@@ -10,14 +10,67 @@ async function init() {
 		await applyMutation();
 		console.debug("Observer started");
 
-		// always refresh button
-
 		isActive = true;
 	}
 }
 
-function refreshButton() {
-	let button = `<button id="refreshButton" class="btn btn-primary btn-sm" style="margin-left: 10px;">Refresh</button>`;
+async function refreshButton() {
+	const matChipList = document.querySelector(".mat-chip-list-wrapper");
+
+	let refreshChip = document.createElement("div");
+	refreshChip.classList.add("betterfloat-refresh");
+	refreshChip.setAttribute("style", "display: inline-flex; margin-left: 20px;");
+
+
+	let buttonStyle = "display: flex; background-color: #616161; margin: 4px; padding: 7px 12px; border-radius: 16px; align-items: center;";
+	refreshChip.innerHTML = `<div style="display: flex;flex-direction: column;align-items: center;margin: 4px 8px 4px 8px;"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart" style="${buttonStyle}">Start</div><div class="betterfloat-refreshStop" style="${buttonStyle}">Stop</div></div>`;
+
+	if (matChipList) {
+		if (!matChipList.innerHTML.includes("betterfloat-refresh")) {
+			matChipList.appendChild(refreshChip);
+		}
+		while (!document.getElementsByClassName("betterfloat-refresh")[0])
+			await new Promise((r) => setTimeout(r, 100));
+
+		let startElement = document.querySelector(".betterfloat-refreshStart");
+		let stopElement = document.querySelector(".betterfloat-refreshStop");
+
+		startElement.addEventListener("click", () => {
+			if (refreshInterval.length > 1) {
+				console.log("[BetterFloat] Auto-refresh already active");
+				return;
+			}
+			console.log("[BetterFloat] Starting auto-refresh, interval: 30s, current time: " + Date.now());
+			
+			let refreshText	= document.querySelector(".betterfloat-refreshText");
+			refreshText.innerHTML = "active";
+			refreshText.setAttribute("style", "color: greenyellow;");
+
+			refreshInterval.push(setInterval(() => {
+				let refreshButton = document
+					.querySelector(".mat-chip-list-wrapper")
+					.querySelector(".mat-tooltip-trigger")
+					?.children[0] as HTMLElement;
+				if (refreshButton && lastRefresh + 9000 < Date.now()) {
+					lastRefresh = Date.now();
+					refreshButton.click();
+				}
+			}, 10000));
+		});
+		stopElement.addEventListener("click", () => {
+			console.log("[BetterFloat] Stopping auto-refresh, current time: " + Date.now());
+
+			let refreshText	= document.querySelector(".betterfloat-refreshText");
+			refreshText.innerHTML = "inactive";
+			refreshText.setAttribute("style", "color: #ce0000;");
+
+			//clearinterval for every entry in refreshInterval
+			for (let i = 0; i < refreshInterval.length; i++) {
+				clearInterval(refreshInterval[i]);
+				refreshInterval.splice(i, 1);
+			}
+		});
+	}
 }
 
 async function loadMapping() {
@@ -57,13 +110,15 @@ async function loadMapping() {
 }
 
 async function loadBuffMapping() {
-	console.debug("[BetterSkinport] Attempting to load buff mapping from rums.dev");
-	fetch("https://api.rums.dev/file/buff_name_to_id")
+	console.debug(
+		"[BetterFloat] Attempting to load buff mapping from rums.dev"
+	);
+	await fetch("https://api.rums.dev/file/buff_name_to_id")
 		.then((response) => response.json())
 		.then((data) => {
 			buffMapping = data;
 			console.debug(
-				"[BetterSkinport] Buff mapping successfully loaded from rums.dev"
+				"[BetterFloat] Buff mapping successfully loaded from rums.dev"
 			);
 		})
 		.catch((err) => console.error(err));
@@ -102,6 +157,11 @@ async function applyMutation() {
 				}
 			}
 		}
+
+		let activeTab = getTabNumber();
+		if (activeTab == 4) {
+			await refreshButton();
+		}
 	});
 	await loadMapping();
 	await loadBuffMapping();
@@ -119,6 +179,9 @@ function getFloatItem(container: Element): FloatItem {
 	const priceContainer = container.querySelector(".price");
 	const header_details = <Element>nameContainer.childNodes[1];
 
+	let name = nameContainer
+		.querySelector(".item-name")
+		.textContent.replace("\n", "");
 	let price = priceContainer.textContent;
 	let condition: ItemCondition = "";
 	let quality = "";
@@ -138,7 +201,7 @@ function getFloatItem(container: Element): FloatItem {
 					// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 					quality = text;
 				} else {
-					style = text as ItemStyle;
+					style = text.substring(1, text.length - 1) as ItemStyle;
 				}
 				break;
 			case Node.TEXT_NODE:
@@ -148,10 +211,12 @@ function getFloatItem(container: Element): FloatItem {
 				break;
 		}
 	});
+
+	if (!name.includes("|")) {
+		style = "Vanilla";
+	}
 	return {
-		name: nameContainer
-			.querySelector(".item-name")
-			.textContent.replace("\n", ""),
+		name: name,
 		quality: quality,
 		style: style,
 		condition: condition,
@@ -180,9 +245,31 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
 		return;
 	}
-	let price = priceMapping[buff_name]["buff163"];
-	const suggestedContainer = container.querySelector(".suggested-container");
+	let priceListing = 0;
+	let priceOrder = 0;
+	if (item.style != "" && item.style != "Vanilla") {
+		priceListing =
+			priceMapping[buff_name]["buff163"]["starting_at"]["doppler"][
+				item.style
+			];
+		priceOrder =
+			priceMapping[buff_name]["buff163"]["highest_order"]["doppler"][
+				item.style
+			];
+	} else {
+		priceListing =
+			priceMapping[buff_name]["buff163"]["starting_at"]["price"];
+		priceOrder =
+			priceMapping[buff_name]["buff163"]["highest_order"]["price"];
+	}
+	if (priceListing == undefined) {
+		priceListing = 0;
+	}
+	if (priceOrder == undefined) {
+		priceOrder = 0;
+	}
 
+	const suggestedContainer = container.querySelector(".suggested-container");
 	if (suggestedContainer) {
 		let buff_url =
 			buff_id > 0
@@ -198,23 +285,26 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 		);
 		suggestedContainer.innerHTML = `<img src="${chrome.runtime.getURL(
 			"../public/buff_favicon.png"
-		)}"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice"><span style="color: orange;">▼$${
-			price["highest_order"]["price"]
-		}</span> <span style="color: greenyellow;">▲$${
-			price["starting_at"]["price"]
-		}</span></div>`;
+		)}"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice"><span style="color: orange;">▼$${priceOrder}</span> <span style="color: greenyellow;">▲$${priceListing}</span></div>`;
 	}
 
 	const priceContainer = container.querySelector(".price");
 	if (priceContainer.querySelector(".sale-tag")) {
 		priceContainer.removeChild(priceContainer.querySelector(".sale-tag"));
 	}
-	const difference = item.price - price["starting_at"]["price"];
+	const difference = item.price - priceListing;
 	if (item.price !== 0) {
 		priceContainer.innerHTML += `<span class="sale-tag betterfloat-sale-tag" style="position: relative;top: -3px;left: 3px;font-size: 15px;padding: 5px;border-radius: 5px;background-color: ${
-			difference == 0 ? "slategrey" : (difference < 0 ? "green" : "red")
+			difference == 0
+				? "slategrey;"
+				: difference < 0
+				? "green;"
+				: "#ce0000;"
 		}"> ${
-			difference == 0 ? "-$0" : ((difference > 0 ? "+$" : "-$") + Math.abs(difference).toFixed(2))
+			difference == 0
+				? "-$0"
+				: (difference > 0 ? "+$" : "-$") +
+				  Math.abs(difference).toFixed(2)
 		} </span>`;
 	}
 }
@@ -232,7 +322,9 @@ function createBuffName(item: FloatItem): string {
 				? `★ StatTrak™ ${full_name.split("★ ")[1]}`
 				: `${item.quality} ${full_name}`;
 		}
-		full_name += ` (${item.condition})`;
+		if (item.style != "Vanilla") {
+			full_name += ` (${item.condition})`;
+		}
 	}
 	return full_name
 		.replace(/ +(?= )/g, "")
@@ -248,6 +340,8 @@ function getTabNumber() {
 	);
 }
 
+let refreshInterval: [ReturnType<typeof setTimeout>] = [null];
+let lastRefresh = 0;
 let isActive = false;
 let buffMapping = {};
 let priceMapping = {};
