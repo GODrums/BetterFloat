@@ -1,0 +1,16 @@
+{
+    "name": "betterfloat",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "typescript": "4.5.5"
+    },
+    "scripts": {
+        "start": ".\\node_modules\\.bin\\tsc --project .\\tsconfig.json"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.243",
+        "@types/node": "^20.4.9"
+    }
+}

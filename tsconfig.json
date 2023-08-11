@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+      "target": "es6",
+      "inlineSourceMap": true,
+      "inlineSources": true,
+      "skipLibCheck": true,
+      "outDir": "dist",
+      "lib": [
+          "ES2017.Object",
+          "ES2015",
+          "dom",
+          "DOM.Iterable"
+      ]
+  },
+  "exclude": [
+      "node_modules"
+  ],
+  "include": [
+      "src/*.ts"
+  ]
+}

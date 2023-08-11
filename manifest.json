@@ -1,0 +1,24 @@
+{
+	"name": "BetterFloat",
+	"author": "Rums",
+	"version": "1.0.0",
+	"version_name": "1.0.0",
+	"description": "",
+	"manifest_version": 3,
+	"host_permissions": ["https://prices.csgotrader.app/*"],
+	"background": {
+		"service_worker": "dist/background.js"
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
+			"js": ["dist/content-script.js"],
+			"run_at": "document_idle"
+		}
+	],
+	"permissions": ["storage", "tabs", "unlimitedStorage", "webRequest"],
+    "web_accessible_resources": [ {
+       "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*" ],
+       "resources": [ "public/buff_item_map.json", "public/prices_v6.json", "public/buff_favicon.png" ]
+    } ]
+}
