@@ -21,8 +21,7 @@ async function refreshButton() {
 	refreshChip.classList.add("betterfloat-refresh");
 	refreshChip.setAttribute("style", "display: inline-flex; margin-left: 20px;");
 
-	const buttonStyle = "display: flex; background-color: #616161; margin: 4px; padding: 7px 12px; border-radius: 16px; align-items: center;";
-	refreshChip.innerHTML = `<div style="display: flex;flex-direction: column;align-items: center;margin: 4px 8px 4px 8px;"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart" style="${buttonStyle}">Start</div><div class="betterfloat-refreshStop" style="${buttonStyle}">Stop</div></div>`;
+	refreshChip.innerHTML = `<div class="betterfloat-refreshContainer"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart">Start</div><div class="betterfloat-refreshStop">Stop</div></div>`;
 
 	if (matChipList) {
 		if (!matChipList.innerHTML.includes("betterfloat-refresh")) {
@@ -298,7 +297,7 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 	}
 	const difference = item.price - priceListing;
 	if (item.price !== 0) {
-		priceContainer.innerHTML += `<span class="sale-tag betterfloat-sale-tag" style="position: relative;top: -3px;left: 3px;font-size: 15px;padding: 5px;border-radius: 5px;background-color: ${
+		priceContainer.innerHTML += `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${
 			difference == 0
 				? "slategrey;"
 				: difference < 0
