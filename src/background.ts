@@ -12,6 +12,7 @@ chrome.storage.local.get("lastUpdate", (data) => {
 	}
 });
 
+// file is updated every 8 hours
 if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
 	fetch("https://prices.csgotrader.app/latest/prices_v6.json")
 		.then((response) => response.json())

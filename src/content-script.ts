@@ -8,8 +8,16 @@ async function init() {
 	if (!isActive) {
 		console.debug("Starting observer");
 		await applyMutation();
+		console.debug("Observer started");
+
+		// always refresh button
+
 		isActive = true;
 	}
+}
+
+function refreshButton() {
+	let button = `<button id="refreshButton" class="btn btn-primary btn-sm" style="margin-left: 10px;">Refresh</button>`;
 }
 
 async function loadMapping() {
@@ -48,15 +56,26 @@ async function loadMapping() {
 	return true;
 }
 
+async function loadBuffMapping() {
+	console.debug("[BetterSkinport] Attempting to load buff mapping from rums.dev");
+	fetch("https://api.rums.dev/file/buff_name_to_id")
+		.then((response) => response.json())
+		.then((data) => {
+			buffMapping = data;
+			console.debug(
+				"[BetterSkinport] Buff mapping successfully loaded from rums.dev"
+			);
+		})
+		.catch((err) => console.error(err));
+}
+
 // convert to get from rums.dev
 async function getBuffMapping(name: string) {
 	if (Object.keys(buffMapping).length == 0) {
-		console.debug("[BetterSkinport] Loading buff mapping");
-		let response = await fetchFile("../public/buff_item_map.json");
-		buffMapping = await response.json();
+		await loadBuffMapping();
 	}
-	if (buffMapping["name_to_id"][name]) {
-		return buffMapping["name_to_id"][name];
+	if (buffMapping[name]) {
+		return buffMapping[name];
 	} else {
 		console.debug(`[BetterFloat] No buff mapping found for ${name}`);
 		return 0;
@@ -79,13 +98,13 @@ async function applyMutation() {
 					addedNode.className &&
 					addedNode.className.toString().includes("flex-item")
 				) {
-					console.log(JSON.stringify(addedNode));
 					adjustItem(addedNode);
 				}
 			}
 		}
 	});
 	await loadMapping();
+	await loadBuffMapping();
 	observer.observe(document, { childList: true, subtree: true });
 }
 
@@ -100,6 +119,7 @@ function getFloatItem(container: Element): FloatItem {
 	const priceContainer = container.querySelector(".price");
 	const header_details = <Element>nameContainer.childNodes[1];
 
+	let price = priceContainer.textContent;
 	let condition: ItemCondition = "";
 	let quality = "";
 	let style: ItemStyle = "";
@@ -129,14 +149,24 @@ function getFloatItem(container: Element): FloatItem {
 		}
 	});
 	return {
-		name: nameContainer.querySelector(".item-name").textContent.replace("\n", ""),
+		name: nameContainer
+			.querySelector(".item-name")
+			.textContent.replace("\n", ""),
 		quality: quality,
 		style: style,
 		condition: condition,
 		float: Number(
 			floatContainer?.querySelector(".ng-star-inserted")?.textContent ?? 0
 		),
-		price: Number(priceContainer.textContent.split("  ")[0].trim().replace("$", "").replace(",", "")),
+		price: price.includes("Bids")
+			? 0
+			: Number(
+					price
+						.split("  ")[0]
+						.trim()
+						.replace("$", "")
+						.replace(",", "")
+			  ),
 		bargain: false,
 	};
 }
@@ -146,6 +176,10 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 	let buff_name = createBuffName(item);
 	let buff_id = await getBuffMapping(buff_name);
 
+	if (!priceMapping[buff_name]) {
+		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+		return;
+	}
 	let price = priceMapping[buff_name]["buff163"];
 	const suggestedContainer = container.querySelector(".suggested-container");
 
@@ -157,17 +191,32 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 						buff_name
 				  )}`;
 		suggestedContainer.setAttribute("href", buff_url);
-        suggestedContainer.setAttribute("target", "_blank");
-        suggestedContainer.setAttribute("aria-describedby", "");
-		suggestedContainer.innerHTML = `<img src="${chrome.runtime.getURL("../public/buff_favicon.png")}"" style="height: 20px; margin-top: 5px; margin-right: 3px"><div class="suggested-price betterfloat-buffprice">▼${price["highest_order"]["price"]} ▲${price["starting_at"]["price"]}</div>`;
+		suggestedContainer.setAttribute("target", "_blank");
+		suggestedContainer.setAttribute(
+			"style",
+			"margin-top: 5px; display: inline-flex; align-items: center;"
+		);
+		suggestedContainer.innerHTML = `<img src="${chrome.runtime.getURL(
+			"../public/buff_favicon.png"
+		)}"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice"><span style="color: orange;">▼$${
+			price["highest_order"]["price"]
+		}</span> <span style="color: greenyellow;">▲$${
+			price["starting_at"]["price"]
+		}</span></div>`;
 	}
 
-    const priceContainer = container.querySelector(".price");
-    if (priceContainer.querySelector(".sale-tag")) {
-        priceContainer.removeChild(priceContainer.querySelector(".sale-tag"));
-    }
-    const difference = item.price - price["starting_at"]["price"];
-    priceContainer.innerHTML += `<span class="sale-tag betterfloat-sale-tag" style="position: relative;top: -3px;left: 3px;font-size: 15px;padding: 5px;border-radius: 5px;background-color: ${(difference < 0 ? "green" : "red")}"> ${(difference > 0 ? "+$" : "-$") + Math.abs(difference).toFixed(2)} </span>`;
+	const priceContainer = container.querySelector(".price");
+	if (priceContainer.querySelector(".sale-tag")) {
+		priceContainer.removeChild(priceContainer.querySelector(".sale-tag"));
+	}
+	const difference = item.price - price["starting_at"]["price"];
+	if (item.price !== 0) {
+		priceContainer.innerHTML += `<span class="sale-tag betterfloat-sale-tag" style="position: relative;top: -3px;left: 3px;font-size: 15px;padding: 5px;border-radius: 5px;background-color: ${
+			difference == 0 ? "slategrey" : (difference < 0 ? "green" : "red")
+		}"> ${
+			difference == 0 ? "-$0" : ((difference > 0 ? "+$" : "-$") + Math.abs(difference).toFixed(2))
+		} </span>`;
+	}
 }
 
 function createBuffName(item: FloatItem): string {
@@ -185,7 +234,10 @@ function createBuffName(item: FloatItem): string {
 		}
 		full_name += ` (${item.condition})`;
 	}
-	return full_name.replace(/ +(?= )/g, "").replace(/\//g, "-").trim();
+	return full_name
+		.replace(/ +(?= )/g, "")
+		.replace(/\//g, "-")
+		.trim();
 }
 
 function getTabNumber() {

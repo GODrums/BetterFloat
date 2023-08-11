@@ -1,7 +1,5 @@
 export type FloatItem = {
 	name: string;
-    //star: boolean;
-    //type: ItemType;
 	quality: string;
 	style: ItemStyle;
 	condition: ItemCondition;
