@@ -1,16 +1,16 @@
 import { FloatItem, ItemCondition, ItemStyle } from "./@typings/FloatTypes";
 
 async function init() {
-	console.log("content-script init");
 	let activeTab = getTabNumber();
-	console.log(`Currently on tab ${activeTab}`);
+	console.debug(`[BetterFloat] Currently on tab ${activeTab}`);
 
-	if (!isActive) {
-		console.debug("Starting observer");
+	// mutation observer is only needed once
+	if (!isObserverActive) {
+		console.debug("[BetterFloat] Starting observer");
 		await applyMutation();
-		console.debug("Observer started");
+		console.debug("[BetterFloat] Observer started");
 
-		isActive = true;
+		isObserverActive = true;
 	}
 }
 
@@ -21,8 +21,7 @@ async function refreshButton() {
 	refreshChip.classList.add("betterfloat-refresh");
 	refreshChip.setAttribute("style", "display: inline-flex; margin-left: 20px;");
 
-
-	let buttonStyle = "display: flex; background-color: #616161; margin: 4px; padding: 7px 12px; border-radius: 16px; align-items: center;";
+	const buttonStyle = "display: flex; background-color: #616161; margin: 4px; padding: 7px 12px; border-radius: 16px; align-items: center;";
 	refreshChip.innerHTML = `<div style="display: flex;flex-direction: column;align-items: center;margin: 4px 8px 4px 8px;"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart" style="${buttonStyle}">Start</div><div class="betterfloat-refreshStop" style="${buttonStyle}">Stop</div></div>`;
 
 	if (matChipList) {
@@ -36,8 +35,9 @@ async function refreshButton() {
 		let stopElement = document.querySelector(".betterfloat-refreshStop");
 
 		startElement.addEventListener("click", () => {
+			// somehow Angular calls the eventlistener multiple times, this prevents side effects
 			if (refreshInterval.length > 1) {
-				console.log("[BetterFloat] Auto-refresh already active");
+				console.debug("[BetterFloat] Auto-refresh already active");
 				return;
 			}
 			console.log("[BetterFloat] Starting auto-refresh, interval: 30s, current time: " + Date.now());
@@ -46,11 +46,13 @@ async function refreshButton() {
 			refreshText.innerHTML = "active";
 			refreshText.setAttribute("style", "color: greenyellow;");
 
+			// save timer to avoid multiple executions
 			refreshInterval.push(setInterval(() => {
 				let refreshButton = document
 					.querySelector(".mat-chip-list-wrapper")
 					.querySelector(".mat-tooltip-trigger")
 					?.children[0] as HTMLElement;
+				// time should be lower than interval due to inconsistencies
 				if (refreshButton && lastRefresh + 9000 < Date.now()) {
 					lastRefresh = Date.now();
 					refreshButton.click();
@@ -58,6 +60,7 @@ async function refreshButton() {
 			}, 10000));
 		});
 		stopElement.addEventListener("click", () => {
+			// gets called multiple times, maybe needs additional handling in the future
 			console.log("[BetterFloat] Stopping auto-refresh, current time: " + Date.now());
 
 			let refreshText	= document.querySelector(".betterfloat-refreshText");
@@ -109,6 +112,8 @@ async function loadMapping() {
 	return true;
 }
 
+// get mapping from rums.dev
+// currently has no fallback if api is down
 async function loadBuffMapping() {
 	console.debug(
 		"[BetterFloat] Attempting to load buff mapping from rums.dev"
@@ -124,7 +129,6 @@ async function loadBuffMapping() {
 		.catch((err) => console.error(err));
 }
 
-// convert to get from rums.dev
 async function getBuffMapping(name: string) {
 	if (Object.keys(buffMapping).length == 0) {
 		await loadBuffMapping();
@@ -341,8 +345,12 @@ function getTabNumber() {
 }
 
 let refreshInterval: [ReturnType<typeof setTimeout>] = [null];
+// time of last refresh in auto-refresh functionality
 let lastRefresh = 0;
-let isActive = false;
+// mutation observer active?
+let isObserverActive = false;
+// maps buff_name to buff_id
 let buffMapping = {};
+// maps buff_name to prices and more - from csgotrader
 let priceMapping = {};
 init();
