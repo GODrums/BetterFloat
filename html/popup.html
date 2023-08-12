@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title>BetterFloat</title>
+        <link href="https://fonts.googleapis.com/css?family=Source Sans Pro" rel="stylesheet" />
+        <link rel="stylesheet" href="/css/popup.css" />
+    </head>
+    <body>
+        <div class="MainScreen">
+            <div class="Topbar">
+                <img class="BetterfloatIcon" src="../public/betterfloat_logo128.png" />
+                <p id="version">v. 1.0.0</p>
+            </div>
+            <div class="MainContent">
+                <div class="FeaturesGroup">
+                    <div class="GroupHeader">FEATURES</div>
+                    <div class="GroupElement">
+                        <input type="checkbox" id="InputBuffPrice" name="InputBuffPrice" value="InputBuffPrice" style="top: 8px" />
+                        <p class="ElementText">Buff Price Calculations</p>
+                    </div>
+                    <div class="GroupElement" style="top: 80px">
+                        <input type="checkbox" id="InputAutorefresh" name="InputAutorefresh" value="InputAutorefresh" style="top: 8px" />
+                        <p class="ElementText">Auto-Refresh</p>
+                    </div>
+                </div>
+                <div class="PricesGroup">
+                    <div class="GroupHeader">PRICES</div>
+                    <div class="GroupElement">
+                        <p class="ElementText">Buff Price Reference</p>
+                        <select class="ElementDropdownMenu" id="DropDownPriceReference">
+                            <option value="0">Bid</option>
+                            <option value="1" selected>Ask</option>
+                        </select>
+                        <p class="ElementDescription">
+                            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default)
+                        </p>
+                    </div>
+                </div>
+                <div class="RefreshGroup">
+                    <div class="GroupHeader">AUTO-REFRESH</div>
+                    <div class="GroupElement">
+                        <p class="ElementText">Default Interval</p>
+                        <select class="ElementDropdownMenu" id="DropDownInterval">
+                            <option value="10">10s</option>
+                            <option value="30" selected>30s</option>
+                            <option value="60">60s</option>
+                            <option value="120">2min</option>
+                            <option value="300">5min</option>
+                        </select>
+                        <p class="ElementDescription">Sets the default interval for the auto-refresh feature. Can still be adjusted on the page itself. Default value is 30s.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/dist/popup.js"></script>
+    </body>
+</html>

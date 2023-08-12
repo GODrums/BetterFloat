@@ -11,7 +11,7 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
+			"matches": ["https://csfloat.com/", "https://csgofloat.com/", "https://csfloat.com/item/*", "https://csgofloat.com/item/*"],
 			"js": ["dist/content-script.js"],
 			"css": ["css/stylesheet.css"],
 			"run_at": "document_idle"
@@ -20,6 +20,9 @@
 	"icons": {
 		"128": "public/betterfloat_logo128.png"
 	},
+	"action": {
+		"default_popup": "/html/popup.html"
+	 },
 	"permissions": ["storage", "tabs", "unlimitedStorage", "webRequest"],
     "web_accessible_resources": [ {
        "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*" ],

@@ -15,3 +15,10 @@ export type ItemQuality = "" | "Souvenir" | "StatTrak™" | "Base Grade Containe
 export type ItemStyle = "" | "Vanilla" | "Sapphire" | "Ruby" | "Black Pearl" | "Emerald" | "Phase 1" | "Phase 2" | "Phase 3" | "Phase 4";
 
 export type ItemCondition = "" | "Factory New" | "Minimal Wear" | "Field-Tested" | "Well-Worn" | "Battle-Scarred";
+
+export type ExtensionSettings = {
+	buffprice: boolean;
+	autorefresh: boolean;
+	priceReference: 0 | 1;
+	refreshInterval: 10 | 30 | 60 | 120 | 300;
+};

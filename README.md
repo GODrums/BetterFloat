@@ -30,7 +30,7 @@ npm install
 npm start
 ```
 
-In case of a runtime error, delete the follow line located at the end of the code from your compiled `dist/content-script.js` file:
+In case of a runtime error, delete the following line located at the end of the code from your compiled `dist/content-script.js` file:
 
 ```js
 export {};

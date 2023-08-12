@@ -1,0 +1,129 @@
+::root {
+    --primary-color: #004594;
+    --background-color: #303030;
+    --accent-color: #ff5722;
+    --text-color: #ffffff;
+    --primary-hover-color: #0056b3;
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: var(--primary-color);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-hover-color);
+}
+
+body {
+    font-family: 'Source Sans Pro';
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--background-color, #303030);
+    margin: 0;
+}
+
+.MainScreen {
+    position: relative;
+    width: 375px;
+    height: 600px;
+    background: var(--background-color, #303030);
+}
+
+.Topbar {
+    width: 100%;
+    height: 50px;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    background: var(--background-color, #004594);
+}
+
+.Topbar p {
+    color: var(--text-color, #ffffff);
+    margin-left: 15px;
+}
+
+.BetterFloatIcon {
+    width: 45px;
+    height: 45px;
+    left: 165px;
+    top: 3px;
+    position: absolute;
+}
+
+.MainContent {
+    top: 50px;
+    position: absolute;
+    margin: 15px 10px;
+}
+
+.FeaturesGroup {
+    left: 0px;
+    top: 0px;
+    position: absolute;
+}
+
+.GroupHeader {
+    left: 5px;
+    top: 0px;
+    position: absolute;
+    color: white;
+    text-wrap: nowrap;
+}
+
+.GroupElement {
+    width: 350px;
+    left: 0px;
+    top: 25px;
+    position: absolute;
+    background: var(--primary-color, #004594);
+    border-radius: 10px;
+}
+
+input[type=checkbox] {
+    width: 23px;
+    height: 23px;
+    left: 300px;
+    position: absolute;
+    accent-color: var(--accent-color, #ff5722);
+    border-radius: 5px;
+}
+
+.ElementText {
+    margin-left: 18px;
+    color: white;
+}
+
+.PricesGroup {
+    left: 0px; 
+    top: 140px; 
+    position: absolute;
+}
+
+.ElementDescription {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    margin: 10px 15px;
+}
+
+.ElementDropdownMenu {
+    left: 222px; 
+    top: 9px;
+    position: absolute;
+    width: 108px; 
+    height: 30px;
+    padding-left: 7px;
+    background: var(--background-color, #303030);
+    border: 0;
+    border-radius: 16px;
+    color: white;
+}
+
+.RefreshGroup {
+    left: 0px;
+    top: 300px;
+    position: absolute;
+}
