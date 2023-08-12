@@ -27,13 +27,13 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	if (!extensionSettings.buffprice) return;
+    if (!extensionSettings.buffprice) return;
 
-	let items = document.querySelectorAll('item-card');
-	
-	for (let i = 0; i < items.length; i++) {
-		adjustItem(items[i]);
-	}
+    let items = document.querySelectorAll('item-card');
+
+    for (let i = 0; i < items.length; i++) {
+        adjustItem(items[i]);
+    }
 }
 
 async function initSettings() {
@@ -68,20 +68,22 @@ async function refreshButton() {
     refreshChip.classList.add('betterfloat-refresh');
     refreshChip.setAttribute('style', 'display: inline-flex; margin-left: 20px;');
 
-    refreshChip.innerHTML = `<div class="betterfloat-refreshContainer"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span><span style="color: gray;">Interval: ${extensionSettings.refreshInterval?.toString() ?? 0}s</span></div>`;
-	
-	let startStopContainer = document.createElement('div');
-	let startElement = genRefreshButton('Start');
-	let stopElement = genRefreshButton('Stop');
-	startStopContainer.style.display = 'flex';
-	startStopContainer.style.flexDirection = 'row';
-	startStopContainer.appendChild(startElement);
-	startStopContainer.appendChild(stopElement);
+    refreshChip.innerHTML = `<div class="betterfloat-refreshContainer"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span><span style="color: gray;">Interval: ${
+        extensionSettings.refreshInterval?.toString() ?? 0
+    }s</span></div>`;
+
+    let startStopContainer = document.createElement('div');
+    let startElement = genRefreshButton('Start');
+    let stopElement = genRefreshButton('Stop');
+    startStopContainer.style.display = 'flex';
+    startStopContainer.style.flexDirection = 'row';
+    startStopContainer.appendChild(startElement);
+    startStopContainer.appendChild(stopElement);
 
     if (matChipList) {
         if (!matChipList.innerHTML.includes('betterfloat-refresh')) {
             matChipList.appendChild(refreshChip);
-			refreshChip.after(startStopContainer);
+            refreshChip.after(startStopContainer);
         }
         //while (!document.getElementsByClassName('betterfloat-refresh')[0]) await new Promise((r) => setTimeout(r, 100));
 
@@ -127,11 +129,11 @@ async function refreshButton() {
     }
 }
 
-function genRefreshButton(name: "Start" | "Stop"): HTMLDivElement {
-	let element = document.createElement('div');
-	element.classList.add('betterfloat-refresh' + name.toString());
-	element.innerText = name.toString();
-	return element;
+function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
+    let element = document.createElement('div');
+    element.classList.add('betterfloat-refresh' + name.toString());
+    element.innerText = name.toString();
+    return element;
 }
 
 async function loadMapping() {

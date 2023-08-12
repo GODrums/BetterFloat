@@ -47,10 +47,18 @@ body {
 }
 
 .BetterFloatIcon {
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
     left: 165px;
-    top: 3px;
+    top: 5px;
+    position: absolute;
+}
+
+.GithubIcon {
+    width: 30px;
+    height: 30px;
+    right: 15px;
+    top: 10px;
     position: absolute;
 }
 
@@ -83,7 +91,7 @@ body {
     border-radius: 10px;
 }
 
-input[type=checkbox] {
+input[type='checkbox'] {
     width: 23px;
     height: 23px;
     left: 300px;
@@ -98,8 +106,8 @@ input[type=checkbox] {
 }
 
 .PricesGroup {
-    left: 0px; 
-    top: 140px; 
+    left: 0px;
+    top: 140px;
     position: absolute;
 }
 
@@ -110,10 +118,10 @@ input[type=checkbox] {
 }
 
 .ElementDropdownMenu {
-    left: 222px; 
+    left: 222px;
     top: 9px;
     position: absolute;
-    width: 108px; 
+    width: 108px;
     height: 30px;
     padding-left: 7px;
     background: var(--background-color, #303030);
