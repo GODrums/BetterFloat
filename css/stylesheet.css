@@ -1,29 +1,55 @@
 .betterfloat-sale-tag {
-    position: relative;
-    top: -3px;
-    left: 3px;
-    font-size: 15px;
-    padding: 5px;
-    border-radius: 5px;
+	position: relative;
+	top: -3px;
+	left: 3px;
+	font-size: 15px;
+	padding: 5px;
+	border-radius: 5px;
 }
 
-.betterfloat-refreshStart, .betterfloat-refreshStop {
-    display: flex; 
-    background-color: #616161; 
-    margin: 4px; 
-    padding: 7px 12px; 
-    border-radius: 16px; 
-    align-items: center;
+.betterfloat-refreshStart,
+.betterfloat-refreshStop {
+	display: flex;
+	background-color: #616161;
+	margin: 4px;
+	padding: 7px 12px;
+	border-radius: 16px;
+	align-items: center;
 }
 
 .betterfloat-refreshContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 4px 8px 4px 8px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 4px 8px 4px 8px;
+}
+
+.betterfloat-buff-tooltip {
+	/* Positioning the tooltip text */
+	position: absolute;
+	z-index: 1;
+    transform: translate(-20%, 40%);
+
+	visibility: hidden;
+	width: 180px;
+    background-color: #192733;
+	color: #fff;
+	text-align: center;
+    padding: 8px 10px 8px 10px;
+	border-radius: 6px;
+    font-size: 14px;
+
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.betterfloat-buffprice:hover .betterfloat-buff-tooltip {
+	visibility: visible;
+	opacity: 1;
 }
 
 .betterfloat-buffprice {
-    margin-left: 2px;
-    padding-top: 1px;
+	margin-left: 2px;
+	padding-top: 1px;
 }

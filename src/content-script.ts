@@ -274,21 +274,24 @@ async function addBuffPrice(item: FloatItem, container: Element) {
 
 	const suggestedContainer = container.querySelector(".suggested-container");
 	if (suggestedContainer) {
+		let buffContainer = document.createElement("a");
 		let buff_url =
 			buff_id > 0
 				? `https://buff.163.com/goods/${buff_id}`
 				: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(
 						buff_name
 				  )}`;
-		suggestedContainer.setAttribute("href", buff_url);
-		suggestedContainer.setAttribute("target", "_blank");
-		suggestedContainer.setAttribute(
+		let tooltip = `<span class="betterfloat-buff-tooltip">Bid: Highest buy order price<br>Ask: Lowest listing price</span>`
+		buffContainer.setAttribute("href", buff_url);
+		buffContainer.setAttribute("target", "_blank");
+		buffContainer.setAttribute(
 			"style",
 			"margin-top: 5px; display: inline-flex; align-items: center;"
 		);
-		suggestedContainer.innerHTML = `<img src="${chrome.runtime.getURL(
+		buffContainer.innerHTML = `<img src="${chrome.runtime.getURL(
 			"../public/buff_favicon.png"
-		)}"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice"><span style="color: orange;">▼$${priceOrder}</span> <span style="color: greenyellow;">▲$${priceListing}</span></div>`;
+		)}"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice">${tooltip}<span style="color: orange;">Bid $${priceOrder}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask $${priceListing}</span></div>`;
+		suggestedContainer.replaceWith(buffContainer);
 	}
 
 	const priceContainer = container.querySelector(".price");
