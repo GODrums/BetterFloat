@@ -55,7 +55,7 @@ async function refreshButton() {
 					.querySelector(".mat-tooltip-trigger")
 					?.children[0] as HTMLElement;
 				// time should be lower than interval due to inconsistencies
-				if (refreshButton && lastRefresh + 9000 < Date.now()) {
+				if (refreshButton && lastRefresh + (refreshDelay*0.9) < Date.now()) {
 					lastRefresh = Date.now();
 					refreshButton.click();
 				}
