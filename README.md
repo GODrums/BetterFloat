@@ -2,14 +2,16 @@
   <a href="">
     <img width="128" src="https://raw.githubusercontent.com/GODrums/BetterFloat/main/public/betterfloat_logo128.png"/>
   </a>
+  <h1 align="center">BetterFloat</h1>
 </p>
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
 
 ## Highlights
-- Display Buff prices (buy order + listings) for every item
-- Auto-refresh in the "Newest Items"
-- More coming soon!
+
+-   Display Buff prices (buy order + listings) for every item
+-   Auto-refresh in the "Newest Items"
+-   More coming soon!
 
 ## Development
 
@@ -17,9 +19,9 @@
 
 Prerequisites:
 
-- Node.js `>=18.16.0`
-- npm `>=9.5.0`
-- tsc `>=4.7.0`
+-   Node.js `>=18.16.0`
+-   npm `>=9.5.0`
+-   tsc `>=4.7.0`
 
 Prepare your local build via the commands below:
 
