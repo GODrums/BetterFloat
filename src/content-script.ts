@@ -21,7 +21,9 @@ async function refreshButton() {
 	refreshChip.classList.add("betterfloat-refresh");
 	refreshChip.setAttribute("style", "display: inline-flex; margin-left: 20px;");
 
-	refreshChip.innerHTML = `<div class="betterfloat-refreshContainer"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart">Start</div><div class="betterfloat-refreshStop">Stop</div></div>`;
+	let refreshIntervalContainer = `<select class="betterfloat-refreshselect"><option value="10">10s</option><option value="30" selected="selected">30s</option><option value="60">60s</option><option value="120">2min</option><option value="300">5min</option></select>`
+	refreshChip.innerHTML = `<div class="betterfloat-refreshContainer"><span>Auto-Refresh: </span><span class="betterfloat-refreshText" style="color: red">inactive</span></div><div style="display: flex;flex-direction: row;"><div class="betterfloat-refreshStart">Start</div><div class="betterfloat-refreshStop">Stop</div></div>${refreshIntervalContainer}`;
+
 
 	if (matChipList) {
 		if (!matChipList.innerHTML.includes("betterfloat-refresh")) {
@@ -41,6 +43,7 @@ async function refreshButton() {
 			}
 			console.log("[BetterFloat] Starting auto-refresh, interval: 30s, current time: " + Date.now());
 			
+			let refreshDelay = parseInt((document.querySelector(".betterfloat-refreshselect") as HTMLSelectElement).value) * 1000;
 			let refreshText	= document.querySelector(".betterfloat-refreshText");
 			refreshText.innerHTML = "active";
 			refreshText.setAttribute("style", "color: greenyellow;");
@@ -56,7 +59,7 @@ async function refreshButton() {
 					lastRefresh = Date.now();
 					refreshButton.click();
 				}
-			}, 10000));
+			}, refreshDelay));
 		});
 		stopElement.addEventListener("click", () => {
 			// gets called multiple times, maybe needs additional handling in the future

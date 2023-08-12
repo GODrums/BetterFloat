@@ -53,3 +53,13 @@
 	margin-left: 2px;
 	padding-top: 1px;
 }
+
+.betterfloat-refreshselect {
+    background-color: rgb(97, 97, 97);
+    border: none;
+    border-radius: 16px;
+    color: white;
+    margin: 4px;
+    padding: 7px;
+    font-size: 14px;
+}
