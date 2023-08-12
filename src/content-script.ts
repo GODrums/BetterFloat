@@ -6,23 +6,34 @@ async function init() {
     if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
         return;
     }
-    if (!url.endsWith('float.com/') && !url.includes('/item/')) {
-        console.debug('[BetterFloat] Current page not supported');
-        return;
-    }
-
-    await initSettings();
-    let activeTab = getTabNumber();
-    console.debug(`[BetterFloat] Currently on tab ${activeTab}`);
 
     // mutation observer is only needed once
     if (!isObserverActive) {
         console.debug('[BetterFloat] Starting observer');
         await applyMutation();
-        console.debug('[BetterFloat] Observer started');
+        console.log('[BetterFloat] Observer started');
 
         isObserverActive = true;
     }
+
+    await initSettings();
+
+    if (!url.endsWith('float.com/') && !url.includes('/item/')) {
+        console.debug('[BetterFloat] Current page not supported');
+        return;
+    }
+    await firstLaunch();
+}
+
+// required as mutation does not detect initial DOM
+async function firstLaunch() {
+	if (!extensionSettings.buffprice) return;
+
+	let items = document.querySelectorAll('item-card');
+	
+	for (let i = 0; i < items.length; i++) {
+		adjustItem(items[i]);
+	}
 }
 
 async function initSettings() {
