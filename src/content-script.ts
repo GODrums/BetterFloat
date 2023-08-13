@@ -18,11 +18,17 @@ async function init() {
 
     await initSettings();
 
-    if (!url.endsWith('float.com/') && !url.includes('/item/')) {
-        console.debug('[BetterFloat] Current page not supported');
-        return;
+    // check if current page is supported
+    if (url.endsWith('float.com/')) {
+        //check if url is in supported subpages
+        for (let i = 0; i < supportedSubPages.length; i++) {
+            if (url.includes(supportedSubPages[i])) {
+                console.debug('[BetterFloat] Current page supported');
+                await firstLaunch();
+                return;
+            }
+        }
     }
-    await firstLaunch();
 }
 
 // required as mutation does not detect initial DOM
@@ -196,6 +202,13 @@ async function getBuffMapping(name: string) {
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.buffprice) {
+            let url = window.location.href;
+            for (let i = 0; i < unsupportedSubPages.length; i++) {
+                if (url.includes(unsupportedSubPages[i])) {
+                    //console.debug('[BetterFloat] Current page is currently NOT supported');
+                    return;
+                }
+            }
             for (let mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     let addedNode = mutation.addedNodes[i];
@@ -340,6 +353,9 @@ function createBuffName(item: FloatItem): string {
 function getTabNumber() {
     return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
 }
+
+let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist']
+let unsupportedSubPages = ['/sell']
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('./public');
