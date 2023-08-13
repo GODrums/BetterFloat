@@ -2,6 +2,7 @@ let featureBuffPrice = <HTMLInputElement>document.getElementById('InputBuffPrice
 let featureAutorefresh = <HTMLInputElement>document.getElementById('InputAutorefresh')
 let priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference')
 let refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval')
+let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');;
 
 document.getElementById('version').innerHTML = 'Version: ' + chrome.runtime.getManifest().version
 
@@ -22,6 +23,9 @@ chrome.storage.local.get((data) => {
     if (data.refreshInterval) {
         refreshInterval.value = data.refreshInterval.toString()
     }   
+    if (data.showSteamPrice) {
+        showSteamPrice.checked = true;
+    }
 });
 
 featureBuffPrice.addEventListener('change', (e) => {
@@ -35,4 +39,7 @@ priceReference.addEventListener('change', (e) => {
 });
 refreshInterval.addEventListener('change', (e) => {
     chrome.storage.local.set({ refreshInterval: (<HTMLSelectElement>e.target).value });
+});
+showSteamPrice.addEventListener('change', (e) => {
+    chrome.storage.local.set({ showSteamPrice: (<HTMLInputElement>e.target).checked });
 });

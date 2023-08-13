@@ -18,9 +18,11 @@ async function init() {
 
     await initSettings();
 
-    // check if current page is supported
+
+    //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
-        //check if url is in supported subpages
+        await firstLaunch();
+    } else {
         for (let i = 0; i < supportedSubPages.length; i++) {
             if (url.includes(supportedSubPages[i])) {
                 console.debug('[BetterFloat] Current page supported');
@@ -29,6 +31,7 @@ async function init() {
             }
         }
     }
+    
 }
 
 // required as mutation does not detect initial DOM
@@ -56,6 +59,9 @@ async function initSettings() {
         }
         if (data.refreshInterval) {
             extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
+        }
+        if (data.showSteamPrice) {
+            extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
         }
     });
 
@@ -307,17 +313,24 @@ async function addBuffPrice(item: FloatItem, container: Element) {
     }
 
     const suggestedContainer = container.querySelector('.suggested-container');
+
     if (suggestedContainer) {
         let buffContainer = document.createElement('a');
         let buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
         let tooltip = `<span class="betterfloat-buff-tooltip">Bid: Highest buy order price<br>Ask: Lowest listing price</span>`;
         buffContainer.setAttribute('href', buff_url);
         buffContainer.setAttribute('target', '_blank');
-        buffContainer.setAttribute('style', 'margin-top: 5px; display: inline-flex; align-items: center;');
+        buffContainer.setAttribute('style', `${extensionSettings.showSteamPrice ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
         buffContainer.innerHTML = `<img src="${
             runtimePublicURL + '/buff_favicon.png'
         }"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice">${tooltip}<span style="color: orange;">Bid $${priceOrder}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask $${priceListing}</span></div>`;
-        suggestedContainer.replaceWith(buffContainer);
+        if (extensionSettings.showSteamPrice) {
+            let divider = document.createElement('div');
+            suggestedContainer.after(buffContainer);
+            suggestedContainer.after(divider);
+        } else {
+            suggestedContainer.replaceWith(buffContainer);
+        }
     }
 
     const priceContainer = container.querySelector('.price');
