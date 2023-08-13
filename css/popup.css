@@ -135,3 +135,13 @@ input[type='checkbox'] {
     top: 300px;
     position: absolute;
 }
+
+.Bottombar {
+    bottom: 3px;
+    position: absolute;
+}
+
+.Bottombar p {
+    color: var(--text-color, #ffffff);
+    padding-left: 25px;
+}

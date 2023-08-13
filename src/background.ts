@@ -20,3 +20,19 @@ if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
     lastUpdate = Date.now();
     chrome.storage.local.set({ lastUpdate: lastUpdate });
 }
+
+// Check whether new version is installed
+chrome.runtime.onInstalled.addListener(function (details) {
+    if (details.reason == 'install') {
+        console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
+        chrome.storage.local.set({
+            buffprice: true,
+            autorefresh: true,
+            priceReference: 1,
+            refreshInterval: 30,
+        });
+    } else if (details.reason == 'update') {
+        var thisVersion = chrome.runtime.getManifest().version;
+        console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
+    }
+});

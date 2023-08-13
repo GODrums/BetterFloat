@@ -1,8 +1,8 @@
 {
 	"name": "BetterFloat",
 	"author": "Rums",
-	"version": "0.2.8",
-	"version_name": "1.0.0",
+	"version": "1.0.1",
+	"version_name": "1.0.1",
 	"description": "Enhance your experience on CSFloat.com",
 	"manifest_version": 3,
 	"host_permissions": ["https://prices.csgotrader.app/*"],
@@ -23,7 +23,7 @@
 	"action": {
 		"default_popup": "/html/popup.html"
 	 },
-	"permissions": ["storage", "tabs", "unlimitedStorage", "webRequest"],
+	"permissions": ["storage", "tabs", "unlimitedStorage"],
     "web_accessible_resources": [ {
        "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*" ],
        "resources": [ "public/prices_v6.json", "public/buff_favicon.png" ]
