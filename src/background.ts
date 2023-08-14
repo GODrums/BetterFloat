@@ -20,24 +20,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
         var thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
     }
-
-    // check if extension has host permissions and request them if not
-    const host_permissions = ['*://prices.csgotrader.app/*']
-    chrome.permissions.contains({
-        origins: host_permissions
-    }).then((result) => {
-        if (!result) {
-            chrome.permissions.request({
-                origins: host_permissions
-            }, (granted) => {
-                if (granted) {
-                    console.log('[BetterFloat] Host Permission granted.');
-                } else {
-                    console.log('[BetterFloat] Host Permission denied. Please enable manually in the extension settings.');
-                }
-            });
-        }
-    });
 });
 
 // update every 8 hours

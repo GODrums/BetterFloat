@@ -1,10 +1,10 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-	"version": "1.0.3",
+	"version": "1.0.4",
     "description": "Enhance your experience on CSFloat.com",
     "manifest_version": 3,
-    "host_permissions": ["https://prices.csgotrader.app/*"],
+    "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*"],
     "background": {
         "scripts": ["dist/background.js"]
     },

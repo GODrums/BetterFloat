@@ -145,3 +145,11 @@ input[type='checkbox'] {
     color: var(--text-color, #ffffff);
     padding-left: 25px;
 }
+
+.PermissionsButton {
+    right: 55px;
+    top: 10px;
+    position: absolute;
+    background: inherit;
+    border: 0;
+}
