@@ -22,6 +22,7 @@ async function init() {
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
         await firstLaunch();
+        return;
     } else {
         for (let i = 0; i < supportedSubPages.length; i++) {
             if (url.includes(supportedSubPages[i])) {
@@ -31,7 +32,7 @@ async function init() {
             }
         }
     }
-    
+    console.debug('[BetterFloat] Current page not supported: ' + url);
 }
 
 // required as mutation does not detect initial DOM
@@ -219,7 +220,13 @@ async function applyMutation() {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     let addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
-                    if (addedNode instanceof HTMLElement && addedNode.className && addedNode.className.toString().includes('flex-item')) {
+                    if (!(addedNode instanceof HTMLElement)) continue;
+
+                    // item popout
+                    if (addedNode.tagName && addedNode.tagName.toLowerCase() == 'item-detail') {
+                        adjustItem(addedNode, true);
+                    // item from listings
+                    } else if (addedNode.className && addedNode.className.toString().includes('flex-item')) {
                         adjustItem(addedNode);
                     }
                 }
@@ -236,9 +243,9 @@ async function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
-function adjustItem(container: Element) {
+function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
-    addBuffPrice(item, container);
+    addBuffPrice(item, container, isPopout);
 }
 
 function getFloatItem(container: Element): FloatItem {
@@ -287,7 +294,7 @@ function getFloatItem(container: Element): FloatItem {
     };
 }
 
-async function addBuffPrice(item: FloatItem, container: Element) {
+async function addBuffPrice(item: FloatItem, container: Element, isPopout = false) {
     await loadMapping();
     let buff_name = createBuffName(item);
     let buff_id = await getBuffMapping(buff_name);
@@ -313,6 +320,7 @@ async function addBuffPrice(item: FloatItem, container: Element) {
     }
 
     const suggestedContainer = container.querySelector('.suggested-container');
+    const showBoth = extensionSettings.showSteamPrice || isPopout;
 
     if (suggestedContainer) {
         let buffContainer = document.createElement('a');
@@ -320,11 +328,11 @@ async function addBuffPrice(item: FloatItem, container: Element) {
         let tooltip = `<span class="betterfloat-buff-tooltip">Bid: Highest buy order price<br>Ask: Lowest listing price</span>`;
         buffContainer.setAttribute('href', buff_url);
         buffContainer.setAttribute('target', '_blank');
-        buffContainer.setAttribute('style', `${extensionSettings.showSteamPrice ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
+        buffContainer.setAttribute('style', `${showBoth ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
         buffContainer.innerHTML = `<img src="${
             runtimePublicURL + '/buff_favicon.png'
         }"" style="height: 20px; margin-right: 5px"><div class="suggested-price betterfloat-buffprice">${tooltip}<span style="color: orange;">Bid $${priceOrder}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask $${priceListing}</span></div>`;
-        if (extensionSettings.showSteamPrice) {
+        if (showBoth) {
             let divider = document.createElement('div');
             suggestedContainer.after(buffContainer);
             suggestedContainer.after(divider);
