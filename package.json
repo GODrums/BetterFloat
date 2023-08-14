@@ -11,7 +11,7 @@
     },
     "devDependencies": {
         "@types/chrome": "^0.0.243",
-        "@types/web": "^0.0.113",
-        "@types/node": "^20.4.9"
+        "@types/node": "^20.4.9",
+        "@types/web": "^0.0.113"
     }
 }
