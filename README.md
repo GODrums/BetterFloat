@@ -1,10 +1,15 @@
 <p align="center">
-  <a href="">
+  <a href="https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk">
     <img width="128" src="https://raw.githubusercontent.com/GODrums/BetterFloat/main/public/betterfloat_logo128.png"/>
   </a>
   <h1 align="center">BetterFloat</h1>
 </p>
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/price/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/users/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
 
 ## Highlights
