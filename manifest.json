@@ -23,7 +23,7 @@
 	"action": {
 		"default_popup": "/html/popup.html"
 	 },
-	"permissions": ["storage", "tabs", "unlimitedStorage"],
+	"permissions": ["storage"],
     "web_accessible_resources": [ {
        "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*" ],
        "resources": [ "public/prices_v6.json", "public/buff_favicon.png" ]
