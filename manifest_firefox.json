@@ -1,7 +1,7 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-	"version": "1.0.4",
+	"version": "1.0.5",
     "description": "Enhance your experience on CSFloat.com",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*"],
@@ -20,7 +20,7 @@
         "128": "public/betterfloat_logo128.png"
     },
     "action": {
-        "default_popup": "/html/popup.html"
+        "default_popup": "/html/index.html"
     },
     "browser_specific_settings": {
         "gecko": {

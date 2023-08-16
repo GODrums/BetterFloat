@@ -1,0 +1,49 @@
+<div class="Group">
+    <div class="GroupHeader">FEATURES</div>
+    <div class="GroupElement">
+        <p class="ElementText">Buff Price Calculations</p>
+        <input type="checkbox" id="InputBuffPrice" name="buffprice" value="InputBuffPrice" style="top: 8px" checked />
+    </div>
+    <div class="GroupElement">
+        <p class="ElementText">Auto-Refresh</p>
+        <input type="checkbox" id="InputAutorefresh" name="autorefresh" value="InputAutorefresh" style="top: 8px" checked />
+    </div>
+</div>
+<div class="Group">
+    <div class="GroupHeader">PRICES</div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Buff Price Reference</p>
+            <select class="ElementDropdownMenu" id="DropDownPriceReference" name="priceReference">
+                <option value="0">Bid</option>
+                <option value="1" selected>Ask</option>
+            </select>
+        </div>
+        <p class="ElementDescription">
+            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default)
+        </p>
+    </div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Show Steam Price</p>
+            <input type="checkbox" id="InputSteamPrice" name="showSteamPrice" value="InputSteamPrice" style="top: 8px" />
+        </div>
+        <p class="ElementDescription">Show the Steam price of an item in addition to the Buff price.</p>
+    </div>
+</div>
+<div class="Group">
+    <div class="GroupHeader">AUTO-REFRESH</div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Default Interval</p>
+            <select class="ElementDropdownMenu" id="DropDownInterval" name="refreshInterval">
+                <option value="10">10s</option>
+                <option value="30" selected>30s</option>
+                <option value="60">60s</option>
+                <option value="120">2min</option>
+                <option value="300">5min</option>
+            </select>
+        </div>
+        <p class="ElementDescription">Sets the default interval for the auto-refresh feature. Can still be adjusted on the page itself. Default value is 30s.</p>
+    </div>
+</div>

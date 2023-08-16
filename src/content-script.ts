@@ -18,7 +18,6 @@ async function init() {
 
     await initSettings();
 
-
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
         await firstLaunch();
@@ -107,7 +106,6 @@ async function refreshButton() {
     refreshContainer.appendChild(refreshText);
     refreshContainer.appendChild(intervalContainer);
     refreshChip.appendChild(refreshContainer);
-    
 
     let startStopContainer = document.createElement('div');
     let startElement = genRefreshButton('Start');
@@ -187,15 +185,23 @@ async function loadMapping() {
             }
         });
 
-        // since chrome.storage.local.get is async, we need to wait for it to finish
-        while (mapping == null) {
+        // since chrome.storage.local.get is async, we might need to wait for it to finish
+        let tries = 20;
+        while (mapping == null && tries-- > 0) {
             await new Promise((r) => setTimeout(r, 100));
+        }
+
+        if (tries == 0) {
+            console.debug('[BetterFloat] Did not receive a response from Csgotrader.');
+            mapping = {};
+            priceMapping = {};
         }
 
         if (mapping.length > 0) {
             priceMapping = JSON.parse(mapping);
         } else {
             console.debug('[BetterFloat] Failed. Loading price mapping from file is currently disabled.');
+            return false;
             // fallback to loading older prices from file currently disabled
             // console.debug('[BetterFloat] Failed. Loading price mapping from file.');
             // let response = await fetch(runtimePublicURL + '/prices_v6.json');
@@ -324,7 +330,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     let buff_name = createBuffName(item);
     let buff_id = await getBuffMapping(buff_name);
 
-    if (!priceMapping[buff_name]) {
+    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         return;
     }
@@ -362,7 +368,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
         let tooltipSpan = document.createElement('span');
         tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
-        tooltipSpan.textContent = "Bid: Highest buy order price; Ask: Lowest listing price";
+        tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
         buffPrice.appendChild(tooltipSpan);
         let buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
@@ -378,12 +384,14 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
 
-        if (showBoth) {
-            let divider = document.createElement('div');
-            suggestedContainer.after(buffContainer);
-            suggestedContainer.after(divider);
-        } else {
-            suggestedContainer.replaceWith(buffContainer);
+        if (!container.querySelector('.betterfloat-buff-price')) {
+            if (showBoth) {
+                let divider = document.createElement('div');
+                suggestedContainer.after(buffContainer);
+                suggestedContainer.after(divider);
+            } else {
+                suggestedContainer.replaceWith(buffContainer);
+            }
         }
     }
 
@@ -399,7 +407,6 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         parseHTMLString(buffPriceHTML, priceContainer);
     }
 }
-
 
 function createBuffName(item: FloatItem): string {
     let full_name = `${item.name}`;

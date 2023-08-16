@@ -1,9 +1,9 @@
 ::root {
-    --primary-color: #004594;
-    --background-color: #303030;
-    --accent-color: #ff5722;
-    --text-color: #ffffff;
-    --primary-hover-color: #0056b3;
+    --color-primary: #004594;
+    --color-background: #303030;
+    --color-accent: #ff5722;
+    --color-text: #ffffff;
+    --color-primary-hover: #0056b3;
 }
 
 ::-webkit-scrollbar {
@@ -11,93 +11,124 @@
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--primary-color);
+    background: var(--color-primary);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-hover-color);
+    background: var(--color-primary-hover);
 }
 
 body {
     font-family: 'Source Sans Pro';
     font-size: 14px;
     font-weight: 700;
-    background: var(--background-color, #303030);
+    background: var(--color-background, #303030);
     margin: 0;
+}
+
+footer {
+    background-color: var(--color-primary, #004594);
+    position: fixed;
+    width: 100%;
+    height: 60px;
+}
+
+footer p {
+    font-weight: 700;
 }
 
 .MainScreen {
     position: relative;
     width: 375px;
     height: 600px;
-    background: var(--background-color, #303030);
+    background: var(--color-background, #303030);
 }
 
 .Topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
     height: 50px;
-    left: 0px;
-    top: 0px;
-    position: absolute;
-    background: var(--background-color, #004594);
+    background: var(--color-primary, #004594);
 }
 
 .Topbar p {
-    color: var(--text-color, #ffffff);
+    color: var(--color-text, #ffffff);
     margin-left: 15px;
 }
 
 .BetterFloatIcon {
     width: 40px;
     height: 40px;
-    left: 165px;
-    top: 5px;
-    position: absolute;
+}
+
+.PermissionsButton {
+    background: inherit;
+    border: 0;
 }
 
 .GithubIcon {
     width: 30px;
     height: 30px;
-    right: 15px;
-    top: 10px;
-    position: absolute;
+    margin: 0 15px;
 }
 
 .MainContent {
     top: 50px;
-    position: absolute;
     margin: 15px 10px;
 }
 
-.FeaturesGroup {
-    left: 0px;
-    top: 0px;
-    position: absolute;
+.Warning {
+    display: none;
+    background: darkred;
+    color: whitesmoke;
+    text-align: center;
+}
+
+.Warning p {
+    margin: 0;
+    padding: 2px;
+}
+
+.Group {
+    margin: 10px 0;
 }
 
 .GroupHeader {
     left: 5px;
     top: 0px;
-    position: absolute;
     color: white;
-    text-wrap: nowrap;
 }
 
 .GroupElement {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 350px;
-    left: 0px;
-    top: 25px;
-    position: absolute;
-    background: var(--primary-color, #004594);
+    background: var(--color-primary, #004594);
     border-radius: 10px;
+    margin: 5px 2px;
+}
+
+.GroupElementExtended {
+    width: 350px;
+    background: var(--color-primary, #004594);
+    border-radius: 10px;
+    margin: 5px 2px;
+}
+
+.GroupRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 input[type='checkbox'] {
     width: 23px;
     height: 23px;
-    left: 300px;
-    position: absolute;
-    accent-color: var(--accent-color, #ff5722);
+    accent-color: var(--color-accent, #ff5722);
     border-radius: 5px;
+    margin-right: 15px;
 }
 
 .ElementText {
@@ -105,51 +136,67 @@ input[type='checkbox'] {
     color: white;
 }
 
-.PricesGroup {
-    left: 0px;
-    top: 140px;
-    position: absolute;
-}
-
 .ElementDescription {
     color: rgba(255, 255, 255, 0.7);
     font-size: 12px;
-    margin: 10px 15px;
+    padding-bottom: 10px;
+    margin: 0px 15px 10px 20px;
 }
 
 .ElementDropdownMenu {
-    left: 222px;
-    top: 9px;
-    position: absolute;
-    width: 108px;
+    min-width: 80px;
     height: 30px;
     padding-left: 7px;
-    background: var(--background-color, #303030);
+    background: var(--color-background, #303030);
     border: 0;
     border-radius: 16px;
     color: white;
+    margin-right: 10px;
 }
 
-.RefreshGroup {
-    left: 0px;
-    top: 380px;
-    position: absolute;
+.tabbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 5px;
+    background: var(--color-background, #004594);
 }
 
-.Bottombar {
-    bottom: 3px;
-    position: absolute;
+.tabbar p {
+    color: var(--color-text, #ffffff);
+    margin: 0;
 }
 
-.Bottombar p {
-    color: var(--text-color, #ffffff);
-    padding-left: 25px;
-}
-
-.PermissionsButton {
-    right: 55px;
-    top: 10px;
-    position: absolute;
-    background: inherit;
+.tabItem {
+    background: none;
     border: 0;
+}
+
+.tab-icon {
+    width: 25px;
+    height: 25px;
+    margin-bottom: 3px;
+    display: inline-block;
+    vertical-align: middle;
+    filter: invert(82%) sepia(3%) saturate(242%) hue-rotate(202deg) brightness(85%) contrast(92%);
+}
+
+.active .tab-icon {
+    filter: invert(74%) sepia(27%) saturate(692%) hue-rotate(1deg) brightness(94%) contrast(91%);
+}
+
+.active p {
+    color: var(--color-accent);
+}
+
+.tab:hover {
+    filter: brightness(var(--hover-brightness));
+}
+
+.tab:active .tab-icon {
+    filter: invert(84%) sepia(51%) saturate(570%) hue-rotate(329deg) brightness(91%) contrast(89%);
+}
+
+.tab:active p {
+    color: var(--color-accent);
 }
