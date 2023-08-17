@@ -23,3 +23,53 @@ export type ExtensionSettings = {
     refreshInterval: 10 | 30 | 60 | 120 | 300;
     showSteamPrice: boolean;
 };
+
+export interface EventData<T> {
+    status: string;
+    url: string;
+    data: [T];
+}
+
+export type ListingData = {
+    created_at: string;
+    id: string;
+    is_seller: boolean;
+    is_watchlisted: boolean;
+    item: {
+        asset_id: string;
+        collection: string;
+        d_param: string;
+        def_index: number;
+        description: string;
+        float_value: number;
+        has_screenshot: boolean;
+        icon_url: string;
+        inspect_link: string;
+        is_commodity: boolean;
+        is_souvenir: boolean;
+        is_stattrak: boolean;
+        item_name: string;
+        market_hash_name: string;
+        paint_index: number;
+        paint_seed: number;
+        quality: string;
+        rarity: string;
+        rarity_name: string;
+        scm: {
+            price: number;
+            volume: number;
+        };
+        stickers: [StickerData];
+        tradable: boolean;
+        type: string;
+        type_name: string;
+        wear_name: string;
+    };
+    max_offer_discount: number;
+    max_offer_price: number;
+    price: number;
+    seller: SellerData;
+    state: string;
+    type: string;
+    watchers: number;
+};

@@ -1,4 +1,5 @@
 import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle } from './@typings/FloatTypes';
+import { injectScript } from './eventhandler';
 
 async function init() {
     //get current url
@@ -6,6 +7,7 @@ async function init() {
     if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
         return;
     }
+    injectScript();
 
     // mutation observer is only needed once
     if (!isObserverActive) {
