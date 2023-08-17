@@ -78,8 +78,8 @@ Load the project folder as unpacked extension in your browser.
 
 ### Contributing
 
-If you want to contribute to this project, create your own fork and submit a pull request.
-Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/).
+To contribute to this project, create your own fork of the repository and submit a pull request.
+Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). Make sure to test your changes extensively and include relevant results in your pull request.
 
 ## Disclaimer
 

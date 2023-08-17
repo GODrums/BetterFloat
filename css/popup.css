@@ -4,6 +4,7 @@
     --color-accent: #ff5722;
     --color-text: #ffffff;
     --color-primary-hover: #0056b3;
+    --color-accent-hover: #e54e1e;
 }
 
 ::-webkit-scrollbar {
@@ -11,43 +12,40 @@
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: var(--color-primary);
+    background: var(--color-accent, #ff5722);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-hover);
+    background: var(--color-accent-hover, #e54e1e);
 }
 
 body {
+    width: 375px;
+    height: 600px;
     font-family: 'Source Sans Pro';
     font-size: 14px;
     font-weight: 700;
     background: var(--color-background, #303030);
     margin: 0;
+    overflow: hidden;
 }
 
 footer {
     background-color: var(--color-primary, #004594);
-    position: fixed;
+    position: absolute;
+    bottom: 0;
     width: 100%;
     height: 60px;
+    border-top: 1px solid var(--color-background, #303030);
 }
 
 footer p {
     font-weight: 700;
 }
 
-.MainScreen {
-    position: relative;
-    width: 375px;
-    height: 600px;
-    background: var(--color-background, #303030);
-}
-
 .Topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
     height: 50px;
     background: var(--color-primary, #004594);
 }
@@ -74,8 +72,10 @@ footer p {
 }
 
 .MainContent {
-    top: 50px;
-    margin: 15px 10px;
+    margin-left: 10px;
+    background: var(--color-background, #303030);
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .Warning {
@@ -158,7 +158,7 @@ input[type='checkbox'] {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin: 5px;
+    margin: 10px;
     background: var(--color-background, #004594);
 }
 
@@ -182,11 +182,11 @@ input[type='checkbox'] {
 }
 
 .active .tab-icon {
-    filter: invert(74%) sepia(27%) saturate(692%) hue-rotate(1deg) brightness(94%) contrast(91%);
+    filter: brightness(0) saturate(100%) invert(55%) sepia(61%) saturate(5863%) hue-rotate(347deg) brightness(103%) contrast(101%);
 }
 
 .active p {
-    color: var(--color-accent);
+    color: var(--color-accent, #ff5722);
 }
 
 .tab:hover {
@@ -194,9 +194,34 @@ input[type='checkbox'] {
 }
 
 .tab:active .tab-icon {
-    filter: invert(84%) sepia(51%) saturate(570%) hue-rotate(329deg) brightness(91%) contrast(89%);
+    filter: brightness(0) saturate(100%) invert(55%) sepia(61%) saturate(5863%) hue-rotate(347deg) brightness(103%) contrast(101%);
 }
 
 .tab:active p {
     color: var(--color-accent);
+}
+
+.VersionBox {
+    background: var(--color-background, #004594);
+    width: 350px;
+    border-radius: 10px;
+    margin: 5px 2px;
+    padding: 1px 0px 5px 0;
+    color: white;
+}
+
+.VersionHeader {
+    text-transform: uppercase;
+    margin-top: 10px;
+    color: white;
+}
+
+.VersionSubHeader {
+    margin-left: 15px;
+    margin-bottom: 0px;
+}
+
+.VersionText {    
+    color: rgba(255, 255, 255, 0.7);
+    margin: 5px 20px;
 }

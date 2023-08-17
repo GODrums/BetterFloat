@@ -6,43 +6,34 @@
         <script src="../public/jquery-3.7.0.min.js"></script>
     </head>
     <body>
-        <div class="MainScreen">
-            <div class="Topbar">
-                <p id="version">v. 1.0.0</p>
-                <img class="BetterfloatIcon" src="../public/betterfloat_logo128.png" />
-                <div>
-                    <button class="PermissionsButton">
-                        <img style="height: 30px; width: 30px; filter: invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" src="../public/alert-box.png" />
-                    </button>
-                    <a href="https://github.com/GODrums/BetterFloat" target="_blank">
-                        <img class="GithubIcon" src="../public/github-logo.png" />
-                    </a>
-                </div>
+        <header class="Topbar">
+            <p id="version">v. 1.0.0</p>
+            <img class="BetterfloatIcon" src="../public/betterfloat_logo128.png" />
+            <div>
+                <button class="PermissionsButton">
+                    <img style="height: 30px; width: 30px; filter: invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" src="../public/alert-box.png" />
+                </button>
+                <a href="https://github.com/GODrums/BetterFloat" target="_blank">
+                    <img class="GithubIcon" src="../public/github-logo.png" />
+                </a>
             </div>
-            <div class="Warning">
-                <p>Please <b>refresh</b> the page for changes to come into effect!</p>
-            </div>
-            <div class="MainContent">
-                
-            </div>
-            
-            <footer>
-                <div class="tabbar">
-                    <button class="tabItem active" data-page="settings.html">
-                        <img class="tab-icon" src="../public/gear-solid.svg" />
-                        <p>Settings</p>
-                    </button>
-                    <button class="tabItem" data-page="changelog.html">
-                        <img class="tab-icon" src="../public/file-lines-solid.svg" />
-                        <p>Changelog</p>
-                    </button>
-                    <button class="tabItem" data-page="about.html">
-                        <img class="tab-icon" src="../public/circle-info-solid.svg" />
-                        <p>About</p>
-                    </button>
-                </div>
-            </footer>
+        </header>
+        <div class="Warning">
+            <p>Please <b>refresh</b> the page for changes to come into effect!</p>
         </div>
+        <div class="MainContent"></div>
+        <footer>
+            <div class="tabbar">
+                <button class="tabItem active" data-page="settings.html">
+                    <img class="tab-icon" src="../public/gear-solid.svg" />
+                    <p>Settings</p>
+                </button>
+                <button class="tabItem" data-page="changelog.html">
+                    <img class="tab-icon" src="../public/file-lines-solid.svg" />
+                    <p>Changelog</p>
+                </button>
+            </div>
+        </footer>
         <script src="/dist/popup.js"></script>
     </body>
 </html>
