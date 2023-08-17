@@ -35,8 +35,8 @@
 ### Mozillla Add-on
 
 ![Mozilla Add-on Version](https://img.shields.io/amo/v/betterfloat)
-![Mozilla Add-on Downloads](https://img.shields.io/amo/dw/betterfloat)
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/betterfloat)
+![Mozilla Add-on Downloads](https://img.shields.io/amo/dw/betterfloat)
 
 ### APIs
 
@@ -61,25 +61,34 @@ Prerequisites:
 -   npm `>=9.5.0`
 -   tsc `>=4.7.0`
 
-Prepare your local build via the commands below:
+Prepare your local setup via the following command:
 
 ```bash
 npm install
-npm start
 ```
 
-In case of a runtime error, delete the following line located at the end of the code from your compiled `dist/content-script.js` file:
+### Building
 
-```js
-export {};
+Either build the extension in production mode:
+
+```bash
+npm run build
 ```
+Or as developer version in watch mode:
 
-Load the project folder as unpacked extension in your browser.
+```bash
+npm run watch
+```
+In Visual Studio Code the watch mode can also be started by pressing `CTRL + Shift + B`.
+
+### Loading
+
+The built extension will be located in the `dist` folder. Load that folder as unpacked extension in your browser or pack it first and then load the packed version.
 
 ### Contributing
 
 To contribute to this project, create your own fork of the repository and submit a pull request.
-Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). Make sure to test your changes extensively and include relevant results in your pull request.
+Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). Make sure to test your changes extensively (the project supports [Jest](https://jestjs.io/) as testing framework) and include relevant results in your pull request.
 
 ## Disclaimer
 

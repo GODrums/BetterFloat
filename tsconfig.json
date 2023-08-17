@@ -1,21 +1,16 @@
 {
-  "compilerOptions": {
-      "target": "es6",
-      "inlineSourceMap": true,
-      "inlineSources": true,
-      "skipLibCheck": true,
-      "outDir": "dist",
-      "lib": [
-          "ES2017.Object",
-          "ES2015",
-          "dom",
-          "DOM.Iterable"
-      ]
-  },
-  "exclude": [
-      "node_modules"
-  ],
-  "include": [
-      "src/*.ts"
-  ]
+    "compilerOptions": {
+        "target": "es6",
+        "moduleResolution": "bundler",
+        "module": "ES6",
+        "esModuleInterop": true,
+        "sourceMap": false,
+        "rootDir": "src",
+        "outDir": "dist",
+        "noEmitOnError": true,
+        "jsx": "react",
+        "typeRoots": ["node_modules/@types"]
+    },
+    "exclude": ["node_modules"],
+    "include": ["src/*.ts"]
 }

@@ -11,7 +11,7 @@
     "content_scripts": [
         {
             "matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
-            "js": ["dist/content-script.js"],
+            "js": ["dist/content_script.js"],
             "css": ["css/stylesheet.css"],
             "run_at": "document_idle"
         }

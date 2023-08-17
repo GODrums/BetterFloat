@@ -8,7 +8,7 @@ async function init() {
         return;
     }
     injectScript();
-
+ 
     // mutation observer is only needed once
     if (!isObserverActive) {
         console.debug('[BetterFloat] Starting observer');
