@@ -31,7 +31,6 @@ function interceptNetworkRequests() {
                             data: JSON.parse(current.responseText)
                         }
                     }));
-                    console.debug(`[BetterFloat] Sent event for url: ${current.responseURL} with data:`, JSON.parse(current.responseText));
                 }
             });
 

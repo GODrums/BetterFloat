@@ -1,5 +1,6 @@
 import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle } from './@typings/FloatTypes';
 import { injectScript } from './eventhandler';
+import { getBuffMapping, getPriceMapping, loadBuffMapping, loadMapping } from './mappinghandler';
 
 async function init() {
     //get current url
@@ -173,72 +174,6 @@ function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     return element;
 }
 
-async function loadMapping() {
-    if (Object.keys(priceMapping).length == 0) {
-        console.debug('[BetterFloat] Attempting to load price mapping from local storage');
-
-        let mapping = null;
-
-        chrome.storage.local.get('prices', (data) => {
-            if (data) {
-                mapping = data.prices;
-            } else {
-                mapping = '';
-            }
-        });
-
-        // since chrome.storage.local.get is async, we might need to wait for it to finish
-        let tries = 20;
-        while (mapping == null && tries-- > 0) {
-            await new Promise((r) => setTimeout(r, 100));
-        }
-
-        if (tries == 0) {
-            console.debug('[BetterFloat] Did not receive a response from Csgotrader.');
-            mapping = {};
-            priceMapping = {};
-        }
-
-        if (mapping.length > 0) {
-            priceMapping = JSON.parse(mapping);
-        } else {
-            console.debug('[BetterFloat] Failed. Loading price mapping from file is currently disabled.');
-            return false;
-            // fallback to loading older prices from file currently disabled
-            // console.debug('[BetterFloat] Failed. Loading price mapping from file.');
-            // let response = await fetch(runtimePublicURL + '/prices_v6.json');
-            // priceMapping = await response.json();
-        }
-        console.debug('[BetterFloat] Price mapping successfully initialized');
-    }
-    return true;
-}
-
-// get mapping from rums.dev
-// currently has no fallback if api is down
-async function loadBuffMapping() {
-    console.debug('[BetterFloat] Attempting to load buff mapping from rums.dev');
-    await fetch('https://api.rums.dev/file/buff_name_to_id')
-        .then((response) => response.json())
-        .then((data) => {
-            buffMapping = data;
-            console.debug('[BetterFloat] Buff mapping successfully loaded from rums.dev');
-        })
-        .catch((err) => console.error(err));
-}
-
-async function getBuffMapping(name: string) {
-    if (Object.keys(buffMapping).length == 0) {
-        await loadBuffMapping();
-    }
-    if (buffMapping[name]) {
-        return buffMapping[name];
-    } else {
-        console.log(`[BetterFloat] No buff mapping found for ${name}`);
-        return 0;
-    }
-}
-
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.buffprice) {
@@ -331,6 +266,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     await loadMapping();
     let buff_name = createBuffName(item);
     let buff_id = await getBuffMapping(buff_name);
+    let priceMapping = await getPriceMapping();
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
@@ -436,14 +372,11 @@ let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist'];
 let unsupportedSubPages = ['/sell'];
 
 let extensionSettings: ExtensionSettings;
-let runtimePublicURL = chrome.runtime.getURL('./public');
+let runtimePublicURL = chrome.runtime.getURL('../public');
 let refreshInterval: [ReturnType<typeof setTimeout>] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
-// maps buff_name to buff_id
-let buffMapping = {};
-// maps buff_name to prices and more - from csgotrader
-let priceMapping = {};
+
 init();

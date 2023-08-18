@@ -55,10 +55,7 @@ export type ListingData = {
         quality: string;
         rarity: string;
         rarity_name: string;
-        scm: {
-            price: number;
-            volume: number;
-        };
+        scm: SCMType;
         stickers: [StickerData];
         tradable: boolean;
         type: string;
@@ -73,3 +70,35 @@ export type ListingData = {
     type: string;
     watchers: number;
 };
+
+export type SellerData = {
+    avatar: string;
+    away: boolean;
+    flags: number;
+    has_valid_steam_api_key: boolean;
+    online: boolean;
+    stall_public: boolean;
+    statistics: {
+        median_trade_time: number;
+        total_avoided_trades: number;
+        total_failed_trades: number;
+        total_trades: number;
+        total_verified_trades: number;
+    };
+    steam_id: string;
+    username: string;
+    verification_mode: string;
+};
+
+export type StickerData = {
+    icon_url: string;
+    name: string;
+    scm: SCMType;
+    slot: number;
+    stickerId: number;
+};
+
+export type SCMType = {
+    price: number;
+    volume: number;
+}

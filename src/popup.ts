@@ -8,6 +8,7 @@ $(function () {
     $('.MainContent').load('settings.html', function () {
         //Loading complete
         loadSettings();
+        addListeners();
     });
 
     //add listeners to all tabs
@@ -18,33 +19,32 @@ $(function () {
             if (e.currentTarget.getAttribute('data-page') == 'settings.html') {
                 loadSettings();
             }
+            addListeners();
         });
 
         e.currentTarget.classList.add('active');
         $('.tabItem').not(e.currentTarget).removeClass('active');
     });
+});
 
+function addListeners() {
     //add listeners to all checkboxes
-    $('input[type=checkbox]').each(function () {
-        $(this).on('change', function () {
-            const attrName = $(this).attr('name');
-            chrome.storage.local.set({
-                [attrName]: $(this).prop('checked'),
-            });
-            $('.Warning').show(100);
+    $('input[type=checkbox]').on('change', function () {
+        const attrName = $(this).attr('name');
+        chrome.storage.local.set({
+            [attrName]: $(this).prop('checked'),
         });
+        $('.Warning').show(100);
     });
     // add listeners to all dropdowns
-    $('select').each(function () {
-        $(this).on('change', function () {
-            const attrName = $(this).attr('name');
-            chrome.storage.local.set({
-                [attrName]: $(this).val(),
-            });
-            $('.Warning').show(100);
+    $('select').on('change', function () {
+        const attrName = $(this).attr('name');
+        chrome.storage.local.set({
+            [attrName]: $(this).val(),
         });
+        $('.Warning').show(100);
     });
-});
+}
 
 const host_permissions = chrome.runtime.getManifest().host_permissions;
 
