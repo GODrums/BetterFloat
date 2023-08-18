@@ -53,6 +53,7 @@ chrome.permissions
         origins: host_permissions,
     })
     .then((result) => {
+        console.debug('[BetterFloat] Host Permission: ', result);
         if (result) {
             permissionsButton.style.display = 'none';
         } else {
@@ -82,6 +83,7 @@ function loadSettings() {
     let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
 
     chrome.storage.local.get((data) => {
+        console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.buffprice) {
             featureBuffPrice.checked = true;
         } else {

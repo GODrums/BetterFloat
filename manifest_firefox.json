@@ -6,12 +6,12 @@
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*"],
     "background": {
-        "scripts": ["dist/background.js"]
+        "scripts": ["js/background.js"]
     },
     "content_scripts": [
         {
             "matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
-            "js": ["dist/content_script.js"],
+            "js": ["js/content_script.js"],
             "css": ["css/stylesheet.css"],
             "run_at": "document_idle"
         }
@@ -35,7 +35,7 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
-            "resources": ["public/prices_v6.json", "public/buff_favicon.png", "dist/inject.js"]
+            "resources": ["public/buff_favicon.png", "js/inject.js"]
         }
     ]
 }

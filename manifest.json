@@ -26,6 +26,6 @@
 	"permissions": ["storage"],
     "web_accessible_resources": [ {
        "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*" ],
-       "resources": [ "public/prices_v6.json", "public/buff_favicon.png", "js/inject.js"]
+       "resources": [ "public/buff_favicon.png", "js/inject.js"]
     } ]
 }
