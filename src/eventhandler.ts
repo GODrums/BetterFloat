@@ -11,10 +11,13 @@ export function activateHandler() {
 
 // process intercepted data
 function processEvent(eventData: EventData<unknown>) {
-    console.debug('[BetterFloat] Received data from url: ' + eventData.url);
+    console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('v1/listings?')) {
+        cacheItems(eventData.data as ListingData[]);
+    } else if (eventData.url.includes('v1/me/watchlist')) {
         cacheItems(eventData.data as ListingData[]);
     } else if (eventData.url.includes('v1/me')) {
     } else if (eventData.url.includes('v1/listings/')) {
+        // item popup
     }
 }

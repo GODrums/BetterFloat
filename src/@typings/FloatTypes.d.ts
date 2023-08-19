@@ -59,16 +59,16 @@ export type ListingData = {
         scm: SCMType;
         stickers: [StickerData];
         tradable: boolean;
-        type: string;
-        type_name: string;
-        wear_name: string;
+        type: "skin" | "sticker";
+        type_name: "Skin" | "Sticker";
+        wear_name: 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
     };
     max_offer_discount: number;
     max_offer_price: number;
     price: number;
     seller: SellerData;
-    state: string;
-    type: string;
+    state: "listed" | "delisted";
+    type: "buy now" | "auction";
     watchers: number;
 };
 
