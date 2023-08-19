@@ -1,3 +1,5 @@
+// Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
+
 import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
 import { activateHandler } from './Eventhandler';
 import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, loadBuffMapping, loadMapping } from './Mappinghandler';
