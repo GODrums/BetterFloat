@@ -1,7 +1,28 @@
+import { ListingData } from "./@typings/FloatTypes";
+
 // maps buff_name to buff_id
 let buffMapping = {};
 // maps buff_name to prices and more - from csgotrader
 let priceMapping = {};
+// cached items from api
+let cachedItems: ListingData[] = [];
+
+export async function cacheItems(data: ListingData[]) {
+    if (cachedItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, deleting items: ', cachedItems);
+        cachedItems = [];
+    }
+    cachedItems = data;
+}
+
+export async function getFirstCachedItem() {
+    if (cachedItems.length > 0) {
+        const item = cachedItems.shift();
+        return item;
+    } else {
+        return null;
+    }
+}
 
 export async function getPriceMapping() {
     if (Object.keys(priceMapping).length == 0) {
@@ -22,8 +43,8 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
         }
     }
     return {
-        starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'],
-        highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'],
+        starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'] ?? 0,
+        highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'] ?? 0,
     }
 }
 

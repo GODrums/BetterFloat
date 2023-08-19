@@ -35,6 +35,7 @@ function addListeners() {
             [attrName]: $(this).prop('checked'),
         });
         $('.Warning').show(100);
+        $('.MainContent').css('height', '470px');	
     });
     // add listeners to all dropdowns
     $('select').on('change', function () {
@@ -43,6 +44,7 @@ function addListeners() {
             [attrName]: $(this).val(),
         });
         $('.Warning').show(100);
+        $('.MainContent').css('height', '470px');	
     });
 }
 
@@ -81,6 +83,7 @@ function loadSettings() {
     let priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference');
     let refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval');
     let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
+    let stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -102,6 +105,11 @@ function loadSettings() {
         }
         if (data.showSteamPrice) {
             showSteamPrice.checked = true;
+        }
+        if (data.stickerPrices) {
+            stickerPrices.checked = true;
+        } else {
+            stickerPrices.checked = false;
         }
     });
 }

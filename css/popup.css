@@ -19,8 +19,8 @@
 }
 
 body {
-    width: 375px;
-    height: 600px;
+    width: 375px !important;
+    height: 600px !important;
     font-family: 'Source Sans Pro';
     font-size: 14px;
     font-weight: 700;
@@ -76,6 +76,7 @@ footer p {
     background: var(--color-background, #303030);
     overflow-y: scroll;
     overflow-x: hidden;
+    height: 490px;
 }
 
 .Warning {
@@ -223,5 +224,6 @@ input[type='checkbox'] {
 
 .VersionText {    
     color: rgba(255, 255, 255, 0.7);
-    margin: 5px 20px;
+    margin: 5px 20px 5px 0px;
+    font-weight: 400;
 }

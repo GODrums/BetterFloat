@@ -19,6 +19,7 @@ export type ItemCondition = '' | 'Factory New' | 'Minimal Wear' | 'Field-Tested'
 export type ExtensionSettings = {
     buffprice: boolean;
     autorefresh: boolean;
+    stickerPrices: boolean;
     priceReference: 0 | 1;
     refreshInterval: 10 | 30 | 60 | 120 | 300;
     showSteamPrice: boolean;
@@ -52,8 +53,8 @@ export type ListingData = {
         market_hash_name: string;
         paint_index: number;
         paint_seed: number;
-        quality: string;
-        rarity: string;
+        quality: number;
+        rarity: number;
         rarity_name: string;
         scm: SCMType;
         stickers: [StickerData];
@@ -96,6 +97,7 @@ export type StickerData = {
     scm: SCMType;
     slot: number;
     stickerId: number;
+    wear: number;
 };
 
 export type SCMType = {

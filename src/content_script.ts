@@ -1,6 +1,10 @@
-import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle } from './@typings/FloatTypes';
-import { injectScript } from './eventhandler';
-import { getBuffMapping, getPriceMapping, loadBuffMapping, loadMapping } from './mappinghandler';
+import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
+import { activateHandler } from './Eventhandler';
+import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, loadBuffMapping, loadMapping } from './Mappinghandler';
+
+type PriceResult = {
+    price_difference: number;
+};
 
 async function init() {
     //get current url
@@ -8,8 +12,8 @@ async function init() {
     if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
         return;
     }
-    injectScript();
- 
+    activateHandler();
+
     // mutation observer is only needed once
     if (!isObserverActive) {
         console.debug('[BetterFloat] Starting observer');
@@ -65,6 +69,9 @@ async function initSettings() {
         }
         if (data.showSteamPrice) {
             extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
+        }
+        if (data.stickerPrices) {
+            extensionSettings.stickerPrices = Boolean(data.stickerPrices);
         }
     });
 
@@ -192,10 +199,10 @@ async function applyMutation() {
 
                     // item popout
                     if (addedNode.tagName && addedNode.tagName.toLowerCase() == 'item-detail') {
-                        adjustItem(addedNode, true);
+                        await adjustItem(addedNode, true);
                         // item from listings
                     } else if (addedNode.className && addedNode.className.toString().includes('flex-item')) {
-                        adjustItem(addedNode);
+                        await adjustItem(addedNode);
                     }
                 }
             }
@@ -211,9 +218,62 @@ async function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
-function adjustItem(container: Element, isPopout = false) {
+async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
-    addBuffPrice(item, container, isPopout);
+    const priceResult = await addBuffPrice(item, container, isPopout);
+    let cachedItem = await getFirstCachedItem();
+    if (cachedItem && extensionSettings.stickerPrices) {
+        await addStickerInfo(item, container, cachedItem, priceResult);
+    }
+}
+
+
+async function addStickerInfo(item: FloatItem, container: Element, cachedItem: ListingData, priceResult: PriceResult) {
+    if (item.name != cachedItem.item.item_name) {
+        console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
+        return;
+    }
+    
+    let stickerDiv = container.querySelector('.sticker-container')?.children[0];
+    let stickers = cachedItem.item.stickers;
+    if (!stickers || cachedItem.item?.quality == 12) {
+        return;
+    }
+    let stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+    let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+    let spPercentage = priceResult.price_difference / priceSum;
+
+    // don't display SP if total price is below $1 
+    if (stickerDiv && priceSum > 1) {
+        const outerContainer = document.createElement('div');
+        const spContainer = document.createElement('span');
+        spContainer.classList.add('betterfloat-sticker-price');
+        let backgroundImageColor = '';
+        if (spPercentage < 0.005 || spPercentage > 2) {
+            backgroundImageColor = 'white';
+        } else if (spPercentage > 1) {
+            backgroundImageColor = 'rgba(245,0,0,1)';
+        } else if (spPercentage > 0.5) {
+            backgroundImageColor = 'rgba(245,164,0,1)';
+        } else if (spPercentage > 0.25) {
+            backgroundImageColor = 'rgba(244,245,0,1)';
+        } else {
+            backgroundImageColor = 'rgba(83,245,0,1)';
+        }
+        spContainer.style.backgroundImage = `radial-gradient(circle, ${backgroundImageColor} 10%, rgba(148,187,233,1) 100%)`;
+        spContainer.style.color = 'black';
+        spContainer.style.padding = '2px 5px';
+        spContainer.style.borderRadius = '7px';
+        // if SP is above 200% or below 0.5% display SP in $, otherwise in %
+        if (spPercentage > 2 || spPercentage < 0.005) {
+            spContainer.textContent = `SP: $${priceSum.toFixed(0)}`
+        } else {
+            spContainer.textContent = `SP: ${(spPercentage > 0 ? spPercentage*100 : 0).toFixed(2)}%`;
+        }
+        outerContainer.style.margin = '0 0 10px 10px';
+        outerContainer.appendChild(spContainer);
+        stickerDiv.before(outerContainer);
+    }
 }
 
 function getFloatItem(container: Element): FloatItem {
@@ -222,7 +282,7 @@ function getFloatItem(container: Element): FloatItem {
     const priceContainer = container.querySelector('.price');
     const header_details = <Element>nameContainer.childNodes[1];
 
-    let name = nameContainer.querySelector('.item-name').textContent.replace('\n', '');
+    let name = nameContainer.querySelector('.item-name').textContent.replace('\n', '').trim();
     let price = priceContainer.textContent;
     let condition: ItemCondition = '';
     let quality = '';
@@ -262,7 +322,7 @@ function getFloatItem(container: Element): FloatItem {
     };
 }
 
-async function addBuffPrice(item: FloatItem, container: Element, isPopout = false) {
+async function addBuffPrice(item: FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
     await loadMapping();
     let buff_name = createBuffName(item);
     let buff_id = await getBuffMapping(buff_name);
@@ -344,12 +404,16 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         } </span>`;
         parseHTMLString(buffPriceHTML, priceContainer);
     }
+
+    return {
+        price_difference: difference,
+    };
 }
 
 function createBuffName(item: FloatItem): string {
     let full_name = `${item.name}`;
     if (item.quality.includes('Sticker')) {
-        full_name = `Sticker |` + full_name;
+        full_name = `Sticker | ` + full_name;
     } else if (!item.quality.includes('Container')) {
         if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
             full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;

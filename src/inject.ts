@@ -1,40 +1,49 @@
-interceptNetworkRequests();
+let loadNumber = 0;
+let lastRequestUrl = '';
 
-function interceptNetworkRequests() {
+openIntercept();
+
+function openIntercept() {
     const open = window.XMLHttpRequest.prototype.open;
-    const isNative = open.toString().indexOf('native code') != -1;
-    console.log('activating network interceptor');
+    console.log('[BetterFloat] Activating HttpRequest Intercept...');
 
-    // don't hijack if already hijacked
-    if (isNative) {
-        // shadow open and capture onLoad
-        window.XMLHttpRequest.prototype.open = function() {
-            (<XMLHttpRequest>this).addEventListener('load', (e) => {
-                let current = <XMLHttpRequest>e.currentTarget;
+    window.XMLHttpRequest.prototype.open = function () {
+        (<XMLHttpRequest>this).addEventListener('load', (e) => {
+            let target = <XMLHttpRequest>e.currentTarget;
+            if (target.responseURL == lastRequestUrl) {
+                console.debug('[BetterFloat] Ignoring duplicate request: ' + target.responseURL);
+                return;
+            }
+            lastRequestUrl = target.responseURL;
 
-                // simple try-parse
-                function tryParseJSON(r: string): undefined | { data: any } {
-                    try {
-                        return JSON.parse(r);
-                    } catch (_) {
-                        return {
-                            data: { raw_content: r }
-                        };
-                    }
-                }
-                // request finished loading
-                if (current.readyState == 4) {
-                    document.dispatchEvent(new CustomEvent("BetterFloat_INTERCEPTED_REQUEST", {
+            // request finished loading
+            if (target.readyState == 4) {
+                document.dispatchEvent(
+                    new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
                         detail: {
-                            status: current.status,
-                            url: current.responseURL,
-                            data: JSON.parse(current.responseText)
-                        }
-                    }));
+                            status: target.status,
+                            url: target.responseURL,
+                            data: JSON.parse(target.responseText),
+                        },
+                    })
+                );
+                // dispatch again on first page load
+                if (loadNumber++ == 0) {
+                    setTimeout(() => {
+                        document.dispatchEvent(
+                            new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
+                                detail: {
+                                    status: target.status,
+                                    url: target.responseURL,
+                                    data: JSON.parse(target.responseText),
+                                },
+                            })
+                        );
+                    }, 1000);
                 }
-            });
+            }
+        });
 
-            return open.apply(this, arguments);
-        };
-    }
+        return open.apply(this, arguments);
+    };
 }
