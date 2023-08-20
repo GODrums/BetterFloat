@@ -242,9 +242,9 @@ async function adjustItem(container: Element, isPopout = false) {
 }
 
 async function addListingAge(item: FloatItem, container: Element, cachedItem: ListingData) {
-    let listingAge = document.createElement('div');
-    let listingAgeText = document.createElement('p');
-    let listingIcon = document.createElement('img');
+    const listingAge = document.createElement('div');
+    const listingAgeText = document.createElement('p');
+    const listingIcon = document.createElement('img');
     listingAge.classList.add('betterfloat-listing-age');
     listingAge.style.display = 'flex';
     listingAge.style.alignItems = 'center';
@@ -289,7 +289,10 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
         outerContainer.style.display = 'flex';
         listingAge.style.marginRight = '5px';
         outerContainer.appendChild(listingAge);
-        outerContainer.appendChild(watchersContainer);
+        // if logged out, watchers are not displayed
+        if (watchersContainer) {
+            outerContainer.appendChild(watchersContainer);
+        }
         let topRightContainer = container.querySelector('.top-right-container');
         if (topRightContainer) {
             topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild);

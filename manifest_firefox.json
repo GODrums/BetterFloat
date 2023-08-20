@@ -17,7 +17,7 @@
         },
 		{
 			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
-			"js": ["js/Injectionhandler.js"],
+			"js": ["js/injectionhandler.js"],
 			"run_at": "document_start"
 		}
     ],

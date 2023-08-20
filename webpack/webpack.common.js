@@ -9,9 +9,9 @@ module.exports = {
       background: path.join(srcDir, 'background.ts'),
       content_script: path.join(srcDir, 'content_script.ts'),
       inject: path.join(srcDir, 'inject.ts'),
-      injectionhandler: path.join(srcDir, 'Injectionhandler.ts'),
-      eventhandler: path.join(srcDir, 'Eventhandler.ts'),
-      mappinghandler: path.join(srcDir, 'Mappinghandler.ts'),
+      injectionhandler: path.join(srcDir, 'injectionhandler.ts'),
+      eventhandler: path.join(srcDir, 'eventhandler.ts'),
+      mappinghandler: path.join(srcDir, 'mappinghandler.ts'),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

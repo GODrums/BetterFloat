@@ -76,6 +76,8 @@ footer p {
     background: var(--color-background, #303030);
     overflow-y: scroll;
     overflow-x: hidden;
+    scrollbar-color: var(--color-accent, #ff5722) var(--color-background, #303030);
+    scrollbar-width: thin;
     height: 490px;
 }
 
