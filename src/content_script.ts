@@ -75,6 +75,9 @@ async function initSettings() {
         if (data.stickerPrices) {
             extensionSettings.stickerPrices = Boolean(data.stickerPrices);
         }
+        if (data.listingAge) {
+            extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds
@@ -224,18 +227,80 @@ async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
     const priceResult = await addBuffPrice(item, container, isPopout);
     let cachedItem = await getFirstCachedItem();
-    if (cachedItem && extensionSettings.stickerPrices) {
-        await addStickerInfo(item, container, cachedItem, priceResult);
+    if (cachedItem) {
+        if (item.name != cachedItem.item.item_name) {
+            console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
+            return;
+        }
+        if (extensionSettings.stickerPrices) {
+            await addStickerInfo(item, container, cachedItem, priceResult);
+        }
+        if (extensionSettings.listingAge > 0) {
+            await addListingAge(item, container, cachedItem);
+        }
     }
 }
 
+async function addListingAge(item: FloatItem, container: Element, cachedItem: ListingData) {
+    let listingAge = document.createElement('div');
+    let listingAgeText = document.createElement('p');
+    let listingIcon = document.createElement('img');
+    listingAge.classList.add('betterfloat-listing-age');
+    listingAge.style.display = 'flex';
+    listingAge.style.alignItems = 'center';
+    listingAge.style.justifyContent = 'flex-end';
+    listingAgeText.classList.add('betterfloat-listing-age-text');
+    listingAgeText.style.display = 'inline';
+    listingAgeText.style.margin = '0 5px 0 0';
+    listingAgeText.style.fontSize = '15px';
+    listingIcon.classList.add('betterfloat-listing-age-icon');
+    listingIcon.setAttribute('src', runtimePublicURL + '/clock-solid.svg');
+    listingIcon.style.height = '20px';
+    listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
-async function addStickerInfo(item: FloatItem, container: Element, cachedItem: ListingData, priceResult: PriceResult) {
-    if (item.name != cachedItem.item.item_name) {
-        console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
-        return;
+    const timeDiff = (strDate) => {
+        const now = new Date();
+        const diff = now.getTime() - Date.parse(strDate);
+        return Math.floor(diff / 60_000);
+    };
+    const timeMin = timeDiff(cachedItem.created_at);
+    const timeHours = Math.floor(timeMin / 60);
+    let textTime = '';
+    if (timeHours < 49) {
+        if (timeMin < 120) {
+            textTime = `${timeMin} minute${timeMin == 1 ? '' : 's'} ago`;
+        } else {
+            textTime = `${timeHours} hour${timeHours == 1 ? '' : 's'} ago`;
+        }
+    } else {
+        textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) == 1 ? '' : 's'} ago`;
+    }
+    listingAgeText.textContent = textTime;
+    listingAge.appendChild(listingAgeText);
+    listingAge.appendChild(listingIcon);
+
+    console.log('[BetterFloat] Adding listing age, setting: ', extensionSettings.listingAge );
+    if (extensionSettings.listingAge == 1) {
+        listingAge.style.marginBottom = '5px';
+        listingAgeText.style.color = 'darkgray';
+        container.querySelector('.online-container')?.after(listingAge);
+    } else {
+        let watchersContainer = container.querySelector('.watchers');
+        let outerContainer = document.createElement('div');
+        outerContainer.classList.add('betterfloat-listing-age-container');
+        outerContainer.style.display = 'flex';
+        listingAge.style.marginRight = '5px';
+        outerContainer.appendChild(listingAge);
+        outerContainer.appendChild(watchersContainer);
+        let topRightContainer = container.querySelector('.top-right-container');
+        if (topRightContainer) {
+            topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild);
+        }
     }
     
+}
+
+async function addStickerInfo(item: FloatItem, container: Element, cachedItem: ListingData, priceResult: PriceResult) {
     let stickerDiv = container.querySelector('.sticker-container')?.children[0];
     let stickers = cachedItem.item.stickers;
     if (!stickers || cachedItem.item?.quality == 12) {
@@ -245,7 +310,7 @@ async function addStickerInfo(item: FloatItem, container: Element, cachedItem: L
     let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
     let spPercentage = priceResult.price_difference / priceSum;
 
-    // don't display SP if total price is below $1 
+    // don't display SP if total price is below $1
     if (stickerDiv && priceSum > 1) {
         const outerContainer = document.createElement('div');
         const spContainer = document.createElement('span');
@@ -268,9 +333,9 @@ async function addStickerInfo(item: FloatItem, container: Element, cachedItem: L
         spContainer.style.borderRadius = '7px';
         // if SP is above 200% or below 0.5% display SP in $, otherwise in %
         if (spPercentage > 2 || spPercentage < 0.005) {
-            spContainer.textContent = `SP: $${priceSum.toFixed(0)}`
+            spContainer.textContent = `SP: $${priceSum.toFixed(0)}`;
         } else {
-            spContainer.textContent = `SP: ${(spPercentage > 0 ? spPercentage*100 : 0).toFixed(2)}%`;
+            spContainer.textContent = `SP: ${(spPercentage > 0 ? spPercentage * 100 : 0).toFixed(2)}%`;
         }
         outerContainer.style.margin = '0 0 10px 10px';
         outerContainer.appendChild(spContainer);

@@ -23,6 +23,7 @@ export type ExtensionSettings = {
     priceReference: 0 | 1;
     refreshInterval: 10 | 30 | 60 | 120 | 300;
     showSteamPrice: boolean;
+    listingAge: 0 | 1 | 2;
 };
 
 export interface EventData<T> {

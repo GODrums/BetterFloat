@@ -16,6 +16,18 @@ function openIntercept() {
             }
             lastRequestUrl = target.responseURL;
 
+            function parseJSON(text: string): undefined | any {
+                try {
+                    return JSON.parse(text);
+                } catch (_) {
+                    console.debug('[BetterFloat] Failed URL: ' + target.responseURL);
+                    console.debug('[BetterFloat] Failed to parse JSON: ' + text);
+                    return {
+                        text: text,
+                    };
+                }
+            }
+
             // request finished loading
             if (target.readyState == 4) {
                 document.dispatchEvent(
@@ -23,7 +35,7 @@ function openIntercept() {
                         detail: {
                             status: target.status,
                             url: target.responseURL,
-                            data: JSON.parse(target.responseText),
+                            data: parseJSON(target.responseText),
                         },
                     })
                 );
@@ -35,7 +47,7 @@ function openIntercept() {
                                 detail: {
                                     status: target.status,
                                     url: target.responseURL,
-                                    data: JSON.parse(target.responseText),
+                                    data: parseJSON(target.responseText),
                                 },
                             })
                         );

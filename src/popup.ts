@@ -84,6 +84,7 @@ function loadSettings() {
     let refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval');
     let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
     let stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
+    let listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -101,7 +102,7 @@ function loadSettings() {
             priceReference.value = data.priceReference;
         }
         if (data.refreshInterval) {
-            refreshInterval.value = data.refreshInterval.toString();
+            refreshInterval.value = data.refreshInterval;
         }
         if (data.showSteamPrice) {
             showSteamPrice.checked = true;
@@ -110,6 +111,9 @@ function loadSettings() {
             stickerPrices.checked = true;
         } else {
             stickerPrices.checked = false;
+        }
+        if (data.listingAge) {
+            listingAge.value = data.listingAge;
         }
     });
 }
