@@ -1,8 +1,8 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
 import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
-import { activateHandler } from './Eventhandler';
-import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, loadBuffMapping, loadMapping } from './Mappinghandler';
+import { activateHandler } from './eventhandler';
+import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, loadBuffMapping, loadMapping } from './mappinghandler';
 
 type PriceResult = {
     price_difference: number;
@@ -278,8 +278,6 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
     listingAgeText.textContent = textTime;
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
-
-    console.log('[BetterFloat] Adding listing age, setting: ', extensionSettings.listingAge );
     if (extensionSettings.listingAge == 1) {
         listingAge.style.marginBottom = '5px';
         listingAgeText.style.color = 'darkgray';

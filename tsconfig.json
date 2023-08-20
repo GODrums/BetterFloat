@@ -9,7 +9,8 @@
         "outDir": "dist",
         "noEmitOnError": true,
         "jsx": "react",
-        "typeRoots": ["node_modules/@types"]
+        "typeRoots": ["node_modules/@types"],
+        "forceConsistentCasingInFileNames": true,
     },
     "exclude": ["node_modules"],
     "include": ["src/*.ts"]
