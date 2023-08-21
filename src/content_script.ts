@@ -147,13 +147,15 @@ async function refreshButton() {
 
             let refreshDelay = (Number(extensionSettings.refreshInterval) ?? 30) * 1000;
             let refreshText = document.querySelector('.betterfloat-refreshText');
+
+            if (!refreshText) return;
             refreshText.textContent = 'active';
             refreshText.setAttribute('style', 'color: greenyellow;');
 
             // save timer to avoid multiple executions
             refreshInterval.push(
                 setInterval(() => {
-                    let refreshButton = document.querySelector('.mat-chip-list-wrapper').querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
+                    let refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
                     // time should be lower than interval due to inconsistencies
                     if (refreshButton && lastRefresh + refreshDelay * 0.9 < Date.now()) {
                         lastRefresh = Date.now();
@@ -167,12 +169,13 @@ async function refreshButton() {
             console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now());
 
             let refreshText = document.querySelector('.betterfloat-refreshText');
+            if (!refreshText) return;
             refreshText.textContent = 'inactive';
             refreshText.setAttribute('style', 'color: #ce0000;');
 
             //clearinterval for every entry in refreshInterval
             for (let i = 0; i < refreshInterval.length; i++) {
-                clearInterval(refreshInterval[i]);
+                clearInterval(refreshInterval[i] ?? 0);
                 refreshInterval.splice(i, 1);
             }
         });
@@ -258,7 +261,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
     listingIcon.style.height = '20px';
     listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
-    const timeDiff = (strDate) => {
+    const timeDiff = (strDate: string) => {
         const now = new Date();
         const diff = now.getTime() - Date.parse(strDate);
         return Math.floor(diff / 60_000);
@@ -295,7 +298,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
         }
         let topRightContainer = container.querySelector('.top-right-container');
         if (topRightContainer) {
-            topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild);
+            topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild as Node);
         }
     }
     
@@ -348,10 +351,10 @@ function getFloatItem(container: Element): FloatItem {
     const nameContainer = container.querySelector('app-item-name');
     const floatContainer = container.querySelector('item-float-bar');
     const priceContainer = container.querySelector('.price');
-    const header_details = <Element>nameContainer.childNodes[1];
+    const header_details = <Element>nameContainer?.childNodes[1];
 
-    let name = nameContainer.querySelector('.item-name').textContent.replace('\n', '').trim();
-    let price = priceContainer.textContent;
+    let name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
+    let price = priceContainer?.textContent;
     let condition: ItemCondition = '';
     let quality = '';
     let style: ItemStyle = '';
@@ -359,33 +362,33 @@ function getFloatItem(container: Element): FloatItem {
     header_details.childNodes.forEach((node) => {
         switch (node.nodeType) {
             case Node.ELEMENT_NODE:
-                let text = node.textContent.trim();
-                if (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker')) {
+                let text = node.textContent?.trim();
+                if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
                     // TODO: integrate the ItemQuality type
                     // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
                     quality = text;
                 } else {
-                    style = text.substring(1, text.length - 1) as ItemStyle;
+                    style = text?.substring(1, text.length - 1) as ItemStyle;
                 }
                 break;
             case Node.TEXT_NODE:
-                condition = node.textContent.trim() as ItemCondition;
+                condition = (node.textContent?.trim() ?? "") as ItemCondition;
                 break;
             case Node.COMMENT_NODE:
                 break;
         }
     });
 
-    if (!name.includes('|')) {
+    if (!name?.includes('|')) {
         style = 'Vanilla';
     }
     return {
-        name: name,
+        name: name ?? '',
         quality: quality,
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price.includes('Bids') ? 0 : Number(price.split('  ')[0].trim().replace('$', '').replace(',', '')),
+        price: price?.includes('Bids') ? 0 : Number(price?.split('  ')[0].trim().replace('$', '').replace(',', '')),
         bargain: false,
     };
 }
@@ -398,7 +401,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        return;
+        return { price_difference: 0 };
     }
     let priceListing = 0;
     let priceOrder = 0;
@@ -462,8 +465,9 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     }
 
     const priceContainer = <HTMLElement>container.querySelector('.price');
-    if (priceContainer.querySelector('.sale-tag')) {
-        priceContainer.removeChild(priceContainer.querySelector('.sale-tag'));
+    let saleTag = priceContainer.querySelector('.sale-tag');
+    if (saleTag) {
+        priceContainer.removeChild(saleTag);
     }
     const difference = item.price - (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
     if (item.price !== 0) {
@@ -505,7 +509,7 @@ let unsupportedSubPages = ['/sell'];
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
-let refreshInterval: [ReturnType<typeof setTimeout>] = [null];
+let refreshInterval: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;
 // mutation observer active?

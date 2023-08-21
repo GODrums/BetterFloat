@@ -26,6 +26,47 @@ export type ExtensionSettings = {
     listingAge: 0 | 1 | 2;
 };
 
+export type CSGOTraderMapping = {
+    [name: string]: {
+        steam: {
+            last_24h: number;
+            last_7d: number;
+            last_30d: number;
+            last_90d: number;
+        };
+        bitskins: {
+            price: string;
+            instant_sale_price: string | null;
+        };
+        lootfarm: number;
+        csgotm: string;
+        csmoney: {
+            price: number;
+        };
+        skinport: {
+            suggested_price: number;
+            starting_at: number;
+        };
+        csgotrader: {
+            price: number;
+        };
+        swapgg: number;
+        csgoexo: number;
+        cstrade: {
+            price: number;
+        };
+        skinwallet: string | number | null;
+        buff163: {
+            starting_at: {
+                price: number;
+            };
+            highest_order: {
+                price: number;
+            };
+        };
+    };
+};
+
 export interface EventData<T> {
     status: string;
     url: string;
@@ -60,16 +101,16 @@ export type ListingData = {
         scm: SCMType;
         stickers: [StickerData];
         tradable: boolean;
-        type: "skin" | "sticker";
-        type_name: "Skin" | "Sticker";
+        type: 'skin' | 'sticker';
+        type_name: 'Skin' | 'Sticker';
         wear_name: 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
     };
     max_offer_discount: number;
     max_offer_price: number;
     price: number;
     seller: SellerData;
-    state: "listed" | "delisted";
-    type: "buy now" | "auction";
+    state: 'listed' | 'delisted';
+    type: 'buy now' | 'auction';
     watchers: number;
 };
 
@@ -104,4 +145,4 @@ export type StickerData = {
 export type SCMType = {
     price: number;
     volume: number;
-}
+};

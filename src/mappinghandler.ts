@@ -1,9 +1,10 @@
-import { ListingData } from "./@typings/FloatTypes";
+import { CSGOTraderMapping, ListingData } from "./@typings/FloatTypes";
 
 // maps buff_name to buff_id
-let buffMapping = {};
+let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
-let priceMapping = {};
+//let priceMapping: { [name: string]: any } = {};
+let priceMapping: CSGOTraderMapping = {};
 // cached items from api
 let cachedItems: ListingData[] = [];
 
@@ -24,7 +25,7 @@ export async function getFirstCachedItem() {
     }
 }
 
-export async function getPriceMapping() {
+export async function getPriceMapping(): Promise<{ [key: string]: any }> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }
@@ -65,7 +66,7 @@ export async function loadMapping() {
     if (Object.keys(priceMapping).length == 0) {
         console.debug('[BetterFloat] Attempting to load price mapping from local storage');
 
-        let mapping = null;
+        let mapping: string | null = null;
 
         chrome.storage.local.get('prices', (data) => {
             if (data) {
@@ -83,11 +84,11 @@ export async function loadMapping() {
 
         if (tries == 0) {
             console.debug('[BetterFloat] Did not receive a response from Csgotrader.');
-            mapping = {};
+            mapping = '';
             priceMapping = {};
         }
-
-        if (mapping.length > 0) {
+        
+        if (mapping != null && mapping.length > 0) {
             priceMapping = JSON.parse(mapping);
         } else {
             console.debug('[BetterFloat] Failed. Loading price mapping from file is currently disabled.');

@@ -56,6 +56,6 @@ function openIntercept() {
             }
         });
 
-        return open.apply(this, arguments);
+        return open.apply(this, <any>arguments);
     };
 }

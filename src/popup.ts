@@ -14,9 +14,10 @@ $(function () {
     //add listeners to all tabs
     $('.tabItem').on('click', function (e) {
         e.preventDefault();
-        $('.MainContent').load(e.currentTarget.getAttribute('data-page'), function () {
+        let url = e.currentTarget.getAttribute('data-page') ?? 'settings.html';
+        $('.MainContent').load(url, function () {
             //Loading complete
-            if (e.currentTarget.getAttribute('data-page') == 'settings.html') {
+            if (url == 'settings.html') {
                 loadSettings();
             }
             addListeners();
@@ -31,20 +32,24 @@ function addListeners() {
     //add listeners to all checkboxes
     $('input[type=checkbox]').on('change', function () {
         const attrName = $(this).attr('name');
-        chrome.storage.local.set({
-            [attrName]: $(this).prop('checked'),
-        });
+        if (attrName) {
+            chrome.storage.local.set({
+                [attrName]: $(this).prop('checked'),
+            });
+        }
         $('.Warning').show(100);
-        $('.MainContent').css('height', '470px');	
+        $('.MainContent').css('height', '470px');
     });
     // add listeners to all dropdowns
     $('select').on('change', function () {
         const attrName = $(this).attr('name');
-        chrome.storage.local.set({
-            [attrName]: $(this).val(),
-        });
+        if (attrName) {
+            chrome.storage.local.set({
+                [attrName]: $(this).val(),
+            });
+        }
         $('.Warning').show(100);
-        $('.MainContent').css('height', '470px');	
+        $('.MainContent').css('height', '470px');
     });
 }
 
