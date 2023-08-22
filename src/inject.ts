@@ -10,6 +10,10 @@ function openIntercept() {
     window.XMLHttpRequest.prototype.open = function () {
         (<XMLHttpRequest>this).addEventListener('load', (e) => {
             let target = <XMLHttpRequest>e.currentTarget;
+            if (!target.responseURL.includes('csfloat.com')) {
+                console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
+                return;
+            }
             if (target.responseURL == lastRequestUrl) {
                 console.debug('[BetterFloat] Ignoring duplicate request: ' + target.responseURL);
                 return;

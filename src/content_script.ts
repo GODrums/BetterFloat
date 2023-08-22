@@ -78,6 +78,9 @@ async function initSettings() {
         if (data.listingAge) {
             extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
         }
+        if (data.showBuffDifference) {
+            extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds
@@ -464,17 +467,19 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         }
     }
 
-    const priceContainer = <HTMLElement>container.querySelector('.price');
-    let saleTag = priceContainer.querySelector('.sale-tag');
-    if (saleTag) {
-        priceContainer.removeChild(saleTag);
-    }
     const difference = item.price - (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
-    if (item.price !== 0) {
-        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
-            difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2)
-        } </span>`;
-        parseHTMLString(buffPriceHTML, priceContainer);
+    if (extensionSettings.showBuffDifference) {
+        const priceContainer = <HTMLElement>container.querySelector('.price');
+        let saleTag = priceContainer.querySelector('.sale-tag');
+        if (saleTag) {
+            priceContainer.removeChild(saleTag);
+        }
+        if (item.price !== 0) {
+            const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
+                difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2)
+            } </span>`;
+            parseHTMLString(buffPriceHTML, priceContainer);
+        }
     }
 
     return {

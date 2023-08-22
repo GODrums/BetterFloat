@@ -90,6 +90,7 @@ function loadSettings() {
     let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
     let stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
     let listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
+    let buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -119,6 +120,11 @@ function loadSettings() {
         }
         if (data.listingAge) {
             listingAge.value = data.listingAge;
+        }
+        if (data.showBuffDifference) {
+            buffDifference.checked = true;
+        } else {
+            buffDifference.checked = false;
         }
     });
 }

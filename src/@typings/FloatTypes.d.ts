@@ -24,6 +24,7 @@ export type ExtensionSettings = {
     refreshInterval: 10 | 30 | 60 | 120 | 300;
     showSteamPrice: boolean;
     listingAge: 0 | 1 | 2;
+    showBuffDifference: boolean;
 };
 
 export type CSGOTraderMapping = {
