@@ -1,8 +1,8 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
-import { ExtensionSettings, FloatItem, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
+import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
 import { activateHandler } from './eventhandler';
-import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, loadBuffMapping, loadMapping } from './mappinghandler';
+import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from './mappinghandler';
 
 type PriceResult = {
     price_difference: number;
@@ -244,6 +244,67 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.listingAge > 0) {
             await addListingAge(item, container, cachedItem);
         }
+    }
+    if (isPopout) {
+        // need timeout as request is only sent after popout is loaded
+        setTimeout(async () => {
+            await addItemHistory(container, item);
+        }, 1000);
+    }
+}
+
+async function addItemHistory(container: Element, item: FloatItem) {
+    const itemHistory = calculateHistoryValues(await getWholeHistory());
+    const headerContainer = <HTMLElement>container.querySelector('#header');
+    if (!headerContainer || !itemHistory) {
+        console.log('[BetterFloat] Could not add item history: ' + itemHistory);
+        return;
+    };
+
+    headerContainer.style.display = 'flex';
+    headerContainer.style.justifyContent = 'space-between';
+    const replacementContainer = document.createElement('div');
+    while (headerContainer.firstChild) {
+        replacementContainer.appendChild(headerContainer.firstChild);
+    }
+    headerContainer.appendChild(replacementContainer);
+
+    const historyContainer = document.createElement('div');
+    historyContainer.classList.add('betterfloat-history-container');
+    historyContainer.style.display = 'flex';
+    historyContainer.style.justifyContent = 'flex-end';
+    historyContainer.style.color = '#a9a9a9';
+    historyContainer.style.marginTop = '2px';
+
+    const highestContainer = document.createElement('span');
+    highestContainer.classList.add('betterfloat-history-highest');
+    highestContainer.textContent = 'High: $' + itemHistory.highest.avg_price;
+
+    const lowestContainer = document.createElement('span');
+    lowestContainer.classList.add('betterfloat-history-lowest');
+    lowestContainer.textContent = 'Low: $' + itemHistory.lowest.avg_price;
+
+    const divider = document.createElement('span');
+    divider.textContent = ' | ';
+    divider.style.margin = '0 5px';
+
+    historyContainer.appendChild(lowestContainer);
+    historyContainer.appendChild(divider);
+    historyContainer.appendChild(highestContainer);
+    headerContainer.appendChild(historyContainer);
+}
+
+function calculateHistoryValues(itemHistory: HistoryData[]) {
+    if (itemHistory.length == 0) {
+        return null;
+    }
+    const highestElement = itemHistory.reduce((prev, current) => (prev.avg_price > current.avg_price) ? prev : current);
+    const lowestElement = itemHistory.reduce((prev, current) => (prev.avg_price < current.avg_price) ? prev : current);
+    
+    return {
+        total: itemHistory,
+        highest: highestElement,
+        lowest: lowestElement
     }
 }
 

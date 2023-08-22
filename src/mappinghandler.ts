@@ -1,4 +1,4 @@
-import { CSGOTraderMapping, ListingData } from "./@typings/FloatTypes";
+import { CSGOTraderMapping, HistoryData, ListingData } from "./@typings/FloatTypes";
 
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
@@ -7,6 +7,23 @@ let buffMapping: { [name: string]: number } = {};
 let priceMapping: CSGOTraderMapping = {};
 // cached items from api
 let cachedItems: ListingData[] = [];
+// history for one item
+let cachedHistory: HistoryData[] = [];
+
+export async function cacheHistory(data: HistoryData[]) {
+    if (cachedHistory.length > 0) {
+        console.debug('[BetterFloat] History already cached, deleting history: ', cachedHistory);
+        cachedHistory = [];
+    }
+    // original price is in cents, convert to dollars
+    cachedHistory = data.map((history) => {
+        return {
+            avg_price: history.avg_price / 100,
+            count: history.count,
+            day: history.day,
+        }
+    });
+}
 
 export async function cacheItems(data: ListingData[]) {
     if (cachedItems.length > 0) {
@@ -14,6 +31,12 @@ export async function cacheItems(data: ListingData[]) {
         cachedItems = [];
     }
     cachedItems = data;
+}
+
+export async function getWholeHistory() {
+    let history = cachedHistory;
+    cachedHistory = [];
+    return history;
 }
 
 export async function getFirstCachedItem() {

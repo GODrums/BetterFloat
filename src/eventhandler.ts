@@ -1,5 +1,5 @@
-import { EventData, ListingData, SellerData } from './@typings/FloatTypes';
-import { cacheItems } from './mappinghandler';
+import { EventData, HistoryData, ListingData, SellerData } from './@typings/FloatTypes';
+import { cacheHistory, cacheItems } from './mappinghandler';
 
 type StallData = {
     listings: ListingData[];
@@ -25,10 +25,13 @@ function processEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('v1/me/listings')) {
         // own stall
         cacheItems(eventData.data as ListingData[]);
-    }else if (eventData.url.includes('v1/users/')) {
+    } else if (eventData.url.includes('v1/users/')) {
         // url schema: v1/users/[:userid]
         // sellers stall, gives StallData
         cacheItems((eventData.data as StallData).listings);
+    } else if (eventData.url.includes('v1/history/')) {
+        // item history, gets called on item popup
+        cacheHistory(eventData.data as HistoryData[]);
     } else if (eventData.url.includes('v1/me')) {
     } else if (eventData.url.includes('v1/listings/')) {
         // item popup

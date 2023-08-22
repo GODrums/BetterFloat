@@ -143,6 +143,12 @@ export type StickerData = {
     wear: number;
 };
 
+export type HistoryData = {
+    avg_price: number;
+    count: number;
+    day: string;
+}
+
 export type SCMType = {
     price: number;
     volume: number;
