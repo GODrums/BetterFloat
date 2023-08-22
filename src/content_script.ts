@@ -27,6 +27,10 @@ async function init() {
 
     await initSettings();
 
+    if (extensionSettings.showTopButton) {
+        createTopButton();
+    }
+
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
         await firstLaunch();
@@ -56,32 +60,49 @@ async function firstLaunch() {
 
 async function initSettings() {
     extensionSettings = <ExtensionSettings>{};
-    chrome.storage.local.get((data) => {
-        if (data.buffprice) {
-            extensionSettings.buffprice = Boolean(data.buffprice);
+    chrome.storage.local.get(
+        {
+            // default values
+            buffprice: true,
+            autorefresh: true,
+            priceReference: 1,
+            refreshInterval: 30,
+            showSteamPrice: false,
+            stickerPrices: true,
+            showBuffDifference: true,
+            listingAge: 0,
+            showTopButton: true,
+        },
+        (data) => {
+            if (data.buffprice) {
+                extensionSettings.buffprice = Boolean(data.buffprice);
+            }
+            if (data.autorefresh) {
+                extensionSettings.autorefresh = Boolean(data.autorefresh);
+            }
+            if (data.priceReference) {
+                extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
+            }
+            if (data.refreshInterval) {
+                extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
+            }
+            if (data.showSteamPrice) {
+                extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
+            }
+            if (data.stickerPrices) {
+                extensionSettings.stickerPrices = Boolean(data.stickerPrices);
+            }
+            if (data.listingAge) {
+                extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
+            }
+            if (data.showBuffDifference) {
+                extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
+            }
+            if (data.showTopButton) {
+                extensionSettings.showTopButton = Boolean(data.showTopButton);
+            }
         }
-        if (data.autorefresh) {
-            extensionSettings.autorefresh = Boolean(data.autorefresh);
-        }
-        if (data.priceReference) {
-            extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
-        }
-        if (data.refreshInterval) {
-            extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
-        }
-        if (data.showSteamPrice) {
-            extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
-        }
-        if (data.stickerPrices) {
-            extensionSettings.stickerPrices = Boolean(data.stickerPrices);
-        }
-        if (data.listingAge) {
-            extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
-        }
-        if (data.showBuffDifference) {
-            extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
-        }
-    });
+    );
 
     // wait for settings to be loaded, takes about 1.5 seconds
     await new Promise<void>((resolve) => {
@@ -259,7 +280,7 @@ async function addItemHistory(container: Element, item: FloatItem) {
     if (!headerContainer || !itemHistory) {
         console.log('[BetterFloat] Could not add item history: ' + itemHistory);
         return;
-    };
+    }
 
     headerContainer.style.display = 'flex';
     headerContainer.style.justifyContent = 'space-between';
@@ -298,14 +319,14 @@ function calculateHistoryValues(itemHistory: HistoryData[]) {
     if (itemHistory.length == 0) {
         return null;
     }
-    const highestElement = itemHistory.reduce((prev, current) => (prev.avg_price > current.avg_price) ? prev : current);
-    const lowestElement = itemHistory.reduce((prev, current) => (prev.avg_price < current.avg_price) ? prev : current);
-    
+    const highestElement = itemHistory.reduce((prev, current) => (prev.avg_price > current.avg_price ? prev : current));
+    const lowestElement = itemHistory.reduce((prev, current) => (prev.avg_price < current.avg_price ? prev : current));
+
     return {
         total: itemHistory,
         highest: highestElement,
-        lowest: lowestElement
-    }
+        lowest: lowestElement,
+    };
 }
 
 async function addListingAge(item: FloatItem, container: Element, cachedItem: ListingData) {
@@ -365,7 +386,6 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
             topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild as Node);
         }
     }
-    
 }
 
 async function addStickerInfo(item: FloatItem, container: Element, cachedItem: ListingData, priceResult: PriceResult) {
@@ -436,7 +456,7 @@ function getFloatItem(container: Element): FloatItem {
                 }
                 break;
             case Node.TEXT_NODE:
-                condition = (node.textContent?.trim() ?? "") as ItemCondition;
+                condition = (node.textContent?.trim() ?? '') as ItemCondition;
                 break;
             case Node.COMMENT_NODE:
                 break;
@@ -568,6 +588,32 @@ function createBuffName(item: FloatItem): string {
 
 function getTabNumber() {
     return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
+}
+
+function createTopButton() {
+    let topButton = document.createElement('button');
+    topButton.classList.add('betterfloat-top-button');
+    topButton.setAttribute(
+        'style',
+        'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none'
+    );
+    let topButtonIcon = document.createElement('img');
+    topButtonIcon.setAttribute('src', runtimePublicURL + '/chevron-up-solid.svg');
+    topButtonIcon.style.marginTop = '5px';
+    topButtonIcon.style.filter = 'brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(2009%) hue-rotate(196deg) brightness(113%) contrast(93%)';
+    topButton.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    topButton.appendChild(topButtonIcon);
+    document.body.appendChild(topButton);
+
+    document.addEventListener('scroll', () => {
+        if (document.body.scrollTop > 700 || document.documentElement.scrollTop > 700) {
+            topButton.style.display = 'block';
+        } else {
+            topButton.style.display = 'none';
+        }
+    });
 }
 
 let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist', '/search?'];

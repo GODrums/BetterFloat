@@ -25,6 +25,7 @@ export type ExtensionSettings = {
     showSteamPrice: boolean;
     listingAge: 0 | 1 | 2;
     showBuffDifference: boolean;
+    showTopButton: boolean;
 };
 
 export type CSGOTraderMapping = {

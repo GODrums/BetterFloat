@@ -63,3 +63,7 @@
     padding: 7px;
     font-size: 14px;
 }
+
+button.betterfloat-top-button:hover {
+	opacity: 0.8;
+}
