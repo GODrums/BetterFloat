@@ -70,7 +70,7 @@ export type CSGOTraderMapping = {
 export interface EventData<T> {
     status: string;
     url: string;
-    data: [T];
+    data: T;
 }
 
 export type ListingData = {

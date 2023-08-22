@@ -12,6 +12,7 @@
         "jsx": "react",
         "typeRoots": ["node_modules/@types"],
         "forceConsistentCasingInFileNames": true,
+        "exactOptionalPropertyTypes": true,
     },
     "exclude": ["node_modules"],
     "include": ["src/*.ts"]
