@@ -14,6 +14,8 @@ async function init() {
     if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
         return;
     }
+    // catch the events thrown by the script
+    // this has to be done as first thing to not miss timed events
     activateHandler();
 
     // mutation observer is only needed once
@@ -176,7 +178,7 @@ async function refreshButton() {
             refreshText.textContent = 'active';
             refreshText.setAttribute('style', 'color: greenyellow;');
 
-            // save timer to avoid multiple executions
+            // save timer to avoid uncoordinated executions
             refreshInterval.push(
                 setInterval(() => {
                     let refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
@@ -202,6 +204,13 @@ async function refreshButton() {
                 clearInterval(refreshInterval[i] ?? 0);
                 refreshInterval.splice(i, 1);
             }
+            setTimeout(() => {
+                //for some weird reason one element stays in the array
+                if (refreshInterval.length > 0) {
+                    clearInterval(refreshInterval[0] ?? 0);
+                    refreshInterval.splice(0, 1);
+                }
+            }, 1000);
         });
     }
 }
@@ -219,7 +228,7 @@ async function applyMutation() {
             let url = window.location.href;
             for (let i = 0; i < unsupportedSubPages.length; i++) {
                 if (url.includes(unsupportedSubPages[i])) {
-                    //console.debug('[BetterFloat] Current page is currently NOT supported');
+                    console.debug('[BetterFloat] Current page is currently NOT supported');
                     return;
                 }
             }

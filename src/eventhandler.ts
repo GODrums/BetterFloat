@@ -19,6 +19,9 @@ function processEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('v1/listings?')) {
         cacheItems(eventData.data as ListingData[]);
+    } else if (eventData.url.includes('v1/listings/recommended')) {
+        // recommended for you tab
+        cacheItems(eventData.data as ListingData[]);
     } else if (eventData.url.includes('v1/me/watchlist')) {
         // own watchlist
         cacheItems(eventData.data as ListingData[]);

@@ -5,7 +5,9 @@
             What's new?
         </p> 
         <ul class="VersionText">
+            <li><b>CHANGE:</b> The 10s interval option of the auto-refresh feature has been removed due to unjustifyably long rate limits after very short periods of usage. For now it is unclear if rate-limits by CSFloat can long term lead to account bans.</li>
             <li><b>BUG-FIX:</b> Additional error handling if the data provided by the CSFloat API contains errors or wrong information. Fixes an issue that previous led to a crash when CSFloat supplied a sticker name with wrong capitalization.</li>
+            <li><b>BUG-FIX:</b> A long-time bug of the stop button not actually stopping the refreshing due to a data race should now be fixed.</li>
         </ul>
     </div>
 </div>
