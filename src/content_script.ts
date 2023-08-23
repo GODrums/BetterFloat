@@ -492,7 +492,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     let buff_id = await getBuffMapping(buff_name);
     let priceMapping = await getPriceMapping();
 
-    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163']) {
+    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         return { price_difference: 0 };
     }
