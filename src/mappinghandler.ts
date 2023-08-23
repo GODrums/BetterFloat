@@ -59,7 +59,9 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }
-    if (!priceMapping[buff_name]) {
+    //removing double spaces
+    buff_name = buff_name.replace(/\s+/g, ' ');
+    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
         console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
         return {
             starting_at: 0,

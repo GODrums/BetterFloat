@@ -487,6 +487,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         return { price_difference: 0 };
     }
+    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
     let priceListing = 0;
     let priceOrder = 0;
     if (item.style != '' && item.style != 'Vanilla') {
