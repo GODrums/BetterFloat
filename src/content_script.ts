@@ -2,7 +2,7 @@
 
 import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
 import { activateHandler } from './eventhandler';
-import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from './mappinghandler';
+import { getBuffMapping, getInventoryHelperPrice, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, handleSpecialStickerNames, loadBuffMapping, loadMapping } from './mappinghandler';
 
 type PriceResult = {
     price_difference: number;
@@ -488,31 +488,30 @@ function getFloatItem(container: Element): FloatItem {
 
 async function addBuffPrice(item: FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
     await loadMapping();
-    let buff_name = createBuffName(item);
-    let buff_id = await getBuffMapping(buff_name);
+    let buff_name = handleSpecialStickerNames(createBuffName(item));
     let priceMapping = await getPriceMapping();
+    let helperPrice: number | null = null;
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        if (buff_name.includes('Ninjas in Pyjamas | Katowice 2015')) {
-            buff_name = 'Sticker | Ninjas in Pyjamas  | Katowice 2015';
-        } else if (buff_name.includes('Vox Eminor | Katowice 2015')) {
-            buff_name = 'Sticker | Vox Eminor  | Katowice 2015';
-        } else if (buff_name.includes('PENTA Sports | Katowice 2015')) {
-            buff_name = 'Sticker | PENTA Sports  | Katowice 2015';
-        } else {
-            console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-            return { price_difference: 0 };
-        }  
+        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+        helperPrice = await getInventoryHelperPrice(buff_name);
     }
+
+    let buff_id = await getBuffMapping(buff_name);
     // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
     let priceListing = 0;
     let priceOrder = 0;
-    if (item.style != '' && item.style != 'Vanilla') {
-        priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
-        priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];
+    if (typeof helperPrice == 'number') {
+        priceListing = helperPrice;
+        priceOrder = helperPrice;
     } else {
-        priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
-        priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
+        if (item.style != '' && item.style != 'Vanilla') {
+            priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
+            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];
+        } else {
+            priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
+            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
+        }
     }
     if (priceListing == undefined) {
         priceListing = 0;

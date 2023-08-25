@@ -1,4 +1,4 @@
-import { CSGOTraderMapping, HistoryData, ListingData } from "./@typings/FloatTypes";
+import { CSGOTraderMapping, HistoryData, ListingData } from './@typings/FloatTypes';
 
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
@@ -9,6 +9,7 @@ let priceMapping: CSGOTraderMapping = {};
 let cachedItems: ListingData[] = [];
 // history for one item
 let cachedHistory: HistoryData[] = [];
+let cachedInventoryHelperResponses: { [buff_name: string] : SteaminventoryhelperResponse | null} = {};
 
 export async function cacheHistory(data: HistoryData[]) {
     if (cachedHistory.length > 0) {
@@ -21,7 +22,7 @@ export async function cacheHistory(data: HistoryData[]) {
             avg_price: history.avg_price / 100,
             count: history.count,
             day: history.day,
-        }
+        };
     });
 }
 
@@ -55,25 +56,86 @@ export async function getPriceMapping(): Promise<{ [key: string]: any }> {
     return priceMapping;
 }
 
-export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number; }> {
+export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number }> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }
     //removing double spaces
-    buff_name = buff_name.replace(/\s+/g, ' ');
+    buff_name = handleSpecialStickerNames(buff_name.replace(/\s+/g, ' '));
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
         console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
-        return {
-            starting_at: 0,
-            highest_order: 0,
+        let helperPrice = await getInventoryHelperPrice(buff_name);
+        if (helperPrice) {
+            return {
+                starting_at: helperPrice,
+                highest_order: helperPrice,
+            };
+        } else {
+            return {
+                starting_at: 0,
+                highest_order: 0,
+            };
         }
     }
     return {
         starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'] ?? 0,
         highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'] ?? 0,
-    }
+    };
 }
 
+export function handleSpecialStickerNames(name: string): string {
+    if (name.includes('Ninjas in Pyjamas | Katowice 2015')) {
+        return 'Sticker | Ninjas in Pyjamas  | Katowice 2015';
+    } else if (name.includes('Vox Eminor | Katowice 2015')) {
+        return 'Sticker | Vox Eminor  | Katowice 2015';
+    } else if (name.includes('PENTA Sports | Katowice 2015')) {
+        return 'Sticker | PENTA Sports  | Katowice 2015';
+    } else if (name.indexOf('niko') > -1) {
+        return name.substring(0, name.lastIndexOf('|')) + ' ' + name.substring(name.lastIndexOf('|'), name.length);
+    }
+    return name;
+}
+
+type SteaminventoryhelperResponse = {
+    success: boolean;
+    items: {
+        [key: string]: {
+            buff163: {
+                price: number;
+                count: number;
+            };
+        };
+    };
+};
+
+export async function getInventoryHelperPrice(buff_name: string): Promise<number | null> {
+    if (cachedInventoryHelperResponses[buff_name]) {
+        console.log(`[BetterFloat] Returning cached steaminventoryhelper response for ${buff_name}: `, cachedInventoryHelperResponses[buff_name]);
+        return cachedInventoryHelperResponses[buff_name]?.items[buff_name]?.buff163?.price ?? null;
+    }
+    console.log(`[BetterFloat] Attempting to get price for ${buff_name} from steaminventoryhelper`);
+    const reponse = await fetch('https://api.steaminventoryhelper.com/v2/live-prices/getPrices', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            appId: 730,
+            markets: ['buff163'],
+            items: [buff_name],
+        }),
+    });
+    const data: SteaminventoryhelperResponse = await reponse.json();
+    console.log(`[BetterFloat] Steaminventoryhelper response for ${buff_name}: `, data);
+    if (data.success) {
+        cachedInventoryHelperResponses[buff_name] = data;
+        return data?.items[buff_name]?.buff163?.price;
+    } else {
+        console.log(`[BetterFloat] Steaminventoryhelper did not return success for ${buff_name}`);
+        cachedInventoryHelperResponses[buff_name] = null;
+        return null;
+    }
+}
 
 export async function getBuffMapping(name: string) {
     if (Object.keys(buffMapping).length == 0) {
@@ -112,7 +174,7 @@ export async function loadMapping() {
             mapping = '';
             priceMapping = {};
         }
-        
+
         if (mapping != null && mapping.length > 0) {
             priceMapping = JSON.parse(mapping);
         } else {
