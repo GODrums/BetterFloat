@@ -493,8 +493,16 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     let priceMapping = await getPriceMapping();
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        return { price_difference: 0 };
+        if (buff_name.includes('Ninjas in Pyjamas | Katowice 2015')) {
+            buff_name = 'Sticker | Ninjas in Pyjamas  | Katowice 2015';
+        } else if (buff_name.includes('Vox Eminor | Katowice 2015')) {
+            buff_name = 'Sticker | Vox Eminor  | Katowice 2015';
+        } else if (buff_name.includes('PENTA Sports | Katowice 2015')) {
+            buff_name = 'Sticker | PENTA Sports  | Katowice 2015';
+        } else {
+            console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+            return { price_difference: 0 };
+        }  
     }
     // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
     let priceListing = 0;
