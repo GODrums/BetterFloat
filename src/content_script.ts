@@ -33,7 +33,6 @@ async function init() {
         createTopButton();
     }
 
-    console.log("Checking for first launch");
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
         await firstLaunch();
@@ -52,7 +51,6 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-    console.log('[BetterFloat] First launch');
     if (!extensionSettings.buffprice) return;
 
     let items = document.querySelectorAll('item-card');
@@ -65,35 +63,34 @@ async function firstLaunch() {
 async function initSettings() {
     extensionSettings = <ExtensionSettings>{};
     chrome.storage.local.get((data) => {
-            if (data.buffprice) {
-                extensionSettings.buffprice = Boolean(data.buffprice);
-            }
-            if (data.autorefresh) {
-                extensionSettings.autorefresh = Boolean(data.autorefresh);
-            }
-            if (data.priceReference) {
-                extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
-            }
-            if (data.refreshInterval) {
-                extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
-            }
-            if (data.showSteamPrice) {
-                extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
-            }
-            if (data.stickerPrices) {
-                extensionSettings.stickerPrices = Boolean(data.stickerPrices);
-            }
-            if (data.listingAge) {
-                extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
-            }
-            if (data.showBuffDifference) {
-                extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
-            }
-            if (data.showTopButton) {
-                extensionSettings.showTopButton = Boolean(data.showTopButton);
-            }
+        if (data.buffprice) {
+            extensionSettings.buffprice = Boolean(data.buffprice);
         }
-    );
+        if (data.autorefresh) {
+            extensionSettings.autorefresh = Boolean(data.autorefresh);
+        }
+        if (data.priceReference) {
+            extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
+        }
+        if (data.refreshInterval) {
+            extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
+        }
+        if (data.showSteamPrice) {
+            extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
+        }
+        if (data.stickerPrices) {
+            extensionSettings.stickerPrices = Boolean(data.stickerPrices);
+        }
+        if (data.listingAge) {
+            extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
+        }
+        if (data.showBuffDifference) {
+            extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
+        }
+        if (data.showTopButton) {
+            extensionSettings.showTopButton = Boolean(data.showTopButton);
+        }
+    });
 
     // wait for settings to be loaded, takes about 1.5 seconds
     await new Promise<void>((resolve) => {
@@ -633,5 +630,4 @@ let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
 
-console.log('[BetterFloat] Content script loaded');
 init();

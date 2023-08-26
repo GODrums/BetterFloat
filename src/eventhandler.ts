@@ -4,7 +4,7 @@ import { cacheHistory, cacheItems } from './mappinghandler';
 type StallData = {
     listings: ListingData[];
     user: SellerData;
-}
+};
 
 export function activateHandler() {
     // important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879

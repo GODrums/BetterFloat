@@ -148,7 +148,7 @@ export type HistoryData = {
     avg_price: number;
     count: number;
     day: string;
-}
+};
 
 export type SCMType = {
     price: number;

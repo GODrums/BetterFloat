@@ -8,5 +8,4 @@ function injectScript() {
         (<HTMLScriptElement>this).remove();
     };
     (document.head || document.documentElement).appendChild(script);
-    
 }

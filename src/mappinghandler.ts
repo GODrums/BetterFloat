@@ -9,7 +9,7 @@ let priceMapping: CSGOTraderMapping = {};
 let cachedItems: ListingData[] = [];
 // history for one item
 let cachedHistory: HistoryData[] = [];
-let cachedInventoryHelperResponses: { [buff_name: string] : SteaminventoryhelperResponse | null} = {};
+let cachedInventoryHelperResponses: { [buff_name: string]: SteaminventoryhelperResponse | null } = {};
 
 export async function cacheHistory(data: HistoryData[]) {
     if (cachedHistory.length > 0) {
