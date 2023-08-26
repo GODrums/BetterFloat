@@ -114,7 +114,7 @@ export async function getInventoryHelperPrice(buff_name: string): Promise<number
         return cachedInventoryHelperResponses[buff_name]?.items[buff_name]?.buff163?.price ?? null;
     }
     console.log(`[BetterFloat] Attempting to get price for ${buff_name} from steaminventoryhelper`);
-    const reponse = await fetch('https://api.steaminventoryhelper.com/v2/live-prices/getPrices', {
+    return await fetch('https://api.steaminventoryhelper.com/v2/live-prices/getPrices', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -124,17 +124,14 @@ export async function getInventoryHelperPrice(buff_name: string): Promise<number
             markets: ['buff163'],
             items: [buff_name],
         }),
-    });
-    const data: SteaminventoryhelperResponse = await reponse.json();
-    console.log(`[BetterFloat] Steaminventoryhelper response for ${buff_name}: `, data);
-    if (data.success) {
+    }).then((response) => response.json()).then((data: SteaminventoryhelperResponse) => {
+        console.log(`[BetterFloat] Steaminventoryhelper response for ${buff_name}: `, data);
         cachedInventoryHelperResponses[buff_name] = data;
         return data?.items[buff_name]?.buff163?.price;
-    } else {
-        console.log(`[BetterFloat] Steaminventoryhelper did not return success for ${buff_name}`);
-        cachedInventoryHelperResponses[buff_name] = null;
+    }).catch((err) => {
+        console.error(err);
         return null;
-    }
+    });
 }
 
 export async function getBuffMapping(name: string) {

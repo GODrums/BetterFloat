@@ -11,13 +11,13 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
+			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
 			"js": ["js/content_script.js"],
 			"css": ["css/stylesheet.css"],
-			"run_at": "document_idle"
+			"run_at": "document_end"
 		},
 		{
-			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*"],
+			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
 			"js": ["js/injectionhandler.js"],
 			"run_at": "document_start"
 		}

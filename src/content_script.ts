@@ -2,7 +2,17 @@
 
 import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
 import { activateHandler } from './eventhandler';
-import { getBuffMapping, getInventoryHelperPrice, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, handleSpecialStickerNames, loadBuffMapping, loadMapping } from './mappinghandler';
+import {
+    getBuffMapping,
+    getInventoryHelperPrice,
+    getFirstCachedItem,
+    getItemPrice,
+    getPriceMapping,
+    getWholeHistory,
+    handleSpecialStickerNames,
+    loadBuffMapping,
+    loadMapping,
+} from './mappinghandler';
 
 type PriceResult = {
     price_difference: number;
@@ -18,6 +28,26 @@ async function init() {
     // this has to be done as first thing to not miss timed events
     activateHandler();
 
+    await initSettings();
+    await loadMapping();
+    await loadBuffMapping();
+
+    if (extensionSettings.showTopButton) {
+        createTopButton();
+    }
+
+
+    //check if url is in supported subpages
+    if (url.endsWith('float.com/')) {
+        await firstLaunch();
+    } else {
+        for (let i = 0; i < supportedSubPages.length; i++) {
+            if (url.includes(supportedSubPages[i])) {
+                await firstLaunch();
+            }
+        }
+    }
+
     // mutation observer is only needed once
     if (!isObserverActive) {
         console.debug('[BetterFloat] Starting observer');
@@ -26,27 +56,6 @@ async function init() {
 
         isObserverActive = true;
     }
-
-    await initSettings();
-
-    if (extensionSettings.showTopButton) {
-        createTopButton();
-    }
-
-    //check if url is in supported subpages
-    if (url.endsWith('float.com/')) {
-        await firstLaunch();
-        return;
-    } else {
-        for (let i = 0; i < supportedSubPages.length; i++) {
-            if (url.includes(supportedSubPages[i])) {
-                console.debug('[BetterFloat] Current page supported');
-                await firstLaunch();
-                return;
-            }
-        }
-    }
-    console.debug('[BetterFloat] Current page not supported: ' + url);
 }
 
 // required as mutation does not detect initial DOM
@@ -240,8 +249,6 @@ async function applyMutation() {
             await refreshButton();
         }
     });
-    await loadMapping();
-    await loadBuffMapping();
     observer.observe(document, { childList: true, subtree: true });
 }
 
