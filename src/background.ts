@@ -15,6 +15,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
             autorefresh: true,
             priceReference: 1,
             refreshInterval: 30,
+            showSteamPrice: false,
+            stickerPrices: true,
+            showBuffDifference: true,
+            listingAge: 0,
+            showTopButton: true,
         });
     } else if (details.reason == 'update') {
         var thisVersion = chrome.runtime.getManifest().version;

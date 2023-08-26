@@ -33,6 +33,7 @@ async function init() {
         createTopButton();
     }
 
+    console.log("Checking for first launch");
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
         await firstLaunch();
@@ -51,6 +52,7 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
+    console.log('[BetterFloat] First launch');
     if (!extensionSettings.buffprice) return;
 
     let items = document.querySelectorAll('item-card');
@@ -62,20 +64,7 @@ async function firstLaunch() {
 
 async function initSettings() {
     extensionSettings = <ExtensionSettings>{};
-    chrome.storage.local.get(
-        {
-            // default values
-            buffprice: true,
-            autorefresh: true,
-            priceReference: 1,
-            refreshInterval: 30,
-            showSteamPrice: false,
-            stickerPrices: true,
-            showBuffDifference: true,
-            listingAge: 0,
-            showTopButton: true,
-        },
-        (data) => {
+    chrome.storage.local.get((data) => {
             if (data.buffprice) {
                 extensionSettings.buffprice = Boolean(data.buffprice);
             }
@@ -644,4 +633,5 @@ let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
 
+console.log('[BetterFloat] Content script loaded');
 init();
