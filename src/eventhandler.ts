@@ -22,6 +22,9 @@ function processEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('v1/listings/recommended')) {
         // recommended for you tab
         cacheItems(eventData.data as ListingData[]);
+    } else if (eventData.url.includes('v1/listings/unique-items')) {
+        // unique items tab
+        cacheItems(eventData.data as ListingData[]);
     } else if (eventData.url.includes('v1/me/watchlist')) {
         // own watchlist
         cacheItems(eventData.data as ListingData[]);
