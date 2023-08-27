@@ -12,7 +12,7 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
-			"js": ["js/content_script.js"],
+			"js": ["js/csfloat/content_script.js"],
 			"css": ["css/stylesheet.css"],
 			"run_at": "document_end"
 		},
@@ -20,6 +20,11 @@
 			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
 			"js": ["js/injectionhandler.js"],
 			"run_at": "document_start"
+		},
+		{
+			"matches": ["*://*.skinport.com/*"],
+			"js": ["js/skinport/content_script.js"],
+			"run_at": "document_end"
 		}
 	],
 	"icons": {

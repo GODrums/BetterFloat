@@ -7,11 +7,12 @@ module.exports = {
     entry: {
       popup: path.join(srcDir, 'popup.ts'),
       background: path.join(srcDir, 'background.ts'),
-      content_script: path.join(srcDir, 'content_script.ts'),
+      csfloat_script: { import: path.join(srcDir, 'content_script.ts'), filename: 'csfloat/content_script.js' },
       inject: path.join(srcDir, 'inject.ts'),
       injectionhandler: path.join(srcDir, 'injectionhandler.ts'),
-      eventhandler: path.join(srcDir, 'eventhandler.ts'),
-      mappinghandler: path.join(srcDir, 'mappinghandler.ts'),
+    //   eventhandler: path.join(srcDir, 'eventhandler.ts'),
+    //   mappinghandler: path.join(srcDir, 'mappinghandler.ts'),
+      skinport_content: { import: path.join(srcDir, 'skinport/content_script.ts'), filename: 'skinport/content_script.js' },
     },
     output: {
         path: path.join(__dirname, "../dist/js"),
