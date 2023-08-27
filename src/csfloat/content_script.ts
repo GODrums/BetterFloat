@@ -1,7 +1,7 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
-import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from './@typings/FloatTypes';
-import { activateHandler } from './eventhandler';
+import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from '../@typings/FloatTypes';
+import { activateHandler } from '../eventhandler';
 import {
     getBuffMapping,
     getInventoryHelperPrice,
@@ -12,8 +12,8 @@ import {
     handleSpecialStickerNames,
     loadBuffMapping,
     loadMapping,
-} from './mappinghandler';
-import { initSettings } from './util/extensionsettings';
+} from '../mappinghandler';
+import { initSettings } from '../util/extensionsettings';
 
 type PriceResult = {
     price_difference: number;

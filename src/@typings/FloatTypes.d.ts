@@ -69,6 +69,107 @@ export type CSGOTraderMapping = {
     };
 };
 
+export module Skinport {
+    export type MarketData = {
+        filter: {
+            components: {
+                appid: number;
+                data: any;
+                name: string;
+                type: string;
+            }[];
+            total: number;
+        };
+        items: Item[];
+        message: string | null;
+        requestId: string;
+        success: boolean;
+    }
+
+    export type CartData = {
+        message: string | null;
+        requestId: string;
+        success: boolean;
+        result: {
+            cart: Item[];
+            openOrders: any[]; // what is this?
+        };
+    }
+
+    export type Item = {
+        appid: number;
+        assetId: number;
+        assetid: string; // those are not the same!
+        bgColor: string | null;
+        canHaveScreenshots: boolean;
+        category: string;
+        category_localized: string;
+        collection: string | null;
+        collection_localized: string | null;
+        color: string;
+        currency: string;
+        customName: string | null;
+        exterior: string;
+        family: string;
+        family_localized: string;
+        finish: number;
+        id: number;
+        image: string;
+        itemId: number;
+        link: string;
+        lock: any | null;
+        marketHashName: string;
+        marketName: string;
+        name: string;
+        ownItem: boolean;
+        pattern: number;
+        productId: number;
+        quality: string; // e.g. "★"
+        rarity: string; // e.g. "Covert"
+        rarityColor: string; // in hex
+        rarity_localized: string;
+        saleId: number;
+        salePrice: number; // e.g. 148936 for 1,489.36€
+        saleStatus: string;
+        saleType: string;
+        screenshots: string[] | null;
+        shortId: string;
+        souvenir: boolean;
+        stackAble: boolean;
+        stattrak: boolean;
+        steamid: string;
+        stickers: StickerData[];
+        subCategory: string;
+        subCategory_localized: string;
+        suggestedPrice: number;
+        tags: [{
+            name: string;
+            name_localized: string;
+        }];
+        text: string;
+        title: string;
+        type: string;
+        url: string;
+        version: string;
+        versionType: string;
+        wear: number;
+    };
+
+    export type StickerData = {
+        color: string | null;
+        img: string;
+        name: string;
+        name_localized: string;
+        slot: number;
+        slug: any | null;
+        sticker_id: number | null;
+        type: string | null;
+        type_localized: string | null;
+        value: number | null;
+        wear: number | null;
+    };
+}
+
 export interface EventData<T> {
     status: string;
     url: string;
@@ -101,7 +202,7 @@ export type ListingData = {
         rarity: number;
         rarity_name: string;
         scm: SCMType;
-        stickers: [StickerData];
+        stickers: StickerData[];
         tradable: boolean;
         type: 'skin' | 'sticker';
         type_name: 'Skin' | 'Sticker';

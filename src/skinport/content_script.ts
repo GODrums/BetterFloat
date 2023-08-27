@@ -3,6 +3,7 @@ import {
     loadBuffMapping,
     loadMapping,
 } from '../mappinghandler';
+import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 
 async function init() {
@@ -14,7 +15,7 @@ async function init() {
     console.log('[BetterFloat] Starting BetterFloat');
     // catch the events thrown by the script
     // this has to be done as first thing to not miss timed events
-    // activateHandler();
+    activateHandler();
     
     extensionSettings = await initSettings();
     await loadMapping();

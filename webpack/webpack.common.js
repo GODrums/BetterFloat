@@ -7,7 +7,7 @@ module.exports = {
     entry: {
       popup: path.join(srcDir, 'popup.ts'),
       background: path.join(srcDir, 'background.ts'),
-      csfloat_script: { import: path.join(srcDir, 'content_script.ts'), filename: 'csfloat/content_script.js' },
+      csfloat_script: { import: path.join(srcDir, 'csfloat/content_script.ts'), filename: 'csfloat/content_script.js' },
       inject: path.join(srcDir, 'inject.ts'),
       injectionhandler: path.join(srcDir, 'injectionhandler.ts'),
     //   eventhandler: path.join(srcDir, 'eventhandler.ts'),
