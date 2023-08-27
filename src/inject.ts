@@ -10,7 +10,6 @@ function openIntercept() {
     window.XMLHttpRequest.prototype.open = function () {
         (<XMLHttpRequest>this).addEventListener('load', (e) => {
             let target = <XMLHttpRequest>e.currentTarget;
-            console.debug('[BetterFloat] Intercepted HTTP request to: ' + target.responseURL);
             if (!target.responseURL.includes('csfloat.com') && !target.responseURL.includes('skinport.com')) {
                 console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
                 return;

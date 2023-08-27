@@ -16,6 +16,9 @@ async function init() {
     // catch the events thrown by the script
     // this has to be done as first thing to not miss timed events
     activateHandler();
+
+    // start intercepting websocket requests
+    webSocketListener();
     
     extensionSettings = await initSettings();
     await loadMapping();
@@ -45,6 +48,20 @@ async function init() {
 
     //     isObserverActive = true;
     // }
+}
+
+// Idea from: https://stackoverflow.com/a/53990245
+function webSocketListener() {
+    const networkFilters = {
+        urls: [
+            "wss://skinport.com/socket.io/?EIO=4&transport=websocket"
+        ]
+    };
+    chrome.webRequest.onCompleted.addListener((details) => {
+        const { tabId, requestId } = details;
+        console.log('[BetterFloat] Intercepted websocket request: ', details);
+        // do stuff here
+    }, networkFilters);
 }
 
 let extensionSettings: ExtensionSettings;

@@ -86,6 +86,41 @@ export module Skinport {
         success: boolean;
     }
 
+    // https://skinport.com/api/home
+    export type HomeData = {
+        message: string | null;
+        requestId: string;
+        success: boolean;
+        adverts: {
+            bgColor: string;
+            button: {
+                text: string;
+                link: string;
+            };
+            id: number;
+            img: string;
+            img2x: string;
+            text: string;
+            title: string;
+        }[];
+        blog: {
+            img: string;
+            published_at: string;
+            slug: string;
+            title: string;
+        }[];
+        sales: {
+            appid: number;
+            items: Item[];
+            total: number;
+        }[]; // the four sale rows
+        score: {
+            count: number;
+            rating: number;
+        }; // Trustpilot score
+    };
+
+    // https://skinport.com/api/cart
     export type CartData = {
         message: string | null;
         requestId: string;

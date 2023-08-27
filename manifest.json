@@ -5,7 +5,7 @@
 	"version_name": "1.4.0",
 	"description": "Enhance your experience on CSFloat.com and Skinport.com",
 	"manifest_version": 3,
-	"host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*"],
+	"host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "wss://skinport.com/*"],
 	"background": {
 		"service_worker": "js/background.js"
 	},
@@ -33,7 +33,7 @@
 	"action": {
 		"default_popup": "/html/index.html"
 	 },
-	"permissions": ["storage"],
+	"permissions": ["storage", "webRequest"],
     "web_accessible_resources": [ {
        "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*" ],
        "resources": [ "public/buff_favicon.png", "public/clock-solid.svg", "public/chevron-up-solid.svg", "js/inject.js"]
