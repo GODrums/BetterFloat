@@ -41,3 +41,16 @@ if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
     lastUpdate = Date.now();
     chrome.storage.local.set({ lastUpdate: lastUpdate });
 }
+
+// Idea from: https://stackoverflow.com/a/53990245
+// the WSS Skinport stream contains the LIVE feed. Does not work yet.
+// chrome.webRequest.onBeforeSendHeaders.addListener(
+//     (details) => {
+//         const { tabId, requestId } = details;
+//         console.log('[BetterFloat] Intercepted websocket request: ', details);
+//         // do stuff here
+//     },
+//     {
+//         urls: ['wss://skinport.com/socket.io/?EIO=4&transport=websocket'],
+//     }
+// );

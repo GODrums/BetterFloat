@@ -10,9 +10,11 @@ module.exports = {
       csfloat_script: { import: path.join(srcDir, 'csfloat/content_script.ts'), filename: 'csfloat/content_script.js' },
       inject: path.join(srcDir, 'inject.ts'),
       injectionhandler: path.join(srcDir, 'injectionhandler.ts'),
-    //   eventhandler: path.join(srcDir, 'eventhandler.ts'),
-    //   mappinghandler: path.join(srcDir, 'mappinghandler.ts'),
+      eventhandler: path.join(srcDir, 'eventhandler.ts'),
+      mappinghandler: path.join(srcDir, 'mappinghandler.ts'),
       skinport_content: { import: path.join(srcDir, 'skinport/content_script.ts'), filename: 'skinport/content_script.js' },
+      helperfunctions: { import: path.join(srcDir, 'util/helperfunctions.ts'), filename: 'util/helperfunctions.js' },
+      extensionsettings: { import: path.join(srcDir, 'util/extensionsettings.ts'), filename: 'util/extensionsettings.js' },
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

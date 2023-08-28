@@ -96,6 +96,13 @@ export function handleSpecialStickerNames(name: string): string {
     return name;
 }
 
+type SIHRelay = {
+    name: string;
+    data: SteaminventoryhelperResponse;
+    strategy: string;
+    time: string;
+};
+
 type SteaminventoryhelperResponse = {
     success: boolean;
     items: {
@@ -108,26 +115,21 @@ type SteaminventoryhelperResponse = {
     };
 };
 
+// Currently using my own server to relay requests to steaminventoryhelper due to their CORS policy
+// For security reasons, I cannot share my whole server code, but the relevant endpoint is here:
+// https://gist.github.com/GODrums/5b2d24c17c136a1b37acd14b1089933c
 export async function getInventoryHelperPrice(buff_name: string): Promise<number | null> {
     if (cachedInventoryHelperResponses[buff_name]) {
         console.log(`[BetterFloat] Returning cached steaminventoryhelper response for ${buff_name}: `, cachedInventoryHelperResponses[buff_name]);
         return cachedInventoryHelperResponses[buff_name]?.items[buff_name]?.buff163?.price ?? null;
     }
     console.log(`[BetterFloat] Attempting to get price for ${buff_name} from steaminventoryhelper`);
-    return await fetch('https://api.steaminventoryhelper.com/v2/live-prices/getPrices', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            appId: 730,
-            markets: ['buff163'],
-            items: [buff_name],
-        }),
-    }).then((response) => response.json()).then((data: SteaminventoryhelperResponse) => {
-        console.log(`[BetterFloat] Steaminventoryhelper response for ${buff_name}: `, data);
-        cachedInventoryHelperResponses[buff_name] = data;
-        return data?.items[buff_name]?.buff163?.price;
+    return await fetch('https://api.rums.dev/sih/'+encodeURI(buff_name)).then((response) => response.json()).then((response: SIHRelay) => {
+        console.log(`[BetterFloat] Steaminventoryhelper response for ${buff_name}: `, response);
+        if (response.data) {
+            cachedInventoryHelperResponses[buff_name] = response.data;
+        }
+        return response.data?.items[buff_name]?.buff163?.price;
     }).catch((err) => {
         console.error(err);
         return null;

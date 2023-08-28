@@ -131,6 +131,19 @@ export module Skinport {
         };
     }
 
+    export type Listing = {
+        name: string;
+        type: string;
+        text: string;
+        price: number;
+        stickers: {
+            name: string;
+        }[];
+        style: ItemStyle;
+        wear: number;
+        wear_name: string;
+    }
+
     export type Item = {
         appid: number;
         assetId: number;

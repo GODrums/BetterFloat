@@ -15,5 +15,5 @@
         "exactOptionalPropertyTypes": true,
     },
     "exclude": ["node_modules"],
-    "include": ["src/*.ts", "src/util/extensionsettings.ts", "src/csfloat/content_script.ts", "src/eventhandler.ts"]
+    "include": ["src/*.ts", "src/**/*.ts"]
 }
