@@ -20,6 +20,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
             showBuffDifference: true,
             listingAge: 0,
             showTopButton: true,
+            skinportRates: 'real',
+            spBuffPrice: true,
+            spCheckBoxes: true,
+            spPriceReference: 1,
+            spBuffDifference: true,
         });
     } else if (details.reason == 'update') {
         var thisVersion = chrome.runtime.getManifest().version;

@@ -13,7 +13,7 @@
 		{
 			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
 			"js": ["js/csfloat/content_script.js"],
-			"css": ["css/stylesheet.css"],
+			"css": ["css/csfloat_styles.css"],
 			"run_at": "document_end"
 		},
 		{
@@ -24,6 +24,7 @@
 		{
 			"matches": ["*://*.skinport.com/*"],
 			"js": ["js/skinport/content_script.js"],
+			"css": ["css/skinport_styles.css"],
 			"run_at": "document_end"
 		}
 	],

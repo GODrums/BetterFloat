@@ -7,7 +7,7 @@ $(function () {
     // init loading of content
     $('.MainContent').load('settings.html', function () {
         //Loading complete
-        loadSettings();
+        loadSettings('settings.html');
         addListeners();
     });
 
@@ -17,9 +17,7 @@ $(function () {
         let url = e.currentTarget.getAttribute('data-page') ?? 'settings.html';
         $('.MainContent').load(url, function () {
             //Loading complete
-            if (url == 'settings.html') {
-                loadSettings();
-            }
+            loadSettings(url);
             addListeners();
         });
 
@@ -82,7 +80,7 @@ chrome.permissions
         }
     });
 
-function loadSettings() {
+function loadForSettings() {
     let featureBuffPrice = <HTMLInputElement>document.getElementById('InputBuffPrice');
     let featureAutorefresh = <HTMLInputElement>document.getElementById('InputAutorefresh');
     let priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference');
@@ -92,7 +90,6 @@ function loadSettings() {
     let listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
     let buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
     let topButton = <HTMLInputElement>document.getElementById('InputTopButton');
-
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.buffprice) {
@@ -133,4 +130,52 @@ function loadSettings() {
             topButton.checked = false;
         }
     });
+}
+
+function loadForSkinport() {
+    let buffPriceElement = <HTMLInputElement>document.getElementById('SkinportBuffPrice');
+    let checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
+    let skinportRatesElement = <HTMLSelectElement>document.getElementById('SkinportCurrencyConversion');
+    let priceReferenceElement = <HTMLSelectElement>document.getElementById('SkinportPriceReference');
+    let skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
+    let skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
+    
+
+    chrome.storage.local.get((data) => {
+        console.debug('[BetterFloat] Loaded settings: ', data);
+        if (data.spBuffPrice) {
+            buffPriceElement.checked = true;
+        } else {
+            buffPriceElement.checked = false;
+        }
+        if (data.spCheckBoxes) {
+            checkBoxesElement.checked = true;
+        } else {
+            checkBoxesElement.checked = false;
+        }
+        if (data.skinportRates) {
+            skinportRatesElement.value = data.skinportRates;
+        }
+        if (data.spPriceReference) {
+            priceReferenceElement.value = data.spPriceReference;
+        }
+        if (data.spSteamPrice) {
+            skinportSteamPrice.checked = true;
+        } else {
+            skinportSteamPrice.checked = false;
+        }
+        if (data.spBuffDifference) {
+            skinportInputBuffDifference.checked = true;
+        } else {
+            skinportInputBuffDifference.checked = false;
+        }
+    });
+}
+
+function loadSettings(url: string) {
+    if (url == 'settings.html') {
+        loadForSettings();
+    } else if (url == 'skinport.html') {
+        loadForSkinport();
+    }
 }

@@ -1,8 +1,8 @@
 import { ExtensionSettings, ItemStyle, Skinport } from '../@typings/FloatTypes';
-import { getBuffMapping, getInventoryHelperPrice, getPriceMapping, handleSpecialStickerNames, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getInventoryHelperPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
-import { parseHTMLString } from '../util/helperfunctions';
+import { handleSpecialStickerNames } from '../util/helperfunctions';
 
 async function init() {
     //get current url
@@ -16,6 +16,7 @@ async function init() {
     activateHandler();
 
     extensionSettings = await initSettings();
+
     await loadMapping();
     await loadBuffMapping();
 
@@ -42,7 +43,7 @@ async function init() {
 
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
-        if (extensionSettings.buffprice) {
+        if (extensionSettings.spBuffPrice) {
             for (let mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     let addedNode = mutation.addedNodes[i];
@@ -70,6 +71,7 @@ async function applyMutation() {
 
 async function adjustItem(container: Element) {
     const item = getFloatItem(container);
+    if (!item) return;
     await addBuffPrice(item, container);
     // if (extensionSettings.stickerPrices) {
     //     await addStickerInfo(item, container, cachedItem, priceResult);
@@ -79,8 +81,11 @@ async function adjustItem(container: Element) {
     // }
 }
 
-function getFloatItem(container: Element): Skinport.Listing {
+function getFloatItem(container: Element): Skinport.Listing | null {
     let name = container.querySelector('.ItemPreview-itemName')?.textContent ?? '';
+    if (name == '') {
+        return null;
+    }
     let price = Number(container.querySelector('.ItemPreview-price .Tooltip-link')?.innerHTML.substring(1).replace(',', '')) ?? 0;
     let type = container.querySelector('.ItemPreview-itemTitle')?.textContent ?? '';
     let text = container.querySelector('.ItemPreview-itemText')?.innerHTML ?? '';
@@ -144,7 +149,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
     let helperPrice: number | null = null;
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+        console.debug(`[BetterFloat] No price mapping found for ${buff_name}: `, container);
         helperPrice = await getInventoryHelperPrice(buff_name);
     }
 
@@ -171,7 +176,17 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         priceOrder = 0;
     }
 
-    //TODO: from here
+    //convert prices to user's currency
+    let currencyRate = await getUserCurrencyRate(extensionSettings.skinportRates);
+    if (extensionSettings.skinportRates == 'skinport') {
+        // origin price of rate is non-USD, so we need to divide
+        priceListing = priceListing / currencyRate;
+        priceOrder = priceOrder / currencyRate;
+    } else {
+        // origin price of rate is USD, so we need to multiply
+        priceListing = priceListing * currencyRate;
+        priceOrder = priceOrder * currencyRate;
+    }
 
     const presentationDiv = container.querySelector('.ItemPreview-mainAction');
     if (presentationDiv) {
@@ -190,10 +205,15 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         }
     }
 
+    let tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
+    const currencySymbol = tooltipLink.textContent?.charAt(0);
     let priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
-        priceDiv.className += 'betterfloat-buffprice';
+        priceDiv.className += ' betterfloat-buffprice';
         let buffContainer = document.createElement('div');
+        buffContainer.style.display = 'flex';
+        buffContainer.style.marginTop = '5px';
+        buffContainer.style.justifyContent = 'center';
         let buffImage = document.createElement('img');
         buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
         buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
@@ -206,7 +226,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         buffPrice.appendChild(tooltipSpan);
         let buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
-        buffPriceBid.textContent = `Bid $${priceOrder}`;
+        buffPriceBid.textContent = `Bid ${currencySymbol}${priceOrder.toFixed(2)}`;
         buffPrice.appendChild(buffPriceBid);
         let buffPriceDivider = document.createElement('span');
         buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
@@ -214,10 +234,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         buffPrice.appendChild(buffPriceDivider);
         let buffPriceAsk = document.createElement('span');
         buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-        buffPriceAsk.textContent = `Ask $${priceListing}`;
+        buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
-        if (extensionSettings.showSteamPrice) {
+        if (extensionSettings.spSteamPrice) {
             let divider = document.createElement('div');
             priceDiv.after(buffContainer);
             priceDiv.after(divider);
@@ -226,46 +246,46 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         }
     }
 
-    if (extensionSettings.showBuffDifference) {
-        const difference = item.price - (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
-        const priceContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
-        let saleTag = priceContainer.firstChild;
-        if (saleTag) {
-            priceContainer.removeChild(saleTag);
+    if (extensionSettings.spBuffDifference) {
+        const difference = item.price - (extensionSettings.spPriceReference == 0 ? priceOrder : priceListing);
+        let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
+        if (!discountContainer || !discountContainer.firstChild) {
+            discountContainer = document.createElement('div');
+            discountContainer.className = 'GradientLabel ItemPreview-discount';
+            const newSaleTag = document.createElement('span');
+            discountContainer.appendChild(newSaleTag);
+            container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
         }
-        if (item.price !== 0) {
-            const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
-                difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2)
-            } </span>`;
-            parseHTMLString(buffPriceHTML, priceContainer);
+        let saleTag = <HTMLElement>discountContainer.firstChild;
+        if (item.price !== 0 && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+            saleTag.className = 'sale-tag betterfloat-sale-tag';
+            discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
+            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
+        }
+    } else {
+        if (container.querySelector('.sale-tag')) {
+            (<HTMLElement>container.querySelector('.sale-tag')).className += 'betterfloat-sale-tag';
         }
     }
 }
 
 function createBuffName(item: Skinport.Listing): string {
-    // let full_name = `${item.name}`;
-    // if (item.type.includes('Sticker')) {
-    //     full_name = `Sticker | ` + full_name;
-    // } else if (!item.type.includes('Container')) {
-    //     if (item.type.includes('StatTrak') || item.type.includes('Souvenir')) {
-    //         full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
-    //     }
-    //     if (item.style != 'Vanilla') {
-    //         full_name += ` (${item.condition})`;
-    //     }
-    // }
-    // return full_name
-    //     .replace(/ +(?= )/g, '')
-    //     .replace(/\//g, '-')
-    //     .trim();
-    let full_name = `${(item.text.includes('Knife') || item.text.includes('Gloves')) && !item.text.includes('StatTrak') ? '★ ' : ''}${item.type}${
-        item.name.includes('Vanilla') ? '' : ' | ' + item.name.split(' (')[0].trim()
-    }${item.name.includes('Vanilla') ? '' : ' (' + item.wear + ')'}`;
-    if (item.name.includes('Dragon King')) full_name = `M4A4 | 龍王 (Dragon King)${' (' + item.wear + ')'}`;
-    else if (item.text.includes('Container') || item.text.includes('Collectible') || item.text.includes('Graffiti')) full_name = item.name;
-    else if (item.text.includes('Sticker')) full_name = `Sticker | ${item.name}`;
-    else if (item.text.includes('Patch')) full_name = `Patch | ${item.name}`;
-    else if (item.text.includes('Agent')) full_name = `${name} | ${item.type}`;
+    let full_name = `${item.name}`;
+    if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
+        full_name = item.type + ' | ' + full_name;
+    } else if (item.text.includes('Container') || item.text.includes('Collectible') || item.type.includes('Gift') || item.type.includes('Key') || item.type.includes('Pass')) {
+        full_name = item.name;
+    } else if (item.text.includes('Graffiti')) {
+        full_name = 'Sealed Graffiti | ' + item.name;
+    } else if (item.text.includes('Agent')) {
+        full_name = `${item.name} | ${item.type}`;
+    } else if (item.name.includes('Dragon King')) {
+        full_name = `M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
+    } else {
+        full_name = `${(item.text.includes('Knife') || item.text.includes('Gloves')) && !item.text.includes('StatTrak') ? '★ ' : ''}${item.type}${
+            item.name.includes('Vanilla') ? '' : ' | ' + item.name.split(' (')[0].trim()
+        }${item.name.includes('Vanilla') ? '' : ' (' + item.wear_name + ')'}`;
+    }
     return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
 }
 

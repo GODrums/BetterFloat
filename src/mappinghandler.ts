@@ -1,4 +1,5 @@
-import { CSGOTraderMapping, HistoryData, ListingData } from './@typings/FloatTypes';
+import { CSGOTraderMapping, HistoryData, ListingData, Skinport } from './@typings/FloatTypes';
+import { handleSpecialStickerNames } from './util/helperfunctions';
 
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
@@ -9,7 +10,14 @@ let priceMapping: CSGOTraderMapping = {};
 let cachedItems: ListingData[] = [];
 // history for one item
 let cachedHistory: HistoryData[] = [];
+// cached steaminventoryhelper responses
 let cachedInventoryHelperResponses: { [buff_name: string]: SteaminventoryhelperResponse | null } = {};
+// cached currency rates by Skinport: USD -> X
+let skinportRatesFromUSD: { [currency: string]: number } = {};
+// cached currency rates by exchangerate.host: USD -> X
+let realRatesFromUSD: { [currency: string]: number } = {};
+let userCurrency = '';
+
 
 export async function cacheHistory(data: HistoryData[]) {
     if (cachedHistory.length > 0) {
@@ -32,6 +40,21 @@ export async function cacheItems(data: ListingData[]) {
         cachedItems = [];
     }
     cachedItems = data;
+}
+
+export async function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
+    if (Object.keys(skinportRatesFromUSD).length > 0) {
+        console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
+    }
+    skinportRatesFromUSD = data;
+    userCurrency = user;
+}
+
+export async function cacheRealCurrencyRates(data: { [currency: string]: number }) {
+    if (Object.keys(realRatesFromUSD).length > 0) {
+        console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
+    }
+    realRatesFromUSD = data;
 }
 
 export async function getWholeHistory() {
@@ -83,17 +106,30 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     };
 }
 
-export function handleSpecialStickerNames(name: string): string {
-    if (name.includes('Ninjas in Pyjamas | Katowice 2015')) {
-        return 'Sticker | Ninjas in Pyjamas  | Katowice 2015';
-    } else if (name.includes('Vox Eminor | Katowice 2015')) {
-        return 'Sticker | Vox Eminor  | Katowice 2015';
-    } else if (name.includes('PENTA Sports | Katowice 2015')) {
-        return 'Sticker | PENTA Sports  | Katowice 2015';
-    } else if (name.indexOf('niko') > -1) {
-        return name.substring(0, name.lastIndexOf('|')) + ' ' + name.substring(name.lastIndexOf('|'), name.length);
+export async function getUserCurrencyRate(rates: "skinport" | "real" = "real") {
+    if (Object.keys(skinportRatesFromUSD).length == 0) {
+        await fetchUserData();
     }
-    return name;
+    if (rates == "real" && Object.keys(realRatesFromUSD).length == 0) {
+        await fetchCurrencyRates();
+    }
+    return rates == "real" ? realRatesFromUSD[userCurrency] : skinportRatesFromUSD[userCurrency];
+}
+
+// this endpoint sometimes gets called by Skinport itself and provides the user data
+async function fetchUserData() {
+    await fetch('https://skinport.com/api/data/').then((response) => response.json()).then((data: Skinport.UserData) => {
+        console.debug('[BetterFloat] Received user data from Skinport manually: ', data)
+        cacheSkinportCurrencyRates(data.rates, data.currency);
+    });
+}
+
+// fetches currency rates from exchangerate.host, which is a free API which currently allows CORS
+async function fetchCurrencyRates() {
+    await fetch('https://api.exchangerate.host/latest?base=USD').then((response) => response.json()).then((data) => {
+        console.debug('[BetterFloat] Received currency rates from exchangerate.host: ', data);
+        cacheRealCurrencyRates(data.rates);
+    });
 }
 
 type SIHRelay = {

@@ -228,4 +228,5 @@ input[type='checkbox'] {
     color: rgba(255, 255, 255, 0.7);
     margin: 5px 20px 5px 0px;
     font-weight: 400;
+    overflow-wrap: break-word;
 }

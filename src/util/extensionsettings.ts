@@ -30,6 +30,24 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.showTopButton) {
             extensionSettings.showTopButton = Boolean(data.showTopButton);
         }
+        if (data.spBuffPrice) {
+            extensionSettings.spBuffPrice = Boolean(data.spBuffPrice);
+        }
+        if (data.spCheckBoxes) {
+            extensionSettings.spCheckBoxes = Boolean(data.spCheckBoxes);
+        }
+        if (data.skinportRates) {
+            extensionSettings.skinportRates = data.skinportRates as ExtensionSettings['skinportRates'];
+        }
+        if (data.spPriceReference) {
+            extensionSettings.spPriceReference = data.spPriceReference as ExtensionSettings['spPriceReference'];
+        }
+        if (data.spSteamPrice) {
+            extensionSettings.spSteamPrice = Boolean(data.spSteamPrice);
+        }
+        if (data.spBuffDifference) {
+            extensionSettings.spBuffDifference = Boolean(data.spBuffDifference);
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds

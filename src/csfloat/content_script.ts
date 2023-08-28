@@ -9,12 +9,11 @@ import {
     getItemPrice,
     getPriceMapping,
     getWholeHistory,
-    handleSpecialStickerNames,
     loadBuffMapping,
     loadMapping,
 } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { parseHTMLString } from '../util/helperfunctions';
+import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
 
 type PriceResult = {
     price_difference: number;
@@ -253,11 +252,11 @@ async function addItemHistory(container: Element, item: FloatItem) {
 
     const highestContainer = document.createElement('span');
     highestContainer.classList.add('betterfloat-history-highest');
-    highestContainer.textContent = 'High: $' + itemHistory.highest.avg_price;
+    highestContainer.textContent = 'High: $' + itemHistory.highest.avg_price.toFixed(2);
 
     const lowestContainer = document.createElement('span');
     lowestContainer.classList.add('betterfloat-history-lowest');
-    lowestContainer.textContent = 'Low: $' + itemHistory.lowest.avg_price;
+    lowestContainer.textContent = 'Low: $' + itemHistory.lowest.avg_price.toFixed(2);
 
     const divider = document.createElement('span');
     divider.textContent = ' | ';
@@ -557,7 +556,7 @@ function createTopButton() {
     topButton.classList.add('betterfloat-top-button');
     topButton.setAttribute(
         'style',
-        'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none'
+        'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none; transition: visibility 0s, opacity 0.5s linear;'
     );
     let topButtonIcon = document.createElement('img');
     topButtonIcon.setAttribute('src', runtimePublicURL + '/chevron-up-solid.svg');

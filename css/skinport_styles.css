@@ -1,0 +1,32 @@
+.betterfloat-buff-tooltip {
+	/* Positioning the tooltip text */
+	position: absolute;
+	z-index: 1;
+    transform: translate(-16%, 40%);
+	visibility: hidden;
+	width: 200px;
+    background-color: #192733;
+	color: #fff;
+	text-align: center;
+    padding: 8px 10px 8px 10px;
+	border-radius: 6px;
+    font-size: 14px;
+
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.betterfloat-buffprice {
+    font-size: 12px;
+}
+
+.betterfloat-buffprice:hover .betterfloat-buff-tooltip {
+	visibility: visible;
+	opacity: 1;
+}
+
+.betterfloat-sale-tag {
+    font-size: 12px!important;
+    margin: 1px;
+}

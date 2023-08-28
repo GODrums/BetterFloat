@@ -26,6 +26,12 @@ export type ExtensionSettings = {
     listingAge: 0 | 1 | 2;
     showBuffDifference: boolean;
     showTopButton: boolean;
+    spBuffPrice: boolean;
+    spCheckBoxes: boolean;
+    spPriceReference: 0 | 1;
+    spSteamPrice: boolean;
+    spBuffDifference: boolean;
+    skinportRates: "skinport" | "real";
 };
 
 export type CSGOTraderMapping = {
@@ -82,6 +88,29 @@ export module Skinport {
         };
         items: Item[];
         message: string | null;
+        requestId: string;
+        success: boolean;
+    }
+
+    export type UserData = {
+        country: string;
+        csrf: string;
+        currency: string; // e.g. "EUR"
+        followings: number[];
+        limits: {
+            kycTier1PayoutMax: number;
+            kycTier2PayoutMax: number;
+            maxOrderValue: number;
+            minOrderValue: number;
+            minPayoutValue: number;
+            minSaleValue: number;
+            saleFeeReduced: number;
+        };
+        locale: string;
+        message: string | null;
+        paymentMethods: string[];
+        rate: 1;
+        rates: { [target: string]: number }; //currency -> target
         requestId: string;
         success: boolean;
     }
