@@ -266,7 +266,7 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
     if (typeof helperPrice == 'number') {
         priceListing = helperPrice;
         priceOrder = helperPrice;
-    } else {
+    } else if (priceMapping[buff_name]) {
         if (item.style != '' && item.style != 'Vanilla') {
             priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
             priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];

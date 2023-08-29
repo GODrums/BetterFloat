@@ -5,16 +5,16 @@ $(function () {
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
 
     // init loading of content
-    $('.MainContent').load('settings.html', function () {
+    $('.MainContent').load('csfloat.html', function () {
         //Loading complete
-        loadSettings('settings.html');
+        loadSettings('csfloat.html');
         addListeners();
     });
 
     //add listeners to all tabs
     $('.tabItem').on('click', function (e) {
         e.preventDefault();
-        let url = e.currentTarget.getAttribute('data-page') ?? 'settings.html';
+        let url = e.currentTarget.getAttribute('data-page') ?? 'csfloat.html';
         $('.MainContent').load(url, function () {
             //Loading complete
             loadSettings(url);
@@ -173,7 +173,7 @@ function loadForSkinport() {
 }
 
 function loadSettings(url: string) {
-    if (url == 'settings.html') {
+    if (url == 'csfloat.html') {
         loadForSettings();
     } else if (url == 'skinport.html') {
         loadForSkinport();

@@ -100,10 +100,16 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
             };
         }
     }
+    if (priceMapping[buff_name]) {
+        return {
+            starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'] ?? 0,
+            highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'] ?? 0,
+        };
+    }
     return {
-        starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'] ?? 0,
-        highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'] ?? 0,
-    };
+        starting_at: 0,
+        highest_order: 0,
+    }
 }
 
 export async function getUserCurrencyRate(rates: "skinport" | "real" = "real") {

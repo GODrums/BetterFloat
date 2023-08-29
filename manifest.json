@@ -36,7 +36,7 @@
 	 },
 	"permissions": ["storage"],
     "web_accessible_resources": [ {
-       "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*" ],
+       "matches": [ "https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*"],
        "resources": [ "public/buff_favicon.png", "public/clock-solid.svg", "public/chevron-up-solid.svg", "js/inject.js"]
     } ]
 }
