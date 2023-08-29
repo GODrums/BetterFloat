@@ -1,0 +1,52 @@
+<div class="Group">
+    <div class="GroupHeader">FEATURES</div>
+    <div class="GroupElement">
+        <p class="ElementText">Buff Price Calculations</p>
+        <input type="checkbox" id="SkinportBuffPrice" name="spBuffPrice" value="spBuffPrice" checked />
+    </div>
+    <div class="GroupElement">
+        <p class="ElementText">Auto-Checkboxes</p>
+        <input type="checkbox" id="SkinportCheckboxes" name="spCheckBoxes" value="spCheckBoxes" checked />
+    </div>
+</div>
+<div class="Group">
+    <div class="GroupHeader">PRICES</div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Buff Price Reference</p>
+            <select class="ElementDropdownMenu" id="SkinportPriceReference" name="spPriceReference">
+                <option value="0">Bid</option>
+                <option value="1" selected>Ask</option>
+            </select>
+        </div>
+        <p class="ElementDescription">
+            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default)
+        </p>
+    </div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Currency Conversion</p>
+            <select class="ElementDropdownMenu" id="SkinportCurrencyConversion" name="skinportRates">
+                <option value="real" selected>Real</option>
+                <option value="skinport">Skinport</option>
+            </select>
+        </div>
+        <p class="ElementDescription">
+            Sets the reference rates for the currency conversion (USD -> X). Skinport will nevertheless always charge you in your local currency.. <br />Real refers to the buff-like currency conversion rates. (Default) <br />Skinport refers to the rates used by Skinport, which can vary from Buff rates.
+        </p>
+    </div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Show Steam Price</p>
+            <input type="checkbox" id="SkinportSteamPrice" name="spSteamPrice" value="spSteamPrice" />
+        </div>
+        <p class="ElementDescription">Show the Steam price of an item in addition to the Buff price.</p>
+    </div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Show Buff Price Difference</p>
+            <input type="checkbox" id="SkinportInputBuffDifference" name="spBuffDifference" value="spBuffDifference" checked/>
+        </div>
+        <p class="ElementDescription">This settings allows to switch between displaying the difference to the Buff price in absolute units and the original difference to the Steam price in percentage.</p>
+    </div>
+</div>

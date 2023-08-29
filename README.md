@@ -18,8 +18,15 @@
 
 ## Highlights
 
+Currently supports CSFloat.com and Skinport.com, but more sites are coming soon!
+
 -   Display Buff prices (buy order + listings) for every item
--   Auto-refresh in the "Newest Items"
+-   Price difference to Buff at first glance next to the price tag
+-   Accurate sticker price calculation (%sp) with gradual coloring
+-   CSFloat: Auto-refresh in the "Newest Items"
+-   CSFloat: See the listing age of an item
+-   Skinport: Automatically check the checkboxes in the cart for faster buying
+-   Skinport: Multiple currency conversion options
 -   More coming soon!
 
 ## Services
@@ -92,6 +99,6 @@ Please follow the [conventional commits](https://www.conventionalcommits.org/en/
 
 ## Disclaimer
 
-BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat in any way. If you are a legal representative of CSFloat and would like this project to be taken down, please contact me.
+BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc. or Skinport GmbH in any way. If you are a legal representative of CSFloat or Skinport and would like this project to be taken down, please contact me directly.
 
-Built with 🖤 in Munich
+Built with 🖤 in Munich.
