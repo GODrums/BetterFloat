@@ -103,10 +103,22 @@ async function adjustItemPage(container: Element) {
     let linkSteam = (Array.from(links).find((el) => el.innerHTML.includes('Steam')) as HTMLAnchorElement | null)?.href;
     let linkInspect = (Array.from(links).find((el) => el.innerHTML.includes('Inspect')) as HTMLAnchorElement | null)?.href;
     if (linkInspect) {
-        newGroup.insertAdjacentHTML('beforeend', `<button onclick="window.open('${linkInspect}');" type="button"><span>Inspect</span></button>`);
+        let inspectButton = document.createElement('button');
+        inspectButton.onclick = () => {
+            window.open(linkInspect);
+        };
+        inspectButton.type = 'button';
+        inspectButton.textContent = 'Inspect';
+        newGroup.appendChild(inspectButton);
     }
     if (linkSteam) {
-        newGroup.insertAdjacentHTML('beforeend', `<button onclick="window.open('${linkSteam}');" type="button"><span>Steam</span></button>`);
+        let steamButton = document.createElement('button');
+        steamButton.onclick = () => {
+            window.open(linkSteam, '_blank');
+        };
+        steamButton.type = 'button';
+        steamButton.textContent = 'Steam';
+        newGroup.appendChild(steamButton);
     }
 
     let item = getFloatItem(container, itemSelectors.page);
@@ -115,7 +127,14 @@ async function adjustItemPage(container: Element) {
     let { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buffid = await getBuffMapping(buff_name);
     let buffLink = buffid > 0 ? `https://buff.163.com/goods/${buffid}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-    newGroup.insertAdjacentHTML('beforeend', `<button onclick="window.open('${buffLink}','_blank');" type="button"><span>Buff</span></button>`);
+
+    let buffButton = document.createElement('button');
+    buffButton.onclick = () => {
+        window.open(buffLink, '_blank');
+    };
+    buffButton.type = 'button';
+    buffButton.textContent = 'Buff';
+    newGroup.appendChild(buffButton);
     btnGroup.after(newGroup);
 
     let tooltipLink = <HTMLElement>container.querySelector('.ItemPage-value .Tooltip-link');
