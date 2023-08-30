@@ -25,6 +25,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
             spCheckBoxes: true,
             spPriceReference: 1,
             spBuffDifference: true,
+            spBuffLink: "action",
+            spFloatColoring: true,
         });
     } else if (details.reason == 'update') {
         var thisVersion = chrome.runtime.getManifest().version;

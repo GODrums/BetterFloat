@@ -48,6 +48,12 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.spBuffDifference) {
             extensionSettings.spBuffDifference = Boolean(data.spBuffDifference);
         }
+        if (data.spBuffLink) {
+            extensionSettings.spBuffLink = data.spBuffLink as ExtensionSettings['spBuffLink'];
+        }
+        if (data.spFloatColoring) {
+            extensionSettings.spFloatColoring = Boolean(data.spFloatColoring);
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds

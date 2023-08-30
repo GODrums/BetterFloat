@@ -4,17 +4,16 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
-//let priceMapping: { [name: string]: any } = {};
 let priceMapping: CSGOTraderMapping = {};
-// cached items from api
+// csfloat: cached items from api
 let cachedItems: ListingData[] = [];
-// history for one item
+// csfloat: history for one item
 let cachedHistory: HistoryData[] = [];
 // cached steaminventoryhelper responses
 let cachedInventoryHelperResponses: { [buff_name: string]: SteaminventoryhelperResponse | null } = {};
-// cached currency rates by Skinport: USD -> X
+// skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
-// cached currency rates by exchangerate.host: USD -> X
+// skinport: cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 let userCurrency = '';
 

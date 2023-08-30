@@ -135,10 +135,9 @@ function loadForSettings() {
 function loadForSkinport() {
     let buffPriceElement = <HTMLInputElement>document.getElementById('SkinportBuffPrice');
     let checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
-    let skinportRatesElement = <HTMLSelectElement>document.getElementById('SkinportCurrencyConversion');
-    let priceReferenceElement = <HTMLSelectElement>document.getElementById('SkinportPriceReference');
     let skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     let skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
+    let skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
     
 
     chrome.storage.local.get((data) => {
@@ -154,10 +153,10 @@ function loadForSkinport() {
             checkBoxesElement.checked = false;
         }
         if (data.skinportRates) {
-            skinportRatesElement.value = data.skinportRates;
+            (<HTMLSelectElement>document.getElementById('SkinportCurrencyConversion')).value = data.skinportRates;
         }
         if (data.spPriceReference) {
-            priceReferenceElement.value = data.spPriceReference;
+            (<HTMLSelectElement>document.getElementById('SkinportPriceReference')).value = data.spPriceReference;
         }
         if (data.spSteamPrice) {
             skinportSteamPrice.checked = true;
@@ -168,6 +167,14 @@ function loadForSkinport() {
             skinportInputBuffDifference.checked = true;
         } else {
             skinportInputBuffDifference.checked = false;
+        }
+        if (data.spBuffLink) {
+            (<HTMLInputElement>document.getElementById('SkinportBuffLink')).value = data.spBuffLink;
+        }
+        if (data.spFloatColoring) {
+            skinportFloatColoring.checked = true;
+        } else {
+            skinportFloatColoring.checked = false;
         }
     });
 }

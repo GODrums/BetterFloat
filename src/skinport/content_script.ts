@@ -35,7 +35,17 @@ async function init() {
 async function firstLaunch() {
     let url = window.location.href;
     console.log('[BetterFloat] First launch on Skinport, url: ', url);
-    if (url.includes('/market')) {
+    if (url == 'https://skinport.com/') {
+        let popularLists = document.querySelectorAll('.PopularList');
+        for (let list of popularLists) {
+            if (list.querySelector('h3')?.textContent?.includes('CS:GO')) {
+                let popularItems = list.querySelectorAll('.PopularList-item');
+                for (let item of popularItems) {
+                    await adjustItem(item);
+                }
+            }
+        }
+    } else if (url.includes('/market')) {
         let catalogItems = document.querySelectorAll('.CatalogPage-item');
         for (let item of catalogItems) {
             await adjustItem(item);
@@ -49,6 +59,11 @@ async function firstLaunch() {
         let itemPage = document.querySelectorAll('.ItemPage');
         for (let item of itemPage) {
             await adjustItemPage(item);
+        }
+    } else if (url.includes('/myitems/')) {
+        let inventoryItems = document.querySelectorAll('.InventoryPage-item');
+        for (let item of inventoryItems) {
+            await adjustItem(item);
         }
     }
 }
@@ -65,12 +80,20 @@ async function applyMutation() {
                     // console.log('[BetterFloat] Mutation observer triggered, added node:', addedNode);
 
                     if (addedNode.className) {
-                        if (addedNode.className.toString().includes('CatalogPage-item')) {
+                        let className = addedNode.className.toString();
+                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item')) {
                             await adjustItem(addedNode);
-                        } else if (addedNode.className.toString().includes('Cart-container')) {
+                        } else if (className.includes('Cart-container')) {
                             await adjustCart(addedNode);
-                        } else if (addedNode.className.toString() == 'ItemPage') {
+                        } else if (className == 'ItemPage') {
                             await adjustItemPage(addedNode);
+                        } else if (className.includes('PopularList')) {
+                            if (addedNode.querySelector('h3')?.textContent?.includes('CS:GO')) {
+                                let popularItems = addedNode.querySelectorAll('.PopularList-item');
+                                for (let item of popularItems) {
+                                    await adjustItem(item);
+                                }
+                            }
                         }
                     }
                     // item popout
@@ -137,11 +160,21 @@ async function adjustItemPage(container: Element) {
     newGroup.appendChild(buffButton);
     btnGroup.after(newGroup);
 
-    let tooltipLink = <HTMLElement>container.querySelector('.ItemPage-value .Tooltip-link');
+    let tooltipLink = container.querySelector('.ItemPage-value .Tooltip-link');
+    if (!tooltipLink) return;
     const currencySymbol = tooltipLink.textContent?.charAt(0);
     let suggestedContainer = container.querySelector('.ItemPage-suggested');
     if (suggestedContainer) {
         generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', true);
+    }
+    // HERE
+    const buffContainer = container.querySelector('.betterfloat-buff-container');
+    if (buffContainer) {
+        (<HTMLElement>buffContainer).onclick = (e: Event) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open(buffLink, '_blank');
+        };
     }
 
     const difference = item.price - (extensionSettings.spPriceReference == 0 ? priceOrder : priceListing);
@@ -153,12 +186,15 @@ async function adjustItemPage(container: Element) {
         newContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
         newContainer.style.transform = 'skewX(-15deg)';
         newContainer.style.borderRadius = '3px';
+        newContainer.style.paddingTop = '2px';
         saleTag.style.margin = '5px';
         saleTag.style.fontWeight = '700';
         saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         newContainer.appendChild(saleTag);
         priceContainer.appendChild(newContainer);
     }
+    
+    await addFloatColoring(container, item);
 }
 
 async function adjustCart(container: Element) {
@@ -175,12 +211,31 @@ async function adjustItem(container: Element) {
     const item = getFloatItem(container, itemSelectors.preview);
     if (!item) return;
     await addBuffPrice(item, container);
+    if (extensionSettings.spFloatColoring) {
+        await addFloatColoring(container, item);
+    }
     // if (extensionSettings.stickerPrices) {
     //     await addStickerInfo(item, container, cachedItem, priceResult);
     // }
-    // if (extensionSettings.listingAge > 0) {
-    //     await addListingAge(item, container, cachedItem);
-    // }
+}
+
+async function addFloatColoring(container: Element, item: Skinport.Listing) {
+    let floatContainer = container.querySelector('.WearBar-value');
+    if (!floatContainer) return;
+    let color = '';
+    let w = item.wear;
+    if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
+        if (w === 0) {
+            color = 'springgreen';
+        }
+        color = 'turquoise';
+    } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
+        if (w === 0.999) {
+            color = 'red';
+        }
+        color = 'indianred';
+    }
+    (<HTMLElement>floatContainer).style.color = color;
 }
 
 const itemSelectors = {
@@ -319,12 +374,10 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
 async function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage: boolean = false) {
     container.className += ' betterfloat-buffprice';
     let buffContainer = document.createElement('div');
+    buffContainer.className = 'betterfloat-buff-container';
     buffContainer.style.display = 'flex';
     buffContainer.style.marginTop = '5px';
     buffContainer.style.alignItems = 'center';
-    if (!isItemPage) {
-        buffContainer.style.justifyContent = 'center';
-    }
     let buffImage = document.createElement('img');
     buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
@@ -365,28 +418,36 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
     let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
 
-    const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-    if (presentationDiv) {
-        let buffLink = document.createElement('a');
-        buffLink.className = 'ItemPreview-sideAction betterskinport-bufflink';
-        buffLink.style.width = '60px';
-        buffLink.target = '_blank';
-        buffLink.innerText = 'Buff';
-        if (buff_id > 0) {
-            buffLink.href = `https://buff.163.com/goods/${buff_id}`;
-        } else {
-            buffLink.href = `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-        }
-        if (!presentationDiv.querySelector('.betterskinport-bufflink')) {
-            presentationDiv.after(buffLink);
-        }
-    }
-
     let tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
     const currencySymbol = tooltipLink.textContent?.charAt(0);
     let priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+    }
+
+    const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+    if (extensionSettings.spBuffLink == 'action') {
+        const presentationDiv = container.querySelector('.ItemPreview-mainAction');
+        if (presentationDiv) {
+            let buffLink = document.createElement('a');
+            buffLink.className = 'ItemPreview-sideAction betterskinport-bufflink';
+            buffLink.style.width = '60px';
+            buffLink.target = '_blank';
+            buffLink.innerText = 'Buff';
+            buffLink.href = buffHref;
+            if (!presentationDiv.querySelector('.betterskinport-bufflink')) {
+                presentationDiv.after(buffLink);
+            }
+        }
+    } else {
+        const buffContainer = container.querySelector('.betterfloat-buff-container');
+        if (buffContainer) {
+            (<HTMLElement>buffContainer).onclick = (e: Event) => {
+                e.stopPropagation();
+                e.preventDefault();
+                window.open(buffHref, '_blank');
+            };
+        }
     }
 
     if (extensionSettings.spBuffDifference) {
@@ -416,7 +477,15 @@ function createBuffName(item: Skinport.Listing): string {
     let full_name = `${item.name}`;
     if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
         full_name = item.type + ' | ' + full_name;
-    } else if (item.text.includes('Container') || item.text.includes('Collectible') || item.type.includes('Gift') || item.type.includes('Key') || item.type.includes('Pass')) {
+    } else if (
+        item.text.includes('Container') ||
+        item.text.includes('Collectible') ||
+        item.type.includes('Gift') ||
+        item.type.includes('Key') ||
+        item.type.includes('Pass') ||
+        item.type.includes('Pin') ||
+        item.type.includes('Tool')
+    ) {
         full_name = item.name;
     } else if (item.text.includes('Graffiti')) {
         full_name = 'Sealed Graffiti | ' + item.name;

@@ -213,7 +213,7 @@ async function adjustItem(container: Element, isPopout = false) {
             return;
         }
         if (extensionSettings.stickerPrices) {
-            await addStickerInfo(item, container, cachedItem, priceResult);
+            await addStickerInfo(container, cachedItem, priceResult.price_difference);
         }
         if (extensionSettings.listingAge > 0) {
             await addListingAge(item, container, cachedItem);
@@ -341,7 +341,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
     }
 }
 
-async function addStickerInfo(item: FloatItem, container: Element, cachedItem: ListingData, priceResult: PriceResult) {
+async function addStickerInfo(container: Element, cachedItem: ListingData, price_difference: number) {
     let stickerDiv = container.querySelector('.sticker-container')?.children[0];
     let stickers = cachedItem.item.stickers;
     if (!stickers || cachedItem.item?.quality == 12) {
@@ -349,7 +349,7 @@ async function addStickerInfo(item: FloatItem, container: Element, cachedItem: L
     }
     let stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
     let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
-    let spPercentage = priceResult.price_difference / priceSum;
+    let spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
     if (stickerDiv && priceSum > 1) {

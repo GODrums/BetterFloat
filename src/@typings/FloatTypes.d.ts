@@ -32,6 +32,8 @@ export type ExtensionSettings = {
     spSteamPrice: boolean;
     spBuffDifference: boolean;
     skinportRates: "skinport" | "real";
+    spBuffLink: "action" | "text";
+    spFloatColoring: boolean;
 };
 
 export type CSGOTraderMapping = {

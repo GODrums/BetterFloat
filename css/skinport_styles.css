@@ -10,7 +10,7 @@
 	text-align: center;
     padding: 8px 10px 8px 10px;
 	border-radius: 6px;
-    font-size: 14px;
+    font-size: 12px;
 
 	/* Fade in tooltip */
 	opacity: 0;
@@ -19,6 +19,7 @@
 
 .betterfloat-buffprice {
     font-size: 12px;
+	cursor: pointer;
 }
 
 .betterfloat-buffprice:hover .betterfloat-buff-tooltip {
