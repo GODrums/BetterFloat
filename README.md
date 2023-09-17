@@ -56,7 +56,9 @@ In some cases, Firefox does not grant extensions necessary permissions automatic
 1. Open the Add-ons Manager page: [about:addons](about:addons)
 2. Click on the BetterFloat extension -> "Permissions"
 3. Check all of the required AND optional "Access your data for ..." checkboxes
-4. Reload the CSFloat page
+4. Reload the extension by dis- and reenabling it
+5. Adjust the extension settings to your liking in the extension popup
+6. Refresh the CSFloat page
 
 ## Development
 
