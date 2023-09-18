@@ -13,7 +13,7 @@ import {
     loadMapping,
 } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
+import { handleSpecialStickerNames, parseHTMLString, calculateRelativePercentageDifference } from '../util/helperfunctions';
 
 type PriceResult = {
     price_difference: number;
@@ -508,8 +508,10 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
             }
         }
     }
-
-    const difference = item.price - (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
+    
+    const priceFromReference = (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
+    const difference = item.price - priceFromReference;
+    const percentageDifference = calculateRelativePercentageDifference(priceFromReference, item.price);
     if (extensionSettings.showBuffDifference) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
@@ -519,7 +521,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         if (item.price !== 0) {
             const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
                 difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2)
-            } </span>`;
+            } (${percentageDifference}%) </span>`;
             parseHTMLString(buffPriceHTML, priceContainer);
         }
     }
