@@ -13,7 +13,7 @@ import {
     loadMapping,
 } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames, parseHTMLString, calculateRelativePercentageDifference } from '../util/helperfunctions';
+import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
 
 type PriceResult = {
     price_difference: number;
@@ -511,7 +511,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     
     const priceFromReference = (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
     const difference = item.price - priceFromReference;
-    const percentageDifference = calculateRelativePercentageDifference(priceFromReference, item.price);
+    const percentageDifference = ((item.price/priceFromReference)*100).toFixed(2);
     if (extensionSettings.showBuffDifference) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
