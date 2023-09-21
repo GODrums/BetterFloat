@@ -2,16 +2,7 @@
 
 import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from '../@typings/FloatTypes';
 import { activateHandler } from '../eventhandler';
-import {
-    getBuffMapping,
-    getInventoryHelperPrice,
-    getFirstCachedItem,
-    getItemPrice,
-    getPriceMapping,
-    getWholeHistory,
-    loadBuffMapping,
-    loadMapping,
-} from '../mappinghandler';
+import { getBuffMapping, getInventoryHelperPrice, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
 
@@ -36,7 +27,6 @@ async function init() {
     if (extensionSettings.showTopButton) {
         createTopButton();
     }
-
 
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
@@ -508,10 +498,10 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
             }
         }
     }
-    
-    const priceFromReference = (extensionSettings.priceReference == 0 ? priceOrder : priceListing);
+
+    const priceFromReference = extensionSettings.priceReference == 0 ? priceOrder : priceListing;
     const difference = item.price - priceFromReference;
-    const percentageDifference = ((item.price/priceFromReference)*100).toFixed(2);
+    const percentageDifference = ((item.price / priceFromReference) * 100).toFixed(2);
     if (extensionSettings.showBuffDifference) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
@@ -520,8 +510,8 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         }
         if (item.price !== 0) {
             const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
-                difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2)
-            } (${percentageDifference}%) </span>`;
+                priceFromReference > 0 ? (difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2) + ' (' + percentageDifference + '%)') : 'N/A'
+            }  </span>`;
             parseHTMLString(buffPriceHTML, priceContainer);
         }
     }
@@ -591,4 +581,3 @@ let lastRefresh = 0;
 let isObserverActive = false;
 
 init();
-
