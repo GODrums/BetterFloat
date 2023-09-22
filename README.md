@@ -11,6 +11,14 @@
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
 
+## Community / Support
+
+We use the CS Market Forum for discussions and support. BetterFloat owns the thread `#BetterFloat` in `#chat`, where you can ask questions, report bugs, or suggest new features.
+
+Click the badge below to join the server:
+
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/8Q9QV5QZ)
+
 ## Downloads
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=Chrome%20Web%20Store)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
@@ -89,6 +97,12 @@ Or as developer version in watch mode:
 npm run watch
 ```
 In Visual Studio Code the watch mode can also be started by pressing `CTRL + Shift + B`.
+
+When working with multiple version, the build process may benefit from clean builds. This can be achieved by running the following command before building:
+
+```bash
+npm run clean
+```
 
 ### Loading
 
