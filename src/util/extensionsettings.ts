@@ -27,6 +27,9 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.showBuffDifference) {
             extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
         }
+        if(data.showBuffPercentageDifference){
+            extensionSettings.showBuffPercentageDifference = Boolean(data.showBuffPercentageDifference);
+        }
         if (data.showTopButton) {
             extensionSettings.showTopButton = Boolean(data.showTopButton);
         }

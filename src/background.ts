@@ -18,6 +18,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             showSteamPrice: false,
             stickerPrices: true,
             showBuffDifference: true,
+            showBuffPercentageDifference: true,
             listingAge: 0,
             showTopButton: true,
             skinportRates: 'real',

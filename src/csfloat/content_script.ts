@@ -509,9 +509,26 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
             priceContainer.removeChild(saleTag);
         }
         if (item.price !== 0) {
-            const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${difference == 0 ? 'slategrey;' : difference < 0 ? 'green;' : '#ce0000;'}"> ${
-                priceFromReference > 0 ? (difference == 0 ? '-$0' : (difference > 0 ? '+$' : '-$') + Math.abs(difference).toFixed(2) + ' (' + percentageDifference + '%)') : 'N/A'
-            }  </span>`;
+            let backgroundColor;
+            let differenceSymbol;
+            let buffPriceHTML;
+            if (priceFromReference > 0) {
+                if (difference < 0) {
+                    backgroundColor = 'green';
+                    differenceSymbol = '-$';
+                } else if (difference > 0) {
+                    backgroundColor = '#ce0000';
+                    differenceSymbol = '+$';
+                } else {
+                    backgroundColor = 'slategrey';
+                    differenceSymbol = '-$';
+                }
+                buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};">${differenceSymbol}${Math.abs(difference).toFixed(2)} ${
+                    extensionSettings.showBuffPercentageDifference ? ' (' + percentageDifference + '%)' : ''
+                }</span>`;
+            } else {
+                buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: #ce0000;">N/A</span>`;
+            }
             parseHTMLString(buffPriceHTML, priceContainer);
         }
     }
