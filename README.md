@@ -17,7 +17,7 @@ We use the CS Market Forum for discussions and support. BetterFloat owns the thr
 
 Click the badge below to join the server:
 
-[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/8Q9QV5QZ)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/csgomarket)
 
 ## Downloads
 
