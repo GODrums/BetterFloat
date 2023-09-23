@@ -25,7 +25,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             spCheckBoxes: true,
             spPriceReference: 1,
             spBuffDifference: true,
-            spBuffLink: "action",
+            spBuffLink: 'action',
             spFloatColoring: true,
         });
     } else if (details.reason == 'update') {
@@ -36,17 +36,25 @@ chrome.runtime.onInstalled.addListener(function (details) {
 
 // update every 8 hours
 if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
-    fetch('https://prices.csgotrader.app/latest/prices_v6.json')
-        .then((response) => response.json())
-        .then((data) => {
-            chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
-                console.log('Prices updated. Last update: ' + lastUpdate + '. Current time: ' + Date.now());
-            });
-        })
-        .catch((err) => console.error(err));
+    refreshPrices();
 
     lastUpdate = Date.now();
     chrome.storage.local.set({ lastUpdate: lastUpdate });
+}
+
+export async function refreshPrices() {
+    return await fetch('https://prices.csgotrader.app/latest/prices_v6.json')
+        .then((response) => response.json())
+        .then(async (data) => {
+            //set cookie and wait for finish
+            return await new Promise<Boolean>((resolve) => {
+                chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
+                    console.log('Prices updated. Last update: ' + lastUpdate + '. Current time: ' + Date.now());
+                    resolve(true);
+                });
+            });
+        })
+        .catch((err) => console.error(err));
 }
 
 // Idea from: https://stackoverflow.com/a/53990245

@@ -224,9 +224,49 @@ input[type='checkbox'] {
     margin-bottom: 0px;
 }
 
-.VersionText {    
+.VersionText {
     color: rgba(255, 255, 255, 0.7);
     margin: 5px 20px 5px 0px;
     font-weight: 400;
     overflow-wrap: break-word;
+}
+
+.AboutGroup {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.AboutHeader {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 13px;
+}
+
+.AboutText {
+    color: white;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.AboutBottomGroup {
+    position: absolute;
+    bottom: 70px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+
+#priceRefreshButton {
+    background: whitesmoke;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border: 0;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 10px;
+    display: block;
+    .icon {
+        fill: #323232;
+    }
 }
