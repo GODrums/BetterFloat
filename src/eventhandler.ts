@@ -1,5 +1,5 @@
 import { EventData, HistoryData, ListingData, SellerData, Skinport } from './@typings/FloatTypes';
-import { cacheHistory, cacheItems, cacheSkinportCurrencyRates } from './mappinghandler';
+import { cacheHistory, cacheItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
 
 type StallData = {
     listings: ListingData[];
@@ -15,6 +15,21 @@ export function activateHandler() {
             processCSFloatEvent(eventData);
         } else if (window.location.href.includes('skinport.com')) {
             processSkinportEvent(eventData);
+        }
+    });
+
+    //listener for messages from background
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.message == 'refreshPrices') {
+            loadMapping().then((value) => {
+                if (value) {
+                    console.log('[BetterFloat] Prices refreshed manually via popup.');
+                    sendResponse({ message: 'Prices fetched successfully.' });
+                } else {
+                    console.log('[BetterFloat] Error refreshing prices manually.');
+                    sendResponse({ message: 'Error while fetching prices.' });
+                }
+            });
         }
     });
 }

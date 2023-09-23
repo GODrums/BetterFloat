@@ -1,3 +1,5 @@
+import { refreshPrices } from './background';
+
 let permissionsButton = <HTMLButtonElement>document.getElementsByClassName('PermissionsButton')[0];
 
 //executes on document.ready
@@ -144,7 +146,6 @@ function loadForSkinport() {
     let skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     let skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
     let skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
-    
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -185,10 +186,35 @@ function loadForSkinport() {
     });
 }
 
+function loadForAbout() {
+    (<HTMLButtonElement>document.getElementById('priceRefreshButton')).addEventListener('click', () => {
+        if ($('#priceRefreshButton').hasClass('loading') || $('#priceRefreshButton').hasClass('done')) return;
+        $('#priceRefreshButton').addClass('loading');
+        refreshPrices().then(async (result) => {
+            if (!result) return;
+
+            console.log('Manual prices refresh initiated. Sending message to content script.');
+            chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+                var activeTab = tabs[0];
+                chrome.tabs.sendMessage(activeTab.id!, { message: 'refreshPrices' }, (response) => {
+                    if (response) {
+                        console.log(response.message);
+                        $('#priceRefreshButton').removeClass('loading');
+                        $('#priceRefreshButton').addClass('done');
+                        $('.fetchSuccessText').show(100);
+                    }
+                });
+            });
+        });
+    });
+}
+
 function loadSettings(url: string) {
     if (url == 'csfloat.html') {
         loadForSettings();
     } else if (url == 'skinport.html') {
         loadForSkinport();
+    } else if (url == 'about.html') {
+        loadForAbout();
     }
 }
