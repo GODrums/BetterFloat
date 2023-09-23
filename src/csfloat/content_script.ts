@@ -512,6 +512,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
             let backgroundColor;
             let differenceSymbol;
             let buffPriceHTML;
+            //evaluates that we have a valid buff price to show the price difference, otherwise show N/A
             if (priceFromReference > 0) {
                 if (difference < 0) {
                     backgroundColor = 'green';
