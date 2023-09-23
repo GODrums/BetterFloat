@@ -89,6 +89,7 @@ function loadForSettings() {
     let stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
     let listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
     let buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
+    let showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
     let topButton = <HTMLInputElement>document.getElementById('InputTopButton');
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -123,6 +124,11 @@ function loadForSettings() {
             buffDifference.checked = true;
         } else {
             buffDifference.checked = false;
+        }
+        if (data.showBuffPercentageDifference) {
+            showBuffPercentageDifference.checked = true;
+        } else {
+            showBuffPercentageDifference.checked = false;
         }
         if (data.showTopButton) {
             topButton.checked = true;

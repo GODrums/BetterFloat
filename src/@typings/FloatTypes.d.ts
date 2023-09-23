@@ -25,6 +25,7 @@ export type ExtensionSettings = {
     showSteamPrice: boolean;
     listingAge: 0 | 1 | 2;
     showBuffDifference: boolean;
+    showBuffPercentageDifference: boolean;
     showTopButton: boolean;
     spBuffPrice: boolean;
     spCheckBoxes: boolean;
