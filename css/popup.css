@@ -257,7 +257,7 @@ input[type='checkbox'] {
 }
 
 #priceRefreshButton {
-    background: whitesmoke;
+    background: var(--color-accent, #ff5722);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
     padding: 8px;
     border: 0;
@@ -266,7 +266,42 @@ input[type='checkbox'] {
     height: 40px;
     margin: 0 auto 10px;
     display: block;
-    .icon {
-        fill: #323232;
+    .tab-icon {
+        filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(209deg) brightness(102%) contrast(99%);
+    }
+    &.done{
+        background: #5ac938;
+        cursor: pointer;
+        .icon {
+            fill: #fff;
+        }
+    }
+    &.loading {
+		background: #def4d7;
+		cursor: wait;
+		.icon {
+			-webkit-animation: rotating 1.2s linear infinite;
+			-moz-animation: rotating 1.2s linear infinite;
+			-ms-animation: rotating 1.2s linear infinite;
+			-o-animation: rotating 1.2s linear infinite;
+			animation: rotating 1.2s linear infinite;
+		}
+	}
+}
+
+@keyframes rotating {
+    from {
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }

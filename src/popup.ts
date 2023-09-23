@@ -182,6 +182,8 @@ function loadForSkinport() {
 
 function loadForAbout() {
     (<HTMLButtonElement>document.getElementById('priceRefreshButton')).addEventListener('click', () => {
+        if ($('#priceRefreshButton').hasClass('loading') || $('#priceRefreshButton').hasClass('done')) return;
+        $('#priceRefreshButton').addClass('loading');
         refreshPrices().then(async (result) => {
             if (!result) return;
 
@@ -189,14 +191,14 @@ function loadForAbout() {
             chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
                 var activeTab = tabs[0];
                 chrome.tabs.sendMessage(activeTab.id!, { message: 'refreshPrices' }, (response) => {
-                    if (response)
+                    if (response) {
                         console.log(response.message);
+                        $('#priceRefreshButton').removeClass('loading');
+                        $('#priceRefreshButton').addClass('done');
+                        $('.fetchSuccessText').show(100);
+                    }
                 });
             });
-            // chrome.runtime.sendMessage({ message: 'refreshPrices' }, (response) => {
-            //     if (response)
-            //         console.log(response.message);
-            // });
         });
     });
 }
