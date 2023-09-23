@@ -501,35 +501,33 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
 
     const priceFromReference = extensionSettings.priceReference == 0 ? priceOrder : priceListing;
     const difference = item.price - priceFromReference;
-    const percentageDifference = ((item.price / priceFromReference) * 100).toFixed(2);
     if (extensionSettings.showBuffDifference) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
         if (saleTag) {
             priceContainer.removeChild(saleTag);
         }
-        if (item.price !== 0) {
+        //evaluates that we have a valid buff price to show the price difference
+        if (item.price !== 0 && priceFromReference > 0) {
             let backgroundColor;
             let differenceSymbol;
-            let buffPriceHTML;
-            //evaluates that we have a valid buff price to show the price difference, otherwise show N/A
-            if (priceFromReference > 0) {
-                if (difference < 0) {
-                    backgroundColor = 'green';
-                    differenceSymbol = '-$';
-                } else if (difference > 0) {
-                    backgroundColor = '#ce0000';
-                    differenceSymbol = '+$';
-                } else {
-                    backgroundColor = 'slategrey';
-                    differenceSymbol = '-$';
-                }
-                buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};">${differenceSymbol}${Math.abs(difference).toFixed(2)} ${
-                    extensionSettings.showBuffPercentageDifference ? ' (' + percentageDifference + '%)' : ''
-                }</span>`;
+            if (difference < 0) {
+                backgroundColor = 'green';
+                differenceSymbol = '-$';
+            } else if (difference > 0) {
+                backgroundColor = '#ce0000';
+                differenceSymbol = '+$';
             } else {
-                buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: #ce0000;">N/A</span>`;
+                backgroundColor = 'slategrey';
+                differenceSymbol = '-$';
             }
+
+            const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};">${differenceSymbol}${Math.abs(difference).toFixed(2)} ${
+                extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''
+            }</span>`;
+            if (item.price > 1999 && extensionSettings.showBuffPercentageDifference)
+                parseHTMLString('<br>', priceContainer);
+
             parseHTMLString(buffPriceHTML, priceContainer);
         }
     }
