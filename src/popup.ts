@@ -16,6 +16,7 @@ $(function () {
     //add listeners to all tabs
     $('.tabItem').on('click', function (e) {
         e.preventDefault();
+        if ($(this).hasClass('active')) return;
         let url = e.currentTarget.getAttribute('data-page') ?? 'csfloat.html';
         $('.MainContent').load(url, function () {
             //Loading complete
