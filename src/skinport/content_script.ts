@@ -17,6 +17,12 @@ async function init() {
 
     extensionSettings = await initSettings();
 
+    if (extensionSettings.spBuffPrice && document.getElementsByClassName("CountryFlag--GB").length == 0) {
+        console.log('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
+        createLanguagePopup();
+        return;
+    }
+
     await loadMapping();
     await loadBuffMapping();
 
@@ -66,6 +72,59 @@ async function firstLaunch() {
             await adjustItem(item);
         }
     }
+}
+
+function createLanguagePopup() {
+    let popupOuter = document.createElement('div');
+    popupOuter.className = 'betterfloat-popup-outer';
+    popupOuter.style.backdropFilter = 'blur(2px)';
+    popupOuter.style.fontSize = '16px';
+    let popup = document.createElement('div');
+    popup.className = 'betterfloat-popup-language';
+    let popupHeaderDiv = document.createElement('div');
+    popupHeaderDiv.style.display = 'flex';
+    popupHeaderDiv.style.alignItems = 'center';
+    popupHeaderDiv.style.justifyContent = 'space-between';
+    popupHeaderDiv.style.margin = '0 10px';
+    let warningIcon = document.createElement('img');
+    warningIcon.src = runtimePublicURL + '/triangle-exclamation-solid.svg';
+    warningIcon.style.width = '32px';
+    warningIcon.style.height = '32px';
+    warningIcon.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%)';
+    let popupHeaderText = document.createElement('h2');
+    popupHeaderText.style.fontWeight = '700';
+    popupHeaderText.textContent = 'Warning: Language not supported';
+    let closeButton = document.createElement('a');
+    closeButton.className = 'close';
+    closeButton.style.marginBottom = '10px';
+    closeButton.textContent = 'x';
+    closeButton.style.cursor = 'pointer';
+    closeButton.onclick = () => {
+        popupOuter.remove();
+    };
+    popupHeaderDiv.appendChild(warningIcon);
+    popupHeaderDiv.appendChild(popupHeaderText);
+    popupHeaderDiv.appendChild(closeButton);
+    let popupText = document.createElement('p');
+    popupText.style.marginTop = '30px';
+    popupText.textContent = 'BetterFloat currently only supports the English language on Skinport. If you prefer to pass on most of BetterFloat\'s features on Skinport, please disable the \'Buff Price Calculation\'-feature in the extension settings.';
+    let buttonDiv = document.createElement('div');
+    buttonDiv.style.display = 'flex';
+    buttonDiv.style.justifyContent = 'center';
+    let changeLanguageButton = document.createElement('button');
+    changeLanguageButton.type = 'button';
+    changeLanguageButton.className = 'betterfloat-language-button';
+    changeLanguageButton.textContent = 'Change language';
+    changeLanguageButton.onclick = () => {
+        (<HTMLButtonElement>document.querySelector(".Dropdown-button")).click();
+        (<HTMLButtonElement>document.querySelector(".Dropdown-dropDownItem")).click();
+    };
+    buttonDiv.appendChild(changeLanguageButton);
+    popup.appendChild(popupHeaderDiv);
+    popup.appendChild(popupText);
+    popup.appendChild(buttonDiv);
+    popupOuter.appendChild(popup);
+    document.body.appendChild(popupOuter);
 }
 
 async function applyMutation() {

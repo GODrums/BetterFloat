@@ -124,7 +124,7 @@ export async function getUserCurrencyRate(rates: "skinport" | "real" = "real") {
 // this endpoint sometimes gets called by Skinport itself and provides the user data
 async function fetchUserData() {
     await fetch('https://skinport.com/api/data/').then((response) => response.json()).then((data: Skinport.UserData) => {
-        console.debug('[BetterFloat] Received user data from Skinport manually: ', data)
+        console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
         cacheSkinportCurrencyRates(data.rates, data.currency);
     });
 }

@@ -1,7 +1,7 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-	"version": "1.5.1",
+	"version": "1.5.2",
     "description": "Enhance your experience on CSFloat.com and Skinport.com",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*", "*://*.skinport.com/*"],
@@ -46,7 +46,7 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*"],
-            "resources": ["public/buff_favicon.png", "public/clock-solid.svg", "public/chevron-up-solid.svg", "js/inject.js"]
+            "resources": ["public/buff_favicon.png", "public/clock-solid.svg", "public/chevron-up-solid.svg", "public/triangle-exclamation-solid.svg", "js/inject.js"]
         }
     ]
 }
