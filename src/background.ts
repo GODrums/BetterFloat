@@ -58,6 +58,23 @@ export async function refreshPrices() {
         .catch((err) => console.error(err));
 }
 
+// receive message from content script to re-fetch prices
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.message == 'fetchPrices') {
+        refreshPrices().then((value) => {
+            console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
+            if (value) {
+                sendResponse({ message: 'Prices fetched successfully.', success: true });
+            } else {
+                sendResponse({ message: 'Error while fetching prices.', success: false });
+            }
+        });
+        // this is required to let the message listener wait for the fetch to finish
+        // https://github.com/mozilla/webextension-polyfill/issues/130#issuecomment-484772327
+        return true;
+    }
+});
+
 // Idea from: https://stackoverflow.com/a/53990245
 // the WSS Skinport stream contains the LIVE feed. Does not work yet.
 // chrome.webRequest.onBeforeSendHeaders.addListener(

@@ -32,6 +32,26 @@ export function activateHandler() {
             });
         }
     });
+
+    // refresh prices if they are older than 8 hours
+    chrome.storage.local.get('lastUpdate', (result) => {
+        let lastUpdate = result.lastUpdate;
+        if (lastUpdate == undefined) {
+            lastUpdate = 0;
+        }
+        // if lastUpdate is older than 8 hours, refresh prices
+        if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
+            console.debug('[BetterFloat] Prices are older than 8 hours, last update:', new Date(lastUpdate), '. Refreshing prices...');
+            // send message to background to fetch and store new prices
+            chrome.runtime.sendMessage({ message: 'fetchPrices' }, (response) => {
+                if (!response) return;
+                console.debug('[BetterFloat] Prices refresh result: ' + response.message);
+                if (response.success) {
+                    chrome.storage.local.set({ lastUpdate: Date.now() });
+                }
+            });
+        }
+    });
 }
 
 function processSkinportEvent(eventData: EventData<unknown>) {
