@@ -510,7 +510,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
     }
 
     if (extensionSettings.spBuffDifference) {
-        const difference = item.price - (extensionSettings.spPriceReference == 0 ? priceOrder : priceListing);
+        const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
         let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
         if (!discountContainer || !discountContainer.firstChild) {
             discountContainer = document.createElement('div');

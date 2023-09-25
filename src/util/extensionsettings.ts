@@ -9,7 +9,7 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.autorefresh) {
             extensionSettings.autorefresh = Boolean(data.autorefresh);
         }
-        if (data.priceReference) {
+        if (data.priceReference !== undefined) {
             extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
         }
         if (data.refreshInterval) {
@@ -21,8 +21,8 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.stickerPrices) {
             extensionSettings.stickerPrices = Boolean(data.stickerPrices);
         }
-        if (data.listingAge) {
-            extensionSettings.listingAge = Number(data.listingAge) as ExtensionSettings['listingAge'];
+        if (data.listingAge !== undefined) {
+            extensionSettings.listingAge = data.listingAge as ExtensionSettings['listingAge'];
         }
         if (data.showBuffDifference) {
             extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
@@ -42,7 +42,7 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.skinportRates) {
             extensionSettings.skinportRates = data.skinportRates as ExtensionSettings['skinportRates'];
         }
-        if (data.spPriceReference) {
+        if (data.spPriceReference !== undefined) {
             extensionSettings.spPriceReference = data.spPriceReference as ExtensionSettings['spPriceReference'];
         }
         if (data.spSteamPrice) {

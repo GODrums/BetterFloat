@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             skinportRates: 'real',
             spBuffPrice: true,
             spCheckBoxes: true,
-            spPriceReference: 1,
+            spPriceReference: 0,
             spBuffDifference: true,
             spBuffLink: 'action',
             spFloatColoring: true,

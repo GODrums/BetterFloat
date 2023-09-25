@@ -500,7 +500,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         }
     }
 
-    const priceFromReference = extensionSettings.priceReference == 0 ? priceOrder : priceListing;
+    const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     const difference = item.price - priceFromReference;
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.
     if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06)) {
