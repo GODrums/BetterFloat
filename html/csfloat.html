@@ -1,16 +1,18 @@
 <div class="Group">
+    <div class="GroupElement">
+        <p class="ElementText">Enable on CSFloat</p>
+        <input type="checkbox" id="InputCSFloat" name="enableCSFloat" checked />
+    </div>
+</div>
+<div class="Group">
     <div class="GroupHeader">FEATURES</div>
     <div class="GroupElement">
-        <p class="ElementText">Buff Price Calculations</p>
-        <input type="checkbox" id="InputBuffPrice" name="buffprice" value="InputBuffPrice" checked />
-    </div>
-    <div class="GroupElement">
         <p class="ElementText">Auto-Refresh</p>
-        <input type="checkbox" id="InputAutorefresh" name="autorefresh" value="InputAutorefresh" checked />
+        <input type="checkbox" id="InputAutorefresh" name="autorefresh" checked />
     </div>
     <div class="GroupElement">
         <p class="ElementText">Sticker Prices</p>
-        <input type="checkbox" id="InputStickerPrices" name="stickerPrices" value="InputStickerPrices" checked />
+        <input type="checkbox" id="InputStickerPrices" name="stickerPrices" checked />
     </div>
 </div>
 <div class="Group">
@@ -24,7 +26,7 @@
             </select>
         </div>
         <p class="ElementDescription">
-            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default)
+            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default: Bid)
         </p>
     </div>
     <div class="GroupElementExtended">

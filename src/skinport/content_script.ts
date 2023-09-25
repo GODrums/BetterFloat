@@ -1,8 +1,10 @@
-import { ExtensionSettings, ItemStyle, Skinport } from '../@typings/FloatTypes';
-import { getBuffMapping, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
+import { Skinport } from '../@typings/SkinportTypes';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
+import { generateSpStickerContainer, generateStickerContainer } from '../util/uigeneration';
 
 async function init() {
     //get current url
@@ -17,7 +19,7 @@ async function init() {
 
     extensionSettings = await initSettings();
 
-    if (extensionSettings.spBuffPrice && document.getElementsByClassName("CountryFlag--GB").length == 0) {
+    if (extensionSettings.enableSkinport && (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0)) {
         console.log('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
         createLanguagePopup();
         return;
@@ -39,6 +41,8 @@ async function init() {
 }
 
 async function firstLaunch() {
+    if (!extensionSettings.enableSkinport) return;
+
     let url = window.location.href;
     console.log('[BetterFloat] First launch on Skinport, url: ', url);
     if (url == 'https://skinport.com/') {
@@ -107,7 +111,8 @@ function createLanguagePopup() {
     popupHeaderDiv.appendChild(closeButton);
     let popupText = document.createElement('p');
     popupText.style.marginTop = '30px';
-    popupText.textContent = 'BetterFloat currently only supports the English language on Skinport. If you prefer to pass on most of BetterFloat\'s features on Skinport, please disable the \'Buff Price Calculation\'-feature in the extension settings.';
+    popupText.textContent =
+        "BetterFloat currently only supports the English language on Skinport. If you prefer to pass on most of BetterFloat's features on Skinport, please disable the 'Buff Price Calculation'-feature in the extension settings.";
     let buttonDiv = document.createElement('div');
     buttonDiv.style.display = 'flex';
     buttonDiv.style.justifyContent = 'center';
@@ -116,8 +121,8 @@ function createLanguagePopup() {
     changeLanguageButton.className = 'betterfloat-language-button';
     changeLanguageButton.textContent = 'Change language';
     changeLanguageButton.onclick = () => {
-        (<HTMLButtonElement>document.querySelector(".Dropdown-button")).click();
-        (<HTMLButtonElement>document.querySelector(".Dropdown-dropDownItem")).click();
+        (<HTMLButtonElement>document.querySelector('.Dropdown-button')).click();
+        (<HTMLButtonElement>document.querySelector('.Dropdown-dropDownItem')).click();
     };
     buttonDiv.appendChild(changeLanguageButton);
     popup.appendChild(popupHeaderDiv);
@@ -129,7 +134,7 @@ function createLanguagePopup() {
 
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
-        if (extensionSettings.spBuffPrice) {
+        if (extensionSettings.enableSkinport) {
             for (let mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     let addedNode = mutation.addedNodes[i];
@@ -170,7 +175,6 @@ async function applyMutation() {
 }
 
 async function adjustItemPage(container: Element) {
-    console.log('[BetterFloat] Adjusting item page: ', container);
     let itemRating = container.querySelector('.ItemPage-rating');
     if (itemRating) {
         itemRating.remove();
@@ -252,7 +256,11 @@ async function adjustItemPage(container: Element) {
         newContainer.appendChild(saleTag);
         priceContainer.appendChild(newContainer);
     }
-    
+
+    if (extensionSettings.spStickerPrices) {
+        await addStickerInfo(container, item, itemSelectors.page, difference, true);
+    }
+
     await addFloatColoring(container, item);
 }
 
@@ -269,13 +277,47 @@ async function adjustCart(container: Element) {
 async function adjustItem(container: Element) {
     const item = getFloatItem(container, itemSelectors.preview);
     if (!item) return;
-    await addBuffPrice(item, container);
+    const priceResult = await addBuffPrice(item, container);
+    if (extensionSettings.spStickerPrices) {
+        await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
+    }
     if (extensionSettings.spFloatColoring) {
         await addFloatColoring(container, item);
     }
-    // if (extensionSettings.stickerPrices) {
-    //     await addStickerInfo(item, container, cachedItem, priceResult);
-    // }
+}
+
+async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage: boolean = false) {
+    if (item.text.includes('Agent')) return;
+    let itemInfoDiv; 
+    if (isItemPage) {
+        itemInfoDiv = container.querySelector(selector.info);
+    } else {
+        itemInfoDiv = container.querySelector(selector.info)?.children[0];
+    }
+    let stickers = item.stickers;
+    if (item.stickers.length == 0 || item.text.includes('Souvenir')) {
+        return;
+    }
+    let stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+    let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+    let spPercentage = price_difference / priceSum;
+
+    // don't display SP if total price is below $1
+    if (itemInfoDiv && priceSum > 1) {
+        if (isItemPage) {
+            let wrapperDiv = document.createElement('div');
+            wrapperDiv.style.display = 'flex';
+            let h3 = itemInfoDiv.querySelector('.ItemPage-h3')?.cloneNode(true);
+            if (h3) {
+                itemInfoDiv.removeChild(itemInfoDiv.firstChild!);
+                wrapperDiv.appendChild(h3);
+            }
+            wrapperDiv.appendChild(generateSpStickerContainer(priceSum, spPercentage, true));
+            itemInfoDiv.firstChild?.before(wrapperDiv);
+        } else {
+            itemInfoDiv.before(generateSpStickerContainer(priceSum, spPercentage));
+        }
+    }
 }
 
 async function addFloatColoring(container: Element, item: Skinport.Listing) {
@@ -304,13 +346,15 @@ const itemSelectors = {
         text: '.ItemPreview-itemText',
         stickers: '.ItemPreview-stickers',
         price: '.ItemPreview-price',
+        info: '.ItemPreview-itemInfo',
     },
     page: {
         name: '.ItemPage-name',
         title: '.ItemPage-title',
         text: '.ItemPage-text',
-        stickers: '.ItemPage-stickers',
+        stickers: '.ItemPage-include',
         price: '.ItemPage-price',
+        info: '.ItemPage-include',
     },
 } as const;
 
@@ -342,10 +386,10 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
     let stickersDiv = container.querySelector(selector.stickers);
     if (stickersDiv) {
         for (let sticker of stickersDiv.children) {
-            let stickerName = sticker.children[0].getAttribute('alt');
+            let stickerName = sticker.children[0]?.getAttribute('alt');
             if (stickerName) {
                 stickers.push({
-                    name: stickerName,
+                    name: 'Sticker | ' + stickerName,
                 });
             }
         }
@@ -472,7 +516,7 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     }
 }
 
-async function addBuffPrice(item: Skinport.Listing, container: Element): Promise<any> {
+async function addBuffPrice(item: Skinport.Listing, container: Element) {
     await loadMapping();
     let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
@@ -509,8 +553,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
         }
     }
 
+    const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
     if (extensionSettings.spBuffDifference) {
-        const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
         let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
         if (!discountContainer || !discountContainer.firstChild) {
             discountContainer = document.createElement('div');
@@ -530,6 +574,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element): Promise
             (<HTMLElement>container.querySelector('.sale-tag')).className += 'betterfloat-sale-tag';
         }
     }
+
+    return {
+        price_difference: difference,
+    };
 }
 
 function createBuffName(item: Skinport.Listing): string {

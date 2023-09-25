@@ -3,8 +3,8 @@ import { ExtensionSettings } from "../@typings/FloatTypes";
 export async function initSettings(): Promise<ExtensionSettings> {
     let extensionSettings = <ExtensionSettings>{};
     chrome.storage.local.get((data) => {
-        if (data.buffprice) {
-            extensionSettings.buffprice = Boolean(data.buffprice);
+        if (data.enableCSFloat) {
+            extensionSettings.enableCSFloat = Boolean(data.enableCSFloat);
         }
         if (data.autorefresh) {
             extensionSettings.autorefresh = Boolean(data.autorefresh);
@@ -33,11 +33,14 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.showTopButton) {
             extensionSettings.showTopButton = Boolean(data.showTopButton);
         }
-        if (data.spBuffPrice) {
-            extensionSettings.spBuffPrice = Boolean(data.spBuffPrice);
+        if (data.enableSkinport) {
+            extensionSettings.enableSkinport = Boolean(data.enableSkinport);
         }
         if (data.spCheckBoxes) {
             extensionSettings.spCheckBoxes = Boolean(data.spCheckBoxes);
+        }
+        if (data.spStickerPrices) {
+            extensionSettings.spStickerPrices = Boolean(data.spStickerPrices);
         }
         if (data.skinportRates) {
             extensionSettings.skinportRates = data.skinportRates as ExtensionSettings['skinportRates'];

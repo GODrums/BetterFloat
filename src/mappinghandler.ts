@@ -1,4 +1,5 @@
-import { CSGOTraderMapping, HistoryData, ListingData, Skinport } from './@typings/FloatTypes';
+import { CSGOTraderMapping, HistoryData, ListingData } from './@typings/FloatTypes';
+import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
 
 // maps buff_name to buff_id
@@ -9,6 +10,8 @@ let priceMapping: CSGOTraderMapping = {};
 let cachedItems: ListingData[] = [];
 // csfloat: history for one item
 let cachedHistory: HistoryData[] = [];
+// skinport: cached items from api
+let cachedSpItems: Skinport.Item[] = [];
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinport: cached currency rates by exchangerate.host: USD -> X
@@ -39,6 +42,14 @@ export async function cacheItems(data: ListingData[]) {
     cachedItems = data;
 }
 
+export async function cacheSpItems(data: Skinport.Item[]) {
+    if (cachedSpItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, deleting items: ', cachedSpItems);
+        cachedSpItems = [];
+    }
+    cachedSpItems = data;
+}
+
 export async function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
     if (Object.keys(skinportRatesFromUSD).length > 0) {
         console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
@@ -63,6 +74,15 @@ export async function getWholeHistory() {
 export async function getFirstCachedItem() {
     if (cachedItems.length > 0) {
         const item = cachedItems.shift();
+        return item;
+    } else {
+        return null;
+    }
+}
+
+export async function getFirstSpItem() {
+    if (cachedSpItems.length > 0) {
+        const item = cachedSpItems.shift();
         return item;
     } else {
         return null;

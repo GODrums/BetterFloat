@@ -1,4 +1,5 @@
-import { EventData, HistoryData, ListingData, SellerData, Skinport } from './@typings/FloatTypes';
+import { EventData, HistoryData, ListingData, SellerData } from './@typings/FloatTypes';
+import { Skinport } from './@typings/SkinportTypes';
 import { cacheHistory, cacheItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
 
 type StallData = {
@@ -58,6 +59,8 @@ function processSkinportEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('api/browse/730')) {
         // Skinport.MarketData
+    } else if (eventData.url.includes('api/home')) {
+        // Skinport.HomeData
     } else if (eventData.url.includes('api/data/')) {
         // Data from first page load
         let data = eventData.data as Skinport.UserData;

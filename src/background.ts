@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
         chrome.storage.local.set({
-            buffprice: true,
+            enableCSFloat: true,
             autorefresh: true,
             priceReference: 0,
             refreshInterval: 30,
@@ -22,8 +22,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
             listingAge: 0,
             showTopButton: true,
             skinportRates: 'real',
-            spBuffPrice: true,
+            enableSkinport: true,
             spCheckBoxes: true,
+            spStickerPrices: true,
             spPriceReference: 0,
             spBuffDifference: true,
             spBuffLink: 'action',

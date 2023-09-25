@@ -1,12 +1,18 @@
 <div class="Group">
+    <div class="GroupElement">
+        <p class="ElementText">Enable on Skinport</p>
+        <input type="checkbox" id="InputSkinport" name="enableSkinport" checked />
+    </div>
+</div>
+<div class="Group">
     <div class="GroupHeader">FEATURES</div>
     <div class="GroupElement">
-        <p class="ElementText">Buff Price Calculations</p>
-        <input type="checkbox" id="SkinportBuffPrice" name="spBuffPrice" value="spBuffPrice" checked />
+        <p class="ElementText">Auto-Checkboxes</p>
+        <input type="checkbox" id="SkinportCheckboxes" name="spCheckBoxes" checked />
     </div>
     <div class="GroupElement">
-        <p class="ElementText">Auto-Checkboxes</p>
-        <input type="checkbox" id="SkinportCheckboxes" name="spCheckBoxes" value="spCheckBoxes" checked />
+        <p class="ElementText">Sticker Prices</p>
+        <input type="checkbox" id="SkinportStickerPrices" name="spStickerPrices" checked />
     </div>
 </div>
 <div class="Group">
@@ -20,7 +26,7 @@
             </select>
         </div>
         <p class="ElementDescription">
-            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default)
+            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default: Bid)
         </p>
     </div>
     <div class="GroupElementExtended">

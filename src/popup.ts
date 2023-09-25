@@ -84,7 +84,7 @@ chrome.permissions
     });
 
 function loadForSettings() {
-    let featureBuffPrice = <HTMLInputElement>document.getElementById('InputBuffPrice');
+    let enableCSFloat = <HTMLInputElement>document.getElementById('InputCSFloat');
     let featureAutorefresh = <HTMLInputElement>document.getElementById('InputAutorefresh');
     let priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference');
     let refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval');
@@ -96,10 +96,10 @@ function loadForSettings() {
     let topButton = <HTMLInputElement>document.getElementById('InputTopButton');
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
-        if (data.buffprice) {
-            featureBuffPrice.checked = true;
+        if (data.enableCSFloat) {
+            enableCSFloat.checked = true;
         } else {
-            featureBuffPrice.checked = false;
+            enableCSFloat.checked = false;
         }
         if (data.autorefresh) {
             featureAutorefresh.checked = true;
@@ -142,23 +142,29 @@ function loadForSettings() {
 }
 
 function loadForSkinport() {
-    let buffPriceElement = <HTMLInputElement>document.getElementById('SkinportBuffPrice');
+    let skinportEnable = <HTMLInputElement>document.getElementById('InputSkinport');
     let checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
+    let stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
     let skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     let skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
     let skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
-        if (data.spBuffPrice) {
-            buffPriceElement.checked = true;
+        if (data.enableSkinport) {
+            skinportEnable.checked = true;
         } else {
-            buffPriceElement.checked = false;
+            skinportEnable.checked = false;
         }
         if (data.spCheckBoxes) {
             checkBoxesElement.checked = true;
         } else {
             checkBoxesElement.checked = false;
+        }
+        if (data.spStickerPrices) {
+            stickerPriceElement.checked = true;
+        } else {
+            stickerPriceElement.checked = false;
         }
         if (data.skinportRates) {
             (<HTMLSelectElement>document.getElementById('SkinportCurrencyConversion')).value = data.skinportRates;

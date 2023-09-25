@@ -5,6 +5,7 @@ import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
+import { generateStickerContainer } from '../util/uigeneration';
 
 type PriceResult = {
     price_difference: number;
@@ -51,7 +52,7 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-    if (!extensionSettings.buffprice) return;
+    if (!extensionSettings.enableCSFloat) return;
 
     let items = document.querySelectorAll('item-card');
 
@@ -160,7 +161,7 @@ function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
 
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
-        if (extensionSettings.buffprice) {
+        if (extensionSettings.enableCSFloat) {
             let url = window.location.href;
             for (let i = 0; i < unsupportedSubPages.length; i++) {
                 if (url.includes(unsupportedSubPages[i])) {
@@ -335,6 +336,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
 async function addStickerInfo(container: Element, cachedItem: ListingData, price_difference: number) {
     let stickerDiv = container.querySelector('.sticker-container')?.children[0];
     let stickers = cachedItem.item.stickers;
+    // quality 12 is souvenir
     if (!stickers || cachedItem.item?.quality == 12) {
         return;
     }
@@ -344,34 +346,7 @@ async function addStickerInfo(container: Element, cachedItem: ListingData, price
 
     // don't display SP if total price is below $1
     if (stickerDiv && priceSum > 1) {
-        const outerContainer = document.createElement('div');
-        const spContainer = document.createElement('span');
-        spContainer.classList.add('betterfloat-sticker-price');
-        let backgroundImageColor = '';
-        if (spPercentage < 0.005 || spPercentage > 2) {
-            backgroundImageColor = 'white';
-        } else if (spPercentage > 1) {
-            backgroundImageColor = 'rgba(245,0,0,1)';
-        } else if (spPercentage > 0.5) {
-            backgroundImageColor = 'rgba(245,164,0,1)';
-        } else if (spPercentage > 0.25) {
-            backgroundImageColor = 'rgba(244,245,0,1)';
-        } else {
-            backgroundImageColor = 'rgba(83,245,0,1)';
-        }
-        spContainer.style.backgroundImage = `radial-gradient(circle, ${backgroundImageColor} 10%, rgba(148,187,233,1) 100%)`;
-        spContainer.style.color = 'black';
-        spContainer.style.padding = '2px 5px';
-        spContainer.style.borderRadius = '7px';
-        // if SP is above 200% or below 0.5% display SP in $, otherwise in %
-        if (spPercentage > 2 || spPercentage < 0.005) {
-            spContainer.textContent = `SP: $${priceSum.toFixed(0)}`;
-        } else {
-            spContainer.textContent = `SP: ${(spPercentage > 0 ? spPercentage * 100 : 0).toFixed(2)}%`;
-        }
-        outerContainer.style.margin = '0 0 10px 10px';
-        outerContainer.appendChild(spContainer);
-        stickerDiv.before(outerContainer);
+        stickerDiv.before(generateStickerContainer(priceSum, spPercentage));
     }
 }
 
