@@ -1,5 +1,5 @@
 import { ExtensionSettings, ItemStyle, Skinport } from '../@typings/FloatTypes';
-import { getBuffMapping, getInventoryHelperPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -390,7 +390,7 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = await getInventoryHelperPrice(buff_name);
+        helperPrice = 0;
     }
 
     // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins

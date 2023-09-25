@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         chrome.storage.local.set({
             buffprice: true,
             autorefresh: true,
-            priceReference: 1,
+            priceReference: 0,
             refreshInterval: 30,
             showSteamPrice: false,
             stickerPrices: true,

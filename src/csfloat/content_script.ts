@@ -2,7 +2,7 @@
 
 import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from '../@typings/FloatTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getInventoryHelperPrice, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
 
@@ -429,7 +429,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = await getInventoryHelperPrice(buff_name);
+        helperPrice = 0;
     }
 
     let buff_id = await getBuffMapping(buff_name);
@@ -502,13 +502,14 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
 
     const priceFromReference = extensionSettings.priceReference == 0 ? priceOrder : priceListing;
     const difference = item.price - priceFromReference;
-    if (extensionSettings.showBuffDifference && item.price !== 0 && priceFromReference > 0) {
+    // edge case handling: reference price may be a valid 0 for some paper stickers etc.
+    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06)) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
         if (saleTag) {
             priceContainer.removeChild(saleTag);
         }
-        //evaluates that we have a valid buff price to show the price difference
+
         let backgroundColor;
         let differenceSymbol;
         if (difference < 0) {
