@@ -288,12 +288,7 @@ async function adjustItem(container: Element) {
 
 async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage: boolean = false) {
     if (item.text.includes('Agent')) return;
-    let itemInfoDiv; 
-    if (isItemPage) {
-        itemInfoDiv = container.querySelector(selector.info);
-    } else {
-        itemInfoDiv = container.querySelector(selector.info)?.children[0];
-    }
+    let itemInfoDiv = container.querySelector(selector.info);
     let stickers = item.stickers;
     if (item.stickers.length == 0 || item.text.includes('Souvenir')) {
         return;
