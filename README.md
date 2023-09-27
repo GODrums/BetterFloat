@@ -21,8 +21,9 @@ Click the badge below to join the server:
 
 ## Downloads
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=Chrome%20Web%20Store)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
-[![Mozilla Add-on](https://img.shields.io/amo/v/betterfloat.svg?label=Mozilla%20Add-on)](https://addons.mozilla.org/en-US/firefox/addon/betterfloat/)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=Chrome%20Web%20Store&logo=googlechrome)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=CWS%20%28Preview%29&logo=googlechrome)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Mozilla Add-on](https://img.shields.io/amo/v/betterfloat.svg?label=Mozilla%20Add-on&logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/betterfloat/)
 
 ## Highlights
 
@@ -115,6 +116,6 @@ Please follow the [conventional commits](https://www.conventionalcommits.org/en/
 
 ## Disclaimer
 
-BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc. or Skinport GmbH in any way. If you are a legal representative of CSFloat or Skinport and would like this project to be taken down, please contact me directly.
+BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc. or Skinport GmbH in any way. If you are a legal representative of aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
 
 Built with 🖤 in Munich.
