@@ -13,7 +13,9 @@
 
 ## Community / Support
 
-We use the CS Market Forum for discussions and support. BetterFloat owns the thread `#BetterFloat` in `#chat`, where you can ask questions, report bugs, or suggest new features.
+<p>
+We use the CS Market Forum for discussions and support. BetterFloat owns the thread <a href="https://discord.com/channels/664104795367538690/1140464870559584267">#BetterFloat</a>, where you can ask questions, report bugs, or suggest new features.
+</p>
 
 Click the badge below to join the server:
 
