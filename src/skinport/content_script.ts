@@ -7,6 +7,7 @@ import { handleSpecialStickerNames } from '../util/helperfunctions';
 import { generateSpStickerContainer, generateStickerContainer } from '../util/uigeneration';
 
 async function init() {
+    console.time('[BetterFloat] Skinport init timer');
     //get current url
     let url = window.location.href;
     if (!url.includes('skinport.com')) {
@@ -20,31 +21,31 @@ async function init() {
     extensionSettings = await initSettings();
 
     if (extensionSettings.enableSkinport && (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0)) {
-        console.log('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
+        console.warn('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
         createLanguagePopup();
         return;
     }
 
+    console.group("[BetterFloat] Loading mappings...");
     await loadMapping();
     await loadBuffMapping();
+    console.groupEnd();
 
-    await firstLaunch();
+    console.timeEnd('[BetterFloat] Skinport init timer');
+
+    await firstLaunch(url);
 
     // mutation observer is only needed once
     if (!isObserverActive) {
-        console.debug('[BetterFloat] Starting observer');
+        isObserverActive = true;
         await applyMutation();
         console.log('[BetterFloat] Observer started');
-
-        isObserverActive = true;
     }
 }
 
-async function firstLaunch() {
+async function firstLaunch(url: string) {
     if (!extensionSettings.enableSkinport) return;
 
-    let url = window.location.href;
-    console.log('[BetterFloat] First launch on Skinport, url: ', url);
     if (url == 'https://skinport.com/') {
         let popularLists = document.querySelectorAll('.PopularList');
         for (let list of popularLists) {

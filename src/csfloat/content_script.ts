@@ -12,6 +12,7 @@ type PriceResult = {
 };
 
 async function init() {
+    console.time('[BetterFloat] CSFloat init timer');
     //get current url
     let url = window.location.href;
     if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
@@ -22,8 +23,11 @@ async function init() {
     activateHandler();
 
     extensionSettings = await initSettings();
+    console.group("[BetterFloat] Loading mappings...");
     await loadMapping();
     await loadBuffMapping();
+    console.groupEnd();
+    console.timeEnd('[BetterFloat] CSFloat init timer');
 
     if (extensionSettings.showTopButton) {
         createTopButton();
@@ -42,11 +46,9 @@ async function init() {
 
     // mutation observer is only needed once
     if (!isObserverActive) {
-        console.debug('[BetterFloat] Starting observer');
-        await applyMutation();
-        console.log('[BetterFloat] Observer started');
-
         isObserverActive = true;
+        await applyMutation();
+        console.log('[BetterFloat] Mutation observer started');
     }
 }
 
