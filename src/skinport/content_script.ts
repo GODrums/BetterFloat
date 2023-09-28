@@ -33,6 +33,8 @@ async function init() {
 
     console.timeEnd('[BetterFloat] Skinport init timer');
 
+    createLiveLink();
+
     await firstLaunch(url);
 
     // mutation observer is only needed once
@@ -77,6 +79,24 @@ async function firstLaunch(url: string) {
             await adjustItem(item);
         }
     }
+}
+
+function createLiveLink() {
+    let marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
+    if (!marketLink) return;
+    marketLink.style.marginRight = '30px';
+    let liveLink = <HTMLElement>marketLink.cloneNode(true);
+    liveLink.setAttribute('href', '/market?sort=date&order=desc');
+    liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market');
+    liveLink.textContent = 'Live';
+    marketLink.after(liveLink);
+
+    setTimeout(async () => {
+        while (!document.querySelector(".LiveBtn")) {
+            await new Promise(r => setTimeout(r, 100));
+        }
+        (<HTMLButtonElement>document.querySelector(".LiveBtn")).click();
+    }, 500);
 }
 
 function createLanguagePopup() {
