@@ -20,13 +20,13 @@ async function init() {
 
     extensionSettings = await initSettings();
 
-    if (extensionSettings.enableSkinport && (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0)) {
+    if (extensionSettings.enableSkinport && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0) {
         console.warn('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
         createLanguagePopup();
         return;
     }
 
-    console.group("[BetterFloat] Loading mappings...");
+    console.group('[BetterFloat] Loading mappings...');
     await loadMapping();
     await loadBuffMapping();
     console.groupEnd();
@@ -63,6 +63,9 @@ async function firstLaunch(url: string) {
         for (let item of catalogItems) {
             await adjustItem(item);
         }
+        if (url.includes('bf=live')) {
+            (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
+        }
     } else if (url.includes('/cart')) {
         let cartContainer = document.querySelector('.Cart-container');
         if (cartContainer) {
@@ -83,20 +86,13 @@ async function firstLaunch(url: string) {
 
 function createLiveLink() {
     let marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
-    if (!marketLink) return;
+    if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
     marketLink.style.marginRight = '30px';
-    let liveLink = <HTMLElement>marketLink.cloneNode(true);
-    liveLink.setAttribute('href', '/market?sort=date&order=desc');
-    liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market');
+    let liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
+    liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
+    liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
     liveLink.textContent = 'Live';
     marketLink.after(liveLink);
-
-    setTimeout(async () => {
-        while (!document.querySelector(".LiveBtn")) {
-            await new Promise(r => setTimeout(r, 100));
-        }
-        (<HTMLButtonElement>document.querySelector(".LiveBtn")).click();
-    }, 500);
 }
 
 function createLanguagePopup() {

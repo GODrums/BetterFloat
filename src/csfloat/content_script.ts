@@ -35,11 +35,11 @@ async function init() {
 
     //check if url is in supported subpages
     if (url.endsWith('float.com/')) {
-        await firstLaunch();
+        await firstLaunch(url);
     } else {
         for (let i = 0; i < supportedSubPages.length; i++) {
             if (url.includes(supportedSubPages[i])) {
-                await firstLaunch();
+                await firstLaunch(url);
             }
         }
     }
@@ -53,13 +53,31 @@ async function init() {
 }
 
 // required as mutation does not detect initial DOM
-async function firstLaunch() {
+async function firstLaunch(url: string) {
     if (!extensionSettings.enableCSFloat) return;
+
+    if(url.includes('?tab=')) {
+        let tab = Number(url.split('?tab=')[1]);
+        console.log('[BetterFloat] Tab number: ' + tab);
+        let tabList = document.querySelectorAll('.mat-tab-label');
+        (<HTMLElement>tabList[tab-1]).click();
+    }
+
+    createTabListeners();
 
     let items = document.querySelectorAll('item-card');
 
     for (let i = 0; i < items.length; i++) {
         adjustItem(items[i]);
+    }
+}
+
+function createTabListeners() {
+    const tabList = document.querySelectorAll(".mat-tab-label");
+    for (let i = 0; i < tabList.length; i++) {
+        tabList[i].addEventListener("click", () => {
+            window.history.pushState({}, "", "?tab=" + tabList[i].getAttribute("aria-posinset"));
+        });
     }
 }
 
@@ -104,7 +122,7 @@ async function refreshButton() {
 
         startElement.addEventListener('click', () => {
             // somehow Angular calls the eventlistener multiple times, this prevents side effects
-            if (refreshInterval.length > 1) {
+            if (refreshThreads.length > 1) {
                 console.debug('[BetterFloat] Auto-refresh already active');
                 return;
             }
@@ -118,7 +136,7 @@ async function refreshButton() {
             refreshText.setAttribute('style', 'color: greenyellow;');
 
             // save timer to avoid uncoordinated executions
-            refreshInterval.push(
+            refreshThreads.push(
                 setInterval(() => {
                     let refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
                     // time should be lower than interval due to inconsistencies
@@ -131,7 +149,7 @@ async function refreshButton() {
         });
         stopElement.addEventListener('click', () => {
             // gets called multiple times, maybe needs additional handling in the future
-            console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now());
+            console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now(), ", #active threads: " + refreshThreads.length);
 
             let refreshText = document.querySelector('.betterfloat-refreshText');
             if (!refreshText) return;
@@ -139,15 +157,15 @@ async function refreshButton() {
             refreshText.setAttribute('style', 'color: #ce0000;');
 
             //clearinterval for every entry in refreshInterval
-            for (let i = 0; i < refreshInterval.length; i++) {
-                clearInterval(refreshInterval[i] ?? 0);
-                refreshInterval.splice(i, 1);
+            for (let i = 0; i < refreshThreads.length; i++) {
+                clearInterval(refreshThreads[i] ?? 0);
+                refreshThreads.splice(i, 1);
             }
             setTimeout(() => {
                 //for some weird reason one element stays in the array
-                if (refreshInterval.length > 0) {
-                    clearInterval(refreshInterval[0] ?? 0);
-                    refreshInterval.splice(0, 1);
+                if (refreshThreads.length > 0) {
+                    clearInterval(refreshThreads[0] ?? 0);
+                    refreshThreads.splice(0, 1);
                 }
             }, 1000);
         });
@@ -562,12 +580,12 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist', '/search?'];
+let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist', '/search?', '?tab='];
 let unsupportedSubPages = ['/sell'];
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
-let refreshInterval: [ReturnType<typeof setTimeout> | null] = [null];
+let refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;
 // mutation observer active?
