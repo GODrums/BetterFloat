@@ -27,6 +27,7 @@ export type ExtensionSettings = {
     showBuffDifference: boolean;
     showBuffPercentageDifference: boolean;
     showTopButton: boolean;
+    useTabStates: boolean;
     enableSkinport: boolean;
     spCheckBoxes: boolean;
     spStickerPrices: boolean;

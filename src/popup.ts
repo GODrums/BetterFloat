@@ -94,6 +94,8 @@ function loadForSettings() {
     let buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
     let showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
     let topButton = <HTMLInputElement>document.getElementById('InputTopButton');
+    let useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
+
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.enableCSFloat) {
@@ -137,6 +139,11 @@ function loadForSettings() {
             topButton.checked = true;
         } else {
             topButton.checked = false;
+        }
+        if (data.useTabStates) {
+            useTabStates.checked = true;
+        } else {
+            useTabStates.checked = false;
         }
     });
 }

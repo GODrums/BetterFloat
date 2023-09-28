@@ -21,6 +21,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             showBuffPercentageDifference: false,
             listingAge: 0,
             showTopButton: true,
+            useTabStates: true,
             skinportRates: 'real',
             enableSkinport: true,
             spCheckBoxes: true,

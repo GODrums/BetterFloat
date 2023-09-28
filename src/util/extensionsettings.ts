@@ -33,6 +33,9 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.showTopButton) {
             extensionSettings.showTopButton = Boolean(data.showTopButton);
         }
+        if (data.useTabStates) {
+            extensionSettings.useTabStates = Boolean(data.useTabStates);
+        }
         if (data.enableSkinport) {
             extensionSettings.enableSkinport = Boolean(data.enableSkinport);
         }

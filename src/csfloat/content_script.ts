@@ -61,6 +61,7 @@ async function firstLaunch(url: string) {
         console.log('[BetterFloat] Tab number: ' + tab);
         let tabList = document.querySelectorAll('.mat-tab-label');
         (<HTMLElement>tabList[tab-1]).click();
+        document.title = tabList[tab-1].textContent?.trim() + " | CSFloat";
     }
 
     createTabListeners();
@@ -76,7 +77,8 @@ function createTabListeners() {
     const tabList = document.querySelectorAll(".mat-tab-label");
     for (let i = 0; i < tabList.length; i++) {
         tabList[i].addEventListener("click", () => {
-            window.history.pushState({}, "", "?tab=" + tabList[i].getAttribute("aria-posinset"));
+            window.history.replaceState({}, "", "?tab=" + tabList[i].getAttribute("aria-posinset"));
+            document.title = tabList[i].textContent?.trim() + " | CSFloat";
         });
     }
 }
