@@ -5,7 +5,7 @@ import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
-import { generateStickerContainer } from '../util/uigeneration';
+import { genRefreshButton, generateStickerContainer } from '../util/uigeneration';
 
 type PriceResult = {
     price_difference: number;
@@ -75,6 +75,9 @@ async function firstLaunch(url: string) {
 
 function createTabListeners() {
     const tabList = document.querySelectorAll(".mat-tab-label");
+    const tabContainer = tabList[0]?.parentElement;
+    if (!tabList || tabContainer?.className.includes('betterfloat-tabs')) return;
+    tabContainer?.classList.add('betterfloat-tabs');
     for (let i = 0; i < tabList.length; i++) {
         tabList[i].addEventListener("click", () => {
             window.history.replaceState({}, "", "?tab=" + tabList[i].getAttribute("aria-posinset"));
@@ -174,13 +177,6 @@ async function refreshButton() {
     }
 }
 
-function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
-    let element = document.createElement('div');
-    element.classList.add('betterfloat-refresh' + name.toString());
-    element.textContent = name.toString();
-    return element;
-}
-
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableCSFloat) {
@@ -207,6 +203,8 @@ async function applyMutation() {
                 }
             }
         }
+
+        createTabListeners();
 
         let activeTab = getTabNumber();
         if (activeTab == 4 && extensionSettings.autorefresh) {

@@ -1,3 +1,10 @@
+export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
+    let element = document.createElement('div');
+    element.classList.add('betterfloat-refresh' + name.toString());
+    element.textContent = name.toString();
+    return element;
+}
+
 export function generateStickerContainer(priceSum: number, spPercentage: number) {
     const outerContainer = document.createElement('div');
     const spContainer = document.createElement('span');
