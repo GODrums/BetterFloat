@@ -230,13 +230,37 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.listingAge > 0) {
             await addListingAge(item, container, cachedItem);
         }
+        storeApiItem(container, cachedItem);
     }
     if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
             await addItemHistory(container, item);
+
+            const itemPreview = document.getElementsByClassName("item-" + window.location.href.split('/').pop())[0];
+
+            let apiItem = getApiItem(itemPreview);
+            if (apiItem) {
+                await addStickerInfo(container, apiItem, priceResult.price_difference);
+                await addListingAge(item, container, apiItem);
+            }
         }, 1000);
     }
+}
+
+function storeApiItem(container: Element, item: ListingData) {
+    // add id as class to find the element later more easily
+    container.classList.add("item-"+item.id);
+    container.setAttribute('data-betterfloat', JSON.stringify(item));
+}
+
+
+function getApiItem(container: Element): ListingData | null {
+    let data = container.getAttribute('data-betterfloat');
+    if (data) {
+        return JSON.parse(data);
+    }
+    return null;
 }
 
 async function addItemHistory(container: Element, item: FloatItem) {
