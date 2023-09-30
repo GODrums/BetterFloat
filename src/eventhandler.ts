@@ -7,6 +7,11 @@ type StallData = {
     user: SellerData;
 };
 
+type SkinportWebsocketData = {
+    eventType: string;
+    data: Skinport.Item[];
+};
+
 export function activateHandler() {
     // important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879
     document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', function (e) {
@@ -17,6 +22,14 @@ export function activateHandler() {
         } else if (window.location.href.includes('skinport.com')) {
             processSkinportEvent(eventData);
         }
+    });
+
+    document.addEventListener('BetterFloat_WEBSOCKET_EVENT', function (e) {
+        var eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
+        if (eventData.eventType == 'listed') {
+            console.debug('[BetterFloat] Received data from websocket:', eventData);
+        }
+        // further process data
     });
 
     //listener for messages from background

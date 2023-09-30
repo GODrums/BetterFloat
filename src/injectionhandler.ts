@@ -1,5 +1,7 @@
 injectScript();
-// injectWebsocketListener();
+if (location.href.includes('skinport.com')) {
+    injectWebsocketListener();
+}
 
 // inject script into page
 function injectScript() {
@@ -11,12 +13,13 @@ function injectScript() {
     (document.head || document.documentElement).appendChild(script);
 }
 
-// can listen to Skinport websocket wss stream
-// function injectWebsocketListener() {
-//     let script = document.createElement('script');
-//     script.src = chrome.runtime.getURL('js/websocketlistener.js');
-//     script.onload = function () {
-//         (<HTMLScriptElement>this).remove();
-//     };
-//     (document.head || document.documentElement).appendChild(script);
-// }
+// inject wss stream listener into page
+function injectWebsocketListener() {
+    let script = document.createElement('script');
+    script.type = "module";
+    script.src = chrome.runtime.getURL('js/skinport/socketConnection.js');
+    script.onload = function () {
+        (<HTMLScriptElement>this).remove();
+    };
+    (document.head || document.documentElement).appendChild(script);
+}

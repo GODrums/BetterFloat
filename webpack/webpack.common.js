@@ -46,7 +46,8 @@ module.exports = {
                 { from: ".", to: "../public", context: "public" },
                 { from: ".", to: "../html", context: "html" },
                 { from: ".", to: "../css", context: "css" },
-                // copy manifest.json
+                { from: "**/*.js", to: "../js", context: "src" },
+                // chrome manifest
                 { from: "manifest.json", to: "../manifest.json" },
             ],
             options: {},

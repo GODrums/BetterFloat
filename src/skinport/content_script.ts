@@ -4,7 +4,7 @@ import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getUserC
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
-import { generateSpStickerContainer, generateStickerContainer } from '../util/uigeneration';
+import { generateSpStickerContainer } from '../util/uigeneration';
 
 async function init() {
     console.time('[BetterFloat] Skinport init timer');
