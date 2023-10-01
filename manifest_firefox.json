@@ -45,8 +45,16 @@
     "permissions": ["storage"],
     "web_accessible_resources": [
         {
-            "matches": ["https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*"],
-            "resources": ["public/buff_favicon.png", "public/clock-solid.svg", "public/chevron-up-solid.svg", "public/triangle-exclamation-solid.svg", "js/inject.js"]
+            "matches": ["https://csfloat.com/*", "*://*.skinport.com/*"],
+            "resources": ["js/inject.js", "public/buff_favicon.png"]
+        },
+        {
+            "matches": ["https://csfloat.com/*"],
+            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg"]
+        },
+        {
+            "matches": ["*://*.skinport.com/*"],
+            "resources": ["js/skinport/socketConnection.js", "public/triangle-exclamation-solid.svg"]
         }
     ]
 }

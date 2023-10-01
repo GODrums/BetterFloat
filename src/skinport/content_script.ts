@@ -48,15 +48,12 @@ async function init() {
 async function firstLaunch(url: string) {
     if (!extensionSettings.enableSkinport) return;
 
+    console.log('[BetterFloat] First launch, url:', url);
+
     if (url == 'https://skinport.com/') {
         let popularLists = document.querySelectorAll('.PopularList');
         for (let list of popularLists) {
-            if (list.querySelector('h3')?.textContent?.includes('CS:GO')) {
-                let popularItems = list.querySelectorAll('.PopularList-item');
-                for (let item of popularItems) {
-                    await adjustItem(item);
-                }
-            }
+            await handlePopularList(list);
         }
     } else if (url.includes('/market')) {
         let catalogItems = document.querySelectorAll('.CatalogPage-item');
@@ -158,8 +155,6 @@ async function applyMutation() {
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
 
-                    // console.log('[BetterFloat] Mutation observer triggered, added node:', addedNode);
-
                     if (addedNode.className) {
                         let className = addedNode.className.toString();
                         if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item')) {
@@ -169,26 +164,23 @@ async function applyMutation() {
                         } else if (className == 'ItemPage') {
                             await adjustItemPage(addedNode);
                         } else if (className.includes('PopularList')) {
-                            if (addedNode.querySelector('h3')?.textContent?.includes('CS:GO')) {
-                                let popularItems = addedNode.querySelectorAll('.PopularList-item');
-                                for (let item of popularItems) {
-                                    await adjustItem(item);
-                                }
-                            }
+                            await handlePopularList(addedNode);
                         }
                     }
-                    // item popout
-                    // if (addedNode.tagName && addedNode.tagName.toLowerCase() == 'item-detail') {
-                    //     await adjustItem(addedNode, true);
-                    //     // item from listings
-                    // } else if (addedNode.className && addedNode.className.toString().includes('flex-item')) {
-                    //     await adjustItem(addedNode);
-                    // }
                 }
             }
         }
     });
     observer.observe(document, { childList: true, subtree: true });
+}
+
+async function handlePopularList(list: Element) {
+    if (list.querySelector('h3')?.textContent?.includes('CS2')) {
+        let popularItems = list.querySelectorAll('.PopularList-item');
+        for (let item of popularItems) {
+            await adjustItem(item);
+        }
+    }
 }
 
 async function adjustItemPage(container: Element) {

@@ -27,9 +27,8 @@ export function activateHandler() {
     document.addEventListener('BetterFloat_WEBSOCKET_EVENT', function (e) {
         var eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
         if (eventData.eventType == 'listed') {
-            console.debug('[BetterFloat] Received data from websocket:', eventData);
+            // console.debug('[BetterFloat] Received data from websocket:', eventData);
         }
-        // further process data
     });
 
     //listener for messages from background
