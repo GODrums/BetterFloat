@@ -27,7 +27,7 @@ async function init() {
     extensionSettings = await initSettings();
 
     if (location.search.includes('?tab=') && extensionSettings.enableCSFloat) {
-        console.log('[BetterFloat] Switching to tab ' + location.search.split('=')[1]);
+        console.log('[BetterFloat] Tab State: Switching to tab ' + location.search.split('=')[1]);
         switchTab(Number(location.search.split('=')[1]) - 1);
     }
 
@@ -42,8 +42,10 @@ async function init() {
     }
 
     //check if url is in supported subpages
-    if (supportedSubPages.includes(location.pathname)) {
-                await firstLaunch();
+    for (let i = 0; i < supportedSubPages.length; i++) {
+        if (location.pathname.includes(supportedSubPages[i])) {
+            await firstLaunch();
+        }
     }
 
     // mutation observer is only needed once
@@ -602,7 +604,7 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/', '/item/', '/stall/', '/profile/watchlist', '/search'];
+let supportedSubPages = ['/', '/item', '/stall', '/profile/watchlist', '/search'];
 let unsupportedSubPages = ['/sell'];
 
 let extensionSettings: ExtensionSettings;
