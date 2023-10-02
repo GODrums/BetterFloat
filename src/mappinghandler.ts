@@ -16,6 +16,7 @@ let cachedSpItems: Skinport.Item[] = [];
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinport: cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
+// skinport: user currency (e.g. EUR)
 let userCurrency = '';
 
 
@@ -125,6 +126,7 @@ export async function getUserCurrencyRate(rates: "skinport" | "real" = "real") {
     if (Object.keys(skinportRatesFromUSD).length == 0) {
         await fetchUserData();
     }
+    if (userCurrency == 'USD') return 1;
     if (rates == "real" && Object.keys(realRatesFromUSD).length == 0) {
         await fetchCurrencyRates();
     }

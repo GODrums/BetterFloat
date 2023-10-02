@@ -15,7 +15,6 @@ async function init() {
     console.time('[BetterFloat] CSFloat init timer');
     //get current url
     let location = window.location;
-    
 
     if (!location.hostname.includes('csfloat.com')) {
         return;
@@ -42,9 +41,14 @@ async function init() {
     }
 
     //check if url is in supported subpages
-    for (let i = 0; i < supportedSubPages.length; i++) {
-        if (location.pathname.includes(supportedSubPages[i])) {
-            await firstLaunch();
+    if (location.pathname == '/') {
+        await firstLaunch();
+    } else {
+        for (let i = 0; i < supportedSubPages.length; i++) {
+            if (location.pathname.includes(supportedSubPages[i])) {
+                await firstLaunch();
+                break;
+            }
         }
     }
 
@@ -604,8 +608,8 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/', '/item', '/stall', '/profile/watchlist', '/search'];
-let unsupportedSubPages = ['/sell'];
+let supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search'];
+let unsupportedSubPages = ['/sell', '/db'];
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
