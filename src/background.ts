@@ -1,49 +1,61 @@
-let lastUpdate = 0;
+import { ExtensionSettings } from './@typings/FloatTypes';
 
-chrome.storage.local.get('lastUpdate', (data) => {
-    if (data.lastUpdate) {
-        lastUpdate = data.lastUpdate;
-    }
-});
+let defaultSettings: ExtensionSettings = {
+    enableCSFloat: true,
+    autorefresh: true,
+    priceReference: 0,
+    refreshInterval: 30,
+    showSteamPrice: false,
+    stickerPrices: true,
+    showBuffDifference: true,
+    showBuffPercentageDifference: false,
+    listingAge: 0,
+    showTopButton: true,
+    useTabStates: true,
+    enableSkinport: true,
+    spCheckBoxes: true,
+    spStickerPrices: true,
+    spPriceReference: 0,
+    skinportRates: 'real',
+    spSteamPrice: false,
+    spBuffDifference: true,
+    spBuffLink: 'action',
+    spFloatColoring: true,
+};
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason == 'install') {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
-        chrome.storage.local.set({
-            enableCSFloat: true,
-            autorefresh: true,
-            priceReference: 0,
-            refreshInterval: 30,
-            showSteamPrice: false,
-            stickerPrices: true,
-            showBuffDifference: true,
-            showBuffPercentageDifference: false,
-            listingAge: 0,
-            showTopButton: true,
-            useTabStates: true,
-            skinportRates: 'real',
-            enableSkinport: true,
-            spCheckBoxes: true,
-            spStickerPrices: true,
-            spPriceReference: 0,
-            spBuffDifference: true,
-            spBuffLink: 'action',
-            spFloatColoring: true,
-        });
+        chrome.storage.local.set(defaultSettings);
     } else if (details.reason == 'update') {
         var thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
+        chrome.storage.local.get((data) => {
+            if (!data.settings) {
+                chrome.storage.local.set(defaultSettings);
+                return;
+            }
+            const storedSettings = data.settings as ExtensionSettings;
+            console.debug('[BetterFloat] Loaded settings: ', storedSettings);
+            const newSettings: { [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings] } = {};
+            let update = false;
+            for (const key in defaultSettings) {
+                const settingKey = key as keyof ExtensionSettings;
+                if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
+                    // add missing settings
+                    console.log('[BetterFloat] Adding missing setting: ', key);
+                    update = true;
+                    newSettings[key] = defaultSettings[settingKey];
+                }
+            }
+            if (update) {
+                console.debug('[BetterFloat] Updating settings: ', newSettings);
+                chrome.storage.local.set(newSettings);
+            }
+        });
     }
 });
-
-// update every 8 hours
-if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
-    refreshPrices();
-
-    lastUpdate = Date.now();
-    chrome.storage.local.set({ lastUpdate: lastUpdate });
-}
 
 export async function refreshPrices() {
     return await fetch('https://prices.csgotrader.app/latest/prices_v6.json')
@@ -52,7 +64,7 @@ export async function refreshPrices() {
             //set cookie and wait for finish
             return await new Promise<Boolean>((resolve) => {
                 chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
-                    console.log('Prices updated. Last update: ' + lastUpdate + '. Current time: ' + Date.now());
+                    console.log('Prices updated. Current time: ', Date.toString());
                     resolve(true);
                 });
             });
@@ -61,7 +73,7 @@ export async function refreshPrices() {
 }
 
 // receive message from content script to re-fetch prices
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.message == 'fetchPrices') {
         refreshPrices().then((value) => {
             console.log('[BetterFloat] Prices refreshed via content script due to time limit.');

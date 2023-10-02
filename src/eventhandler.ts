@@ -32,7 +32,7 @@ export function activateHandler() {
     });
 
     //listener for messages from background
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         if (request.message == 'refreshPrices') {
             loadMapping().then((value) => {
                 if (value) {

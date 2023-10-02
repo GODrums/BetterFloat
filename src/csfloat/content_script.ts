@@ -14,8 +14,10 @@ type PriceResult = {
 async function init() {
     console.time('[BetterFloat] CSFloat init timer');
     //get current url
-    let url = window.location.href;
-    if (!url.includes('csgofloat.com') && !url.includes('csfloat.com')) {
+    let location = window.location;
+    
+
+    if (!location.hostname.includes('csfloat.com')) {
         return;
     }
     // catch the events thrown by the script
@@ -23,7 +25,13 @@ async function init() {
     activateHandler();
 
     extensionSettings = await initSettings();
-    console.group("[BetterFloat] Loading mappings...");
+
+    if (location.search.includes('?tab=') && extensionSettings.enableCSFloat) {
+        console.log('[BetterFloat] Switching to tab ' + location.search.split('=')[1]);
+        switchTab(Number(location.search.split('=')[1]) - 1);
+    }
+
+    console.group('[BetterFloat] Loading mappings...');
     await loadMapping();
     await loadBuffMapping();
     console.groupEnd();
@@ -34,14 +42,8 @@ async function init() {
     }
 
     //check if url is in supported subpages
-    if (url.endsWith('float.com/')) {
-        await firstLaunch(url);
-    } else {
-        for (let i = 0; i < supportedSubPages.length; i++) {
-            if (url.includes(supportedSubPages[i])) {
-                await firstLaunch(url);
-            }
-        }
+    if (supportedSubPages.includes(location.pathname)) {
+                await firstLaunch();
     }
 
     // mutation observer is only needed once
@@ -53,16 +55,8 @@ async function init() {
 }
 
 // required as mutation does not detect initial DOM
-async function firstLaunch(url: string) {
+async function firstLaunch() {
     if (!extensionSettings.enableCSFloat) return;
-
-    if(url.includes('?tab=')) {
-        let tab = Number(url.split('?tab=')[1]);
-        console.log('[BetterFloat] Tab number: ' + tab);
-        let tabList = document.querySelectorAll('.mat-tab-label');
-        (<HTMLElement>tabList[tab-1]).click();
-        document.title = tabList[tab-1].textContent?.trim() + " | CSFloat";
-    }
 
     createTabListeners();
 
@@ -73,15 +67,21 @@ async function firstLaunch(url: string) {
     }
 }
 
+function switchTab(tab: number) {
+    let tabList = document.querySelectorAll('.mat-tab-label');
+    (<HTMLElement>tabList[tab]).click();
+    document.title = tabList[tab].textContent?.trim() + ' | CSFloat';
+}
+
 function createTabListeners() {
-    const tabList = document.querySelectorAll(".mat-tab-label");
+    const tabList = document.querySelectorAll('.mat-tab-label');
     const tabContainer = tabList[0]?.parentElement;
     if (!tabList || tabContainer?.className.includes('betterfloat-tabs')) return;
     tabContainer?.classList.add('betterfloat-tabs');
     for (let i = 0; i < tabList.length; i++) {
-        tabList[i].addEventListener("click", () => {
-            window.history.replaceState({}, "", "?tab=" + tabList[i].getAttribute("aria-posinset"));
-            document.title = tabList[i].textContent?.trim() + " | CSFloat";
+        tabList[i].addEventListener('click', () => {
+            window.history.replaceState({}, '', '?tab=' + tabList[i].getAttribute('aria-posinset'));
+            document.title = tabList[i].textContent?.trim() + ' | CSFloat';
         });
     }
 }
@@ -154,7 +154,7 @@ async function refreshButton() {
         });
         stopElement.addEventListener('click', () => {
             // gets called multiple times, maybe needs additional handling in the future
-            console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now(), ", #active threads: " + refreshThreads.length);
+            console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now(), ', #active threads: ' + refreshThreads.length);
 
             let refreshText = document.querySelector('.betterfloat-refreshText');
             if (!refreshText) return;
@@ -237,7 +237,7 @@ async function adjustItem(container: Element, isPopout = false) {
         setTimeout(async () => {
             await addItemHistory(container, item);
 
-            const itemPreview = document.getElementsByClassName("item-" + window.location.href.split('/').pop())[0];
+            const itemPreview = document.getElementsByClassName('item-' + window.location.href.split('/').pop())[0];
 
             let apiItem = getApiItem(itemPreview);
             if (apiItem) {
@@ -250,10 +250,9 @@ async function adjustItem(container: Element, isPopout = false) {
 
 function storeApiItem(container: Element, item: ListingData) {
     // add id as class to find the element later more easily
-    container.classList.add("item-"+item.id);
+    container.classList.add('item-' + item.id);
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
-
 
 function getApiItem(container: Element): ListingData | null {
     let data = container.getAttribute('data-betterfloat');
@@ -545,8 +544,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};">${differenceSymbol}${Math.abs(difference).toFixed(2)} ${
             extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''
         }</span>`;
-        if (item.price > 1999 && extensionSettings.showBuffPercentageDifference)
-            parseHTMLString('<br>', priceContainer);
+        if (item.price > 1999 && extensionSettings.showBuffPercentageDifference) parseHTMLString('<br>', priceContainer);
 
         parseHTMLString(buffPriceHTML, priceContainer);
     }
@@ -604,7 +602,7 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/item/', '/stall/', '/profile/watchlist', '/search?', '?tab='];
+let supportedSubPages = ['/', '/item/', '/stall/', '/profile/watchlist', '/search'];
 let unsupportedSubPages = ['/sell'];
 
 let extensionSettings: ExtensionSettings;
