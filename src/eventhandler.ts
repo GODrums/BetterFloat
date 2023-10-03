@@ -17,9 +17,9 @@ export function activateHandler() {
     document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', function (e) {
         var eventData = (<CustomEvent>e).detail;
         //switch depending on current site
-        if (window.location.href.includes('csfloat.com')) {
+        if (location.href.includes('csfloat.com')) {
             processCSFloatEvent(eventData);
-        } else if (window.location.href.includes('skinport.com')) {
+        } else if (location.href.includes('skinport.com')) {
             processSkinportEvent(eventData);
         }
     });

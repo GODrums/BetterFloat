@@ -7,13 +7,12 @@ import { handleSpecialStickerNames } from '../util/helperfunctions';
 import { generateSpStickerContainer } from '../util/uigeneration';
 
 async function init() {
-    console.time('[BetterFloat] Skinport init timer');
-    //get current url
-    let url = window.location.href;
-    if (!url.includes('skinport.com')) {
+    if (!location.hostname.includes('skinport.com')) {
         return;
     }
+
     console.log('[BetterFloat] Starting BetterFloat');
+    console.time('[BetterFloat] Skinport init timer');
     // catch the events thrown by the script
     // this has to be done as first thing to not miss timed events
     activateHandler();
@@ -35,7 +34,7 @@ async function init() {
 
     createLiveLink();
 
-    await firstLaunch(url);
+    await firstLaunch();
 
     // mutation observer is only needed once
     if (!isObserverActive) {
@@ -45,35 +44,37 @@ async function init() {
     }
 }
 
-async function firstLaunch(url: string) {
+async function firstLaunch() {
     if (!extensionSettings.enableSkinport) return;
 
-    console.log('[BetterFloat] First launch, url:', url);
+    let path = location.pathname;
 
-    if (url == 'https://skinport.com/') {
+    console.log('[BetterFloat] First launch, url:', path);
+
+    if (path == '/') {
         let popularLists = document.querySelectorAll('.PopularList');
         for (let list of popularLists) {
             await handlePopularList(list);
         }
-    } else if (url.includes('/market')) {
+    } else if (path.startsWith('/market')) {
         let catalogItems = document.querySelectorAll('.CatalogPage-item');
         for (let item of catalogItems) {
             await adjustItem(item);
         }
-        if (url.includes('bf=live')) {
+        if (path.includes('bf=live')) {
             (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
         }
-    } else if (url.includes('/cart')) {
+    } else if (path.startsWith('/cart')) {
         let cartContainer = document.querySelector('.Cart-container');
         if (cartContainer) {
             await adjustCart(cartContainer);
         }
-    } else if (url.includes('/item')) {
+    } else if (path.startsWith('/item')) {
         let itemPage = document.querySelectorAll('.ItemPage');
         for (let item of itemPage) {
             await adjustItemPage(item);
         }
-    } else if (url.includes('/myitems/')) {
+    } else if (path.startsWith('/myitems/')) {
         let inventoryItems = document.querySelectorAll('.InventoryPage-item');
         for (let item of inventoryItems) {
             await adjustItem(item);

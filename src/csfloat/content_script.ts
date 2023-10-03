@@ -13,10 +13,8 @@ type PriceResult = {
 
 async function init() {
     console.time('[BetterFloat] CSFloat init timer');
-    //get current url
-    let location = window.location;
 
-    if (!location.hostname.includes('csfloat.com')) {
+    if (!location.hostname.includes('csfloat.com') || location.hostname.includes('blog.')) {
         return;
     }
     // catch the events thrown by the script
@@ -186,9 +184,8 @@ async function refreshButton() {
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableCSFloat) {
-            let url = window.location.href;
             for (let i = 0; i < unsupportedSubPages.length; i++) {
-                if (url.includes(unsupportedSubPages[i])) {
+                if (location.href.includes(unsupportedSubPages[i])) {
                     console.debug('[BetterFloat] Current page is currently NOT supported');
                     return;
                 }
@@ -622,7 +619,7 @@ function createTopButton() {
 }
 
 let supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search'];
-let unsupportedSubPages = ['/sell', '/db'];
+let unsupportedSubPages = ['blog.csfloat', '/sell', '/db'];
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
