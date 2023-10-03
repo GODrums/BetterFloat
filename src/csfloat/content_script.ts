@@ -383,7 +383,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
 }
 
 async function addStickerInfo(container: Element, cachedItem: ListingData, price_difference: number) {
-    let stickerDiv = container.querySelector('.sticker-container')?.children[0];
+    let stickerDiv = container.querySelector('.sticker-container');
     let stickers = cachedItem.item.stickers;
     // quality 12 is souvenir
     if (!stickers || cachedItem.item?.quality == 12) {
@@ -394,8 +394,17 @@ async function addStickerInfo(container: Element, cachedItem: ListingData, price
     let spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
+    let csfSP = container.querySelector('.sticker-percentage');
+    if (csfSP) {
+        csfSP.remove();
+    }
     if (stickerDiv && priceSum > 1) {
-        stickerDiv.before(generateStickerContainer(priceSum, spPercentage));
+        let spContainer = generateStickerContainer(priceSum, spPercentage);
+        if (stickerDiv.children.length > 0) {
+            stickerDiv.children[0].before(spContainer);
+        } else {
+            stickerDiv.appendChild(spContainer);
+        }
     }
 }
 
@@ -406,7 +415,7 @@ function getFloatItem(container: Element): FloatItem {
     const header_details = <Element>nameContainer?.childNodes[1];
 
     let name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    let price = priceContainer?.textContent;
+    let price = priceContainer?.textContent?.trim();
     let condition: ItemCondition = '';
     let quality = '';
     let style: ItemStyle = '';
@@ -440,7 +449,7 @@ function getFloatItem(container: Element): FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : Number(price?.split('  ')[0].trim().replace('$', '').replace(',', '')),
+        price: price?.includes('Bids') ? 0 : Number(price?.split(" ver")[0].split('  ')[0].trim().replace('$', '').replace(',', '')),
         bargain: false,
     };
 }
@@ -479,7 +488,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
         priceOrder = 0;
     }
 
-    const suggestedContainer = container.querySelector('.suggested-container');
+    const suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
 
     if (suggestedContainer && !suggestedContainer.querySelector('.betterfloat-buff-price')) {
@@ -530,8 +539,12 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06)) {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
+        let badge = priceContainer.querySelector('.badge');
         if (saleTag) {
             priceContainer.removeChild(saleTag);
+        }
+        if (badge) {
+            priceContainer.removeChild(badge);
         }
 
         let backgroundColor;

@@ -1,7 +1,7 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-	"version": "1.7.1",
+	"version": "1.7.2",
     "description": "Enhance your experience on CSFloat.com and Skinport.com",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*", "*://*.skinport.com/*"],
