@@ -1,4 +1,5 @@
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+// import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+import { io } from "/public/socket.io_4.4.1.min.js";
 
 const userCurrency = await (async () => {
     const response = await fetch('https://skinport.com/api/data/');
