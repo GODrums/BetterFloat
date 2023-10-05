@@ -288,7 +288,7 @@ async function adjustItem(container: Element, isPopout = false) {
     if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
-            await addItemHistory(container);
+            await addItemHistory(container.parentElement!.parentElement!);
 
             const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 
@@ -301,7 +301,7 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
             }
-        }, 1000);
+        }, 500);
     }
 }
 
@@ -442,7 +442,10 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 
     let csfSP = container.querySelector('.sticker-percentage');
     if (csfSP) {
-        await changeSpContainer(csfSP, stickers, price_difference);
+        let didChange = await changeSpContainer(csfSP, stickers, price_difference);
+        if (!didChange) {
+            csfSP.remove();
+        }
     }
 }
 
