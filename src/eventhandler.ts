@@ -1,10 +1,10 @@
-import { EventData, HistoryGraphData, ListingData, SellerData } from './@typings/FloatTypes';
+import { EventData, CSFloat } from './@typings/FloatTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { cacheHistory, cacheItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
 
 type StallData = {
-    listings: ListingData[];
-    user: SellerData;
+    listings: CSFloat.ListingData[];
+    user: CSFloat.SellerData;
 };
 
 type SkinportWebsocketData = {
@@ -84,19 +84,19 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 function processCSFloatEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('v1/listings?')) {
-        cacheItems(eventData.data as ListingData[]);
+        cacheItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/listings/recommended')) {
         // recommended for you tab
-        cacheItems(eventData.data as ListingData[]);
+        cacheItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/listings/unique-items')) {
         // unique items tab
-        cacheItems(eventData.data as ListingData[]);
+        cacheItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/me/watchlist')) {
         // own watchlist
-        cacheItems(eventData.data as ListingData[]);
+        cacheItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/me/listings')) {
         // own stall
-        cacheItems(eventData.data as ListingData[]);
+        cacheItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/users/')) {
         // url schema: v1/users/[:userid]
         // sellers stall, gives StallData
@@ -104,7 +104,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup
         if (eventData.url.includes('/graph')){
-            cacheHistory(eventData.data as HistoryGraphData[]);
+            cacheHistory(eventData.data as CSFloat.HistoryGraphData[]);
         } else if (eventData.url.includes('/sales')){
             // item table - last sales
         }
