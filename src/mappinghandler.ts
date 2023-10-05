@@ -1,4 +1,4 @@
-import { CSGOTraderMapping, HistoryData, ListingData } from './@typings/FloatTypes';
+import { CSGOTraderMapping, CSFloat } from './@typings/FloatTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
 
@@ -7,9 +7,11 @@ let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
 let priceMapping: CSGOTraderMapping = {};
 // csfloat: cached items from api
-let cachedItems: ListingData[] = [];
-// csfloat: history for one item
-let cachedHistory: HistoryData[] = [];
+let cachedItems: CSFloat.ListingData[] = [];
+// csfloat: history graph for one item
+let cachedHistoryGraph: CSFloat.HistoryGraphData[] = [];
+// csfloat: history sales for one item
+let cachedHistorySales: CSFloat.HistorySalesData[] = [];
 // skinport: cached items from api
 let cachedSpItems: Skinport.Item[] = [];
 // skinport: cached currency rates by Skinport: USD -> X
@@ -20,13 +22,13 @@ let realRatesFromUSD: { [currency: string]: number } = {};
 let userCurrency = '';
 
 
-export async function cacheHistory(data: HistoryData[]) {
-    if (cachedHistory.length > 0) {
-        console.debug('[BetterFloat] History already cached, deleting history: ', cachedHistory);
-        cachedHistory = [];
+export async function cacheHistory(data: CSFloat.HistoryGraphData[]) {
+    if (cachedHistoryGraph.length > 0) {
+        console.debug('[BetterFloat] History already cached, deleting history: ', cachedHistoryGraph);
+        cachedHistoryGraph = [];
     }
     // original price is in cents, convert to dollars
-    cachedHistory = data.map((history) => {
+    cachedHistoryGraph = data.map((history) => {
         return {
             avg_price: history.avg_price / 100,
             count: history.count,
@@ -35,7 +37,7 @@ export async function cacheHistory(data: HistoryData[]) {
     });
 }
 
-export async function cacheItems(data: ListingData[]) {
+export async function cacheItems(data: CSFloat.ListingData[]) {
     if (cachedItems.length > 0) {
         console.debug('[BetterFloat] Items already cached, deleting items: ', cachedItems);
         cachedItems = [];
@@ -67,8 +69,8 @@ export async function cacheRealCurrencyRates(data: { [currency: string]: number 
 }
 
 export async function getWholeHistory() {
-    let history = cachedHistory;
-    cachedHistory = [];
+    let history = cachedHistoryGraph;
+    cachedHistoryGraph = [];
     return history;
 }
 

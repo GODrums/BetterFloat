@@ -61,7 +61,7 @@ async function firstLaunch() {
         for (let item of catalogItems) {
             await adjustItem(item);
         }
-        if (path.includes('bf=live')) {
+        if (location.search.includes('bf=live')) {
             (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
         }
     } else if (path.startsWith('/cart')) {
@@ -572,7 +572,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
         if (item.price !== 0 && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
             discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
-            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
+            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(1);
         }
     } else {
         if (container.querySelector('.sale-tag')) {

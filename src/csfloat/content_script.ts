@@ -1,6 +1,6 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
-import { ExtensionSettings, FloatItem, HistoryData, ItemCondition, ItemStyle, ListingData } from '../@typings/FloatTypes';
+import { ExtensionSettings, CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
@@ -251,13 +251,13 @@ async function adjustItem(container: Element, isPopout = false) {
     }
 }
 
-function storeApiItem(container: Element, item: ListingData) {
+function storeApiItem(container: Element, item: CSFloat.ListingData) {
     // add id as class to find the element later more easily
     container.classList.add('item-' + item.id);
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-function getApiItem(container: Element): ListingData | null {
+function getApiItem(container: Element): CSFloat.ListingData | null {
     let data = container.getAttribute('data-betterfloat');
     if (data) {
         return JSON.parse(data);
@@ -265,7 +265,7 @@ function getApiItem(container: Element): ListingData | null {
     return null;
 }
 
-async function addItemHistory(container: Element, item: FloatItem) {
+async function addItemHistory(container: Element, item: CSFloat.FloatItem) {
     const itemHistory = calculateHistoryValues(await getWholeHistory());
     const headerContainer = <HTMLElement>container.querySelector('#header');
     if (!headerContainer || !itemHistory) {
@@ -306,7 +306,7 @@ async function addItemHistory(container: Element, item: FloatItem) {
     headerContainer.appendChild(historyContainer);
 }
 
-function calculateHistoryValues(itemHistory: HistoryData[]) {
+function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
     if (itemHistory.length == 0) {
         return null;
     }
@@ -320,7 +320,7 @@ function calculateHistoryValues(itemHistory: HistoryData[]) {
     };
 }
 
-async function addListingAge(item: FloatItem, container: Element, cachedItem: ListingData) {
+async function addListingAge(item: CSFloat.FloatItem, container: Element, cachedItem: CSFloat.ListingData) {
     const listingAge = document.createElement('div');
     const listingAgeText = document.createElement('p');
     const listingIcon = document.createElement('img');
@@ -379,7 +379,7 @@ async function addListingAge(item: FloatItem, container: Element, cachedItem: Li
     }
 }
 
-async function addStickerInfo(container: Element, cachedItem: ListingData, price_difference: number) {
+async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
     let stickerDiv = container.querySelector('.sticker-container');
     let stickers = cachedItem.item.stickers;
     // quality 12 is souvenir
@@ -415,7 +415,7 @@ async function addStickerInfo(container: Element, cachedItem: ListingData, price
     }
 }
 
-function getFloatItem(container: Element): FloatItem {
+function getFloatItem(container: Element): CSFloat.FloatItem {
     const nameContainer = container.querySelector('app-item-name');
     const floatContainer = container.querySelector('item-float-bar');
     const priceContainer = container.querySelector('.price');
@@ -461,7 +461,7 @@ function getFloatItem(container: Element): FloatItem {
     };
 }
 
-async function addBuffPrice(item: FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
+async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
     await loadMapping();
     let buff_name = handleSpecialStickerNames(createBuffName(item));
     let priceMapping = await getPriceMapping();
@@ -581,7 +581,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
     };
 }
 
-function createBuffName(item: FloatItem): string {
+function createBuffName(item: CSFloat.FloatItem): string {
     let full_name = `${item.name}`;
     if (item.quality.includes('Sticker')) {
         full_name = `Sticker | ` + full_name;

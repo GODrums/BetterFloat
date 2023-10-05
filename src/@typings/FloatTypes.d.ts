@@ -1,13 +1,3 @@
-export type FloatItem = {
-    name: string;
-    quality: string;
-    style: ItemStyle;
-    condition: ItemCondition;
-    float: number;
-    price: number;
-    bargain: false | number;
-};
-
 export type ItemType = 'Container' | 'Sticker' | 'Weapon' | 'Knife' | 'Gloves';
 
 export type ItemQuality = '' | 'Souvenir' | 'StatTrak™' | 'Base Grade Container' | 'Remarkable Sticker' | 'Exotic Sticker' | 'Extraordinary Sticker' | 'High Grade Sticker';
@@ -34,8 +24,8 @@ export type ExtensionSettings = {
     spPriceReference: 0 | 1;
     spSteamPrice: boolean;
     spBuffDifference: boolean;
-    skinportRates: "skinport" | "real";
-    spBuffLink: "action" | "text";
+    skinportRates: 'skinport' | 'real';
+    spBuffLink: 'action' | 'text';
     spFloatColoring: boolean;
 };
 
@@ -86,12 +76,33 @@ export interface EventData<T> {
     data: T;
 }
 
-export type ListingData = {
-    created_at: string;
-    id: string;
-    is_seller: boolean;
-    is_watchlisted: boolean;
-    item: {
+export module CSFloat {
+    export type FloatItem = {
+        name: string;
+        quality: string;
+        style: ItemStyle;
+        condition: ItemCondition;
+        float: number;
+        price: number;
+        bargain: false | number;
+    };
+
+    export type ListingData = {
+        created_at: string;
+        id: string;
+        is_seller: boolean;
+        is_watchlisted: boolean;
+        item: Item;
+        max_offer_discount: number;
+        max_offer_price: number;
+        price: number;
+        seller: SellerData;
+        state: 'listed' | 'delisted';
+        type: 'buy now' | 'auction';
+        watchers: number;
+    };
+
+    export type Item = {
         asset_id: string;
         collection: string;
         d_param: string;
@@ -118,50 +129,64 @@ export type ListingData = {
         type_name: 'Skin' | 'Sticker';
         wear_name: 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
     };
-    max_offer_discount: number;
-    max_offer_price: number;
-    price: number;
-    seller: SellerData;
-    state: 'listed' | 'delisted';
-    type: 'buy now' | 'auction';
-    watchers: number;
-};
 
-export type SellerData = {
-    avatar: string;
-    away: boolean;
-    flags: number;
-    has_valid_steam_api_key: boolean;
-    online: boolean;
-    stall_public: boolean;
-    statistics: {
-        median_trade_time: number;
-        total_avoided_trades: number;
-        total_failed_trades: number;
-        total_trades: number;
-        total_verified_trades: number;
+    export type SellerData = {
+        avatar: string;
+        away: boolean;
+        flags: number;
+        has_valid_steam_api_key: boolean;
+        online: boolean;
+        stall_public: boolean;
+        statistics: {
+            median_trade_time: number;
+            total_avoided_trades: number;
+            total_failed_trades: number;
+            total_trades: number;
+            total_verified_trades: number;
+        };
+        steam_id: string;
+        username: string;
+        verification_mode: string;
     };
-    steam_id: string;
-    username: string;
-    verification_mode: string;
-};
 
-export type StickerData = {
-    icon_url: string;
-    name: string;
-    scm: SCMType;
-    slot: number;
-    stickerId: number;
-    wear: number;
-};
+    export type StickerData = {
+        icon_url: string;
+        name: string;
+        scm: SCMType;
+        slot: number;
+        stickerId: number;
+        wear: number;
+    };
 
-export type HistoryData = {
-    avg_price: number;
-    count: number;
-    day: string;
-};
+    export type HistoryGraphData = {
+        avg_price: number;
+        count: number;
+        day: string;
+    };
 
-export type SCMType = {
-    price: number;
-    volume: number;
-};
+    export type HistorySalesData = {
+        sales: {
+            createdAt: string;
+            id: string;
+            is_seller: boolean;
+            item: Item;
+            price: number;
+            reference: {
+                base_price: number;
+                float_factor: number;
+                last_updated: string;
+                predicted_price: number;
+                quantity: number;
+            };
+            sold_at: string;
+            state: string;
+            type: string;
+            watchers: number;
+        }[];
+    };
+
+    export type SCMType = {
+        price: number;
+        volume: number;
+    };
+}

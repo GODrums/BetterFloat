@@ -1,4 +1,4 @@
-import { EventData, HistoryData, ListingData, SellerData } from './@typings/FloatTypes';
+import { EventData, HistoryGraphData, ListingData, SellerData } from './@typings/FloatTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { cacheHistory, cacheItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
 
@@ -103,7 +103,11 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
         cacheItems((eventData.data as StallData).listings);
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup
-        cacheHistory(eventData.data as HistoryData[]);
+        if (eventData.url.includes('/graph')){
+            cacheHistory(eventData.data as HistoryGraphData[]);
+        } else if (eventData.url.includes('/sales')){
+            // item table - last sales
+        }
     } else if (eventData.url.includes('v1/me')) {
     } else if (eventData.url.includes('v1/listings/')) {
         // item popup
