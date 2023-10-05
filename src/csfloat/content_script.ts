@@ -5,7 +5,7 @@ import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstCachedItem, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
-import { genRefreshButton, generateStickerContainer } from '../util/uigeneration';
+import { genRefreshButton } from '../util/uigeneration';
 
 type PriceResult = {
     price_difference: number;
@@ -392,16 +392,26 @@ async function addStickerInfo(container: Element, cachedItem: ListingData, price
 
     // don't display SP if total price is below $1
     let csfSP = container.querySelector('.sticker-percentage');
-    if (csfSP) {
-        csfSP.remove();
-    }
-    if (stickerDiv && priceSum > 1) {
-        let spContainer = generateStickerContainer(priceSum, spPercentage);
-        if (stickerDiv.children.length > 0) {
-            stickerDiv.children[0].before(spContainer);
+    if (csfSP && priceSum > 1) {
+        let backgroundImageColor = '';
+        if (spPercentage < 0.005 || spPercentage > 2) {
+            backgroundImageColor = '#0003';
+        } else if (spPercentage > 1) {
+            backgroundImageColor = 'rgb(245 0 0 / 40%)';
+        } else if (spPercentage > 0.5) {
+            backgroundImageColor = 'rgb(245 164 0 / 40%)';
+        } else if (spPercentage > 0.25) {
+            backgroundImageColor = 'rgb(244 245 0 / 40%)';
         } else {
-            stickerDiv.appendChild(spContainer);
+            backgroundImageColor = 'rgb(83 245 0 / 40%)';
         }
+        if (spPercentage > 2 || spPercentage < 0.005) {
+            csfSP.textContent = `$${priceSum.toFixed(0)} SP`;
+        } else {
+            csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
+        }
+        (<HTMLElement>csfSP).style.backgroundColor = backgroundImageColor;
+        (<HTMLElement>csfSP).style.marginBottom = '5px';
     }
 }
 
@@ -446,7 +456,7 @@ function getFloatItem(container: Element): FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : Number(price?.split(" ver")[0].split('  ')[0].trim().replace('$', '').replace(',', '')),
+        price: price?.includes('Bids') ? 0 : Number(price?.split(' ver')[0].split('  ')[0].trim().replace('$', '').replace(',', '')),
         bargain: false,
     };
 }
@@ -521,6 +531,7 @@ async function addBuffPrice(item: FloatItem, container: Element, isPopout = fals
 
         if (!container.querySelector('.betterfloat-buff-price')) {
             if (showBoth) {
+                suggestedContainer.setAttribute('href', 'https://steamcommunity.com/market/listings/730/' + encodeURIComponent(buff_name));
                 let divider = document.createElement('div');
                 suggestedContainer.after(buffContainer);
                 suggestedContainer.after(divider);
