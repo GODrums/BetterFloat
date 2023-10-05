@@ -165,24 +165,22 @@ export module CSFloat {
     };
 
     export type HistorySalesData = {
-        sales: {
-            createdAt: string;
-            id: string;
-            is_seller: boolean;
-            item: Item;
-            price: number;
-            reference: {
-                base_price: number;
-                float_factor: number;
-                last_updated: string;
-                predicted_price: number;
-                quantity: number;
-            };
-            sold_at: string;
-            state: string;
-            type: string;
-            watchers: number;
-        }[];
+        createdAt: string;
+        id: string;
+        is_seller: boolean;
+        item: Item;
+        price: number;
+        reference: {
+            base_price: number;
+            float_factor: number;
+            last_updated: string;
+            predicted_price: number;
+            quantity: number;
+        };
+        sold_at: string;
+        state: string;
+        type: string;
+        watchers: number;
     };
 
     export type SCMType = {

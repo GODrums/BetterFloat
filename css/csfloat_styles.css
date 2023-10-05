@@ -7,6 +7,15 @@
 	border-radius: 5px;
 }
 
+.betterfloat-table-sp {
+    background-color: #0003;
+    border-radius: 5px;
+    font-size: 13px;
+    margin-left: 8px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
 .betterfloat-refreshStart,
 .betterfloat-refreshStop {
 	display: flex;

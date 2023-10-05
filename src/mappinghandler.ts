@@ -7,11 +7,13 @@ let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
 let priceMapping: CSGOTraderMapping = {};
 // csfloat: cached items from api
-let cachedItems: CSFloat.ListingData[] = [];
+let csfloatItems: CSFloat.ListingData[] = [];
+// csfloat: cached popup item from api
+let csfloatPopupItem: CSFloat.ListingData | null = null;
 // csfloat: history graph for one item
-let cachedHistoryGraph: CSFloat.HistoryGraphData[] = [];
+let csfloatHistoryGraph: CSFloat.HistoryGraphData[] = [];
 // csfloat: history sales for one item
-let cachedHistorySales: CSFloat.HistorySalesData[] = [];
+let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
 // skinport: cached items from api
 let cachedSpItems: Skinport.Item[] = [];
 // skinport: cached currency rates by Skinport: USD -> X
@@ -22,13 +24,13 @@ let realRatesFromUSD: { [currency: string]: number } = {};
 let userCurrency = '';
 
 
-export async function cacheHistory(data: CSFloat.HistoryGraphData[]) {
-    if (cachedHistoryGraph.length > 0) {
-        console.debug('[BetterFloat] History already cached, deleting history: ', cachedHistoryGraph);
-        cachedHistoryGraph = [];
+export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
+    if (csfloatHistoryGraph.length > 0) {
+        console.debug('[BetterFloat] History graph already cached, deleting history: ', csfloatHistoryGraph);
+        csfloatHistoryGraph = [];
     }
     // original price is in cents, convert to dollars
-    cachedHistoryGraph = data.map((history) => {
+    csfloatHistoryGraph = data.map((history) => {
         return {
             avg_price: history.avg_price / 100,
             count: history.count,
@@ -37,12 +39,29 @@ export async function cacheHistory(data: CSFloat.HistoryGraphData[]) {
     });
 }
 
-export async function cacheItems(data: CSFloat.ListingData[]) {
-    if (cachedItems.length > 0) {
-        console.debug('[BetterFloat] Items already cached, deleting items: ', cachedItems);
-        cachedItems = [];
+export async function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
+    if (csfloatHistorySales.length > 0) {
+        console.debug('[BetterFloat] History sales already cached, deleting history: ', csfloatHistoryGraph);
+        csfloatHistorySales = [];
     }
-    cachedItems = data;
+    // original price is in cents, convert to dollars
+    csfloatHistorySales = data;
+}
+
+export async function cacheCSFItems(data: CSFloat.ListingData[]) {
+    if (csfloatItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, deleting items: ', csfloatItems);
+        csfloatItems = [];
+    }
+    csfloatItems = data;
+}
+
+export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
+    if (csfloatPopupItem) {
+        console.debug('[BetterFloat] Popup item already cached, deleting item: ', csfloatPopupItem);
+        csfloatPopupItem = null;
+    }
+    csfloatPopupItem = data;
 }
 
 export async function cacheSpItems(data: Skinport.Item[]) {
@@ -69,18 +88,31 @@ export async function cacheRealCurrencyRates(data: { [currency: string]: number 
 }
 
 export async function getWholeHistory() {
-    let history = cachedHistoryGraph;
-    cachedHistoryGraph = [];
+    let history = csfloatHistoryGraph;
+    csfloatHistoryGraph = [];
     return history;
 }
 
-export async function getFirstCachedItem() {
-    if (cachedItems.length > 0) {
-        const item = cachedItems.shift();
+export async function getFirstHistorySale() {
+    if (csfloatHistorySales.length > 0) {
+        const sale = csfloatHistorySales.shift();
+        return sale;
+    } else {
+        return null;
+    }
+}
+
+export async function getFirstCSFItem() {
+    if (csfloatItems.length > 0) {
+        const item = csfloatItems.shift();
         return item;
     } else {
         return null;
     }
+}
+
+export async function getCSFPopupItem() {
+    return csfloatPopupItem;
 }
 
 export async function getFirstSpItem() {
