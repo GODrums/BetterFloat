@@ -453,7 +453,7 @@ async function adjustItem(container: Element) {
 function applyFilter(item: Skinport.Listing) {
     let targetName = extensionSettings.spFilter.name.toLowerCase();
     // if true, item should be filtered
-    const nameCheck = targetName != '' && !(item.type + " | " + item.name).toLowerCase().includes(targetName);
+    const nameCheck = targetName != '' && !(item.type + ' | ' + item.name).toLowerCase().includes(targetName);
     const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
     const typeCheck = extensionSettings.spFilter.types.includes(item.category);
     return nameCheck || priceCheck || typeCheck;

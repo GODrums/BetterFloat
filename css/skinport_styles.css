@@ -140,6 +140,7 @@
 }
 
 .betterfloat-filterpopup input {
+    appearance: auto;
     -webkit-appearance: auto;
     -moz-appearance: auto;
     

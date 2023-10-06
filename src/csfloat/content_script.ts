@@ -65,7 +65,6 @@ async function firstLaunch() {
     createTabListeners();
 
     let items = document.querySelectorAll('item-card');
-    console.log('[BetterFloat] Found ' + items.length + ' items on page');
 
     for (let i = 0; i < items.length; i++) {
         adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ?? false);
@@ -565,7 +564,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     if (location.pathname == '/sell') {
         price = priceText[1].split('Price')[1];
     } else {
-        price = priceText.includes('Bids') ? "0" : priceText[0];
+        price = priceText.includes('Bids') ? '0' : priceText[0];
     }
     let condition: ItemCondition = '';
     let quality = '';
