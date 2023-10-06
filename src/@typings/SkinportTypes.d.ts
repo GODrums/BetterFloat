@@ -89,6 +89,8 @@ export module Skinport {
         name: string;
         type: string;
         text: string;
+        // Knife, Gloves, Agent, Weapon, Collectible, Container, Sticker
+        category: string;
         price: number;
         stickers: {
             name: string;

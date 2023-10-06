@@ -27,6 +27,12 @@ export type ExtensionSettings = {
     skinportRates: 'skinport' | 'real';
     spBuffLink: 'action' | 'text';
     spFloatColoring: boolean;
+    spFilter: {
+        priceLow: number;
+        priceHigh: number;
+        name: string;
+        types: string[];
+    }
 };
 
 export type CSGOTraderMapping = {

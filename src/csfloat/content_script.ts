@@ -261,7 +261,7 @@ async function adjustSalesTableRow(container: Element) {
             const doChange = await changeSpContainer(stickerContainer, stickerData, Number(price_difference));
             if (doChange) {
                 appStickerView.appendChild(stickerContainer);
-                (<HTMLElement>appStickerView.parentElement).style.paddingRight = "0";
+                (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
             }
         }
     }

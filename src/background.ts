@@ -1,6 +1,6 @@
 import { ExtensionSettings } from './@typings/FloatTypes';
 
-let defaultSettings: ExtensionSettings = {
+const defaultSettings: ExtensionSettings = {
     enableCSFloat: true,
     autorefresh: true,
     priceReference: 0,
@@ -21,6 +21,12 @@ let defaultSettings: ExtensionSettings = {
     spBuffDifference: true,
     spBuffLink: 'action',
     spFloatColoring: true,
+    spFilter: {
+        priceLow: 0,
+        priceHigh: 999999,
+        name: '',
+        types: [],
+    },
 };
 
 // Check whether new version is installed

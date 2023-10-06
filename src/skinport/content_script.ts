@@ -1,4 +1,4 @@
-import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
+import { ExtensionSettings, ItemStyle, ItemType } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
@@ -18,6 +18,7 @@ async function init() {
     activateHandler();
 
     extensionSettings = await initSettings();
+    console.debug('[BetterFloat] Settings: ', extensionSettings);
 
     if (extensionSettings.enableSkinport && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0) {
         console.warn('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
@@ -60,6 +61,9 @@ async function firstLaunch() {
         let catalogItems = document.querySelectorAll('.CatalogPage-item');
         for (let item of catalogItems) {
             await adjustItem(item);
+        }
+        if (location.search.includes('sort=date')) {
+            await addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
         }
         if (location.search.includes('bf=live')) {
             (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
@@ -166,6 +170,9 @@ async function applyMutation() {
                             await adjustItemPage(addedNode);
                         } else if (className.includes('PopularList')) {
                             await handlePopularList(addedNode);
+                        } else if (className.includes("CatalogHeader-tooltipLive")) {
+                            // contains live button
+                            addLiveFilterMenu(addedNode);
                         }
                     }
                 }
@@ -173,6 +180,137 @@ async function applyMutation() {
         }
     });
     observer.observe(document, { childList: true, subtree: true });
+}
+
+async function addLiveFilterMenu(container: Element) {
+    let filterDiv = document.createElement('div');
+
+    let filterPopup = document.createElement('div');
+    filterPopup.className = 'betterfloat-filterpopup';
+    let popupHeader = document.createElement('h3');
+    popupHeader.textContent = 'ITEM FILTER';
+    popupHeader.style.fontWeight = '600';
+    popupHeader.style.fontSize = '18px';
+    popupHeader.style.lineHeight = '0.5';
+    popupHeader.style.marginTop= '20px';
+    let popupSubHeader = document.createElement('h4');
+    popupSubHeader.style.fontSize = '16px';
+    popupSubHeader.style.color = '#828282';
+    popupSubHeader.textContent = 'by BetterFloat';
+    let popupCloseButton = document.createElement('button');
+    popupCloseButton.type = 'button';
+    popupCloseButton.className = 'betterfloat-filterpopup-close';
+    popupCloseButton.textContent = 'x';
+    popupCloseButton.onclick = () => {
+        filterPopup.style.display = 'none';
+    };
+    let popupContent = document.createElement('div');
+    popupContent.className = 'betterfloat-filterpopup-content';
+    let popupHorizonalDiv = document.createElement('div');
+    popupHorizonalDiv.style.display = 'flex';
+    popupHorizonalDiv.style.justifyContent = 'space-between';
+    popupHorizonalDiv.style.marginTop = '5px';
+    let popupPriceDiv = document.createElement('div');
+    popupPriceDiv.style.display = 'flex';
+    popupPriceDiv.style.flexDirection = 'column';
+    popupPriceDiv.style.alignItems = 'center';
+    popupPriceDiv.style.marginRight = '10px';
+    popupPriceDiv.style.padding = '0 20px';
+    let popupPriceLabel = document.createElement('label');
+    popupPriceLabel.textContent = 'PRICE';
+    popupPriceLabel.style.margin = '5px 0';
+    let popupPriceLow = document.createElement('input');
+    popupPriceLow.type = 'number';
+    popupPriceLow.min = '0';
+    popupPriceLow.max = '999999';
+    popupPriceLow.step = '0.01';
+    popupPriceLow.value = extensionSettings.spFilter.priceLow.toString();
+    let popupPriceHigh = popupPriceLow.cloneNode() as HTMLInputElement;
+    popupPriceHigh.value = extensionSettings.spFilter.priceHigh.toString();
+    let popupPriceDivider = document.createElement('span');
+    popupPriceDivider.textContent = '-';
+    popupPriceDiv.appendChild(popupPriceLabel);
+    popupPriceDiv.appendChild(popupPriceLow);
+    popupPriceDiv.appendChild(popupPriceDivider);
+    popupPriceDiv.appendChild(popupPriceHigh);
+    let popupNameDiv = document.createElement('div');
+    popupNameDiv.style.display = 'flex';
+    popupNameDiv.style.flexDirection = 'column';
+    popupNameDiv.style.alignItems = 'flex-start';
+    let popupNameLabel = document.createElement('label');
+    popupNameLabel.textContent = 'NAME';
+    popupNameLabel.style.margin = '5px 0';
+    let popupNameInput = document.createElement('input');
+    popupNameInput.type = 'text';
+    popupNameInput.value = extensionSettings.spFilter.name;
+    popupNameDiv.appendChild(popupNameLabel);
+    popupNameDiv.appendChild(popupNameInput);
+    let popupTypeDiv = document.createElement('div');
+    popupTypeDiv.style.display = 'flex';
+    popupTypeDiv.style.flexDirection = 'column';
+    popupTypeDiv.style.alignItems = 'flex-start';
+    let typeContainerHeader = document.createElement('label');
+    typeContainerHeader.textContent = 'TYPE';
+    typeContainerHeader.style.margin = '5px 0';
+    popupTypeDiv.appendChild(typeContainerHeader);
+    let types = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
+    for (let type of types) {
+        let typeDiv = document.createElement('div');
+        typeDiv.style.display = 'flex';
+        typeDiv.style.alignItems = 'center';
+        typeDiv.style.margin = '0 0 3px 5px';
+        let typeLabel = document.createElement('label');
+        typeLabel.textContent = type;
+        typeLabel.style.marginRight = '5px';
+        let typeCheckbox = document.createElement('input');
+        typeCheckbox.type = 'checkbox';
+        typeCheckbox.value = type;
+        typeCheckbox.checked = !extensionSettings.spFilter.types.includes(type);
+        typeDiv.appendChild(typeCheckbox);
+        typeDiv.appendChild(typeLabel);
+        popupTypeDiv.appendChild(typeDiv);
+    }
+    let popupButtonDiv = document.createElement('div');
+    popupButtonDiv.className = 'betterfloat-filterpopup-buttondiv';
+    let popupSaveButton = document.createElement('button');
+    popupSaveButton.type = 'button';
+    popupSaveButton.textContent = 'Save';
+    popupSaveButton.onclick = () => {
+        extensionSettings.spFilter.priceLow = parseFloat(popupPriceLow.value);
+        extensionSettings.spFilter.priceHigh = parseFloat(popupPriceHigh.value);
+        extensionSettings.spFilter.name = popupNameInput.value;
+        let typeCheckboxes = popupTypeDiv.querySelectorAll('input[type=checkbox]');
+        extensionSettings.spFilter.types = Array.from(typeCheckboxes).filter((el) => !(<HTMLInputElement>el).checked).map((el) => (<HTMLInputElement>el).value);
+        console.debug('[BetterFloat] New filter settings: ', extensionSettings.spFilter);
+        chrome.storage.local.set({ spFilter: extensionSettings.spFilter });
+        filterPopup.style.display = 'none';
+    };
+    popupButtonDiv.appendChild(popupSaveButton);
+    filterPopup.appendChild(popupHeader);
+    filterPopup.appendChild(popupSubHeader);
+    filterPopup.appendChild(popupCloseButton);
+    popupHorizonalDiv.appendChild(popupTypeDiv);
+    popupHorizonalDiv.appendChild(popupPriceDiv);
+    popupContent.appendChild(popupNameDiv);
+    popupContent.appendChild(popupHorizonalDiv);
+    filterPopup.appendChild(popupContent);
+    filterPopup.appendChild(popupButtonDiv);
+
+    let filterButton = document.createElement('button');
+    let filterIcon = document.createElement('img');
+    filterIcon.src = runtimePublicURL + '/filter-solid.svg';
+    filterIcon.style.width = '24px';
+    filterIcon.style.height = '24px';
+    filterIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
+    filterButton.style.marginRight = '25px';
+    filterButton.appendChild(filterIcon);
+    filterButton.onclick = () => {
+        filterPopup.style.display = 'block';
+    };
+
+    filterDiv.appendChild(filterPopup);
+    filterDiv.appendChild(filterButton);
+    container.before(filterDiv);
 }
 
 async function handlePopularList(list: Element) {
@@ -287,6 +425,12 @@ async function adjustCart(container: Element) {
 async function adjustItem(container: Element) {
     const item = getFloatItem(container, itemSelectors.preview);
     if (!item) return;
+    let filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
+    if (filterItem) {
+        (<HTMLElement>container).style.display = 'none';
+        return;
+    }
+
     const priceResult = await addBuffPrice(item, container);
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
@@ -294,6 +438,18 @@ async function adjustItem(container: Element) {
     if (extensionSettings.spFloatColoring) {
         await addFloatColoring(container, item);
     }
+}
+
+// true: display item, false: remove item
+function applyFilter(item: Skinport.Listing) {
+    let targetName = extensionSettings.spFilter.name.toLowerCase();
+    // if true, item should be filtered
+    const nameCheck = targetName != '' && !item.name.toLowerCase().includes(targetName);
+    const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
+    const typeCheck = !extensionSettings.spFilter.types.includes(item.category);
+    // console.log('[BetterFloat] Filter check: ', item.name, item.category, nameCheck, priceCheck, typeCheck);
+    // return nameCheck || priceCheck || !typeCheck;
+    return false;
 }
 
 async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage: boolean = false) {
@@ -379,6 +535,16 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
         ) ?? 0;
     let type = container.querySelector(selector.title)?.textContent ?? '';
     let text = container.querySelector(selector.text)?.innerHTML ?? '';
+    // Skinport uses more detailed item types than Buff163, they are called cateogiories here
+    let lastWord = text.split(' ').pop() ?? '';
+    let category = '';
+    if (lastWord == 'Knife' || lastWord == 'Gloves' || lastWord == 'Agent') {
+        category = lastWord;
+    } else if (lastWord == 'Rifle' || lastWord == 'Pistol' || lastWord == 'SMG' || lastWord == 'Sniper' || lastWord == 'Shotgun' || lastWord == 'Machinegun') {
+        category = 'Weapon';
+    } else {
+        category = type;
+    }
 
     let style: ItemStyle = '';
     if (name.includes('Doppler')) {
@@ -424,6 +590,7 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
         name: name,
         price: price,
         type: type,
+        category: category,
         text: text,
         stickers: stickers,
         style: style,

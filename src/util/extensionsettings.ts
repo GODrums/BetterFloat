@@ -63,6 +63,9 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.spFloatColoring) {
             extensionSettings.spFloatColoring = Boolean(data.spFloatColoring);
         }
+        if (data.spFilter) {
+            extensionSettings.spFilter = data.spFilter as ExtensionSettings['spFilter'];
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds
