@@ -218,8 +218,10 @@ async function addLiveFilterMenu(container: Element) {
     popupPriceDiv.style.padding = '0 20px';
     let popupPriceLabel = document.createElement('label');
     popupPriceLabel.textContent = 'PRICE';
+    popupPriceLabel.style.fontWeight = '600';
     popupPriceLabel.style.margin = '5px 0';
     let popupPriceLow = document.createElement('input');
+    popupPriceLow.style.fontSize = '15px';
     popupPriceLow.type = 'number';
     popupPriceLow.min = '0';
     popupPriceLow.max = '999999';
@@ -238,11 +240,13 @@ async function addLiveFilterMenu(container: Element) {
     popupNameDiv.style.flexDirection = 'column';
     popupNameDiv.style.alignItems = 'flex-start';
     let popupNameLabel = document.createElement('label');
+    popupNameLabel.style.fontWeight = '600';
     popupNameLabel.textContent = 'NAME';
     popupNameLabel.style.margin = '5px 0';
     let popupNameInput = document.createElement('input');
     popupNameInput.type = 'text';
     popupNameInput.value = extensionSettings.spFilter.name;
+    popupNameInput.style.fontSize = '15px';
     popupNameDiv.appendChild(popupNameLabel);
     popupNameDiv.appendChild(popupNameInput);
     let popupTypeDiv = document.createElement('div');
@@ -251,6 +255,7 @@ async function addLiveFilterMenu(container: Element) {
     popupTypeDiv.style.alignItems = 'flex-start';
     let typeContainerHeader = document.createElement('label');
     typeContainerHeader.textContent = 'TYPE';
+    typeContainerHeader.style.fontWeight = '600';
     typeContainerHeader.style.margin = '5px 0';
     popupTypeDiv.appendChild(typeContainerHeader);
     let types = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
@@ -262,6 +267,7 @@ async function addLiveFilterMenu(container: Element) {
         let typeLabel = document.createElement('label');
         typeLabel.textContent = type;
         typeLabel.style.marginRight = '5px';
+        typeLabel.style.fontSize = '15px';
         let typeCheckbox = document.createElement('input');
         typeCheckbox.type = 'checkbox';
         typeCheckbox.value = type;

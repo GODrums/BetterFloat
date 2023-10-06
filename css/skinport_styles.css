@@ -146,8 +146,8 @@
 }
 
 .betterfloat-filterpopup input[type=checkbox] {
-    width: 23px;
-    height: 23px;
+    width: 19px;
+    height: 19px;
     accent-color: var(--color-accent, #ff5722);
     margin-right: 5px;
     color: white;
