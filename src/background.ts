@@ -38,11 +38,12 @@ chrome.runtime.onInstalled.addListener(function (details) {
         var thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
         chrome.storage.local.get((data) => {
-            if (!data.settings) {
+            if (!data) {
+                console.log('[BetterFloat] No settings found, setting default settings.');
                 chrome.storage.local.set(defaultSettings);
                 return;
             }
-            const storedSettings = data.settings as ExtensionSettings;
+            const storedSettings = data as ExtensionSettings;
             console.debug('[BetterFloat] Loaded settings: ', storedSettings);
             const newSettings: { [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings] } = {};
             let update = false;

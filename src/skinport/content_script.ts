@@ -435,6 +435,7 @@ async function adjustItem(container: Element) {
     if (!item) return;
     let filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
     if (filterItem) {
+        console.log('[BetterFloat] Filtered item: ', item.name);
         (<HTMLElement>container).style.display = 'none';
         return;
     }
@@ -448,16 +449,14 @@ async function adjustItem(container: Element) {
     }
 }
 
-// true: display item, false: remove item
+// true: remove item, false: display item
 function applyFilter(item: Skinport.Listing) {
     let targetName = extensionSettings.spFilter.name.toLowerCase();
     // if true, item should be filtered
-    const nameCheck = targetName != '' && !item.name.toLowerCase().includes(targetName);
+    const nameCheck = targetName != '' && !(item.type + " | " + item.name).toLowerCase().includes(targetName);
     const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
-    const typeCheck = !extensionSettings.spFilter.types.includes(item.category);
-    // console.log('[BetterFloat] Filter check: ', item.name, item.category, nameCheck, priceCheck, typeCheck);
-    // return nameCheck || priceCheck || !typeCheck;
-    return false;
+    const typeCheck = extensionSettings.spFilter.types.includes(item.category);
+    return nameCheck || priceCheck || typeCheck;
 }
 
 async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage: boolean = false) {

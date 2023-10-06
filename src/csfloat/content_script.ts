@@ -65,6 +65,7 @@ async function firstLaunch() {
     createTabListeners();
 
     let items = document.querySelectorAll('item-card');
+    console.log('[BetterFloat] Found ' + items.length + ' items on page');
 
     for (let i = 0; i < items.length; i++) {
         adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ?? false);
@@ -248,7 +249,7 @@ async function applyMutation() {
                     } else if (addedNode.className.toString().includes('offer-bubble')) {
                         // offer bubbles in offers page
                         await adjustItemBubble(addedNode);
-                    } else if (addedNode.className.toString().includes('mat-list-item')) {
+                    } else if (location.pathname == '/profile/offers' && addedNode.className.toString().includes('mat-list-item')) {
                         // offer list in offers page
                         offerItemClickListener(addedNode);
                     }
@@ -559,7 +560,13 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const header_details = <Element>nameContainer?.childNodes[1];
 
     let name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    let price = priceContainer?.textContent?.trim().split(' ')[0];
+    let priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
+    let price: string;
+    if (location.pathname == '/sell') {
+        price = priceText[1].split('Price')[1];
+    } else {
+        price = priceText.includes('Bids') ? "0" : priceText[0];
+    }
     let condition: ItemCondition = '';
     let quality = '';
     let style: ItemStyle = '';
@@ -645,8 +652,14 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
     const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 
-    const suggestedContainer = container.querySelector('.reference-container');
+    let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
+
+    if (!suggestedContainer && location.pathname == '/sell') {
+        suggestedContainer = document.createElement('div');
+        suggestedContainer.setAttribute('class', 'reference-container');
+        container.querySelector('.price')?.after(suggestedContainer);
+    }
 
     if (suggestedContainer && !suggestedContainer.querySelector('.betterfloat-buffprice')) {
         let buffContainer = document.createElement('a');
@@ -702,7 +715,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     }
 
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.
-    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06)) {
+    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname != '/sell') {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         let saleTag = priceContainer.querySelector('.sale-tag');
         let badge = priceContainer.querySelector('.badge');
@@ -789,8 +802,8 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers'];
-let unsupportedSubPages = ['blog.csfloat', '/sell', '/db'];
+let supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
+let unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: ExtensionSettings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
