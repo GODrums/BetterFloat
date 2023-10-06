@@ -32,7 +32,7 @@ export type ExtensionSettings = {
         priceHigh: number;
         name: string;
         types: string[];
-    }
+    };
 };
 
 export type CSGOTraderMapping = {

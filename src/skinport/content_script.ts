@@ -170,7 +170,7 @@ async function applyMutation() {
                             await adjustItemPage(addedNode);
                         } else if (className.includes('PopularList')) {
                             await handlePopularList(addedNode);
-                        } else if (className.includes("CatalogHeader-tooltipLive")) {
+                        } else if (className.includes('CatalogHeader-tooltipLive')) {
                             // contains live button
                             addLiveFilterMenu(addedNode);
                         }
@@ -192,7 +192,7 @@ async function addLiveFilterMenu(container: Element) {
     popupHeader.style.fontWeight = '600';
     popupHeader.style.fontSize = '18px';
     popupHeader.style.lineHeight = '0.5';
-    popupHeader.style.marginTop= '20px';
+    popupHeader.style.marginTop = '20px';
     let popupSubHeader = document.createElement('h4');
     popupSubHeader.style.fontSize = '16px';
     popupSubHeader.style.color = '#828282';
@@ -286,7 +286,9 @@ async function addLiveFilterMenu(container: Element) {
         extensionSettings.spFilter.priceHigh = parseFloat(popupPriceHigh.value);
         extensionSettings.spFilter.name = popupNameInput.value;
         let typeCheckboxes = popupTypeDiv.querySelectorAll('input[type=checkbox]');
-        extensionSettings.spFilter.types = Array.from(typeCheckboxes).filter((el) => !(<HTMLInputElement>el).checked).map((el) => (<HTMLInputElement>el).value);
+        extensionSettings.spFilter.types = Array.from(typeCheckboxes)
+            .filter((el) => !(<HTMLInputElement>el).checked)
+            .map((el) => (<HTMLInputElement>el).value);
         console.debug('[BetterFloat] New filter settings: ', extensionSettings.spFilter);
         chrome.storage.local.set({ spFilter: extensionSettings.spFilter });
         filterPopup.style.display = 'none';

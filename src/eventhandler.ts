@@ -103,9 +103,9 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
         cacheCSFItems((eventData.data as StallData).listings);
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup
-        if (eventData.url.includes('/graph')){
+        if (eventData.url.includes('/graph')) {
             cacheCSFHistoryGraph(eventData.data as CSFloat.HistoryGraphData[]);
-        } else if (eventData.url.includes('/sales')){
+        } else if (eventData.url.includes('/sales')) {
             // item table - last sales
             cacheCSFHistorySales(eventData.data as CSFloat.HistorySalesData[]);
         }

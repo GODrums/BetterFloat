@@ -23,7 +23,6 @@ let realRatesFromUSD: { [currency: string]: number } = {};
 // skinport: user currency (e.g. EUR)
 let userCurrency = '';
 
-
 export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     if (csfloatHistoryGraph.length > 0) {
         console.debug('[BetterFloat] History graph already cached, deleting history: ', csfloatHistoryGraph);
@@ -153,34 +152,38 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     return {
         starting_at: 0,
         highest_order: 0,
-    }
+    };
 }
 
-export async function getUserCurrencyRate(rates: "skinport" | "real" = "real") {
+export async function getUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
     if (Object.keys(skinportRatesFromUSD).length == 0) {
         await fetchUserData();
     }
     if (userCurrency == 'USD') return 1;
-    if (rates == "real" && Object.keys(realRatesFromUSD).length == 0) {
+    if (rates == 'real' && Object.keys(realRatesFromUSD).length == 0) {
         await fetchCurrencyRates();
     }
-    return rates == "real" ? realRatesFromUSD[userCurrency] : skinportRatesFromUSD[userCurrency];
+    return rates == 'real' ? realRatesFromUSD[userCurrency] : skinportRatesFromUSD[userCurrency];
 }
 
 // this endpoint sometimes gets called by Skinport itself and provides the user data
 async function fetchUserData() {
-    await fetch('https://skinport.com/api/data/').then((response) => response.json()).then((data: Skinport.UserData) => {
-        console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
-        cacheSkinportCurrencyRates(data.rates, data.currency);
-    });
+    await fetch('https://skinport.com/api/data/')
+        .then((response) => response.json())
+        .then((data: Skinport.UserData) => {
+            console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
+            cacheSkinportCurrencyRates(data.rates, data.currency);
+        });
 }
 
 // fetches currency rates from exchangerate.host, which is a free API which currently allows CORS
 async function fetchCurrencyRates() {
-    await fetch('https://api.exchangerate.host/latest?base=USD').then((response) => response.json()).then((data) => {
-        console.debug('[BetterFloat] Received currency rates from exchangerate.host: ', data);
-        cacheRealCurrencyRates(data.rates);
-    });
+    await fetch('https://api.exchangerate.host/latest?base=USD')
+        .then((response) => response.json())
+        .then((data) => {
+            console.debug('[BetterFloat] Received currency rates from exchangerate.host: ', data);
+            cacheRealCurrencyRates(data.rates);
+        });
 }
 
 export async function getBuffMapping(name: string) {

@@ -20,7 +20,7 @@ function injectScript() {
 // inject wss stream listener into page
 function injectWebsocketListener() {
     let script = document.createElement('script');
-    script.type = "module";
+    script.type = 'module';
     script.src = chrome.runtime.getURL('js/skinport/socketConnection.js');
     script.onload = function () {
         (<HTMLScriptElement>this).remove();

@@ -208,7 +208,7 @@ function loadForAbout() {
             if (!result) return;
 
             console.log('Manual prices refresh done. Sending message to content script.');
-            chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+            chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
                 var activeTab = tabs[0];
                 // send message to initiate mapping reload
                 chrome.tabs.sendMessage(activeTab.id!, { message: 'refreshPrices' }, (response) => {

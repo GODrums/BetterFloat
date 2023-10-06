@@ -1,4 +1,4 @@
-import { ItemStyle } from "./FloatTypes";
+import { ItemStyle } from './FloatTypes';
 
 export module Skinport {
     export type MarketData = {
@@ -15,7 +15,7 @@ export module Skinport {
         message: string | null;
         requestId: string;
         success: boolean;
-    }
+    };
 
     export type UserData = {
         country: string;
@@ -38,7 +38,7 @@ export module Skinport {
         rates: { [target: string]: number }; //currency -> target
         requestId: string;
         success: boolean;
-    }
+    };
 
     // https://skinport.com/api/home
     export type HomeData = {
@@ -83,7 +83,7 @@ export module Skinport {
             cart: Item[];
             openOrders: any[]; // what is this?
         };
-    }
+    };
 
     export type Listing = {
         name: string;
@@ -98,7 +98,7 @@ export module Skinport {
         style: ItemStyle;
         wear: number;
         wear_name: string;
-    }
+    };
 
     export type Item = {
         appid: number;
@@ -146,10 +146,12 @@ export module Skinport {
         subCategory: string;
         subCategory_localized: string;
         suggestedPrice: number;
-        tags: [{
-            name: string;
-            name_localized: string;
-        }];
+        tags: [
+            {
+                name: string;
+                name_localized: string;
+            }
+        ];
         text: string;
         title: string;
         type: string;

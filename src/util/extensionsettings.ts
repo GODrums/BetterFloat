@@ -1,4 +1,4 @@
-import { ExtensionSettings } from "../@typings/FloatTypes";
+import { ExtensionSettings } from '../@typings/FloatTypes';
 
 export async function initSettings(): Promise<ExtensionSettings> {
     let extensionSettings = <ExtensionSettings>{};
@@ -27,7 +27,7 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.showBuffDifference) {
             extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
         }
-        if(data.showBuffPercentageDifference){
+        if (data.showBuffPercentageDifference) {
             extensionSettings.showBuffPercentageDifference = Boolean(data.showBuffPercentageDifference);
         }
         if (data.showTopButton) {
