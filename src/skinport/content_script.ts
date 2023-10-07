@@ -63,6 +63,7 @@ async function firstLaunch() {
             await adjustItem(item);
         }
         if (location.search.includes('sort=date')) {
+            await waitForElement('.CatalogHeader-tooltipLive');
             await addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
         }
         if (location.search.includes('bf=live')) {
@@ -84,6 +85,16 @@ async function firstLaunch() {
             await adjustItem(item);
         }
     }
+}
+
+// return if element has been successfully waited for, else limit has been reached
+async function waitForElement(selector: string, interval = 200, maxTries = 10) {
+    let tries = 0;
+    while (!document.querySelector(selector) && tries < maxTries) {
+        tries++;
+        await new Promise((r) => setTimeout(r, interval));
+    }
+    return tries < maxTries;
 }
 
 function createLiveLink() {
@@ -746,7 +757,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
         if (item.price !== 0 && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
             discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
-            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(1);
+            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         }
     } else {
         if (container.querySelector('.sale-tag')) {
