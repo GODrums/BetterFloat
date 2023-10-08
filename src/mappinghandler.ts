@@ -57,7 +57,7 @@ export async function cacheCSFItems(data: CSFloat.ListingData[]) {
 
 export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
     if (csfloatPopupItem) {
-        console.debug('[BetterFloat] Popup item already cached, deleting item: ', csfloatPopupItem);
+        // console.debug('[BetterFloat] Popup item already cached, deleting item: ', csfloatPopupItem);
         csfloatPopupItem = null;
     }
     csfloatPopupItem = data;
@@ -176,12 +176,13 @@ async function fetchUserData() {
         });
 }
 
-// fetches currency rates from exchangerate.host, which is a free API which currently allows CORS
+// fetches currency rates from freecurrencyapi via my own server to avoid rate limits
+// source code of the server endpoint can be found here: https://gist.github.com/GODrums/9206e8d7ff07bc548c5a28aaeb3f3e74
 async function fetchCurrencyRates() {
-    await fetch('https://api.exchangerate.host/latest?base=USD')
+    await fetch('https://api.rums.dev/v1/currencyrates')
         .then((response) => response.json())
         .then((data) => {
-            console.debug('[BetterFloat] Received currency rates from exchangerate.host: ', data);
+            console.debug('[BetterFloat] Received currency rates from freecurrencyapi: ', data);
             cacheRealCurrencyRates(data.rates);
         });
 }

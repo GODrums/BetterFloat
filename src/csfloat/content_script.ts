@@ -320,15 +320,16 @@ async function adjustSalesTableRow(container: Element) {
     if (appStickerView) {
         if (appStickerView.querySelectorAll('.sticker').length == 0) return;
         let stickerData = cachedSale.item.stickers;
-        const price_difference = document.querySelector('.betterfloat-big-sale')?.getAttribute('data-betterfloat');
+        const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
+        const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace('$', ''));
 
-        if (price_difference && stickerData.length > 0) {
+        if (priceData && stickerData.length > 0) {
             let stickerContainer = document.createElement('div');
             stickerContainer.className = 'betterfloat-table-sp';
             (<HTMLElement>appStickerView).style.display = 'flex';
             (<HTMLElement>appStickerView).style.alignItems = 'center';
 
-            const doChange = await changeSpContainer(stickerContainer, stickerData, Number(price_difference));
+            const doChange = await changeSpContainer(stickerContainer, stickerData, sellPrice - Number(priceData.priceFromReference));
             if (doChange) {
                 appStickerView.appendChild(stickerContainer);
                 (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
@@ -347,8 +348,10 @@ async function adjustItem(container: Element, isPopout = false) {
             console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
             return;
         }
-        if (extensionSettings.stickerPrices) {
+        if (extensionSettings.stickerPrices && item.price > 0) {
             await addStickerInfo(container, cachedItem, priceResult.price_difference);
+        } else {
+            adjustExistingSP(container);
         }
         if (extensionSettings.listingAge > 0) {
             await addListingAge(container, cachedItem);
@@ -373,6 +376,18 @@ async function adjustItem(container: Element, isPopout = false) {
             }
         }, 500);
     }
+}
+
+function adjustExistingSP(container: Element) {
+    let spContainer = container.querySelector('.sticker-percentage');
+    let spValue = spContainer?.textContent!.trim().split('%')[0];
+    if (!spValue || !spContainer) return;
+    if (spValue.startsWith('>')) {
+        spValue = spValue.substring(1);
+    }
+    let backgroundImageColor = getSPBackgroundColor(Number(spValue) / 100);
+    (<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
+    (<HTMLElement>spContainer).style.marginBottom = '5px';
 }
 
 function storeApiItem(container: Element, item: CSFloat.ListingData) {
@@ -527,18 +542,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 
     // don't display SP if total price is below $1
     if (priceSum > 1) {
-        let backgroundImageColor = '';
-        if (spPercentage < 0.005 || spPercentage > 2) {
-            backgroundImageColor = '#0003';
-        } else if (spPercentage > 1) {
-            backgroundImageColor = 'rgb(245 0 0 / 40%)';
-        } else if (spPercentage > 0.5) {
-            backgroundImageColor = 'rgb(245 164 0 / 40%)';
-        } else if (spPercentage > 0.25) {
-            backgroundImageColor = 'rgb(244 245 0 / 40%)';
-        } else {
-            backgroundImageColor = 'rgb(83 245 0 / 40%)';
-        }
+        let backgroundImageColor = getSPBackgroundColor(spPercentage);
         if (spPercentage > 2 || spPercentage < 0.005) {
             csfSP.textContent = `$${priceSum.toFixed(0)} SP`;
         } else {
@@ -549,6 +553,20 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
         return true;
     } else {
         return false;
+    }
+}
+
+function getSPBackgroundColor(spPercentage: number) {
+    if (spPercentage < 0.005 || spPercentage > 2) {
+        return '#0003';
+    } else if (spPercentage >= 1) {
+        return 'rgb(245 0 0 / 40%)';
+    } else if (spPercentage > 0.5) {
+        return 'rgb(245 164 0 / 40%)';
+    } else if (spPercentage > 0.25) {
+        return 'rgb(244 245 0 / 40%)';
+    } else {
+        return 'rgb(83 245 0 / 40%)';
     }
 }
 
@@ -673,7 +691,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
         buffContainer.appendChild(buffImage);
         let buffPrice = document.createElement('div');
-        buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
+        buffPrice.setAttribute('class', `suggested-price betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}`);
         buffPrice.setAttribute('data-betterfloat', JSON.stringify({ buff_name: buff_name, priceFromReference: priceFromReference }));
         let tooltipSpan = document.createElement('span');
         tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
@@ -738,11 +756,9 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
             differenceSymbol = '-$';
         }
 
-        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag${
-            isPopout ? ' betterfloat-big-sale' : ''
-        }" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${Math.abs(difference).toFixed(2)} ${
-            extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''
-        }</span>`;
+        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${Math.abs(
+            difference
+        ).toFixed(2)} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
         if (item.price > 1999 && extensionSettings.showBuffPercentageDifference) parseHTMLString('<br>', priceContainer);
 
         parseHTMLString(buffPriceHTML, priceContainer);
