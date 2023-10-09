@@ -267,11 +267,12 @@ async function applyMutation() {
 }
 
 async function adjustItemBubble(container: Element) {
-    let personDiv = container.querySelector('div > span')!;
+    let personDiv = container.querySelector('div > span');
+    
     let buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
     let bargainPrice = Number(container.querySelector('b')?.textContent?.replace('$', ''));
     let difference = bargainPrice - buffData.priceFromReference;
-    let isSeller = personDiv.textContent?.includes('Seller') ?? false;
+    let isSeller = container.textContent?.includes('Seller') ?? false;
 
     let buffContainer = document.createElement('div');
     buffContainer.setAttribute('style', `width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-start' : 'flex-end'}; translate: 0 3px;`);
@@ -284,10 +285,10 @@ async function adjustItemBubble(container: Element) {
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
     buffPrice.textContent = `${difference > 0 ? '+' : ''}$${difference.toFixed(2)}`;
     buffContainer.appendChild(buffPrice);
-    if (isSeller) {
+    if (isSeller && personDiv) {
         personDiv.before(buffContainer);
     } else {
-        personDiv.after(buffContainer);
+        container.querySelector('div')?.appendChild(buffContainer);
     }
 }
 
