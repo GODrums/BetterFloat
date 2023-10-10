@@ -244,7 +244,10 @@ async function applyMutation() {
                         await adjustSalesTableRow(addedNode);
                     } else if (location.pathname == '/profile/offers' && addedNode.className.includes('reference-container')) {
                         // item in the offers page when switching from another page
-                        await adjustItem(document.querySelector('item-card')!);
+                        let itemCard = document.querySelector('item-card');
+                        if (itemCard) {
+                            await adjustItem(itemCard);
+                        }
                     } else if (addedNode.className.toString().includes('offer-bubble')) {
                         // offer bubbles in offers page
                         await adjustItemBubble(addedNode);
@@ -283,7 +286,7 @@ async function adjustItemBubble(container: Element) {
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
     buffPrice.textContent = `${difference > 0 ? '+' : ''}$${difference.toFixed(2)}`;
     buffContainer.appendChild(buffPrice);
-    
+
     const personDiv = container.querySelector('div > span');
     if (isSeller && personDiv) {
         personDiv.before(buffContainer);
@@ -693,7 +696,13 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         buffContainer.appendChild(buffImage);
         const buffPrice = document.createElement('div');
         buffPrice.setAttribute('class', `suggested-price betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}`);
-        buffPrice.setAttribute('data-betterfloat', JSON.stringify({ buff_name: buff_name, priceFromReference: priceFromReference }));
+        buffPrice.setAttribute(
+            'data-betterfloat',
+            JSON.stringify({
+                buff_name: buff_name,
+                priceFromReference: priceFromReference,
+            })
+        );
         const tooltipSpan = document.createElement('span');
         tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
         tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
@@ -727,7 +736,13 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         const buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
         buffA.setAttribute('href', buff_url);
         const buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
-        buffPriceDiv.setAttribute('data-betterfloat', JSON.stringify({ buff_name: buff_name, priceFromReference: priceFromReference }));
+        buffPriceDiv.setAttribute(
+            'data-betterfloat',
+            JSON.stringify({
+                buff_name: buff_name,
+                priceFromReference: priceFromReference,
+            })
+        );
         buffPriceDiv.children[1].textContent = `Bid $${priceOrder}`;
         buffPriceDiv.children[3].textContent = `Ask $${priceListing}`;
     }

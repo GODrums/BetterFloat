@@ -46,7 +46,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
             }
             const storedSettings = data as ExtensionSettings;
             console.debug('[BetterFloat] Loaded settings: ', storedSettings);
-            const newSettings: { [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings] } = {};
+            const newSettings: {
+                [x: string]: typeof defaultSettings[keyof typeof defaultSettings];
+            } = {};
             let update = false;
             for (const key in defaultSettings) {
                 const settingKey = key as keyof ExtensionSettings;
@@ -86,9 +88,15 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         refreshPrices().then((value) => {
             console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
             if (value) {
-                sendResponse({ message: 'Prices fetched successfully.', success: true });
+                sendResponse({
+                    message: 'Prices fetched successfully.',
+                    success: true,
+                });
             } else {
-                sendResponse({ message: 'Error while fetching prices.', success: false });
+                sendResponse({
+                    message: 'Error while fetching prices.',
+                    success: false,
+                });
             }
         });
         // this is required to let the message listener wait for the fetch to finish

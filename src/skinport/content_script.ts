@@ -1,6 +1,6 @@
-import { ExtensionSettings, ItemStyle, ItemType } from '../@typings/FloatTypes';
+import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -537,7 +537,7 @@ const itemSelectors = {
     },
 } as const;
 
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
+type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
 
 function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
     const name = container.querySelector(selector.name)?.textContent ?? '';

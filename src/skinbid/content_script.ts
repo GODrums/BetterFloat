@@ -1,7 +1,7 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getPriceMapping, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getPriceMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 

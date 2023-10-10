@@ -1,21 +1,21 @@
-export module Skinbid {
+export namespace Skinbid {
     // https://api.skinbid.com/api/search/auctions?
     export type MarketData = {
         items: Listing[];
         maximumPrice: number;
         totalItems: number;
-    }
+    };
 
     // https://api.skinbid.com/api/public/exchangeRates
     export type ExchangeRates = {
         [key: string]: ExchangeRate;
-    }
+    };
 
     export type ExchangeRate = {
         currencyCode: string;
         rate: number;
         updated: string;
-    }
+    };
 
     export type HTMLItem = {
         name: string;
@@ -24,7 +24,7 @@ export module Skinbid {
         style: string;
         wear: number;
         wear_name: string;
-    }
+    };
 
     // https://api.skinbid.com/api/user/whoami
     export type UserData = {
@@ -58,11 +58,11 @@ export module Skinbid {
             sellerReducedFeeCampaignListingStatus: any | null;
             sellerReducedFeeCampaignUsedDate: string | null;
             usedBuyerCampaigns: any[];
-        },
+        };
         notificationsLastSeen: string;
         overrideSteamRequirements: boolean;
         payoutTier: number;
-        preferences: UserPreferences,
+        preferences: UserPreferences;
         processingTier: number;
         referralCode: string | null;
         refreshToken: string;
@@ -73,7 +73,7 @@ export module Skinbid {
         steamId: string | null;
         steamSignupDate: string | null;
         username: string;
-    }
+    };
 
     // https://api.skinbid.com/api/user/preferences
     export type UserPreferences = {
@@ -102,7 +102,7 @@ export module Skinbid {
         steamTradeLink: string | null;
         userId: number;
         webNotificationsEnabled: boolean;
-    }
+    };
 
     export type Listing = {
         auction: Auction;
@@ -125,7 +125,7 @@ export module Skinbid {
         sellerShopCode: any | null;
         trade: any | null;
         yourOffer: any | null;
-    }
+    };
 
     export type ListedItem = {
         auctionHash: string;
@@ -143,9 +143,9 @@ export module Skinbid {
             isLowFloat: boolean;
             isRarePattern: boolean;
             recommendPrice: any | null;
-        },
+        };
         tradeLockExpireDate: string | null;
-    }
+    };
 
     export type Item = {
         assetId: string;
@@ -184,7 +184,7 @@ export module Skinbid {
         subCategory: string; // "AWP"
         type: string; // "Weapon"
         wearName: number; // "Battle-Scarred"
-    }
+    };
 
     export type Sticker = {
         codeName: string;
@@ -196,14 +196,14 @@ export module Skinbid {
         slot: number;
         stickerId: number;
         wear: number;
-    }
+    };
 
     export type Bid = {
         amount: number;
         bidderId: number;
         created: string;
         yourBid: boolean;
-    }
+    };
 
     export type Auction = {
         allowOffers: boolean;
@@ -226,10 +226,10 @@ export module Skinbid {
         numberOfOffers: number;
         partnerSteamId: string | null;
         runtime: any | null;
-        sellType: "AUCTION" | "FIXED_PRICE";
+        sellType: 'AUCTION' | 'FIXED_PRICE';
         startBid: number;
         startBidEur: number;
-    }
+    };
 
     // https://api.skinbid.com/api/public/price?
     export type PriceStatsData = {
@@ -251,6 +251,6 @@ export module Skinbid {
             average30Days: number;
             average60Days: number;
             currentPrice: number;
-        }
-    }
+        };
+    };
 }

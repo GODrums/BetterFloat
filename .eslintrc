@@ -15,6 +15,7 @@
     "mocha": true
   },
   "rules": {
+    "@typescript-eslint/no-non-null-assertion": 0,
     "@typescript-eslint/no-var-requires": 0,
     "prefer-rest-params": 0,
     "no-case-declarations": 0,
