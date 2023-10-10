@@ -69,7 +69,7 @@ In some cases, Firefox does not grant extensions necessary permissions automatic
 3. Check all of the required AND optional "Access your data for ..." checkboxes
 4. Reload the extension by dis- and reenabling it
 5. Adjust the extension settings to your liking in the extension popup
-6. Refresh the CSFloat page
+6. Refresh the website, e.g. CSFloat
 
 ## Development
 
@@ -114,10 +114,17 @@ The built extension will be located in the `dist` folder. Load that folder as un
 ### Contributing
 
 To contribute to this project, create your own fork of the repository and submit a pull request.
-Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). Make sure to test your changes extensively (the project supports [Jest](https://jestjs.io/) as testing framework) and include relevant results in your pull request.
+Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). This projects supports the following commands to control code quality:
+
+```bash
+npm run lint  # runs eslint
+npm run prettier  # runs prettier
+```
+
+Make sure to test your changes extensively (the project supports [Mocha](https://mochajs.org/) as testing framework) and include relevant results in your pull request.
 
 ## Disclaimer
 
-BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc. or Skinport GmbH in any way. If you are a legal representative of aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
+BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
 
 Built with 🖤 in Munich.
