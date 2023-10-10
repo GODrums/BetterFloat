@@ -1,6 +1,6 @@
 import { refreshPrices } from './background';
 
-let permissionsButton = <HTMLButtonElement>document.getElementsByClassName('PermissionsButton')[0];
+const permissionsButton = <HTMLButtonElement>document.getElementsByClassName('PermissionsButton')[0];
 
 //executes on document.ready
 $(function () {
@@ -17,7 +17,7 @@ $(function () {
     $('.tabItem').on('click', function (e) {
         e.preventDefault();
         if ($(this).hasClass('active')) return;
-        let url = e.currentTarget.getAttribute('data-page') ?? 'csfloat.html';
+        const url = e.currentTarget.getAttribute('data-page') ?? 'csfloat.html';
         $('.MainContent').load(url, function () {
             //Loading complete
             loadSettings(url);
@@ -38,8 +38,9 @@ function addListeners() {
                 [attrName]: $(this).prop('checked'),
             });
         }
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
-        $('.MainContent').css('height', '470px');
     });
     // add listeners to all dropdowns
     $('select').on('change', function () {
@@ -49,8 +50,9 @@ function addListeners() {
                 [attrName]: $(this).val(),
             });
         }
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
-        $('.MainContent').css('height', '470px');
     });
 }
 
@@ -84,17 +86,17 @@ chrome.permissions
     });
 
 function loadForSettings() {
-    let enableCSFloat = <HTMLInputElement>document.getElementById('InputCSFloat');
-    let featureAutorefresh = <HTMLInputElement>document.getElementById('InputAutorefresh');
-    let priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference');
-    let refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval');
-    let showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
-    let stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
-    let listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
-    let buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
-    let showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
-    let topButton = <HTMLInputElement>document.getElementById('InputTopButton');
-    let useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
+    const enableCSFloat = <HTMLInputElement>document.getElementById('InputCSFloat');
+    const featureAutorefresh = <HTMLInputElement>document.getElementById('InputAutorefresh');
+    const priceReference = <HTMLSelectElement>document.getElementById('DropDownPriceReference');
+    const refreshInterval = <HTMLSelectElement>document.getElementById('DropDownInterval');
+    const showSteamPrice = <HTMLInputElement>document.getElementById('InputSteamPrice');
+    const stickerPrices = <HTMLInputElement>document.getElementById('InputStickerPrices');
+    const listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
+    const buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
+    const showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
+    const topButton = <HTMLInputElement>document.getElementById('InputTopButton');
+    const useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -149,12 +151,12 @@ function loadForSettings() {
 }
 
 function loadForSkinport() {
-    let skinportEnable = <HTMLInputElement>document.getElementById('InputSkinport');
-    let checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
-    let stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
-    let skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
-    let skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
-    let skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
+    const skinportEnable = <HTMLInputElement>document.getElementById('InputSkinport');
+    const checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
+    const stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
+    const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
+    const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
+    const skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
 
     chrome.storage.local.get((data) => {
         console.debug('[BetterFloat] Loaded settings: ', data);
@@ -209,7 +211,7 @@ function loadForAbout() {
 
             console.log('Manual prices refresh done. Sending message to content script.');
             chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-                var activeTab = tabs[0];
+                const activeTab = tabs[0];
                 // send message to initiate mapping reload
                 chrome.tabs.sendMessage(activeTab.id!, { message: 'refreshPrices' }, (response) => {
                     if (response) {
@@ -224,6 +226,19 @@ function loadForAbout() {
     });
 }
 
+function loadForSkinbid() {
+    let skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
+
+    chrome.storage.local.get((data) => {
+        console.debug('[BetterFloat] Loaded settings: ', data);
+        if (data.enableSkinbid) {
+            skinbidEnable.checked = true;
+        } else {
+            skinbidEnable.checked = false;
+        }
+    });
+}
+
 function loadSettings(url: string) {
     if (url == 'csfloat.html') {
         loadForSettings();
@@ -231,5 +246,7 @@ function loadSettings(url: string) {
         loadForSkinport();
     } else if (url == 'about.html') {
         loadForAbout();
+    } else if (url == 'skinbid.html') {
+        loadForSkinbid();
     }
 }

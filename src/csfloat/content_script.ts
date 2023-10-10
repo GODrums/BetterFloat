@@ -64,24 +64,24 @@ async function firstLaunch() {
 
     createTabListeners();
 
-    let items = document.querySelectorAll('item-card');
+    const items = document.querySelectorAll('item-card');
 
     for (let i = 0; i < items.length; i++) {
         adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ?? false);
     }
 
     if (location.pathname == '/profile/offers') {
-        let matActionList = document.querySelector('.mat-action-list')?.children;
+        const matActionList = document.querySelector('.mat-action-list')?.children;
         if (!matActionList) return;
         for (let i = 0; i < matActionList.length; i++) {
-            let child = matActionList[i];
+            const child = matActionList[i];
             if (child?.className.includes('mat-list-item')) {
                 offerItemClickListener(child);
             }
         }
 
         await waitForElement('.betterfloat-buffprice');
-        let offerBubbles = document.querySelectorAll('.offer-bubble');
+        const offerBubbles = document.querySelectorAll('.offer-bubble');
         for (let i = 0; i < offerBubbles.length; i++) {
             await adjustItemBubble(offerBubbles[i]);
         }
@@ -101,7 +101,7 @@ async function waitForElement(selector: string, interval = 200, maxTries = 10) {
 function offerItemClickListener(listItem: Element) {
     listItem.addEventListener('click', async () => {
         await new Promise((r) => setTimeout(r, 100));
-        let itemCard = document.querySelector('item-card');
+        const itemCard = document.querySelector('item-card');
         if (itemCard) {
             await adjustItem(itemCard);
         }
@@ -109,7 +109,7 @@ function offerItemClickListener(listItem: Element) {
 }
 
 function switchTab(tab: number) {
-    let tabList = document.querySelectorAll('.mat-tab-label');
+    const tabList = document.querySelectorAll('.mat-tab-label');
     (<HTMLElement>tabList[tab]).click();
     document.title = tabList[tab].textContent?.trim() + ' | CSFloat';
 }
@@ -130,14 +130,14 @@ function createTabListeners() {
 async function refreshButton() {
     const matChipList = document.querySelector('.mat-chip-list-wrapper');
 
-    let refreshChip = document.createElement('div');
+    const refreshChip = document.createElement('div');
     refreshChip.classList.add('betterfloat-refresh');
     refreshChip.setAttribute('style', 'display: inline-flex; margin-left: 20px;');
 
-    let refreshContainer = document.createElement('div');
-    let autorefreshContainer = document.createElement('span');
-    let refreshText = document.createElement('span');
-    let intervalContainer = document.createElement('span');
+    const refreshContainer = document.createElement('div');
+    const autorefreshContainer = document.createElement('span');
+    const refreshText = document.createElement('span');
+    const intervalContainer = document.createElement('span');
     refreshContainer.classList.add('betterfloat-refreshContainer');
     autorefreshContainer.textContent = 'Auto-Refresh: ';
     refreshText.classList.add('betterfloat-refreshText');
@@ -151,9 +151,9 @@ async function refreshButton() {
     refreshContainer.appendChild(intervalContainer);
     refreshChip.appendChild(refreshContainer);
 
-    let startStopContainer = document.createElement('div');
-    let startElement = genRefreshButton('Start');
-    let stopElement = genRefreshButton('Stop');
+    const startStopContainer = document.createElement('div');
+    const startElement = genRefreshButton('Start');
+    const stopElement = genRefreshButton('Stop');
     startStopContainer.style.display = 'flex';
     startStopContainer.style.flexDirection = 'row';
     startStopContainer.appendChild(startElement);
@@ -174,8 +174,8 @@ async function refreshButton() {
             }
             console.log('[BetterFloat] Starting auto-refresh, interval: 30s, current time: ' + Date.now());
 
-            let refreshDelay = (Number(extensionSettings.refreshInterval) ?? 30) * 1000;
-            let refreshText = document.querySelector('.betterfloat-refreshText');
+            const refreshDelay = (Number(extensionSettings.refreshInterval) ?? 30) * 1000;
+            const refreshText = document.querySelector('.betterfloat-refreshText');
 
             if (!refreshText) return;
             refreshText.textContent = 'active';
@@ -184,7 +184,7 @@ async function refreshButton() {
             // save timer to avoid uncoordinated executions
             refreshThreads.push(
                 setInterval(() => {
-                    let refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
+                    const refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
                     // time should be lower than interval due to inconsistencies
                     if (refreshButton && lastRefresh + refreshDelay * 0.9 < Date.now()) {
                         lastRefresh = Date.now();
@@ -197,7 +197,7 @@ async function refreshButton() {
             // gets called multiple times, maybe needs additional handling in the future
             console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now(), ', #active threads: ' + refreshThreads.length);
 
-            let refreshText = document.querySelector('.betterfloat-refreshText');
+            const refreshText = document.querySelector('.betterfloat-refreshText');
             if (!refreshText) return;
             refreshText.textContent = 'inactive';
             refreshText.setAttribute('style', 'color: #ce0000;');
@@ -219,7 +219,7 @@ async function refreshButton() {
 }
 
 async function applyMutation() {
-    let observer = new MutationObserver(async (mutations) => {
+    const observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableCSFloat) {
             for (let i = 0; i < unsupportedSubPages.length; i++) {
                 if (location.href.includes(unsupportedSubPages[i])) {
@@ -227,9 +227,9 @@ async function applyMutation() {
                     return;
                 }
             }
-            for (let mutation of mutations) {
+            for (const mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
-                    let addedNode = mutation.addedNodes[i];
+                    const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
 
@@ -258,7 +258,7 @@ async function applyMutation() {
 
         createTabListeners();
 
-        let activeTab = getTabNumber();
+        const activeTab = getTabNumber();
         if (activeTab == 4 && extensionSettings.autorefresh) {
             await refreshButton();
         }
@@ -267,24 +267,24 @@ async function applyMutation() {
 }
 
 async function adjustItemBubble(container: Element) {
-    let personDiv = container.querySelector('div > span');
-    
-    let buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-    let bargainPrice = Number(container.querySelector('b')?.textContent?.replace('$', ''));
-    let difference = bargainPrice - buffData.priceFromReference;
-    let isSeller = container.textContent?.includes('Seller') ?? false;
+    const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
+    const bargainPrice = Number(container.querySelector('b')?.textContent?.replace('$', ''));
+    const difference = bargainPrice - buffData.priceFromReference;
+    const isSeller = container.textContent?.includes('Seller') ?? false;
 
-    let buffContainer = document.createElement('div');
+    const buffContainer = document.createElement('div');
     buffContainer.setAttribute('style', `width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-start' : 'flex-end'}; translate: 0 3px;`);
-    let buffImage = document.createElement('img');
+    const buffImage = document.createElement('img');
     buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
     buffContainer.appendChild(buffImage);
 
-    let buffPrice = document.createElement('span');
+    const buffPrice = document.createElement('span');
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
     buffPrice.textContent = `${difference > 0 ? '+' : ''}$${difference.toFixed(2)}`;
     buffContainer.appendChild(buffPrice);
+    
+    const personDiv = container.querySelector('div > span');
     if (isSeller && personDiv) {
         personDiv.before(buffContainer);
     } else {
@@ -293,19 +293,19 @@ async function adjustItemBubble(container: Element) {
 }
 
 async function adjustSalesTableRow(container: Element) {
-    let cachedSale = await getFirstHistorySale();
+    const cachedSale = await getFirstHistorySale();
     if (!cachedSale) {
         return;
     }
 
     // link to item page
-    let firstRow = container.firstElementChild;
-    let ageSpan = firstRow?.firstElementChild;
+    const firstRow = container.firstElementChild;
+    const ageSpan = firstRow?.firstElementChild;
     if (firstRow && ageSpan) {
-        let aLink = document.createElement('a');
+        const aLink = document.createElement('a');
         aLink.href = 'https://csfloat.com/item/' + cachedSale.id;
         aLink.target = '_blank';
-        let linkIcon = document.createElement('img');
+        const linkIcon = document.createElement('img');
         linkIcon.setAttribute('src', runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
         linkIcon.style.height = '18px';
         linkIcon.style.marginRight = '10px';
@@ -317,15 +317,15 @@ async function adjustSalesTableRow(container: Element) {
         firstRow.appendChild(aLink);
     }
 
-    let appStickerView = container.querySelector('.cdk-column-stickers')?.firstElementChild;
+    const appStickerView = container.querySelector('.cdk-column-stickers')?.firstElementChild;
     if (appStickerView) {
         if (appStickerView.querySelectorAll('.sticker').length == 0) return;
-        let stickerData = cachedSale.item.stickers;
+        const stickerData = cachedSale.item.stickers;
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
         const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace('$', ''));
 
         if (priceData && stickerData.length > 0) {
-            let stickerContainer = document.createElement('div');
+            const stickerContainer = document.createElement('div');
             stickerContainer.className = 'betterfloat-table-sp';
             (<HTMLElement>appStickerView).style.display = 'flex';
             (<HTMLElement>appStickerView).style.alignItems = 'center';
@@ -343,7 +343,7 @@ async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
     if (Number.isNaN(item.price)) return;
     const priceResult = await addBuffPrice(item, container, isPopout);
-    let cachedItem = await getFirstCSFItem();
+    const cachedItem = await getFirstCSFItem();
     if (cachedItem) {
         if (item.name != cachedItem.item.item_name) {
             console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
@@ -380,13 +380,13 @@ async function adjustItem(container: Element, isPopout = false) {
 }
 
 function adjustExistingSP(container: Element) {
-    let spContainer = container.querySelector('.sticker-percentage');
+    const spContainer = container.querySelector('.sticker-percentage');
     let spValue = spContainer?.textContent!.trim().split('%')[0];
     if (!spValue || !spContainer) return;
     if (spValue.startsWith('>')) {
         spValue = spValue.substring(1);
     }
-    let backgroundImageColor = getSPBackgroundColor(Number(spValue) / 100);
+    const backgroundImageColor = getSPBackgroundColor(Number(spValue) / 100);
     (<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
     (<HTMLElement>spContainer).style.marginBottom = '5px';
 }
@@ -398,7 +398,7 @@ function storeApiItem(container: Element, item: CSFloat.ListingData) {
 }
 
 function getApiItem(container: Element | null): CSFloat.ListingData | null {
-    let data = container?.getAttribute('data-betterfloat');
+    const data = container?.getAttribute('data-betterfloat');
     if (data) {
         return JSON.parse(data);
     }
@@ -502,8 +502,8 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
         listingAgeText.style.color = 'darkgray';
         container.querySelector('.online-container')?.after(listingAge);
     } else {
-        let watchersContainer = container.querySelector('.watchers');
-        let outerContainer = document.createElement('div');
+        const watchersContainer = container.querySelector('.watchers');
+        const outerContainer = document.createElement('div');
         outerContainer.classList.add('betterfloat-listing-age-container');
         outerContainer.style.display = 'flex';
         listingAge.style.marginRight = '5px';
@@ -512,7 +512,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
         if (watchersContainer) {
             outerContainer.appendChild(watchersContainer);
         }
-        let topRightContainer = container.querySelector('.top-right-container');
+        const topRightContainer = container.querySelector('.top-right-container');
         if (topRightContainer) {
             topRightContainer.replaceChild(outerContainer, topRightContainer.firstChild as Node);
         }
@@ -520,15 +520,15 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
 }
 
 async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
-    let stickers = cachedItem.item.stickers;
+    const stickers = cachedItem.item.stickers;
     // quality 12 is souvenir
     if (!stickers || cachedItem.item?.quality == 12) {
         return;
     }
 
-    let csfSP = container.querySelector('.sticker-percentage');
+    const csfSP = container.querySelector('.sticker-percentage');
     if (csfSP) {
-        let didChange = await changeSpContainer(csfSP, stickers, price_difference);
+        const didChange = await changeSpContainer(csfSP, stickers, price_difference);
         if (!didChange) {
             csfSP.remove();
         }
@@ -537,13 +537,13 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
-    let stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
-    let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
-    let spPercentage = price_difference / priceSum;
+    const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+    const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+    const spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
     if (priceSum > 1) {
-        let backgroundImageColor = getSPBackgroundColor(spPercentage);
+        const backgroundImageColor = getSPBackgroundColor(spPercentage);
         if (spPercentage > 2 || spPercentage < 0.005) {
             csfSP.textContent = `$${priceSum.toFixed(0)} SP`;
         } else {
@@ -577,8 +577,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const priceContainer = container.querySelector('.price');
     const header_details = <Element>nameContainer?.childNodes[1];
 
-    let name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    let priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
+    const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
+    const priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
     let price: string;
     if (location.pathname == '/sell') {
         price = priceText[1].split('Price')[1];
@@ -592,7 +592,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     header_details.childNodes.forEach((node) => {
         switch (node.nodeType) {
             case Node.ELEMENT_NODE:
-                let text = node.textContent?.trim();
+                const text = node.textContent?.trim();
                 if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
                     // TODO: integrate the ItemQuality type
                     // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
@@ -625,8 +625,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 
 async function getBuffItem(item: CSFloat.FloatItem) {
     await loadMapping();
-    let buff_name = handleSpecialStickerNames(createBuffName(item));
-    let priceMapping = await getPriceMapping();
+    const buff_name = handleSpecialStickerNames(createBuffName(item));
+    const priceMapping = await getPriceMapping();
     let helperPrice: number | null = null;
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
@@ -634,7 +634,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
         helperPrice = 0;
     }
 
-    let buff_id = await getBuffMapping(buff_name);
+    const buff_id = await getBuffMapping(buff_name);
     // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
     let priceListing = 0;
     let priceOrder = 0;
@@ -680,33 +680,33 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     }
 
     if (suggestedContainer && !suggestedContainer.querySelector('.betterfloat-buffprice')) {
-        let buffContainer = document.createElement('a');
+        const buffContainer = document.createElement('a');
         buffContainer.setAttribute('class', 'betterfloat-buff-a');
-        let buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+        const buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
         buffContainer.setAttribute('href', buff_url);
         buffContainer.setAttribute('target', '_blank');
         buffContainer.setAttribute('style', `${showBoth ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
 
-        let buffImage = document.createElement('img');
+        const buffImage = document.createElement('img');
         buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
         buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
         buffContainer.appendChild(buffImage);
-        let buffPrice = document.createElement('div');
+        const buffPrice = document.createElement('div');
         buffPrice.setAttribute('class', `suggested-price betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}`);
         buffPrice.setAttribute('data-betterfloat', JSON.stringify({ buff_name: buff_name, priceFromReference: priceFromReference }));
-        let tooltipSpan = document.createElement('span');
+        const tooltipSpan = document.createElement('span');
         tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
         tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
         buffPrice.appendChild(tooltipSpan);
-        let buffPriceBid = document.createElement('span');
+        const buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
         buffPriceBid.textContent = `Bid $${priceOrder}`;
         buffPrice.appendChild(buffPriceBid);
-        let buffPriceDivider = document.createElement('span');
+        const buffPriceDivider = document.createElement('span');
         buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
         buffPriceDivider.textContent = '|';
         buffPrice.appendChild(buffPriceDivider);
-        let buffPriceAsk = document.createElement('span');
+        const buffPriceAsk = document.createElement('span');
         buffPriceAsk.setAttribute('style', 'color: greenyellow;');
         buffPriceAsk.textContent = `Ask $${priceListing}`;
         buffPrice.appendChild(buffPriceAsk);
@@ -715,7 +715,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         if (!container.querySelector('.betterfloat-buffprice')) {
             if (showBoth) {
                 suggestedContainer.setAttribute('href', 'https://steamcommunity.com/market/listings/730/' + encodeURIComponent(buff_name));
-                let divider = document.createElement('div');
+                const divider = document.createElement('div');
                 suggestedContainer.after(buffContainer);
                 suggestedContainer.after(divider);
             } else {
@@ -723,10 +723,10 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
             }
         }
     } else if (container.querySelector('.betterfloat-buff-a')) {
-        let buffA = container.querySelector('.betterfloat-buff-a')!;
-        let buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+        const buffA = container.querySelector('.betterfloat-buff-a')!;
+        const buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
         buffA.setAttribute('href', buff_url);
-        let buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
+        const buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
         buffPriceDiv.setAttribute('data-betterfloat', JSON.stringify({ buff_name: buff_name, priceFromReference: priceFromReference }));
         buffPriceDiv.children[1].textContent = `Bid $${priceOrder}`;
         buffPriceDiv.children[3].textContent = `Ask $${priceListing}`;
@@ -735,8 +735,8 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.
     if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname != '/sell') {
         const priceContainer = <HTMLElement>container.querySelector('.price');
-        let saleTag = priceContainer.querySelector('.sale-tag');
-        let badge = priceContainer.querySelector('.badge');
+        const saleTag = priceContainer.querySelector('.sale-tag');
+        const badge = priceContainer.querySelector('.badge');
         if (saleTag) {
             priceContainer.removeChild(saleTag);
         }
@@ -793,13 +793,13 @@ function getTabNumber() {
 }
 
 function createTopButton() {
-    let topButton = document.createElement('button');
+    const topButton = document.createElement('button');
     topButton.classList.add('betterfloat-top-button');
     topButton.setAttribute(
         'style',
         'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none; transition: visibility 0s, opacity 0.5s linear;'
     );
-    let topButtonIcon = document.createElement('img');
+    const topButtonIcon = document.createElement('img');
     topButtonIcon.setAttribute('src', runtimePublicURL + '/chevron-up-solid.svg');
     topButtonIcon.style.marginTop = '5px';
     topButtonIcon.style.filter = 'brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(2009%) hue-rotate(196deg) brightness(113%) contrast(93%)';
@@ -818,12 +818,12 @@ function createTopButton() {
     });
 }
 
-let supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
-let unsupportedSubPages = ['blog.csfloat', '/db'];
+const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
+const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: ExtensionSettings;
-let runtimePublicURL = chrome.runtime.getURL('../public');
-let refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
+const runtimePublicURL = chrome.runtime.getURL('../public');
+const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;
 // mutation observer active?

@@ -9,7 +9,7 @@ if (location.href.includes('skinport.com')) {
 
 // inject script into page
 function injectScript() {
-    let script = document.createElement('script');
+    const script = document.createElement('script');
     script.src = chrome.runtime.getURL('js/inject.js');
     script.onload = function () {
         (<HTMLScriptElement>this).remove();
@@ -19,9 +19,9 @@ function injectScript() {
 
 // inject wss stream listener into page
 function injectWebsocketListener() {
-    let script = document.createElement('script');
+    const script = document.createElement('script');
     script.type = 'module';
-    script.src = chrome.runtime.getURL('js/skinport/socketConnection.js');
+    script.src = chrome.runtime.getURL('js/socketConnection.js');
     script.onload = function () {
         (<HTMLScriptElement>this).remove();
     };

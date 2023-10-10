@@ -19,7 +19,7 @@
 }
 
 body {
-    width: 375px !important;
+    width: 430px !important;
     height: 600px !important;
     font-family: 'Source Sans Pro';
     font-size: 14px;
@@ -71,6 +71,21 @@ footer p {
     margin: 0 15px;
 }
 
+.SideBar {
+    width: 58px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.SideBar .SideBarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .MainContent {
     margin-left: 10px;
     background: var(--color-background, #303030);
@@ -78,7 +93,8 @@ footer p {
     overflow-x: hidden;
     scrollbar-color: var(--color-accent, #ff5722) var(--color-background, #303030);
     scrollbar-width: thin;
-    height: 490px;
+    height: 550px;
+    width: 375px;
 }
 
 .Warning {
@@ -173,9 +189,30 @@ input[type='checkbox'] {
 .tabItem {
     background: none;
     border: 0;
+    margin: 5px 0;
+    cursor: pointer;
 }
 
 .tab-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 20px;
+    margin-bottom: 3px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.flatIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    margin-bottom: 3px;
+    display: inline-block;
+    vertical-align: middle;
+    filter: invert(82%) sepia(3%) saturate(242%) hue-rotate(202deg) brightness(85%) contrast(92%);
+}
+
+.refreshIcon {
     width: 25px;
     height: 25px;
     margin-bottom: 3px;
@@ -185,6 +222,10 @@ input[type='checkbox'] {
 }
 
 .active .tab-icon {
+    border: 2px solid var(--color-accent, #ff5722);
+}
+
+.active .flatIcon {
     filter: brightness(0) saturate(100%) invert(55%) sepia(61%) saturate(5863%) hue-rotate(347deg) brightness(103%) contrast(101%);
 }
 
@@ -196,6 +237,7 @@ input[type='checkbox'] {
     filter: brightness(var(--hover-brightness));
 }
 
+.tab:active .flatIcon,
 .tab:active .tab-icon {
     filter: brightness(0) saturate(100%) invert(55%) sepia(61%) saturate(5863%) hue-rotate(347deg) brightness(103%) contrast(101%);
 }
@@ -266,10 +308,10 @@ input[type='checkbox'] {
     height: 40px;
     margin: 0 auto 10px;
     display: block;
-    .tab-icon {
+    .refreshIcon {
         filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(209deg) brightness(102%) contrast(99%);
     }
-    &.done{
+    &.done {
         background: #5ac938;
         cursor: pointer;
         .icon {
@@ -277,16 +319,16 @@ input[type='checkbox'] {
         }
     }
     &.loading {
-		background: #def4d7;
-		cursor: wait;
-		.icon {
-			-webkit-animation: rotating 1.2s linear infinite;
-			-moz-animation: rotating 1.2s linear infinite;
-			-ms-animation: rotating 1.2s linear infinite;
-			-o-animation: rotating 1.2s linear infinite;
-			animation: rotating 1.2s linear infinite;
-		}
-	}
+        background: #def4d7;
+        cursor: wait;
+        .icon {
+            -webkit-animation: rotating 1.2s linear infinite;
+            -moz-animation: rotating 1.2s linear infinite;
+            -ms-animation: rotating 1.2s linear infinite;
+            -o-animation: rotating 1.2s linear infinite;
+            animation: rotating 1.2s linear infinite;
+        }
+    }
 }
 
 @keyframes rotating {

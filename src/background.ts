@@ -27,6 +27,7 @@ const defaultSettings: ExtensionSettings = {
         name: '',
         types: [],
     },
+    enableSkinbid: true,
 };
 
 // Check whether new version is installed
@@ -35,7 +36,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
         chrome.storage.local.set(defaultSettings);
     } else if (details.reason == 'update') {
-        var thisVersion = chrome.runtime.getManifest().version;
+        const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
         chrome.storage.local.get((data) => {
             if (!data) {
@@ -69,7 +70,7 @@ export async function refreshPrices() {
         .then((response) => response.json())
         .then(async (data) => {
             //set cookie and wait for finish
-            return await new Promise<Boolean>((resolve) => {
+            return await new Promise<boolean>((resolve) => {
                 chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
                     console.log('Prices updated. Current time: ', Date.toString());
                     resolve(true);

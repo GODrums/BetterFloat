@@ -1,4 +1,5 @@
 import { CSGOTraderMapping, CSFloat } from './@typings/FloatTypes';
+import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
 
@@ -22,6 +23,8 @@ let skinportRatesFromUSD: { [currency: string]: number } = {};
 let realRatesFromUSD: { [currency: string]: number } = {};
 // skinport: user currency (e.g. EUR)
 let userCurrency = '';
+// skinbid: cached items from api
+let skinbidItems: Skinbid.Listing[] = [];
 
 export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     if (csfloatHistoryGraph.length > 0) {
@@ -53,6 +56,14 @@ export async function cacheCSFItems(data: CSFloat.ListingData[]) {
         csfloatItems = [];
     }
     csfloatItems = data;
+}
+
+export async function cacheSkbItems(data: Skinbid.Listing[]) {
+    if (skinbidItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, deleting items: ', skinbidItems);
+        skinbidItems = [];
+    }
+    skinbidItems = data;
 }
 
 export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
@@ -87,7 +98,7 @@ export async function cacheRealCurrencyRates(data: { [currency: string]: number 
 }
 
 export async function getWholeHistory() {
-    let history = csfloatHistoryGraph;
+    const history = csfloatHistoryGraph;
     csfloatHistoryGraph = [];
     return history;
 }
@@ -117,6 +128,15 @@ export async function getCSFPopupItem() {
 export async function getFirstSpItem() {
     if (cachedSpItems.length > 0) {
         const item = cachedSpItems.shift();
+        return item;
+    } else {
+        return null;
+    }
+}
+
+export async function getFirstSkbItem() {
+    if (skinbidItems.length > 0) {
+        const item = skinbidItems.shift();
         return item;
     } else {
         return null;

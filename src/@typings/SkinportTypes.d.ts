@@ -1,6 +1,6 @@
 import { ItemStyle } from './FloatTypes';
 
-export module Skinport {
+export namespace Skinport {
     export type MarketData = {
         filter: {
             components: {

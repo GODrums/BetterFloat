@@ -15,17 +15,19 @@ type SkinportWebsocketData = {
 export function activateHandler() {
     // important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879
     document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', function (e) {
-        var eventData = (<CustomEvent>e).detail;
+        const eventData = (<CustomEvent>e).detail;
         //switch depending on current site
         if (location.href.includes('csfloat.com')) {
             processCSFloatEvent(eventData);
         } else if (location.href.includes('skinport.com')) {
             processSkinportEvent(eventData);
+        } else if (location.href.includes('skinbid.com')) {
+            processSkinbidEvent(eventData);
         }
     });
 
     document.addEventListener('BetterFloat_WEBSOCKET_EVENT', function (e) {
-        var eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
+        const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
         if (eventData.eventType == 'listed') {
             // console.debug('[BetterFloat] Received data from websocket:', eventData);
         }
@@ -67,6 +69,19 @@ export function activateHandler() {
     });
 }
 
+function processSkinbidEvent(eventData: EventData<unknown>) {
+    console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+    if (eventData.url.includes('api/search/auctions')) {
+        // Skinbid.MarketData
+    } else if (eventData.url.includes('api/public/exchangeRates')) {
+        // Skinbid.ExchangeRates
+    } else if (eventData.url.includes('api/user/whoami')) {
+        // Skinbid.UserData
+    } else if (eventData.url.includes('api/user/preferences')) {
+        // Skinbid.UserPreferences
+    }
+}
+
 function processSkinportEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('api/browse/730')) {
@@ -75,7 +90,7 @@ function processSkinportEvent(eventData: EventData<unknown>) {
         // Skinport.HomeData
     } else if (eventData.url.includes('api/data/')) {
         // Data from first page load
-        let data = eventData.data as Skinport.UserData;
+        const data = eventData.data as Skinport.UserData;
         cacheSkinportCurrencyRates(data.rates, data.currency);
     }
 }
@@ -110,6 +125,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
             cacheCSFHistorySales(eventData.data as CSFloat.HistorySalesData[]);
         }
     } else if (eventData.url.includes('v1/me')) {
+        // user data, repeats often
     } else if (eventData.url.includes('v1/listings/') && eventData.url.split('/').length == 7) {
         // item popup
         cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
