@@ -22,14 +22,10 @@ export namespace Skinbid {
 
     // https://api.skinbid.com/api/public/exchangeRates
     export type ExchangeRates = {
-        [key: string]: ExchangeRate;
-    };
-
-    export type ExchangeRate = {
         currencyCode: string;
         rate: number;
         updated: string;
-    };
+    }[];
 
     export type HTMLItem = {
         name: string;

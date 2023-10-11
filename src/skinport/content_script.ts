@@ -1,6 +1,6 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -650,7 +650,7 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
     }
 
     //convert prices to user's currency
-    const currencyRate = await getUserCurrencyRate(extensionSettings.skinportRates);
+    const currencyRate = await getSpUserCurrencyRate(extensionSettings.skinportRates);
     if (extensionSettings.skinportRates == 'skinport') {
         // origin price of rate is non-USD, so we need to divide
         priceListing = priceListing / currencyRate;

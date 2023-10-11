@@ -1,7 +1,7 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getFirstSkbItem, getPriceMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getPriceMapping, getSkbUserCurrencyRate, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
@@ -310,17 +310,13 @@ async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string
         priceOrder = 0;
     }
 
-    //convert prices to user's currency
-    // let currencyRate = await getUserCurrencyRate(extensionSettings.skinportRates);
-    // if (extensionSettings.skinportRates == 'skinport') {
-    //     // origin price of rate is non-USD, so we need to divide
-    //     priceListing = priceListing / currencyRate;
-    //     priceOrder = priceOrder / currencyRate;
-    // } else {
-    //     // origin price of rate is USD, so we need to multiply
-    //     priceListing = priceListing * currencyRate;
-    //     priceOrder = priceOrder * currencyRate;
-    // }
+    // convert prices to user's currency
+    let currencyRate = await getSkbUserCurrencyRate();
+    console.log('[BetterFloat] Currency rate: ', currencyRate);
+    if (currencyRate != 1) {
+        priceListing = priceListing / currencyRate;
+        priceOrder = priceOrder / currencyRate;
+    }
 
     return { buff_name, priceListing, priceOrder };
 }

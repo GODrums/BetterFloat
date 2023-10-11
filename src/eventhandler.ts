@@ -1,7 +1,7 @@
 import { EventData, CSFloat } from './@typings/FloatTypes';
 import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
-import { cacheCSFHistoryGraph, cacheCSFHistorySales, cacheCSFItems, cacheCSFPopupItem, cacheSkbItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
+import { cacheCSFHistoryGraph, cacheCSFHistorySales, cacheCSFItems, cacheCSFPopupItem, cacheSkbItems, cacheSkinportCurrencyRates, cacheSkinbidCurrencyRate, loadMapping, cacheSkinbidUserCurrency } from './mappinghandler';
 
 type StallData = {
     listings: CSFloat.ListingData[];
@@ -89,10 +89,13 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
         cacheSkbItems([eventData.data as Skinbid.Listing]);
     } else if (eventData.url.includes('api/public/exchangeRates')) {
         // Skinbid.ExchangeRates
+        const rates = eventData.data as Skinbid.ExchangeRates;
+        cacheSkinbidCurrencyRate(rates.find((rate) => rate.currencyCode == 'USD')?.rate ?? 1);
     } else if (eventData.url.includes('api/user/whoami')) {
         // Skinbid.UserData
     } else if (eventData.url.includes('api/user/preferences')) {
         // Skinbid.UserPreferences
+        cacheSkinbidUserCurrency((eventData.data as Skinbid.UserPreferences).currency);
     }
 }
 
