@@ -69,6 +69,12 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.enableSkinbid) {
             extensionSettings.enableSkinbid = Boolean(data.enableSkinbid);
         }
+        if (data.skbPriceReference !== undefined) {
+            extensionSettings.skbPriceReference = data.skbPriceReference as ExtensionSettings['skbPriceReference'];
+        }
+        if (data.skbBuffDifference) {
+            extensionSettings.skbBuffDifference = Boolean(data.skbBuffDifference);
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds

@@ -3,6 +3,9 @@ import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
 
+// most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
+// e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
+
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
@@ -60,10 +63,11 @@ export async function cacheCSFItems(data: CSFloat.ListingData[]) {
 
 export async function cacheSkbItems(data: Skinbid.Listing[]) {
     if (skinbidItems.length > 0) {
-        console.debug('[BetterFloat] Items already cached, deleting items: ', skinbidItems);
-        skinbidItems = [];
+        console.debug('[BetterFloat] Items already cached, added more items: ', skinbidItems.length);
+        skinbidItems = skinbidItems.concat(data);
+    } else {
+        skinbidItems = data;
     }
-    skinbidItems = data;
 }
 
 export async function cacheCSFPopupItem(data: CSFloat.ListingData) {

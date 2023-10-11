@@ -17,7 +17,7 @@
             "run_at": "document_end"
         },
         {
-            "matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*", "*://*.skinport.com/*"],
+            "matches": ["*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
             "js": ["js/injectionhandler.js"],
             "run_at": "document_start"
         },

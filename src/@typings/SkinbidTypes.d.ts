@@ -6,6 +6,20 @@ export namespace Skinbid {
         totalItems: number;
     };
 
+    export type ShopData = {
+        countryCode: string;
+        deliveryRate: number;
+        deliveryRating: string;
+        deliveryTimeMinutes: number;
+        isEliteSeller: boolean;
+        isPartner: boolean;
+        name: string;
+        profilePicture: string;
+        steamLevel: number;
+        steamMemberSince: string;
+        totalTrades: number;
+    }
+
     // https://api.skinbid.com/api/public/exchangeRates
     export type ExchangeRates = {
         [key: string]: ExchangeRate;
@@ -24,6 +38,7 @@ export namespace Skinbid {
         style: string;
         wear: number;
         wear_name: string;
+        category: string;
     };
 
     // https://api.skinbid.com/api/user/whoami
@@ -112,7 +127,7 @@ export namespace Skinbid {
         currentHighestBidEur: number;
         followConfig: any | null;
         isUserSeller: boolean;
-        items: ListedItem[];
+        items: ListedItem[] | null;
         minimimBargainAmount: number | null;
         nextMinimumBid: number;
         nextMinimumBidEur: number;

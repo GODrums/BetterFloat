@@ -28,6 +28,8 @@ const defaultSettings: ExtensionSettings = {
         types: [],
     },
     enableSkinbid: true,
+    skbPriceReference: 0,
+    skbBuffDifference: true,
 };
 
 // Check whether new version is installed

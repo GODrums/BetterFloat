@@ -97,7 +97,6 @@ function loadForSettings() {
     const useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
 
     chrome.storage.local.get((data) => {
-        console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.enableCSFloat) {
             enableCSFloat.checked = true;
         } else {
@@ -157,7 +156,6 @@ function loadForSkinport() {
     const skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
 
     chrome.storage.local.get((data) => {
-        console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.enableSkinport) {
             skinportEnable.checked = true;
         } else {
@@ -226,13 +224,16 @@ function loadForAbout() {
 
 function loadForSkinbid() {
     let skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
+    let skinbidPriceReference = <HTMLSelectElement>document.getElementById('SkinbidPriceReference');
 
     chrome.storage.local.get((data) => {
-        console.debug('[BetterFloat] Loaded settings: ', data);
         if (data.enableSkinbid) {
             skinbidEnable.checked = true;
         } else {
             skinbidEnable.checked = false;
+        }
+        if (data.skbPriceReference !== undefined) {
+            skinbidPriceReference.value = data.skbPriceReference;
         }
     });
 }

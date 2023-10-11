@@ -1,7 +1,7 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getPriceMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getPriceMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
@@ -61,6 +61,12 @@ async function firstLaunch() {
         for (let i = 1; i < items.length; i++) {
             await adjustItem(items[i]);
         }
+    } else if (location.pathname.includes('/shop/')) {
+        let items = document.querySelectorAll('.items-desktop .auction-item-card');
+        console.log('[BetterFloat] Found items: ', items);
+        for (let i = 0; i < items.length; i++) {
+            await adjustItem(items[i]);
+        }
     }
 }
 
@@ -78,17 +84,20 @@ async function applyMutation() {
                         let firstChild = addedNode.children[0];
                         if (firstChild.tagName.includes('AUCTION-LIST-ITEM')) {
                             await adjustListItem(firstChild);
+                            continue;
+                        } else if (firstChild.tagName.includes('APP-AUCTION-CARD-ITEM')) {
+                            // Items in user shop
+                            await adjustItem(firstChild);
+                            continue;
                         }
                     }
-
                     if (addedNode.className) {
                         let className = addedNode.className.toString();
-                        if (className.includes('item') && addedNode.tagName == 'NGU-TILE') {
-                            console.log('Found item: ', addedNode);
+                        if (className.includes('item') && addedNode.tagName == 'NGU-TILE' && !isMobileItem(addedNode)) {
+                            // console.log('Found item: ', addedNode);
                             await adjustItem(addedNode);
                         } else if (className.includes('item-category')) {
                             // big item page
-                            console.log('Found big item: ', document.querySelector('.item'));
                             await adjustBigItem(document.querySelector('.item')!);
                         } else if (addedNode.tagName == 'APP-PRICE-CHART') {
                             console.log('Found price chart: ', addedNode);
@@ -101,23 +110,26 @@ async function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
+function isMobileItem(container: Element) {
+    return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
+}
+
 async function adjustBigItem(container: Element) {
     const item = getSkinbidFullItem(container);
-    console.log('item: ', item);
     if (!item) return;
-    const priceResult = await addBuffPrice(item, container, itemSelectors.page);
+    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.page); // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 async function adjustListItem(container: Element) {
     const item = getSkinbidItem(container, itemSelectors.list);
     if (!item) return;
-    const priceResult = await addBuffPrice(item, container, itemSelectors.list);
+    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.list); // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 async function adjustItem(container: Element) {
     const item = getSkinbidItem(container, itemSelectors.card);
     if (!item) return;
-    const priceResult = await addBuffPrice(item, container, itemSelectors.card);
+    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.card); // eslint-disable-line @typescript-eslint/no-unused-vars
     // if (extensionSettings.spStickerPrices) {
     //     await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
     // }
@@ -126,12 +138,38 @@ async function adjustItem(container: Element) {
     // }
 }
 
+async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
+    let priceResult;
+    let cachedItem;
+    if (item.type == "Agent") {
+        cachedItem = await getFirstSkbItem();
+        if (!cachedItem?.items) {
+            console.log('[BetterFloat] No cached item found: ', cachedItem);
+            return {priceResult, cachedItem};
+        }
+        let apiItem = cachedItem?.items?.at(0)?.item;
+        if (apiItem) {
+            item.name = apiItem.subCategory;
+            item.category = apiItem.name;
+        }
+        priceResult = await addBuffPrice(item, container, selector);
+    } else {
+        priceResult = await addBuffPrice(item, container, selector);
+        cachedItem = await getFirstSkbItem();
+    }
+    return {priceResult, cachedItem};
+}
+
 async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
     await loadMapping();
     let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
 
     let priceDiv = container.querySelector(selector.priceDiv);
+    if (!priceDiv?.firstChild) {
+        console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
+        return;
+    }
     const currencySymbol = (<HTMLElement>priceDiv?.firstChild).textContent?.trim().charAt(0);
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
@@ -165,20 +203,26 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
         }
     }
 
-    const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
-    if (extensionSettings.spBuffDifference) {
-        let discountContainer = <HTMLElement>container.querySelector('.discount');
+    const difference = item.price - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
+    if (extensionSettings.skbBuffDifference) {
+        let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
             discountContainer = document.createElement('div');
-            discountContainer.className = 'discount';
-            container.querySelector('.item-price-wrapper')?.appendChild(discountContainer);
+            discountContainer.className = selector.discount.substring(1);
+            container.querySelector(selector.discountDiv)?.appendChild(discountContainer);
         }
         if (item.price !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+            if (selector == itemSelectors.page) {
+                let discountSpan = document.createElement('span');
+                discountSpan.style.marginLeft = '5px';
+                discountContainer.appendChild(discountSpan);
+                discountContainer = discountSpan;
+            }
             discountContainer.className += ' betterfloat-sale-tag';
             discountContainer.style.color = difference == 0 ? 'black' : difference < 0 ? '#0cb083' : '#ce0000';
             discountContainer.style.fontWeight = '400';
             discountContainer.style.fontSize = '14px';
-            discountContainer.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(1);
+            discountContainer.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         }
     } else {
         if (container.querySelector('.discount')) {
@@ -296,7 +340,7 @@ function createBuffName(item: Skinbid.HTMLItem): string {
     ) {
         full_name = item.name;
     } else if (item.type.includes('Agent')) {
-        full_name = `${item.name} | ${item.type}`;
+        full_name = `${item.name} | ${item.category}`;
     } else if (item.name.includes('Dragon King')) {
         full_name = `M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
     } else {
@@ -314,68 +358,89 @@ const itemSelectors = {
         type: '.item-type',
         price: '.item-price-wrapper > div',
         priceDiv: '.item-price-wrapper',
-        wear: '.quality-float-row'
+        wear: '.quality-float-row',
+        discount: '.discount',
+        discountDiv: '.item-price-wrapper',
     },
     list: {
         name: '.item-category-and-stickers .first-row',
         type: '.item-category-and-stickers .second-row',
         price: '.section-price .price',
         priceDiv: '.section-price-first-row',
-        wear: '.quality-float-row'
+        wear: '.quality-float-row',
+        discount: '.section-discount',
+        discountDiv: '.section-discount',
     },
     page: {
         name: '.item-title',
         type: '.item-category',
         price: '.item-bids-time-info > div',
         priceDiv: '.item-bids-time-info .value',
-        wear: '.item-detail:nth-child(2)'
+        wear: '.item-detail:nth-child(2)',
+        discount: '.item-bids-time-info .value > div',
+        discountDiv: '.section-discount',
     },
 } as const;
 
 type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
 
-function getSkinbidFullItem(container: Element) {
-    let name = container.querySelector('.item-title')?.textContent ?? '';
+function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
+    let name = container.querySelector('.item-title')?.textContent?.trim() ?? '';
+    let category = '';
+    let style: ItemStyle = '';
     if (name == '') {
         return null;
+    } else if (name.includes('Marble Fade')) {
+        name = 'Marble Fade'
+        category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
+    } else if (name.includes('Doppler')) {
+        style = name.split('Doppler ')[1] as ItemStyle;
+        name = 'Doppler';
+    } else if (name.includes('★')) {
+        style = 'Vanilla';
     }
     let priceText = container.querySelector('.item-bids-time-info')?.children[0].children[1]?.textContent?.trim() ?? '';
     let price = Number(priceText.replace(/[^0-9.-]+/g, ''));
     let type = container.querySelector('.item-category')?.textContent?.trim() ?? '';
-    
-    let style: ItemStyle = '';
-    if (name.includes('Doppler')) {
-        style = name.split(' ')[1] as ItemStyle;
-    } else if (name.includes('★')) {
-        style = 'Vanilla';
-    }
     let itemDetails = container.querySelectorAll('.details-actions-section .item-detail');
     let wearText = itemDetails[0]?.children[1]?.textContent ?? '';
     let wear = Number(itemDetails[1]?.children[1]?.textContent ?? 0) ;
     return {
-        name: name.trim(),
+        name: name,
         price: price,
         type: type,
         style: style,
         wear: wear,
         wear_name: wearText,
+        category: category,
     };
 }
 
 function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HTMLItem | null {
-    let name = container.querySelector(selector.name)?.textContent ?? '';
+    let name = container.querySelector(selector.name)?.textContent?.trim() ?? '';
+    let category = '';
+    let style: ItemStyle = '';
     if (name == '') {
         return null;
-    }
-    let price = Number(container.querySelector(selector.price)?.textContent?.replace(/[^0-9.-]+/g, ''));
-    let type = container.querySelector(selector.type)?.textContent?.trim() ?? '';
-
-    let style: ItemStyle = '';
-    if (name.includes('Doppler')) {
-        style = name.split(' ')[1] as ItemStyle;
+    } else if (name.includes('💎')) {
+        name = name.split('💎')[1].trim();
+        category = '💎';
+    } else if (name.includes('Marble Fade')) {
+        name = 'Marble Fade'
+        category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
+    } else if (name.includes('Doppler')) {
+        style = name.split('Doppler ')[1] as ItemStyle;
+        name = 'Doppler';
     } else if (name.includes('★')) {
         style = 'Vanilla';
     }
+
+    let priceText = container.querySelector(selector.price)?.textContent ?? '';
+    if (priceText.includes('K')) {
+        priceText = priceText.replace('.', '').replace('K', '0.00');
+    }
+    let price = Number(priceText.replace(/[^0-9.-]+/g, '').trim());
+    let type = container.querySelector(selector.type)?.textContent?.trim() ?? '';
     const getWear = (wearDiv: HTMLElement) => {
         let wear = '';
 
@@ -407,12 +472,13 @@ function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HT
     let wearDiv = container.querySelector(selector.wear);
     let wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
     return {
-        name: name.trim(),
+        name: name,
         price: price,
         type: type,
         style: style,
         wear: Number(wearDiv?.textContent?.split('/')[1]),
         wear_name: wear,
+        category: category,
     };
 }
 

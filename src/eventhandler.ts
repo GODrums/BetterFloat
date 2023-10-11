@@ -1,6 +1,7 @@
 import { EventData, CSFloat } from './@typings/FloatTypes';
+import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
-import { cacheCSFHistoryGraph, cacheCSFHistorySales, cacheCSFItems, cacheCSFPopupItem, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
+import { cacheCSFHistoryGraph, cacheCSFHistorySales, cacheCSFItems, cacheCSFPopupItem, cacheSkbItems, cacheSkinportCurrencyRates, loadMapping } from './mappinghandler';
 
 type StallData = {
     listings: CSFloat.ListingData[];
@@ -73,6 +74,19 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('api/search/auctions')) {
         // Skinbid.MarketData
+        cacheSkbItems((eventData.data as Skinbid.MarketData).items);
+    } else if (eventData.url.includes('api/auction/itemInventoryStatus')) {
+        // content: { cachedResult: boolean, inSellerInventory: boolean }
+    }  else if (eventData.url.includes('api/auction/shop')) {
+        // shop data
+        if (eventData.url.includes('/data')) {
+            // Skinbid.ShopData
+        } else {
+            cacheSkbItems((eventData.data as Skinbid.MarketData).items);
+        }
+    } else if (eventData.url.includes('api/auction/')) {
+        // Skinbid.Listing
+        cacheSkbItems([eventData.data as Skinbid.Listing]);
     } else if (eventData.url.includes('api/public/exchangeRates')) {
         // Skinbid.ExchangeRates
     } else if (eventData.url.includes('api/user/whoami')) {
