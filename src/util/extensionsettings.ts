@@ -1,7 +1,7 @@
 import { ExtensionSettings } from '../@typings/FloatTypes';
 
 export async function initSettings(): Promise<ExtensionSettings> {
-    let extensionSettings = <ExtensionSettings>{};
+    const extensionSettings = <ExtensionSettings>{};
     chrome.storage.local.get((data) => {
         if (data.enableCSFloat) {
             extensionSettings.enableCSFloat = Boolean(data.enableCSFloat);
@@ -65,6 +65,15 @@ export async function initSettings(): Promise<ExtensionSettings> {
         }
         if (data.spFilter) {
             extensionSettings.spFilter = data.spFilter as ExtensionSettings['spFilter'];
+        }
+        if (data.enableSkinbid) {
+            extensionSettings.enableSkinbid = Boolean(data.enableSkinbid);
+        }
+        if (data.skbPriceReference !== undefined) {
+            extensionSettings.skbPriceReference = data.skbPriceReference as ExtensionSettings['skbPriceReference'];
+        }
+        if (data.skbBuffDifference) {
+            extensionSettings.skbBuffDifference = Boolean(data.skbBuffDifference);
         }
     });
 

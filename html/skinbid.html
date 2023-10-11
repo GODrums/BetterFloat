@@ -1,0 +1,29 @@
+<div class="Group">
+    <div class="GroupElement">
+        <p class="ElementText">Enable on Skinbid</p>
+        <input type="checkbox" id="InputSkinbid" name="enableSkinbid" checked />
+    </div>
+</div>
+<div class="Group">
+    <div class="GroupHeader">PRICES</div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Buff Price Reference</p>
+            <select class="ElementDropdownMenu" id="SkinbidPriceReference" name="sbkPriceReference">
+                <option value="0" selected>Bid</option>
+                <option value="1">Ask</option>
+            </select>
+        </div>
+        <p class="ElementDescription">
+            Sets the reference price for difference calculations on item prices.<br />Bid refers to the highest buy order price.<br />Ask refers to the lowest listing price. (Default: Bid)
+        </p>
+    </div>
+    <div class="GroupElementExtended">
+        <div class="GroupRow">
+            <p class="ElementText">Show Buff Price Difference</p>
+            <input type="checkbox" id="SkinbidInputBuffDifference" name="sbkBuffDifference" value="sbkBuffDifference" checked/>
+        </div>
+        <p class="ElementDescription">This settings allows to switch between displaying the difference to the Buff price in absolute units and the original difference to the Steam price in percentage.</p>
+    </div>
+    <p style="text-align: center; color: white;">More options coming soon!</p>
+</div>

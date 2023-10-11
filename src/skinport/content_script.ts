@@ -1,6 +1,6 @@
-import { ExtensionSettings, ItemStyle, ItemType } from '../@typings/FloatTypes';
+import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -48,18 +48,18 @@ async function init() {
 async function firstLaunch() {
     if (!extensionSettings.enableSkinport) return;
 
-    let path = location.pathname;
+    const path = location.pathname;
 
     console.log('[BetterFloat] First launch, url:', path);
 
     if (path == '/') {
-        let popularLists = document.querySelectorAll('.PopularList');
-        for (let list of popularLists) {
+        const popularLists = Array.from(document.querySelectorAll('.PopularList'));
+        for (const list of popularLists) {
             await handlePopularList(list);
         }
     } else if (path.startsWith('/market')) {
-        let catalogItems = document.querySelectorAll('.CatalogPage-item');
-        for (let item of catalogItems) {
+        const catalogItems = Array.from(document.querySelectorAll('.CatalogPage-item'));
+        for (const item of catalogItems) {
             await adjustItem(item);
         }
         if (location.search.includes('sort=date')) {
@@ -70,18 +70,18 @@ async function firstLaunch() {
             (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
         }
     } else if (path.startsWith('/cart')) {
-        let cartContainer = document.querySelector('.Cart-container');
+        const cartContainer = document.querySelector('.Cart-container');
         if (cartContainer) {
             await adjustCart(cartContainer);
         }
     } else if (path.startsWith('/item')) {
-        let itemPage = document.querySelectorAll('.ItemPage');
-        for (let item of itemPage) {
+        const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
+        for (const item of itemPage) {
             await adjustItemPage(item);
         }
     } else if (path.startsWith('/myitems/')) {
-        let inventoryItems = document.querySelectorAll('.InventoryPage-item');
-        for (let item of inventoryItems) {
+        const inventoryItems = Array.from(document.querySelectorAll('.InventoryPage-item'));
+        for (const item of inventoryItems) {
             await adjustItem(item);
         }
     }
@@ -98,10 +98,10 @@ async function waitForElement(selector: string, interval = 200, maxTries = 10) {
 }
 
 function createLiveLink() {
-    let marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
+    const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
     if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
     marketLink.style.marginRight = '30px';
-    let liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
+    const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
     liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
     liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
     liveLink.textContent = 'Live';
@@ -109,26 +109,26 @@ function createLiveLink() {
 }
 
 function createLanguagePopup() {
-    let popupOuter = document.createElement('div');
+    const popupOuter = document.createElement('div');
     popupOuter.className = 'betterfloat-popup-outer';
     popupOuter.style.backdropFilter = 'blur(2px)';
     popupOuter.style.fontSize = '16px';
-    let popup = document.createElement('div');
+    const popup = document.createElement('div');
     popup.className = 'betterfloat-popup-language';
-    let popupHeaderDiv = document.createElement('div');
+    const popupHeaderDiv = document.createElement('div');
     popupHeaderDiv.style.display = 'flex';
     popupHeaderDiv.style.alignItems = 'center';
     popupHeaderDiv.style.justifyContent = 'space-between';
     popupHeaderDiv.style.margin = '0 10px';
-    let warningIcon = document.createElement('img');
+    const warningIcon = document.createElement('img');
     warningIcon.src = runtimePublicURL + '/triangle-exclamation-solid.svg';
     warningIcon.style.width = '32px';
     warningIcon.style.height = '32px';
     warningIcon.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%)';
-    let popupHeaderText = document.createElement('h2');
+    const popupHeaderText = document.createElement('h2');
     popupHeaderText.style.fontWeight = '700';
     popupHeaderText.textContent = 'Warning: Language not supported';
-    let closeButton = document.createElement('a');
+    const closeButton = document.createElement('a');
     closeButton.className = 'close';
     closeButton.style.marginBottom = '10px';
     closeButton.textContent = 'x';
@@ -139,14 +139,14 @@ function createLanguagePopup() {
     popupHeaderDiv.appendChild(warningIcon);
     popupHeaderDiv.appendChild(popupHeaderText);
     popupHeaderDiv.appendChild(closeButton);
-    let popupText = document.createElement('p');
+    const popupText = document.createElement('p');
     popupText.style.marginTop = '30px';
     popupText.textContent =
         "BetterFloat currently only supports the English language on Skinport. If you prefer to pass on most of BetterFloat's features on Skinport, please disable the 'Buff Price Calculation'-feature in the extension settings.";
-    let buttonDiv = document.createElement('div');
+    const buttonDiv = document.createElement('div');
     buttonDiv.style.display = 'flex';
     buttonDiv.style.justifyContent = 'center';
-    let changeLanguageButton = document.createElement('button');
+    const changeLanguageButton = document.createElement('button');
     changeLanguageButton.type = 'button';
     changeLanguageButton.className = 'betterfloat-language-button';
     changeLanguageButton.textContent = 'Change language';
@@ -163,16 +163,16 @@ function createLanguagePopup() {
 }
 
 async function applyMutation() {
-    let observer = new MutationObserver(async (mutations) => {
+    const observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableSkinport) {
-            for (let mutation of mutations) {
+            for (const mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
-                    let addedNode = mutation.addedNodes[i];
+                    const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
 
                     if (addedNode.className) {
-                        let className = addedNode.className.toString();
+                        const className = addedNode.className.toString();
                         if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item')) {
                             await adjustItem(addedNode);
                         } else if (className.includes('Cart-container')) {
@@ -194,92 +194,92 @@ async function applyMutation() {
 }
 
 async function addLiveFilterMenu(container: Element) {
-    let filterDiv = document.createElement('div');
+    const filterDiv = document.createElement('div');
 
-    let filterPopup = document.createElement('div');
+    const filterPopup = document.createElement('div');
     filterPopup.className = 'betterfloat-filterpopup';
-    let popupHeader = document.createElement('h3');
+    const popupHeader = document.createElement('h3');
     popupHeader.textContent = 'ITEM FILTER';
     popupHeader.style.fontWeight = '600';
     popupHeader.style.fontSize = '18px';
     popupHeader.style.lineHeight = '0.5';
     popupHeader.style.marginTop = '20px';
-    let popupSubHeader = document.createElement('h4');
+    const popupSubHeader = document.createElement('h4');
     popupSubHeader.style.fontSize = '16px';
     popupSubHeader.style.color = '#828282';
     popupSubHeader.textContent = 'by BetterFloat';
-    let popupCloseButton = document.createElement('button');
+    const popupCloseButton = document.createElement('button');
     popupCloseButton.type = 'button';
     popupCloseButton.className = 'betterfloat-filterpopup-close';
     popupCloseButton.textContent = 'x';
     popupCloseButton.onclick = () => {
         filterPopup.style.display = 'none';
     };
-    let popupContent = document.createElement('div');
+    const popupContent = document.createElement('div');
     popupContent.className = 'betterfloat-filterpopup-content';
-    let popupHorizonalDiv = document.createElement('div');
+    const popupHorizonalDiv = document.createElement('div');
     popupHorizonalDiv.style.display = 'flex';
     popupHorizonalDiv.style.justifyContent = 'space-between';
     popupHorizonalDiv.style.marginTop = '5px';
-    let popupPriceDiv = document.createElement('div');
+    const popupPriceDiv = document.createElement('div');
     popupPriceDiv.style.display = 'flex';
     popupPriceDiv.style.flexDirection = 'column';
     popupPriceDiv.style.alignItems = 'center';
     popupPriceDiv.style.marginRight = '10px';
     popupPriceDiv.style.padding = '0 20px';
-    let popupPriceLabel = document.createElement('label');
+    const popupPriceLabel = document.createElement('label');
     popupPriceLabel.textContent = 'PRICE';
     popupPriceLabel.style.fontWeight = '600';
     popupPriceLabel.style.margin = '5px 0';
-    let popupPriceLow = document.createElement('input');
+    const popupPriceLow = document.createElement('input');
     popupPriceLow.style.fontSize = '15px';
     popupPriceLow.type = 'number';
     popupPriceLow.min = '0';
     popupPriceLow.max = '999999';
     popupPriceLow.step = '0.01';
     popupPriceLow.value = extensionSettings.spFilter.priceLow.toString();
-    let popupPriceHigh = popupPriceLow.cloneNode() as HTMLInputElement;
+    const popupPriceHigh = popupPriceLow.cloneNode() as HTMLInputElement;
     popupPriceHigh.value = extensionSettings.spFilter.priceHigh.toString();
-    let popupPriceDivider = document.createElement('span');
+    const popupPriceDivider = document.createElement('span');
     popupPriceDivider.textContent = '-';
     popupPriceDiv.appendChild(popupPriceLabel);
     popupPriceDiv.appendChild(popupPriceLow);
     popupPriceDiv.appendChild(popupPriceDivider);
     popupPriceDiv.appendChild(popupPriceHigh);
-    let popupNameDiv = document.createElement('div');
+    const popupNameDiv = document.createElement('div');
     popupNameDiv.style.display = 'flex';
     popupNameDiv.style.flexDirection = 'column';
     popupNameDiv.style.alignItems = 'flex-start';
-    let popupNameLabel = document.createElement('label');
+    const popupNameLabel = document.createElement('label');
     popupNameLabel.style.fontWeight = '600';
     popupNameLabel.textContent = 'NAME';
     popupNameLabel.style.margin = '5px 0';
-    let popupNameInput = document.createElement('input');
+    const popupNameInput = document.createElement('input');
     popupNameInput.type = 'text';
     popupNameInput.value = extensionSettings.spFilter.name;
     popupNameInput.style.fontSize = '15px';
     popupNameDiv.appendChild(popupNameLabel);
     popupNameDiv.appendChild(popupNameInput);
-    let popupTypeDiv = document.createElement('div');
+    const popupTypeDiv = document.createElement('div');
     popupTypeDiv.style.display = 'flex';
     popupTypeDiv.style.flexDirection = 'column';
     popupTypeDiv.style.alignItems = 'flex-start';
-    let typeContainerHeader = document.createElement('label');
+    const typeContainerHeader = document.createElement('label');
     typeContainerHeader.textContent = 'TYPE';
     typeContainerHeader.style.fontWeight = '600';
     typeContainerHeader.style.margin = '5px 0';
     popupTypeDiv.appendChild(typeContainerHeader);
-    let types = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
-    for (let type of types) {
-        let typeDiv = document.createElement('div');
+    const types = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
+    for (const type of types) {
+        const typeDiv = document.createElement('div');
         typeDiv.style.display = 'flex';
         typeDiv.style.alignItems = 'center';
         typeDiv.style.margin = '0 0 3px 5px';
-        let typeLabel = document.createElement('label');
+        const typeLabel = document.createElement('label');
         typeLabel.textContent = type;
         typeLabel.style.marginRight = '5px';
         typeLabel.style.fontSize = '15px';
-        let typeCheckbox = document.createElement('input');
+        const typeCheckbox = document.createElement('input');
         typeCheckbox.type = 'checkbox';
         typeCheckbox.value = type;
         typeCheckbox.checked = !extensionSettings.spFilter.types.includes(type);
@@ -287,16 +287,16 @@ async function addLiveFilterMenu(container: Element) {
         typeDiv.appendChild(typeLabel);
         popupTypeDiv.appendChild(typeDiv);
     }
-    let popupButtonDiv = document.createElement('div');
+    const popupButtonDiv = document.createElement('div');
     popupButtonDiv.className = 'betterfloat-filterpopup-buttondiv';
-    let popupSaveButton = document.createElement('button');
+    const popupSaveButton = document.createElement('button');
     popupSaveButton.type = 'button';
     popupSaveButton.textContent = 'Save';
     popupSaveButton.onclick = () => {
         extensionSettings.spFilter.priceLow = parseFloat(popupPriceLow.value);
         extensionSettings.spFilter.priceHigh = parseFloat(popupPriceHigh.value);
         extensionSettings.spFilter.name = popupNameInput.value;
-        let typeCheckboxes = popupTypeDiv.querySelectorAll('input[type=checkbox]');
+        const typeCheckboxes = popupTypeDiv.querySelectorAll('input[type=checkbox]');
         extensionSettings.spFilter.types = Array.from(typeCheckboxes)
             .filter((el) => !(<HTMLInputElement>el).checked)
             .map((el) => (<HTMLInputElement>el).value);
@@ -315,8 +315,8 @@ async function addLiveFilterMenu(container: Element) {
     filterPopup.appendChild(popupContent);
     filterPopup.appendChild(popupButtonDiv);
 
-    let filterButton = document.createElement('button');
-    let filterIcon = document.createElement('img');
+    const filterButton = document.createElement('button');
+    const filterIcon = document.createElement('img');
     filterIcon.src = runtimePublicURL + '/filter-solid.svg';
     filterIcon.style.width = '24px';
     filterIcon.style.height = '24px';
@@ -334,29 +334,29 @@ async function addLiveFilterMenu(container: Element) {
 
 async function handlePopularList(list: Element) {
     if (list.querySelector('h3')?.textContent?.includes('CS2')) {
-        let popularItems = list.querySelectorAll('.PopularList-item');
-        for (let item of popularItems) {
+        const popularItems = Array.from(list.querySelectorAll('.PopularList-item'));
+        for (const item of popularItems) {
             await adjustItem(item);
         }
     }
 }
 
 async function adjustItemPage(container: Element) {
-    let itemRating = container.querySelector('.ItemPage-rating');
+    const itemRating = container.querySelector('.ItemPage-rating');
     if (itemRating) {
         itemRating.remove();
     }
 
-    let btnGroup = container.querySelector('.ItemPage-btnGroup');
+    const btnGroup = container.querySelector('.ItemPage-btnGroup');
     if (!btnGroup) return;
-    let newGroup = document.createElement('div');
+    const newGroup = document.createElement('div');
     newGroup.className = btnGroup.className ?? newGroup.className;
     // if an item is sold, the original links are unclickable, hence we reproduce them
-    let links = container.querySelectorAll('.ItemPage-link');
-    let linkSteam = (Array.from(links).find((el) => el.innerHTML.includes('Steam')) as HTMLAnchorElement | null)?.href;
-    let linkInspect = (Array.from(links).find((el) => el.innerHTML.includes('Inspect')) as HTMLAnchorElement | null)?.href;
+    const links = container.querySelectorAll('.ItemPage-link');
+    const linkSteam = (Array.from(links).find((el) => el.innerHTML.includes('Steam')) as HTMLAnchorElement | null)?.href;
+    const linkInspect = (Array.from(links).find((el) => el.innerHTML.includes('Inspect')) as HTMLAnchorElement | null)?.href;
     if (linkInspect) {
-        let inspectButton = document.createElement('button');
+        const inspectButton = document.createElement('button');
         inspectButton.onclick = () => {
             window.open(linkInspect);
         };
@@ -365,7 +365,7 @@ async function adjustItemPage(container: Element) {
         newGroup.appendChild(inspectButton);
     }
     if (linkSteam) {
-        let steamButton = document.createElement('button');
+        const steamButton = document.createElement('button');
         steamButton.onclick = () => {
             window.open(linkSteam, '_blank');
         };
@@ -374,14 +374,14 @@ async function adjustItemPage(container: Element) {
         newGroup.appendChild(steamButton);
     }
 
-    let item = getFloatItem(container, itemSelectors.page);
+    const item = getFloatItem(container, itemSelectors.page);
     console.log('[BetterFloat] Item: ', item);
     if (!item) return;
-    let { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
-    let buffid = await getBuffMapping(buff_name);
-    let buffLink = buffid > 0 ? `https://buff.163.com/goods/${buffid}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+    const { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
+    const buffid = await getBuffMapping(buff_name);
+    const buffLink = buffid > 0 ? `https://buff.163.com/goods/${buffid}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
-    let buffButton = document.createElement('button');
+    const buffButton = document.createElement('button');
     buffButton.onclick = () => {
         window.open(buffLink, '_blank');
     };
@@ -390,10 +390,10 @@ async function adjustItemPage(container: Element) {
     newGroup.appendChild(buffButton);
     btnGroup.after(newGroup);
 
-    let tooltipLink = container.querySelector('.ItemPage-value .Tooltip-link');
+    const tooltipLink = container.querySelector('.ItemPage-value .Tooltip-link');
     if (!tooltipLink) return;
     const currencySymbol = tooltipLink.textContent?.charAt(0);
-    let suggestedContainer = container.querySelector('.ItemPage-suggested');
+    const suggestedContainer = container.querySelector('.ItemPage-suggested');
     if (suggestedContainer) {
         generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', true);
     }
@@ -408,10 +408,10 @@ async function adjustItemPage(container: Element) {
     }
 
     const difference = item.price - (extensionSettings.spPriceReference == 0 ? priceOrder : priceListing);
-    let priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
+    const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
     if (priceContainer) {
-        let newContainer = document.createElement('div');
-        let saleTag = document.createElement('span');
+        const newContainer = document.createElement('div');
+        const saleTag = document.createElement('span');
         newContainer.className = 'ItemPage-discount betterfloat-discount-container';
         newContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
         newContainer.style.transform = 'skewX(-15deg)';
@@ -433,8 +433,8 @@ async function adjustItemPage(container: Element) {
 
 async function adjustCart(container: Element) {
     if (extensionSettings.spCheckBoxes) {
-        let checkboxes = container.querySelectorAll('.Checkbox-input');
-        for (let checkbox of checkboxes) {
+        const checkboxes = Array.from(container.querySelectorAll('.Checkbox-input'));
+        for (const checkbox of checkboxes) {
             (checkbox as HTMLInputElement).click();
             await new Promise((r) => setTimeout(r, 50)); // to avoid bot detection
         }
@@ -444,7 +444,7 @@ async function adjustCart(container: Element) {
 async function adjustItem(container: Element) {
     const item = getFloatItem(container, itemSelectors.preview);
     if (!item) return;
-    let filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
+    const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
     if (filterItem) {
         console.log('[BetterFloat] Filtered item: ', item.name);
         (<HTMLElement>container).style.display = 'none';
@@ -462,7 +462,7 @@ async function adjustItem(container: Element) {
 
 // true: remove item, false: display item
 function applyFilter(item: Skinport.Listing) {
-    let targetName = extensionSettings.spFilter.name.toLowerCase();
+    const targetName = extensionSettings.spFilter.name.toLowerCase();
     // if true, item should be filtered
     const nameCheck = targetName != '' && !(item.type + ' | ' + item.name).toLowerCase().includes(targetName);
     const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
@@ -470,25 +470,25 @@ function applyFilter(item: Skinport.Listing) {
     return nameCheck || priceCheck || typeCheck;
 }
 
-async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage: boolean = false) {
+async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
     if (item.text.includes('Agent')) return;
-    let itemInfoDiv = container.querySelector(selector.info);
-    let stickers = item.stickers;
+    const itemInfoDiv = container.querySelector(selector.info);
+    const stickers = item.stickers;
     if (item.stickers.length == 0 || item.text.includes('Souvenir')) {
         return;
     }
-    let stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
-    let priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
-    let spPercentage = price_difference / priceSum;
+    const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+    const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+    const spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
     if (itemInfoDiv && priceSum > 1) {
         if (isItemPage) {
-            let wrapperDiv = document.createElement('div');
+            const wrapperDiv = document.createElement('div');
             wrapperDiv.style.display = 'flex';
-            let h3 = itemInfoDiv.querySelector('.ItemPage-h3')?.cloneNode(true);
-            if (h3) {
-                itemInfoDiv.removeChild(itemInfoDiv.firstChild!);
+            const h3 = itemInfoDiv.querySelector('.ItemPage-h3')?.cloneNode(true);
+            if (h3 && itemInfoDiv.firstChild) {
+                itemInfoDiv.removeChild(itemInfoDiv.firstChild);
                 wrapperDiv.appendChild(h3);
             }
             wrapperDiv.appendChild(generateSpStickerContainer(priceSum, spPercentage, true));
@@ -500,10 +500,10 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 }
 
 async function addFloatColoring(container: Element, item: Skinport.Listing) {
-    let floatContainer = container.querySelector('.WearBar-value');
+    const floatContainer = container.querySelector('.WearBar-value');
     if (!floatContainer) return;
     let color = '';
-    let w = item.wear;
+    const w = item.wear;
     if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
         if (w === 0) {
             color = 'springgreen';
@@ -537,24 +537,24 @@ const itemSelectors = {
     },
 } as const;
 
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
+type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
 
 function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
-    let name = container.querySelector(selector.name)?.textContent ?? '';
+    const name = container.querySelector(selector.name)?.textContent ?? '';
     if (name == '') {
         return null;
     }
-    let price =
+    const price =
         Number(
             container
                 .querySelector(selector.price + ' .Tooltip-link')
                 ?.innerHTML.substring(1)
                 .replace(',', '')
         ) ?? 0;
-    let type = container.querySelector(selector.title)?.textContent ?? '';
-    let text = container.querySelector(selector.text)?.innerHTML ?? '';
+    const type = container.querySelector(selector.title)?.textContent ?? '';
+    const text = container.querySelector(selector.text)?.innerHTML ?? '';
     // Skinport uses more detailed item types than Buff163, they are called cateogiories here
-    let lastWord = text.split(' ').pop() ?? '';
+    const lastWord = text.split(' ').pop() ?? '';
     let category = '';
     if (lastWord == 'Knife' || lastWord == 'Gloves' || lastWord == 'Agent') {
         category = lastWord;
@@ -571,11 +571,11 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
         style = 'Vanilla';
     }
 
-    let stickers: { name: string }[] = [];
-    let stickersDiv = container.querySelector(selector.stickers);
+    const stickers: { name: string }[] = [];
+    const stickersDiv = container.querySelector(selector.stickers);
     if (stickersDiv) {
-        for (let sticker of stickersDiv.children) {
-            let stickerName = sticker.children[0]?.getAttribute('alt');
+        for (const sticker of Array.from(stickersDiv.children)) {
+            const stickerName = sticker.children[0]?.getAttribute('alt');
             if (stickerName) {
                 stickers.push({
                     name: 'Sticker | ' + stickerName,
@@ -587,7 +587,7 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
         let wear = '';
 
         if (wearDiv) {
-            let w = Number(wearDiv.innerHTML);
+            const w = Number(wearDiv.innerHTML);
             if (w < 0.07) {
                 wear = 'Factory New';
             } else if (w < 0.15) {
@@ -602,8 +602,8 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
         }
         return wear;
     };
-    let wearDiv = container.querySelector('.WearBar-value');
-    let wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
+    const wearDiv = container.querySelector('.WearBar-value');
+    const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
     return {
         name: name,
         price: price,
@@ -618,8 +618,8 @@ function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Lis
 }
 
 async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
-    let priceMapping = await getPriceMapping();
-    let buff_name = handleSpecialStickerNames(createBuffName(item));
+    const priceMapping = await getPriceMapping();
+    const buff_name = handleSpecialStickerNames(createBuffName(item));
     let helperPrice: number | null = null;
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
@@ -650,7 +650,7 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
     }
 
     //convert prices to user's currency
-    let currencyRate = await getUserCurrencyRate(extensionSettings.skinportRates);
+    const currencyRate = await getSpUserCurrencyRate(extensionSettings.skinportRates);
     if (extensionSettings.skinportRates == 'skinport') {
         // origin price of rate is non-USD, so we need to divide
         priceListing = priceListing / currencyRate;
@@ -664,41 +664,41 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
     return { buff_name, priceListing, priceOrder };
 }
 
-async function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage: boolean = false) {
+async function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
     container.className += ' betterfloat-buffprice';
-    let buffContainer = document.createElement('div');
+    const buffContainer = document.createElement('div');
     buffContainer.className = 'betterfloat-buff-container';
     buffContainer.style.display = 'flex';
     buffContainer.style.marginTop = '5px';
     buffContainer.style.alignItems = 'center';
-    let buffImage = document.createElement('img');
+    const buffImage = document.createElement('img');
     buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
     buffContainer.appendChild(buffImage);
-    let buffPrice = document.createElement('div');
+    const buffPrice = document.createElement('div');
     buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
     if (isItemPage) {
         buffPrice.style.fontSize = '18px';
     }
-    let tooltipSpan = document.createElement('span');
+    const tooltipSpan = document.createElement('span');
     tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
     tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
     buffPrice.appendChild(tooltipSpan);
-    let buffPriceBid = document.createElement('span');
+    const buffPriceBid = document.createElement('span');
     buffPriceBid.setAttribute('style', 'color: orange;');
     buffPriceBid.textContent = `Bid ${currencySymbol}${priceOrder.toFixed(2)}`;
     buffPrice.appendChild(buffPriceBid);
-    let buffPriceDivider = document.createElement('span');
+    const buffPriceDivider = document.createElement('span');
     buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
     buffPriceDivider.textContent = '|';
     buffPrice.appendChild(buffPriceDivider);
-    let buffPriceAsk = document.createElement('span');
+    const buffPriceAsk = document.createElement('span');
     buffPriceAsk.setAttribute('style', 'color: greenyellow;');
     buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
     buffPrice.appendChild(buffPriceAsk);
     buffContainer.appendChild(buffPrice);
     if (extensionSettings.spSteamPrice || isItemPage) {
-        let divider = document.createElement('div');
+        const divider = document.createElement('div');
         container.after(buffContainer);
         container.after(divider);
     } else {
@@ -708,12 +708,12 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
     await loadMapping();
-    let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
-    let buff_id = await getBuffMapping(buff_name);
+    const { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
+    const buff_id = await getBuffMapping(buff_name);
 
-    let tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
+    const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
     const currencySymbol = tooltipLink.textContent?.charAt(0);
-    let priceDiv = container.querySelector('.ItemPreview-oldPrice');
+    const priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
     }
@@ -722,7 +722,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
     if (extensionSettings.spBuffLink == 'action') {
         const presentationDiv = container.querySelector('.ItemPreview-mainAction');
         if (presentationDiv) {
-            let buffLink = document.createElement('a');
+            const buffLink = document.createElement('a');
             buffLink.className = 'ItemPreview-sideAction betterskinport-bufflink';
             buffLink.style.width = '60px';
             buffLink.target = '_blank';
@@ -753,7 +753,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
             discountContainer.appendChild(newSaleTag);
             container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
         }
-        let saleTag = <HTMLElement>discountContainer.firstChild;
+        const saleTag = <HTMLElement>discountContainer.firstChild;
         if (item.price !== 0 && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
             discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
@@ -799,7 +799,7 @@ function createBuffName(item: Skinport.Listing): string {
 }
 
 let extensionSettings: ExtensionSettings;
-let runtimePublicURL = chrome.runtime.getURL('../public');
+const runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;
 init();

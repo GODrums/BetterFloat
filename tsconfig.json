@@ -1,19 +1,14 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "moduleResolution": "bundler",
-        "module": "ES6",
-        "strict": true,
-        "esModuleInterop": true,
-        "sourceMap": false,
-        "rootDir": "src",
-        "outDir": "dist",
-        "noEmitOnError": true,
-        "jsx": "react",
-        "typeRoots": ["node_modules/@types"],
-        "forceConsistentCasingInFileNames": true,
-        "exactOptionalPropertyTypes": true,
-    },
-    "exclude": ["node_modules"],
-    "include": ["src/*.ts", "src/**/*.ts"]
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "allowJs": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "exactOptionalPropertyTypes": true,
+  }
 }

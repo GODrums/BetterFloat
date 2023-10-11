@@ -13,32 +13,39 @@
                 <button class="PermissionsButton">
                     <img style="height: 30px; width: 30px; display: inline-block; vertical-align: middle; filter: invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" src="../public/alert-box.png" />
                 </button>
-                <button class="tabItem" data-page="about.html">
-                    <img class="tab-icon" src="../public/circle-info-solid.svg" style="height: 30px; width: 30px; margin: 0 15px;"/>
-                </button>
+                <a href="https://github.com/GODrums/BetterFloat" target="_blank">
+                    <img class="GithubIcon" src="../public/github-logo.png" />
+                </a>
             </div>
         </header>
         <div class="Warning">
             <p>Please <b>refresh</b> the page for changes to come into effect!</p>
         </div>
-        <div class="MainContent"></div>
-        <footer>
-            <div class="tabbar">
-                <button class="tabItem active" data-page="csfloat.html">
-                    <img class="tab-icon" src="../public/gear-solid.svg" />
-                    <p>CSFloat</p>
-                </button>
-                <button class="tabItem" data-page="skinport.html">
-                    <img class="tab-icon" src="../public/gear-solid.svg" />
-                    <p>Skinport</p>
-                </button>
-                <button class="tabItem" data-page="changelog.html">
-                    <img class="tab-icon" src="../public/file-lines-solid.svg" />
-                    <p>Changelog</p>
-                </button>
-
+        <div class="MainBody" style="display: flex;">
+            <div class="SideBar">
+                <div class="SideBarSection">
+                    <p style="color: white;">SITES</p>
+                    <button class="tabItem active" data-page="csfloat.html">
+                        <img class="tab-icon" src="../public/csfloat_logo.png" />
+                    </button>
+                    <button class="tabItem" data-page="skinport.html">
+                        <img class="tab-icon" src="../public/skinport_icon.ico" />
+                    </button>
+                    <button class="tabItem" data-page="skinbid.html">
+                        <img class="tab-icon" src="../public/skinbid_icon.svg" />
+                    </button>
+                </div>
+                <div class="SideBarSection" style="margin-bottom: 10px;">
+                    <button class="tabItem" data-page="changelog.html">
+                        <img class="flatIcon" src="../public/file-lines-solid.svg" />
+                    </button>
+                    <button class="tabItem" data-page="about.html">
+                        <img class="flatIcon" src="../public/circle-info-solid.svg"/>
+                    </button>
+                </div>
             </div>
-        </footer>
+            <div class="MainContent"></div>
+        </div>
         <script src="/js/popup.js"></script>
     </body>
 </html>

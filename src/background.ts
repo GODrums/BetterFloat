@@ -27,6 +27,9 @@ const defaultSettings: ExtensionSettings = {
         name: '',
         types: [],
     },
+    enableSkinbid: true,
+    skbPriceReference: 0,
+    skbBuffDifference: true,
 };
 
 // Check whether new version is installed
@@ -35,7 +38,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
         chrome.storage.local.set(defaultSettings);
     } else if (details.reason == 'update') {
-        var thisVersion = chrome.runtime.getManifest().version;
+        const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
         chrome.storage.local.get((data) => {
             if (!data) {
@@ -45,7 +48,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
             }
             const storedSettings = data as ExtensionSettings;
             console.debug('[BetterFloat] Loaded settings: ', storedSettings);
-            const newSettings: { [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings] } = {};
+            const newSettings: {
+                [x: string]: typeof defaultSettings[keyof typeof defaultSettings];
+            } = {};
             let update = false;
             for (const key in defaultSettings) {
                 const settingKey = key as keyof ExtensionSettings;
@@ -69,7 +74,7 @@ export async function refreshPrices() {
         .then((response) => response.json())
         .then(async (data) => {
             //set cookie and wait for finish
-            return await new Promise<Boolean>((resolve) => {
+            return await new Promise<boolean>((resolve) => {
                 chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
                     console.log('Prices updated. Current time: ', Date.toString());
                     resolve(true);
@@ -85,9 +90,15 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         refreshPrices().then((value) => {
             console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
             if (value) {
-                sendResponse({ message: 'Prices fetched successfully.', success: true });
+                sendResponse({
+                    message: 'Prices fetched successfully.',
+                    success: true,
+                });
             } else {
-                sendResponse({ message: 'Error while fetching prices.', success: false });
+                sendResponse({
+                    message: 'Error while fetching prices.',
+                    success: false,
+                });
             }
         });
         // this is required to let the message listener wait for the fetch to finish

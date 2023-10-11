@@ -9,8 +9,8 @@ function openIntercept() {
 
     window.XMLHttpRequest.prototype.open = function () {
         (<XMLHttpRequest>this).addEventListener('load', (e) => {
-            let target = <XMLHttpRequest>e.currentTarget;
-            if (!target.responseURL.includes('csfloat.com') && !target.responseURL.includes('skinport.com')) {
+            const target = <XMLHttpRequest>e.currentTarget;
+            if (!target.responseURL.includes(location.hostname)) {
                 console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
                 return;
             }

@@ -33,6 +33,9 @@ export type ExtensionSettings = {
         name: string;
         types: string[];
     };
+    enableSkinbid: boolean;
+    skbPriceReference: 0 | 1;
+    skbBuffDifference: boolean;
 };
 
 export type CSGOTraderMapping = {
@@ -82,7 +85,7 @@ export interface EventData<T> {
     data: T;
 }
 
-export module CSFloat {
+export namespace CSFloat {
     export type FloatItem = {
         name: string;
         quality: string;

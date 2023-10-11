@@ -1,11 +1,11 @@
 export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
-    let element = document.createElement('div');
+    const element = document.createElement('div');
     element.classList.add('betterfloat-refresh' + name.toString());
     element.textContent = name.toString();
     return element;
 }
 
-export function generateSpStickerContainer(priceSum: number, spPercentage: number, isItemPage: boolean = false) {
+export function generateSpStickerContainer(priceSum: number, spPercentage: number, isItemPage = false) {
     const outerContainer = document.createElement('div');
     const spContainer = document.createElement('span');
     spContainer.classList.add('betterfloat-sticker-price');

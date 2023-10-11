@@ -1,6 +1,10 @@
 import { CSGOTraderMapping, CSFloat } from './@typings/FloatTypes';
+import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
+
+// most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
+// e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
 
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
@@ -18,10 +22,17 @@ let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
 let cachedSpItems: Skinport.Item[] = [];
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
+// skinbid: cached currency rates by Skinport: USD -> X
+let skinbidRateToUSD = 1;
 // skinport: cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 // skinport: user currency (e.g. EUR)
-let userCurrency = '';
+let skinportUserCurrency = '';
+// skinbid: user currency (e.g. EUR)
+let skinbidUserCurrency = '';
+// skinbid: cached items from api
+let skinbidItems: Skinbid.Listing[] = [];
+
 
 export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     if (csfloatHistoryGraph.length > 0) {
@@ -55,6 +66,15 @@ export async function cacheCSFItems(data: CSFloat.ListingData[]) {
     csfloatItems = data;
 }
 
+export async function cacheSkbItems(data: Skinbid.Listing[]) {
+    if (skinbidItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, added more items: ', skinbidItems.length);
+        skinbidItems = skinbidItems.concat(data);
+    } else {
+        skinbidItems = data;
+    }
+}
+
 export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
     if (csfloatPopupItem) {
         // console.debug('[BetterFloat] Popup item already cached, deleting item: ', csfloatPopupItem);
@@ -76,7 +96,15 @@ export async function cacheSkinportCurrencyRates(data: { [currency: string]: num
         console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
     }
     skinportRatesFromUSD = data;
-    userCurrency = user;
+    skinportUserCurrency = user;
+}
+
+export async function cacheSkinbidCurrencyRate(rate: number) {
+    skinbidRateToUSD = rate;
+}
+
+export async function cacheSkinbidUserCurrency(currency: string) {
+    skinbidUserCurrency= currency;
 }
 
 export async function cacheRealCurrencyRates(data: { [currency: string]: number }) {
@@ -87,7 +115,7 @@ export async function cacheRealCurrencyRates(data: { [currency: string]: number 
 }
 
 export async function getWholeHistory() {
-    let history = csfloatHistoryGraph;
+    const history = csfloatHistoryGraph;
     csfloatHistoryGraph = [];
     return history;
 }
@@ -117,6 +145,15 @@ export async function getCSFPopupItem() {
 export async function getFirstSpItem() {
     if (cachedSpItems.length > 0) {
         const item = cachedSpItems.shift();
+        return item;
+    } else {
+        return null;
+    }
+}
+
+export async function getFirstSkbItem() {
+    if (skinbidItems.length > 0) {
+        const item = skinbidItems.shift();
         return item;
     } else {
         return null;
@@ -155,15 +192,20 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     };
 }
 
-export async function getUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
+export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
     if (Object.keys(skinportRatesFromUSD).length == 0) {
         await fetchUserData();
     }
-    if (userCurrency == 'USD') return 1;
+    if (skinportUserCurrency == 'USD') return 1;
     if (rates == 'real' && Object.keys(realRatesFromUSD).length == 0) {
         await fetchCurrencyRates();
     }
-    return rates == 'real' ? realRatesFromUSD[userCurrency] : skinportRatesFromUSD[userCurrency];
+    return rates == 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD[skinportUserCurrency];
+}
+
+export async function getSkbUserCurrencyRate() {
+    if (skinbidUserCurrency == 'USD') return 1;
+    else return skinbidRateToUSD;
 }
 
 // this endpoint sometimes gets called by Skinport itself and provides the user data
