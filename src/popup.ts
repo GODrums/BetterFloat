@@ -61,8 +61,7 @@ const host_permissions = chrome.runtime.getManifest().host_permissions;
 chrome.permissions
     .contains({
         origins: host_permissions,
-    })
-    .then((result) => {
+    }, (result) => {
         console.debug('[BetterFloat] Host Permission: ', result);
         if (result) {
             permissionsButton.style.display = 'none';
@@ -72,8 +71,7 @@ chrome.permissions
                 chrome.permissions
                     .request({
                         origins: host_permissions,
-                    })
-                    .then((granted) => {
+                    }, (granted) => {
                         if (granted) {
                             permissionsButton.style.display = 'none';
                             console.log('[BetterFloat] Host Permission granted.');

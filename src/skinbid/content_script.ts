@@ -49,6 +49,18 @@ async function firstLaunch() {
         for (let i = 0; i < items.length; i++) {
             await adjustItem(items[i]);
         }
+    } else if (location.pathname == '/listings') {
+        let items = document.getElementsByClassName('item');
+        for (let i = 0; i < items.length; i++) {
+            await adjustListItem(items[i]);
+        }
+    } else if (location.pathname.includes('/market/')) {
+        let items = document.querySelectorAll('.item');
+        // first one is big item
+        await adjustBigItem(items[0]);
+        for (let i = 1; i < items.length; i++) {
+            await adjustItem(items[i]);
+        }
     }
 }
 
@@ -63,9 +75,9 @@ async function applyMutation() {
                     // console.log("Added node: ", addedNode);
 
                     if (addedNode.children.length == 1) {
-                        let childTag = addedNode.children[0].tagName;
-                        if (childTag.includes('AUCTION-LIST-ITEM')) {
-                            console.log('Found auction list item: ', addedNode);
+                        let firstChild = addedNode.children[0];
+                        if (firstChild.tagName.includes('AUCTION-LIST-ITEM')) {
+                            await adjustListItem(firstChild);
                         }
                     }
 
@@ -74,6 +86,12 @@ async function applyMutation() {
                         if (className.includes('item') && addedNode.tagName == 'NGU-TILE') {
                             console.log('Found item: ', addedNode);
                             await adjustItem(addedNode);
+                        } else if (className.includes('item-category')) {
+                            // big item page
+                            console.log('Found big item: ', document.querySelector('.item'));
+                            await adjustBigItem(document.querySelector('.item')!);
+                        } else if (addedNode.tagName == 'APP-PRICE-CHART') {
+                            console.log('Found price chart: ', addedNode);
                         }
                     }
                 }
@@ -83,11 +101,23 @@ async function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustItem(container: Element) {
-    const item = getSkinbidItem(container);
-    console.log('[BetterFloat] Generated item: ', item);
+async function adjustBigItem(container: Element) {
+    const item = getSkinbidFullItem(container);
+    console.log('item: ', item);
     if (!item) return;
-    const priceResult = await addBuffPrice(item, container);
+    const priceResult = await addBuffPrice(item, container, itemSelectors.page);
+}
+
+async function adjustListItem(container: Element) {
+    const item = getSkinbidItem(container, itemSelectors.list);
+    if (!item) return;
+    const priceResult = await addBuffPrice(item, container, itemSelectors.list);
+}
+
+async function adjustItem(container: Element) {
+    const item = getSkinbidItem(container, itemSelectors.card);
+    if (!item) return;
+    const priceResult = await addBuffPrice(item, container, itemSelectors.card);
     // if (extensionSettings.spStickerPrices) {
     //     await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
     // }
@@ -95,13 +125,14 @@ async function adjustItem(container: Element) {
     //     await addFloatColoring(container, item);
     // }
 }
-async function addBuffPrice(item: Skinbid.HTMLItem, container: Element) {
+
+async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
     await loadMapping();
     let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
 
-    let priceDiv = container.querySelector('.item-price-wrapper');
-    const currencySymbol = (<HTMLElement>priceDiv?.firstChild).textContent?.charAt(1);
+    let priceDiv = container.querySelector(selector.priceDiv);
+    const currencySymbol = (<HTMLElement>priceDiv?.firstChild).textContent?.trim().charAt(0);
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
     }
@@ -114,6 +145,24 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element) {
             e.preventDefault();
             window.open(buffHref, '_blank');
         };
+        if (selector == itemSelectors.list) {
+            (<HTMLElement>buffContainer).style.alignItems = 'center';
+            let suggestContainer = <HTMLElement>buffContainer.querySelector('.suggested-price');
+            suggestContainer.style.display = 'flex';
+            suggestContainer.style.flexDirection = 'column';
+            suggestContainer.children[2].remove();
+            let buffIcon = <HTMLElement>buffContainer.children[0];
+            buffIcon.style.height = '30px';
+        } else if (selector == itemSelectors.page) {
+            let parentDiv = container.querySelector('.item-bids-time-info');
+            if (parentDiv) {
+                // buffContainer.parentElement?.removeChild(buffContainer);
+                (<HTMLElement>parentDiv).style.marginTop = '0';
+                parentDiv.before(buffContainer);
+            }
+            (<HTMLElement>buffContainer).style.margin = '20px 0 0 0';
+
+        }
     }
 
     const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
@@ -147,12 +196,15 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     buffContainer.className = 'betterfloat-buff-container';
     buffContainer.style.display = 'flex';
     buffContainer.style.margin = '5px 0';
+    buffContainer.style.cursor = 'pointer';
+    buffContainer.style.alignItems = 'center';
     let buffImage = document.createElement('img');
     buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
-    buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
+    buffImage.setAttribute('style', `height: 20px; margin-right: 5px; border: 1px solid #323c47; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
     buffContainer.appendChild(buffImage);
     let buffPrice = document.createElement('div');
     buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
+    buffPrice.setAttribute('style', 'margin: 2px 0 0 0');
     if (isItemPage) {
         buffPrice.style.fontSize = '18px';
     }
@@ -256,13 +308,67 @@ function createBuffName(item: Skinbid.HTMLItem): string {
     return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
 }
 
-function getSkinbidItem(container: Element): Skinbid.HTMLItem | null {
-    let name = container.querySelector('.item-name')?.textContent ?? '';
+const itemSelectors = {
+    card: {
+        name: '.item-name',
+        type: '.item-type',
+        price: '.item-price-wrapper > div',
+        priceDiv: '.item-price-wrapper',
+        wear: '.quality-float-row'
+    },
+    list: {
+        name: '.item-category-and-stickers .first-row',
+        type: '.item-category-and-stickers .second-row',
+        price: '.section-price .price',
+        priceDiv: '.section-price-first-row',
+        wear: '.quality-float-row'
+    },
+    page: {
+        name: '.item-title',
+        type: '.item-category',
+        price: '.item-bids-time-info > div',
+        priceDiv: '.item-bids-time-info .value',
+        wear: '.item-detail:nth-child(2)'
+    },
+} as const;
+
+type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
+
+function getSkinbidFullItem(container: Element) {
+    let name = container.querySelector('.item-title')?.textContent ?? '';
     if (name == '') {
         return null;
     }
-    let price = Number(container.querySelector('.item-price-wrapper > div')?.textContent?.trim().substring(2).split(' ')[0].replace(',', '')) ?? 0;
-    let type = container.querySelector('.item-type')?.textContent ?? '';
+    let priceText = container.querySelector('.item-bids-time-info')?.children[0].children[1]?.textContent?.trim() ?? '';
+    let price = Number(priceText.replace(/[^0-9.-]+/g, ''));
+    let type = container.querySelector('.item-category')?.textContent?.trim() ?? '';
+    
+    let style: ItemStyle = '';
+    if (name.includes('Doppler')) {
+        style = name.split(' ')[1] as ItemStyle;
+    } else if (name.includes('★')) {
+        style = 'Vanilla';
+    }
+    let itemDetails = container.querySelectorAll('.details-actions-section .item-detail');
+    let wearText = itemDetails[0]?.children[1]?.textContent ?? '';
+    let wear = Number(itemDetails[1]?.children[1]?.textContent ?? 0) ;
+    return {
+        name: name.trim(),
+        price: price,
+        type: type,
+        style: style,
+        wear: wear,
+        wear_name: wearText,
+    };
+}
+
+function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HTMLItem | null {
+    let name = container.querySelector(selector.name)?.textContent ?? '';
+    if (name == '') {
+        return null;
+    }
+    let price = Number(container.querySelector(selector.price)?.textContent?.replace(/[^0-9.-]+/g, ''));
+    let type = container.querySelector(selector.type)?.textContent?.trim() ?? '';
 
     let style: ItemStyle = '';
     if (name.includes('Doppler')) {
@@ -298,7 +404,7 @@ function getSkinbidItem(container: Element): Skinbid.HTMLItem | null {
         }
         return wear;
     };
-    let wearDiv = container.querySelector('.quality-float-row');
+    let wearDiv = container.querySelector(selector.wear);
     let wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
     return {
         name: name.trim(),

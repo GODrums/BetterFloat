@@ -222,7 +222,8 @@ input[type='checkbox'] {
 }
 
 .active .tab-icon {
-    border: 2px solid var(--color-accent, #ff5722);
+    border: 3px solid var(--color-primary, #004594);
+    background-color: var(--color-primary, #004594);
 }
 
 .active .flatIcon {
