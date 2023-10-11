@@ -312,7 +312,6 @@ async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();
-    console.log('[BetterFloat] Currency rate: ', currencyRate);
     if (currencyRate != 1) {
         priceListing = priceListing / currencyRate;
         priceOrder = priceOrder / currencyRate;
