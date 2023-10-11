@@ -1,7 +1,7 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getFirstSkbItem, getPriceMapping, getSkbUserCurrencyRate, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
@@ -18,14 +18,14 @@ async function init() {
 
     extensionSettings = await initSettings();
 
-    // if (!extensionSettings.enableSkinbid) {
-    //     console.log('[BetterFloat] Skinbid disabled');
-    //     return;
-    // }
+    if (!extensionSettings.enableSkinbid) {
+        console.log('[BetterFloat] Skinbid disabled');
+        return;
+    }
 
     console.group('[BetterFloat] Loading mappings...');
-    // await loadMapping();
-    // await loadBuffMapping();
+    await loadMapping();
+    await loadBuffMapping();
     console.groupEnd();
 
     console.timeEnd('[BetterFloat] Skinbid init timer');
@@ -72,7 +72,7 @@ async function firstLaunch() {
 
 async function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
-        if (extensionSettings.enableSkinport) {
+        if (extensionSettings.enableSkinbid) {
             for (let mutation of mutations) {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     let addedNode = mutation.addedNodes[i];
@@ -319,6 +319,7 @@ async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string
 
     return { buff_name, priceListing, priceOrder };
 }
+
 function createBuffName(item: Skinbid.HTMLItem): string {
     let full_name = `${item.name}`;
     if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
@@ -433,6 +434,9 @@ function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HT
     let priceText = container.querySelector(selector.price)?.textContent ?? '';
     if (priceText.includes('K')) {
         priceText = priceText.replace('.', '').replace('K', '0.00');
+    }
+    if (container.querySelector(selector.price + ' .item-buynow')) {
+        priceText = container.querySelector(selector.price + ' .item-buynow')?.textContent ?? '';
     }
     let price = Number(priceText.replace(/[^0-9.-]+/g, '').trim());
     let type = container.querySelector(selector.type)?.textContent?.trim() ?? '';

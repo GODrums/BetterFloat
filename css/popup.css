@@ -87,14 +87,14 @@ footer p {
 }
 
 .MainContent {
-    margin-left: 10px;
+    padding-left: 10px;
     background: var(--color-background, #303030);
     overflow-y: scroll;
     overflow-x: hidden;
     scrollbar-color: var(--color-accent, #ff5722) var(--color-background, #303030);
     scrollbar-width: thin;
     height: 550px;
-    width: 375px;
+    width: 372px;
 }
 
 .Warning {
@@ -293,9 +293,9 @@ input[type='checkbox'] {
 
 .AboutBottomGroup {
     position: absolute;
-    bottom: 70px;
+    bottom: 20px;
     display: flex;
-    width: 100%;
+    width: 358px;
     justify-content: center;
 }
 

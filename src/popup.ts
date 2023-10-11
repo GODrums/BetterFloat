@@ -225,8 +225,10 @@ function loadForAbout() {
 function loadForSkinbid() {
     let skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
     let skinbidPriceReference = <HTMLSelectElement>document.getElementById('SkinbidPriceReference');
+    let skinbidInputBuffDifference = <HTMLInputElement>document.getElementById('SkinbidInputBuffDifference');
 
     chrome.storage.local.get((data) => {
+        console.log(data);
         if (data.enableSkinbid) {
             skinbidEnable.checked = true;
         } else {
@@ -234,6 +236,11 @@ function loadForSkinbid() {
         }
         if (data.skbPriceReference !== undefined) {
             skinbidPriceReference.value = data.skbPriceReference;
+        }
+        if (data.skbBuffDifference) {
+            skinbidInputBuffDifference.checked = true;
+        } else {
+            skinbidInputBuffDifference.checked = false;
         }
     });
 }

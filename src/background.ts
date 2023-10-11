@@ -76,7 +76,7 @@ export async function refreshPrices() {
             //set cookie and wait for finish
             return await new Promise<boolean>((resolve) => {
                 chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
-                    console.log('Prices updated. Current time: ', Date.toString());
+                    console.log('Prices updated. Current time: ' + Date.toString());
                     resolve(true);
                 });
             });

@@ -1,36 +1,43 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-	"version": "1.8.1",
-    "description": "Enhance your experience on CSFloat.com and Skinport.com",
+    "version": "1.9.0",
+    "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
-    "host_permissions": ["*://prices.csgotrader.app/*", "*://csfloat.com/*", "*://*.skinport.com/*"],
+    "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
     "background": {
         "scripts": ["js/background.js"]
     },
     "content_scripts": [
         {
-			"matches": ["*://*.csfloat.com/*", "*://*.csgofloat.com/*"],
-			"js": ["js/csfloat/content_script.js"],
-			"css": ["css/csfloat_styles.css"],
-			"run_at": "document_end"
+            "matches": ["*://*.csfloat.com/*"],
+            "js": ["js/csfloat_script.js"],
+            "css": ["css/csfloat_styles.css"],
+            "run_at": "document_end"
         },
-		{
-			"matches": ["https://csfloat.com/*", "https://csgofloat.com/*", "*://*.skinport.com/*"],
-			"js": ["js/injectionhandler.js"],
-			"run_at": "document_start"
-		},
-		{
-			"matches": ["*://*.skinport.com/*"],
-			"js": ["js/skinport/content_script.js"],
-			"css": ["css/skinport_styles.css"],
-			"run_at": "document_end"
-		}
+        {
+            "matches": ["*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
+            "js": ["js/injectionhandler.js"],
+            "run_at": "document_start"
+        },
+        {
+            "matches": ["*://*.skinport.com/*"],
+            "js": ["js/skinport_script.js"],
+            "css": ["css/skinport_styles.css"],
+            "run_at": "document_end"
+        },
+        {
+            "matches": ["*://*.skinbid.com/*"],
+            "js": ["js/skinbid_script.js"],
+            "css": ["css/skinbid_styles.css"],
+            "run_at": "document_end"
+        }
     ],
     "icons": {
         "128": "public/betterfloat_logo128.png"
     },
     "action": {
+        "default_title": "BetterFloat",
         "default_popup": "/html/index.html"
     },
     "browser_specific_settings": {
@@ -45,7 +52,7 @@
     "permissions": ["storage"],
     "web_accessible_resources": [
         {
-            "matches": ["https://csfloat.com/*", "*://*.skinport.com/*"],
+            "matches": ["https://csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
             "resources": ["js/inject.js", "public/buff_favicon.png"]
         },
         {
@@ -54,7 +61,7 @@
         },
         {
             "matches": ["*://*.skinport.com/*"],
-            "resources": ["js/skinport/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg"]
+            "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg"]
         }
     ]
 }
