@@ -392,7 +392,7 @@ async function adjustItemPage(container: Element) {
 
     const tooltipLink = container.querySelector('.ItemPage-value .Tooltip-link');
     if (!tooltipLink) return;
-    const currencySymbol = tooltipLink.textContent?.charAt(0);
+    const currencySymbol = getCurrencySymbol(tooltipLink);
     const suggestedContainer = container.querySelector('.ItemPage-suggested');
     if (suggestedContainer) {
         generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', true);
@@ -482,7 +482,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
     const spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
-    if (itemInfoDiv && priceSum > 1) {
+    if (itemInfoDiv && priceSum >= 2) {
         if (isItemPage) {
             const wrapperDiv = document.createElement('div');
             wrapperDiv.style.display = 'flex';
@@ -723,11 +723,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
     const buff_id = await getBuffMapping(buff_name);
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
-    let currencySymbol = getCurrencySymbol(tooltipLink);
-    if (!currencySymbol) {
-        console.log('[BetterFloat] Could not find currency symbol for item: ', item);
-        return { price_difference: 0 };
-    }
+    const currencySymbol = getCurrencySymbol(tooltipLink);
     const priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');

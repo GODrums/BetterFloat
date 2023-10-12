@@ -32,3 +32,38 @@
 	opacity: 1;
 	transition: visibility 0s, opacity 0.5s linear;
 }
+
+.betterfloat-listing-age {
+    display: flex;
+    align-items: center;
+}
+
+.betterfloat-listing-age p {
+    margin: 3px 0px 0px 5px;
+    font-size: 14px;
+}
+
+.betterfloat-listing-age img {
+    height: 15px;
+    filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);
+}
+
+.betterfloat-age-card {
+    margin-top: -5px;
+}
+
+.betterfloat-age-list {
+    color: #a3a3cb;
+}
+
+.betterfloat-age-list p {
+    font-size: 12px;
+}
+
+.betterfloat-sticker-container {
+    font-size: 13px;
+    border-radius: 5px;
+    padding: 5px;
+	margin-left: 3px;
+    white-space: nowrap;
+}

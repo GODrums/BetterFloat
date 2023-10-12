@@ -36,6 +36,8 @@ export type ExtensionSettings = {
     enableSkinbid: boolean;
     skbPriceReference: 0 | 1;
     skbBuffDifference: boolean;
+    skbListingAge: boolean;
+    skbStickerPrices: boolean;
 };
 
 export type CSGOTraderMapping = {

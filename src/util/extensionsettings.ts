@@ -75,6 +75,12 @@ export async function initSettings(): Promise<ExtensionSettings> {
         if (data.skbBuffDifference) {
             extensionSettings.skbBuffDifference = Boolean(data.skbBuffDifference);
         }
+        if (data.skbListingAge) {
+            extensionSettings.skbListingAge = Boolean(data.skbListingAge);
+        }
+        if (data.skbStickerPrices) {
+            extensionSettings.skbStickerPrices = Boolean(data.skbStickerPrices);
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds

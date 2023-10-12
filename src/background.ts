@@ -30,6 +30,8 @@ const defaultSettings: ExtensionSettings = {
     enableSkinbid: true,
     skbPriceReference: 0,
     skbBuffDifference: true,
+    skbListingAge: true,
+    skbStickerPrices: true,
 };
 
 // Check whether new version is installed

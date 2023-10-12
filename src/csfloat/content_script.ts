@@ -4,7 +4,7 @@ import { ExtensionSettings, CSFloat, ItemStyle, ItemCondition } from '../@typing
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
+import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 
 type PriceResult = {
@@ -480,24 +480,8 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingIcon.style.height = '20px';
     listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
-    const timeDiff = (strDate: string) => {
-        const now = new Date();
-        const diff = now.getTime() - Date.parse(strDate);
-        return Math.floor(diff / 60_000);
-    };
-    const timeMin = timeDiff(cachedItem.created_at);
-    const timeHours = Math.floor(timeMin / 60);
-    let textTime = '';
-    if (timeHours < 49) {
-        if (timeMin < 120) {
-            textTime = `${timeMin} minute${timeMin == 1 ? '' : 's'} ago`;
-        } else {
-            textTime = `${timeHours} hour${timeHours == 1 ? '' : 's'} ago`;
-        }
-    } else {
-        textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) == 1 ? '' : 's'} ago`;
-    }
-    listingAgeText.textContent = textTime;
+    
+    listingAgeText.textContent = calculateTime(cachedItem.created_at);
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
     if (extensionSettings.listingAge == 1) {
@@ -545,7 +529,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
     const spPercentage = price_difference / priceSum;
 
     // don't display SP if total price is below $1
-    if (priceSum > 1) {
+    if (priceSum >= 2) {
         const backgroundImageColor = getSPBackgroundColor(spPercentage);
         if (spPercentage > 2 || spPercentage < 0.005) {
             csfSP.textContent = `$${priceSum.toFixed(0)} SP`;
@@ -557,20 +541,6 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
         return true;
     } else {
         return false;
-    }
-}
-
-function getSPBackgroundColor(spPercentage: number) {
-    if (spPercentage < 0.005 || spPercentage > 2) {
-        return '#0003';
-    } else if (spPercentage >= 1) {
-        return 'rgb(245 0 0 / 40%)';
-    } else if (spPercentage > 0.5) {
-        return 'rgb(245 164 0 / 40%)';
-    } else if (spPercentage > 0.25) {
-        return 'rgb(244 245 0 / 40%)';
-    } else {
-        return 'rgb(83 245 0 / 40%)';
     }
 }
 

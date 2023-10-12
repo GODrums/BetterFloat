@@ -1,9 +1,9 @@
 import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getFirstSkbItem, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames } from '../util/helperfunctions';
+import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
 async function init() {
     if (!location.hostname.includes('skinbid.com')) {
@@ -29,8 +29,6 @@ async function init() {
     console.groupEnd();
 
     console.timeEnd('[BetterFloat] Skinbid init timer');
-
-    // createLiveLink();
 
     await firstLaunch();
 
@@ -117,22 +115,39 @@ function isMobileItem(container: Element) {
 async function adjustBigItem(container: Element) {
     const item = getSkinbidFullItem(container);
     if (!item) return;
-    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.page); // eslint-disable-line @typescript-eslint/no-unused-vars
+    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.page); // eslint-disable-line @typescript-eslint/no-unused-vars
+    if (cachedItem) {
+        await addListingAge(container, cachedItem, 'page');
+        await addStickerInfo(container, cachedItem, itemSelectors.page, priceResult?.price_difference ?? 0);
+    }
 }
 
 async function adjustListItem(container: Element) {
     const item = getSkinbidItem(container, itemSelectors.list);
     if (!item) return;
-    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.list); // eslint-disable-line @typescript-eslint/no-unused-vars
+    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.list); // eslint-disable-line @typescript-eslint/no-unused-vars
+    if (cachedItem) {
+        if (extensionSettings.skbListingAge) {
+            await addListingAge(container, cachedItem, 'list');
+        }
+        if (extensionSettings.skbStickerPrices) {
+            await addStickerInfo(container, cachedItem, itemSelectors.list, priceResult?.price_difference ?? 0);
+        }
+    }
 }
 
 async function adjustItem(container: Element) {
     const item = getSkinbidItem(container, itemSelectors.card);
     if (!item) return;
-    const {priceResult, cachedItem} = await handleSkbNameIssues(item, container, itemSelectors.card); // eslint-disable-line @typescript-eslint/no-unused-vars
-    // if (extensionSettings.spStickerPrices) {
-    //     await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
-    // }
+    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.card); // eslint-disable-line @typescript-eslint/no-unused-vars
+    if (cachedItem) {
+        if (extensionSettings.skbListingAge) {
+            await addListingAge(container, cachedItem, 'card');
+        }
+        if (extensionSettings.skbStickerPrices) {
+            await addStickerInfo(container, cachedItem, itemSelectors.card, priceResult?.price_difference ?? 0);
+        }
+    }
     // if (extensionSettings.spFloatColoring) {
     //     await addFloatColoring(container, item);
     // }
@@ -141,11 +156,11 @@ async function adjustItem(container: Element) {
 async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
     let priceResult;
     let cachedItem;
-    if (item.type == "Agent") {
+    if (item.type == 'Agent') {
         cachedItem = await getFirstSkbItem();
         if (!cachedItem?.items) {
             console.log('[BetterFloat] No cached item found: ', cachedItem);
-            return {priceResult, cachedItem};
+            return { priceResult, cachedItem };
         }
         let apiItem = cachedItem?.items?.at(0)?.item;
         if (apiItem) {
@@ -157,7 +172,71 @@ async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, s
         priceResult = await addBuffPrice(item, container, selector);
         cachedItem = await getFirstSkbItem();
     }
-    return {priceResult, cachedItem};
+    return { priceResult, cachedItem };
+}
+
+async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: number) {
+    if (!item.items) return;
+    let stickers = item.items[0].item.stickers;
+    const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice('Sticker | ' + s.name)));
+    const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+    const spPercentage = priceDifference / priceSum;
+
+    if (priceSum >= 2) {
+        let overlayContainer = container.querySelector(selector.stickerDiv);
+        console.log('[BetterFloat] Found sticker container: ', overlayContainer);
+        if (selector == itemSelectors.card) {
+            (<HTMLElement>overlayContainer).style.justifyContent = 'flex-end';
+        } else if (selector == itemSelectors.page) {
+            (<HTMLElement>overlayContainer).style.display = 'flex';
+        }
+
+        let stickerDiv = document.createElement('div');
+        stickerDiv.className = 'betterfloat-sticker-container';
+        const backgroundImageColor = getSPBackgroundColor(spPercentage);
+        if (spPercentage > 2 || spPercentage < 0.005) {
+            stickerDiv.textContent = `$${priceSum.toFixed(0)} SP`;
+        } else {
+            stickerDiv.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
+        }
+        stickerDiv.style.backgroundColor = backgroundImageColor;
+        if (selector == itemSelectors.page) {
+            stickerDiv.style.marginLeft = '15px';
+        }
+
+        overlayContainer?.appendChild(stickerDiv);
+    }
+}
+
+async function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: PageTypes) {
+    let referenceDiv = container.querySelector(itemSelectors[page].listingAge);
+    if (!referenceDiv) return;
+
+    if (page == 'page') {
+        let listingContainer = referenceDiv?.cloneNode(true);
+        if (listingContainer.childNodes.length > 1) {
+            listingContainer.firstChild!.textContent = ' Time of Listing ';
+            listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created);
+        }
+        referenceDiv.after(listingContainer);
+        return;
+    } else {
+        const listingAge = document.createElement('div');
+        const listingAgeText = document.createElement('p');
+        const listingIcon = document.createElement('img');
+        listingAge.classList.add('betterfloat-listing-age');
+        listingAge.classList.add('betterfloat-age-' + page);
+        listingIcon.setAttribute('src', runtimePublicURL + '/clock-solid.svg');
+
+        listingAgeText.textContent = calculateTime(cachedItem.auction.created);
+        listingAge.appendChild(listingIcon);
+        listingAge.appendChild(listingAgeText);
+
+        if (page == 'card') {
+            (<HTMLElement>referenceDiv.parentElement).style.flexDirection = 'column';
+        }
+        referenceDiv.before(listingAge);
+    }
 }
 
 async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
@@ -199,7 +278,6 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
                 parentDiv.before(buffContainer);
             }
             (<HTMLElement>buffContainer).style.margin = '20px 0 0 0';
-
         }
     }
 
@@ -357,6 +435,8 @@ const itemSelectors = {
         wear: '.quality-float-row',
         discount: '.discount',
         discountDiv: '.item-price-wrapper',
+        listingAge: '.left.flex > app-quality-float-row',
+        stickerDiv: '.on-top-of-image .items-center',
     },
     list: {
         name: '.item-category-and-stickers .first-row',
@@ -366,6 +446,8 @@ const itemSelectors = {
         wear: '.quality-float-row',
         discount: '.section-discount',
         discountDiv: '.section-discount',
+        listingAge: '.stickers-and-fade',
+        stickerDiv: '.stickers',
     },
     page: {
         name: '.item-title',
@@ -375,8 +457,12 @@ const itemSelectors = {
         wear: '.item-detail:nth-child(2)',
         discount: '.item-bids-time-info .value > div',
         discountDiv: '.section-discount',
+        listingAge: '.item-detail:last-child',
+        stickerDiv: '.stickers-wrapper .title',
     },
 } as const;
+
+type PageTypes = keyof typeof itemSelectors;
 
 type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
 
@@ -387,7 +473,7 @@ function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
     if (name == '') {
         return null;
     } else if (name.includes('Marble Fade')) {
-        name = 'Marble Fade'
+        name = 'Marble Fade';
         category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
     } else if (name.includes('Doppler')) {
         style = name.split('Doppler ')[1] as ItemStyle;
@@ -400,7 +486,7 @@ function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
     let type = container.querySelector('.item-category')?.textContent?.trim() ?? '';
     let itemDetails = container.querySelectorAll('.details-actions-section .item-detail');
     let wearText = itemDetails[0]?.children[1]?.textContent ?? '';
-    let wear = Number(itemDetails[1]?.children[1]?.textContent ?? 0) ;
+    let wear = Number(itemDetails[1]?.children[1]?.textContent ?? 0);
     return {
         name: name,
         price: price,
@@ -422,7 +508,7 @@ function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HT
         name = name.split('💎')[1].trim();
         category = '💎';
     } else if (name.includes('Marble Fade')) {
-        name = 'Marble Fade'
+        name = 'Marble Fade';
         category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
     } else if (name.includes('Doppler')) {
         style = name.split('Doppler ')[1] as ItemStyle;

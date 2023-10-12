@@ -226,6 +226,8 @@ function loadForSkinbid() {
     let skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
     let skinbidPriceReference = <HTMLSelectElement>document.getElementById('SkinbidPriceReference');
     let skinbidInputBuffDifference = <HTMLInputElement>document.getElementById('SkinbidInputBuffDifference');
+    let skinbidListingAge = <HTMLInputElement>document.getElementById('SkinbidListingAge');
+    let skinbidStickerPrices = <HTMLInputElement>document.getElementById('SkinbidStickerPrices');
 
     chrome.storage.local.get((data) => {
         console.log(data);
@@ -234,6 +236,11 @@ function loadForSkinbid() {
         } else {
             skinbidEnable.checked = false;
         }
+        if (data.skbStickerPrices) {
+            skinbidStickerPrices.checked = true;
+        } else {
+            skinbidStickerPrices.checked = false;
+        }
         if (data.skbPriceReference !== undefined) {
             skinbidPriceReference.value = data.skbPriceReference;
         }
@@ -241,6 +248,11 @@ function loadForSkinbid() {
             skinbidInputBuffDifference.checked = true;
         } else {
             skinbidInputBuffDifference.checked = false;
+        }
+        if (data.skbListingAge) {
+            skinbidListingAge.checked = true;
+        } else {
+            skinbidListingAge.checked = false;
         }
     });
 }

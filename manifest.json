@@ -54,6 +54,10 @@
         {
             "matches": ["*://*.skinport.com/*"],
             "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg"]
+        },
+        {
+            "matches": ["*://*.skinbid.com/*"],
+            "resources": ["public/clock-solid.svg"]
         }
     ]
 }

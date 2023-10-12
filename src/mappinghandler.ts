@@ -167,6 +167,11 @@ export async function getPriceMapping(): Promise<{ [key: string]: any }> {
     return priceMapping;
 }
 
+/**
+ * should only be used for non-weapon as no special conditions are checked
+ * @param buff_name 
+ * @returns 
+ */
 export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number }> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();

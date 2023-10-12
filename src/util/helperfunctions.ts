@@ -1,9 +1,48 @@
+/**
+ * get the time difference between now and the creation of the listing
+ * @param created_at example format: "2023-10-12T11:06:15"
+ */
+export function calculateTime(created_at: string) {
+    const timeDiff = (strDate: string) => {
+        const now = new Date();
+        const diff = now.getTime() - Date.parse(strDate);
+        return Math.floor(diff / 60_000);
+    };
+    const timeMin = timeDiff(created_at);
+    const timeHours = Math.floor(timeMin / 60);
+    let textTime = '';
+    if (timeHours < 49) {
+        if (timeMin < 120) {
+            textTime = `${timeMin} minute${timeMin == 1 ? '' : 's'} ago`;
+        } else {
+            textTime = `${timeHours} hour${timeHours == 1 ? '' : 's'} ago`;
+        }
+    } else {
+        textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) == 1 ? '' : 's'} ago`;
+    }
+    return textTime;
+}
+
+export function getSPBackgroundColor(spPercentage: number) {
+    if (spPercentage < 0.005 || spPercentage > 2) {
+        return '#0003';
+    } else if (spPercentage >= 1) {
+        return 'rgb(245 0 0 / 40%)';
+    } else if (spPercentage > 0.5) {
+        return 'rgb(245 164 0 / 40%)';
+    } else if (spPercentage > 0.25) {
+        return 'rgb(244 245 0 / 40%)';
+    } else {
+        return 'rgb(83 245 0 / 40%)';
+    }
+}
+
 export function parseHTMLString(htmlString: string, container: HTMLElement) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, 'text/html');
     const tags = doc.getElementsByTagName(`body`)[0];
 
-    for (const tag of tags.children) {
+    for (const tag of Array.from(tags.children)) {
         container.appendChild(tag);
     }
 }
