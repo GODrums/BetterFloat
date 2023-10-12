@@ -374,7 +374,7 @@ async function adjustItemPage(container: Element) {
         newGroup.appendChild(steamButton);
     }
 
-    const item = getFloatItem(container, itemSelectors.page);
+    const item = getSkinportItem(container, itemSelectors.page);
     console.log('[BetterFloat] Item: ', item);
     if (!item) return;
     const { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
@@ -442,7 +442,7 @@ async function adjustCart(container: Element) {
 }
 
 async function adjustItem(container: Element) {
-    const item = getFloatItem(container, itemSelectors.preview);
+    const item = getSkinportItem(container, itemSelectors.preview);
     if (!item) return;
     const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
     if (filterItem) {
@@ -539,18 +539,20 @@ const itemSelectors = {
 
 type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
 
-function getFloatItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
+function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
     const name = container.querySelector(selector.name)?.textContent ?? '';
     if (name == '') {
         return null;
     }
-    const price =
-        Number(
-            container
-                .querySelector(selector.price + ' .Tooltip-link')
-                ?.innerHTML.substring(1)
-                .replace(',', '')
-        ) ?? 0;
+
+    let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.replace(',', '') ?? '';
+    if (priceText.split(' ').length > 1) {
+        priceText = priceText.split(' ')[0];
+    } else {
+        priceText = priceText.substring(1)
+    }
+    let price = Number(priceText) ?? 0;
+
     const type = container.querySelector(selector.title)?.textContent ?? '';
     const text = container.querySelector(selector.text)?.innerHTML ?? '';
     // Skinport uses more detailed item types than Buff163, they are called cateogiories here
@@ -706,13 +708,26 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     }
 }
 
+function getCurrencySymbol(tooltipLink: Element) {
+    let currencySymbol = tooltipLink.textContent?.charAt(0);
+    if (!isNaN(+(currencySymbol ?? ''))) {
+        // in some instances skinport displays the currency at the end of the price
+        currencySymbol = tooltipLink.textContent?.charAt(tooltipLink.textContent?.length - 1);
+    }
+    return currencySymbol;
+}
+
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
     await loadMapping();
     const { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     const buff_id = await getBuffMapping(buff_name);
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
-    const currencySymbol = tooltipLink.textContent?.charAt(0);
+    let currencySymbol = getCurrencySymbol(tooltipLink);
+    if (!currencySymbol) {
+        console.log('[BetterFloat] Could not find currency symbol for item: ', item);
+        return { price_difference: 0 };
+    }
     const priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
