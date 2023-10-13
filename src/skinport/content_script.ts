@@ -84,6 +84,11 @@ async function firstLaunch() {
         for (const item of inventoryItems) {
             await adjustItem(item);
         }
+    } else if (path.startsWith('/checkout/confirmation')) {
+        const cartContainer = document.querySelector('.CheckoutConfirmation-item');
+        if (cartContainer) {
+            await adjustItem(cartContainer);
+        }
     }
 }
 
@@ -173,7 +178,7 @@ async function applyMutation() {
 
                     if (addedNode.className) {
                         const className = addedNode.className.toString();
-                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item')) {
+                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item')) {
                             await adjustItem(addedNode);
                         } else if (className.includes('Cart-container')) {
                             await adjustCart(addedNode);
@@ -545,11 +550,11 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         return null;
     }
 
-    let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.replace(',', '') ?? '';
+    let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent ?? '';
     if (priceText.split(' ').length > 1) {
-        priceText = priceText.split(' ')[0];
+        priceText = priceText.split(' ')[0].replace('.', '').replace(',', '.');
     } else {
-        priceText = priceText.substring(1)
+        priceText = priceText.replace(',', '').substring(1)
     }
     let price = Number(priceText) ?? 0;
 

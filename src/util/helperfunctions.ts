@@ -56,6 +56,8 @@ export function handleSpecialStickerNames(name: string): string {
         return 'Sticker | PENTA Sports  | Katowice 2015';
     } else if (name.includes('Ground Rebel | Elite Crew')) {
         return 'Ground Rebel  | Elite Crew';
+    } else if (name.includes('Michael Syfers | FBI Sniper')) {
+        return 'Michael Syfers  | FBI Sniper';
     } else if (name.indexOf('niko') > -1) {
         return name.substring(0, name.lastIndexOf('|')) + ' ' + name.substring(name.lastIndexOf('|'), name.length);
     }
