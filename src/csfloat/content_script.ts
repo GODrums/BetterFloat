@@ -1,10 +1,11 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
-import { ExtensionSettings, CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
+import { CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
+import { Extension } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString } from '../util/helperfunctions';
+import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 
 type PriceResult = {
@@ -85,17 +86,62 @@ async function firstLaunch() {
         for (let i = 0; i < offerBubbles.length; i++) {
             await adjustItemBubble(offerBubbles[i]);
         }
+    } else if (location.pathname.includes('/stall/')) {
+        await customStall(location.pathname.split('/').pop() ?? '');
     }
 }
 
-// return if element has been successfully waited for, else limit has been reached
-async function waitForElement(selector: string, interval = 200, maxTries = 10) {
-    let tries = 0;
-    while (!document.querySelector(selector) && tries < maxTries) {
-        tries++;
-        await new Promise((r) => setTimeout(r, interval));
+async function customStall(stall_id: string) {
+    let stallData = await getStallData(stall_id);
+    if (!stallData || !stall_id.includes(stallData.stall_id)) {
+        console.log('[BetterFloat] Could not load stall data');
+        return;
     }
-    return tries < maxTries;
+
+    document.body.classList.add('betterfloat-custom-stall');
+
+    let backgroundVideo = document.createElement('video');
+    backgroundVideo.setAttribute('playsinline', '');
+    backgroundVideo.setAttribute('autoplay', '');
+    backgroundVideo.setAttribute('muted', '');
+    backgroundVideo.setAttribute('loop', '');
+    backgroundVideo.setAttribute('poster', stallData.options.video.poster);
+    backgroundVideo.setAttribute('style', `position: absolute; width: 100%; height: 100%; z-index: -100; background-size: cover; background-position: center center; object-fit: cover; background-color: ${stallData.options['background-color']}`);
+    let sourceWebm = document.createElement('source');
+    sourceWebm.setAttribute('src', stallData.options.video.webm);
+    sourceWebm.setAttribute('type', 'video/webm');
+    let sourceMp4 = document.createElement('source');
+    sourceMp4.setAttribute('src', stallData.options.video.mp4);
+    sourceMp4.setAttribute('type', 'video/mp4');
+
+    backgroundVideo.appendChild(sourceWebm);
+    backgroundVideo.appendChild(sourceMp4);
+    document.body.firstChild?.before(backgroundVideo);
+
+    // start video after it is loaded
+    backgroundVideo.addEventListener('canplay', () => {
+        backgroundVideo.muted = true;
+        backgroundVideo.play();
+    });
+
+    if (stallData.options.transparent_elements) {
+        let stallHeader = document.querySelector('.betterfloat-custom-stall .mat-card.header');
+        if (stallHeader) {
+            (<HTMLElement>stallHeader).style.backgroundColor = 'transparent';
+        }
+        let stallFooter = document.querySelector('.betterfloat-custom-stall > app-root > div > div.footer');
+        if (stallFooter) {
+            (<HTMLElement>stallFooter).style.backgroundColor = 'transparent';
+        }
+    }
+
+    let matChipWrapper = document.querySelector('.mat-chip-list-wrapper');
+    if (matChipWrapper && matChipWrapper.firstElementChild) {
+        let bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
+        bfChip.style.backgroundColor = 'purple';
+        bfChip.textContent = "BetterFloat "+stallData.role;
+        matChipWrapper.appendChild(bfChip);
+    }
 }
 
 function offerItemClickListener(listItem: Element) {
@@ -806,7 +852,7 @@ function createTopButton() {
 const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
-let extensionSettings: ExtensionSettings;
+let extensionSettings: Extension.Settings;
 const runtimePublicURL = chrome.runtime.getURL('../public');
 const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality

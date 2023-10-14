@@ -1,4 +1,5 @@
-import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
+import { Extension } from '../@typings/ExtensionTypes';
+import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
@@ -567,7 +568,7 @@ function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HT
     };
 }
 
-let extensionSettings: ExtensionSettings;
+let extensionSettings: Extension.Settings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;

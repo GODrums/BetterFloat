@@ -77,3 +77,7 @@
 button.betterfloat-top-button:hover {
 	opacity: 0.8;
 }
+
+.betterfloat-custom-stall {
+	background-color: transparent !important;
+}

@@ -3,7 +3,7 @@ import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames } from '../util/helperfunctions';
+import { handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { generateSpStickerContainer } from '../util/uigeneration';
 
 async function init() {
@@ -90,16 +90,6 @@ async function firstLaunch() {
             await adjustItem(cartContainer);
         }
     }
-}
-
-// return if element has been successfully waited for, else limit has been reached
-async function waitForElement(selector: string, interval = 200, maxTries = 10) {
-    let tries = 0;
-    while (!document.querySelector(selector) && tries < maxTries) {
-        tries++;
-        await new Promise((r) => setTimeout(r, interval));
-    }
-    return tries < maxTries;
 }
 
 function createLiveLink() {

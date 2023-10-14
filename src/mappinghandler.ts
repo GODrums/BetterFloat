@@ -1,4 +1,5 @@
-import { CSGOTraderMapping, CSFloat } from './@typings/FloatTypes';
+import { Extension } from './@typings/ExtensionTypes';
+import { CSFloat } from './@typings/FloatTypes';
 import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './util/helperfunctions';
@@ -9,7 +10,7 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
-let priceMapping: CSGOTraderMapping = {};
+let priceMapping: Extension.CSGOTraderMapping = {};
 // csfloat: cached items from api
 let csfloatItems: CSFloat.ListingData[] = [];
 // csfloat: cached popup item from api
@@ -211,6 +212,17 @@ export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real')
 export async function getSkbUserCurrencyRate() {
     if (skinbidUserCurrency == 'USD') return 1;
     else return skinbidRateToUSD;
+}
+
+export async function getStallData(stall_id: string) {
+    let request = await fetch('https://api.rums.dev/v1/csfloatstalls/'+stall_id);
+    let response = await request.json() as Extension.CustomStallData;
+    console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
+    if (response && response.status == "OK" && response.data) {
+        return response.data;
+    } else {
+        return null;
+    }
 }
 
 // this endpoint sometimes gets called by Skinport itself and provides the user data

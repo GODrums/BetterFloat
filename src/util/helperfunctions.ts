@@ -1,3 +1,13 @@
+// return if element has been successfully waited for, else limit has been reached
+export async function waitForElement(selector: string, interval = 200, maxTries = 10) {
+    let tries = 0;
+    while (!document.querySelector(selector) && tries < maxTries) {
+        tries++;
+        await new Promise((r) => setTimeout(r, interval));
+    }
+    return tries < maxTries;
+}
+
 /**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
