@@ -81,3 +81,54 @@ button.betterfloat-top-button:hover {
 .betterfloat-custom-stall {
 	background-color: transparent !important;
 }
+.betterfloat-customstall-popup-content {
+	display: flex; 
+	flex-direction: column; 
+	align-items: flex-start;
+	margin: 5px;
+}
+
+.betterfloat-customstall-popup-content label {
+	margin: 10px;
+}
+
+.betterfloat-customstall-popup {
+	position: fixed;
+    z-index: 999;
+    width: 350px;
+    backdrop-filter: blur(16px);
+    background: rgba(0,0,0,.3);
+    display: none;
+    translate: -100px 80px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 20px;
+    padding: 20px;
+    transition: opacity 0.3s ease 0s;
+}
+
+.betterfloat-customstall-close {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    font-size: 25px;
+    font-weight: 600;
+	background: none;
+	border: none;
+    color: white;
+}
+
+.betterfloat-customstall-close:hover {
+	color: #ccc;
+}
+
+.betterfloat-customstall-popup input {
+    padding: 4px 0 5px;
+    box-sizing: content-box;
+    background: rgba(0,0,0,0.3);
+	border-radius: 5px;
+	border: none;
+	color: white;
+	margin: 5px;
+	padding: 8px;
+}

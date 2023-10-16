@@ -1,10 +1,11 @@
-import { ExtensionSettings, ItemStyle } from '../@typings/FloatTypes';
+import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { generateSpStickerContainer } from '../util/uigeneration';
+import { Extension } from '../@typings/ExtensionTypes';
 
 async function init() {
     if (!location.hostname.includes('skinport.com')) {
@@ -532,7 +533,7 @@ const itemSelectors = {
     },
 } as const;
 
-type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
+type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
     const name = container.querySelector(selector.name)?.textContent ?? '';
@@ -544,7 +545,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     if (priceText.split(' ').length > 1) {
         priceText = priceText.split(' ')[0].replace('.', '').replace(',', '.');
     } else {
-        priceText = priceText.replace(',', '').substring(1)
+        priceText = priceText.replace(',', '').substring(1);
     }
     let price = Number(priceText) ?? 0;
 
@@ -804,7 +805,7 @@ function createBuffName(item: Skinport.Listing): string {
     return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
 }
 
-let extensionSettings: ExtensionSettings;
+let extensionSettings: Extension.Settings;
 const runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;

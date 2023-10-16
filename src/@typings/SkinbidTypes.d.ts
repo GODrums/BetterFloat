@@ -18,7 +18,7 @@ export namespace Skinbid {
         steamLevel: number;
         steamMemberSince: string;
         totalTrades: number;
-    }
+    };
 
     // https://api.skinbid.com/api/public/exchangeRates
     export type ExchangeRates = {

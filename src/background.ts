@@ -51,7 +51,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             const storedSettings = data as ExtensionSettings;
             console.debug('[BetterFloat] Loaded settings: ', storedSettings);
             const newSettings: {
-                [x: string]: typeof defaultSettings[keyof typeof defaultSettings];
+                [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings];
             } = {};
             let update = false;
             for (const key in defaultSettings) {

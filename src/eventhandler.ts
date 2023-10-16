@@ -1,7 +1,17 @@
 import { EventData, CSFloat } from './@typings/FloatTypes';
 import { Skinbid } from './@typings/SkinbidTypes';
 import { Skinport } from './@typings/SkinportTypes';
-import { cacheCSFHistoryGraph, cacheCSFHistorySales, cacheCSFItems, cacheCSFPopupItem, cacheSkbItems, cacheSkinportCurrencyRates, cacheSkinbidCurrencyRate, loadMapping, cacheSkinbidUserCurrency } from './mappinghandler';
+import {
+    cacheCSFHistoryGraph,
+    cacheCSFHistorySales,
+    cacheCSFItems,
+    cacheCSFPopupItem,
+    cacheSkbItems,
+    cacheSkinportCurrencyRates,
+    cacheSkinbidCurrencyRate,
+    loadMapping,
+    cacheSkinbidUserCurrency,
+} from './mappinghandler';
 
 type StallData = {
     listings: CSFloat.ListingData[];
@@ -77,7 +87,7 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
         cacheSkbItems((eventData.data as Skinbid.MarketData).items);
     } else if (eventData.url.includes('api/auction/itemInventoryStatus')) {
         // content: { cachedResult: boolean, inSellerInventory: boolean }
-    }  else if (eventData.url.includes('api/auction/shop')) {
+    } else if (eventData.url.includes('api/auction/shop')) {
         // shop data
         if (eventData.url.includes('/data')) {
             // Skinbid.ShopData

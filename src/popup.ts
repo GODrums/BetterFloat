@@ -58,30 +58,34 @@ function addListeners() {
 
 const host_permissions = chrome.runtime.getManifest().host_permissions;
 
-chrome.permissions
-    .contains({
+chrome.permissions.contains(
+    {
         origins: host_permissions,
-    }, (result) => {
+    },
+    (result) => {
         console.debug('[BetterFloat] Host Permission: ', result);
         if (result) {
             permissionsButton.style.display = 'none';
         } else {
             permissionsButton.style.display = 'absolute';
             permissionsButton.addEventListener('click', () => {
-                chrome.permissions
-                    .request({
+                chrome.permissions.request(
+                    {
                         origins: host_permissions,
-                    }, (granted) => {
+                    },
+                    (granted) => {
                         if (granted) {
                             permissionsButton.style.display = 'none';
                             console.log('[BetterFloat] Host Permission granted.');
                         } else {
                             console.log('[BetterFloat] Host Permission denied. Please enable manually in the extension settings.');
                         }
-                    });
+                    }
+                );
             });
         }
-    });
+    }
+);
 
 function loadForSettings() {
     const enableCSFloat = <HTMLInputElement>document.getElementById('InputCSFloat');

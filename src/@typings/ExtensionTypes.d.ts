@@ -31,8 +31,8 @@ export namespace Extension {
         skbBuffDifference: boolean;
         skbListingAge: boolean;
         skbStickerPrices: boolean;
-    }
-    
+    };
+
     export type CSGOTraderMapping = {
         [name: string]: {
             steam: {
@@ -72,15 +72,15 @@ export namespace Extension {
                 };
             };
         };
-    }
-    
+    };
+
     export type CustomStallData = {
-        status: "OK" | "ERROR";
+        status: 'OK' | 'ERROR';
         data: {
             id: number;
             stall_id: string;
             created_at: string;
-            role: "Developer" | "Contributor" | "Supporter" | "Enjoyer";
+            roles: ('Developer' | 'Contributor' | 'Supporter' | 'Enjoyer')[];
             options: {
                 video: {
                     mp4: string;
@@ -88,8 +88,8 @@ export namespace Extension {
                     poster: string;
                 };
                 transparent_elements: boolean;
-                "background-color": string;
-            }
+                'background-color': string;
+            };
         };
-    }
+    };
 }

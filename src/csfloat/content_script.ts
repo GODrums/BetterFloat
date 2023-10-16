@@ -63,6 +63,7 @@ async function init() {
 async function firstLaunch() {
     if (!extensionSettings.enableCSFloat) return;
 
+    createUrlListener();
     createTabListeners();
 
     const items = document.querySelectorAll('item-card');
@@ -92,6 +93,174 @@ async function firstLaunch() {
 }
 
 async function customStall(stall_id: string) {
+    if (stall_id == 'me') {
+        const popupOuter = document.createElement('div');
+        const settingsPopup = document.createElement('div');
+        settingsPopup.setAttribute('class', 'betterfloat-customstall-popup');
+        settingsPopup.setAttribute('style', 'display: none;');
+
+        const popupHeader = document.createElement('h3');
+        popupHeader.textContent = 'CUSTOM STALL';
+        popupHeader.setAttribute('style', 'font-weight: 600; font-size: 24px; line-height: 0; margin-top: 20px;');
+        const popupSubHeader = document.createElement('h4');
+        popupSubHeader.textContent = 'by BetterFloat';
+        popupSubHeader.setAttribute('style', 'font-size: 18px; color: rgb(130, 130, 130); line-height: 0;');
+        const popupCloseButton = document.createElement('button');
+        popupCloseButton.type = 'button';
+        popupCloseButton.className = 'betterfloat-customstall-close';
+        popupCloseButton.textContent = 'x';
+        popupCloseButton.onclick = () => {
+            settingsPopup.style.display = 'none';
+        };
+        settingsPopup.appendChild(popupHeader);
+        settingsPopup.appendChild(popupSubHeader);
+        settingsPopup.appendChild(popupCloseButton);
+
+        const popupBackground = document.createElement('div');
+        popupBackground.className = 'betterfloat-customstall-popup-content';
+        const backgroundText = document.createElement('p');
+        backgroundText.setAttribute('style', 'font-weight: 600; margin: 5px 0;');
+        backgroundText.textContent = 'BACKGROUND';
+        popupBackground.appendChild(backgroundText);
+
+        const inputField = {
+            img: {
+                placeholder: 'Image URL',
+                text: 'IMG:',
+            },
+            webm: {
+                placeholder: 'Webm URL',
+                text: 'WEBM:',
+            },
+            mp4: {
+                placeholder: 'Mp4 URL',
+                text: 'MP4:',
+            },
+        };
+        for (const key in inputField) {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between w-full';
+            const label = document.createElement('label');
+            label.textContent = inputField[key as keyof typeof inputField].text;
+            const input = document.createElement('input');
+            input.className = 'w-2/4';
+            input.type = 'url';
+            input.placeholder = inputField[key as keyof typeof inputField].placeholder;
+            input.id = 'betterfloat-customstall-' + key;
+            // input.className = 'mat-input-element';
+            div.appendChild(label);
+            div.appendChild(input);
+            popupBackground.appendChild(div);
+        }
+        const colorDiv = document.createElement('div');
+        colorDiv.className = 'flex justify-between w-full';
+        const colorLabel = document.createElement('label');
+        colorLabel.textContent = 'Color:';
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.id = 'betterfloat-customstall-color';
+        colorDiv.appendChild(colorLabel);
+        colorDiv.appendChild(colorInput);
+        const transparentDiv = document.createElement('div');
+        transparentDiv.className = 'flex justify-between w-full';
+        const transparentLabel = document.createElement('label');
+        transparentLabel.textContent = 'Transparent Elements:';
+        const transparentInput = document.createElement('input');
+        transparentInput.setAttribute('style', 'height: 24px; width: 24px; accent-color: #ff5722;');
+        transparentInput.type = 'checkbox';
+        transparentInput.id = 'betterfloat-customstall-transparent';
+        transparentDiv.appendChild(transparentLabel);
+        transparentDiv.appendChild(transparentInput);
+
+        const popupSaveButton = document.createElement('button');
+        popupSaveButton.className = 'mat-raised-button mat-warn betterfloat-customstall-buttondiv';
+        popupSaveButton.style.marginTop = '15px';
+        popupSaveButton.type = 'button';
+        const saveButtonTextNode = document.createElement('span');
+        saveButtonTextNode.textContent = 'Save';
+        popupSaveButton.onclick = async () => {
+            const stall_id = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
+            if (isNaN(Number(stall_id)) || location.pathname != '/stall/me') {
+                console.debug('[BetterFloat] Invalid stall id');
+                return;
+            }
+            // send get to /api/v1/me to get obfuscated user id
+            let obfuscated_id: string = await fetch('https://csfloat.com/api/v1/me')
+                .then((res) => res.json())
+                .then((data) => data?.user?.obfuscated_id);
+            if (!obfuscated_id) {
+                console.debug('[BetterFloat] Could not get obfuscated user id');
+                return;
+            }
+            const stallData = {
+                stall_id: stall_id,
+                options: {
+                    video: {
+                        poster: (<HTMLInputElement>document.getElementById('betterfloat-customstall-img')).value,
+                        webm: (<HTMLInputElement>document.getElementById('betterfloat-customstall-webm')).value,
+                        mp4: (<HTMLInputElement>document.getElementById('betterfloat-customstall-mp4')).value,
+                    },
+                    'background-color': (<HTMLInputElement>document.getElementById('betterfloat-customstall-color')).value,
+                    transparent_elements: (<HTMLInputElement>document.getElementById('betterfloat-customstall-transparent')).checked,
+                },
+            };
+            console.debug('[BetterFloat] New stall settings: ', stallData);
+
+            // send post to /api/v1/stall/{id} to update stall
+            await fetch('https://api.rums.dev/v1/csfloatstalls/store', {
+                method: 'POST',
+                headers: {
+                    Accept: '*/*',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    stall_id: stallData.stall_id,
+                    // token: obfuscated_id,
+                    token: 'testtoken',
+                    data: stallData.options,
+                }),
+            })
+                .then((res) => res.json())
+                .then((data) => console.debug('[BetterFloat] Stall update - success response from api.rums.dev: ', data))
+                .catch((err) => console.debug('[BetterFloat] Stall update - error: ', err));
+
+            settingsPopup.style.display = 'none';
+        };
+        popupSaveButton.appendChild(saveButtonTextNode);
+
+        popupBackground.appendChild(colorDiv);
+        popupBackground.appendChild(transparentDiv);
+        settingsPopup.appendChild(popupBackground);
+        settingsPopup.appendChild(popupSaveButton);
+
+        const settingsButton = document.createElement('button');
+        settingsButton.setAttribute('style', 'background: none; border: none; margin-left: 60px');
+        const settingsIcon = document.createElement('img');
+        settingsIcon.setAttribute('src', runtimePublicURL + '/gear-solid.svg');
+        settingsIcon.style.height = '64px';
+        settingsIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
+        settingsButton.onclick = () => {
+            settingsPopup.style.display = 'block';
+        };
+        settingsButton.appendChild(settingsIcon);
+        popupOuter.appendChild(settingsPopup);
+        popupOuter.appendChild(settingsButton);
+
+        const container = document.querySelector('.settings')?.parentElement;
+        if (container) {
+            container.after(popupOuter);
+            (<HTMLElement>container.parentElement).style.alignItems = 'center';
+        }
+
+        // get stall id from input field to still load custom stall
+        let newID = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
+        if (newID) {
+            stall_id = newID;
+        } else {
+            console.log('[BetterFloat] Could not load stall data');
+            return;
+        }
+    }
     let stallData = await getStallData(stall_id);
     if (!stallData || !stall_id.includes(stallData.stall_id)) {
         console.log('[BetterFloat] Could not load stall data');
@@ -106,7 +275,10 @@ async function customStall(stall_id: string) {
     backgroundVideo.setAttribute('muted', '');
     backgroundVideo.setAttribute('loop', '');
     backgroundVideo.setAttribute('poster', stallData.options.video.poster);
-    backgroundVideo.setAttribute('style', `position: absolute; width: 100%; height: 100%; z-index: -100; background-size: cover; background-position: center center; object-fit: cover; background-color: ${stallData.options['background-color']}`);
+    backgroundVideo.setAttribute(
+        'style',
+        `position: absolute; width: 100%; height: 100%; z-index: -100; background-size: cover; background-position: center center; object-fit: cover; background-color: ${stallData.options['background-color']}`
+    );
     let sourceWebm = document.createElement('source');
     sourceWebm.setAttribute('src', stallData.options.video.webm);
     sourceWebm.setAttribute('type', 'video/webm');
@@ -139,7 +311,7 @@ async function customStall(stall_id: string) {
     if (matChipWrapper && matChipWrapper.firstElementChild) {
         let bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
         bfChip.style.backgroundColor = 'purple';
-        bfChip.textContent = "BetterFloat "+stallData.role;
+        bfChip.textContent = 'BetterFloat ' + stallData.roles[0];
         matChipWrapper.appendChild(bfChip);
     }
 }
@@ -157,7 +329,9 @@ function offerItemClickListener(listItem: Element) {
 function switchTab(tab: number) {
     const tabList = document.querySelectorAll('.mat-tab-label');
     (<HTMLElement>tabList[tab]).click();
-    document.title = tabList[tab].textContent?.trim() + ' | CSFloat';
+    if (location.pathname == '/') {
+        document.title = tabList[tab].textContent?.trim() + ' | CSFloat';
+    }
 }
 
 function createTabListeners() {
@@ -167,10 +341,55 @@ function createTabListeners() {
     tabContainer?.classList.add('betterfloat-tabs');
     for (let i = 0; i < tabList.length; i++) {
         tabList[i].addEventListener('click', () => {
-            window.history.replaceState({}, '', '?tab=' + tabList[i].getAttribute('aria-posinset'));
-            document.title = tabList[i].textContent?.trim() + ' | CSFloat';
+            window.history.replaceState({}, '', location.pathname + '?tab=' + tabList[i].getAttribute('aria-posinset'));
+            if (location.pathname == '/') {
+                document.title = tabList[i].textContent?.trim() + ' | CSFloat';
+            }
         });
     }
+}
+
+/**
+ * Updates the document title according to the current site
+ * @async setInterval executed every 200ms
+ */
+function createUrlListener() {
+    setInterval(() => {
+        const newUrl = location.href;
+        if (currentUrl != newUrl) {
+          // URL changed
+          let newTitle = '';
+          if (location.pathname == '/' && location.search == '') {
+            newTitle = 'Home';
+          } else if (location.pathname == '/profile/offers') {
+            newTitle = 'Offers';
+          } else if (location.pathname == '/profile/watchlist') {
+            newTitle = 'Watchlist';
+          } else if (location.pathname == '/profile/trades') {
+            newTitle = 'Trades';
+          } else if (location.pathname == '/sell') {
+            newTitle = 'Selling';
+          } else if (location.pathname == '/profile') {
+            newTitle = 'Profile';
+          } else if (location.pathname == '/support') {
+            newTitle = 'Support';
+          } else if (location.pathname == '/profile/deposit') {
+            newTitle = 'Deposit';
+          } else if (location.pathname.includes('/stall/')) {
+            let username = document.querySelector('.username')?.textContent;
+            if (username) {
+              newTitle = username + '\'s Stall';
+            }
+          } else if (location.pathname.includes('/item/')) {
+            // item titles are fine as they are
+          }
+          if (newTitle != '') {
+            document.title = newTitle + ' | CSFloat';
+          }
+          currentUrl = newUrl;
+          // /stall/
+        }
+      }, 200);
 }
 
 async function refreshButton() {
@@ -526,7 +745,6 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingIcon.style.height = '20px';
     listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
-    
     listingAgeText.textContent = calculateTime(cachedItem.created_at);
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
@@ -859,5 +1077,7 @@ const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
+// current url, automically updated per interval 
+let currentUrl: string = location.href;
 
 init();

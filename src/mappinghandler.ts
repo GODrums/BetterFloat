@@ -34,7 +34,6 @@ let skinbidUserCurrency = '';
 // skinbid: cached items from api
 let skinbidItems: Skinbid.Listing[] = [];
 
-
 export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     if (csfloatHistoryGraph.length > 0) {
         console.debug('[BetterFloat] History graph already cached, deleting history: ', csfloatHistoryGraph);
@@ -105,7 +104,7 @@ export async function cacheSkinbidCurrencyRate(rate: number) {
 }
 
 export async function cacheSkinbidUserCurrency(currency: string) {
-    skinbidUserCurrency= currency;
+    skinbidUserCurrency = currency;
 }
 
 export async function cacheRealCurrencyRates(data: { [currency: string]: number }) {
@@ -170,8 +169,8 @@ export async function getPriceMapping(): Promise<{ [key: string]: any }> {
 
 /**
  * should only be used for non-weapon as no special conditions are checked
- * @param buff_name 
- * @returns 
+ * @param buff_name
+ * @returns
  */
 export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number }> {
     if (Object.keys(priceMapping).length == 0) {
@@ -215,10 +214,10 @@ export async function getSkbUserCurrencyRate() {
 }
 
 export async function getStallData(stall_id: string) {
-    let request = await fetch('https://api.rums.dev/v1/csfloatstalls/'+stall_id);
-    let response = await request.json() as Extension.CustomStallData;
+    let request = await fetch('https://api.rums.dev/v1/csfloatstalls/' + stall_id);
+    let response = (await request.json()) as Extension.CustomStallData;
     console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
-    if (response && response.status == "OK" && response.data) {
+    if (response && response.status == 'OK' && response.data) {
         return response.data;
     } else {
         return null;

@@ -465,7 +465,7 @@ const itemSelectors = {
 
 type PageTypes = keyof typeof itemSelectors;
 
-type ItemSelectors = typeof itemSelectors[keyof typeof itemSelectors];
+type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
     let name = container.querySelector('.item-title')?.textContent?.trim() ?? '';
