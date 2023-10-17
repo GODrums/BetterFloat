@@ -73,6 +73,17 @@ In some cases, Firefox does not grant extensions necessary permissions automatic
 
 ## Development
 
+### The Tech Stack
+
+<div style="display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 1rem;">
+<img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" alt="Typescript" width="50" height="50">
+<img align="center" src="https://icongr.am/devicon/webpack-original-wordmark.svg?size=128&color=currentColor" alt="Typescript" width="100">
+<img align="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original-wordmark.svg" alt="Typescript" width="100">
+<img align="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/eslint/eslint-original-wordmark.svg" alt="Typescript" width="100">
+<img align="center" src="https://raw.githubusercontent.com/prettier/prettier-logo/master/images/prettier-banner-dark.svg" alt="Typescript" width="100">
+<img align="center" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mocha/mocha-plain.svg" alt="Typescript" height="50" width="50">
+</div>
+
 ### Installation
 
 Prerequisites:
