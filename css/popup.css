@@ -71,6 +71,13 @@ footer p {
     margin: 0 15px;
 }
 
+.HandShakeIcon {
+    width: 30px;
+    height: 30px;
+    margin: 0 15px 0 0;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(213deg) brightness(103%) contrast(102%);
+}
+
 .SideBar {
     width: 58px;
     height: 550px;
@@ -283,6 +290,9 @@ input[type='checkbox'] {
     color: white;
     font-size: 14px;
     margin-bottom: 13px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
 }
 
 .AboutText {
@@ -297,6 +307,15 @@ input[type='checkbox'] {
     display: flex;
     width: 358px;
     justify-content: center;
+}
+
+.BlueGemContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 8px;
+    text-decoration: none;
+    color: lightskyblue;
 }
 
 #priceRefreshButton {

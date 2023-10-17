@@ -1,7 +1,7 @@
-import { ExtensionSettings } from '../@typings/FloatTypes';
+import { Extension } from '../@typings/ExtensionTypes';
 
-export async function initSettings(): Promise<ExtensionSettings> {
-    const extensionSettings = <ExtensionSettings>{};
+export async function initSettings(): Promise<Extension.Settings> {
+    const extensionSettings = <Extension.Settings>{};
     chrome.storage.local.get((data) => {
         if (data.enableCSFloat) {
             extensionSettings.enableCSFloat = Boolean(data.enableCSFloat);
@@ -10,10 +10,10 @@ export async function initSettings(): Promise<ExtensionSettings> {
             extensionSettings.autorefresh = Boolean(data.autorefresh);
         }
         if (data.priceReference !== undefined) {
-            extensionSettings.priceReference = data.priceReference as ExtensionSettings['priceReference'];
+            extensionSettings.priceReference = data.priceReference as Extension.Settings['priceReference'];
         }
         if (data.refreshInterval) {
-            extensionSettings.refreshInterval = data.refreshInterval as ExtensionSettings['refreshInterval'];
+            extensionSettings.refreshInterval = data.refreshInterval as Extension.Settings['refreshInterval'];
         }
         if (data.showSteamPrice) {
             extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
@@ -22,7 +22,7 @@ export async function initSettings(): Promise<ExtensionSettings> {
             extensionSettings.stickerPrices = Boolean(data.stickerPrices);
         }
         if (data.listingAge !== undefined) {
-            extensionSettings.listingAge = data.listingAge as ExtensionSettings['listingAge'];
+            extensionSettings.listingAge = data.listingAge as Extension.Settings['listingAge'];
         }
         if (data.showBuffDifference) {
             extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
@@ -46,10 +46,10 @@ export async function initSettings(): Promise<ExtensionSettings> {
             extensionSettings.spStickerPrices = Boolean(data.spStickerPrices);
         }
         if (data.skinportRates) {
-            extensionSettings.skinportRates = data.skinportRates as ExtensionSettings['skinportRates'];
+            extensionSettings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
         }
         if (data.spPriceReference !== undefined) {
-            extensionSettings.spPriceReference = data.spPriceReference as ExtensionSettings['spPriceReference'];
+            extensionSettings.spPriceReference = data.spPriceReference as Extension.Settings['spPriceReference'];
         }
         if (data.spSteamPrice) {
             extensionSettings.spSteamPrice = Boolean(data.spSteamPrice);
@@ -58,19 +58,19 @@ export async function initSettings(): Promise<ExtensionSettings> {
             extensionSettings.spBuffDifference = Boolean(data.spBuffDifference);
         }
         if (data.spBuffLink) {
-            extensionSettings.spBuffLink = data.spBuffLink as ExtensionSettings['spBuffLink'];
+            extensionSettings.spBuffLink = data.spBuffLink as Extension.Settings['spBuffLink'];
         }
         if (data.spFloatColoring) {
             extensionSettings.spFloatColoring = Boolean(data.spFloatColoring);
         }
         if (data.spFilter) {
-            extensionSettings.spFilter = data.spFilter as ExtensionSettings['spFilter'];
+            extensionSettings.spFilter = data.spFilter as Extension.Settings['spFilter'];
         }
         if (data.enableSkinbid) {
             extensionSettings.enableSkinbid = Boolean(data.enableSkinbid);
         }
         if (data.skbPriceReference !== undefined) {
-            extensionSettings.skbPriceReference = data.skbPriceReference as ExtensionSettings['skbPriceReference'];
+            extensionSettings.skbPriceReference = data.skbPriceReference as Extension.Settings['skbPriceReference'];
         }
         if (data.skbBuffDifference) {
             extensionSettings.skbBuffDifference = Boolean(data.skbBuffDifference);

@@ -1,6 +1,6 @@
-import { ExtensionSettings } from './@typings/FloatTypes';
+import { Extension } from './@typings/ExtensionTypes';
 
-const defaultSettings: ExtensionSettings = {
+const defaultSettings: Extension.Settings = {
     enableCSFloat: true,
     autorefresh: true,
     priceReference: 0,
@@ -48,14 +48,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
                 chrome.storage.local.set(defaultSettings);
                 return;
             }
-            const storedSettings = data as ExtensionSettings;
+            const storedSettings = data as Extension.Settings;
             console.debug('[BetterFloat] Loaded settings: ', storedSettings);
             const newSettings: {
                 [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings];
             } = {};
             let update = false;
             for (const key in defaultSettings) {
-                const settingKey = key as keyof ExtensionSettings;
+                const settingKey = key as keyof Extension.Settings;
                 if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
                     // add missing settings
                     console.log('[BetterFloat] Adding missing setting: ', key);
@@ -108,16 +108,3 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         return true;
     }
 });
-
-// Idea from: https://stackoverflow.com/a/53990245
-// the WSS Skinport stream contains the LIVE feed. Does not work yet.
-// chrome.webRequest.onBeforeSendHeaders.addListener(
-//     (details) => {
-//         const { tabId, requestId } = details;
-//         console.log('[BetterFloat] Intercepted websocket request: ', details);
-//         // do stuff here
-//     },
-//     {
-//         urls: ['wss://skinport.com/socket.io/?EIO=4&transport=websocket'],
-//     }
-// );

@@ -1,7 +1,7 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
 import { CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
-import { Extension } from '../@typings/ExtensionTypes';
+import { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
@@ -357,39 +357,41 @@ function createUrlListener() {
     setInterval(() => {
         const newUrl = location.href;
         if (currentUrl != newUrl) {
-          // URL changed
-          let newTitle = '';
-          if (location.pathname == '/' && location.search == '') {
-            newTitle = 'Home';
-          } else if (location.pathname == '/profile/offers') {
-            newTitle = 'Offers';
-          } else if (location.pathname == '/profile/watchlist') {
-            newTitle = 'Watchlist';
-          } else if (location.pathname == '/profile/trades') {
-            newTitle = 'Trades';
-          } else if (location.pathname == '/sell') {
-            newTitle = 'Selling';
-          } else if (location.pathname == '/profile') {
-            newTitle = 'Profile';
-          } else if (location.pathname == '/support') {
-            newTitle = 'Support';
-          } else if (location.pathname == '/profile/deposit') {
-            newTitle = 'Deposit';
-          } else if (location.pathname.includes('/stall/')) {
-            let username = document.querySelector('.username')?.textContent;
-            if (username) {
-              newTitle = username + '\'s Stall';
+            // URL changed
+            let newTitle = '';
+            if (location.pathname == '/' && location.search == '') {
+                newTitle = 'Home';
+            } else if (location.pathname == '/profile/offers') {
+                newTitle = 'Offers';
+            } else if (location.pathname == '/profile/watchlist') {
+                newTitle = 'Watchlist';
+            } else if (location.pathname == '/profile/trades') {
+                newTitle = 'Trades';
+            } else if (location.pathname == '/sell') {
+                newTitle = 'Selling';
+            } else if (location.pathname == '/profile') {
+                newTitle = 'Profile';
+            } else if (location.pathname == '/support') {
+                newTitle = 'Support';
+            } else if (location.pathname == '/search') {
+                newTitle = 'Search';
+            } else if (location.pathname == '/profile/deposit') {
+                newTitle = 'Deposit';
+            } else if (location.pathname.includes('/stall/')) {
+                let username = document.querySelector('.username')?.textContent;
+                if (username) {
+                    newTitle = username + "'s Stall";
+                }
+            } else if (location.pathname.includes('/item/')) {
+                // item titles are fine as they are
             }
-          } else if (location.pathname.includes('/item/')) {
-            // item titles are fine as they are
-          }
-          if (newTitle != '') {
-            document.title = newTitle + ' | CSFloat';
-          }
-          currentUrl = newUrl;
-          // /stall/
+            if (newTitle != '') {
+                document.title = newTitle + ' | CSFloat';
+            }
+            currentUrl = newUrl;
+            // /stall/
         }
-      }, 200);
+    }, 200);
 }
 
 async function refreshButton() {
@@ -626,6 +628,8 @@ async function adjustItem(container: Element, isPopout = false) {
             await addListingAge(container, cachedItem);
         }
         storeApiItem(container, cachedItem);
+
+        caseHardenedDetection(container, cachedItem, false);
     }
     if (isPopout) {
         // need timeout as request is only sent after popout is loaded
@@ -642,9 +646,119 @@ async function adjustItem(container: Element, isPopout = false) {
             if (apiItem) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
+                await caseHardenedDetection(container, apiItem, true);
             }
         }, 500);
     }
+}
+
+async function caseHardenedDetection(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
+    let item = listing.item;
+    if (!item.item_name.includes('Case Hardened')) return;
+    let pastSales: BlueGem.PastSale[] = [];
+    let patternElement: BlueGem.PatternElement | null = null;
+    if (isPopout) {
+        const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+        let csbluegem = itemPreview?.getAttribute('data-csbluegem');
+        if (csbluegem) {
+            let csbluegemData = JSON.parse(csbluegem);
+            pastSales = csbluegemData.pastSales;
+            patternElement = csbluegemData.patternElement;
+        }
+    }
+    if (pastSales.length == 0 && !patternElement) {
+        let type = '';
+        if (item.item_name.startsWith('★')) {
+            type = item.item_name.split(' | ')[0].split('★ ')[1];
+        } else {
+            type = item.item_name.split(' | ')[0];
+        }
+        await fetchCSBlueGem(type, item.paint_seed).then((data) => {
+            pastSales = data.pastSales;
+            patternElement = data.patternElement;
+            container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
+        });
+    }
+    
+    let tierContainer = container.querySelector('.badge-container');
+    if (!tierContainer) {
+        tierContainer = document.createElement('div');
+        tierContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+        container.querySelector('.item-img')?.after(tierContainer);
+    } else {
+        tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
+        tierContainer.setAttribute('style', 'gap: 5px;');
+    }
+    let gemContainer = document.createElement('div');
+    gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
+    let gemImage = document.createElement('img');
+    gemImage.setAttribute('src', runtimePublicURL + '/icon-diamond.svg');
+    gemImage.setAttribute('style', 'height: 20px; margin-right: 5px; margin-top: 1px;');
+    gemContainer.appendChild(gemImage);
+    if (patternElement) {
+        let gemValue = document.createElement('span');
+        gemValue.style.color = 'cyan';
+        gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
+        gemContainer.appendChild(gemValue);
+    }
+    tierContainer.appendChild(gemContainer);
+
+    // add screenshot if there csfloat does not offer one
+
+    if (isPopout) {
+        let gridHistory = document.querySelector('.grid-history');
+        if (!gridHistory) return;
+        let divider = document.createElement('span');
+        divider.textContent = ' | ';
+        divider.setAttribute('style', 'margin: 0 5px;');
+        let salesHeader = document.createElement('span');
+        salesHeader.textContent = `Buff Pattern (${pastSales.length})`;
+        salesHeader.setAttribute('style', 'color: deepskyblue;');
+        salesHeader.addEventListener('click', () => {
+            Array.from(salesHeader.parentElement?.children ?? []).forEach((element) => {
+                if (!element.textContent?.includes('|')) {
+                    element.setAttribute('style', 'color: grey;');
+                }
+            });
+            salesHeader.style.color = 'cyan';
+
+            let tableBody = '';
+            pastSales.forEach((sale) => {
+                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted"><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                    sale.date
+                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(sale.price * 0.14).toFixed(
+                    0
+                )})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                    sale.pattern
+                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a href=${sale.url} target="_blank"><img src="${
+                    runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
+                }" style="height: 18px; margin-right: 10px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); translate: 0px 3px;"></a></td></tr>`;
+            });
+            7;
+            let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
+
+            let historyComponent = gridHistory?.querySelector('.history-component');
+            if (historyComponent) {
+                historyComponent.innerHTML = tableHTML;
+            }
+        });
+        let gridHeading = gridHistory.querySelector('#header');
+        gridHeading?.firstChild?.lastChild?.appendChild(divider);
+        gridHeading?.firstChild?.lastChild?.appendChild(salesHeader);
+    }
+}
+
+async function fetchCSBlueGem(type: string, paint_seed: number) {
+    return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}`)
+        .then((res) => res.json())
+        .then((data) => {
+            const { pastSales, patternElement } = {
+                pastSales: data.pop() as BlueGem.PastSale[],
+                patternElement: data.pop() as BlueGem.PatternElement | null,
+            };
+            console.debug('[BetterFloat] Received case hardened data from CSBlueGem: ', { patternElement, pastSales });
+            return { patternElement, pastSales };
+        });
 }
 
 function adjustExistingSP(container: Element) {
@@ -1077,7 +1191,7 @@ const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
-// current url, automically updated per interval 
+// current url, automically updated per interval
 let currentUrl: string = location.href;
 
 init();

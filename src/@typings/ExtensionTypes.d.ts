@@ -74,6 +74,7 @@ export namespace Extension {
         };
     };
 
+    // response from api.rums.dev/v1/csfloatstalls/:id
     export type CustomStallData = {
         status: 'OK' | 'ERROR';
         data: {
@@ -92,4 +93,23 @@ export namespace Extension {
             };
         };
     };
+
+    // reponse from https://csbluegem.com/api
+}
+export namespace BlueGem {
+    export type PatternElement = {
+        backside: number;
+        double_sided: number;
+        playside: number;
+        screenshot: string;
+    };
+    export type PastSale = {
+        date: string;
+        float: number;
+        pattern: number;
+        price: number;
+        url: string;
+    };
+
+    export type Response = [PatternElement, PastSale[]] | [PastSale[]];
 }

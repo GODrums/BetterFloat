@@ -1,3 +1,7 @@
+export type Prettify<T> = {
+    [P in keyof T]: T[P];
+};
+
 export type ItemType = 'Container' | 'Sticker' | 'Weapon' | 'Knife' | 'Gloves';
 
 export type ItemQuality = '' | 'Souvenir' | 'StatTrak™' | 'Base Grade Container' | 'Remarkable Sticker' | 'Exotic Sticker' | 'Extraordinary Sticker' | 'High Grade Sticker';
