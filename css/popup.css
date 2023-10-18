@@ -345,6 +345,23 @@ input[type="color"]::-webkit-color-swatch-wrapper {
     color: lightskyblue;
 }
 
+.ColorsHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ResetColorsIcon {
+    width: 25px;
+    height: 25px;
+    margin-right: 15px;
+    display: inline-block;
+    vertical-align: middle;
+    filter: invert(82%) sepia(3%) saturate(242%) hue-rotate(202deg) brightness(85%) contrast(92%);
+    cursor: pointer;
+}
+
 #priceRefreshButton {
     background: var(--color-accent, #ff5722);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);

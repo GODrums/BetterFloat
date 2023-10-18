@@ -78,6 +78,19 @@ function addListeners() {
         $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
     });
+    // add listener to resetColors button
+    $('#resetColors').on('click', function () {
+        chrome.storage.local.set({
+            colors: {
+                profit: '#008000',
+                loss: '#ce0000',
+                neutral: '#708090',
+            },
+        });
+        $('#InputProfitColor').val('#008000');
+        $('#InputLossColor').val('#ce0000');
+        $('#InputNeutralColor').val('#708090');
+    });
 }
 
 const host_permissions = chrome.runtime.getManifest().host_permissions;
