@@ -32,6 +32,11 @@ export namespace Extension {
         skbBuffDifference: boolean;
         skbListingAge: boolean;
         skbStickerPrices: boolean;
+        colors: {
+            profit: string;
+            loss: string;
+            neutral: string;
+        }
     };
 
     export type CSGOTraderMapping = {

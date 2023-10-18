@@ -54,6 +54,30 @@ function addListeners() {
         $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
     });
+    // add listeners to all color pickers
+    $('input[type=color]').on('change', function () {
+        const attrName = $(this).attr('name');
+        if (attrName) {
+            chrome.storage.local.get((data) => {
+                if (data.colors) {
+                    data.colors[attrName] = $(this).val();
+                    chrome.storage.local.set({
+                        colors: data.colors,
+                    });
+                }
+                else {
+                    chrome.storage.local.set({
+                        colors: {
+                            [attrName]: $(this).val(),
+                        },
+                    });
+                }
+            });
+        }
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
+        $('.Warning').show(100);
+    });
 }
 
 const host_permissions = chrome.runtime.getManifest().host_permissions;
@@ -99,6 +123,9 @@ function loadForSettings() {
     const showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
     const topButton = <HTMLInputElement>document.getElementById('InputTopButton');
     const useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
+    const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
+    const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
+    const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
 
     chrome.storage.local.get((data) => {
         if (data.enableCSFloat) {
@@ -147,6 +174,11 @@ function loadForSettings() {
             useTabStates.checked = true;
         } else {
             useTabStates.checked = false;
+        }
+        if (data.colors) {
+            profitColor.value = data.colors.profit;
+            lossColor.value = data.colors.loss;
+            neutralColor.value = data.colors.neutral;
         }
     });
 }

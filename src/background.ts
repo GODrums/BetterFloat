@@ -33,6 +33,11 @@ const defaultSettings: Extension.Settings = {
     skbBuffDifference: true,
     skbListingAge: true,
     skbStickerPrices: true,
+    colors: {
+        profit: "#008000",
+        loss: "#ce0000",
+        neutral: "#708090"
+    }
 };
 
 // Check whether new version is installed
