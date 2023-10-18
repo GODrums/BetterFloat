@@ -542,10 +542,11 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     }
 
     let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent ?? '';
-    if (priceText.split(' ').length > 1) {
-        priceText = priceText.split(' ')[0].replace('.', '').replace(',', '.');
-    } else {
+    if (isNaN(Number(priceText.charAt(0)))) {
         priceText = priceText.replace(',', '').substring(1);
+    }
+    else {
+        priceText = priceText.replace('€', '').replace(',', '.').replace(/\s/g, '').trim();
     }
     let price = Number(priceText) ?? 0;
 

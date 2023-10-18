@@ -633,7 +633,7 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.csBlueGem) {
             await caseHardenedDetection(container, cachedItem, false);
         }
-        await addFadePercentages(container, cachedItem, false);
+        await addFadePercentages(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -650,13 +650,13 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
-                await addFadePercentages(container, apiItem, true);
+                await addFadePercentages(container, apiItem);
             }
         }, 500);
     }
 }
 
-async function addFadePercentages(container: Element, item: CSFloat.ListingData, isPopout: boolean) {
+async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
     const itemName = item.item.item_name;
     const paintSeed = item.item.paint_seed;
     if (!itemName.includes('Fade')) return;
