@@ -58,17 +58,21 @@ function addListeners() {
     $('input[type=color]').on('change', function () {
         const attrName = $(this).attr('name');
         if (attrName) {
+            const [site, color] = attrName.split('-');
+
             chrome.storage.local.get((data) => {
-                if (data.colors) {
-                    data.colors[attrName] = $(this).val();
+                if (data.colors && data.colors[site]) {
+                    data.colors[site][color] = $(this).val();
                     chrome.storage.local.set({
-                        colors: data.colors,
+                        colors: data.colors
                     });
                 }
                 else {
                     chrome.storage.local.set({
                         colors: {
-                            [attrName]: $(this).val(),
+                            [site]: {
+                                [color]: $(this).val()
+                            }
                         },
                     });
                 }
@@ -80,11 +84,17 @@ function addListeners() {
     });
     // add listener to resetColors button
     $('#resetColors').on('click', function () {
+        const attrSite = $(this).attr('site');
+
+        if (!attrSite) return;
+
         chrome.storage.local.set({
             colors: {
-                profit: '#008000',
-                loss: '#ce0000',
-                neutral: '#708090',
+                [attrSite]: {
+                    profit: '#008000',
+                    loss: '#ce0000',
+                    neutral: '#708090'
+                }
             },
         });
         $('#InputProfitColor').val('#008000');
@@ -188,10 +198,10 @@ function loadForSettings() {
         } else {
             useTabStates.checked = false;
         }
-        if (data.colors) {
-            profitColor.value = data.colors.profit;
-            lossColor.value = data.colors.loss;
-            neutralColor.value = data.colors.neutral;
+        if (data.colors?.csfloat) {
+            profitColor.value = data.colors.csfloat.profit;
+            lossColor.value = data.colors.csfloat.loss;
+            neutralColor.value = data.colors.csfloat.neutral;
         }
     });
 }

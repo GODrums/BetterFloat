@@ -33,11 +33,17 @@ export namespace Extension {
         skbListingAge: boolean;
         skbStickerPrices: boolean;
         colors: {
-            profit: string;
-            loss: string;
-            neutral: string;
+            csfloat: IColors;
+            skinport: IColors;
+            skinbid: IColors;
         }
     };
+
+    type IColors = {
+        profit: string;
+        loss: string;
+        neutral: string;
+    }
 
     export type CSGOTraderMapping = {
         [name: string]: {

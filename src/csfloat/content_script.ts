@@ -1142,13 +1142,13 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         let backgroundColor;
         let differenceSymbol;
         if (difference < 0) {
-            backgroundColor = extensionSettings.colors.profit;
+            backgroundColor = extensionSettings.colors.csfloat.profit;
             differenceSymbol = '-$';
         } else if (difference > 0) {
-            backgroundColor = extensionSettings.colors.loss;
+            backgroundColor = extensionSettings.colors.csfloat.loss;
             differenceSymbol = '+$';
         } else {
-            backgroundColor = extensionSettings.colors.neutral;
+            backgroundColor = extensionSettings.colors.csfloat.neutral;
             differenceSymbol = '-$';
         }
 
