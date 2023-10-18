@@ -1,6 +1,6 @@
 import { Extension } from './@typings/ExtensionTypes';
 
-const defaultSettings: Extension.Settings = {
+export const defaultSettings: Extension.Settings = {
     enableCSFloat: true,
     autorefresh: true,
     stickerPrices: true,
@@ -34,9 +34,21 @@ const defaultSettings: Extension.Settings = {
     skbListingAge: true,
     skbStickerPrices: true,
     colors: {
-        profit: "#008000",
-        loss: "#ce0000",
-        neutral: "#708090"
+        csfloat: {
+            profit: "#008000",
+            loss: "#ce0000",
+            neutral: "#708090"
+        },
+        skinport: {
+            profit: "#008000",
+            loss: "#ce0000",
+            neutral: "#000000"
+        },
+        skinbid: {
+            profit: "#0cb083",
+            loss: "#ce0000",
+            neutral: "#000000"
+        }
     }
 };
 
