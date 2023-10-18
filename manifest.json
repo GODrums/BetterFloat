@@ -13,7 +13,7 @@
         {
             "matches": ["*://*.csfloat.com/*"],
             "js": ["js/csfloat_script.js"],
-            "css": ["css/csfloat_styles.css", "css/tailwindcss.min.css"],
+            "css": ["css/csfloat_styles.css"],
             "run_at": "document_end"
         },
         {

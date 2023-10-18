@@ -629,7 +629,9 @@ async function adjustItem(container: Element, isPopout = false) {
         }
         storeApiItem(container, cachedItem);
 
-        caseHardenedDetection(container, cachedItem, false);
+        if (extensionSettings.csBlueGem) {
+            caseHardenedDetection(container, cachedItem, false);
+        }
     }
     if (isPopout) {
         // need timeout as request is only sent after popout is loaded
@@ -653,33 +655,34 @@ async function adjustItem(container: Element, isPopout = false) {
 }
 
 async function caseHardenedDetection(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
-    let item = listing.item;
+    const item = listing.item;
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
     let patternElement: BlueGem.PatternElement | null = null;
+    let type = '';
+    if (item.item_name.startsWith('★')) {
+        type = item.item_name.split(' | ')[0].split('★ ')[1];
+    } else {
+        type = item.item_name.split(' | ')[0];
+    }
     if (isPopout) {
         const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-        let csbluegem = itemPreview?.getAttribute('data-csbluegem');
+        const csbluegem = itemPreview?.getAttribute('data-csbluegem');
         if (csbluegem) {
-            let csbluegemData = JSON.parse(csbluegem);
+            const csbluegemData = JSON.parse(csbluegem);
             pastSales = csbluegemData.pastSales;
             patternElement = csbluegemData.patternElement;
         }
     }
     if (pastSales.length == 0 && !patternElement) {
-        let type = '';
-        if (item.item_name.startsWith('★')) {
-            type = item.item_name.split(' | ')[0].split('★ ')[1];
-        } else {
-            type = item.item_name.split(' | ')[0];
-        }
         await fetchCSBlueGem(type, item.paint_seed).then((data) => {
             pastSales = data.pastSales;
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
         });
     }
-    
+
+    // add gem icon and blue gem percent if item is a knife
     let tierContainer = container.querySelector('.badge-container');
     if (!tierContainer) {
         tierContainer = document.createElement('div');
@@ -689,26 +692,51 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
         tierContainer.setAttribute('style', 'gap: 5px;');
     }
-    let gemContainer = document.createElement('div');
+    const gemContainer = document.createElement('div');
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-    let gemImage = document.createElement('img');
+    const gemImage = document.createElement('img');
     gemImage.setAttribute('src', runtimePublicURL + '/icon-diamond.svg');
     gemImage.setAttribute('style', 'height: 20px; margin-right: 5px; margin-top: 1px;');
     gemContainer.appendChild(gemImage);
     if (patternElement) {
-        let gemValue = document.createElement('span');
+        const gemValue = document.createElement('span');
         gemValue.style.color = 'cyan';
         gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
         gemContainer.appendChild(gemValue);
     }
     tierContainer.appendChild(gemContainer);
 
-    // add screenshot if there csfloat does not offer one
+    // add screenshot if csfloat does not offer one
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
+        // get closest item float-wise that has a screenshot
+        let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value) - Math.abs(b.float - item.float_value));
+        if (sortedSales.length > 0 || patternElement?.screenshot) {
+            const screenshotButton = document.createElement('a');
+            screenshotButton.href = sortedSales[0]?.url ?? patternElement?.screenshot;
+            screenshotButton.target = '_blank';
+            screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+            const iconButton = document.createElement('button');
+            iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+            iconButton.setAttribute('style', 'color: cyan;');
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'mat-button-wrapper';
+            const icon = document.createElement('i');
+            icon.className = 'material-icons';
+            icon.textContent = 'camera_alt';
+            iconSpan.appendChild(icon);
+            iconButton.appendChild(iconSpan);
+            screenshotButton.appendChild(iconButton);
+            detailButtons.insertBefore(screenshotButton, detailButtons.firstChild);
+        }
+    }
 
+    // offer new table with past sales
+    // this is done in html as it's way too much otherwise
     if (isPopout) {
-        let gridHistory = document.querySelector('.grid-history');
+        const gridHistory = document.querySelector('.grid-history');
         if (!gridHistory) return;
-        let divider = document.createElement('span');
+        const divider = document.createElement('span');
         divider.textContent = ' | ';
         divider.setAttribute('style', 'margin: 0 5px;');
         let salesHeader = document.createElement('span');
@@ -722,27 +750,31 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             });
             salesHeader.style.color = 'cyan';
 
+            // all of this should at some point be done in a safer way
             let tableBody = '';
             pastSales.forEach((sale) => {
-                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted"><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
-                    sale.date
-                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(sale.price * 0.14).toFixed(
-                    0
-                )})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
+                    item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
+                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
+                    sale.price * 0.14
+                ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
                     sale.pattern
-                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a href=${sale.url} target="_blank"><img src="${
-                    runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
-                }" style="height: 18px; margin-right: 10px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); translate: 0px 3px;"></a></td></tr>`;
+                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a href=${
+                    sale.url
+                } target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 3px;">camera_alt</i></a></td></tr>`;
             });
-            7;
-            let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
+            let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"><a href="https://csbluegem.com/search?skin=${type}&pattern=${
+                item.paint_seed
+            }&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${
+                runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
+            }" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
 
-            let historyComponent = gridHistory?.querySelector('.history-component');
+            const historyComponent = gridHistory?.querySelector('.history-component');
             if (historyComponent) {
                 historyComponent.innerHTML = tableHTML;
             }
         });
-        let gridHeading = gridHistory.querySelector('#header');
+        const gridHeading = gridHistory.querySelector('#header');
         gridHeading?.firstChild?.lastChild?.appendChild(divider);
         gridHeading?.firstChild?.lastChild?.appendChild(salesHeader);
     }
@@ -756,7 +788,7 @@ async function fetchCSBlueGem(type: string, paint_seed: number) {
                 pastSales: data.pop() as BlueGem.PastSale[],
                 patternElement: data.pop() as BlueGem.PatternElement | null,
             };
-            console.debug('[BetterFloat] Received case hardened data from CSBlueGem: ', { patternElement, pastSales });
+            // console.debug('[BetterFloat] Received case hardened data from CSBlueGem: ', { patternElement, pastSales });
             return { patternElement, pastSales };
         });
 }

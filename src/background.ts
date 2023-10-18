@@ -3,10 +3,11 @@ import { Extension } from './@typings/ExtensionTypes';
 const defaultSettings: Extension.Settings = {
     enableCSFloat: true,
     autorefresh: true,
+    stickerPrices: true,
+    csBlueGem: true,
     priceReference: 0,
     refreshInterval: 30,
     showSteamPrice: false,
-    stickerPrices: true,
     showBuffDifference: true,
     showBuffPercentageDifference: false,
     listingAge: 0,

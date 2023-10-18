@@ -21,6 +21,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.stickerPrices) {
             extensionSettings.stickerPrices = Boolean(data.stickerPrices);
         }
+        if (data.csBlueGem) {
+            extensionSettings.csBlueGem = Boolean(data.csBlueGem);
+        }
         if (data.listingAge !== undefined) {
             extensionSettings.listingAge = data.listingAge as Extension.Settings['listingAge'];
         }
