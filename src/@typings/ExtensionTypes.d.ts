@@ -114,3 +114,9 @@ export namespace BlueGem {
 
     export type Response = [PatternElement, PastSale[]] | [PastSale[]];
 }
+
+export interface FadePercentage {
+  seed: number,
+  percentage: number,
+  ranking: number,
+}

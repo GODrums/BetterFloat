@@ -1,12 +1,13 @@
 // Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
 
 import { CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
-import { BlueGem, Extension } from '../@typings/ExtensionTypes';
+import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
+import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 
 type PriceResult = {
     price_difference: number;
@@ -630,10 +631,10 @@ async function adjustItem(container: Element, isPopout = false) {
         storeApiItem(container, cachedItem);
 
         if (extensionSettings.csBlueGem) {
-            caseHardenedDetection(container, cachedItem, false);
+            await caseHardenedDetection(container, cachedItem, false);
         }
-    }
-    if (isPopout) {
+        await addFadePercentages(container, cachedItem, false);
+    } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
             await addItemHistory(container.parentElement!.parentElement!);
@@ -649,8 +650,50 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
+                await addFadePercentages(container, apiItem, true);
             }
         }, 500);
+    }
+}
+
+async function addFadePercentages(container: Element, item: CSFloat.ListingData, isPopout: boolean) {
+    const itemName = item.item.item_name;
+    const paintSeed = item.item.paint_seed;
+    if (!itemName.includes('Fade')) return;
+    const weapon = itemName.split(' | ')[0];
+    let fadePercentage: FadePercentage & {background: string} | null = null;
+    if (itemName.includes('Amber Fade')) {
+        fadePercentage = {...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)'};
+    } else if (itemName.includes('Acid Fade')) {
+        fadePercentage = {...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)'};
+    }
+    if (fadePercentage != null) {
+        let fadeTooltip = document.createElement('div');
+        fadeTooltip.className = 'bf-fade-tooltip';
+        let fadePercentageSpan = document.createElement('span');
+        fadePercentageSpan.textContent = `Fade: ${fadePercentage.percentage.toFixed(5)}%`;
+        let fadeRankingSpan = document.createElement('span');
+        fadeRankingSpan.textContent = `Rank #${fadePercentage.ranking}`;
+        fadeTooltip.appendChild(fadePercentageSpan);
+        fadeTooltip.appendChild(fadeRankingSpan);
+        let fadeBadge = document.createElement('div');
+        fadeBadge.className = 'bf-fade';
+        fadeBadge.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
+        let fadeBadgePercentageSpan = document.createElement('span');
+        fadeBadgePercentageSpan.style.color = '#00000080';
+        fadeBadgePercentageSpan.textContent = fadePercentage.percentage.toFixed(1);
+        fadeBadge.appendChild(fadeBadgePercentageSpan);
+        fadeBadge.appendChild(fadeTooltip);
+        let badgeContainer = container.querySelector('.badge-container');
+        if (!badgeContainer) {
+            badgeContainer = document.createElement('div');
+            badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+            container.querySelector('.item-img')?.after(badgeContainer);
+        } else {
+            badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+            badgeContainer.setAttribute('style', 'gap: 5px;');
+        }
+        badgeContainer.appendChild(fadeBadge);
     }
 }
 
@@ -665,6 +708,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     } else {
         type = item.item_name.split(' | ')[0];
     }
+    // retrieve the stored data instead of fetching newly
     if (isPopout) {
         const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
         const csbluegem = itemPreview?.getAttribute('data-csbluegem');
@@ -674,6 +718,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             patternElement = csbluegemData.patternElement;
         }
     }
+    // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
         await fetchCSBlueGem(type, item.paint_seed).then((data) => {
             pastSales = data.pastSales;
@@ -759,9 +804,13 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     sale.price * 0.14
                 ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
                     sale.pattern
-                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a href=${
-                    sale.url
-                } target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 3px;">camera_alt</i></a></td></tr>`;
+                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
+                    sale.url == 'No Link Available'
+                        ? 'style="pointer-events: none;cursor: default;"><img src="' +
+                          runtimePublicURL +
+                          '/ban-solid.svg" style="height: 20px; translate: 0px 3px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
+                        : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 3px;">camera_alt</i></a>'
+                }</td></tr>`;
             });
             let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"><a href="https://csbluegem.com/search?skin=${type}&pattern=${
                 item.paint_seed
@@ -802,7 +851,6 @@ function adjustExistingSP(container: Element) {
     }
     const backgroundImageColor = getSPBackgroundColor(Number(spValue) / 100);
     (<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
-    (<HTMLElement>spContainer).style.marginBottom = '5px';
 }
 
 function storeApiItem(container: Element, item: CSFloat.ListingData) {
