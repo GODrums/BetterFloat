@@ -61,7 +61,7 @@ function addListeners() {
         if (attrName) {
             const [site, color] = attrName.split('-');
 
-            chrome.storage.local.get((data) => {
+            chrome.storage.local.get(['colors']).then((data) => {
                 if (data.colors && data.colors[site]) {
                     data.colors[site][color] = $(this).val();
                     chrome.storage.local.set({
@@ -103,6 +103,10 @@ function addListeners() {
         $('#InputProfitColor').val(defaultColors[attrSite].profit);
         $('#InputLossColor').val(defaultColors[attrSite].loss);
         $('#InputNeutralColor').val(defaultColors[attrSite].neutral);
+        
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
+        $('.Warning').show(100);
     });
 }
 

@@ -47,7 +47,7 @@ export const defaultSettings: Extension.Settings = {
         skinbid: {
             profit: "#0cb083",
             loss: "#ce0000",
-            neutral: "#000000"
+            neutral: "#FFFFFF"
         }
     }
 };
