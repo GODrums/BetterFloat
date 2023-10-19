@@ -818,7 +818,9 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                 runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
             }" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
 
-            const historyComponent = gridHistory?.querySelector('.history-component');
+
+            // has to be the first child as they are associated with the tab change listeners
+            const historyComponent = gridHistory?.querySelector('.history-component')?.firstElementChild;
             if (historyComponent) {
                 historyComponent.innerHTML = tableHTML;
             }
