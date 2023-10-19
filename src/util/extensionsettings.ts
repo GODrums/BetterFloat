@@ -84,6 +84,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.skbStickerPrices) {
             extensionSettings.skbStickerPrices = Boolean(data.skbStickerPrices);
         }
+        if (data.colors) {
+            extensionSettings.colors = data.colors as Extension.Settings['colors'];
+        }
     });
 
     // wait for settings to be loaded, takes about 1.5 seconds

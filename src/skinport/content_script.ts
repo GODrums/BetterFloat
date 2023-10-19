@@ -406,7 +406,7 @@ async function adjustItemPage(container: Element) {
         const newContainer = document.createElement('div');
         const saleTag = document.createElement('span');
         newContainer.className = 'ItemPage-discount betterfloat-discount-container';
-        newContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
+        newContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss})`;
         newContainer.style.transform = 'skewX(-15deg)';
         newContainer.style.borderRadius = '3px';
         newContainer.style.paddingTop = '2px';
@@ -755,7 +755,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
         const saleTag = <HTMLElement>discountContainer.firstChild;
         if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
-            discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? 'black' : difference < 0 ? 'green' : '#ce0000'})`;
+            discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss})`;
             saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
         }
     } else {

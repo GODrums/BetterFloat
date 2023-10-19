@@ -32,7 +32,20 @@ export namespace Extension {
         skbBuffDifference: boolean;
         skbListingAge: boolean;
         skbStickerPrices: boolean;
+        colors: IColorsSites
     };
+
+    export type IColors = {
+        profit: string;
+        loss: string;
+        neutral: string;
+    }
+
+    export type IColorsSites = {
+        csfloat: IColors;
+        skinport: IColors;
+        skinbid: IColors;
+    }
 
     export type CSGOTraderMapping = {
         [name: string]: {

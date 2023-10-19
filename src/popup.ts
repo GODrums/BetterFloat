@@ -1,4 +1,5 @@
-import { refreshPrices } from './background';
+import { defaultSettings, refreshPrices } from './background';
+import { Extension } from './@typings/ExtensionTypes';
 
 const permissionsButton = <HTMLButtonElement>document.getElementsByClassName('PermissionsButton')[0];
 
@@ -54,6 +55,55 @@ function addListeners() {
         $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
     });
+    // add listeners to all color pickers
+    $('input[type=color]').on('change', function () {
+        const attrName = $(this).attr('name');
+        if (attrName) {
+            const [site, color] = attrName.split('-');
+
+            chrome.storage.local.get((data) => {
+                if (data.colors && data.colors[site]) {
+                    data.colors[site][color] = $(this).val();
+                    chrome.storage.local.set({
+                        colors: data.colors
+                    });
+                }
+                else {
+                    chrome.storage.local.set({
+                        colors: {
+                            [site]: {
+                                [color]: $(this).val()
+                            }
+                        },
+                    });
+                }
+            });
+        }
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
+        $('.Warning').show(100);
+    });
+    // add listener to resetColors button
+    $('#resetColors').on('click', function () {
+        const defaultColors = defaultSettings.colors;
+        const attrSite = $(this).attr('site') as keyof Extension.IColorsSites;
+
+        if (!attrSite || !defaultColors[attrSite]) return;
+
+        chrome.storage.local.get((data) => {
+            if (data.colors) {
+                data.colors[attrSite] = defaultColors[attrSite];
+
+                chrome.storage.local.set({
+                    colors: data.colors,
+                });
+            }
+        });
+
+        $('#InputProfitColor').val(defaultColors[attrSite].profit);
+        $('#InputLossColor').val(defaultColors[attrSite].loss);
+        $('#InputNeutralColor').val(defaultColors[attrSite].neutral);
+    });
 }
 
 const host_permissions = chrome.runtime.getManifest().host_permissions;
@@ -99,6 +149,9 @@ function loadForSettings() {
     const showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
     const topButton = <HTMLInputElement>document.getElementById('InputTopButton');
     const useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
+    const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
+    const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
+    const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
 
     chrome.storage.local.get((data) => {
         if (data.enableCSFloat) {
@@ -148,6 +201,11 @@ function loadForSettings() {
         } else {
             useTabStates.checked = false;
         }
+        if (data.colors.csfloat) {
+            profitColor.value = data.colors.csfloat.profit;
+            lossColor.value = data.colors.csfloat.loss;
+            neutralColor.value = data.colors.csfloat.neutral;
+        }
     });
 }
 
@@ -158,6 +216,9 @@ function loadForSkinport() {
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
     const skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
+    const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
+    const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
+    const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
 
     chrome.storage.local.get((data) => {
         if (data.enableSkinport) {
@@ -199,6 +260,11 @@ function loadForSkinport() {
         } else {
             skinportFloatColoring.checked = false;
         }
+        if (data.colors.skinport) {
+            profitColor.value = data.colors.skinport.profit;
+            lossColor.value = data.colors.skinport.loss;
+            neutralColor.value = data.colors.skinport.neutral;
+        }
     });
 }
 
@@ -227,11 +293,14 @@ function loadForAbout() {
 }
 
 function loadForSkinbid() {
-    let skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
-    let skinbidPriceReference = <HTMLSelectElement>document.getElementById('SkinbidPriceReference');
-    let skinbidInputBuffDifference = <HTMLInputElement>document.getElementById('SkinbidInputBuffDifference');
-    let skinbidListingAge = <HTMLInputElement>document.getElementById('SkinbidListingAge');
-    let skinbidStickerPrices = <HTMLInputElement>document.getElementById('SkinbidStickerPrices');
+    const skinbidEnable = <HTMLInputElement>document.getElementById('InputSkinbid');
+    const skinbidPriceReference = <HTMLSelectElement>document.getElementById('SkinbidPriceReference');
+    const skinbidInputBuffDifference = <HTMLInputElement>document.getElementById('SkinbidInputBuffDifference');
+    const skinbidListingAge = <HTMLInputElement>document.getElementById('SkinbidListingAge');
+    const skinbidStickerPrices = <HTMLInputElement>document.getElementById('SkinbidStickerPrices');
+    const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
+    const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
+    const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
 
     chrome.storage.local.get((data) => {
         console.log(data);
@@ -257,6 +326,11 @@ function loadForSkinbid() {
             skinbidListingAge.checked = true;
         } else {
             skinbidListingAge.checked = false;
+        }
+        if (data.colors.skinbid) {
+            profitColor.value = data.colors.skinbid.profit;
+            lossColor.value = data.colors.skinbid.loss;
+            neutralColor.value = data.colors.skinbid.neutral;
         }
     });
 }
