@@ -139,3 +139,44 @@ button.betterfloat-top-button:hover {
     text-align: center!important;
     padding: 0px 10px;
 }
+
+.bf-fade {
+    font-weight: 600;
+    font-size: 20px;
+    transition: all .2s ease-in-out;
+    padding: 2px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 170%;
+}
+
+.bf-fade-tooltip {
+	/* Positioning the tooltip text */
+	position: absolute;
+	z-index: 1;
+    translate: 0 40px;
+
+    display: flex;
+    flex-direction: column;
+	visibility: hidden;
+	color: #fff;
+	text-align: center;
+    background-color: #5c5c5c;
+    padding: 5px 3px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 400;
+    width: 100px;
+
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.1s;
+}
+
+.bf-fade:hover .bf-fade-tooltip {
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.2s linear;
+}

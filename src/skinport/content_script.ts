@@ -386,12 +386,9 @@ async function adjustItemPage(container: Element) {
     newGroup.appendChild(buffButton);
     btnGroup.after(newGroup);
 
-    const tooltipLink = container.querySelector('.ItemPage-value .Tooltip-link');
-    if (!tooltipLink) return;
-    const currencySymbol = getCurrencySymbol(tooltipLink);
     const suggestedContainer = container.querySelector('.ItemPage-suggested');
     if (suggestedContainer) {
-        generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', true);
+        generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, item.currency, true);
     }
     // HERE
     const buffContainer = container.querySelector('.betterfloat-buff-container');
@@ -415,7 +412,7 @@ async function adjustItemPage(container: Element) {
         newContainer.style.paddingTop = '2px';
         saleTag.style.margin = '5px';
         saleTag.style.fontWeight = '700';
-        saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
+        saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
         newContainer.appendChild(saleTag);
         priceContainer.appendChild(newContainer);
     }
@@ -541,17 +538,21 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         return null;
     }
 
-    let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent ?? '';
+    let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim() ?? '';
+    let currency = '';
     if (priceText.split(' ').length > 1) {
-        priceText = priceText.split(' ')[0].replace('.', '').replace(',', '.');
+        let parts = priceText.replace(',', '').replace('.', '').split(' ');
+        priceText = String(Number(parts.filter((x) => !isNaN(+x))[0]) / 100);
+        currency = parts.filter((x) => isNaN(+x))[0];
     } else {
-        priceText = priceText.replace(',', '').substring(1);
+        currency = priceText.charAt(0);
+        priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
     }
     let price = Number(priceText) ?? 0;
 
     const type = container.querySelector(selector.title)?.textContent ?? '';
     const text = container.querySelector(selector.text)?.innerHTML ?? '';
-    // Skinport uses more detailed item types than Buff163, they are called cateogiories here
+    // Skinport uses more detailed item types than Buff163, they are called categories here
     const lastWord = text.split(' ').pop() ?? '';
     let category = '';
     if (lastWord == 'Knife' || lastWord == 'Gloves' || lastWord == 'Agent') {
@@ -612,6 +613,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         style: style,
         wear: Number(wearDiv?.innerHTML),
         wear_name: wear,
+        currency: currency,
     };
 }
 
@@ -704,25 +706,15 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     }
 }
 
-function getCurrencySymbol(tooltipLink: Element) {
-    let currencySymbol = tooltipLink.textContent?.charAt(0);
-    if (!isNaN(+(currencySymbol ?? ''))) {
-        // in some instances skinport displays the currency at the end of the price
-        currencySymbol = tooltipLink.textContent?.charAt(tooltipLink.textContent?.length - 1);
-    }
-    return currencySymbol;
-}
-
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
     await loadMapping();
     const { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     const buff_id = await getBuffMapping(buff_name);
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
-    const currencySymbol = getCurrencySymbol(tooltipLink);
     const priceDiv = container.querySelector('.ItemPreview-oldPrice');
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
-        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
     }
 
     const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
@@ -761,10 +753,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
             container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
         }
         const saleTag = <HTMLElement>discountContainer.firstChild;
-        if (item.price !== 0 && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+        if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
             discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss})`;
-            saleTag.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
+            saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
         }
     } else {
         if (container.querySelector('.sale-tag')) {
