@@ -65,15 +65,14 @@ function addListeners() {
                 if (data.colors && data.colors[site]) {
                     data.colors[site][color] = $(this).val();
                     chrome.storage.local.set({
-                        colors: data.colors
+                        colors: data.colors,
                     });
-                }
-                else {
+                } else {
                     chrome.storage.local.set({
                         colors: {
                             [site]: {
-                                [color]: $(this).val()
-                            }
+                                [color]: $(this).val(),
+                            },
                         },
                     });
                 }
@@ -103,7 +102,7 @@ function addListeners() {
         $('#InputProfitColor').val(defaultColors[attrSite].profit);
         $('#InputLossColor').val(defaultColors[attrSite].loss);
         $('#InputNeutralColor').val(defaultColors[attrSite].neutral);
-        
+
         $('.SideBar').css('height', '528px');
         $('.MainContent').css('height', '528px');
         $('.Warning').show(100);

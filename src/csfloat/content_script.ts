@@ -661,11 +661,11 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     const paintSeed = item.item.paint_seed;
     if (!itemName.includes('Fade')) return;
     const weapon = itemName.split(' | ')[0];
-    let fadePercentage: FadePercentage & {background: string} | null = null;
+    let fadePercentage: (FadePercentage & { background: string }) | null = null;
     if (itemName.includes('Amber Fade')) {
-        fadePercentage = {...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)'};
+        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
     } else if (itemName.includes('Acid Fade')) {
-        fadePercentage = {...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)'};
+        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
@@ -817,7 +817,6 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             }&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${
                 runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
             }" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
-
 
             // has to be the first child as they are associated with the tab change listeners
             const historyComponent = gridHistory?.querySelector('.history-component')?.firstElementChild;
