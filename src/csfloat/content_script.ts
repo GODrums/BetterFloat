@@ -808,8 +808,8 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     sale.url == 'No Link Available'
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
                           runtimePublicURL +
-                          '/ban-solid.svg" style="height: 20px; translate: 0px 3px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
-                        : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 3px;">camera_alt</i></a>'
+                          '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
+                        : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
                 }</td></tr>`;
             });
             let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"><a href="https://csbluegem.com/search?skin=${type}&pattern=${
