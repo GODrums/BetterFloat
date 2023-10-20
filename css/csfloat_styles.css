@@ -140,6 +140,10 @@ button.betterfloat-top-button:hover {
     padding: 0px 10px;
 }
 
+.bf-table thead {
+    height: 56px;
+}
+
 .bf-fade {
     font-weight: 600;
     font-size: 20px;

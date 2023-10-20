@@ -777,7 +777,6 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     }
 
     // offer new table with past sales
-    // this is done in html as it's way too much otherwise
     if (isPopout) {
         const gridHistory = document.querySelector('.grid-history');
         if (!gridHistory) return;
@@ -812,16 +811,44 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                         : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
                 }</td></tr>`;
             });
-            let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"><a href="https://csbluegem.com/search?skin=${type}&pattern=${
-                item.paint_seed
-            }&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${
-                runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
-            }" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
+            const outerContainer = document.createElement('div');
+            outerContainer.setAttribute('style', 'max-height: 260px;overflow: auto;background-color: #424242;');
+            const table = document.createElement('table');
+            table.className = 'mat-table cdk-table bf-table';
+            table.setAttribute('role', 'table');
+            table.setAttribute('style', 'width: 100%;');
+            const header = document.createElement('thead');
+            header.setAttribute('role', 'rowgroup');
+            let headerValues = ['Date', 'Price', 'Float Value', 'Paint Seed'];
+            for (let i = 0; i < headerValues.length; i++) {
+                const headerCell = document.createElement('th');
+                headerCell.setAttribute('role', 'columnheader');
+                headerCell.className = 'mat-header-cell cdk-header-cell ng-star-inserted';
+                headerCell.textContent = headerValues[i];
+                header.appendChild(headerCell);
+            }
+            const linkHeaderCell = document.createElement('th');
+            linkHeaderCell.setAttribute('role', 'columnheader');
+            linkHeaderCell.className = 'mat-header-cell cdk-header-cell ng-star-inserted';
+            const linkHeader = document.createElement('a');
+            linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=CNY&filter=date&sort=descending`);
+            linkHeader.setAttribute('target', '_blank');
+            const linkHeaderImage = document.createElement('img');
+            linkHeaderImage.setAttribute('src', runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
+            linkHeaderImage.setAttribute('style', 'height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);');
+            linkHeader.appendChild(linkHeaderImage);
+            linkHeaderCell.appendChild(linkHeader);
+            header.appendChild(linkHeaderCell);
+            table.appendChild(header);
+            const body = document.createElement('tbody');
+            body.innerHTML = tableBody;
+            table.appendChild(body);
+            outerContainer.appendChild(table);
 
-            // has to be the first child as they are associated with the tab change listeners
-            const historyComponent = gridHistory?.querySelector('.history-component')?.firstElementChild;
-            if (historyComponent) {
-                historyComponent.innerHTML = tableHTML;
+            const historyChild = gridHistory?.querySelector('.history-component')?.firstElementChild;
+            if (historyChild && historyChild.firstElementChild) {
+                historyChild.removeChild(historyChild.firstElementChild);
+                historyChild.appendChild(outerContainer);
             }
         });
         const gridHeading = gridHistory.querySelector('#header');
