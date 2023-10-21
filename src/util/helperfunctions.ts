@@ -8,6 +8,16 @@ export async function waitForElement(selector: string, interval = 200, maxTries 
     return tries < maxTries;
 }
 
+// truncats a number to a given amount of digits
+export function toTruncatedString(num: number, digits: number) {
+    let regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${digits}})?`);
+    if (regex) {
+        return num.toString().match(regex)![0] ?? '';
+    } else {
+        return num.toString();
+    }
+}
+
 /**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"

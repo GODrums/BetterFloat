@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, waitForElement } from '../util/helperfunctions';
+import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 
@@ -671,7 +671,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
         let fadeTooltip = document.createElement('div');
         fadeTooltip.className = 'bf-fade-tooltip';
         let fadePercentageSpan = document.createElement('span');
-        fadePercentageSpan.textContent = `Fade: ${fadePercentage.percentage.toFixed(5)}%`;
+        fadePercentageSpan.textContent = `Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%`;
         let fadeRankingSpan = document.createElement('span');
         fadeRankingSpan.textContent = `Rank #${fadePercentage.ranking}`;
         fadeTooltip.appendChild(fadePercentageSpan);
@@ -683,7 +683,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
         percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
         let fadeBadgePercentageSpan = document.createElement('span');
         fadeBadgePercentageSpan.style.color = '#00000080';
-        fadeBadgePercentageSpan.textContent = fadePercentage.percentage.toFixed(1);
+        fadeBadgePercentageSpan.textContent = toTruncatedString(fadePercentage.percentage, 1);
         percentageDiv.appendChild(fadeBadgePercentageSpan);
         fadeBadge.appendChild(percentageDiv);
         fadeBadge.appendChild(fadeTooltip);
