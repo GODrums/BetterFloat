@@ -811,7 +811,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
                           runtimePublicURL +
                           '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
-                        : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
+                        : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
                 }</td></tr>`;
             });
             const outerContainer = document.createElement('div');
