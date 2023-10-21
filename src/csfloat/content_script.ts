@@ -678,11 +678,14 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
         fadeTooltip.appendChild(fadeRankingSpan);
         let fadeBadge = document.createElement('div');
         fadeBadge.className = 'bf-fade';
-        fadeBadge.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
+        let percentageDiv = document.createElement('div');
+        percentageDiv.className = 'bf-fade-percentage';
+        percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
         let fadeBadgePercentageSpan = document.createElement('span');
         fadeBadgePercentageSpan.style.color = '#00000080';
         fadeBadgePercentageSpan.textContent = fadePercentage.percentage.toFixed(1);
-        fadeBadge.appendChild(fadeBadgePercentageSpan);
+        percentageDiv.appendChild(fadeBadgePercentageSpan);
+        fadeBadge.appendChild(percentageDiv);
         fadeBadge.appendChild(fadeTooltip);
         let badgeContainer = container.querySelector('.badge-container');
         if (!badgeContainer) {

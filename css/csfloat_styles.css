@@ -144,7 +144,7 @@ button.betterfloat-top-button:hover {
     height: 56px;
 }
 
-.bf-fade {
+.bf-fade .bf-fade-percentage {
     font-weight: 600;
     font-size: 20px;
     transition: all .2s ease-in-out;
@@ -160,7 +160,7 @@ button.betterfloat-top-button:hover {
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 1;
-    translate: 0 40px;
+    translate: -30px 15px;
 
     display: flex;
     flex-direction: column;
@@ -183,4 +183,8 @@ button.betterfloat-top-button:hover {
 	visibility: visible;
 	opacity: 1;
 	transition: visibility 0s, opacity 0.2s linear;
+}
+
+.bf-fade:hover .bf-fade-percentage {
+    transform: scale(1.8);
 }

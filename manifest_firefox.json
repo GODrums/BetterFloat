@@ -1,6 +1,9 @@
 {
     "name": "BetterFloat",
-    "author": "Rums",
+    "developer": {
+        "name": "Rums",
+        "url": "https://github.com/GODrums"
+    },
     "version": "1.10.1",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
