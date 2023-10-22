@@ -677,7 +677,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
         fadeTooltip.appendChild(fadePercentageSpan);
         fadeTooltip.appendChild(fadeRankingSpan);
         let fadeBadge = document.createElement('div');
-        fadeBadge.className = 'bf-fade';
+        fadeBadge.className = 'bf-fade bf-tooltip';
         let percentageDiv = document.createElement('div');
         percentageDiv.className = 'bf-fade-percentage';
         percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
@@ -760,6 +760,9 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         // get closest item float-wise that has a screenshot
         let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value) - Math.abs(b.float - item.float_value));
         if (sortedSales.length > 0 || patternElement?.screenshot) {
+            detailButtons.setAttribute('style', 'display: flex;');
+            const outerContainer = document.createElement('div');
+            outerContainer.className = 'bf-tooltip';
             const screenshotButton = document.createElement('a');
             screenshotButton.href = sortedSales[0]?.url ?? patternElement?.screenshot;
             screenshotButton.target = '_blank';
@@ -775,7 +778,14 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             iconSpan.appendChild(icon);
             iconButton.appendChild(iconSpan);
             screenshotButton.appendChild(iconButton);
-            detailButtons.insertBefore(screenshotButton, detailButtons.firstChild);
+            let fadeTooltip = document.createElement('div');
+            fadeTooltip.className = 'bf-fade-tooltip';
+            let fadePercentageSpan = document.createElement('span');
+            fadePercentageSpan.textContent = `Show Buff pattern screenshot`;
+            fadeTooltip.appendChild(fadePercentageSpan);
+            outerContainer.appendChild(screenshotButton);
+            outerContainer.appendChild(fadeTooltip);
+            detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
         }
     }
 
