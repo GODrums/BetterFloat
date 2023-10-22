@@ -156,7 +156,7 @@ button.betterfloat-top-button:hover {
     background-size: 170%;
 }
 
-.bf-fade-tooltip {
+.bf-tooltip-inner {
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 1;
@@ -179,7 +179,7 @@ button.betterfloat-top-button:hover {
 	transition: opacity 0.1s;
 }
 
-.bf-tooltip:hover .bf-fade-tooltip {
+.bf-tooltip:hover .bf-tooltip-inner {
 	visibility: visible;
 	opacity: 1;
 	transition: visibility 0s, opacity 0.2s linear;

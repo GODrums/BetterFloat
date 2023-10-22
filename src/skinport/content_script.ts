@@ -86,9 +86,9 @@ async function firstLaunch() {
             await adjustItem(item);
         }
     } else if (path.startsWith('/checkout/confirmation')) {
-        const cartContainer = document.querySelector('.CheckoutConfirmation-item');
-        if (cartContainer) {
-            await adjustItem(cartContainer);
+        const cartItems = Array.from(document.querySelectorAll('.CheckoutConfirmation-item'));
+        for (const item of cartItems) {
+            await adjustItem(item);
         }
     }
 }
@@ -439,6 +439,9 @@ async function adjustCart(container: Element) {
 async function adjustItem(container: Element) {
     const item = getSkinportItem(container, itemSelectors.preview);
     if (!item) return;
+
+    storeItem(container, item);
+
     const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
     if (filterItem) {
         console.log('[BetterFloat] Filtered item: ', item.name);
@@ -453,6 +456,11 @@ async function adjustItem(container: Element) {
     if (extensionSettings.spFloatColoring) {
         await addFloatColoring(container, item);
     }
+}
+
+function storeItem(container: Element, item: Skinport.Listing) {
+    container.className += ' sale-' + item.saleId;
+    container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
 // true: remove item, false: display item
@@ -605,6 +613,8 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     };
     const wearDiv = container.querySelector('.WearBar-value');
     const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
+
+    const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
     return {
         name: name,
         price: price,
@@ -616,6 +626,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         wear: Number(wearDiv?.innerHTML),
         wear_name: wear,
         currency: currency,
+        saleId: saleId,
     };
 }
 
@@ -784,7 +795,8 @@ function createBuffName(item: Skinport.Listing): string {
         item.type.includes('Key') ||
         item.type.includes('Pass') ||
         item.type.includes('Pin') ||
-        item.type.includes('Tool')
+        item.type.includes('Tool') ||
+        item.type.includes('Tag')
     ) {
         full_name = item.name;
     } else if (item.text.includes('Graffiti')) {

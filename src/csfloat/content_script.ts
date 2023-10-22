@@ -669,7 +669,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
-        fadeTooltip.className = 'bf-fade-tooltip';
+        fadeTooltip.className = 'bf-tooltip-inner';
         let fadePercentageSpan = document.createElement('span');
         fadePercentageSpan.textContent = `Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%`;
         let fadeRankingSpan = document.createElement('span');
@@ -778,13 +778,13 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             iconSpan.appendChild(icon);
             iconButton.appendChild(iconSpan);
             screenshotButton.appendChild(iconButton);
-            let fadeTooltip = document.createElement('div');
-            fadeTooltip.className = 'bf-fade-tooltip';
-            let fadePercentageSpan = document.createElement('span');
-            fadePercentageSpan.textContent = `Show Buff pattern screenshot`;
-            fadeTooltip.appendChild(fadePercentageSpan);
+            let tooltip = document.createElement('div');
+            tooltip.className = 'bf-tooltip-inner';
+            let tooltipSpan = document.createElement('span');
+            tooltipSpan.textContent = `Show Buff pattern screenshot`;
+            tooltip.appendChild(tooltipSpan);
             outerContainer.appendChild(screenshotButton);
-            outerContainer.appendChild(fadeTooltip);
+            outerContainer.appendChild(tooltip);
             detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
         }
     }

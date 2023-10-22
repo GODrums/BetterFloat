@@ -12,6 +12,7 @@ import {
     loadMapping,
     cacheSkinbidUserCurrency,
 } from './mappinghandler';
+import { handleSold } from './skinport/websockethandler';
 
 type StallData = {
     listings: CSFloat.ListingData[];
@@ -40,7 +41,10 @@ export function activateHandler() {
     document.addEventListener('BetterFloat_WEBSOCKET_EVENT', function (e) {
         const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
         if (eventData.eventType == 'listed') {
-            // console.debug('[BetterFloat] Received data from websocket:', eventData);
+            // console.debug('[BetterFloat] Received data from websocket "listed":', eventData);
+        } else if (eventData.eventType == 'sold') {
+            // console.debug('[BetterFloat] Received data from websocket "sold":', eventData);
+            handleSold(eventData.data);
         }
     });
 
