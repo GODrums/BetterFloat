@@ -3,7 +3,7 @@ import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
-import { handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
+import { getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 
@@ -505,22 +505,8 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 async function addFloatColoring(container: Element, item: Skinport.Listing) {
     const floatContainer = container.querySelector('.WearBar-value');
     if (!floatContainer) return;
-    let color = '';
-    const w = item.wear;
-    if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
-        if (w === 0) {
-            color = 'springgreen';
-        } else {
-            color = 'turquoise';
-        }
-    } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-        if (w === 0.999) {
-            color = 'red';
-        } else {
-            color = 'indianred';
-        }
-    }
-    (<HTMLElement>floatContainer).style.color = color;
+
+    (<HTMLElement>floatContainer).style.color = getFloatColoring(item.wear);
 }
 
 const itemSelectors = {

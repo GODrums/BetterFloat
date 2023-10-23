@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
+import { calculateTime, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 
@@ -663,23 +663,7 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
 
     elements.forEach((element) => {
         if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
-            const w = item.item.float_value;
-            let color = '';
-
-            if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
-                if (w === 0) {
-                    color = 'springgreen';
-                } else {
-                    color = 'turquoise';
-                }
-            } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-                if (w === 0.999) {
-                    color = 'red';
-                } else {
-                    color = 'indianred';
-                }
-            }
-            (element as any).style.color = color;
+            (<HTMLElement>element).style.color = getFloatColoring(item.item.float_value);
         }
     })
 }
@@ -838,19 +822,16 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             // all of this should at some point be done in a safer way
             let tableBody = '';
             pastSales.forEach((sale) => {
-                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
-                    item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
-                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
-                    sale.price * 0.14
-                ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
-                    sale.pattern
-                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
-                    sale.url == 'No Link Available'
+                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
+                    }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
+                        sale.price * 0.14
+                    ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.pattern
+                    }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${sale.url == 'No Link Available'
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                          runtimePublicURL +
-                          '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
+                        runtimePublicURL +
+                        '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
                         : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
-                }</td></tr>`;
+                    }</td></tr>`;
             });
             const outerContainer = document.createElement('div');
             outerContainer.setAttribute('style', 'max-height: 260px;overflow: auto;background-color: #424242;');

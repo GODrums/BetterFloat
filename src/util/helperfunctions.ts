@@ -83,3 +83,12 @@ export function handleSpecialStickerNames(name: string): string {
     }
     return name;
 }
+
+export function getFloatColoring(w: number): string {
+    if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
+        return w === 0 ? 'springgreen' : 'turquoise';
+    } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
+        return w === 0.999 ? 'red' : 'indianred';
+    }
+    return '';
+}
