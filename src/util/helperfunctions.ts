@@ -23,7 +23,7 @@ export function toTruncatedString(num: number, digits: number) {
  * @param text original string
  * @param startChar last character before the substring
  * @param endChar first character after the substring
- * @returns 
+ * @returns
  */
 export function cutSubstring(text: string, startChar: string, endChar: string) {
     const start = text.indexOf(startChar);
@@ -105,12 +105,17 @@ export function handleSpecialStickerNames(name: string): string {
  * @param colors color values for good, bad, perfect and worst
  * @returns
  */
-export function getFloatColoring(w: number, l = 0, h = 1, colors = {
-    good: 'turquoise',
-    bad: 'indianred',
-    perfect: 'springgreen',
-    worst: 'orangered',
-}): string {
+export function getFloatColoring(
+    w: number,
+    l = 0,
+    h = 1,
+    colors = {
+        good: 'turquoise',
+        bad: 'indianred',
+        perfect: 'springgreen',
+        worst: 'orangered',
+    }
+): string {
     // use relative deviation to determine color. 0.2% / 1.3% are used as thresholds
     if (l > 0) {
         const deviation = Math.abs((l - w) / l);
@@ -118,7 +123,7 @@ export function getFloatColoring(w: number, l = 0, h = 1, colors = {
             return colors.perfect;
         } else if (deviation < 0.013) {
             return colors.good;
-        } 
+        }
     }
     if (h < 1) {
         const deviation = (h - w) / h;

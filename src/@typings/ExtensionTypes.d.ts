@@ -46,7 +46,7 @@ export namespace Extension {
         skinport: IColors;
         skinbid: IColors;
     };
-    
+
     export type IFloatColoringSites = {
         csfloat: boolean;
         skinport: boolean;
