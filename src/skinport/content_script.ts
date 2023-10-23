@@ -86,9 +86,9 @@ async function firstLaunch() {
             await adjustItem(item);
         }
     } else if (path.startsWith('/checkout/confirmation')) {
-        const cartContainer = document.querySelector('.CheckoutConfirmation-item');
-        if (cartContainer) {
-            await adjustItem(cartContainer);
+        const cartItems = Array.from(document.querySelectorAll('.CheckoutConfirmation-item'));
+        for (const item of cartItems) {
+            await adjustItem(item);
         }
     }
 }
@@ -406,7 +406,9 @@ async function adjustItemPage(container: Element) {
         const newContainer = document.createElement('div');
         const saleTag = document.createElement('span');
         newContainer.className = 'ItemPage-discount betterfloat-discount-container';
-        newContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss})`;
+        newContainer.style.background = `linear-gradient(135deg,#0073d5,${
+            difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss
+        })`;
         newContainer.style.transform = 'skewX(-15deg)';
         newContainer.style.borderRadius = '3px';
         newContainer.style.paddingTop = '2px';
@@ -437,6 +439,9 @@ async function adjustCart(container: Element) {
 async function adjustItem(container: Element) {
     const item = getSkinportItem(container, itemSelectors.preview);
     if (!item) return;
+
+    storeItem(container, item);
+
     const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
     if (filterItem) {
         console.log('[BetterFloat] Filtered item: ', item.name);
@@ -451,6 +456,11 @@ async function adjustItem(container: Element) {
     if (extensionSettings.spFloatColoring) {
         await addFloatColoring(container, item);
     }
+}
+
+function storeItem(container: Element, item: Skinport.Listing) {
+    container.className += ' sale-' + item.saleId;
+    container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
 // true: remove item, false: display item
@@ -500,13 +510,15 @@ async function addFloatColoring(container: Element, item: Skinport.Listing) {
     if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
         if (w === 0) {
             color = 'springgreen';
+        } else {
+            color = 'turquoise';
         }
-        color = 'turquoise';
     } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
         if (w === 0.999) {
             color = 'red';
+        } else {
+            color = 'indianred';
         }
-        color = 'indianred';
     }
     (<HTMLElement>floatContainer).style.color = color;
 }
@@ -603,6 +615,8 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     };
     const wearDiv = container.querySelector('.WearBar-value');
     const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
+
+    const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
     return {
         name: name,
         price: price,
@@ -614,6 +628,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         wear: Number(wearDiv?.innerHTML),
         wear_name: wear,
         currency: currency,
+        saleId: saleId,
     };
 }
 
@@ -755,7 +770,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
         const saleTag = <HTMLElement>discountContainer.firstChild;
         if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             saleTag.className = 'sale-tag betterfloat-sale-tag';
-            discountContainer.style.background = `linear-gradient(135deg,#0073d5,${difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss})`;
+            discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
+                difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss
+            })`;
             saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
         }
     } else {
@@ -780,7 +797,8 @@ function createBuffName(item: Skinport.Listing): string {
         item.type.includes('Key') ||
         item.type.includes('Pass') ||
         item.type.includes('Pin') ||
-        item.type.includes('Tool')
+        item.type.includes('Tool') ||
+        item.type.includes('Tag')
     ) {
         full_name = item.name;
     } else if (item.text.includes('Graffiti')) {

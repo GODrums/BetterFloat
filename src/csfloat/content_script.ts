@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, waitForElement } from '../util/helperfunctions';
+import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 
@@ -689,28 +689,31 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     const paintSeed = item.item.paint_seed;
     if (!itemName.includes('Fade')) return;
     const weapon = itemName.split(' | ')[0];
-    let fadePercentage: FadePercentage & {background: string} | null = null;
+    let fadePercentage: (FadePercentage & { background: string }) | null = null;
     if (itemName.includes('Amber Fade')) {
-        fadePercentage = {...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)'};
+        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
     } else if (itemName.includes('Acid Fade')) {
-        fadePercentage = {...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)'};
+        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
-        fadeTooltip.className = 'bf-fade-tooltip';
+        fadeTooltip.className = 'bf-tooltip-inner';
         let fadePercentageSpan = document.createElement('span');
-        fadePercentageSpan.textContent = `Fade: ${fadePercentage.percentage.toFixed(5)}%`;
+        fadePercentageSpan.textContent = `Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%`;
         let fadeRankingSpan = document.createElement('span');
         fadeRankingSpan.textContent = `Rank #${fadePercentage.ranking}`;
         fadeTooltip.appendChild(fadePercentageSpan);
         fadeTooltip.appendChild(fadeRankingSpan);
         let fadeBadge = document.createElement('div');
-        fadeBadge.className = 'bf-fade';
-        fadeBadge.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
+        fadeBadge.className = 'bf-fade bf-tooltip';
+        let percentageDiv = document.createElement('div');
+        percentageDiv.className = 'bf-fade-percentage';
+        percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
         let fadeBadgePercentageSpan = document.createElement('span');
         fadeBadgePercentageSpan.style.color = '#00000080';
-        fadeBadgePercentageSpan.textContent = fadePercentage.percentage.toFixed(1);
-        fadeBadge.appendChild(fadeBadgePercentageSpan);
+        fadeBadgePercentageSpan.textContent = toTruncatedString(fadePercentage.percentage, 1);
+        percentageDiv.appendChild(fadeBadgePercentageSpan);
+        fadeBadge.appendChild(percentageDiv);
         fadeBadge.appendChild(fadeTooltip);
         let badgeContainer = container.querySelector('.badge-container');
         if (!badgeContainer) {
@@ -768,12 +771,12 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     const gemContainer = document.createElement('div');
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
     const gemImage = document.createElement('img');
-    gemImage.setAttribute('src', runtimePublicURL + '/icon-diamond.svg');
-    gemImage.setAttribute('style', 'height: 20px; margin-right: 5px; margin-top: 1px;');
+    gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
+    gemImage.setAttribute('style', 'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);');
     gemContainer.appendChild(gemImage);
     if (patternElement) {
         const gemValue = document.createElement('span');
-        gemValue.style.color = 'cyan';
+        gemValue.style.color = 'deepskyblue';
         gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
         gemContainer.appendChild(gemValue);
     }
@@ -785,6 +788,9 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         // get closest item float-wise that has a screenshot
         let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value) - Math.abs(b.float - item.float_value));
         if (sortedSales.length > 0 || patternElement?.screenshot) {
+            detailButtons.setAttribute('style', 'display: flex;');
+            const outerContainer = document.createElement('div');
+            outerContainer.className = 'bf-tooltip';
             const screenshotButton = document.createElement('a');
             screenshotButton.href = sortedSales[0]?.url ?? patternElement?.screenshot;
             screenshotButton.target = '_blank';
@@ -800,12 +806,18 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             iconSpan.appendChild(icon);
             iconButton.appendChild(iconSpan);
             screenshotButton.appendChild(iconButton);
-            detailButtons.insertBefore(screenshotButton, detailButtons.firstChild);
+            let tooltip = document.createElement('div');
+            tooltip.className = 'bf-tooltip-inner';
+            let tooltipSpan = document.createElement('span');
+            tooltipSpan.textContent = `Show Buff pattern screenshot`;
+            tooltip.appendChild(tooltipSpan);
+            outerContainer.appendChild(screenshotButton);
+            outerContainer.appendChild(tooltip);
+            detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
         }
     }
 
     // offer new table with past sales
-    // this is done in html as it's way too much otherwise
     if (isPopout) {
         const gridHistory = document.querySelector('.grid-history');
         if (!gridHistory) return;
@@ -836,21 +848,48 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     sale.url == 'No Link Available'
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
                           runtimePublicURL +
-                          '/ban-solid.svg" style="height: 20px; translate: 0px 3px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
-                        : 'href=' + sale.url + 'target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 3px;">camera_alt</i></a>'
+                          '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
+                        : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
                 }</td></tr>`;
             });
-            let tableHTML = `<div style="max-height: 260px;overflow: auto;background-color: #424242;"><table class="mat-table cdk-table bf-table" role="table" style="width: 100%;"><thead role="rowgroup"><tr class="mat-header-row cdk-header-row ng-star-inserted"><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Date</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Price</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Float Value</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted">Paint Seed</th><th role="columnheader" mat-header-cell class="mat-header-cell cdk-header-cell ng-star-inserted"><a href="https://csbluegem.com/search?skin=${type}&pattern=${
-                item.paint_seed
-            }&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${
-                runtimePublicURL + '/arrow-up-right-from-square-solid.svg'
-            }" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></th></tr></thead><tbody>${tableBody}</tbody></table></div>`;
+            const outerContainer = document.createElement('div');
+            outerContainer.setAttribute('style', 'max-height: 260px;overflow: auto;background-color: #424242;');
+            const table = document.createElement('table');
+            table.className = 'mat-table cdk-table bf-table';
+            table.setAttribute('role', 'table');
+            table.setAttribute('style', 'width: 100%;');
+            const header = document.createElement('thead');
+            header.setAttribute('role', 'rowgroup');
+            let headerValues = ['Date', 'Price', 'Float Value', 'Paint Seed'];
+            for (let i = 0; i < headerValues.length; i++) {
+                const headerCell = document.createElement('th');
+                headerCell.setAttribute('role', 'columnheader');
+                headerCell.className = 'mat-header-cell cdk-header-cell ng-star-inserted';
+                headerCell.textContent = headerValues[i];
+                header.appendChild(headerCell);
+            }
+            const linkHeaderCell = document.createElement('th');
+            linkHeaderCell.setAttribute('role', 'columnheader');
+            linkHeaderCell.className = 'mat-header-cell cdk-header-cell ng-star-inserted';
+            const linkHeader = document.createElement('a');
+            linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=CNY&filter=date&sort=descending`);
+            linkHeader.setAttribute('target', '_blank');
+            const linkHeaderImage = document.createElement('img');
+            linkHeaderImage.setAttribute('src', runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
+            linkHeaderImage.setAttribute('style', 'height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);');
+            linkHeader.appendChild(linkHeaderImage);
+            linkHeaderCell.appendChild(linkHeader);
+            header.appendChild(linkHeaderCell);
+            table.appendChild(header);
+            const body = document.createElement('tbody');
+            body.innerHTML = tableBody;
+            table.appendChild(body);
+            outerContainer.appendChild(table);
 
-
-            // has to be the first child as they are associated with the tab change listeners
-            const historyComponent = gridHistory?.querySelector('.history-component')?.firstElementChild;
-            if (historyComponent) {
-                historyComponent.innerHTML = tableHTML;
+            const historyChild = gridHistory?.querySelector('.history-component')?.firstElementChild;
+            if (historyChild && historyChild.firstElementChild) {
+                historyChild.removeChild(historyChild.firstElementChild);
+                historyChild.appendChild(outerContainer);
             }
         });
         const gridHeading = gridHistory.querySelector('#header');

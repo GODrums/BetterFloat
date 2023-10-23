@@ -140,7 +140,11 @@ button.betterfloat-top-button:hover {
     padding: 0px 10px;
 }
 
-.bf-fade {
+.bf-table thead {
+    height: 56px;
+}
+
+.bf-fade .bf-fade-percentage {
     font-weight: 600;
     font-size: 20px;
     transition: all .2s ease-in-out;
@@ -152,11 +156,11 @@ button.betterfloat-top-button:hover {
     background-size: 170%;
 }
 
-.bf-fade-tooltip {
+.bf-tooltip-inner {
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 1;
-    translate: 0 40px;
+    translate: -30px 15px;
 
     display: flex;
     flex-direction: column;
@@ -175,8 +179,12 @@ button.betterfloat-top-button:hover {
 	transition: opacity 0.1s;
 }
 
-.bf-fade:hover .bf-fade-tooltip {
+.bf-tooltip:hover .bf-tooltip-inner {
 	visibility: visible;
 	opacity: 1;
 	transition: visibility 0s, opacity 0.2s linear;
+}
+
+.bf-tooltip:hover .bf-fade-percentage {
+    transform: scale(1.8);
 }

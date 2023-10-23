@@ -298,7 +298,8 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
                 discountContainer = discountSpan;
             }
             discountContainer.className += ' betterfloat-sale-tag';
-            discountContainer.style.color = difference == 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
+            discountContainer.style.color =
+                difference == 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
             discountContainer.style.fontWeight = '400';
             discountContainer.style.fontSize = '14px';
             discountContainer.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);

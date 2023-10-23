@@ -1,7 +1,10 @@
 {
     "name": "BetterFloat",
-    "author": "Rums",
-    "version": "1.10.1",
+    "developer": {
+        "name": "Rums",
+        "url": "https://github.com/GODrums"
+    },
+    "version": "1.10.3",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
@@ -53,11 +56,11 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
-            "resources": ["js/inject.js", "public/buff_favicon.png"]
+            "resources": ["js/inject.js", "public/buff_favicon.png", "public/ban-solid.svg"]
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/arrow-up-right-from-square-solid.svg", "public/gear-solid.svg", "public/icon-diamond.svg"]
+            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/arrow-up-right-from-square-solid.svg", "public/gear-solid.svg", "public/gem-shop.svg"]
         },
         {
             "matches": ["*://*.skinport.com/*"],

@@ -35,21 +35,21 @@ export const defaultSettings: Extension.Settings = {
     skbStickerPrices: true,
     colors: {
         csfloat: {
-            profit: "#008000",
-            loss: "#ce0000",
-            neutral: "#708090"
+            profit: '#008000',
+            loss: '#ce0000',
+            neutral: '#708090',
         },
         skinport: {
-            profit: "#008000",
-            loss: "#ce0000",
-            neutral: "#000000"
+            profit: '#008000',
+            loss: '#ce0000',
+            neutral: '#000000',
         },
         skinbid: {
-            profit: "#0cb083",
-            loss: "#ce0000",
-            neutral: "#000000"
-        }
-    }
+            profit: '#0cb083',
+            loss: '#ce0000',
+            neutral: '#FFFFFF',
+        },
+    },
 };
 
 // Check whether new version is installed
