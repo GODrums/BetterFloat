@@ -20,7 +20,6 @@ export namespace Extension {
         spBuffDifference: boolean;
         skinportRates: 'skinport' | 'real';
         spBuffLink: 'action' | 'text';
-        spFloatColoring: boolean;
         spFilter: {
             priceLow: number;
             priceHigh: number;
@@ -32,6 +31,7 @@ export namespace Extension {
         skbBuffDifference: boolean;
         skbListingAge: boolean;
         skbStickerPrices: boolean;
+        floatColoring: IFloatColoringSites;
         colors: IColorsSites;
     };
 
@@ -45,6 +45,12 @@ export namespace Extension {
         csfloat: IColors;
         skinport: IColors;
         skinbid: IColors;
+    };
+    
+    export type IFloatColoringSites = {
+        csfloat: boolean;
+        skinport: boolean;
+        skinbid: boolean;
     };
 
     export type CSGOTraderMapping = {

@@ -21,7 +21,6 @@ export const defaultSettings: Extension.Settings = {
     spSteamPrice: false,
     spBuffDifference: true,
     spBuffLink: 'action',
-    spFloatColoring: true,
     spFilter: {
         priceLow: 0,
         priceHigh: 999999,
@@ -33,6 +32,11 @@ export const defaultSettings: Extension.Settings = {
     skbBuffDifference: true,
     skbListingAge: true,
     skbStickerPrices: true,
+    floatColoring: {
+        csfloat: true,
+        skinport: true,
+        skinbid: false,
+    },
     colors: {
         csfloat: {
             profit: '#008000',

@@ -633,8 +633,10 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.csBlueGem) {
             await caseHardenedDetection(container, cachedItem, false);
         }
+        if (extensionSettings.floatColoring.csfloat) {
+            await addFloatColoring(container, cachedItem);
+        }
         await addFadePercentages(container, cachedItem);
-        await addFloatColoring(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {

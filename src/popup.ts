@@ -35,9 +35,28 @@ function addListeners() {
     $('input[type=checkbox]').on('change', function () {
         const attrName = $(this).attr('name');
         if (attrName) {
-            chrome.storage.local.set({
-                [attrName]: $(this).prop('checked'),
-            });
+            const [site, key] = attrName.split('-');
+            
+            if (site) {
+                chrome.storage.local.get([key]).then((data) => {
+                    if (data[key] && data[key][site]) {
+                        data[key][site] = $(this).prop('checked');
+                        chrome.storage.local.set({
+                            [key]: data[key],
+                        });
+                    } else {
+                        chrome.storage.local.set({
+                            [key]: {
+                                [site]: $(this).prop('checked'),
+                            },
+                        });
+                    }
+                });
+            } else {
+                chrome.storage.local.set({
+                    [attrName]: $(this).prop('checked'),
+                });
+            }
         }
         $('.SideBar').css('height', '528px');
         $('.MainContent').css('height', '528px');
@@ -150,6 +169,7 @@ function loadForSettings() {
     const listingAge = <HTMLSelectElement>document.getElementById('DropDownListingAge');
     const buffDifference = <HTMLInputElement>document.getElementById('InputBuffDifference');
     const showBuffPercentageDifference = <HTMLInputElement>document.getElementById('InputBuffPercentageDifference');
+    const floatColoring = <HTMLInputElement>document.getElementById('FloatColoring');
     const topButton = <HTMLInputElement>document.getElementById('InputTopButton');
     const useTabStates = <HTMLInputElement>document.getElementById('InputTabStates');
     const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
@@ -204,6 +224,11 @@ function loadForSettings() {
         } else {
             useTabStates.checked = false;
         }
+        if (data.floatColoring.csfloat) {
+            floatColoring.checked = true;
+        } else {
+            floatColoring.checked = false;
+        }
         if (data.colors.csfloat) {
             profitColor.value = data.colors.csfloat.profit;
             lossColor.value = data.colors.csfloat.loss;
@@ -218,7 +243,7 @@ function loadForSkinport() {
     const stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
-    const skinportFloatColoring = <HTMLInputElement>document.getElementById('SkinportFloatColoring');
+    const floatColoring = <HTMLInputElement>document.getElementById('FloatColoring');
     const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
     const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
     const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
@@ -258,10 +283,10 @@ function loadForSkinport() {
         if (data.spBuffLink) {
             (<HTMLInputElement>document.getElementById('SkinportBuffLink')).value = data.spBuffLink;
         }
-        if (data.spFloatColoring) {
-            skinportFloatColoring.checked = true;
+        if (data.floatColoring.skinport) {
+            floatColoring.checked = true;
         } else {
-            skinportFloatColoring.checked = false;
+            floatColoring.checked = false;
         }
         if (data.colors.skinport) {
             profitColor.value = data.colors.skinport.profit;

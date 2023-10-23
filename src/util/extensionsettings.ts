@@ -63,9 +63,6 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.spBuffLink) {
             extensionSettings.spBuffLink = data.spBuffLink as Extension.Settings['spBuffLink'];
         }
-        if (data.spFloatColoring) {
-            extensionSettings.spFloatColoring = Boolean(data.spFloatColoring);
-        }
         if (data.spFilter) {
             extensionSettings.spFilter = data.spFilter as Extension.Settings['spFilter'];
         }
@@ -83,6 +80,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         }
         if (data.skbStickerPrices) {
             extensionSettings.skbStickerPrices = Boolean(data.skbStickerPrices);
+        }
+        if (data.floatColoring) {
+            extensionSettings.floatColoring = data.floatColoring as Extension.Settings['floatColoring'];
         }
         if (data.colors) {
             extensionSettings.colors = data.colors as Extension.Settings['colors'];

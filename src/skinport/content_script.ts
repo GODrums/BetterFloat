@@ -453,7 +453,7 @@ async function adjustItem(container: Element) {
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
     }
-    if (extensionSettings.spFloatColoring) {
+    if (extensionSettings.floatColoring.skinport) {
         await addFloatColoring(container, item);
     }
 }
