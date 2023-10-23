@@ -689,11 +689,11 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     const paintSeed = item.item.paint_seed;
     if (!itemName.includes('Fade')) return;
     const weapon = itemName.split(' | ')[0];
-    let fadePercentage: FadePercentage & { background: string } | null = null;
+    let fadePercentage: FadePercentage & {background: string} | null = null;
     if (itemName.includes('Amber Fade')) {
-        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
+        fadePercentage = {...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)'};
     } else if (itemName.includes('Acid Fade')) {
-        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
+        fadePercentage = {...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)'};
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
