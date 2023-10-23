@@ -36,21 +36,14 @@ function addListeners() {
         const attrName = $(this).attr('name');
         if (attrName) {
             const [site, key] = attrName.split('-');
-            
-            if (site) {
+
+            if (key) {
                 chrome.storage.local.get([key]).then((data) => {
-                    if (data[key] && data[key][site]) {
-                        data[key][site] = $(this).prop('checked');
-                        chrome.storage.local.set({
-                            [key]: data[key],
-                        });
-                    } else {
-                        chrome.storage.local.set({
-                            [key]: {
-                                [site]: $(this).prop('checked'),
-                            },
-                        });
-                    }
+                    let oldData = data[key];
+                    oldData[site] = $(this).prop('checked');
+                    chrome.storage.local.set({
+                        [key]: oldData,
+                    });
                 });
             } else {
                 chrome.storage.local.set({
