@@ -49,7 +49,7 @@
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/arrow-up-right-from-square-solid.svg", "public/gear-solid.svg", "public/icon-diamond.svg"]
+            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/arrow-up-right-from-square-solid.svg", "public/gear-solid.svg", "public/gem-shop.svg"]
         },
         {
             "matches": ["*://*.skinport.com/*"],

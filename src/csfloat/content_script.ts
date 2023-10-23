@@ -743,12 +743,12 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     const gemContainer = document.createElement('div');
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
     const gemImage = document.createElement('img');
-    gemImage.setAttribute('src', runtimePublicURL + '/icon-diamond.svg');
-    gemImage.setAttribute('style', 'height: 20px; margin-right: 5px; margin-top: 1px;');
+    gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
+    gemImage.setAttribute('style', 'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);');
     gemContainer.appendChild(gemImage);
     if (patternElement) {
         const gemValue = document.createElement('span');
-        gemValue.style.color = 'cyan';
+        gemValue.style.color = 'deepskyblue';
         gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
         gemContainer.appendChild(gemValue);
     }
