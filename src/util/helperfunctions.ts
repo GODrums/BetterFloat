@@ -19,6 +19,19 @@ export function toTruncatedString(num: number, digits: number) {
 }
 
 /**
+ * Cut a substring from a string
+ * @param text original string
+ * @param startChar last character before the substring
+ * @param endChar first character after the substring
+ * @returns 
+ */
+export function cutSubstring(text: string, startChar: string, endChar: string) {
+    const start = text.indexOf(startChar);
+    const end = text.indexOf(endChar);
+    return text.substring(start + 1, end);
+}
+
+/**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
  */
@@ -84,11 +97,41 @@ export function handleSpecialStickerNames(name: string): string {
     return name;
 }
 
-export function getFloatColoring(w: number): string {
+/**
+ * Get a coloring for the float value of an item
+ * @param w wear value
+ * @param l low: lower float bound
+ * @param h high: upper float bound
+ * @param colors color values for good, bad, perfect and worst
+ * @returns
+ */
+export function getFloatColoring(w: number, l = 0, h = 1, colors = {
+    good: 'turquoise',
+    bad: 'indianred',
+    perfect: 'springgreen',
+    worst: 'orangered',
+}): string {
+    // use relative deviation to determine color. 0.2% / 1.3% are used as thresholds
+    if (l > 0) {
+        const deviation = Math.abs((l - w) / l);
+        if (deviation < 0.002) {
+            return colors.perfect;
+        } else if (deviation < 0.013) {
+            return colors.good;
+        } 
+    }
+    if (h < 1) {
+        const deviation = (h - w) / h;
+        if (deviation < 0.002) {
+            return colors.worst;
+        } else if (deviation < 0.013) {
+            return colors.bad;
+        }
+    }
     if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
-        return w === 0 ? 'springgreen' : 'turquoise';
+        return w === 0 ? colors.perfect : colors.good;
     } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-        return w === 0.999 ? 'red' : 'indianred';
+        return w === 0.999 ? colors.worst : colors.bad;
     }
     return '';
 }

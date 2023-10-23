@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
+import { calculateTime, cutSubstring, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 
@@ -662,12 +662,23 @@ async function adjustItem(container: Element, isPopout = false) {
 
 async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
     const elements = container.querySelectorAll('span.mat-tooltip-trigger.ng-star-inserted');
+    const rangeMarker = container.querySelectorAll('.float-range-marker');
+    let [lowerLimit, upperLimit] = [0, 1];
+
+    rangeMarker.forEach((marker) => {
+        const limit = Number(cutSubstring(marker.getAttribute('style')!, '(', '%')) / 100;
+        if (limit > item.item.float_value) {
+            upperLimit = limit;
+        } else if (limit < item.item.float_value) {
+            lowerLimit = limit;
+        }
+    });
 
     elements.forEach((element) => {
         if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
-            (<HTMLElement>element).style.color = getFloatColoring(item.item.float_value);
+            (<HTMLElement>element).style.color = getFloatColoring(item.item.float_value, lowerLimit, upperLimit);
         }
-    })
+    });
 }
 
 async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
@@ -758,7 +769,10 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
     const gemImage = document.createElement('img');
     gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
-    gemImage.setAttribute('style', 'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);');
+    gemImage.setAttribute(
+        'style',
+        'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);'
+    );
     gemContainer.appendChild(gemImage);
     if (patternElement) {
         const gemValue = document.createElement('span');
@@ -824,16 +838,19 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             // all of this should at some point be done in a safer way
             let tableBody = '';
             pastSales.forEach((sale) => {
-                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
-                    }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
-                        sale.price * 0.14
-                    ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.pattern
-                    }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${sale.url == 'No Link Available'
+                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
+                    item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
+                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
+                    sale.price * 0.14
+                ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                    sale.pattern
+                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
+                    sale.url == 'No Link Available'
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                        runtimePublicURL +
-                        '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
+                          runtimePublicURL +
+                          '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
                         : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
-                    }</td></tr>`;
+                }</td></tr>`;
             });
             const outerContainer = document.createElement('div');
             outerContainer.setAttribute('style', 'max-height: 260px;overflow: auto;background-color: #424242;');
