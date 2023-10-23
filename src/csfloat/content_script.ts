@@ -610,64 +610,6 @@ async function adjustSalesTableRow(container: Element) {
     }
 }
 
-const floatValues = {
-    'Factory New': {
-        min: 0.00,
-        max: 0.07,
-    },
-    'Minimal Wear': {
-        min: 0.07,
-        max: 0.15,
-    },
-    'Field-Tested': {
-        min: 0.15,
-        max: 0.38,
-    },
-    'Well-Worn': {
-        min: 0.38,
-        max: 0.45,
-    },
-    'Battle-Scarred': {
-        min: 0.45,
-        max: 1.00,
-    }
-}
-
-async function colorFloatValue(container: Element, item: CSFloat.ListingData) {
-    console.log('[BetterFloat] Color float value');
-    console.log('[BetterFloat] Item: ', item);
-    console.log('[BetterFloat] Container: ', container);
-
-    const itemFloat = item.item.float_value;
-    const itemQuality = item.item.wear_name;
-
-    if (!itemFloat || !itemQuality) return;
-
-    const floatRange = floatValues[itemQuality];
-    if (!floatRange) return;
-
-    // QT: G-30% - Y-70% - R-100%
-    // FN: 0.021 - 0.049 - 0.07
-    // MW: 0.094 - 0.126 - 0.15
-    // FT: 0.219 - 0.311 - 0.38
-    // WW: 0.401 - 0.429 - 0.45
-    // BS: 0.615 - 0.835 - 1.00
-
-    const floatPercentage = (itemFloat - floatRange.min) / (floatRange.max - floatRange.min);
-    console.log('[BetterFloat] Float percentage: ', floatPercentage);
-
-    const floatColor = floatPercentage <= 0.30 ? 'green' : floatPercentage <= 0.70 ? 'yellow' : 'red';
-    console.log('[BetterFloat] Float color: ', floatColor);
-
-    const floatElement = container.querySelectorAll('span.mat-tooltip-trigger.ng-star-inserted');
-    floatElement.forEach((element) => {
-        if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
-            console.log('[BetterFloat] Float element: ', element);
-            (element as any).style.color = floatColor;
-        }
-    });
-}
-
 async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
     if (Number.isNaN(item.price)) return;
@@ -692,7 +634,7 @@ async function adjustItem(container: Element, isPopout = false) {
             await caseHardenedDetection(container, cachedItem, false);
         }
         await addFadePercentages(container, cachedItem);
-        await colorFloatValue(container, cachedItem);
+        await addFloatColoring(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -715,16 +657,39 @@ async function adjustItem(container: Element, isPopout = false) {
     }
 }
 
+async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
+    const element = container.querySelector('span.mat-tooltip-trigger.ng-star-inserted');
+    if (!element) return;
+
+    if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
+        const w = item.item.float_value;
+        let color = '';
+
+        if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
+            if (w === 0) {
+                color = 'springgreen';
+            }
+            color = 'turquoise';
+        } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
+            if (w === 0.999) {
+                color = 'red';
+            }
+            color = 'indianred';
+        }
+        (element as any).style.color = color;
+    }
+}
+
 async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
     const itemName = item.item.item_name;
     const paintSeed = item.item.paint_seed;
     if (!itemName.includes('Fade')) return;
     const weapon = itemName.split(' | ')[0];
-    let fadePercentage: FadePercentage & {background: string} | null = null;
+    let fadePercentage: FadePercentage & { background: string } | null = null;
     if (itemName.includes('Amber Fade')) {
-        fadePercentage = {...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)'};
+        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
     } else if (itemName.includes('Acid Fade')) {
-        fadePercentage = {...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)'};
+        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
