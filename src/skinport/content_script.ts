@@ -510,13 +510,15 @@ async function addFloatColoring(container: Element, item: Skinport.Listing) {
     if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
         if (w === 0) {
             color = 'springgreen';
+        } else {
+            color = 'turquoise';
         }
-        color = 'turquoise';
     } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
         if (w === 0.999) {
             color = 'red';
+        } else {
+            color = 'indianred';
         }
-        color = 'indianred';
     }
     (<HTMLElement>floatContainer).style.color = color;
 }
