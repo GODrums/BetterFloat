@@ -652,32 +652,36 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
                 await addFadePercentages(container, apiItem);
+                await addFloatColoring(container, apiItem);
             }
         }, 500);
     }
 }
 
 async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
-    const element = container.querySelector('span.mat-tooltip-trigger.ng-star-inserted');
-    if (!element) return;
+    const elements = container.querySelectorAll('span.mat-tooltip-trigger.ng-star-inserted');
 
-    if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
-        const w = item.item.float_value;
-        let color = '';
+    elements.forEach((element) => {
+        if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
+            const w = item.item.float_value;
+            let color = '';
 
-        if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
-            if (w === 0) {
-                color = 'springgreen';
+            if (w < 0.01 || (w > 0.07 && w < 0.08) || (w > 0.15 && w < 0.18) || (w > 0.38 && w < 0.39)) {
+                if (w === 0) {
+                    color = 'springgreen';
+                } else {
+                    color = 'turquoise';
+                }
+            } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
+                if (w === 0.999) {
+                    color = 'red';
+                } else {
+                    color = 'indianred';
+                }
             }
-            color = 'turquoise';
-        } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-            if (w === 0.999) {
-                color = 'red';
-            }
-            color = 'indianred';
+            (element as any).style.color = color;
         }
-        (element as any).style.color = color;
-    }
+    })
 }
 
 async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
