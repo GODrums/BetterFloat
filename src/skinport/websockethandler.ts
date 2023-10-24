@@ -1,5 +1,10 @@
 import { Skinport } from '../@typings/SkinportTypes';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function handleListed(data: Skinport.Item[]) {
+    // do stuff here
+}
+
 export function handleSold(data: Skinport.Item[]) {
     for (let item of data) {
         let element = document.querySelector('.sale-' + item.saleId);

@@ -4,7 +4,7 @@
         "name": "Rums",
         "url": "https://github.com/GODrums"
     },
-    "version": "1.10.3",
+    "version": "1.11.0",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
@@ -56,15 +56,15 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
-            "resources": ["js/inject.js", "public/buff_favicon.png", "public/ban-solid.svg"]
+            "resources": ["js/inject.js", "public/buff_favicon.png", "public/ban-solid.svg", "public/gem-shop.svg", "public/arrow-up-right-from-square-solid.svg"]
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/arrow-up-right-from-square-solid.svg", "public/gear-solid.svg", "public/gem-shop.svg"]
+            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/gear-solid.svg"]
         },
         {
             "matches": ["*://*.skinport.com/*"],
-            "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg"]
+            "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg", "public/camera-solid.svg"]
         },
         {
             "matches": ["*://*.skinbid.com/*"],

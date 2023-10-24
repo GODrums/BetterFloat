@@ -6,8 +6,9 @@ import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { calculateTime, cutSubstring, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
-import { genRefreshButton } from '../util/uigeneration';
+import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
+import { fetchCSBlueGem } from '../networkhandler';
 
 type PriceResult = {
     price_difference: number;
@@ -765,21 +766,8 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
         tierContainer.setAttribute('style', 'gap: 5px;');
     }
-    const gemContainer = document.createElement('div');
+    const gemContainer = genGemContainer(runtimePublicURL, patternElement);
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-    const gemImage = document.createElement('img');
-    gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
-    gemImage.setAttribute(
-        'style',
-        'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);'
-    );
-    gemContainer.appendChild(gemImage);
-    if (patternElement) {
-        const gemValue = document.createElement('span');
-        gemValue.style.color = 'deepskyblue';
-        gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
-        gemContainer.appendChild(gemValue);
-    }
     tierContainer.appendChild(gemContainer);
 
     // add screenshot if csfloat does not offer one
@@ -825,7 +813,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         divider.textContent = ' | ';
         divider.setAttribute('style', 'margin: 0 5px;');
         let salesHeader = document.createElement('span');
-        salesHeader.textContent = `Buff Pattern (${pastSales.length})`;
+        salesHeader.textContent = `Buff Pattern Sales (${pastSales.length})`;
         salesHeader.setAttribute('style', 'color: deepskyblue;');
         salesHeader.addEventListener('click', () => {
             Array.from(salesHeader.parentElement?.children ?? []).forEach((element) => {
@@ -896,19 +884,6 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         gridHeading?.firstChild?.lastChild?.appendChild(divider);
         gridHeading?.firstChild?.lastChild?.appendChild(salesHeader);
     }
-}
-
-async function fetchCSBlueGem(type: string, paint_seed: number) {
-    return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}`)
-        .then((res) => res.json())
-        .then((data) => {
-            const { pastSales, patternElement } = {
-                pastSales: data.pop() as BlueGem.PastSale[],
-                patternElement: data.pop() as BlueGem.PatternElement | null,
-            };
-            // console.debug('[BetterFloat] Received case hardened data from CSBlueGem: ', { patternElement, pastSales });
-            return { patternElement, pastSales };
-        });
 }
 
 function adjustExistingSP(container: Element) {

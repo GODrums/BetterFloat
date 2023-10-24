@@ -11,8 +11,10 @@ import {
     cacheSkinbidCurrencyRate,
     loadMapping,
     cacheSkinbidUserCurrency,
+    cacheSpItems,
+    cacheSpPopupItem,
 } from './mappinghandler';
-import { handleSold } from './skinport/websockethandler';
+import { handleListed, handleSold } from './skinport/websockethandler';
 
 type StallData = {
     listings: CSFloat.ListingData[];
@@ -42,6 +44,7 @@ export function activateHandler() {
         const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
         if (eventData.eventType == 'listed') {
             // console.debug('[BetterFloat] Received data from websocket "listed":', eventData);
+            handleListed(eventData.data);
         } else if (eventData.eventType == 'sold') {
             // console.debug('[BetterFloat] Received data from websocket "sold":', eventData);
             handleSold(eventData.data);
@@ -117,6 +120,10 @@ function processSkinportEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
     if (eventData.url.includes('api/browse/730')) {
         // Skinport.MarketData
+        cacheSpItems((eventData.data as Skinport.MarketData).items);
+    } else if (eventData.url.includes('api/item')) {
+        // Skinport.ItemData
+        cacheSpPopupItem(eventData.data as Skinport.ItemData);
     } else if (eventData.url.includes('api/home')) {
         // Skinport.HomeData
     } else if (eventData.url.includes('api/data/')) {

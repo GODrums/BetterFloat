@@ -1,8 +1,28 @@
+import { BlueGem } from "../@typings/ExtensionTypes";
+
 export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     const element = document.createElement('div');
     element.classList.add('betterfloat-refresh' + name.toString());
     element.textContent = name.toString();
     return element;
+}
+
+export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | null) {
+    const gemContainer = document.createElement('div');
+    const gemImage = document.createElement('img');
+    gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
+    gemImage.setAttribute(
+        'style',
+        'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);'
+    );
+    gemContainer.appendChild(gemImage);
+    if (patternElement) {
+        const gemValue = document.createElement('span');
+        gemValue.style.color = 'deepskyblue';
+        gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
+        gemContainer.appendChild(gemValue);
+    }
+    return gemContainer;
 }
 
 export function generateSpStickerContainer(priceSum: number, spPercentage: number, isItemPage = false) {

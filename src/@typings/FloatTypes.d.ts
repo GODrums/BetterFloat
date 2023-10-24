@@ -35,6 +35,7 @@ export namespace CSFloat {
         max_offer_discount: number;
         max_offer_price: number;
         price: number;
+        reference: ReferenceData;
         seller: SellerData;
         state: 'listed' | 'delisted';
         type: 'buy now' | 'auction';
@@ -109,17 +110,19 @@ export namespace CSFloat {
         is_seller: boolean;
         item: Item;
         price: number;
-        reference: {
-            base_price: number;
-            float_factor: number;
-            last_updated: string;
-            predicted_price: number;
-            quantity: number;
-        };
+        reference: ReferenceData;
         sold_at: string;
         state: string;
         type: string;
         watchers: number;
+    };
+
+    export type ReferenceData = {
+        base_price: number;
+        float_factor: number;
+        last_updated: string;
+        predicted_price: number;
+        quantity: number;
     };
 
     export type SCMType = {

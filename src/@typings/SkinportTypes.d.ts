@@ -1,3 +1,4 @@
+import { type } from 'os';
 import { ItemStyle } from './FloatTypes';
 
 export namespace Skinport {
@@ -15,6 +16,76 @@ export namespace Skinport {
         message: string | null;
         requestId: string;
         success: boolean;
+    };
+
+    export type ItemData = {
+        data: {
+            history: {
+                date: string;
+                price: {
+                    currency: string;
+                    value: number;
+                };
+                saleId: number;
+                wear: string;
+            }[];
+            item: Item;
+            offers: {
+                currency: string;
+                highPrice: number;
+                lowPrice: number;
+                offerCount: number;
+            };
+            otherSales: {
+                total: number;
+                items: Item[];
+            };
+            rating: {
+                value: number;
+                votes: number;
+            };
+            recentViewed: {
+                total: number;
+                items: Item[];
+            };
+            recommendedStickers: any[];
+            relatedItems: RelatedItem[];
+            similarItems: Item[];
+            trends: {
+                data: {
+                    date: number;
+                    value: number;
+                    volume: number;
+                };
+            };
+        };
+        message: string | null;
+        requestId: string;
+        success: boolean;
+    };
+
+    export type RelatedItem = {
+        count: number;
+        default: boolean;
+        discount: number;
+        exterior: string;
+        price: {
+            currency: string;
+            value: number;
+        };
+        quality: string;
+        type: string;
+        url: string;
+        versions: {
+            count: number;
+            discount: number;
+            price: {
+                currency: string;
+                value: number;
+            } | null;
+            url: string;
+            version: string;
+        }[];
     };
 
     export type UserData = {

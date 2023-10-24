@@ -20,7 +20,9 @@ let csfloatHistoryGraph: CSFloat.HistoryGraphData[] = [];
 // csfloat: history sales for one item
 let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
 // skinport: cached items from api
-let cachedSpItems: Skinport.Item[] = [];
+let skinportItems: Skinport.Item[] = [];
+// skinport: cached popup item from api
+let skinportPopupItem: Skinport.ItemData | null = null;
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinbid: cached currency rates by Skinport: USD -> X
@@ -76,19 +78,19 @@ export async function cacheSkbItems(data: Skinbid.Listing[]) {
 }
 
 export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
-    if (csfloatPopupItem) {
-        // console.debug('[BetterFloat] Popup item already cached, deleting item: ', csfloatPopupItem);
-        csfloatPopupItem = null;
-    }
     csfloatPopupItem = data;
 }
 
+export async function cacheSpPopupItem(data: Skinport.ItemData) {
+    skinportPopupItem = data;
+}
+
 export async function cacheSpItems(data: Skinport.Item[]) {
-    if (cachedSpItems.length > 0) {
-        console.debug('[BetterFloat] Items already cached, deleting items: ', cachedSpItems);
-        cachedSpItems = [];
+    if (skinportItems.length > 0) {
+        console.debug('[BetterFloat] Items already cached, deleting items: ', skinportItems);
+        skinportItems = [];
     }
-    cachedSpItems = data;
+    skinportItems = data;
 }
 
 export async function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
@@ -142,9 +144,13 @@ export async function getCSFPopupItem() {
     return csfloatPopupItem;
 }
 
+export async function getSpPopupItem() {
+    return skinportPopupItem;
+}
+
 export async function getFirstSpItem() {
-    if (cachedSpItems.length > 0) {
-        const item = cachedSpItems.shift();
+    if (skinportItems.length > 0) {
+        const item = skinportItems.shift();
         return item;
     } else {
         return null;

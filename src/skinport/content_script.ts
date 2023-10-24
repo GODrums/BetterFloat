@@ -1,11 +1,12 @@
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getItemPrice, getPriceMapping, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { initSettings } from '../util/extensionsettings';
 import { getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
-import { generateSpStickerContainer } from '../util/uigeneration';
+import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
+import { fetchCSBlueGem } from '../networkhandler';
 
 async function init() {
     if (!location.hostname.includes('skinport.com')) {
@@ -180,6 +181,11 @@ async function applyMutation() {
                         } else if (className.includes('CatalogHeader-tooltipLive')) {
                             // contains live button
                             addLiveFilterMenu(addedNode);
+                        } else if (className.includes('CartButton-tooltip')) {
+                            console.log('[BetterFloat] Cart button added: ', addedNode);
+                            autoCloseTooltip(addedNode);
+                        } else if (className.includes('Message')) {
+                            // contains 'item has been sold' message
                         }
                     }
                 }
@@ -187,6 +193,34 @@ async function applyMutation() {
         }
     });
     observer.observe(document, { childList: true, subtree: true });
+}
+
+function autoCloseTooltip(container: Element) {
+    let counterValue = 5;
+
+    // add counter to tooltip container
+    const links = container.querySelector('.CartButton-tooltipLinks');
+    if (!links) return;
+    const counter = document.createElement('div');
+    counter.style.marginLeft = '40px';
+    const counterText = document.createElement('span');
+    counterText.textContent = 'Auto-close in ';
+    counter.appendChild(counterText);
+    const counterNumber = document.createElement('span');
+    counterNumber.className = 'betterfloat-tooltip-counter';
+    counterNumber.textContent = String(counterValue) + 's';
+    counter.appendChild(counterText);
+    counter.appendChild(counterNumber);
+    links.appendChild(counter);
+
+    // start counter
+    const interval = setInterval(() => {
+        counterNumber.textContent = String(--counterValue) + 's';
+        if (counterValue == 0) {
+            clearInterval(interval);
+            (<HTMLButtonElement>links.querySelector('button.ButtonSimple')).click();
+        }
+    }, 1000);
 }
 
 async function addLiveFilterMenu(container: Element) {
@@ -424,6 +458,11 @@ async function adjustItemPage(container: Element) {
     }
 
     await addFloatColoring(container, item);
+
+    const popupItem = await getSpPopupItem();
+    if (popupItem) {
+        await caseHardenedDetection(container, popupItem);
+    }
 }
 
 async function adjustCart(container: Element) {
@@ -449,6 +488,9 @@ async function adjustItem(container: Element) {
         return;
     }
 
+    if (item.type == 'Key') {
+        return;
+    }
     const priceResult = await addBuffPrice(item, container);
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
@@ -456,11 +498,83 @@ async function adjustItem(container: Element) {
     if (extensionSettings.floatColoring.skinport) {
         await addFloatColoring(container, item);
     }
+
+    const cachedItem = await getFirstSpItem();
+    if (cachedItem) {
+        if (cachedItem.name != item.name) {
+            console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
+            return;
+        }
+        // console.log('[BetterFloat] Cached item: ', cachedItem);
+    }
 }
 
 function storeItem(container: Element, item: Skinport.Listing) {
     container.className += ' sale-' + item.saleId;
     container.setAttribute('data-betterfloat', JSON.stringify(item));
+}
+
+async function caseHardenedDetection(container: Element, popupItem: Skinport.ItemData) {
+    let item = popupItem.data.item;
+    if (!item.name.includes('Case Hardened')) return;
+    let { patternElement, pastSales } = await fetchCSBlueGem(item.title, item.pattern);
+
+    const itemHeader = container.querySelector('.ItemPage-itemHeader');
+    if (!itemHeader) return;
+    itemHeader.appendChild(genGemContainer(runtimePublicURL, patternElement));
+
+    const linksContainer = container.querySelector('.ItemHistory-links');
+    if (!linksContainer) return;
+    const patternLink = <HTMLElement>linksContainer.lastElementChild!.cloneNode(true);
+    patternLink.id = 'react-tabs-6';
+    patternLink.setAttribute('aria-controls', 'react-tabs-7');
+    patternLink.textContent = `Buff Pattern Sales (${pastSales.length})`;
+    patternLink.style.color = 'deepskyblue';
+
+    const itemHistory = container.querySelector('.ItemHistory');
+    let tableTab = <HTMLElement>itemHistory?.lastElementChild?.cloneNode(false);
+    tableTab.id = 'react-tabs-7';
+    tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
+    let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.title}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
+    let tableBody = '';
+    for (const sale of pastSales) {
+        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">¥ ${sale.price} (~$${(
+            sale.price * 0.14
+        ).toFixed(0)})</div><div><a ${
+            sale.url == 'No Link Available'
+                ? 'style="pointer-events: none;cursor: default;"><img src="'+ runtimePublicURL +'/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
+                : 'href="' + sale.url + '" target="_blank"><img src="'+ runtimePublicURL + '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
+        }height: 20px;"></img></a></div></div>`;
+    }
+    let tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
+    tableTab.innerHTML = tableHTML;
+    itemHistory?.appendChild(tableTab);
+
+    patternLink.onclick = () => {
+        let currActive = document.querySelector('.ItemHistory-link.active');
+        if (currActive) {
+            currActive.classList.remove('active');
+            currActive.setAttribute('aria-selected', 'false');
+        }
+        patternLink.classList.add('active');
+        patternLink.setAttribute('aria-selected', 'true');
+
+        document.querySelector('.ItemHistory-tab.active')?.classList.remove('active');
+        tableTab.classList.add('active');
+    };
+    for (let child of Array.from(linksContainer.children)) {
+        (<HTMLElement>child).onclick = () => {
+            patternLink.classList.remove('active');
+            patternLink.setAttribute('aria-selected', 'false');
+            tableTab.classList.remove('active');
+
+            document.querySelector('.ItemHistory-link.active')?.classList.remove('active');
+            document.querySelector('.ItemHistory-tab.active')?.classList.remove('active');
+            child.classList.add('active');
+            document.querySelector(`#${child.getAttribute('aria-controls')}`)?.classList.add('active');
+        };
+    }
+    linksContainer.appendChild(patternLink);
 }
 
 // true: remove item, false: display item
@@ -531,7 +645,7 @@ const itemSelectors = {
 type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
-    const name = container.querySelector(selector.name)?.textContent ?? '';
+    const name = container.querySelector(selector.name)?.textContent?.trim() ?? '';
     if (name == '') {
         return null;
     }
