@@ -7,13 +7,18 @@ export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     return element;
 }
 
-export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | null) {
+export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | null, mode: 'left' | 'right' = 'left') {
     const gemContainer = document.createElement('div');
+    gemContainer.className = 'betterfloat-gem-container';
+    gemContainer.style.display = 'flex';
+    if (mode == 'right') {
+        gemContainer.style.flexDirection = 'row-reverse';
+    }
     const gemImage = document.createElement('img');
     gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
     gemImage.setAttribute(
         'style',
-        'height: 25px; margin-right: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);'
+        `height: ${mode == 'left' ? '25' : '18'}px; margin-${mode == 'left' ? 'right' : 'left'}: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
     );
     gemContainer.appendChild(gemImage);
     if (patternElement) {

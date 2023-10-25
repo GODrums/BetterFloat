@@ -499,13 +499,26 @@ async function adjustItem(container: Element) {
         await addFloatColoring(container, item);
     }
 
-    const cachedItem = await getFirstSpItem();
+    let cachedItem = await getFirstSpItem();
     if (cachedItem) {
         if (cachedItem.name != item.name) {
             console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
             return;
         }
         // console.log('[BetterFloat] Cached item: ', cachedItem);
+
+        if (cachedItem.marketHashName.includes('Case Hardened') && cachedItem.quality.includes('★')) {
+            if (!item.name.includes('Case Hardened')) return;
+            console.log('[BetterFloat] Case Hardened detected: ', item);
+            let { patternElement } = await fetchCSBlueGem(cachedItem.subCategory, cachedItem.pattern);
+            const itemHeader = container.querySelector('.TradeLock-lock');
+            if (!itemHeader) return;
+            const gemContainer = genGemContainer(runtimePublicURL, patternElement, 'right');
+            gemContainer.style.fontSize = '11px';
+            gemContainer.style.fontWeight = '600';
+            (<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
+            itemHeader.after(gemContainer);
+        }
     }
 }
 
@@ -517,7 +530,8 @@ function storeItem(container: Element, item: Skinport.Listing) {
 async function caseHardenedDetection(container: Element, popupItem: Skinport.ItemData) {
     let item = popupItem.data.item;
     if (!item.name.includes('Case Hardened')) return;
-    let { patternElement, pastSales } = await fetchCSBlueGem(item.title, item.pattern);
+    console.log('[BetterFloat] Case Hardened detected: ', item);
+    let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern);
 
     const itemHeader = container.querySelector('.ItemPage-itemHeader');
     if (!itemHeader) return;
@@ -538,12 +552,18 @@ async function caseHardenedDetection(container: Element, popupItem: Skinport.Ite
     let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.title}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
     let tableBody = '';
     for (const sale of pastSales) {
-        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">¥ ${sale.price} (~$${(
-            sale.price * 0.14
-        ).toFixed(0)})</div><div><a ${
+        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">¥ ${
+            sale.price
+        } (~$${(sale.price * 0.14).toFixed(0)})</div><div><a ${
             sale.url == 'No Link Available'
-                ? 'style="pointer-events: none;cursor: default;"><img src="'+ runtimePublicURL +'/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
-                : 'href="' + sale.url + '" target="_blank"><img src="'+ runtimePublicURL + '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
+                ? 'style="pointer-events: none;cursor: default;"><img src="' +
+                  runtimePublicURL +
+                  '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
+                : 'href="' +
+                  sale.url +
+                  '" target="_blank"><img src="' +
+                  runtimePublicURL +
+                  '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
         }height: 20px;"></img></a></div></div>`;
     }
     let tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
