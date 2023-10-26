@@ -238,7 +238,7 @@ async function customStall(stall_id: string) {
         const settingsButton = document.createElement('button');
         settingsButton.setAttribute('style', 'background: none; border: none; margin-left: 60px');
         const settingsIcon = document.createElement('img');
-        settingsIcon.setAttribute('src', runtimePublicURL + '/gear-solid.svg');
+        settingsIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/gear-solid.svg');
         settingsIcon.style.height = '64px';
         settingsIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
         settingsButton.onclick = () => {
@@ -547,7 +547,7 @@ async function adjustItemBubble(container: Element) {
     const buffContainer = document.createElement('div');
     buffContainer.setAttribute('style', `width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-start' : 'flex-end'}; translate: 0 3px;`);
     const buffImage = document.createElement('img');
-    buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
+    buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
     buffContainer.appendChild(buffImage);
 
@@ -578,7 +578,7 @@ async function adjustSalesTableRow(container: Element) {
         aLink.href = 'https://csfloat.com/item/' + cachedSale.id;
         aLink.target = '_blank';
         const linkIcon = document.createElement('img');
-        linkIcon.setAttribute('src', runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
+        linkIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
         linkIcon.style.height = '18px';
         linkIcon.style.marginRight = '10px';
         linkIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
@@ -766,7 +766,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
         tierContainer.setAttribute('style', 'gap: 5px;');
     }
-    const gemContainer = genGemContainer(runtimePublicURL, patternElement);
+    const gemContainer = genGemContainer(extensionSettings.runtimePublicURL, patternElement);
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
     tierContainer.appendChild(gemContainer);
 
@@ -835,7 +835,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                 }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
                     sale.url == 'No Link Available'
                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                          runtimePublicURL +
+                          extensionSettings.runtimePublicURL +
                           '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
                         : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
                 }</td></tr>`;
@@ -863,7 +863,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=CNY&filter=date&sort=descending`);
             linkHeader.setAttribute('target', '_blank');
             const linkHeaderImage = document.createElement('img');
-            linkHeaderImage.setAttribute('src', runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
+            linkHeaderImage.setAttribute('src', extensionSettings.runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
             linkHeaderImage.setAttribute('style', 'height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);');
             linkHeader.appendChild(linkHeaderImage);
             linkHeaderCell.appendChild(linkHeader);
@@ -979,7 +979,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingAgeText.style.margin = '0 5px 0 0';
     listingAgeText.style.fontSize = '15px';
     listingIcon.classList.add('betterfloat-listing-age-icon');
-    listingIcon.setAttribute('src', runtimePublicURL + '/clock-solid.svg');
+    listingIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/clock-solid.svg');
     listingIcon.style.height = '20px';
     listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
@@ -1163,7 +1163,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         buffContainer.setAttribute('style', `${showBoth ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
 
         const buffImage = document.createElement('img');
-        buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
+        buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
         buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
         buffContainer.appendChild(buffImage);
         const buffPrice = document.createElement('div');
@@ -1287,7 +1287,7 @@ function createTopButton() {
         'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none; transition: visibility 0s, opacity 0.5s linear;'
     );
     const topButtonIcon = document.createElement('img');
-    topButtonIcon.setAttribute('src', runtimePublicURL + '/chevron-up-solid.svg');
+    topButtonIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/chevron-up-solid.svg');
     topButtonIcon.style.marginTop = '5px';
     topButtonIcon.style.filter = 'brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(2009%) hue-rotate(196deg) brightness(113%) contrast(93%)';
     topButton.addEventListener('click', () => {
@@ -1309,7 +1309,6 @@ const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', 
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: Extension.Settings;
-const runtimePublicURL = chrome.runtime.getURL('../public');
 const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;

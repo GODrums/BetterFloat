@@ -1,5 +1,6 @@
 export namespace Extension {
     export type Settings = {
+        runtimePublicURL: string;
         enableCSFloat: boolean;
         autorefresh: boolean;
         stickerPrices: boolean;

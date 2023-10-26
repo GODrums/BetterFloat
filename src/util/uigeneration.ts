@@ -1,4 +1,4 @@
-import { BlueGem } from "../@typings/ExtensionTypes";
+import { BlueGem } from '../@typings/ExtensionTypes';
 
 export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     const element = document.createElement('div');
@@ -18,7 +18,9 @@ export function genGemContainer(runtimePublicURL: string, patternElement: BlueGe
     gemImage.setAttribute('src', runtimePublicURL + '/gem-shop.svg');
     gemImage.setAttribute(
         'style',
-        `height: ${mode == 'left' ? '25' : '18'}px; margin-${mode == 'left' ? 'right' : 'left'}: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
+        `height: ${mode == 'left' ? '25' : '18'}px; margin-${
+            mode == 'left' ? 'right' : 'left'
+        }: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
     );
     gemContainer.appendChild(gemImage);
     if (patternElement) {

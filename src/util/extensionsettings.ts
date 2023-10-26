@@ -1,8 +1,27 @@
 import { Extension } from '../@typings/ExtensionTypes';
 
+let settings: Extension.Settings;
+
+export async function getAllSettings() {
+    if (!settings) {
+        settings = await initSettings();
+    }
+    return settings;
+}
+
+export async function getSetting<Key extends keyof Extension.Settings>(key: Key): Promise<Extension.Settings[Key]> {
+    if (!settings) {
+        settings = await initSettings();
+    }
+    return settings[key];
+}
+
 export async function initSettings(): Promise<Extension.Settings> {
     const extensionSettings = <Extension.Settings>{};
     chrome.storage.local.get((data) => {
+        if (data.runtimePublicURL) {
+            extensionSettings.runtimePublicURL = data.runtimePublicURL as Extension.Settings['runtimePublicURL'];
+        }
         if (data.enableCSFloat) {
             extensionSettings.enableCSFloat = Boolean(data.enableCSFloat);
         }

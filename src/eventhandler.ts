@@ -40,14 +40,14 @@ export function activateHandler() {
         }
     });
 
-    document.addEventListener('BetterFloat_WEBSOCKET_EVENT', function (e) {
+    document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async function (e) {
         const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
         if (eventData.eventType == 'listed') {
             // console.debug('[BetterFloat] Received data from websocket "listed":', eventData);
-            handleListed(eventData.data);
+            await handleListed(eventData.data);
         } else if (eventData.eventType == 'sold') {
             // console.debug('[BetterFloat] Received data from websocket "sold":', eventData);
-            handleSold(eventData.data);
+            await handleSold(eventData.data);
         }
     });
 

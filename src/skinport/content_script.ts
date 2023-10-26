@@ -2,7 +2,7 @@ import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
-import { initSettings } from '../util/extensionsettings';
+import { getAllSettings } from '../util/extensionsettings';
 import { getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
@@ -19,7 +19,7 @@ async function init() {
     // this has to be done as first thing to not miss timed events
     activateHandler();
 
-    extensionSettings = await initSettings();
+    extensionSettings = await getAllSettings();
     console.debug('[BetterFloat] Settings: ', extensionSettings);
 
     if (extensionSettings.enableSkinport && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0) {
@@ -118,7 +118,7 @@ function createLanguagePopup() {
     popupHeaderDiv.style.justifyContent = 'space-between';
     popupHeaderDiv.style.margin = '0 10px';
     const warningIcon = document.createElement('img');
-    warningIcon.src = runtimePublicURL + '/triangle-exclamation-solid.svg';
+    warningIcon.src = extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg';
     warningIcon.style.width = '32px';
     warningIcon.style.height = '32px';
     warningIcon.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%)';
@@ -348,7 +348,7 @@ async function addLiveFilterMenu(container: Element) {
 
     const filterButton = document.createElement('button');
     const filterIcon = document.createElement('img');
-    filterIcon.src = runtimePublicURL + '/filter-solid.svg';
+    filterIcon.src = extensionSettings.runtimePublicURL + '/filter-solid.svg';
     filterIcon.style.width = '24px';
     filterIcon.style.height = '24px';
     filterIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
@@ -406,7 +406,6 @@ async function adjustItemPage(container: Element) {
     }
 
     const item = getSkinportItem(container, itemSelectors.page);
-    console.log('[BetterFloat] Item: ', item);
     if (!item) return;
     const { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     const buffid = await getBuffMapping(buff_name);
@@ -519,25 +518,25 @@ function storeItem(container: Element, item: Skinport.Listing) {
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-async function addBlueBadge(container: Element, item: Skinport.Item) {
+export async function addBlueBadge(container: Element, item: Skinport.Item) {
     if (!item.name.includes('Case Hardened')) return;
     let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
     const itemHeader = container.querySelector('.TradeLock-lock');
     if (!itemHeader) return;
-    const gemContainer = genGemContainer(runtimePublicURL, patternElement, 'right');
+    const gemContainer = genGemContainer(extensionSettings.runtimePublicURL, patternElement, 'right');
     gemContainer.style.fontSize = '11px';
     gemContainer.style.fontWeight = '600';
     (<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
     itemHeader.after(gemContainer);
 }
 
-export async function caseHardenedDetection(container: Element, item: Skinport.Item) {
+async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     if (!item.name.includes('Case Hardened')) return;
     let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern);
 
     const itemHeader = container.querySelector('.ItemPage-itemHeader');
     if (!itemHeader) return;
-    itemHeader.appendChild(genGemContainer(runtimePublicURL, patternElement));
+    itemHeader.appendChild(genGemContainer(extensionSettings.runtimePublicURL, patternElement));
 
     const linksContainer = container.querySelector('.ItemHistory-links');
     if (!linksContainer) return;
@@ -551,7 +550,7 @@ export async function caseHardenedDetection(container: Element, item: Skinport.I
     let tableTab = <HTMLElement>itemHistory?.lastElementChild?.cloneNode(false);
     tableTab.id = 'react-tabs-7';
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-    let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.title}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
+    let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
     let tableBody = '';
     for (const sale of pastSales) {
         tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">¥ ${
@@ -559,12 +558,12 @@ export async function caseHardenedDetection(container: Element, item: Skinport.I
         } (~$${(sale.price * 0.14).toFixed(0)})</div><div><a ${
             sale.url == 'No Link Available'
                 ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                  runtimePublicURL +
+                  extensionSettings.runtimePublicURL +
                   '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
                 : 'href="' +
                   sale.url +
                   '" target="_blank"><img src="' +
-                  runtimePublicURL +
+                  extensionSettings.runtimePublicURL +
                   '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
         }height: 20px;"></img></a></div></div>`;
     }
@@ -809,7 +808,7 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     buffContainer.style.marginTop = '5px';
     buffContainer.style.alignItems = 'center';
     const buffImage = document.createElement('img');
-    buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
+    buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
     buffContainer.appendChild(buffImage);
     const buffPrice = document.createElement('div');
@@ -938,7 +937,6 @@ function createBuffName(item: Skinport.Listing): string {
 }
 
 let extensionSettings: Extension.Settings;
-const runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;
 init();

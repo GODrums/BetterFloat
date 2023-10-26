@@ -1,6 +1,7 @@
 import { Extension } from './@typings/ExtensionTypes';
 
 export const defaultSettings: Extension.Settings = {
+    runtimePublicURL: chrome.runtime.getURL('/public'),
     enableCSFloat: true,
     autorefresh: true,
     stickerPrices: true,

@@ -1,23 +1,27 @@
 import { Skinport } from '../@typings/SkinportTypes';
-import { caseHardenedDetection } from './content_script';
+import { getSetting } from '../util/extensionsettings';
+import { addBlueBadge } from './content_script';
 
-export function handleListed(data: Skinport.Item[]) {
+export async function handleListed(data: Skinport.Item[]) {
     // do stuff here
     for (let item of data) {
         let element = document.querySelector('.sale-' + item.saleId);
         if (element) {
-            console.debug('[BetterFloat] Found listed item:', item);
-            caseHardenedDetection(element, item);
+            // console.debug('[BetterFloat] Found listed item:', item);
+            if (item.marketHashName.includes('Case Hardened') && item.quality.includes('★')) {
+                await addBlueBadge(element, item);
+            }
         }
     }
 }
 
-export function handleSold(data: Skinport.Item[]) {
+export async function handleSold(data: Skinport.Item[]) {
     for (let item of data) {
         let element = document.querySelector('.sale-' + item.saleId);
         if (element) {
             // console.debug('[BetterFloat] Found sold item:', item);
-            element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay());
+            const runtimePublicURL = await getSetting('runtimePublicURL');
+            element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay(runtimePublicURL));
             if (element.firstElementChild) {
                 element.firstElementChild.className += ' ItemPreview--inCart';
             }
@@ -25,12 +29,12 @@ export function handleSold(data: Skinport.Item[]) {
     }
 }
 
-function createSoldOverlay() {
+function createSoldOverlay(runtimePublicURL: string) {
     let soldElement = document.createElement('div');
     soldElement.className = 'ItemPreview-status';
     soldElement.style.background = 'rgb(69, 10, 10)';
     const banIcon = document.createElement('img');
-    banIcon.src = chrome.runtime.getURL('public/ban-solid.svg');
+    banIcon.src = runtimePublicURL + '/ban-solid.svg';
     banIcon.setAttribute('style', 'height: auto; width: 30px; filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(1%) hue-rotate(233deg) brightness(103%) contrast(101%);');
     soldElement.appendChild(banIcon);
     return soldElement;

@@ -226,7 +226,7 @@ async function addListingAge(container: Element, cachedItem: Skinbid.Listing, pa
         const listingIcon = document.createElement('img');
         listingAge.classList.add('betterfloat-listing-age');
         listingAge.classList.add('betterfloat-age-' + page);
-        listingIcon.setAttribute('src', runtimePublicURL + '/clock-solid.svg');
+        listingIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/clock-solid.svg');
 
         listingAgeText.textContent = calculateTime(cachedItem.auction.created);
         listingAge.appendChild(listingIcon);
@@ -243,6 +243,11 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
     await loadMapping();
     let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
+
+    if (priceListing == 0 && priceOrder == 0) {
+        console.debug('[BetterFloat] No buff price found for ', buff_name);
+        return;
+    }
 
     let priceDiv = container.querySelector(selector.priceDiv);
     if (!priceDiv?.firstChild) {
@@ -322,7 +327,7 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     buffContainer.style.cursor = 'pointer';
     buffContainer.style.alignItems = 'center';
     let buffImage = document.createElement('img');
-    buffImage.setAttribute('src', runtimePublicURL + '/buff_favicon.png');
+    buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
     buffImage.setAttribute('style', `height: 20px; margin-right: 5px; border: 1px solid #323c47; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
     buffContainer.appendChild(buffImage);
     let buffPrice = document.createElement('div');
@@ -391,7 +396,6 @@ async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();
-    console.log ('[BetterFloat] Currency rate: ', currencyRate);
     if (currencyRate != 1) {
         priceListing = priceListing * currencyRate;
         priceOrder = priceOrder * currencyRate;
@@ -570,7 +574,6 @@ function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HT
 }
 
 let extensionSettings: Extension.Settings;
-let runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;
 init();

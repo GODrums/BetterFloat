@@ -1,4 +1,4 @@
-import { BlueGem } from "./@typings/ExtensionTypes";
+import { BlueGem } from './@typings/ExtensionTypes';
 
 export async function fetchCSBlueGem(type: string, paint_seed: number) {
     return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}`)
