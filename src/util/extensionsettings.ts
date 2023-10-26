@@ -48,6 +48,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.spStickerPrices) {
             extensionSettings.spStickerPrices = Boolean(data.spStickerPrices);
         }
+        if (data.spBlueGem) {
+            extensionSettings.spBlueGem = Boolean(data.spBlueGem);
+        }
         if (data.skinportRates) {
             extensionSettings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
         }
@@ -80,6 +83,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         }
         if (data.skbStickerPrices) {
             extensionSettings.skbStickerPrices = Boolean(data.skbStickerPrices);
+        }
+        if (data.spAutoclosePopup) {
+            extensionSettings.spAutoclosePopup = Boolean(data.spAutoclosePopup);
         }
         if (data.floatColoring) {
             extensionSettings.floatColoring = data.floatColoring as Extension.Settings['floatColoring'];

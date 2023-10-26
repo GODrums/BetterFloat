@@ -1,4 +1,5 @@
 import { Skinport } from '../@typings/SkinportTypes';
+import { caseHardenedDetection } from './content_script';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function handleListed(data: Skinport.Item[]) {
@@ -10,15 +11,17 @@ export function handleSold(data: Skinport.Item[]) {
         let element = document.querySelector('.sale-' + item.saleId);
         if (element) {
             // console.debug('[BetterFloat] Found sold item:', item);
-            element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldElement());
+            element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay());
             if (element.firstElementChild) {
                 element.firstElementChild.className += ' ItemPreview--inCart';
             }
+
+            caseHardenedDetection(element, item);
         }
     }
 }
 
-function createSoldElement() {
+function createSoldOverlay() {
     let soldElement = document.createElement('div');
     soldElement.className = 'ItemPreview-status';
     soldElement.style.background = 'rgb(69, 10, 10)';

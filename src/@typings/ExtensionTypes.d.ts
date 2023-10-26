@@ -15,11 +15,13 @@ export namespace Extension {
         enableSkinport: boolean;
         spCheckBoxes: boolean;
         spStickerPrices: boolean;
+        spBlueGem: boolean;
         spPriceReference: 0 | 1;
         spSteamPrice: boolean;
         spBuffDifference: boolean;
         skinportRates: 'skinport' | 'real';
         spBuffLink: 'action' | 'text';
+        spAutoclosePopup: boolean;
         spFilter: {
             priceLow: number;
             priceHigh: number;

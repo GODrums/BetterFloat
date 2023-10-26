@@ -196,6 +196,7 @@ async function applyMutation() {
 }
 
 function autoCloseTooltip(container: Element) {
+    if (!extensionSettings.spAutoclosePopup) return;
     let counterValue = 5;
 
     // add counter to tooltip container
@@ -460,8 +461,8 @@ async function adjustItemPage(container: Element) {
     await addFloatColoring(container, item);
 
     const popupItem = await getSpPopupItem();
-    if (popupItem) {
-        await caseHardenedDetection(container, popupItem);
+    if (popupItem && extensionSettings.spBlueGem) {
+        await caseHardenedDetection(container, popupItem.data.item);
     }
 }
 
@@ -507,17 +508,8 @@ async function adjustItem(container: Element) {
         }
         // console.log('[BetterFloat] Cached item: ', cachedItem);
 
-        if (cachedItem.marketHashName.includes('Case Hardened') && cachedItem.quality.includes('★')) {
-            if (!item.name.includes('Case Hardened')) return;
-            console.log('[BetterFloat] Case Hardened detected: ', item);
-            let { patternElement } = await fetchCSBlueGem(cachedItem.subCategory, cachedItem.pattern);
-            const itemHeader = container.querySelector('.TradeLock-lock');
-            if (!itemHeader) return;
-            const gemContainer = genGemContainer(runtimePublicURL, patternElement, 'right');
-            gemContainer.style.fontSize = '11px';
-            gemContainer.style.fontWeight = '600';
-            (<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
-            itemHeader.after(gemContainer);
+        if (extensionSettings.spBlueGem && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.quality.includes('★')) {
+            addBlueBadge(container, cachedItem);
         }
     }
 }
@@ -527,10 +519,20 @@ function storeItem(container: Element, item: Skinport.Listing) {
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-async function caseHardenedDetection(container: Element, popupItem: Skinport.ItemData) {
-    let item = popupItem.data.item;
+async function addBlueBadge(container: Element, item: Skinport.Item) {
     if (!item.name.includes('Case Hardened')) return;
-    console.log('[BetterFloat] Case Hardened detected: ', item);
+    let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
+    const itemHeader = container.querySelector('.TradeLock-lock');
+    if (!itemHeader) return;
+    const gemContainer = genGemContainer(runtimePublicURL, patternElement, 'right');
+    gemContainer.style.fontSize = '11px';
+    gemContainer.style.fontWeight = '600';
+    (<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
+    itemHeader.after(gemContainer);
+}
+
+export async function caseHardenedDetection(container: Element, item: Skinport.Item) {
+    if (!item.name.includes('Case Hardened')) return;
     let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern);
 
     const itemHeader = container.querySelector('.ItemPage-itemHeader');

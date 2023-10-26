@@ -16,11 +16,13 @@ export const defaultSettings: Extension.Settings = {
     enableSkinport: true,
     spCheckBoxes: true,
     spStickerPrices: true,
+    spBlueGem: true,
     spPriceReference: 0,
     skinportRates: 'real',
     spSteamPrice: false,
     spBuffDifference: true,
     spBuffLink: 'action',
+    spAutoclosePopup: true,
     spFilter: {
         priceLow: 0,
         priceHigh: 999999,

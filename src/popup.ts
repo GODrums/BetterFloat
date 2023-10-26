@@ -234,8 +234,10 @@ function loadForSkinport() {
     const skinportEnable = <HTMLInputElement>document.getElementById('InputSkinport');
     const checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
     const stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
+    const skinportBlueGem = <HTMLInputElement>document.getElementById('InputCSBlueGem');
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
+    const skinportAutoClosePopup = <HTMLInputElement>document.getElementById('SkinportInputClosePopup');
     const floatColoring = <HTMLInputElement>document.getElementById('FloatColoring');
     const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
     const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
@@ -257,6 +259,11 @@ function loadForSkinport() {
         } else {
             stickerPriceElement.checked = false;
         }
+        if (data.spBlueGem) {
+            skinportBlueGem.checked = true;
+        } else {
+            skinportBlueGem.checked = false;
+        }
         if (data.skinportRates) {
             (<HTMLSelectElement>document.getElementById('SkinportCurrencyConversion')).value = data.skinportRates;
         }
@@ -275,6 +282,11 @@ function loadForSkinport() {
         }
         if (data.spBuffLink) {
             (<HTMLInputElement>document.getElementById('SkinportBuffLink')).value = data.spBuffLink;
+        }
+        if (data.spAutoclosePopup) {
+            skinportAutoClosePopup.checked = true;
+        } else {
+            skinportAutoClosePopup.checked = false;
         }
         if (data.floatColoring.skinport) {
             floatColoring.checked = true;
