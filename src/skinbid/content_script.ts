@@ -185,7 +185,6 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 
     if (priceSum >= 2) {
         let overlayContainer = container.querySelector(selector.stickerDiv);
-        console.log('[BetterFloat] Found sticker container: ', overlayContainer);
         if (selector == itemSelectors.card) {
             (<HTMLElement>overlayContainer).style.justifyContent = 'flex-end';
         } else if (selector == itemSelectors.page) {
@@ -392,9 +391,10 @@ async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();
+    console.log ('[BetterFloat] Currency rate: ', currencyRate);
     if (currencyRate != 1) {
-        priceListing = priceListing / currencyRate;
-        priceOrder = priceOrder / currencyRate;
+        priceListing = priceListing * currencyRate;
+        priceOrder = priceOrder * currencyRate;
     }
 
     return { buff_name, priceListing, priceOrder };
@@ -573,5 +573,4 @@ let extensionSettings: Extension.Settings;
 let runtimePublicURL = chrome.runtime.getURL('../public');
 // mutation observer active?
 let isObserverActive = false;
-console.log('[BetterFloat] Skinbid content script loaded');
 init();

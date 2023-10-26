@@ -8,7 +8,7 @@ import {
     cacheCSFPopupItem,
     cacheSkbItems,
     cacheSkinportCurrencyRates,
-    cacheSkinbidCurrencyRate,
+    cacheSkinbidCurrencyRates,
     loadMapping,
     cacheSkinbidUserCurrency,
     cacheSpItems,
@@ -107,7 +107,7 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('api/public/exchangeRates')) {
         // Skinbid.ExchangeRates
         const rates = eventData.data as Skinbid.ExchangeRates;
-        cacheSkinbidCurrencyRate(rates.find((rate) => rate.currencyCode == 'USD')?.rate ?? 1);
+        cacheSkinbidCurrencyRates(rates);
     } else if (eventData.url.includes('api/user/whoami')) {
         // Skinbid.UserData
     } else if (eventData.url.includes('api/user/preferences')) {

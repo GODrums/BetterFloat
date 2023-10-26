@@ -25,8 +25,8 @@ let skinportItems: Skinport.Item[] = [];
 let skinportPopupItem: Skinport.ItemData | null = null;
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
-// skinbid: cached currency rates by Skinport: USD -> X
-let skinbidRateToUSD = 1;
+// skinbid: cached currency rates by Skinbid: EUR -> X
+let skinbidRates: Skinbid.ExchangeRates = [];
 // skinport: cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 // skinport: user currency (e.g. EUR)
@@ -101,8 +101,8 @@ export async function cacheSkinportCurrencyRates(data: { [currency: string]: num
     skinportUserCurrency = user;
 }
 
-export async function cacheSkinbidCurrencyRate(rate: number) {
-    skinbidRateToUSD = rate;
+export async function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
+    skinbidRates = rates;
 }
 
 export async function cacheSkinbidUserCurrency(currency: string) {
@@ -215,8 +215,14 @@ export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real')
 }
 
 export async function getSkbUserCurrencyRate() {
+    if (skinbidUserCurrency == '') {
+        skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
+    }
     if (skinbidUserCurrency == 'USD') return 1;
-    else return skinbidRateToUSD;
+    else if (skinbidUserCurrency == 'EUR') return 1 / skinbidRates[0].rate;
+    // origin is USD, first convert to EUR, then to user currency: USD -> EUR -> user currency
+    // example: 1 USD -> 1/USDrate EUR -> 1/USDrate * EURUserCurrency
+    else return (skinbidRates.find((rate) => rate.currencyCode == skinbidUserCurrency)?.rate ?? 1) / skinbidRates[0].rate;
 }
 
 export async function getStallData(stall_id: string) {

@@ -1,9 +1,15 @@
 import { Skinport } from '../@typings/SkinportTypes';
 import { caseHardenedDetection } from './content_script';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function handleListed(data: Skinport.Item[]) {
     // do stuff here
+    for (let item of data) {
+        let element = document.querySelector('.sale-' + item.saleId);
+        if (element) {
+            console.debug('[BetterFloat] Found listed item:', item);
+            caseHardenedDetection(element, item);
+        }
+    }
 }
 
 export function handleSold(data: Skinport.Item[]) {
@@ -15,8 +21,6 @@ export function handleSold(data: Skinport.Item[]) {
             if (element.firstElementChild) {
                 element.firstElementChild.className += ' ItemPreview--inCart';
             }
-
-            caseHardenedDetection(element, item);
         }
     }
 }
