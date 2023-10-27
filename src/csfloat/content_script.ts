@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, cutSubstring, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
+import { USDollar, calculateTime, cutSubstring, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
@@ -553,7 +553,7 @@ async function adjustItemBubble(container: Element) {
 
     const buffPrice = document.createElement('span');
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
-    buffPrice.textContent = `${difference > 0 ? '+' : ''}$${difference.toFixed(2)}`;
+    buffPrice.textContent = `${difference > 0 ? '+' : ''}${USDollar.format(Number(difference.toFixed(2)))}`;
     buffContainer.appendChild(buffPrice);
 
     const personDiv = container.querySelector('div > span');
@@ -828,9 +828,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             pastSales.forEach((sale) => {
                 tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
                     item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
-                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">¥ ${sale.price} (~$${(
-                    sale.price * 0.14
-                ).toFixed(0)})</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${USDollar.format(sale.price)}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
                     sale.pattern
                 }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
                     sale.url == 'No Link Available'
@@ -1034,7 +1032,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
     if (priceSum >= 2) {
         const backgroundImageColor = getSPBackgroundColor(spPercentage);
         if (spPercentage > 2 || spPercentage < 0.005) {
-            csfSP.textContent = `$${priceSum.toFixed(0)} SP`;
+            csfSP.textContent = `${USDollar.format(Number(priceSum.toFixed(0)))} SP`;
         } else {
             csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
         }
@@ -1181,7 +1179,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         buffPrice.appendChild(tooltipSpan);
         const buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
-        buffPriceBid.textContent = `Bid $${priceOrder}`;
+        buffPriceBid.textContent = `Bid ${USDollar.format(priceOrder)}`;
         buffPrice.appendChild(buffPriceBid);
         const buffPriceDivider = document.createElement('span');
         buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
@@ -1189,7 +1187,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
         buffPrice.appendChild(buffPriceDivider);
         const buffPriceAsk = document.createElement('span');
         buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-        buffPriceAsk.textContent = `Ask $${priceListing}`;
+        buffPriceAsk.textContent = `Ask ${USDollar.format(priceListing)}`;
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
 
@@ -1215,8 +1213,8 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
                 priceFromReference: priceFromReference,
             })
         );
-        buffPriceDiv.children[1].textContent = `Bid $${priceOrder}`;
-        buffPriceDiv.children[3].textContent = `Ask $${priceListing}`;
+        buffPriceDiv.children[1].textContent = `Bid ${USDollar.format(priceOrder)}`;
+        buffPriceDiv.children[3].textContent = `Ask ${USDollar.format(priceListing)}`;
     }
 
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.

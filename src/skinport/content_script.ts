@@ -3,10 +3,11 @@ import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
-import { getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
+import { Euro, USDollar, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 async function init() {
     if (!location.hostname.includes('skinport.com')) {
@@ -532,7 +533,14 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     if (!item.name.includes('Case Hardened')) return;
-    let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern);
+    
+    // santized for CSBlueGem's supported currencies, otherwise use USD
+    const sanitizedCurrency = (currency: string) => {
+        return ["CNY", "USD", "EUR", "JPY", "GBP", "AUD", "CAD"].includes(currency) ? currency : "CNY";
+    };
+    const usedCurrency = sanitizedCurrency(item.currency);
+    const currencySymbol = getSymbolFromCurrency(usedCurrency);
+    let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern, usedCurrency);
 
     const itemHeader = container.querySelector('.ItemPage-itemHeader');
     if (!itemHeader) return;
@@ -553,9 +561,9 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
     let tableBody = '';
     for (const sale of pastSales) {
-        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">¥ ${
-            sale.price
-        } (~$${(sale.price * 0.14).toFixed(0)})</div><div><a ${
+        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">${
+            currencySymbol == '€' ? Euro.format(sale.price) : (currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price)
+        }</div><div><a ${
             sale.url == 'No Link Available'
                 ? 'style="pointer-events: none;cursor: default;"><img src="' +
                   extensionSettings.runtimePublicURL +

@@ -1,7 +1,7 @@
 import { BlueGem } from './@typings/ExtensionTypes';
 
-export async function fetchCSBlueGem(type: string, paint_seed: number) {
-    return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}`)
+export async function fetchCSBlueGem(type: string, paint_seed: number, currency = 'USD') {
+    return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
         .then((res) => res.json())
         .then((data) => {
             const { pastSales, patternElement } = {
