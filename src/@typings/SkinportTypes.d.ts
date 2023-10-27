@@ -1,4 +1,3 @@
-import { type } from 'os';
 import { ItemStyle } from './FloatTypes';
 
 export namespace Skinport {

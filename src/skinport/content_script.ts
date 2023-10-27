@@ -508,7 +508,7 @@ async function adjustItem(container: Element) {
         }
         // console.log('[BetterFloat] Cached item: ', cachedItem);
 
-        if (extensionSettings.spBlueGem && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.quality.includes('★')) {
+        if (extensionSettings.spBlueGem && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
             addBlueBadge(container, cachedItem);
         }
     }
@@ -520,7 +520,6 @@ function storeItem(container: Element, item: Skinport.Listing) {
 }
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
-    if (!item.name.includes('Case Hardened')) return;
     let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
     const itemHeader = container.querySelector('.TradeLock-lock');
     if (!itemHeader) return;
@@ -533,10 +532,10 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     if (!item.name.includes('Case Hardened')) return;
-    
+
     // santized for CSBlueGem's supported currencies, otherwise use USD
     const sanitizedCurrency = (currency: string) => {
-        return ["CNY", "USD", "EUR", "JPY", "GBP", "AUD", "CAD"].includes(currency) ? currency : "CNY";
+        return ['CNY', 'USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD'].includes(currency) ? currency : 'CNY';
     };
     const usedCurrency = sanitizedCurrency(item.currency);
     const currencySymbol = getSymbolFromCurrency(usedCurrency);
@@ -562,7 +561,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     let tableBody = '';
     for (const sale of pastSales) {
         tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">${
-            currencySymbol == '€' ? Euro.format(sale.price) : (currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price)
+            currencySymbol == '€' ? Euro.format(sale.price) : currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price
         }</div><div><a ${
             sale.url == 'No Link Available'
                 ? 'style="pointer-events: none;cursor: default;"><img src="' +

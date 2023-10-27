@@ -8,7 +8,7 @@ export async function handleListed(data: Skinport.Item[]) {
         let element = document.querySelector('.sale-' + item.saleId);
         if (element) {
             // console.debug('[BetterFloat] Found listed item:', item);
-            if (item.marketHashName.includes('Case Hardened') && item.quality.includes('★')) {
+            if (item.marketHashName.includes('Case Hardened') && item.category == 'Knife' && (await getSetting('spBlueGem'))) {
                 await addBlueBadge(element, item);
             }
         }

@@ -676,7 +676,7 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
     });
 
     elements.forEach((element) => {
-        if (element.textContent && item.item.float_value.toFixed(12) === element.textContent) {
+        if (element.textContent && item?.item?.float_value && item.item.float_value.toFixed(12) === element.textContent) {
             (<HTMLElement>element).style.color = getFloatColoring(item.item.float_value, lowerLimit, upperLimit);
         }
     });
@@ -828,7 +828,9 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             pastSales.forEach((sale) => {
                 tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
                     item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
-                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${USDollar.format(sale.price)}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
+                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${USDollar.format(
+                    sale.price
+                )}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
                     sale.pattern
                 }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
                     sale.url == 'No Link Available'
