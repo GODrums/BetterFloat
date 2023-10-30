@@ -56,7 +56,7 @@ async function init() {
     // mutation observer is only needed once
     if (!isObserverActive) {
         isObserverActive = true;
-        await applyMutation();
+        applyMutation();
         console.log('[BetterFloat] Mutation observer started');
     }
 }
@@ -487,7 +487,7 @@ async function refreshButton() {
     }
 }
 
-async function applyMutation() {
+function applyMutation() {
     const observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableCSFloat) {
             for (let i = 0; i < unsupportedSubPages.length; i++) {
