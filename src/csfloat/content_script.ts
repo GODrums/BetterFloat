@@ -3,9 +3,20 @@
 import { CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
 import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { USDollar, calculateTime, cutSubstring, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
+import {
+    USDollar,
+    calculateTime,
+    cutSubstring,
+    getBuffPrice,
+    getFloatColoring,
+    getSPBackgroundColor,
+    handleSpecialStickerNames,
+    parseHTMLString,
+    toTruncatedString,
+    waitForElement,
+} from '../util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
@@ -565,7 +576,7 @@ async function adjustItemBubble(container: Element) {
 }
 
 async function adjustSalesTableRow(container: Element) {
-    const cachedSale = await getFirstHistorySale();
+    const cachedSale = getFirstHistorySale();
     if (!cachedSale) {
         return;
     }
@@ -615,7 +626,7 @@ async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
     if (Number.isNaN(item.price)) return;
     const priceResult = await addBuffPrice(item, container, isPopout);
-    const cachedItem = await getFirstCSFItem();
+    const cachedItem = getFirstCSFItem();
     if (cachedItem) {
         if (item.name != cachedItem.item.item_name) {
             console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
@@ -641,14 +652,12 @@ async function adjustItem(container: Element, isPopout = false) {
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
-            await addItemHistory(container.parentElement!.parentElement!);
-
             const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 
             let apiItem = getApiItem(itemPreview);
             // if this is the first launch, the item has to be newly retrieved by the api
             if (!apiItem) {
-                apiItem = await getCSFPopupItem();
+                apiItem = getCSFPopupItem();
             }
             if (apiItem) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
@@ -657,6 +666,9 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addFadePercentages(container, apiItem);
                 await addFloatColoring(container, apiItem);
             }
+
+            // last as it has to wait for history api data
+            await addItemHistory(container.parentElement!.parentElement!);
         }, 500);
     }
 }
@@ -912,7 +924,7 @@ function getApiItem(container: Element | null): CSFloat.ListingData | null {
 }
 
 async function addItemHistory(container: Element) {
-    const itemHistory = calculateHistoryValues(await getWholeHistory());
+    const itemHistory = calculateHistoryValues(getWholeHistory());
     const headerContainer = <HTMLElement>container.querySelector('#header');
     if (!headerContainer || !itemHistory) {
         console.log('[BetterFloat] Could not add item history: ', itemHistory);
@@ -1010,7 +1022,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
 
 async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
     // quality 12 is souvenir
-    if (!cachedItem.item.stickers || cachedItem.item.quality == 12) {
+    if (!cachedItem.item.stickers || cachedItem.item.quality === 12) {
         return;
     }
 
@@ -1079,7 +1091,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
                 case Node.TEXT_NODE:
                     condition = (node.textContent?.trim() ?? '') as ItemCondition;
                     break;
-                case Node.COMMENT_NODE:
+                default:
                     break;
             }
         });
@@ -1102,9 +1114,9 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 async function getBuffItem(item: CSFloat.FloatItem) {
     const buff_name = handleSpecialStickerNames(createBuffName(item));
     const buff_id = await getBuffMapping(buff_name);
-    
+
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
-    
+
     const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,

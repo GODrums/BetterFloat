@@ -2,7 +2,7 @@ import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
@@ -158,7 +158,7 @@ async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, s
     let priceResult;
     let cachedItem;
     if (item.type == 'Agent') {
-        cachedItem = await getFirstSkbItem();
+        cachedItem = getFirstSkbItem();
         if (!cachedItem?.items) {
             console.log('[BetterFloat] No cached item found: ', cachedItem);
             return { priceResult, cachedItem };
@@ -171,7 +171,7 @@ async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, s
         priceResult = await addBuffPrice(item, container, selector);
     } else {
         priceResult = await addBuffPrice(item, container, selector);
-        cachedItem = await getFirstSkbItem();
+        cachedItem = getFirstSkbItem();
     }
     return { priceResult, cachedItem };
 }

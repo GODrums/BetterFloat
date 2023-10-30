@@ -100,15 +100,15 @@ export namespace Extension {
     };
 
     type DopplerPrices = {
-        "Sapphire": number;
-        "Ruby": number;
-        "Black Pearl": number;
-        "Emerald": number;
-        "Phase 1": number;
-        "Phase 2": number;
-        "Phase 3": number;
-        "Phase 4": number;
-    }
+        Sapphire: number;
+        Ruby: number;
+        'Black Pearl': number;
+        Emerald: number;
+        'Phase 1': number;
+        'Phase 2': number;
+        'Phase 3': number;
+        'Phase 4': number;
+    };
 
     // response from api.rums.dev/v1/csfloatstalls/:id
     export type CustomStallData = {

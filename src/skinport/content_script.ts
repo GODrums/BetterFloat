@@ -1,6 +1,6 @@
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
 import { Euro, USDollar, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
@@ -460,7 +460,7 @@ async function adjustItemPage(container: Element) {
 
     await addFloatColoring(container, item);
 
-    const popupItem = await getSpPopupItem();
+    const popupItem = getSpPopupItem();
     if (popupItem && extensionSettings.spBlueGem) {
         await caseHardenedDetection(container, popupItem.data.item);
     }
@@ -555,7 +555,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 
     const itemHistory = container.querySelector('.ItemHistory');
     if (!itemHistory || !itemHistory.lastElementChild) return;
-    let tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
+    const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
     tableTab.id = 'react-tabs-7';
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
     let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
