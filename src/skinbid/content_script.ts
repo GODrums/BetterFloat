@@ -319,7 +319,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
     };
 }
 
-async function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
+function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
     let buffContainer = document.createElement('div');
     buffContainer.className = 'betterfloat-buff-container';
     buffContainer.style.display = 'flex';

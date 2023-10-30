@@ -304,9 +304,9 @@ async function customStall(stall_id: string) {
     document.body.firstChild?.before(backgroundVideo);
 
     // start video after it is loaded
-    backgroundVideo.addEventListener('canplay', () => {
+    backgroundVideo.addEventListener('canplay', async () => {
         backgroundVideo.muted = true;
-        backgroundVideo.play();
+        await backgroundVideo.play();
     });
 
     if (stallData.options.transparent_elements) {
@@ -668,7 +668,7 @@ async function adjustItem(container: Element, isPopout = false) {
             }
 
             // last as it has to wait for history api data
-            await addItemHistory(container.parentElement!.parentElement!);
+            addItemHistory(container.parentElement!.parentElement!);
         }, 500);
     }
 }
@@ -809,7 +809,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             let tooltip = document.createElement('div');
             tooltip.className = 'bf-tooltip-inner';
             let tooltipSpan = document.createElement('span');
-            tooltipSpan.textContent = `Show Buff pattern screenshot`;
+            tooltipSpan.textContent = 'Show Buff pattern screenshot';
             tooltip.appendChild(tooltipSpan);
             outerContainer.appendChild(screenshotButton);
             outerContainer.appendChild(tooltip);
@@ -923,7 +923,7 @@ function getApiItem(container: Element | null): CSFloat.ListingData | null {
     return null;
 }
 
-async function addItemHistory(container: Element) {
+function addItemHistory(container: Element) {
     const itemHistory = calculateHistoryValues(getWholeHistory());
     const headerContainer = <HTMLElement>container.querySelector('#header');
     if (!headerContainer || !itemHistory) {
@@ -1246,7 +1246,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
 function createBuffName(item: CSFloat.FloatItem): string {
     let full_name = `${item.name}`;
     if (item.quality.includes('Sticker')) {
-        full_name = `Sticker | ` + full_name;
+        full_name = 'Sticker | ' + full_name;
     } else if (!item.quality.includes('Container')) {
         if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
             full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;

@@ -112,7 +112,7 @@ export function getSPBackgroundColor(spPercentage: number) {
 export function parseHTMLString(htmlString: string, container: HTMLElement) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, 'text/html');
-    const tags = doc.getElementsByTagName(`body`)[0];
+    const tags = doc.getElementsByTagName('body')[0];
 
     for (const tag of Array.from(tags.children)) {
         container.appendChild(tag);
