@@ -85,9 +85,9 @@ export function calculateTime(created_at: string) {
     let textTime = '';
     if (timeHours < 49) {
         if (timeMin < 120) {
-            textTime = `${timeMin} minute${timeMin == 1 ? '' : 's'} ago`;
+            textTime = `${timeMin} minute${timeMin === 1 ? '' : 's'} ago`;
         } else {
-            textTime = `${timeHours} hour${timeHours == 1 ? '' : 's'} ago`;
+            textTime = `${timeHours} hour${timeHours === 1 ? '' : 's'} ago`;
         }
     } else {
         textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) == 1 ? '' : 's'} ago`;

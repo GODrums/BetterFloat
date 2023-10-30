@@ -835,22 +835,51 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             });
             salesHeader.style.color = 'cyan';
 
-            // all of this should at some point be done in a safer way
-            let tableBody = '';
+            const tableBody = document.createElement('tbody');
             pastSales.forEach((sale) => {
-                tableBody += `<tr role="row" mat-row class="mat-row cdk-row ng-star-inserted" ${
-                    item.float_value == sale.float ? 'style="background-color: darkslategray;"' : ''
-                }><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.date}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${USDollar.format(
-                    sale.price
-                )}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${sale.float}</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted">${
-                    sale.pattern
-                }</td><td role="cell" mat-cell class="mat-cell cdk-cell ng-star-inserted"><a ${
-                    sale.url == 'No Link Available'
-                        ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                          extensionSettings.runtimePublicURL +
-                          '/ban-solid.svg" style="height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);"> </img>'
-                        : 'href="' + sale.url + '" target="_blank"><i _ngcontent-mua-c199="" class="material-icons" style="translate: 0px 1px;">camera_alt</i></a>'
-                }</td></tr>`;
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('role', 'row');
+                newRow.className = 'mat-row cdk-row ng-star-inserted';
+                if (sale.float === item.float_value) {
+                    newRow.style.backgroundColor = 'darkslategray';
+                }
+                const dateCell = document.createElement('td');
+                dateCell.setAttribute('role', 'cell');
+                dateCell.className = 'mat-cell cdk-cell ng-star-inserted';
+                dateCell.textContent = sale.date;
+                newRow.appendChild(dateCell);
+                const priceCell = document.createElement('td');
+                priceCell.setAttribute('role', 'cell');
+                priceCell.className = 'mat-cell cdk-cell ng-star-inserted';
+                priceCell.textContent = USDollar.format(sale.price);
+                newRow.appendChild(priceCell);
+                const floatCell = document.createElement('td');
+                floatCell.setAttribute('role', 'cell');
+                floatCell.className = 'mat-cell cdk-cell ng-star-inserted';
+                floatCell.textContent = sale.float.toString();
+                newRow.appendChild(floatCell);
+                const linkCell = document.createElement('td');
+                linkCell.setAttribute('role', 'cell');
+                linkCell.className = 'mat-cell cdk-cell ng-star-inserted';
+                const link = document.createElement('a');
+                if (sale.url === 'No Link Available') {
+                    link.setAttribute('style', 'pointer-events: none;cursor: default;');
+                    const linkImage = document.createElement('img');
+                    linkImage.setAttribute('src', extensionSettings.runtimePublicURL + '/ban-solid.svg');
+                    linkImage.setAttribute('style', 'height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);');
+                    link.appendChild(linkImage);
+                } else {
+                    link.href = sale.url;
+                    link.target = '_blank';
+                    const linkImage = document.createElement('i');
+                    linkImage.className = 'material-icons';
+                    linkImage.setAttribute('style', 'translate: 0px 1px;');
+                    linkImage.textContent = 'camera_alt';
+                    link.appendChild(linkImage);
+                }
+                linkCell.appendChild(link);
+                newRow.appendChild(linkCell);
+                tableBody.appendChild(newRow);
             });
             const outerContainer = document.createElement('div');
             outerContainer.setAttribute('style', 'max-height: 260px;overflow: auto;background-color: #424242;');
@@ -860,7 +889,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             table.setAttribute('style', 'width: 100%;');
             const header = document.createElement('thead');
             header.setAttribute('role', 'rowgroup');
-            let headerValues = ['Date', 'Price', 'Float Value', 'Paint Seed'];
+            let headerValues = ['Date', 'Price', 'Float Value'];
             for (let i = 0; i < headerValues.length; i++) {
                 const headerCell = document.createElement('th');
                 headerCell.setAttribute('role', 'columnheader');
@@ -872,7 +901,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             linkHeaderCell.setAttribute('role', 'columnheader');
             linkHeaderCell.className = 'mat-header-cell cdk-header-cell ng-star-inserted';
             const linkHeader = document.createElement('a');
-            linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=CNY&filter=date&sort=descending`);
+            linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
             linkHeader.setAttribute('target', '_blank');
             const linkHeaderImage = document.createElement('img');
             linkHeaderImage.setAttribute('src', extensionSettings.runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
@@ -881,9 +910,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             linkHeaderCell.appendChild(linkHeader);
             header.appendChild(linkHeaderCell);
             table.appendChild(header);
-            const body = document.createElement('tbody');
-            body.innerHTML = tableBody;
-            table.appendChild(body);
+            table.appendChild(tableBody);
             outerContainer.appendChild(table);
 
             const historyChild = gridHistory?.querySelector('.history-component')?.firstElementChild;
@@ -893,8 +920,8 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             }
         });
         const gridHeading = gridHistory.querySelector('#header');
-        gridHeading?.firstChild?.lastChild?.appendChild(divider);
-        gridHeading?.firstChild?.lastChild?.appendChild(salesHeader);
+        gridHeading?.lastChild?.appendChild(divider);
+        gridHeading?.lastChild?.appendChild(salesHeader);
     }
 }
 
@@ -948,11 +975,11 @@ function addItemHistory(container: Element) {
 
     const highestContainer = document.createElement('span');
     highestContainer.classList.add('betterfloat-history-highest');
-    highestContainer.textContent = 'High: $' + itemHistory.highest.avg_price.toFixed(2);
+    highestContainer.textContent = 'High: ' + USDollar.format(itemHistory.highest.avg_price);
 
     const lowestContainer = document.createElement('span');
     lowestContainer.classList.add('betterfloat-history-lowest');
-    lowestContainer.textContent = 'Low: $' + itemHistory.lowest.avg_price.toFixed(2);
+    lowestContainer.textContent = 'Low: ' + USDollar.format(itemHistory.lowest.avg_price);
 
     const divider = document.createElement('span');
     divider.textContent = ' | ';
@@ -965,7 +992,7 @@ function addItemHistory(container: Element) {
 }
 
 function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
-    if (itemHistory.length == 0) {
+    if (itemHistory.length === 0) {
         return null;
     }
     const highestElement = itemHistory.reduce((prev, current) => (prev.avg_price > current.avg_price ? prev : current));
@@ -998,7 +1025,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingAgeText.textContent = calculateTime(cachedItem.created_at);
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
-    if (extensionSettings.listingAge == 1) {
+    if (extensionSettings.listingAge === 1) {
         listingAge.style.marginBottom = '5px';
         listingAgeText.style.color = 'darkgray';
         container.querySelector('.online-container')?.after(listingAge);
@@ -1066,7 +1093,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
     const priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
     let price: string;
-    if (location.pathname == '/sell') {
+    if (location.pathname === '/sell') {
         price = priceText[1].split('Price')[1];
     } else {
         price = priceText.includes('Bids') ? '0' : priceText[0];
@@ -1117,7 +1144,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
-    const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
+    const priceFromReference = extensionSettings.priceReference === 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,
         buff_id: buff_id,
@@ -1134,7 +1161,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
 
-    if (!suggestedContainer && location.pathname == '/sell') {
+    if (!suggestedContainer && location.pathname === '/sell') {
         suggestedContainer = document.createElement('div');
         suggestedContainer.setAttribute('class', 'reference-container');
         container.querySelector('.price')?.after(suggestedContainer);
@@ -1206,7 +1233,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     }
 
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.
-    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname != '/sell') {
+    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         const saleTag = priceContainer.querySelector('.sale-tag');
         const badge = priceContainer.querySelector('.badge');

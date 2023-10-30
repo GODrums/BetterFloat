@@ -43,7 +43,7 @@ async function init() {
 
 async function firstLaunch() {
     console.log('[BetterFloat] First launch, url: ', location.pathname, location.search);
-    if (location.pathname == '/') {
+    if (location.pathname === '/') {
         let items = document.getElementsByTagName('NGU-TILE');
         for (let i = 0; i < items.length; i++) {
             await adjustItem(items[i]);
@@ -92,13 +92,13 @@ async function applyMutation() {
                     }
                     if (addedNode.className) {
                         let className = addedNode.className.toString();
-                        if (className.includes('item') && addedNode.tagName == 'NGU-TILE' && !isMobileItem(addedNode)) {
+                        if (className.includes('item') && addedNode.tagName === 'NGU-TILE' && !isMobileItem(addedNode)) {
                             // console.log('Found item: ', addedNode);
                             await adjustItem(addedNode);
                         } else if (className.includes('item-category')) {
                             // big item page
                             await adjustBigItem(document.querySelector('.item')!);
-                        } else if (addedNode.tagName == 'APP-PRICE-CHART') {
+                        } else if (addedNode.tagName === 'APP-PRICE-CHART') {
                             console.log('Found price chart: ', addedNode);
                         }
                     }
@@ -157,7 +157,7 @@ async function adjustItem(container: Element) {
 async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
     let priceResult;
     let cachedItem;
-    if (item.type == 'Agent') {
+    if (item.type === 'Agent') {
         cachedItem = getFirstSkbItem();
         if (!cachedItem?.items) {
             console.log('[BetterFloat] No cached item found: ', cachedItem);
@@ -187,7 +187,7 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
         let overlayContainer = container.querySelector(selector.stickerDiv);
         if (selector == itemSelectors.card) {
             (<HTMLElement>overlayContainer).style.justifyContent = 'flex-end';
-        } else if (selector == itemSelectors.page) {
+        } else if (selector === itemSelectors.page) {
             (<HTMLElement>overlayContainer).style.display = 'flex';
         }
 
@@ -232,7 +232,7 @@ async function addListingAge(container: Element, cachedItem: Skinbid.Listing, pa
         listingAge.appendChild(listingIcon);
         listingAge.appendChild(listingAgeText);
 
-        if (page == 'card') {
+        if (page === 'card') {
             (<HTMLElement>referenceDiv.parentElement).style.flexDirection = 'column';
         }
         referenceDiv.before(listingAge);
@@ -244,7 +244,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
     let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
 
-    if (priceListing == 0 && priceOrder == 0) {
+    if (priceListing === 0 && priceOrder === 0) {
         console.debug('[BetterFloat] No buff price found for ', buff_name);
         return;
     }
@@ -286,7 +286,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
         }
     }
 
-    const difference = item.price - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
+    const difference = item.price - (extensionSettings.skbPriceReference === 1 ? priceListing : priceOrder);
     if (extensionSettings.skbBuffDifference) {
         let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
@@ -295,7 +295,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
             container.querySelector(selector.discountDiv)?.appendChild(discountContainer);
         }
         if (item.price !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
-            if (selector == itemSelectors.page) {
+            if (selector === itemSelectors.page) {
                 let discountSpan = document.createElement('span');
                 discountSpan.style.marginLeft = '5px';
                 discountContainer.appendChild(discountSpan);
@@ -303,10 +303,10 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
             }
             discountContainer.className += ' betterfloat-sale-tag';
             discountContainer.style.color =
-                difference == 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
+                difference === 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
             discountContainer.style.fontWeight = '400';
             discountContainer.style.fontSize = '14px';
-            discountContainer.textContent = difference == 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
+            discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         }
     } else {
         if (container.querySelector('.discount')) {
@@ -368,7 +368,7 @@ async function calculateBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: 
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();
-    if (currencyRate != 1) {
+    if (currencyRate !== 1) {
         priceListing = priceListing * currencyRate;
         priceOrder = priceOrder * currencyRate;
     }
@@ -388,7 +388,7 @@ function createBuffName(item: Skinbid.HTMLItem): string {
         item.type.includes('Pass') ||
         item.type.includes('Pin') ||
         item.type.includes('Tool') ||
-        item.style == 'Vanilla'
+        item.style === 'Vanilla'
     ) {
         full_name = item.name;
     } else if (item.type.includes('Agent')) {
