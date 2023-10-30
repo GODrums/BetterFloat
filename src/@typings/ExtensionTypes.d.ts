@@ -89,13 +89,26 @@ export namespace Extension {
             buff163: {
                 starting_at: {
                     price: number;
+                    doppler?: DopplerPrices;
                 };
                 highest_order: {
                     price: number;
+                    doppler?: DopplerPrices;
                 };
             };
         };
     };
+
+    type DopplerPrices = {
+        "Sapphire": number;
+        "Ruby": number;
+        "Black Pearl": number;
+        "Emerald": number;
+        "Phase 1": number;
+        "Phase 2": number;
+        "Phase 3": number;
+        "Phase 4": number;
+    }
 
     // response from api.rums.dev/v1/csfloatstalls/:id
     export type CustomStallData = {

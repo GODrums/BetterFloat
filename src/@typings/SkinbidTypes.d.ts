@@ -1,3 +1,5 @@
+import { ItemStyle } from "./FloatTypes";
+
 export namespace Skinbid {
     // https://api.skinbid.com/api/search/auctions?
     export type MarketData = {
@@ -31,7 +33,7 @@ export namespace Skinbid {
         name: string;
         type: string;
         price: number;
-        style: string;
+        style: ItemStyle;
         wear: number;
         wear_name: string;
         category: string;

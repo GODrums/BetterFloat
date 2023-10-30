@@ -4,7 +4,7 @@ import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getPriceMapping, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
+import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
 async function init() {
     if (!location.hostname.includes('skinbid.com')) {
@@ -241,7 +241,7 @@ async function addListingAge(container: Element, cachedItem: Skinbid.Listing, pa
 
 async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
     await loadMapping();
-    let { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
+    let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
     let buff_id = await getBuffMapping(buff_name);
 
     if (priceListing == 0 && priceOrder == 0) {
@@ -254,7 +254,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
         console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
         return;
     }
-    const currencySymbol = (<HTMLElement>priceDiv?.firstChild).textContent?.trim().charAt(0);
+    const currencySymbol = (<HTMLElement>priceDiv.firstChild).textContent?.trim().charAt(0);
     if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
     }
@@ -362,37 +362,9 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
     }
 }
 
-async function getBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
-    let priceMapping = await getPriceMapping();
+async function calculateBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
     let buff_name = handleSpecialStickerNames(createBuffName(item));
-    let helperPrice: number | null = null;
-
-    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = 0;
-    }
-
-    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
-    let priceListing = 0;
-    let priceOrder = 0;
-    if (typeof helperPrice == 'number') {
-        priceListing = helperPrice;
-        priceOrder = helperPrice;
-    } else if (priceMapping[buff_name]) {
-        if (item.style != '' && item.style != 'Vanilla') {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];
-        } else {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
-        }
-    }
-    if (priceListing == undefined) {
-        priceListing = 0;
-    }
-    if (priceOrder == undefined) {
-        priceOrder = 0;
-    }
+    let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();

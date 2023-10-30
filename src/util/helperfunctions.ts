@@ -1,3 +1,6 @@
+import { ItemStyle } from "../@typings/FloatTypes";
+import { getPriceMapping } from "../mappinghandler";
+
 // return if element has been successfully waited for, else limit has been reached
 export async function waitForElement(selector: string, interval = 200, maxTries = 10) {
     let tries = 0;
@@ -8,14 +11,44 @@ export async function waitForElement(selector: string, interval = 200, maxTries 
     return tries < maxTries;
 }
 
+export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Promise<{ priceListing: number; priceOrder: number }> {
+    const priceMapping = await getPriceMapping();
+    let helperPrice: number | null = null;
+
+    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
+        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+        helperPrice = 0;
+    }
+
+    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
+    let priceListing = 0;
+    let priceOrder = 0;
+    if (typeof helperPrice == 'number') {
+        priceListing = helperPrice;
+        priceOrder = helperPrice;
+    } else if (priceMapping[buff_name]) {
+        if (itemStyle!= '' && itemStyle != 'Vanilla') {
+            priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler']![itemStyle] ?? 0;
+            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler']![itemStyle] ?? 0;
+        } else {
+            priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
+            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
+        }
+    }
+    if (priceListing == undefined) {
+        priceListing = 0;
+    }
+    if (priceOrder == undefined) {
+        priceOrder = 0;
+    }
+
+    return { priceListing, priceOrder };
+}
+
 // truncats a number to a given amount of digits
 export function toTruncatedString(num: number, digits: number) {
-    let regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${digits}})?`);
-    if (regex) {
-        return num.toString().match(regex)![0] ?? '';
-    } else {
-        return num.toString();
-    }
+    const regex = num.toString().match(new RegExp(`^-?\\d+(?:\\.\\d{0,${digits}})?`));
+    return regex ? regex[0] : '';
 }
 
 /**

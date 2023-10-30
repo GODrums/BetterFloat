@@ -74,7 +74,7 @@ function addListeners() {
             const [site, color] = attrName.split('-');
 
             chrome.storage.local.get(['colors']).then((data) => {
-                if (data.colors && data.colors[site]) {
+                if (data.colors?.[site]) {
                     data.colors[site][color] = $(this).val();
                     chrome.storage.local.set({
                         colors: data.colors,
@@ -305,7 +305,7 @@ function loadForAbout() {
     (<HTMLButtonElement>document.getElementById('priceRefreshButton')).addEventListener('click', () => {
         if ($('#priceRefreshButton').hasClass('loading') || $('#priceRefreshButton').hasClass('done')) return;
         $('#priceRefreshButton').addClass('loading');
-        refreshPrices().then(async (result) => {
+        refreshPrices().then((result) => {
             if (!result) return;
 
             console.log('Manual prices refresh done. Sending message to content script.');

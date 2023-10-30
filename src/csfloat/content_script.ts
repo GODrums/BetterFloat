@@ -5,7 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getPriceMapping, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
-import { USDollar, calculateTime, cutSubstring, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
+import { USDollar, calculateTime, cutSubstring, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, parseHTMLString, toTruncatedString, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
@@ -71,7 +71,7 @@ async function firstLaunch() {
     const items = document.querySelectorAll('item-card');
 
     for (let i = 0; i < items.length; i++) {
-        adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ?? false);
+        await adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ?? false);
     }
 
     if (location.pathname == '/profile/offers') {
@@ -310,7 +310,7 @@ async function customStall(stall_id: string) {
     }
 
     let matChipWrapper = document.querySelector('.mat-chip-list-wrapper');
-    if (matChipWrapper && matChipWrapper.firstElementChild) {
+    if (matChipWrapper?.firstElementChild) {
         let bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
         bfChip.style.backgroundColor = 'purple';
         bfChip.textContent = 'BetterFloat ' + stallData.roles[0];
@@ -339,8 +339,8 @@ function switchTab(tab: number) {
 function createTabListeners() {
     const tabList = document.querySelectorAll('.mat-tab-label');
     const tabContainer = tabList[0]?.parentElement;
-    if (!tabList || tabContainer?.className.includes('betterfloat-tabs')) return;
-    tabContainer?.classList.add('betterfloat-tabs');
+    if (!tabContainer || tabContainer?.className.includes('betterfloat-tabs')) return;
+    tabContainer.classList.add('betterfloat-tabs');
     for (let i = 0; i < tabList.length; i++) {
         tabList[i].addEventListener('click', () => {
             window.history.replaceState({}, '', location.pathname + '?tab=' + tabList[i].getAttribute('aria-posinset'));
@@ -443,7 +443,7 @@ async function refreshButton() {
             }
             console.log('[BetterFloat] Starting auto-refresh, interval: 30s, current time: ' + Date.now());
 
-            const refreshDelay = (Number(extensionSettings.refreshInterval) ?? 30) * 1000;
+            const refreshDelay = extensionSettings.refreshInterval * 1000;
             const refreshText = document.querySelector('.betterfloat-refreshText');
 
             if (!refreshText) return;
@@ -875,7 +875,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             outerContainer.appendChild(table);
 
             const historyChild = gridHistory?.querySelector('.history-component')?.firstElementChild;
-            if (historyChild && historyChild.firstElementChild) {
+            if (historyChild?.firstElementChild) {
                 historyChild.removeChild(historyChild.firstElementChild);
                 historyChild.appendChild(outerContainer);
             }
@@ -1009,15 +1009,14 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
 }
 
 async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
-    const stickers = cachedItem.item.stickers;
     // quality 12 is souvenir
-    if (!stickers || cachedItem.item?.quality == 12) {
+    if (!cachedItem.item.stickers || cachedItem.item.quality == 12) {
         return;
     }
 
     const csfSP = container.querySelector('.sticker-percentage');
     if (csfSP) {
-        const didChange = await changeSpContainer(csfSP, stickers, price_difference);
+        const didChange = await changeSpContainer(csfSP, cachedItem.item.stickers, price_difference);
         if (!didChange) {
             csfSP.remove();
         }
@@ -1064,25 +1063,27 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     let quality = '';
     let style: ItemStyle = '';
 
-    header_details.childNodes.forEach((node) => {
-        switch (node.nodeType) {
-            case Node.ELEMENT_NODE:
-                const text = node.textContent?.trim();
-                if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
-                    // TODO: integrate the ItemQuality type
-                    // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
-                    quality = text;
-                } else {
-                    style = text?.substring(1, text.length - 1) as ItemStyle;
-                }
-                break;
-            case Node.TEXT_NODE:
-                condition = (node.textContent?.trim() ?? '') as ItemCondition;
-                break;
-            case Node.COMMENT_NODE:
-                break;
-        }
-    });
+    if (header_details) {
+        header_details.childNodes.forEach((node) => {
+            switch (node.nodeType) {
+                case Node.ELEMENT_NODE:
+                    const text = node.textContent?.trim();
+                    if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
+                        // TODO: integrate the ItemQuality type
+                        // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
+                        quality = text;
+                    } else {
+                        style = text?.substring(1, text.length - 1) as ItemStyle;
+                    }
+                    break;
+                case Node.TEXT_NODE:
+                    condition = (node.textContent?.trim() ?? '') as ItemCondition;
+                    break;
+                case Node.COMMENT_NODE:
+                    break;
+            }
+        });
+    }
 
     if (!name?.includes('|')) {
         style = 'Vanilla';
@@ -1099,38 +1100,11 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 }
 
 async function getBuffItem(item: CSFloat.FloatItem) {
-    await loadMapping();
     const buff_name = handleSpecialStickerNames(createBuffName(item));
-    const priceMapping = await getPriceMapping();
-    let helperPrice: number | null = null;
-
-    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = 0;
-    }
-
     const buff_id = await getBuffMapping(buff_name);
-    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
-    let priceListing = 0;
-    let priceOrder = 0;
-    if (typeof helperPrice == 'number') {
-        priceListing = helperPrice;
-        priceOrder = helperPrice;
-    } else {
-        if (item.style != '' && item.style != 'Vanilla') {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];
-        } else {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
-        }
-    }
-    if (priceListing == undefined) {
-        priceListing = 0;
-    }
-    if (priceOrder == undefined) {
-        priceOrder = 0;
-    }
+    
+    const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+    
     const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,

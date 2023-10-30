@@ -36,7 +36,7 @@ let skinbidUserCurrency = '';
 // skinbid: cached items from api
 let skinbidItems: Skinbid.Listing[] = [];
 
-export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
+export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     if (csfloatHistoryGraph.length > 0) {
         console.debug('[BetterFloat] History graph already cached, deleting history: ', csfloatHistoryGraph);
         csfloatHistoryGraph = [];
@@ -51,7 +51,7 @@ export async function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
     });
 }
 
-export async function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
+export function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
     if (csfloatHistorySales.length > 0) {
         console.debug('[BetterFloat] History sales already cached, deleting history: ', csfloatHistoryGraph);
         csfloatHistorySales = [];
@@ -60,7 +60,7 @@ export async function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
     csfloatHistorySales = data;
 }
 
-export async function cacheCSFItems(data: CSFloat.ListingData[]) {
+export function cacheCSFItems(data: CSFloat.ListingData[]) {
     if (csfloatItems.length > 0) {
         console.debug('[BetterFloat] Items already cached, deleting items: ', csfloatItems);
         csfloatItems = [];
@@ -68,7 +68,7 @@ export async function cacheCSFItems(data: CSFloat.ListingData[]) {
     csfloatItems = data;
 }
 
-export async function cacheSkbItems(data: Skinbid.Listing[]) {
+export function cacheSkbItems(data: Skinbid.Listing[]) {
     if (skinbidItems.length > 0) {
         console.debug('[BetterFloat] Items already cached, added more items: ', skinbidItems.length);
         skinbidItems = skinbidItems.concat(data);
@@ -77,15 +77,15 @@ export async function cacheSkbItems(data: Skinbid.Listing[]) {
     }
 }
 
-export async function cacheCSFPopupItem(data: CSFloat.ListingData) {
+export function cacheCSFPopupItem(data: CSFloat.ListingData) {
     csfloatPopupItem = data;
 }
 
-export async function cacheSpPopupItem(data: Skinport.ItemData) {
+export function cacheSpPopupItem(data: Skinport.ItemData) {
     skinportPopupItem = data;
 }
 
-export async function cacheSpItems(data: Skinport.Item[]) {
+export function cacheSpItems(data: Skinport.Item[]) {
     if (skinportItems.length > 0) {
         console.debug('[BetterFloat] Items already cached, deleting items: ', skinportItems);
         skinportItems = [];
@@ -93,7 +93,7 @@ export async function cacheSpItems(data: Skinport.Item[]) {
     skinportItems = data;
 }
 
-export async function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
+export function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
     if (Object.keys(skinportRatesFromUSD).length > 0) {
         console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
     }
@@ -101,28 +101,28 @@ export async function cacheSkinportCurrencyRates(data: { [currency: string]: num
     skinportUserCurrency = user;
 }
 
-export async function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
+export function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
     skinbidRates = rates;
 }
 
-export async function cacheSkinbidUserCurrency(currency: string) {
+export function cacheSkinbidUserCurrency(currency: string) {
     skinbidUserCurrency = currency;
 }
 
-export async function cacheRealCurrencyRates(data: { [currency: string]: number }) {
+export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
     if (Object.keys(realRatesFromUSD).length > 0) {
         console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
     }
     realRatesFromUSD = data;
 }
 
-export async function getWholeHistory() {
+export function getWholeHistory() {
     const history = csfloatHistoryGraph;
     csfloatHistoryGraph = [];
     return history;
 }
 
-export async function getFirstHistorySale() {
+export function getFirstHistorySale() {
     if (csfloatHistorySales.length > 0) {
         const sale = csfloatHistorySales.shift();
         return sale;
@@ -131,7 +131,7 @@ export async function getFirstHistorySale() {
     }
 }
 
-export async function getFirstCSFItem() {
+export function getFirstCSFItem() {
     if (csfloatItems.length > 0) {
         const item = csfloatItems.shift();
         return item;
@@ -140,15 +140,15 @@ export async function getFirstCSFItem() {
     }
 }
 
-export async function getCSFPopupItem() {
+export function getCSFPopupItem() {
     return csfloatPopupItem;
 }
 
-export async function getSpPopupItem() {
+export function getSpPopupItem() {
     return skinportPopupItem;
 }
 
-export async function getFirstSpItem() {
+export function getFirstSpItem() {
     if (skinportItems.length > 0) {
         const item = skinportItems.shift();
         return item;
@@ -157,7 +157,7 @@ export async function getFirstSpItem() {
     }
 }
 
-export async function getFirstSkbItem() {
+export function getFirstSkbItem() {
     if (skinbidItems.length > 0) {
         const item = skinbidItems.shift();
         return item;
@@ -166,7 +166,7 @@ export async function getFirstSkbItem() {
     }
 }
 
-export async function getPriceMapping(): Promise<{ [key: string]: any }> {
+export async function getPriceMapping(): Promise<Extension.CSGOTraderMapping> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }

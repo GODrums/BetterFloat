@@ -1,5 +1,4 @@
 const path = require('path');
-const srcDir = path.join(__dirname, "..", "src");
 
 const DotenvPlugin = require('dotenv-webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');

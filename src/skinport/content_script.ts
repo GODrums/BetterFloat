@@ -3,7 +3,7 @@ import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getPriceMapping, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
-import { Euro, USDollar, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
+import { Euro, USDollar, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
@@ -67,7 +67,7 @@ async function firstLaunch() {
         }
         if (location.search.includes('sort=date')) {
             await waitForElement('.CatalogHeader-tooltipLive');
-            await addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
+            addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
         }
         if (location.search.includes('bf=live')) {
             (<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
@@ -225,7 +225,7 @@ function autoCloseTooltip(container: Element) {
     }, 1000);
 }
 
-async function addLiveFilterMenu(container: Element) {
+function addLiveFilterMenu(container: Element) {
     const filterDiv = document.createElement('div');
 
     const filterPopup = document.createElement('div');
@@ -408,7 +408,7 @@ async function adjustItemPage(container: Element) {
 
     const item = getSkinportItem(container, itemSelectors.page);
     if (!item) return;
-    const { buff_name: buff_name, priceListing, priceOrder } = await getBuffPrice(item);
+    const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
     const buffid = await getBuffMapping(buff_name);
     const buffLink = buffid > 0 ? `https://buff.163.com/goods/${buffid}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
@@ -509,7 +509,7 @@ async function adjustItem(container: Element) {
         // console.log('[BetterFloat] Cached item: ', cachedItem);
 
         if (extensionSettings.spBlueGem && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
-            addBlueBadge(container, cachedItem);
+            await addBlueBadge(container, cachedItem);
         }
     }
 }
@@ -554,7 +554,8 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     patternLink.style.color = 'deepskyblue';
 
     const itemHistory = container.querySelector('.ItemHistory');
-    let tableTab = <HTMLElement>itemHistory?.lastElementChild?.cloneNode(false);
+    if (!itemHistory || !itemHistory.lastElementChild) return;
+    let tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
     tableTab.id = 'react-tabs-7';
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
     let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
@@ -688,7 +689,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         currency = priceText.charAt(0);
         priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
     }
-    let price = Number(priceText) ?? 0;
+    let price = Number(priceText);
 
     const type = container.querySelector(selector.title)?.textContent ?? '';
     const text = container.querySelector(selector.text)?.innerHTML ?? '';
@@ -747,7 +748,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
     return {
         name: name,
-        price: price,
+        price: isNaN(price) ? 0 : price,
         type: type,
         category: category,
         text: text,
@@ -760,37 +761,9 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     };
 }
 
-async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
-    const priceMapping = await getPriceMapping();
+async function calculateBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
     const buff_name = handleSpecialStickerNames(createBuffName(item));
-    let helperPrice: number | null = null;
-
-    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = 0;
-    }
-
-    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
-    let priceListing = 0;
-    let priceOrder = 0;
-    if (typeof helperPrice == 'number') {
-        priceListing = helperPrice;
-        priceOrder = helperPrice;
-    } else if (priceMapping[buff_name]) {
-        if (item.style != '' && item.style != 'Vanilla') {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['doppler'][item.style];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['doppler'][item.style];
-        } else {
-            priceListing = priceMapping[buff_name]['buff163']['starting_at']['price'];
-            priceOrder = priceMapping[buff_name]['buff163']['highest_order']['price'];
-        }
-    }
-    if (priceListing == undefined) {
-        priceListing = 0;
-    }
-    if (priceOrder == undefined) {
-        priceOrder = 0;
-    }
+    let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
     //convert prices to user's currency
     const currencyRate = await getSpUserCurrencyRate(extensionSettings.skinportRates);
@@ -807,7 +780,7 @@ async function getBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string
     return { buff_name, priceListing, priceOrder };
 }
 
-async function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
+function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
     container.className += ' betterfloat-buffprice';
     const buffContainer = document.createElement('div');
     buffContainer.className = 'betterfloat-buff-container';
@@ -851,7 +824,7 @@ async function generateBuffContainer(container: HTMLElement, priceListing: numbe
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
     await loadMapping();
-    const { buff_name, priceListing, priceOrder } = await getBuffPrice(item);
+    const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
     const buff_id = await getBuffMapping(buff_name);
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
