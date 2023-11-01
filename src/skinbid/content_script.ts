@@ -219,7 +219,6 @@ async function addListingAge(container: Element, cachedItem: Skinbid.Listing, pa
             listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created);
         }
         referenceDiv.after(listingContainer);
-        return;
     } else {
         const listingAge = document.createElement('div');
         const listingAgeText = document.createElement('p');
@@ -286,7 +285,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
         }
     }
 
-    const difference = item.price - (extensionSettings.skbPriceReference === 1 ? priceListing : priceOrder);
+    const difference = item.price - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
     if (extensionSettings.skbBuffDifference) {
         let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
@@ -295,7 +294,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
             container.querySelector(selector.discountDiv)?.appendChild(discountContainer);
         }
         if (item.price !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
-            if (selector === itemSelectors.page) {
+            if (selector == itemSelectors.page) {
                 let discountSpan = document.createElement('span');
                 discountSpan.style.marginLeft = '5px';
                 discountContainer.appendChild(discountSpan);
@@ -388,7 +387,7 @@ function createBuffName(item: Skinbid.HTMLItem): string {
         item.type.includes('Pass') ||
         item.type.includes('Pin') ||
         item.type.includes('Tool') ||
-        item.style === 'Vanilla'
+        item.style == 'Vanilla'
     ) {
         full_name = item.name;
     } else if (item.type.includes('Agent')) {

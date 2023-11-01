@@ -327,6 +327,15 @@ async function customStall(stall_id: string) {
         bfChip.textContent = 'BetterFloat ' + stallData.roles[0];
         matChipWrapper.appendChild(bfChip);
     }
+
+    const interval = setInterval(() => {
+        if (!location.href.includes('/stall/') && !location.href.includes('/item/')) {
+            document.querySelector('.betterfloat-custom-stall')?.classList.remove('betterfloat-custom-stall');
+            document.querySelector('video')?.remove();
+            
+            clearInterval(interval);
+        }
+    }, 200);
 }
 
 function offerItemClickListener(listItem: Element) {
@@ -512,11 +521,15 @@ function applyMutation() {
                     const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
+                    // console.debug('[BetterFloat] Mutation detected:', addedNode);
 
                     // item popout
                     if (addedNode.tagName.toLowerCase() == 'item-detail') {
                         await adjustItem(addedNode, true);
                         // item from listings
+                    } else if (addedNode.tagName.toLowerCase() == 'app-stall-view') {
+                        // adjust stall
+                        await customStall(location.pathname.split('/').pop() ?? '');
                     } else if (addedNode.className.toString().includes('flex-item')) {
                         await adjustItem(addedNode);
                     } else if (addedNode.className.toString().includes('mat-row cdk-row')) {
@@ -1025,7 +1038,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingAgeText.textContent = calculateTime(cachedItem.created_at);
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
-    if (extensionSettings.listingAge === 1) {
+    if (extensionSettings.listingAge == 1) {
         listingAge.style.marginBottom = '5px';
         listingAgeText.style.color = 'darkgray';
         container.querySelector('.online-container')?.after(listingAge);
@@ -1144,7 +1157,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
-    const priceFromReference = extensionSettings.priceReference === 1 ? priceListing : priceOrder;
+    const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,
         buff_id: buff_id,
@@ -1233,7 +1246,7 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopou
     }
 
     // edge case handling: reference price may be a valid 0 for some paper stickers etc.
-    if (extensionSettings.showBuffDifference && item.price !== 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
+    if (extensionSettings.showBuffDifference && item.price != 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
         const priceContainer = <HTMLElement>container.querySelector('.price');
         const saleTag = priceContainer.querySelector('.sale-tag');
         const badge = priceContainer.querySelector('.badge');
