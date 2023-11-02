@@ -8,6 +8,7 @@ import { initSettings } from '../util/extensionsettings';
 import {
     USDollar,
     calculateTime,
+    createUrlListener,
     cutSubstring,
     getBuffPrice,
     getFloatColoring,
@@ -76,7 +77,7 @@ async function init() {
 async function firstLaunch() {
     if (!extensionSettings.enableCSFloat) return;
 
-    createUrlListener();
+    titleChanger();
     createTabListeners();
 
     const items = document.querySelectorAll('item-card');
@@ -332,7 +333,7 @@ async function customStall(stall_id: string) {
         if (!location.href.includes('/stall/') && !location.href.includes('/item/')) {
             document.querySelector('.betterfloat-custom-stall')?.classList.remove('betterfloat-custom-stall');
             document.querySelector('video')?.remove();
-            
+
             clearInterval(interval);
         }
     }, 200);
@@ -375,45 +376,39 @@ function createTabListeners() {
  * Updates the document title according to the current site
  * @async setInterval executed every 200ms
  */
-function createUrlListener() {
-    setInterval(() => {
-        const newUrl = location.href;
-        if (currentUrl != newUrl) {
-            // URL changed
-            let newTitle = '';
-            if (location.pathname == '/' && location.search == '') {
-                newTitle = 'Home';
-            } else if (location.pathname == '/profile/offers') {
-                newTitle = 'Offers';
-            } else if (location.pathname == '/profile/watchlist') {
-                newTitle = 'Watchlist';
-            } else if (location.pathname == '/profile/trades') {
-                newTitle = 'Trades';
-            } else if (location.pathname == '/sell') {
-                newTitle = 'Selling';
-            } else if (location.pathname == '/profile') {
-                newTitle = 'Profile';
-            } else if (location.pathname == '/support') {
-                newTitle = 'Support';
-            } else if (location.pathname == '/search') {
-                newTitle = 'Search';
-            } else if (location.pathname == '/profile/deposit') {
-                newTitle = 'Deposit';
-            } else if (location.pathname.includes('/stall/')) {
-                let username = document.querySelector('.username')?.textContent;
-                if (username) {
-                    newTitle = username + "'s Stall";
-                }
-            } else if (location.pathname.includes('/item/')) {
-                // item titles are fine as they are
+function titleChanger() {
+    createUrlListener(() => {
+        let newTitle = '';
+        if (location.pathname == '/' && location.search == '') {
+            newTitle = 'Home';
+        } else if (location.pathname == '/profile/offers') {
+            newTitle = 'Offers';
+        } else if (location.pathname == '/profile/watchlist') {
+            newTitle = 'Watchlist';
+        } else if (location.pathname == '/profile/trades') {
+            newTitle = 'Trades';
+        } else if (location.pathname == '/sell') {
+            newTitle = 'Selling';
+        } else if (location.pathname == '/profile') {
+            newTitle = 'Profile';
+        } else if (location.pathname == '/support') {
+            newTitle = 'Support';
+        } else if (location.pathname == '/search') {
+            newTitle = 'Search';
+        } else if (location.pathname == '/profile/deposit') {
+            newTitle = 'Deposit';
+        } else if (location.pathname.includes('/stall/')) {
+            let username = document.querySelector('.username')?.textContent;
+            if (username) {
+                newTitle = username + "'s Stall";
             }
-            if (newTitle != '') {
-                document.title = newTitle + ' | CSFloat';
-            }
-            currentUrl = newUrl;
-            // /stall/
+        } else if (location.pathname.includes('/item/')) {
+            // item titles are fine as they are
         }
-    }, 200);
+        if (newTitle != '') {
+            document.title = newTitle + ' - CSFloat';
+        }
+    });
 }
 
 async function refreshButton() {
@@ -879,7 +874,10 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     link.setAttribute('style', 'pointer-events: none;cursor: default;');
                     const linkImage = document.createElement('img');
                     linkImage.setAttribute('src', extensionSettings.runtimePublicURL + '/ban-solid.svg');
-                    linkImage.setAttribute('style', 'height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);');
+                    linkImage.setAttribute(
+                        'style',
+                        'height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);'
+                    );
                     link.appendChild(linkImage);
                 } else {
                     link.href = sale.url;
@@ -1340,7 +1338,5 @@ const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;
-// current url, automically updated per interval
-let currentUrl: string = location.href;
 
 init();

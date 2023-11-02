@@ -12,6 +12,22 @@ export async function waitForElement(selector: string, interval = 200, maxTries 
 }
 
 /**
+ * Listens for url changes and executes the callback function
+ * @async setInterval executed every 200ms
+ */
+export function createUrlListener(urlChangeCallback: (newUrl: string) => void) {
+    // current url, automically updated per interval
+    let currentUrl: string = location.href;
+    setInterval(() => {
+        const newUrl = location.href;
+        if (currentUrl != newUrl) {
+            currentUrl = newUrl;
+            urlChangeCallback(newUrl);
+        }
+    }, 200);
+}
+
+/**
  * Wrapper for price mapping. Returns the price of an item with respect to its style
  * @param buff_name has to exacty follow Buff's naming convention.
  * @param itemStyle e.g. Vanilla, Phase 1, Phase 2, ...

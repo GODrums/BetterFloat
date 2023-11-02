@@ -3,7 +3,7 @@ import { Skinport } from '../@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
-import { Euro, USDollar, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
+import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
@@ -96,14 +96,24 @@ async function firstLaunch() {
 }
 
 function createLiveLink() {
-    const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
-    if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
-    marketLink.style.marginRight = '30px';
-    const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
-    liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
-    liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
-    liveLink.textContent = 'Live';
-    marketLink.after(liveLink);
+    const generateLink = () => {
+        const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
+            if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
+            marketLink.style.marginRight = '30px';
+            const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
+            liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
+            liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
+            liveLink.textContent = 'Live';
+            marketLink.after(liveLink);
+    };
+
+    generateLink();
+
+    createUrlListener(() => {
+        if (!document.querySelector('.betterfloat-liveLink')) {
+            generateLink();
+        }
+    });
 }
 
 function createLanguagePopup() {
