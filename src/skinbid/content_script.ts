@@ -109,6 +109,46 @@ async function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
+const itemSelectors = {
+    card: {
+        name: '.item-name',
+        type: '.item-type',
+        price: '.item-price-wrapper > div',
+        priceDiv: '.item-price-wrapper',
+        wear: '.quality-float-row',
+        discount: '.discount',
+        discountDiv: '.item-price-wrapper',
+        listingAge: '.left.flex > app-quality-float-row',
+        stickerDiv: '.on-top-of-image .items-center',
+    },
+    list: {
+        name: '.item-category-and-stickers .first-row',
+        type: '.item-category-and-stickers .second-row',
+        price: '.section-price .price',
+        priceDiv: '.section-price-first-row',
+        wear: '.quality-float-row',
+        discount: '.section-discount',
+        discountDiv: '.section-discount',
+        listingAge: '.stickers-and-fade',
+        stickerDiv: '.stickers',
+    },
+    page: {
+        name: '.item-title',
+        type: '.item-category',
+        price: '.item-bids-time-info > div',
+        priceDiv: '.item-bids-time-info .value',
+        wear: '.item-detail:nth-child(2)',
+        discount: '.item-bids-time-info .value > div',
+        discountDiv: '.section-discount',
+        listingAge: '.item-detail:last-child',
+        stickerDiv: '.stickers-wrapper .title',
+    },
+} as const;
+
+type PageTypes = keyof typeof itemSelectors;
+
+type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
+
 function isMobileItem(container: Element) {
     return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
 }
@@ -208,7 +248,7 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
     }
 }
 
-async function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: PageTypes) {
+function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: PageTypes) {
     let referenceDiv = container.querySelector(itemSelectors[page].listingAge);
     if (!referenceDiv) return;
 
@@ -402,46 +442,6 @@ function createBuffName(item: Skinbid.HTMLItem): string {
     }
     return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
 }
-
-const itemSelectors = {
-    card: {
-        name: '.item-name',
-        type: '.item-type',
-        price: '.item-price-wrapper > div',
-        priceDiv: '.item-price-wrapper',
-        wear: '.quality-float-row',
-        discount: '.discount',
-        discountDiv: '.item-price-wrapper',
-        listingAge: '.left.flex > app-quality-float-row',
-        stickerDiv: '.on-top-of-image .items-center',
-    },
-    list: {
-        name: '.item-category-and-stickers .first-row',
-        type: '.item-category-and-stickers .second-row',
-        price: '.section-price .price',
-        priceDiv: '.section-price-first-row',
-        wear: '.quality-float-row',
-        discount: '.section-discount',
-        discountDiv: '.section-discount',
-        listingAge: '.stickers-and-fade',
-        stickerDiv: '.stickers',
-    },
-    page: {
-        name: '.item-title',
-        type: '.item-category',
-        price: '.item-bids-time-info > div',
-        priceDiv: '.item-bids-time-info .value',
-        wear: '.item-detail:nth-child(2)',
-        discount: '.item-bids-time-info .value > div',
-        discountDiv: '.section-discount',
-        listingAge: '.item-detail:last-child',
-        stickerDiv: '.stickers-wrapper .title',
-    },
-} as const;
-
-type PageTypes = keyof typeof itemSelectors;
-
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
     let name = container.querySelector('.item-title')?.textContent?.trim() ?? '';

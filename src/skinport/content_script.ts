@@ -568,10 +568,14 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
     tableTab.id = 'react-tabs-7';
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-    let tableHeader = `<div class="ItemHistoryList-header"><div>Date</div><div style="margin-left: 8%;">Float Value</div><div style="margin-left: -4%;">Price</div><div style="margin-right: 12px;"><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);"></a></div></div>`;
+    let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-right: 18px;"></a></div></div>`;
     let tableBody = '';
     for (const sale of pastSales) {
-        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col">${sale.date}</div><div class="ItemHistoryList-col">${sale.float}</div><div class="ItemHistoryList-col">${
+        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
+            extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')
+        }"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
+            sale.float
+        }</div><div class="ItemHistoryList-col" style="width: 24%;">${
             currencySymbol == '€' ? Euro.format(sale.price) : currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price
         }</div><div><a ${
             sale.url == 'No Link Available'
@@ -579,10 +583,10 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
                   extensionSettings.runtimePublicURL +
                   '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
                 : 'href="' +
-                  (!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + "-front.png" : sale.url) +
+                  (!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
                   '" target="_blank"><img src="' +
                   extensionSettings.runtimePublicURL +
-                  '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
+                  '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
         }height: 20px;"></img></a></div></div>`;
     }
     let tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;

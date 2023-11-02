@@ -13,6 +13,7 @@ export namespace Extension {
         showBuffPercentageDifference: boolean;
         showTopButton: boolean;
         useTabStates: boolean;
+        csfRemoveClustering: boolean;
         enableSkinport: boolean;
         spCheckBoxes: boolean;
         spStickerPrices: boolean;
@@ -140,8 +141,10 @@ export namespace BlueGem {
         screenshot: string;
     };
     export type PastSale = {
+        csfloat: string; // csfloat db link
         date: string;
         float: number;
+        origin: 'CSFloat' | 'BroSkins' | 'Buff';
         pattern: number;
         price: number;
         url: string;

@@ -168,6 +168,7 @@ function loadForSettings() {
     const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
     const lossColor = <HTMLInputElement>document.getElementById('InputLossColor');
     const neutralColor = <HTMLInputElement>document.getElementById('InputNeutralColor');
+    const removeClustering = <HTMLInputElement>document.getElementById('InputRemoveClustering');
 
     chrome.storage.local.get((data) => {
         if (data.enableCSFloat) {
@@ -226,6 +227,11 @@ function loadForSettings() {
             profitColor.value = data.colors.csfloat.profit;
             lossColor.value = data.colors.csfloat.loss;
             neutralColor.value = data.colors.csfloat.neutral;
+        }
+        if (data.csfRemoveClustering) {
+            removeClustering.checked = true;
+        } else {
+            removeClustering.checked = false;
         }
     });
 }

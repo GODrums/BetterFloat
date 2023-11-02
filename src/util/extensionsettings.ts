@@ -58,6 +58,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.useTabStates) {
             extensionSettings.useTabStates = Boolean(data.useTabStates);
         }
+        if (data.csfRemoveClustering) {
+            extensionSettings.csfRemoveClustering = Boolean(data.csfRemoveClustering);
+        }
         if (data.enableSkinport) {
             extensionSettings.enableSkinport = Boolean(data.enableSkinport);
         }

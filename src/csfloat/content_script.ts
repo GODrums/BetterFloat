@@ -653,10 +653,13 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.csBlueGem) {
             await caseHardenedDetection(container, cachedItem, false);
         }
+        await addFadePercentages(container, cachedItem);
         if (extensionSettings.floatColoring.csfloat) {
             await addFloatColoring(container, cachedItem);
         }
-        await addFadePercentages(container, cachedItem);
+        if (extensionSettings.csfRemoveClustering) {
+            removeImageElements(container);
+        }
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -678,6 +681,16 @@ async function adjustItem(container: Element, isPopout = false) {
             // last as it has to wait for history api data
             addItemHistory(container.parentElement!.parentElement!);
         }, 500);
+    }
+}
+
+function removeImageElements(container: Element) {
+    const imageElements = container.querySelectorAll('.top-right-container > div');
+    for (let i = 1; i < imageElements.length; i++) {
+        imageElements[i].setAttribute('style', 'display: none;');
+    }
+    if (!imageElements[0].textContent?.includes('visibility')) {
+        imageElements[0].setAttribute('style', 'display: none;');
     }
 }
 
@@ -851,6 +864,14 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                 if (sale.float === item.float_value) {
                     newRow.style.backgroundColor = 'darkslategray';
                 }
+                const sourceCell = document.createElement('td');
+                sourceCell.setAttribute('role', 'cell');
+                sourceCell.className = 'mat-cell cdk-cell ng-star-inserted';
+                const sourceImage = document.createElement('img');
+                sourceImage.setAttribute('src', extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png'));
+                sourceImage.setAttribute('style', 'height: 24px;');
+                sourceCell.appendChild(sourceImage);
+                newRow.appendChild(sourceCell);
                 const dateCell = document.createElement('td');
                 dateCell.setAttribute('role', 'cell');
                 dateCell.className = 'mat-cell cdk-cell ng-star-inserted';
@@ -880,7 +901,13 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     );
                     link.appendChild(linkImage);
                 } else {
-                    link.href = sale.url;
+                    if (isNaN(Number(sale.url))) {
+                        link.href = sale.url;
+                        link.title = 'Show Buff screenshot';
+                    } else {
+                        link.href = 'https://s.csgofloat.com/' + sale.url + '-front.png';
+                        link.title = 'Show CSFloat screenshot';
+                    }
                     link.target = '_blank';
                     const linkImage = document.createElement('i');
                     linkImage.className = 'material-icons';
@@ -900,7 +927,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
             table.setAttribute('style', 'width: 100%;');
             const header = document.createElement('thead');
             header.setAttribute('role', 'rowgroup');
-            let headerValues = ['Date', 'Price', 'Float Value'];
+            let headerValues = ['Source', 'Date', 'Price', 'Float Value'];
             for (let i = 0; i < headerValues.length; i++) {
                 const headerCell = document.createElement('th');
                 headerCell.setAttribute('role', 'columnheader');
