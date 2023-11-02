@@ -579,7 +579,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
                   extensionSettings.runtimePublicURL +
                   '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
                 : 'href="' +
-                  sale.url +
+                  (!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + "-front.png" : sale.url) +
                   '" target="_blank"><img src="' +
                   extensionSettings.runtimePublicURL +
                   '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%);'
