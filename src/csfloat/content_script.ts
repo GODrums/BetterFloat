@@ -353,7 +353,7 @@ function switchTab(tab: number) {
     const tabList = document.querySelectorAll('.mat-tab-label');
     (<HTMLElement>tabList[tab]).click();
     if (location.pathname == '/') {
-        document.title = tabList[tab].textContent?.trim() + ' | CSFloat';
+        document.title = tabList[tab].textContent?.trim() + ' - CSFloat';
     }
 }
 
@@ -366,7 +366,7 @@ function createTabListeners() {
         tabList[i].addEventListener('click', () => {
             window.history.replaceState({}, '', location.pathname + '?tab=' + tabList[i].getAttribute('aria-posinset'));
             if (location.pathname == '/') {
-                document.title = tabList[i].textContent?.trim() + ' | CSFloat';
+                document.title = tabList[i].textContent?.trim() + ' - CSFloat';
             }
         });
     }

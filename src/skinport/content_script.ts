@@ -98,13 +98,13 @@ async function firstLaunch() {
 function createLiveLink() {
     const generateLink = () => {
         const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
-            if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
-            marketLink.style.marginRight = '30px';
-            const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
-            liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
-            liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
-            liveLink.textContent = 'Live';
-            marketLink.after(liveLink);
+        if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
+        marketLink.style.marginRight = '30px';
+        const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
+        liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
+        liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
+        liveLink.textContent = 'Live';
+        marketLink.after(liveLink);
     };
 
     generateLink();
