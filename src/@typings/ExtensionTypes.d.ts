@@ -57,6 +57,23 @@ export namespace Extension {
         skinbid: boolean;
     };
 
+    export type CSGOTraderBuffMapping = {
+        [name: string]: {
+            starting_at: {
+                price: number;
+                doppler?: {
+                    [style: string]: number;
+                };
+            };
+            highest_order: {
+                price: number;
+                doppler?: {
+                    [style: string]: number;
+                };
+            };
+        };
+    };
+
     export type CSGOTraderMapping = {
         [name: string]: {
             steam: {

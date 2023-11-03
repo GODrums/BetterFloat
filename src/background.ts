@@ -94,11 +94,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
                 chrome.storage.local.set(newSettings);
             }
         });
+
+        // update prices
+        refreshPrices();
     }
 });
 
 export async function refreshPrices() {
-    return await fetch('https://prices.csgotrader.app/latest/prices_v6.json')
+    return await fetch('https://prices.csgotrader.app/latest/buff163.json')
         .then((response) => response.json())
         .then(async (data) => {
             //set cookie and wait for finish

@@ -40,7 +40,7 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Pro
     const priceMapping = await getPriceMapping();
     let helperPrice: number | null = null;
 
-    if (!priceMapping[buff_name] || !priceMapping[buff_name].buff163 || !priceMapping[buff_name].buff163.starting_at || !priceMapping[buff_name].buff163.highest_order) {
+    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name].starting_at || !priceMapping[buff_name].highest_order) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         helperPrice = 0;
     }
@@ -53,11 +53,11 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Pro
         priceOrder = helperPrice;
     } else if (priceMapping[buff_name]) {
         if (itemStyle !== '' && itemStyle !== 'Vanilla') {
-            priceListing = priceMapping[buff_name].buff163.starting_at.doppler![itemStyle] ?? 0;
-            priceOrder = priceMapping[buff_name].buff163.highest_order.doppler![itemStyle] ?? 0;
+            priceListing = priceMapping[buff_name].starting_at.doppler![itemStyle] ?? 0;
+            priceOrder = priceMapping[buff_name].highest_order.doppler![itemStyle] ?? 0;
         } else {
-            priceListing = priceMapping[buff_name].buff163.starting_at.price;
-            priceOrder = priceMapping[buff_name].buff163.highest_order.price;
+            priceListing = priceMapping[buff_name].starting_at.price;
+            priceOrder = priceMapping[buff_name].highest_order.price;
         }
     }
     if (priceListing === undefined) {

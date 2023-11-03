@@ -10,7 +10,7 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
-let priceMapping: Extension.CSGOTraderMapping = {};
+let priceMapping: Extension.CSGOTraderBuffMapping = {};
 // csfloat: cached items from api
 let csfloatItems: CSFloat.ListingData[] = [];
 // csfloat: cached popup item from api
@@ -165,8 +165,7 @@ export function getFirstSkbItem() {
         return null;
     }
 }
-
-export async function getPriceMapping(): Promise<Extension.CSGOTraderMapping> {
+export async function getPriceMapping(): Promise<Extension.CSGOTraderBuffMapping> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }
@@ -184,7 +183,7 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     }
     //removing double spaces
     buff_name = handleSpecialStickerNames(buff_name.replace(/\s+/g, ' '));
-    if (!priceMapping[buff_name] || !priceMapping[buff_name]['buff163'] || !priceMapping[buff_name]['buff163']['starting_at'] || !priceMapping[buff_name]['buff163']['highest_order']) {
+    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name]['starting_at'] || !priceMapping[buff_name]['highest_order']) {
         console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
         return {
             starting_at: 0,
@@ -193,8 +192,8 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     }
     if (priceMapping[buff_name]) {
         return {
-            starting_at: priceMapping[buff_name]['buff163']['starting_at']['price'] ?? 0,
-            highest_order: priceMapping[buff_name]['buff163']['highest_order']['price'] ?? 0,
+            starting_at: priceMapping[buff_name]['starting_at']['price'] ?? 0,
+            highest_order: priceMapping[buff_name]['highest_order']['price'] ?? 0,
         };
     }
     return {
