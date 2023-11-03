@@ -46,25 +46,25 @@ async function firstLaunch() {
     if (location.pathname === '/') {
         let items = document.getElementsByTagName('NGU-TILE');
         for (let i = 0; i < items.length; i++) {
-            await adjustItem(items[i]);
+            await adjustItem(items[i], itemSelectors.card);
         }
     } else if (location.pathname == '/listings') {
         let items = document.getElementsByClassName('item');
         for (let i = 0; i < items.length; i++) {
-            await adjustListItem(items[i]);
+            await adjustItem(items[i], itemSelectors.list);
         }
     } else if (location.pathname.includes('/market/')) {
         let items = document.querySelectorAll('.item');
         // first one is big item
-        await adjustBigItem(items[0]);
+        await adjustItem(items[0], itemSelectors.page);
         for (let i = 1; i < items.length; i++) {
-            await adjustItem(items[i]);
+            await adjustItem(items[i], itemSelectors.card);
         }
     } else if (location.pathname.includes('/shop/')) {
         let items = document.querySelectorAll('.items-desktop .auction-item-card');
         console.log('[BetterFloat] Found items: ', items);
         for (let i = 0; i < items.length; i++) {
-            await adjustItem(items[i]);
+            await adjustItem(items[i], itemSelectors.card);
         }
     }
 }
@@ -82,11 +82,11 @@ async function applyMutation() {
                     if (addedNode.children.length == 1) {
                         let firstChild = addedNode.children[0];
                         if (firstChild.tagName.includes('AUCTION-LIST-ITEM')) {
-                            await adjustListItem(firstChild);
+                            await adjustItem(firstChild, itemSelectors.list);
                             continue;
                         } else if (firstChild.tagName.includes('APP-AUCTION-CARD-ITEM')) {
                             // Items in user shop
-                            await adjustItem(firstChild);
+                            await adjustItem(firstChild, itemSelectors.card);
                             continue;
                         }
                     }
@@ -94,10 +94,10 @@ async function applyMutation() {
                         let className = addedNode.className.toString();
                         if (className.includes('item') && addedNode.tagName === 'NGU-TILE' && !isMobileItem(addedNode)) {
                             // console.log('Found item: ', addedNode);
-                            await adjustItem(addedNode);
+                            await adjustItem(addedNode, itemSelectors.card);
                         } else if (className.includes('item-category')) {
                             // big item page
-                            await adjustBigItem(document.querySelector('.item')!);
+                            await adjustItem(document.querySelector('.item')!, itemSelectors.page);
                         } else if (addedNode.tagName === 'APP-PRICE-CHART') {
                             console.log('Found price chart: ', addedNode);
                         }
@@ -111,6 +111,7 @@ async function applyMutation() {
 
 const itemSelectors = {
     card: {
+        self: 'card',
         name: '.item-name',
         type: '.item-type',
         price: '.item-price-wrapper > div',
@@ -122,6 +123,7 @@ const itemSelectors = {
         stickerDiv: '.on-top-of-image .items-center',
     },
     list: {
+        self: 'list',
         name: '.item-category-and-stickers .first-row',
         type: '.item-category-and-stickers .second-row',
         price: '.section-price .price',
@@ -133,6 +135,7 @@ const itemSelectors = {
         stickerDiv: '.stickers',
     },
     page: {
+        self: 'page',
         name: '.item-title',
         type: '.item-category',
         price: '.item-bids-time-info > div',
@@ -153,45 +156,19 @@ function isMobileItem(container: Element) {
     return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
 }
 
-async function adjustBigItem(container: Element) {
-    const item = getSkinbidFullItem(container);
+async function adjustItem(container: Element, selector: ItemSelectors) {
+    const item = selector.self == 'page' ? getSkinbidFullItem(container) : getSkinbidItem(container, selector);
     if (!item) return;
-    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.page); // eslint-disable-line @typescript-eslint/no-unused-vars
+    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, selector);
     if (cachedItem) {
-        await addListingAge(container, cachedItem, 'page');
-        await addStickerInfo(container, cachedItem, itemSelectors.page, priceResult?.price_difference ?? 0);
-    }
-}
 
-async function adjustListItem(container: Element) {
-    const item = getSkinbidItem(container, itemSelectors.list);
-    if (!item) return;
-    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.list); // eslint-disable-line @typescript-eslint/no-unused-vars
-    if (cachedItem) {
-        if (extensionSettings.skbListingAge) {
-            await addListingAge(container, cachedItem, 'list');
+        if (extensionSettings.skbListingAge || selector.self == 'page') {
+            addListingAge(container, cachedItem, selector.self);
         }
-        if (extensionSettings.skbStickerPrices) {
-            await addStickerInfo(container, cachedItem, itemSelectors.list, priceResult?.price_difference ?? 0);
+        if (extensionSettings.skbStickerPrices || selector.self == 'page') {
+            await addStickerInfo(container, cachedItem, selector, priceResult?.price_difference ?? 0);
         }
     }
-}
-
-async function adjustItem(container: Element) {
-    const item = getSkinbidItem(container, itemSelectors.card);
-    if (!item) return;
-    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, itemSelectors.card); // eslint-disable-line @typescript-eslint/no-unused-vars
-    if (cachedItem) {
-        if (extensionSettings.skbListingAge) {
-            await addListingAge(container, cachedItem, 'card');
-        }
-        if (extensionSettings.skbStickerPrices) {
-            await addStickerInfo(container, cachedItem, itemSelectors.card, priceResult?.price_difference ?? 0);
-        }
-    }
-    // if (extensionSettings.spFloatColoring) {
-    //     await addFloatColoring(container, item);
-    // }
 }
 
 async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
