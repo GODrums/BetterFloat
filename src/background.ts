@@ -95,6 +95,7 @@ chrome.runtime.onInstalled.addListener((details) => {
             }
         });
     }
+    refreshPrices();
 });
 
 export async function refreshPrices() {

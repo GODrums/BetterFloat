@@ -102,10 +102,11 @@ async function firstLaunch() {
             await adjustItemBubble(offerBubbles[i]);
         }
     } else if (location.pathname.includes('/stall/')) {
-        await customStall(location.pathname.split('/').pop() ?? '');
+        // await customStall(location.pathname.split('/').pop() ?? '');
     }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function customStall(stall_id: string) {
     if (stall_id == 'me') {
         const popupOuter = document.createElement('div');
@@ -153,7 +154,7 @@ async function customStall(stall_id: string) {
         };
         for (const key in inputField) {
             const div = document.createElement('div');
-            div.className = 'flex justify-between w-full';
+            div.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
             const label = document.createElement('label');
             label.textContent = inputField[key as keyof typeof inputField].text;
             const input = document.createElement('input');
@@ -167,7 +168,7 @@ async function customStall(stall_id: string) {
             popupBackground.appendChild(div);
         }
         const colorDiv = document.createElement('div');
-        colorDiv.className = 'flex justify-between w-full';
+        colorDiv.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
         const colorLabel = document.createElement('label');
         colorLabel.textContent = 'Color:';
         const colorInput = document.createElement('input');
@@ -176,7 +177,7 @@ async function customStall(stall_id: string) {
         colorDiv.appendChild(colorLabel);
         colorDiv.appendChild(colorInput);
         const transparentDiv = document.createElement('div');
-        transparentDiv.className = 'flex justify-between w-full';
+        transparentDiv.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
         const transparentLabel = document.createElement('label');
         transparentLabel.textContent = 'Transparent Elements:';
         const transparentInput = document.createElement('input');
@@ -524,7 +525,7 @@ function applyMutation() {
                         // item from listings
                     } else if (addedNode.tagName.toLowerCase() == 'app-stall-view') {
                         // adjust stall
-                        await customStall(location.pathname.split('/').pop() ?? '');
+                        // await customStall(location.pathname.split('/').pop() ?? '');
                     } else if (addedNode.className.toString().includes('flex-item')) {
                         await adjustItem(addedNode);
                     } else if (addedNode.className.toString().includes('mat-row cdk-row')) {
