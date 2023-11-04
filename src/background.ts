@@ -61,7 +61,7 @@ export const defaultSettings: Extension.Settings = {
 };
 
 // Check whether new version is installed
-chrome.runtime.onInstalled.addListener(function (details) {
+chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason == 'install') {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
         chrome.storage.local.set(defaultSettings);
@@ -94,9 +94,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
                 chrome.storage.local.set(newSettings);
             }
         });
-
-        // update prices
-        refreshPrices();
     }
 });
 

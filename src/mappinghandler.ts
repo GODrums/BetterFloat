@@ -183,7 +183,7 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     }
     //removing double spaces
     buff_name = handleSpecialStickerNames(buff_name.replace(/\s+/g, ' '));
-    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name]['starting_at'] || !priceMapping[buff_name]['highest_order']) {
+    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name].starting_at || !priceMapping[buff_name].highest_order) {
         console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
         return {
             starting_at: 0,
@@ -192,8 +192,8 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     }
     if (priceMapping[buff_name]) {
         return {
-            starting_at: priceMapping[buff_name]['starting_at']['price'] ?? 0,
-            highest_order: priceMapping[buff_name]['highest_order']['price'] ?? 0,
+            starting_at: priceMapping[buff_name].starting_at.price ?? 0,
+            highest_order: priceMapping[buff_name].highest_order.price ?? 0,
         };
     }
     return {

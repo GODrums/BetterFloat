@@ -161,7 +161,6 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
     if (!item) return;
     const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, selector);
     if (cachedItem) {
-
         if (extensionSettings.skbListingAge || selector.self == 'page') {
             addListingAge(container, cachedItem, selector.self);
         }

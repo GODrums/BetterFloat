@@ -57,23 +57,26 @@ export namespace Extension {
         skinbid: boolean;
     };
 
+    /**
+     * Mapping corresponding to the response from https://prices.csgotrader.app/latest/buff163.json
+     */
     export type CSGOTraderBuffMapping = {
         [name: string]: {
             starting_at: {
                 price: number;
-                doppler?: {
-                    [style: string]: number;
-                };
+                doppler?: DopplerPrices;
             };
             highest_order: {
                 price: number;
-                doppler?: {
-                    [style: string]: number;
-                };
+                doppler?: DopplerPrices;
             };
         };
     };
 
+    /**
+     * Mapping corresponding to the response from https://prices.csgotrader.app/latest/prices_v6.json
+     * @deprecated use CSGOTraderBuffMapping instead
+     */
     export type CSGOTraderMapping = {
         [name: string]: {
             steam: {
@@ -117,6 +120,10 @@ export namespace Extension {
         };
     };
 
+    
+    /**
+     * @see CSGOTraderBuffMapping
+     */
     type DopplerPrices = {
         Sapphire: number;
         Ruby: number;
