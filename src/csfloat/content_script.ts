@@ -917,7 +917,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                         link.title = 'Show Buff screenshot';
                     } else {
                         link.href = 'https://s.csgofloat.com/' + sale.url + '-front.png';
-                        link.title = 'Show CSFloat screenshot';
+                        link.title = 'Show CSFloat font screenshot';
                     }
                     link.target = '_blank';
                     const linkImage = document.createElement('i');
@@ -927,6 +927,19 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     link.appendChild(linkImage);
                 }
                 linkCell.appendChild(link);
+
+                if (!isNaN(Number(sale.url))) {
+                    const backLink = document.createElement('a');
+                    backLink.href = 'https://s.csgofloat.com/' + sale.url + '-back.png';
+                    backLink.target = '_blank';
+                    backLink.title = 'Show CSFloat back screenshot';
+                    const backImage = document.createElement('img');
+                    backImage.setAttribute('src', extensionSettings.runtimePublicURL + '/camera-flipped.svg');
+                    backImage.setAttribute('style', 'height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);');
+                    backLink.appendChild(backImage);
+                    linkCell.appendChild(backLink);
+                }
+
                 newRow.appendChild(linkCell);
                 tableBody.appendChild(newRow);
             });
