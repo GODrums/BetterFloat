@@ -225,7 +225,11 @@ export async function getSkbUserCurrencyRate() {
 }
 
 export async function getStallData(stall_id: string) {
-    let request = await fetch('https://api.rums.dev/v1/csfloatstalls/' + stall_id);
+    let request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
+    if (request.status != 200) {
+        console.warn('[BetterFloat] Invalid stall data from Rums.dev: ', request);
+        return null;
+    }
     let response = (await request.json()) as Extension.CustomStallData;
     console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
     if (response && response.status == 'OK' && response.data) {

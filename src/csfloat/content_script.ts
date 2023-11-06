@@ -281,6 +281,11 @@ async function customStall(stall_id: string) {
         console.log('[BetterFloat] Could not load stall data');
         return;
     }
+    // user has not set a customer stall yet
+    if (stallData.roles.length == 0) {
+        console.debug(`[BetterFloat] User ${stall_id} has not set a custom stall yet`);
+        return;
+    }
 
     document.body.classList.add('betterfloat-custom-stall');
 
