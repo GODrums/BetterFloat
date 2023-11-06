@@ -810,11 +810,21 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
         // get closest item float-wise that has a screenshot
         let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value) - Math.abs(b.float - item.float_value));
         if (sortedSales.length > 0 || patternElement?.screenshot) {
+            const closestSale = sortedSales[0];
             detailButtons.setAttribute('style', 'display: flex;');
             const outerContainer = document.createElement('div');
             outerContainer.className = 'bf-tooltip';
             const screenshotButton = document.createElement('a');
-            screenshotButton.href = sortedSales[0]?.url ?? patternElement?.screenshot;
+            // if closest sale is csfloat but has no screenshot, it will lead to an error page
+            if (closestSale?.url) {
+                if (isNaN(Number(closestSale.url))) {
+                    screenshotButton.href = closestSale.url;
+                } else {
+                    screenshotButton.href = 'https://s.csgofloat.com/' + closestSale.url + '-front.png';
+                }
+            } else {
+                screenshotButton.href = patternElement?.screenshot ?? '';
+            }
             screenshotButton.target = '_blank';
             screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
             const iconButton = document.createElement('button');
