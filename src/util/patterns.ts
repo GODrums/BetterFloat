@@ -5089,10 +5089,6 @@ const patterns = {
             87: 'tier-2',
         },
     },
-    crimson_web: {
-        gloves: {
-        }
-    }
 };
 
 export default patterns;

@@ -809,7 +809,9 @@ async function webDetection(container: Element, listing: CSFloat.ListingData) {
     const cwImage = document.createElement('img');
     cwImage.className = 'betterfloat-cw-image';
     cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/spider-web.svg');
-    const filter = item.item_name.includes('Crimson') ? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)' : 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
+    const filter = item.item_name.includes('Crimson')
+        ? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)'
+        : 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
     const textColor = item.item_name.includes('Crimson') ? 'lightgrey' : 'white';
     cwImage.setAttribute('style', `height: 30px; filter: ${filter};`);
     let cwBadgeSpan = document.createElement('span');
@@ -987,7 +989,8 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                 const newRow = document.createElement('tr');
                 newRow.setAttribute('role', 'row');
                 newRow.className = 'mat-row cdk-row ng-star-inserted';
-                if (sale.float === item.float_value) {
+                // no real equality as broskins data is cut off
+                if (Math.abs(item.float_value - sale.float) < 0.00001) {
                     newRow.style.backgroundColor = 'darkslategray';
                 }
                 const sourceCell = document.createElement('td');

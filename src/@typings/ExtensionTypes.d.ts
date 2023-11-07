@@ -1,4 +1,4 @@
-import { type } from "os";
+import { type } from 'os';
 
 export namespace Extension {
     export type Settings = {
@@ -122,7 +122,6 @@ export namespace Extension {
         };
     };
 
-    
     /**
      * @see CSGOTraderBuffMapping
      */
@@ -137,16 +136,6 @@ export namespace Extension {
         'Phase 4': number;
     };
 
-    // export type CrimsonWebMapping = {
-    //     [weapon: string]: {
-    //         [paint_seed: string]: {
-    //             img?: string;
-    //             type: string;
-    //             tier: number;
-    //         };
-    //     };
-    // };
-
     export type CrimsonWebMapping = {
         [weapon in CWWeaponTypes]: {
             [paint_seed: string]: {
@@ -157,12 +146,12 @@ export namespace Extension {
         };
     };
 
-    export type CWWeaponTypes = "gloves" | "m9" | "karambit" | "nomad";
+    export type CWWeaponTypes = 'gloves' | 'm9' | 'karambit' | 'nomad';
 
-    type CWGloveTypes = "Left Hand" | "Right Hand" | "Double Web" | "Triple Web";
+    type CWGloveTypes = 'Left Hand' | 'Right Hand' | 'Double Web' | 'Triple Web';
 
     // only m9 can have 3 webs
-    type CWKnifeTypes = "Single Web" | "Double Web" | "Triple Web";
+    type CWKnifeTypes = 'Single Web' | 'Double Web' | 'Triple Web';
 
     // response from api.rums.dev/v1/csfloatstalls/:id
     export type CustomStallData = {

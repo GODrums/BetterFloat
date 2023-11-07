@@ -311,7 +311,6 @@ export async function loadMapping() {
     return true;
 }
 
-
 export async function loadCrimsonWebMapping() {
     if (!crimsonWebMapping) {
         // load from local storage first to avoid unnecessary requests
