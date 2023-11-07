@@ -787,13 +787,10 @@ async function webDetection(container: Element, listing: CSFloat.ListingData) {
     } else {
         type = item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
     }
-    console.debug('[BetterFloat] Crimson Web item: ', item);
     const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed);
     if (!cw_data) return;
     const itemImg = container.querySelector('.item-img');
     if (!itemImg) return;
-
-    console.debug('[BetterFloat] Crimson Web data: ', cw_data);
 
     let cwTooltip = document.createElement('div');
     cwTooltip.className = 'bf-tooltip-inner';
