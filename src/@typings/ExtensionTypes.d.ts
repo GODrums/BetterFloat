@@ -136,6 +136,15 @@ export namespace Extension {
         'Phase 4': number;
     };
 
+    export type PhoenixMapping = {
+        [paint_seed: string]: {
+            img: string;
+            type: 'Body' | 'Grip' | 'Text on Body' | 'Text on Grip' | '2 Heads';
+            tier: 1 | 2 | 3 | 4;
+            rank?: 1 | 2 | 3;
+        };
+    };
+
     export type CrimsonWebMapping = {
         [weapon in CWWeaponTypes]: {
             [paint_seed: string]: {

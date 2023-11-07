@@ -13,6 +13,8 @@ let buffMapping: { [name: string]: number } = {};
 let priceMapping: Extension.CSGOTraderBuffMapping = {};
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
+// phoenix blacklight mapping
+let phoenixMapping: Extension.PhoenixMapping | null = null;
 // csfloat: cached items from api
 let csfloatItems: CSFloat.ListingData[] = [];
 // csfloat: cached popup item from api
@@ -262,16 +264,24 @@ async function fetchCurrencyRates() {
         });
 }
 
+export async function getPhoenixMapping(paint_seed: number) {
+    if (!phoenixMapping) {
+        await loadPhoenixMapping();
+    }
+    if (phoenixMapping && phoenixMapping[paint_seed]) {
+        return phoenixMapping[paint_seed];
+    }
+    return null;
+}
+
 export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, paint_seed: number) {
     if (!crimsonWebMapping) {
         await loadCrimsonWebMapping();
     }
     if (crimsonWebMapping && crimsonWebMapping[weapon] && crimsonWebMapping[weapon][paint_seed]) {
         return crimsonWebMapping[weapon][paint_seed];
-    } else {
-        // console.log(`[BetterFloat] No crimson web mapping found for ${weapon} | ${paint_seed}`);
-        return null;
     }
+    return null;
 }
 
 export async function getBuffMapping(name: string) {
@@ -307,6 +317,32 @@ export async function loadMapping() {
             console.error('[BetterFloat] CSGOTrader price load failed.');
             return false;
         }
+    }
+    return true;
+}
+
+export async function loadPhoenixMapping() {
+    if (!phoenixMapping) {
+        // load from local storage first to avoid unnecessary requests
+        console.debug('[BetterFloat] Attempting to load phoenix mapping from local storage');
+        await new Promise<boolean>((resolve) => {
+            chrome.storage.local.get(['phoenixMapping'], async (data) => {
+                if (data.phoenixMapping) {
+                    phoenixMapping = JSON.parse(data.phoenixMapping);
+                } else {
+                    console.debug('[BetterFloat] No phoenix mapping found in local storage. Loading from Github ...');
+                    await fetch('https://raw.githubusercontent.com/GODrums/cs-tierlist/main/standalone/phoenix_galil.json')
+                        .then((response) => response.json())
+                        .then((data) => {
+                            phoenixMapping = data;
+                            chrome.storage.local.set({ phoenixMapping: JSON.stringify(data) });
+                            console.debug('[BetterFloat] Phoenix mapping successfully loaded from Github');
+                        })
+                        .catch((err) => console.error(err));
+                }
+                resolve(true);
+            });
+        });
     }
     return true;
 }

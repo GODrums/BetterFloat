@@ -10,6 +10,7 @@ import {
     getFirstCSFItem,
     getFirstHistorySale,
     getItemPrice,
+    getPhoenixMapping,
     getStallData,
     getWholeHistory,
     loadBuffMapping,
@@ -678,6 +679,7 @@ async function adjustItem(container: Element, isPopout = false) {
             removeImageElements(container);
         }
         await webDetection(container, cachedItem);
+        await patternDetections(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -732,6 +734,88 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
             (<HTMLElement>element).style.color = getFloatColoring(item.item.float_value, lowerLimit, upperLimit);
         }
     });
+}
+
+async function patternDetections(container: Element, listing: CSFloat.ListingData) {
+    const item = listing.item;
+    if (item.item_name.includes('Phoenix Blacklight')) {
+        await badgePhoenix(container, item);
+    }
+}
+
+async function badgePhoenix(container: Element, item: CSFloat.Item) {
+    const phoenix_data = await getPhoenixMapping(item.paint_seed);
+    if (!phoenix_data) return;
+    let cwTooltip = document.createElement('div');
+    cwTooltip.className = 'bf-tooltip-inner';
+    cwTooltip.style.translate = '-15px 15px';
+    cwTooltip.style.width = '90px';
+    let cwTypeSpan = document.createElement('span');
+    cwTypeSpan.textContent = `Position: ${phoenix_data.type}`;
+    let cwTierSpan = document.createElement('span');
+    cwTierSpan.textContent = `Tier ${phoenix_data.tier}`;
+    if (phoenix_data.rank) {
+        let cwRankSpan = document.createElement('span');
+        cwRankSpan.textContent = `Rank #${phoenix_data.rank}`;
+        cwTooltip.appendChild(cwRankSpan);
+    }
+    cwTooltip.appendChild(cwTypeSpan);
+    cwTooltip.appendChild(cwTierSpan);
+    let cwBadge = document.createElement('div');
+    cwBadge.className = 'bf-fade bf-tooltip';
+    let cwDiv = document.createElement('div');
+    cwDiv.className = 'bf-fade-percentage';
+    const cwImage = document.createElement('img');
+    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/phoenix-icon.svg');
+    cwImage.setAttribute('style', 'height: 30px;');
+    let cwBadgeSpan = document.createElement('span');
+    cwBadgeSpan.setAttribute('style', 'color: #d946ef; font-size: 18px; font-weight: 600;');
+    cwBadgeSpan.textContent = 'T' + phoenix_data.tier;
+    cwDiv.appendChild(cwImage);
+    cwDiv.appendChild(cwBadgeSpan);
+    cwBadge.appendChild(cwDiv);
+    cwBadge.appendChild(cwTooltip);
+    let badgeContainer = container.querySelector('.badge-container');
+    if (!badgeContainer) {
+        badgeContainer = document.createElement('div');
+        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+        container.querySelector('.item-img')?.after(badgeContainer);
+    } else {
+        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+        badgeContainer.setAttribute('style', 'gap: 5px;');
+    }
+    badgeContainer.appendChild(cwBadge);
+
+    // add replacement screenshot if csfloat does not offer one and if available
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && phoenix_data.img) {
+        detailButtons.setAttribute('style', 'display: flex;');
+        const outerContainer = document.createElement('div');
+        outerContainer.className = 'bf-tooltip';
+        const screenshotButton = document.createElement('a');
+        screenshotButton.href = phoenix_data.img;
+        screenshotButton.target = '_blank';
+        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+        const iconButton = document.createElement('button');
+        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+        iconButton.setAttribute('style', 'color: #d946ef;');
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'mat-button-wrapper';
+        const icon = document.createElement('i');
+        icon.className = 'material-icons';
+        icon.textContent = 'camera_alt';
+        iconSpan.appendChild(icon);
+        iconButton.appendChild(iconSpan);
+        screenshotButton.appendChild(iconButton);
+        let tooltip = document.createElement('div');
+        tooltip.className = 'bf-tooltip-inner';
+        let tooltipSpan = document.createElement('span');
+        tooltipSpan.textContent = 'Show pattern screenshot';
+        tooltip.appendChild(tooltipSpan);
+        outerContainer.appendChild(screenshotButton);
+        outerContainer.appendChild(tooltip);
+        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+    }
 }
 
 async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
