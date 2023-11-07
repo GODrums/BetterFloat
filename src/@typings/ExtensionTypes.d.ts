@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export namespace Extension {
     export type Settings = {
         runtimePublicURL: string;
@@ -134,6 +136,33 @@ export namespace Extension {
         'Phase 3': number;
         'Phase 4': number;
     };
+
+    // export type CrimsonWebMapping = {
+    //     [weapon: string]: {
+    //         [paint_seed: string]: {
+    //             img?: string;
+    //             type: string;
+    //             tier: number;
+    //         };
+    //     };
+    // };
+
+    export type CrimsonWebMapping = {
+        [weapon in CWWeaponTypes]: {
+            [paint_seed: string]: {
+                img?: string;
+                type: CWKnifeTypes | CWGloveTypes;
+                tier: 1 | 2 | 3;
+            };
+        };
+    };
+
+    export type CWWeaponTypes = "gloves" | "m9" | "karambit" | "nomad";
+
+    type CWGloveTypes = "Left Hand" | "Right Hand" | "Double Web" | "Triple Web";
+
+    // only m9 can have 3 webs
+    type CWKnifeTypes = "Single Web" | "Double Web" | "Triple Web";
 
     // response from api.rums.dev/v1/csfloatstalls/:id
     export type CustomStallData = {

@@ -3,7 +3,18 @@
 import { CSFloat, ItemStyle, ItemCondition } from '../@typings/FloatTypes';
 import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getCSFPopupItem, getFirstCSFItem, getFirstHistorySale, getItemPrice, getStallData, getWholeHistory, loadBuffMapping, loadMapping } from '../mappinghandler';
+import {
+    getBuffMapping,
+    getCSFPopupItem,
+    getCrimsonWebMapping,
+    getFirstCSFItem,
+    getFirstHistorySale,
+    getItemPrice,
+    getStallData,
+    getWholeHistory,
+    loadBuffMapping,
+    loadMapping,
+} from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import {
     USDollar,
@@ -666,6 +677,7 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.csfRemoveClustering) {
             removeImageElements(container);
         }
+        await webDetection(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -680,6 +692,7 @@ async function adjustItem(container: Element, isPopout = false) {
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
+                await webDetection(container, apiItem);
                 await addFadePercentages(container, apiItem);
                 await addFloatColoring(container, apiItem);
             }
@@ -762,6 +775,106 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
             badgeContainer.setAttribute('style', 'gap: 5px;');
         }
         badgeContainer.appendChild(fadeBadge);
+    }
+}
+
+async function webDetection(container: Element, listing: CSFloat.ListingData) {
+    const item = listing.item;
+    if ((!item.item_name.includes('Crimson Web') && !item.item_name.includes('Emerald Web')) || !item.item_name.startsWith('★')) return;
+    let type = '';
+    if (item.item_name.includes('Gloves')) {
+        type = 'gloves';
+    } else {
+        type = item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
+    }
+    console.debug('[BetterFloat] Crimson Web item: ', item);
+    const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed);
+    if (!cw_data) return;
+    const itemImg = container.querySelector('.item-img');
+    if (!itemImg) return;
+
+    console.debug('[BetterFloat] Crimson Web data: ', cw_data);
+
+    let cwTooltip = document.createElement('div');
+    cwTooltip.className = 'bf-tooltip-inner';
+    cwTooltip.style.translate = '-25px 15px';
+    cwTooltip.style.width = '80px';
+    let cwTypeSpan = document.createElement('span');
+    cwTypeSpan.textContent = cw_data.type;
+    let cwTierSpan = document.createElement('span');
+    cwTierSpan.textContent = `Tier ${cw_data.tier}`;
+    cwTooltip.appendChild(cwTypeSpan);
+    cwTooltip.appendChild(cwTierSpan);
+    let cwBadge = document.createElement('div');
+    cwBadge.className = 'bf-fade bf-tooltip';
+    let cwDiv = document.createElement('div');
+    cwDiv.className = 'bf-fade-percentage';
+    const cwImage = document.createElement('img');
+    cwImage.className = 'betterfloat-cw-image';
+    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/spider-web.svg');
+    const filter = item.item_name.includes('Crimson') ? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)' : 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
+    const textColor = item.item_name.includes('Crimson') ? 'lightgrey' : 'white';
+    cwImage.setAttribute('style', `height: 30px; filter: ${filter};`);
+    let cwBadgeSpan = document.createElement('span');
+    cwBadgeSpan.setAttribute('style', `color: ${textColor}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`);
+    let badgeText = '';
+    switch (cw_data.type) {
+        case 'Triple Web':
+            badgeText = '3';
+            break;
+        case 'Double Web':
+            badgeText = '2';
+            break;
+        default:
+            badgeText = '1';
+            break;
+    }
+    cwBadgeSpan.textContent = badgeText;
+    cwDiv.appendChild(cwImage);
+    cwDiv.appendChild(cwBadgeSpan);
+    cwBadge.appendChild(cwDiv);
+    cwBadge.appendChild(cwTooltip);
+    let badgeContainer = container.querySelector('.badge-container');
+    if (!badgeContainer) {
+        badgeContainer = document.createElement('div');
+        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+        container.querySelector('.item-img')?.after(badgeContainer);
+    } else {
+        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+        badgeContainer.setAttribute('style', 'gap: 5px;');
+    }
+    badgeContainer.appendChild(cwBadge);
+
+    // add replacement screenshot if csfloat does not offer one and if available
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cw_data.img) {
+        detailButtons.setAttribute('style', 'display: flex;');
+        const outerContainer = document.createElement('div');
+        outerContainer.className = 'bf-tooltip';
+        const screenshotButton = document.createElement('a');
+        screenshotButton.href = cw_data.img;
+        screenshotButton.target = '_blank';
+        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+        const iconButton = document.createElement('button');
+        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+        const buttonColor = item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)';
+        iconButton.setAttribute('style', `color: ${buttonColor};`);
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'mat-button-wrapper';
+        const icon = document.createElement('i');
+        icon.className = 'material-icons';
+        icon.textContent = 'camera_alt';
+        iconSpan.appendChild(icon);
+        iconButton.appendChild(iconSpan);
+        screenshotButton.appendChild(iconButton);
+        let tooltip = document.createElement('div');
+        tooltip.className = 'bf-tooltip-inner';
+        let tooltipSpan = document.createElement('span');
+        tooltipSpan.textContent = 'Show pattern screenshot';
+        tooltip.appendChild(tooltipSpan);
+        outerContainer.appendChild(screenshotButton);
+        outerContainer.appendChild(tooltip);
+        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
     }
 }
 
@@ -940,7 +1053,10 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                     backLink.title = 'Show CSFloat back screenshot';
                     const backImage = document.createElement('img');
                     backImage.setAttribute('src', extensionSettings.runtimePublicURL + '/camera-flipped.svg');
-                    backImage.setAttribute('style', 'height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);');
+                    backImage.setAttribute(
+                        'style',
+                        'height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);'
+                    );
                     backLink.appendChild(backImage);
                     linkCell.appendChild(backLink);
                 }

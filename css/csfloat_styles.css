@@ -181,7 +181,7 @@ button.betterfloat-top-button:hover {
 
 .bf-tooltip:hover .bf-tooltip-inner {
 	visibility: visible;
-	opacity: 1;
+	opacity: 0.8;
 	transition: visibility 0s, opacity 0.2s linear;
 }
 

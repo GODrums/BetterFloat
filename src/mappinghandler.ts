@@ -11,6 +11,8 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
 let priceMapping: Extension.CSGOTraderBuffMapping = {};
+// crimson web mapping
+let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 // csfloat: cached items from api
 let csfloatItems: CSFloat.ListingData[] = [];
 // csfloat: cached popup item from api
@@ -260,6 +262,18 @@ async function fetchCurrencyRates() {
         });
 }
 
+export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, paint_seed: number) {
+    if (!crimsonWebMapping) {
+        await loadCrimsonWebMapping();
+    }
+    if (crimsonWebMapping && crimsonWebMapping[weapon] && crimsonWebMapping[weapon][paint_seed]) {
+        return crimsonWebMapping[weapon][paint_seed];
+    } else {
+        // console.log(`[BetterFloat] No crimson web mapping found for ${weapon} | ${paint_seed}`);
+        return null;
+    }
+}
+
 export async function getBuffMapping(name: string) {
     if (Object.keys(buffMapping).length == 0) {
         await loadBuffMapping();
@@ -297,6 +311,33 @@ export async function loadMapping() {
     return true;
 }
 
+
+export async function loadCrimsonWebMapping() {
+    if (!crimsonWebMapping) {
+        // load from local storage first to avoid unnecessary requests
+        console.debug('[BetterFloat] Attempting to load crimson web mapping from local storage');
+        await new Promise<boolean>((resolve) => {
+            chrome.storage.local.get(['crimsonWebMapping'], async (data) => {
+                if (data.crimsonWebMapping) {
+                    crimsonWebMapping = JSON.parse(data.crimsonWebMapping);
+                } else {
+                    console.debug('[BetterFloat] No CW mapping found in local storage. Loading from Github ...');
+                    await fetch('https://raw.githubusercontent.com/GODrums/cs-tierlist/main/generated/crimson_web.json')
+                        .then((response) => response.json())
+                        .then((data) => {
+                            crimsonWebMapping = data;
+                            chrome.storage.local.set({ crimsonWebMapping: JSON.stringify(data) });
+                            console.debug('[BetterFloat] Crimson web mapping successfully loaded from Github');
+                        })
+                        .catch((err) => console.error(err));
+                }
+                resolve(true);
+            });
+        });
+    }
+    return true;
+}
+
 // get mapping from rums.dev
 export async function loadBuffMapping() {
     if (Object.keys(buffMapping).length == 0) {
@@ -307,7 +348,7 @@ export async function loadBuffMapping() {
                 if (data.buffMapping) {
                     buffMapping = JSON.parse(data.buffMapping);
                 } else {
-                    console.debug('[BetterFloat] No mapping found in local storage. Fetching new one from rums.dev');
+                    console.debug('[BetterFloat] No mapping found in local storage. Fetching new one from rums.dev ...');
                     await fetch('https://api.rums.dev/file/buff_name_to_id')
                         .then((response) => response.json())
                         .then((data) => {
