@@ -7,6 +7,7 @@ import {
     getBuffMapping,
     getCSFPopupItem,
     getCrimsonWebMapping,
+    getCyanbitMapping,
     getFirstCSFItem,
     getFirstHistorySale,
     getItemPrice,
@@ -691,18 +692,77 @@ async function adjustItem(container: Element, isPopout = false) {
                 apiItem = getCSFPopupItem();
             }
             if (apiItem) {
+                console.log(apiItem);
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
                 await webDetection(container, apiItem);
                 await addFadePercentages(container, apiItem);
                 await addFloatColoring(container, apiItem);
+                addQuickLinks(container, apiItem);
             }
 
             // last as it has to wait for history api data
             addItemHistory(container.parentElement!.parentElement!);
         }, 500);
     }
+}
+
+function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
+    const actionsContainer = document.querySelector('.item-actions');
+    if (!actionsContainer) return;
+
+    const quickLinksContainer = document.createElement('div');
+    quickLinksContainer.className = 'betterfloat-quicklinks';
+    quickLinksContainer.setAttribute('style', 'display: flex; justify-content: space-evenly;');
+    const quickLinks = [
+        {
+            icon: 'csgostash',
+            name: 'CSGOStash',
+            link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
+        },
+        {
+            icon: 'pricempire',
+            name: 'Pricempire',
+            link: createPricempireURL(container, listing.item),
+        },
+    ];
+    for (let i = 0; i < quickLinks.length; i++) {
+        const toolTip = document.createElement('div');
+        toolTip.className = 'bf-tooltip-inner';
+        toolTip.style.translate = '-60px 10px';
+        toolTip.style.width = '140px';
+        let toolTipSpan = document.createElement('span');
+        toolTipSpan.textContent = `Show ${quickLinks[i].name} Page`;
+        toolTip.appendChild(toolTipSpan);
+        const linkContainer = document.createElement('a');
+        linkContainer.href = quickLinks[i].link;
+        linkContainer.target = '_blank';
+        const icon = document.createElement('img');
+        icon.setAttribute('src', extensionSettings.runtimePublicURL + '/icon-' + quickLinks[i].icon + '.png');
+        icon.style.height = '24px';
+        linkContainer.appendChild(icon);
+        let toolTipOuter = document.createElement('div');
+        toolTipOuter.className = 'bf-tooltip';
+        toolTipOuter.appendChild(linkContainer);
+        toolTipOuter.appendChild(toolTip);
+        quickLinksContainer.appendChild(toolTipOuter);
+    }
+
+    actionsContainer.appendChild(quickLinksContainer);
+}
+
+function createPricempireURL(container: Element, item: CSFloat.Item) {
+    const pricempireType = (item: CSFloat.Item) => {
+        if (item.type == 'container' && !item.item_name.includes('Case')) {
+            return 'sticker-capsule';
+        }
+        return item.type;
+    };
+    const sanitizeURL = (url: string) => {
+        return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
+    };
+    return 'https://pricempire.com/item/cs2/' + pricempireType(item) + '/' + sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase()) + (item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : '');
 }
 
 function removeImageElements(container: Element) {
@@ -722,9 +782,9 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
 
     rangeMarker.forEach((marker) => {
         const limit = Number(cutSubstring(marker.getAttribute('style')!, '(', '%')) / 100;
-        if (limit > item.item.float_value) {
+        if (limit > item.item.float_value!) {
             upperLimit = limit;
-        } else if (limit < item.item.float_value) {
+        } else if (limit < item.item.float_value!) {
             lowerLimit = limit;
         }
     });
@@ -740,11 +800,87 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
     const item = listing.item;
     if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
+    } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
+        await badgeCyanbit(container, item);
+    }
+}
+
+async function badgeCyanbit(container: Element, item: CSFloat.Item) {
+    const cyanbit_data = await getCyanbitMapping(item.paint_seed!);
+    if (!cyanbit_data) return;
+    let cwTooltip = document.createElement('div');
+    cwTooltip.className = 'bf-tooltip-inner';
+    cwTooltip.style.translate = '-15px 15px';
+    cwTooltip.style.width = '90px';
+    let cwTypeSpan = document.createElement('span');
+    cwTypeSpan.textContent = `${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`;
+    let cwTierSpan = document.createElement('span');
+    if (cyanbit_data.tier == 0) {
+        cwTierSpan.textContent = 'No Tier';
+    } else {
+        cwTierSpan.textContent = `Tier ${cyanbit_data.tier}`;
+    }
+    cwTooltip.appendChild(cwTypeSpan);
+    cwTooltip.appendChild(cwTierSpan);
+    let cwBadge = document.createElement('div');
+    cwBadge.className = 'bf-fade bf-tooltip';
+    let cwDiv = document.createElement('div');
+    cwDiv.className = 'bf-fade-percentage';
+    const cwImage = document.createElement('img');
+    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/gem-cyan.svg');
+    cwImage.setAttribute('style', 'height: 30px;');
+    let cwBadgeSpan = document.createElement('span');
+    cwBadgeSpan.setAttribute('style', 'color: #00ffff; font-size: 18px; font-weight: 600;');
+    cwBadgeSpan.textContent = 'T' + cyanbit_data.tier;
+    cwDiv.appendChild(cwImage);
+    cwDiv.appendChild(cwBadgeSpan);
+    cwBadge.appendChild(cwDiv);
+    cwBadge.appendChild(cwTooltip);
+    let badgeContainer = container.querySelector('.badge-container');
+    if (!badgeContainer) {
+        badgeContainer = document.createElement('div');
+        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+        container.querySelector('.item-img')?.after(badgeContainer);
+    } else {
+        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+        badgeContainer.setAttribute('style', 'gap: 5px;');
+    }
+    badgeContainer.appendChild(cwBadge);
+
+    // add replacement screenshot if csfloat does not offer one and if available
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cyanbit_data.img) {
+        detailButtons.setAttribute('style', 'display: flex;');
+        const outerContainer = document.createElement('div');
+        outerContainer.className = 'bf-tooltip';
+        const screenshotButton = document.createElement('a');
+        screenshotButton.href = cyanbit_data.img;
+        screenshotButton.target = '_blank';
+        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+        const iconButton = document.createElement('button');
+        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+        iconButton.setAttribute('style', 'color: #00ffff;');
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'mat-button-wrapper';
+        const icon = document.createElement('i');
+        icon.className = 'material-icons';
+        icon.textContent = 'camera_alt';
+        iconSpan.appendChild(icon);
+        iconButton.appendChild(iconSpan);
+        screenshotButton.appendChild(iconButton);
+        let tooltip = document.createElement('div');
+        tooltip.className = 'bf-tooltip-inner';
+        let tooltipSpan = document.createElement('span');
+        tooltipSpan.textContent = 'Show pattern screenshot';
+        tooltip.appendChild(tooltipSpan);
+        outerContainer.appendChild(screenshotButton);
+        outerContainer.appendChild(tooltip);
+        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
     }
 }
 
 async function badgePhoenix(container: Element, item: CSFloat.Item) {
-    const phoenix_data = await getPhoenixMapping(item.paint_seed);
+    const phoenix_data = await getPhoenixMapping(item.paint_seed!);
     if (!phoenix_data) return;
     let cwTooltip = document.createElement('div');
     cwTooltip.className = 'bf-tooltip-inner';
@@ -825,9 +961,9 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     const weapon = itemName.split(' | ')[0];
     let fadePercentage: (FadePercentage & { background: string }) | null = null;
     if (itemName.includes('Amber Fade')) {
-        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
+        fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed!), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
     } else if (itemName.includes('Acid Fade')) {
-        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
+        fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed!), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
     }
     if (fadePercentage != null) {
         let fadeTooltip = document.createElement('div');
@@ -871,7 +1007,7 @@ async function webDetection(container: Element, listing: CSFloat.ListingData) {
     } else {
         type = item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
     }
-    const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed);
+    const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed!);
     if (!cw_data) return;
     const itemImg = container.querySelector('.item-img');
     if (!itemImg) return;
@@ -984,7 +1120,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     }
     // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
-        await fetchCSBlueGem(type, item.paint_seed).then((data) => {
+        await fetchCSBlueGem(type, item.paint_seed!).then((data) => {
             pastSales = data.pastSales;
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
@@ -1009,7 +1145,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
         // get closest item float-wise that has a screenshot
-        let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value) - Math.abs(b.float - item.float_value));
+        let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value!) - Math.abs(b.float - item.float_value!));
         if (sortedSales.length > 0 || patternElement?.screenshot) {
             const closestSale = sortedSales[0];
             detailButtons.setAttribute('style', 'display: flex;');
@@ -1074,7 +1210,7 @@ async function caseHardenedDetection(container: Element, listing: CSFloat.Listin
                 newRow.setAttribute('role', 'row');
                 newRow.className = 'mat-row cdk-row ng-star-inserted';
                 // no real equality as broskins data is cut off
-                if (Math.abs(item.float_value - sale.float) < 0.00001) {
+                if (Math.abs(item.float_value! - sale.float) < 0.00001) {
                     newRow.style.backgroundColor = 'darkslategray';
                 }
                 const sourceCell = document.createElement('td');

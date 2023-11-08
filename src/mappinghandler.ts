@@ -15,6 +15,8 @@ let priceMapping: Extension.CSGOTraderBuffMapping = {};
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 // phoenix blacklight mapping
 let phoenixMapping: Extension.PhoenixMapping | null = null;
+// cyanbit mapping
+let cyanbitMapping: Extension.CyanbitMapping | null = null;
 // csfloat: cached items from api
 let csfloatItems: CSFloat.ListingData[] = [];
 // csfloat: cached popup item from api
@@ -264,6 +266,16 @@ async function fetchCurrencyRates() {
         });
 }
 
+export async function getCyanbitMapping(paint_seed: number) {
+    if (!cyanbitMapping) {
+        await loadCyanbitMapping();
+    }
+    if (cyanbitMapping && cyanbitMapping[paint_seed]) {
+        return cyanbitMapping[paint_seed];
+    }
+    return null;
+}
+
 export async function getPhoenixMapping(paint_seed: number) {
     if (!phoenixMapping) {
         await loadPhoenixMapping();
@@ -317,6 +329,32 @@ export async function loadMapping() {
             console.error('[BetterFloat] CSGOTrader price load failed.');
             return false;
         }
+    }
+    return true;
+}
+
+export async function loadCyanbitMapping() {
+    if (!cyanbitMapping) {
+        // load from local storage first to avoid unnecessary requests
+        console.debug('[BetterFloat] Attempting to load cyanbit mapping from local storage');
+        await new Promise<boolean>((resolve) => {
+            chrome.storage.local.get(['cyanbitMapping'], async (data) => {
+                if (data.cyanbitMapping) {
+                    cyanbitMapping = JSON.parse(data.cyanbitMapping);
+                } else {
+                    console.debug('[BetterFloat] No cyanbit mapping found in local storage. Loading from Github ...');
+                    await fetch(chrome.runtime.getURL('/public') + '/cyanbit_karambit.json')
+                        .then((response) => response.json())
+                        .then((data) => {
+                            cyanbitMapping = data;
+                            chrome.storage.local.set({ cyanbitMapping: JSON.stringify(data) });
+                            console.debug('[BetterFloat] Cyanbit mapping successfully loaded from Github');
+                        })
+                        .catch((err) => console.error(err));
+                }
+                resolve(true);
+            });
+        });
     }
     return true;
 }

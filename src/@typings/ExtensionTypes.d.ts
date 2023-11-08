@@ -136,6 +136,14 @@ export namespace Extension {
         'Phase 4': number;
     };
 
+    export type CyanbitMapping = {
+        [paint_seed: string]: {
+            img: string;
+            type: 'Sigma' | 'Delta' | '';
+            tier: 0 | 1 | 2 | 3;
+        };
+    };
+
     export type PhoenixMapping = {
         [paint_seed: string]: {
             img: string;
