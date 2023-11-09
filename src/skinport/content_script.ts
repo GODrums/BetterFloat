@@ -510,7 +510,7 @@ async function adjustItem(container: Element) {
         await addFloatColoring(container, item);
     }
 
-    let cachedItem = await getFirstSpItem();
+    let cachedItem = getFirstSpItem();
     if (cachedItem) {
         if (cachedItem.name != item.name) {
             console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
@@ -696,10 +696,12 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim() ?? '';
     let currency = '';
     if (priceText.split(' ').length > 1) {
+        // format: "1 696,00€"
         let parts = priceText.replace(',', '').replace('.', '').split(' ');
-        priceText = String(Number(parts.filter((x) => !isNaN(+x))[0]) / 100);
+        priceText = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
         currency = parts.filter((x) => isNaN(+x))[0];
     } else {
+        // format: "€1,696.00"
         currency = priceText.charAt(0);
         priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
     }

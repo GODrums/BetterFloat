@@ -741,6 +741,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         const icon = document.createElement('img');
         icon.setAttribute('src', extensionSettings.runtimePublicURL + '/icon-' + quickLinks[i].icon + '.png');
         icon.style.height = '24px';
+        icon.style.borderRadius = '5px';
         linkContainer.appendChild(icon);
         let toolTipOuter = document.createElement('div');
         toolTipOuter.className = 'bf-tooltip';
