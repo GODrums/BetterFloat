@@ -68,8 +68,8 @@ export namespace CSFloat {
         scm: SCMType;
         stickers: StickerData[];
         tradable: boolean;
-        type: 'skin' | 'sticker' | "container";
-        type_name: 'Skin' | 'Sticker' | "Container";
+        type: 'skin' | 'sticker' | 'container';
+        type_name: 'Skin' | 'Sticker' | 'Container';
         wear_name: 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
     };
 

@@ -679,7 +679,6 @@ async function adjustItem(container: Element, isPopout = false) {
         if (extensionSettings.csfRemoveClustering) {
             removeImageElements(container);
         }
-        await webDetection(container, cachedItem);
         await patternDetections(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
@@ -692,11 +691,11 @@ async function adjustItem(container: Element, isPopout = false) {
                 apiItem = getCSFPopupItem();
             }
             if (apiItem) {
-                console.log(apiItem);
+                // console.log(apiItem);
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
                 await caseHardenedDetection(container, apiItem, true);
-                await webDetection(container, apiItem);
+                await patternDetections(container, apiItem);
                 await addFadePercentages(container, apiItem);
                 await addFloatColoring(container, apiItem);
                 addQuickLinks(container, apiItem);
@@ -763,7 +762,13 @@ function createPricempireURL(container: Element, item: CSFloat.Item) {
     const sanitizeURL = (url: string) => {
         return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
     };
-    return 'https://pricempire.com/item/cs2/' + pricempireType(item) + '/' + sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase()) + (item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : '');
+    return (
+        'https://pricempire.com/item/cs2/' +
+        pricempireType(item) +
+        '/' +
+        sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase()) +
+        (item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : '')
+    );
 }
 
 function removeImageElements(container: Element) {
@@ -799,10 +804,12 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
 
 async function patternDetections(container: Element, listing: CSFloat.ListingData) {
     const item = listing.item;
-    if (item.item_name.includes('Phoenix Blacklight')) {
+    if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
+        await webDetection(container, item);
+    } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
     } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
-        await badgeCyanbit(container, item);
+        // await badgeCyanbit(container, item);
     }
 }
 
@@ -999,9 +1006,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     }
 }
 
-async function webDetection(container: Element, listing: CSFloat.ListingData) {
-    const item = listing.item;
-    if ((!item.item_name.includes('Crimson Web') && !item.item_name.includes('Emerald Web')) || !item.item_name.startsWith('★')) return;
+async function webDetection(container: Element, item: CSFloat.Item) {
     let type = '';
     if (item.item_name.includes('Gloves')) {
         type = 'gloves';

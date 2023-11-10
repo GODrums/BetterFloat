@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 export namespace Extension {
     export type Settings = {
         runtimePublicURL: string;
