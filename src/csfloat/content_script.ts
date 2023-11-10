@@ -807,8 +807,8 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
         await addFadePercentages(container, item);
     } else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
         await webDetection(container, item);
-    } else if (item.item_name.includes('Crimson Kimono')) {
-        await badgeCKimono(container, item);
+    } else if (item.item_name.includes('Specialist Gloves | Crimson Kimono')) {
+        // await badgeCKimono(container, item);
     } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
     } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
@@ -822,7 +822,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
     // available for all patterns
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
-        addReplacementScreenshotButton(container, '#dc143c', `https://broskins.com/patterns/gloves_crimson_kimono/${item.paint_seed}.jpg`);
+        addReplacementScreenshotButton(detailButtons, '#dc143c', `https://broskins.com/patterns/gloves_crimson_kimono/${item.paint_seed}.jpg`);
     }
 
     if (!(item.paint_seed in patterns.crimson_kimono.gloves)) return;

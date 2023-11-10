@@ -696,7 +696,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim() ?? '';
     let currency = '';
     if (priceText.split(' ').length > 1) {
-        // format: "1 696,00€"
+        // format: "1 696,00 €"
         let parts = priceText.replace(',', '').replace('.', '').split(' ');
         priceText = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
         currency = parts.filter((x) => isNaN(+x))[0];
@@ -706,6 +706,17 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
     }
     let price = Number(priceText);
+
+    if (isNaN(price) || !isNaN(Number(currency))) {
+        console.warn('[BetterFloat] Error parsing price: ', priceText, currency, container.querySelector(selector.price + ' .Tooltip-link')?.textContent);
+        let secondPrice = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim().split(' ') ?? [];
+        currency = secondPrice.pop() ?? '';
+        price = Number(secondPrice.join('').replace(',', '').replace('.', '')) / 100;
+    }
+    if (isNaN(price)) {
+        price = 0;
+        currency = '';
+    }
 
     const type = container.querySelector(selector.title)?.textContent ?? '';
     const text = container.querySelector(selector.text)?.innerHTML ?? '';
