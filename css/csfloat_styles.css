@@ -144,7 +144,7 @@ button.betterfloat-top-button:hover {
     height: 56px;
 }
 
-.bf-fade .bf-fade-percentage {
+.bf-tooltip .bf-badge-text {
     font-weight: 600;
     font-size: 20px;
     transition: all .2s ease-in-out;
@@ -185,6 +185,6 @@ button.betterfloat-top-button:hover {
 	transition: visibility 0s, opacity 0.2s linear;
 }
 
-.bf-tooltip:hover .bf-fade-percentage {
+.bf-tooltip:hover .bf-badge-text {
     transform: scale(1.8);
 }

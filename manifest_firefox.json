@@ -60,7 +60,7 @@
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/gear-solid.svg", "public/camera-flipped.svg", "public/spider-web.svg", "public/phoenix-icon.svg", "public/gem-cyan.svg", "public/cyanbit_karambit.json", "public/icon-pricempire.png", "public/icon-csgostash.png"]
+            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/gear-solid.svg", "public/camera-flipped.svg", "public/spider-web.svg", "public/phoenix-icon.svg", "public/gem-cyan.svg", "public/cyanbit_karambit.json", "public/icon-pricempire.png", "public/icon-csgostash.png", "public/crimson-pattern.svg"]
         },
         {
             "matches": ["*://*.skinport.com/*"],

@@ -34,6 +34,7 @@ import {
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
+import patterns from '../util/patterns';
 
 type PriceResult = {
     price_difference: number;
@@ -669,17 +670,13 @@ async function adjustItem(container: Element, isPopout = false) {
         }
         storeApiItem(container, cachedItem);
 
-        if (extensionSettings.csBlueGem) {
-            await caseHardenedDetection(container, cachedItem, false);
-        }
-        await addFadePercentages(container, cachedItem);
         if (extensionSettings.floatColoring.csfloat) {
             await addFloatColoring(container, cachedItem);
         }
         if (extensionSettings.csfRemoveClustering) {
             removeImageElements(container);
         }
-        await patternDetections(container, cachedItem);
+        await patternDetections(container, cachedItem, false);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -694,9 +691,7 @@ async function adjustItem(container: Element, isPopout = false) {
                 // console.log(apiItem);
                 await addStickerInfo(container, apiItem, priceResult.price_difference);
                 await addListingAge(container, apiItem);
-                await caseHardenedDetection(container, apiItem, true);
-                await patternDetections(container, apiItem);
-                await addFadePercentages(container, apiItem);
+                await patternDetections(container, apiItem, true);
                 await addFloatColoring(container, apiItem);
                 addQuickLinks(container, apiItem);
             }
@@ -802,14 +797,58 @@ async function addFloatColoring(container: Element, item: CSFloat.ListingData) {
     });
 }
 
-async function patternDetections(container: Element, listing: CSFloat.ListingData) {
+async function patternDetections(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
     const item = listing.item;
-    if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
+    if (item.item_name.includes('Case Hardened')) {
+        if (extensionSettings.csBlueGem || isPopout) {
+            await caseHardenedDetection(container, item, isPopout);
+        }
+    } else if (item.item_name.includes('Fade')) {
+        await addFadePercentages(container, item);
+    } else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
         await webDetection(container, item);
+    } else if (item.item_name.includes('Crimson Kimono')) {
+        await badgeCKimono(container, item);
     } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
     } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
         // await badgeCyanbit(container, item);
+    }
+}
+
+async function badgeCKimono(container: Element, item: CSFloat.Item) {
+    if (!item.paint_seed) return;
+    // add replacement screenshot if csfloat does not offer one and if available
+    // available for all patterns
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
+        addReplacementScreenshotButton(container, '#dc143c', `https://broskins.com/patterns/gloves_crimson_kimono/${item.paint_seed}.jpg`);
+    }
+
+    if (!(item.paint_seed in patterns.crimson_kimono.gloves)) return;
+    let tier = patterns.crimson_kimono.gloves[item.paint_seed];
+
+    const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500; position: absolute; top: 6px;';
+    if (tier === -1) {
+        addPatternBadge(
+            container,
+            'crimson-pattern.svg',
+            `height: 30px; filter: grayscale(100%);`,
+            [`T1 GRAY PATTERN`],
+            'translate: -25px 15px; width: 80px;',
+            '1',
+            badgeStyle
+        );
+    } else {
+        addPatternBadge(
+            container,
+            'crimson-pattern.svg',
+            `height: 30px;`,
+            [`Tier ${tier}`],
+            'translate: -18px 15px; width: 60px;',
+            String(tier),
+            badgeStyle
+        );
     }
 }
 
@@ -831,9 +870,9 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
     cwTooltip.appendChild(cwTypeSpan);
     cwTooltip.appendChild(cwTierSpan);
     let cwBadge = document.createElement('div');
-    cwBadge.className = 'bf-fade bf-tooltip';
+    cwBadge.className = 'bf-tooltip';
     let cwDiv = document.createElement('div');
-    cwDiv.className = 'bf-fade-percentage';
+    cwDiv.className = 'bf-badge-text';
     const cwImage = document.createElement('img');
     cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/gem-cyan.svg');
     cwImage.setAttribute('style', 'height: 30px;');
@@ -906,9 +945,9 @@ async function badgePhoenix(container: Element, item: CSFloat.Item) {
     cwTooltip.appendChild(cwTypeSpan);
     cwTooltip.appendChild(cwTierSpan);
     let cwBadge = document.createElement('div');
-    cwBadge.className = 'bf-fade bf-tooltip';
+    cwBadge.className = 'bf-tooltip';
     let cwDiv = document.createElement('div');
-    cwDiv.className = 'bf-fade-percentage';
+    cwDiv.className = 'bf-badge-text';
     const cwImage = document.createElement('img');
     cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/phoenix-icon.svg');
     cwImage.setAttribute('style', 'height: 30px;');
@@ -962,10 +1001,108 @@ async function badgePhoenix(container: Element, item: CSFloat.Item) {
     }
 }
 
-async function addFadePercentages(container: Element, item: CSFloat.ListingData) {
-    const itemName = item.item.item_name;
-    const paintSeed = item.item.paint_seed;
-    if (!itemName.includes('Fade')) return;
+function addPatternBadge(container: Element, svgfile: string, svgStyle: string, tooltipText: string[], tooltipStyle: string, badgeText: string, badgeStyle: string) {
+    let badgeTooltip = document.createElement('div');
+    badgeTooltip.className = 'bf-tooltip-inner';
+    badgeTooltip.setAttribute('style', tooltipStyle);
+    for (let i = 0; i < tooltipText.length; i++) {
+        let badgeTooltipSpan = document.createElement('span');
+        badgeTooltipSpan.textContent = tooltipText[i];
+        badgeTooltip.appendChild(badgeTooltipSpan);
+    }
+    let badge = document.createElement('div');
+    badge.className = 'bf-tooltip';
+    let badgeDiv = document.createElement('div');
+    badgeDiv.className = 'bf-badge-text';
+    const bgImage = document.createElement('img');
+    bgImage.className = 'betterfloat-cw-image';
+    bgImage.setAttribute('src', extensionSettings.runtimePublicURL + '/' + svgfile);
+    bgImage.setAttribute('style', svgStyle);
+    badgeDiv.appendChild(bgImage);
+    let badgeSpan = document.createElement('span');
+    badgeSpan.textContent = badgeText;
+    badgeSpan.setAttribute('style', badgeStyle);
+    badgeDiv.appendChild(badgeSpan);
+    badge.appendChild(badgeDiv);
+    badge.appendChild(badgeTooltip);
+    let badgeContainer = container.querySelector('.badge-container');
+    if (!badgeContainer) {
+        badgeContainer = document.createElement('div');
+        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+        container.querySelector('.item-img')?.after(badgeContainer);
+    } else {
+        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+        badgeContainer.setAttribute('style', 'gap: 5px;');
+    }
+    badgeContainer.appendChild(badge);
+}
+
+function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string) {
+    detailButtons.setAttribute('style', 'display: flex;');
+    const outerContainer = document.createElement('div');
+    outerContainer.className = 'bf-tooltip';
+    const screenshotButton = document.createElement('a');
+    screenshotButton.href = href;
+    screenshotButton.target = '_blank';
+    screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+    const iconButton = document.createElement('button');
+    iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+    const buttonColor = color;
+    iconButton.setAttribute('style', `color: ${buttonColor};`);
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'mat-button-wrapper';
+    const icon = document.createElement('i');
+    icon.className = 'material-icons';
+    icon.textContent = 'camera_alt';
+    iconSpan.appendChild(icon);
+    iconButton.appendChild(iconSpan);
+    screenshotButton.appendChild(iconButton);
+    let tooltip = document.createElement('div');
+    tooltip.className = 'bf-tooltip-inner';
+    let tooltipSpan = document.createElement('span');
+    tooltipSpan.textContent = 'Show pattern screenshot';
+    tooltip.appendChild(tooltipSpan);
+    outerContainer.appendChild(screenshotButton);
+    outerContainer.appendChild(tooltip);
+    detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+}
+
+async function webDetection(container: Element, item: CSFloat.Item) {
+    let type = '';
+    if (item.item_name.includes('Gloves')) {
+        type = 'gloves';
+    } else {
+        type = item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
+    }
+    const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed!);
+    if (!cw_data) return;
+    const itemImg = container.querySelector('.item-img');
+    if (!itemImg) return;
+
+    const filter = item.item_name.includes('Crimson')
+        ? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)'
+        : 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
+
+    addPatternBadge(
+        container,
+        'spider-web.svg',
+        `height: 30px; filter: ${filter};`,
+        [cw_data.type, `Tier ${cw_data.tier}`],
+        'translate: -25px 15px; width: 80px;',
+        cw_data.type == 'Triple Web' ? '3' : cw_data.type == 'Double Web' ? '2' : '1',
+        `color: ${item.item_name.includes('Crimson') ? 'lightgrey' : 'white'}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`
+    );
+
+    // add replacement screenshot if csfloat does not offer one and if available
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cw_data.img) {
+        addReplacementScreenshotButton(container, item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)', cw_data.img);
+    }
+}
+
+async function addFadePercentages(container: Element, item: CSFloat.Item) {
+    const itemName = item.item_name;
+    const paintSeed = item.paint_seed;
     const weapon = itemName.split(' | ')[0];
     let fadePercentage: (FadePercentage & { background: string }) | null = null;
     if (itemName.includes('Amber Fade')) {
@@ -983,9 +1120,9 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
         fadeTooltip.appendChild(fadePercentageSpan);
         fadeTooltip.appendChild(fadeRankingSpan);
         let fadeBadge = document.createElement('div');
-        fadeBadge.className = 'bf-fade bf-tooltip';
+        fadeBadge.className = 'bf-tooltip';
         let percentageDiv = document.createElement('div');
-        percentageDiv.className = 'bf-fade-percentage';
+        percentageDiv.className = 'bf-badge-text';
         percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
         let fadeBadgePercentageSpan = document.createElement('span');
         fadeBadgePercentageSpan.style.color = '#00000080';
@@ -1006,105 +1143,7 @@ async function addFadePercentages(container: Element, item: CSFloat.ListingData)
     }
 }
 
-async function webDetection(container: Element, item: CSFloat.Item) {
-    let type = '';
-    if (item.item_name.includes('Gloves')) {
-        type = 'gloves';
-    } else {
-        type = item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
-    }
-    const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed!);
-    if (!cw_data) return;
-    const itemImg = container.querySelector('.item-img');
-    if (!itemImg) return;
-
-    let cwTooltip = document.createElement('div');
-    cwTooltip.className = 'bf-tooltip-inner';
-    cwTooltip.style.translate = '-25px 15px';
-    cwTooltip.style.width = '80px';
-    let cwTypeSpan = document.createElement('span');
-    cwTypeSpan.textContent = cw_data.type;
-    let cwTierSpan = document.createElement('span');
-    cwTierSpan.textContent = `Tier ${cw_data.tier}`;
-    cwTooltip.appendChild(cwTypeSpan);
-    cwTooltip.appendChild(cwTierSpan);
-    let cwBadge = document.createElement('div');
-    cwBadge.className = 'bf-fade bf-tooltip';
-    let cwDiv = document.createElement('div');
-    cwDiv.className = 'bf-fade-percentage';
-    const cwImage = document.createElement('img');
-    cwImage.className = 'betterfloat-cw-image';
-    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/spider-web.svg');
-    const filter = item.item_name.includes('Crimson')
-        ? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)'
-        : 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
-    const textColor = item.item_name.includes('Crimson') ? 'lightgrey' : 'white';
-    cwImage.setAttribute('style', `height: 30px; filter: ${filter};`);
-    let cwBadgeSpan = document.createElement('span');
-    cwBadgeSpan.setAttribute('style', `color: ${textColor}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`);
-    let badgeText = '';
-    switch (cw_data.type) {
-        case 'Triple Web':
-            badgeText = '3';
-            break;
-        case 'Double Web':
-            badgeText = '2';
-            break;
-        default:
-            badgeText = '1';
-            break;
-    }
-    cwBadgeSpan.textContent = badgeText;
-    cwDiv.appendChild(cwImage);
-    cwDiv.appendChild(cwBadgeSpan);
-    cwBadge.appendChild(cwDiv);
-    cwBadge.appendChild(cwTooltip);
-    let badgeContainer = container.querySelector('.badge-container');
-    if (!badgeContainer) {
-        badgeContainer = document.createElement('div');
-        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-        container.querySelector('.item-img')?.after(badgeContainer);
-    } else {
-        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
-        badgeContainer.setAttribute('style', 'gap: 5px;');
-    }
-    badgeContainer.appendChild(cwBadge);
-
-    // add replacement screenshot if csfloat does not offer one and if available
-    const detailButtons = container.querySelector('.detail-buttons');
-    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cw_data.img) {
-        detailButtons.setAttribute('style', 'display: flex;');
-        const outerContainer = document.createElement('div');
-        outerContainer.className = 'bf-tooltip';
-        const screenshotButton = document.createElement('a');
-        screenshotButton.href = cw_data.img;
-        screenshotButton.target = '_blank';
-        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
-        const iconButton = document.createElement('button');
-        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
-        const buttonColor = item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)';
-        iconButton.setAttribute('style', `color: ${buttonColor};`);
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'mat-button-wrapper';
-        const icon = document.createElement('i');
-        icon.className = 'material-icons';
-        icon.textContent = 'camera_alt';
-        iconSpan.appendChild(icon);
-        iconButton.appendChild(iconSpan);
-        screenshotButton.appendChild(iconButton);
-        let tooltip = document.createElement('div');
-        tooltip.className = 'bf-tooltip-inner';
-        let tooltipSpan = document.createElement('span');
-        tooltipSpan.textContent = 'Show pattern screenshot';
-        tooltip.appendChild(tooltipSpan);
-        outerContainer.appendChild(screenshotButton);
-        outerContainer.appendChild(tooltip);
-        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
-    }
-}
-
-async function caseHardenedDetection(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
-    const item = listing.item;
+async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
     let patternElement: BlueGem.PatternElement | null = null;
