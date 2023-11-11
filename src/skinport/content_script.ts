@@ -695,9 +695,10 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 
     let priceText = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim() ?? '';
     let currency = '';
-    if (priceText.split(' ').length > 1) {
-        // format: "1 696,00 €"
-        let parts = priceText.replace(',', '').replace('.', '').split(' ');
+    // regex also detects &nbsp as whitespace!
+    if (priceText.split(/\s/).length > 1) {
+        // format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
+        let parts = priceText.replace(',', '').replace('.', '').split(/\s/);
         priceText = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
         currency = parts.filter((x) => isNaN(+x))[0];
     } else {
@@ -708,12 +709,6 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
     let price = Number(priceText);
 
     if (isNaN(price) || !isNaN(Number(currency))) {
-        console.warn('[BetterFloat] Error parsing price: ', priceText, currency, container.querySelector(selector.price + ' .Tooltip-link')?.textContent);
-        let secondPrice = container.querySelector(selector.price + ' .Tooltip-link')?.textContent?.trim().split(' ') ?? [];
-        currency = secondPrice.pop() ?? '';
-        price = Number(secondPrice.join('').replace(',', '').replace('.', '')) / 100;
-    }
-    if (isNaN(price)) {
         price = 0;
         currency = '';
     }
