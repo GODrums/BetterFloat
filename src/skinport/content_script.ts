@@ -375,7 +375,7 @@ function addLiveFilterMenu(container: Element) {
 }
 
 async function handlePopularList(list: Element) {
-    if (list.querySelector('h3')?.textContent?.includes('CS2')) {
+    if (list.querySelector('h3')?.textContent?.includes('Counter-Strike')) {
         const popularItems = Array.from(list.querySelectorAll('.PopularList-item'));
         for (const item of popularItems) {
             await adjustItem(item);

@@ -808,18 +808,18 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
     } else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
         await webDetection(container, item);
     } else if (item.item_name.includes('Specialist Gloves | Crimson Kimono')) {
-        // await badgeCKimono(container, item);
+        await badgeCKimono(container, item);
     } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
     } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
-        // await badgeCyanbit(container, item);
+        await badgeCyanbit(container, item);
     }
 }
 
 async function badgeCKimono(container: Element, item: CSFloat.Item) {
     if (!item.paint_seed) return;
     // add replacement screenshot if csfloat does not offer one and if available
-    // available for all patterns
+    // available for all kimono patterns
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
         addReplacementScreenshotButton(detailButtons, '#dc143c', `https://broskins.com/patterns/gloves_crimson_kimono/${item.paint_seed}.jpg`);
@@ -834,7 +834,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
             container,
             'crimson-pattern.svg',
             `height: 30px; filter: grayscale(100%);`,
-            [`T1 GRAY PATTERN`],
+            ['T1 GRAY PATTERN'],
             'translate: -25px 15px; width: 80px;',
             '1',
             badgeStyle
@@ -855,150 +855,43 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
 async function badgeCyanbit(container: Element, item: CSFloat.Item) {
     const cyanbit_data = await getCyanbitMapping(item.paint_seed!);
     if (!cyanbit_data) return;
-    let cwTooltip = document.createElement('div');
-    cwTooltip.className = 'bf-tooltip-inner';
-    cwTooltip.style.translate = '-15px 15px';
-    cwTooltip.style.width = '90px';
-    let cwTypeSpan = document.createElement('span');
-    cwTypeSpan.textContent = `${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`;
-    let cwTierSpan = document.createElement('span');
-    if (cyanbit_data.tier == 0) {
-        cwTierSpan.textContent = 'No Tier';
-    } else {
-        cwTierSpan.textContent = `Tier ${cyanbit_data.tier}`;
-    }
-    cwTooltip.appendChild(cwTypeSpan);
-    cwTooltip.appendChild(cwTierSpan);
-    let cwBadge = document.createElement('div');
-    cwBadge.className = 'bf-tooltip';
-    let cwDiv = document.createElement('div');
-    cwDiv.className = 'bf-badge-text';
-    const cwImage = document.createElement('img');
-    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/gem-cyan.svg');
-    cwImage.setAttribute('style', 'height: 30px;');
-    let cwBadgeSpan = document.createElement('span');
-    cwBadgeSpan.setAttribute('style', 'color: #00ffff; font-size: 18px; font-weight: 600;');
-    cwBadgeSpan.textContent = 'T' + cyanbit_data.tier;
-    cwDiv.appendChild(cwImage);
-    cwDiv.appendChild(cwBadgeSpan);
-    cwBadge.appendChild(cwDiv);
-    cwBadge.appendChild(cwTooltip);
-    let badgeContainer = container.querySelector('.badge-container');
-    if (!badgeContainer) {
-        badgeContainer = document.createElement('div');
-        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-        container.querySelector('.item-img')?.after(badgeContainer);
-    } else {
-        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
-        badgeContainer.setAttribute('style', 'gap: 5px;');
-    }
-    badgeContainer.appendChild(cwBadge);
 
     // add replacement screenshot if csfloat does not offer one and if available
     const detailButtons = container.querySelector('.detail-buttons');
-    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cyanbit_data.img) {
-        detailButtons.setAttribute('style', 'display: flex;');
-        const outerContainer = document.createElement('div');
-        outerContainer.className = 'bf-tooltip';
-        const screenshotButton = document.createElement('a');
-        screenshotButton.href = cyanbit_data.img;
-        screenshotButton.target = '_blank';
-        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
-        const iconButton = document.createElement('button');
-        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
-        iconButton.setAttribute('style', 'color: #00ffff;');
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'mat-button-wrapper';
-        const icon = document.createElement('i');
-        icon.className = 'material-icons';
-        icon.textContent = 'camera_alt';
-        iconSpan.appendChild(icon);
-        iconButton.appendChild(iconSpan);
-        screenshotButton.appendChild(iconButton);
-        let tooltip = document.createElement('div');
-        tooltip.className = 'bf-tooltip-inner';
-        let tooltipSpan = document.createElement('span');
-        tooltipSpan.textContent = 'Show pattern screenshot';
-        tooltip.appendChild(tooltipSpan);
-        outerContainer.appendChild(screenshotButton);
-        outerContainer.appendChild(tooltip);
-        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
+        addReplacementScreenshotButton(detailButtons, '#00ffff', cyanbit_data.img);
     }
+
+    addPatternBadge(
+        container,
+        'gem-cyan.svg',
+        `height: 30px;`,
+        [`${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`, cyanbit_data.tier == 0 ? 'No Tier' : `Tier ${cyanbit_data.tier}`],
+        'translate: -15px 15px; width: 90px;',
+        'T' + cyanbit_data.tier,
+        'color: #00ffff; font-size: 18px; font-weight: 600; margin-left: 2px;'
+    );
 }
 
 async function badgePhoenix(container: Element, item: CSFloat.Item) {
     const phoenix_data = await getPhoenixMapping(item.paint_seed!);
     if (!phoenix_data) return;
-    let cwTooltip = document.createElement('div');
-    cwTooltip.className = 'bf-tooltip-inner';
-    cwTooltip.style.translate = '-15px 15px';
-    cwTooltip.style.width = '90px';
-    let cwTypeSpan = document.createElement('span');
-    cwTypeSpan.textContent = `Position: ${phoenix_data.type}`;
-    let cwTierSpan = document.createElement('span');
-    cwTierSpan.textContent = `Tier ${phoenix_data.tier}`;
-    if (phoenix_data.rank) {
-        let cwRankSpan = document.createElement('span');
-        cwRankSpan.textContent = `Rank #${phoenix_data.rank}`;
-        cwTooltip.appendChild(cwRankSpan);
-    }
-    cwTooltip.appendChild(cwTypeSpan);
-    cwTooltip.appendChild(cwTierSpan);
-    let cwBadge = document.createElement('div');
-    cwBadge.className = 'bf-tooltip';
-    let cwDiv = document.createElement('div');
-    cwDiv.className = 'bf-badge-text';
-    const cwImage = document.createElement('img');
-    cwImage.setAttribute('src', extensionSettings.runtimePublicURL + '/phoenix-icon.svg');
-    cwImage.setAttribute('style', 'height: 30px;');
-    let cwBadgeSpan = document.createElement('span');
-    cwBadgeSpan.setAttribute('style', 'color: #d946ef; font-size: 18px; font-weight: 600;');
-    cwBadgeSpan.textContent = 'T' + phoenix_data.tier;
-    cwDiv.appendChild(cwImage);
-    cwDiv.appendChild(cwBadgeSpan);
-    cwBadge.appendChild(cwDiv);
-    cwBadge.appendChild(cwTooltip);
-    let badgeContainer = container.querySelector('.badge-container');
-    if (!badgeContainer) {
-        badgeContainer = document.createElement('div');
-        badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-        container.querySelector('.item-img')?.after(badgeContainer);
-    } else {
-        badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
-        badgeContainer.setAttribute('style', 'gap: 5px;');
-    }
-    badgeContainer.appendChild(cwBadge);
 
     // add replacement screenshot if csfloat does not offer one and if available
     const detailButtons = container.querySelector('.detail-buttons');
-    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && phoenix_data.img) {
-        detailButtons.setAttribute('style', 'display: flex;');
-        const outerContainer = document.createElement('div');
-        outerContainer.className = 'bf-tooltip';
-        const screenshotButton = document.createElement('a');
-        screenshotButton.href = phoenix_data.img;
-        screenshotButton.target = '_blank';
-        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
-        const iconButton = document.createElement('button');
-        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
-        iconButton.setAttribute('style', 'color: #d946ef;');
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'mat-button-wrapper';
-        const icon = document.createElement('i');
-        icon.className = 'material-icons';
-        icon.textContent = 'camera_alt';
-        iconSpan.appendChild(icon);
-        iconButton.appendChild(iconSpan);
-        screenshotButton.appendChild(iconButton);
-        let tooltip = document.createElement('div');
-        tooltip.className = 'bf-tooltip-inner';
-        let tooltipSpan = document.createElement('span');
-        tooltipSpan.textContent = 'Show pattern screenshot';
-        tooltip.appendChild(tooltipSpan);
-        outerContainer.appendChild(screenshotButton);
-        outerContainer.appendChild(tooltip);
-        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
+        addReplacementScreenshotButton(detailButtons, '#d946ef', phoenix_data.img);
     }
+
+    addPatternBadge(
+        container,
+        'phoenix-icon.svg',
+        `height: 30px;`,
+        [`Position: ${phoenix_data.type}`, `Tier ${phoenix_data.tier}`].concat(phoenix_data.rank ? [`Rank #${phoenix_data.rank}`] : []),
+        'translate: -15px 15px; width: 90px;',
+        'T' + phoenix_data.tier,
+        'color: #d946ef; font-size: 18px; font-weight: 600;'
+    );
 }
 
 function addPatternBadge(container: Element, svgfile: string, svgStyle: string, tooltipText: string[], tooltipStyle: string, badgeText: string, badgeStyle: string) {
