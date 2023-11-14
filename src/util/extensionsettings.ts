@@ -17,103 +17,103 @@ export async function getSetting<Key extends keyof Extension.Settings>(key: Key)
 }
 
 export async function initSettings(): Promise<Extension.Settings> {
-    const extensionSettings = <Extension.Settings>{};
+    settings = <Extension.Settings>{};
     chrome.storage.local.get((data) => {
         if (data.runtimePublicURL) {
-            extensionSettings.runtimePublicURL = data.runtimePublicURL as Extension.Settings['runtimePublicURL'];
+            settings.runtimePublicURL = data.runtimePublicURL as Extension.Settings['runtimePublicURL'];
         }
         if (data.enableCSFloat) {
-            extensionSettings.enableCSFloat = Boolean(data.enableCSFloat);
+            settings.enableCSFloat = Boolean(data.enableCSFloat);
         }
         if (data.autorefresh) {
-            extensionSettings.autorefresh = Boolean(data.autorefresh);
+            settings.autorefresh = Boolean(data.autorefresh);
         }
         if (data.priceReference !== undefined) {
-            extensionSettings.priceReference = data.priceReference as Extension.Settings['priceReference'];
+            settings.priceReference = data.priceReference as Extension.Settings['priceReference'];
         }
         if (data.refreshInterval) {
-            extensionSettings.refreshInterval = data.refreshInterval as Extension.Settings['refreshInterval'];
+            settings.refreshInterval = data.refreshInterval as Extension.Settings['refreshInterval'];
         }
         if (data.showSteamPrice) {
-            extensionSettings.showSteamPrice = Boolean(data.showSteamPrice);
+            settings.showSteamPrice = Boolean(data.showSteamPrice);
         }
         if (data.stickerPrices) {
-            extensionSettings.stickerPrices = Boolean(data.stickerPrices);
+            settings.stickerPrices = Boolean(data.stickerPrices);
         }
         if (data.csBlueGem) {
-            extensionSettings.csBlueGem = Boolean(data.csBlueGem);
+            settings.csBlueGem = Boolean(data.csBlueGem);
         }
         if (data.listingAge !== undefined) {
-            extensionSettings.listingAge = data.listingAge as Extension.Settings['listingAge'];
+            settings.listingAge = data.listingAge as Extension.Settings['listingAge'];
         }
         if (data.showBuffDifference) {
-            extensionSettings.showBuffDifference = Boolean(data.showBuffDifference);
+            settings.showBuffDifference = Boolean(data.showBuffDifference);
         }
         if (data.showBuffPercentageDifference) {
-            extensionSettings.showBuffPercentageDifference = Boolean(data.showBuffPercentageDifference);
+            settings.showBuffPercentageDifference = Boolean(data.showBuffPercentageDifference);
         }
         if (data.showTopButton) {
-            extensionSettings.showTopButton = Boolean(data.showTopButton);
+            settings.showTopButton = Boolean(data.showTopButton);
         }
         if (data.useTabStates) {
-            extensionSettings.useTabStates = Boolean(data.useTabStates);
+            settings.useTabStates = Boolean(data.useTabStates);
         }
         if (data.csfRemoveClustering) {
-            extensionSettings.csfRemoveClustering = Boolean(data.csfRemoveClustering);
+            settings.csfRemoveClustering = Boolean(data.csfRemoveClustering);
         }
         if (data.enableSkinport) {
-            extensionSettings.enableSkinport = Boolean(data.enableSkinport);
+            settings.enableSkinport = Boolean(data.enableSkinport);
         }
         if (data.spCheckBoxes) {
-            extensionSettings.spCheckBoxes = Boolean(data.spCheckBoxes);
+            settings.spCheckBoxes = Boolean(data.spCheckBoxes);
         }
         if (data.spStickerPrices) {
-            extensionSettings.spStickerPrices = Boolean(data.spStickerPrices);
+            settings.spStickerPrices = Boolean(data.spStickerPrices);
         }
         if (data.spBlueGem) {
-            extensionSettings.spBlueGem = Boolean(data.spBlueGem);
+            settings.spBlueGem = Boolean(data.spBlueGem);
         }
         if (data.skinportRates) {
-            extensionSettings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
+            settings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
         }
         if (data.spPriceReference !== undefined) {
-            extensionSettings.spPriceReference = data.spPriceReference as Extension.Settings['spPriceReference'];
+            settings.spPriceReference = data.spPriceReference as Extension.Settings['spPriceReference'];
         }
         if (data.spSteamPrice) {
-            extensionSettings.spSteamPrice = Boolean(data.spSteamPrice);
+            settings.spSteamPrice = Boolean(data.spSteamPrice);
         }
         if (data.spBuffDifference) {
-            extensionSettings.spBuffDifference = Boolean(data.spBuffDifference);
+            settings.spBuffDifference = Boolean(data.spBuffDifference);
         }
         if (data.spBuffLink) {
-            extensionSettings.spBuffLink = data.spBuffLink as Extension.Settings['spBuffLink'];
+            settings.spBuffLink = data.spBuffLink as Extension.Settings['spBuffLink'];
         }
         if (data.spFilter) {
-            extensionSettings.spFilter = data.spFilter as Extension.Settings['spFilter'];
+            settings.spFilter = data.spFilter as Extension.Settings['spFilter'];
         }
         if (data.enableSkinbid) {
-            extensionSettings.enableSkinbid = Boolean(data.enableSkinbid);
+            settings.enableSkinbid = Boolean(data.enableSkinbid);
         }
         if (data.skbPriceReference !== undefined) {
-            extensionSettings.skbPriceReference = data.skbPriceReference as Extension.Settings['skbPriceReference'];
+            settings.skbPriceReference = data.skbPriceReference as Extension.Settings['skbPriceReference'];
         }
         if (data.skbBuffDifference) {
-            extensionSettings.skbBuffDifference = Boolean(data.skbBuffDifference);
+            settings.skbBuffDifference = Boolean(data.skbBuffDifference);
         }
         if (data.skbListingAge) {
-            extensionSettings.skbListingAge = Boolean(data.skbListingAge);
+            settings.skbListingAge = Boolean(data.skbListingAge);
         }
         if (data.skbStickerPrices) {
-            extensionSettings.skbStickerPrices = Boolean(data.skbStickerPrices);
+            settings.skbStickerPrices = Boolean(data.skbStickerPrices);
         }
         if (data.spAutoclosePopup) {
-            extensionSettings.spAutoclosePopup = Boolean(data.spAutoclosePopup);
+            settings.spAutoclosePopup = Boolean(data.spAutoclosePopup);
         }
         if (data.floatColoring) {
-            extensionSettings.floatColoring = data.floatColoring as Extension.Settings['floatColoring'];
+            settings.floatColoring = data.floatColoring as Extension.Settings['floatColoring'];
         }
         if (data.colors) {
-            extensionSettings.colors = data.colors as Extension.Settings['colors'];
+            settings.colors = data.colors as Extension.Settings['colors'];
         }
     });
 
@@ -124,5 +124,5 @@ export async function initSettings(): Promise<Extension.Settings> {
         }, 1500);
     });
 
-    return extensionSettings;
+    return settings;
 }

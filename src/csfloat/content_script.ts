@@ -7,11 +7,9 @@ import {
     getBuffMapping,
     getCSFPopupItem,
     getCrimsonWebMapping,
-    getCyanbitMapping,
     getFirstCSFItem,
     getFirstHistorySale,
     getItemPrice,
-    getPhoenixMapping,
     getStallData,
     getWholeHistory,
     loadBuffMapping,
@@ -34,8 +32,8 @@ import {
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
-import patterns from '../util/patterns';
 import { CSFloatHelpers } from './csfloat_helpers';
+import { CrimsonKimonoMapping, CyanbitKarambitMapping, PhoenixMapping } from 'cs-tierlist';
 
 type PriceResult = {
     price_difference: number;
@@ -177,7 +175,6 @@ async function customStall(stall_id: string) {
             input.type = 'url';
             input.placeholder = inputField[key as keyof typeof inputField].placeholder;
             input.id = 'betterfloat-customstall-' + key;
-            // input.className = 'mat-input-element';
             div.appendChild(label);
             div.appendChild(input);
             popupBackground.appendChild(div);
@@ -818,19 +815,17 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 }
 
 async function badgeCKimono(container: Element, item: CSFloat.Item) {
-    if (!item.paint_seed) return;
+    const ck_data = await CrimsonKimonoMapping.getPattern(item.paint_seed!);
+    if (!ck_data) return;
     // add replacement screenshot if csfloat does not offer one and if available
     // available for all kimono patterns
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
-        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#dc143c', `https://broskins.com/patterns/gloves_crimson_kimono/${item.paint_seed}.jpg`);
+        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#dc143c', ck_data.img);
     }
 
-    if (!(item.paint_seed in patterns.crimson_kimono.gloves)) return;
-    let tier = patterns.crimson_kimono.gloves[item.paint_seed];
-
     const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500; position: absolute; top: 6px;';
-    if (tier === -1) {
+    if (ck_data.tier === -1) {
         CSFloatHelpers.addPatternBadge(
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
@@ -845,16 +840,16 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
             `height: 30px;`,
-            [`Tier ${tier}`],
+            [`Tier ${ck_data.tier}`],
             'translate: -18px 15px; width: 60px;',
-            String(tier),
+            String(ck_data.tier),
             badgeStyle
         );
     }
 }
 
 async function badgeCyanbit(container: Element, item: CSFloat.Item) {
-    const cyanbit_data = await getCyanbitMapping(item.paint_seed!);
+    const cyanbit_data = await CyanbitKarambitMapping.getPattern(item.paint_seed!);
     if (!cyanbit_data) return;
 
     // add replacement screenshot if csfloat does not offer one and if available
@@ -875,7 +870,7 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
 }
 
 async function badgePhoenix(container: Element, item: CSFloat.Item) {
-    const phoenix_data = await getPhoenixMapping(item.paint_seed!);
+    const phoenix_data = await PhoenixMapping.getPattern(item.paint_seed!);
     if (!phoenix_data) return;
 
     // add replacement screenshot if csfloat does not offer one and if available
