@@ -33,7 +33,7 @@ import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
 import { fetchCSBlueGem } from '../networkhandler';
 import { CSFloatHelpers } from './csfloat_helpers';
-import { CrimsonKimonoMapping, CyanbitKarambitMapping, PhoenixMapping } from 'cs-tierlist';
+import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 
 type PriceResult = {
     price_difference: number;
@@ -811,7 +811,47 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
         await badgePhoenix(container, item);
     } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
         await badgeCyanbit(container, item);
+    } else if (item.item_name.includes('Overprint')) {
+        await badgeOverprint(container, item);
     }
+}
+
+async function badgeOverprint(container: Element, item: CSFloat.Item) {
+    const overprint_data = await OverprintMapping.getPattern(item.paint_seed!);
+    if (!overprint_data) return;
+
+    // add replacement screenshot if csfloat does not offer one and if available
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
+        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#ff5722', overprint_data.img);
+    }
+
+    const getTooltipStyle = (type: typeof overprint_data.type) => {
+        switch (type) {
+            case 'Flower':
+                return 'translate: -15px 15px; width: 55px;';
+            case 'Arrow':
+                return 'translate: -25px 15px; width: 100px;';
+            case 'Polygon':
+                return 'translate: -25px 15px; width: 100px;';
+            case 'Mixed':
+                return 'translate: -15px 15px; width: 55px;';
+            default:
+                return '';
+        }
+    }
+
+    const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500;' + (overprint_data.type == 'Flower' ? ' margin-left: 5px;' : '');
+    
+    CSFloatHelpers.addPatternBadge(
+        container,
+        extensionSettings.runtimePublicURL + `/overprint-${overprint_data.type.toLowerCase()}.svg`,
+        `height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);`,
+        [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier == 0 ? [] : [`Tier ${overprint_data.tier}`]),
+        getTooltipStyle(overprint_data.type),
+        (overprint_data.tier == 0 ? '' : 'T' + overprint_data.tier),
+        badgeStyle
+    );
 }
 
 async function badgeCKimono(container: Element, item: CSFloat.Item) {

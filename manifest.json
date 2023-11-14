@@ -1,8 +1,8 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-    "version": "1.12.3",
-    "version_name": "1.12.3",
+    "version": "1.13.0",
+    "version_name": "1.13.0",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
@@ -45,19 +45,19 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
-            "resources": ["js/inject.js", "public/buff_favicon.png", "public/ban-solid.svg", "public/gem-shop.svg", "public/arrow-up-right-from-square-solid.svg", "public/csfloat_logo.png"]
+            "resources": ["public/*.svg", "js/inject.js", "public/buff_favicon.png", "public/csfloat_logo.png"]
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/clock-solid.svg", "public/chevron-up-solid.svg", "public/gear-solid.svg", "public/camera-flipped.svg", "public/spider-web.svg", "public/phoenix-icon.svg", "public/gem-cyan.svg", "public/cyanbit_karambit.json", "public/icon-pricempire.png", "public/icon-csgostash.png", "public/crimson-pattern.svg"]
+            "resources": ["public/icon-pricempire.png", "public/icon-csgostash.png"]
         },
         {
             "matches": ["*://*.skinport.com/*"],
-            "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js", "public/triangle-exclamation-solid.svg", "public/filter-solid.svg", "public/camera-solid.svg"]
+            "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js"]
         },
         {
             "matches": ["*://*.skinbid.com/*"],
-            "resources": ["public/clock-solid.svg"]
+            "resources": []
         }
     ]
 }

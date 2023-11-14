@@ -11,7 +11,7 @@
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
 
-## Community / Support
+## 🤝 Community / Support
 
 <p>
 We use the CS Market Forum for discussions and support. BetterFloat owns the thread <a href="https://discord.com/channels/664104795367538690/1140464870559584267">#BetterFloat</a>, where you can ask questions, report bugs, or suggest new features.
@@ -21,15 +21,15 @@ Click the badge below to join the server:
 
 [![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/csgomarket)
 
-## Downloads
+## 🌎 Downloads
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=Chrome%20Web%20Store&logo=googlechrome)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=CWS%20%28Preview%29&logo=googlechrome)](https://chromewebstore.google.com/detail/betterfloat/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Mozilla Add-on](https://img.shields.io/amo/v/betterfloat.svg?label=Mozilla%20Add-on&logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/betterfloat/)
 
-## Highlights
+## 📄 Highlights
 
-Currently supports CSFloat.com and Skinport.com, but more sites are coming soon!
+Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are coming soon!
 
 -   Display Buff prices (buy order + listings) for every item
 -   Price difference to Buff at first glance next to the price tag
@@ -44,21 +44,22 @@ Currently supports CSFloat.com and Skinport.com, but more sites are coming soon!
 
 ### Chrome Web Store
 
-[![Chrome Web Store Version](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
-[![Chrome Web Store Price](https://img.shields.io/chrome-web-store/price/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bphfhlfhnohppnleaehnlfigkkccpglk.svg?label=Chrome%20Web%20Store&logo=googlechrome)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
+[![Chrome Web Store Price](https://img.shields.io/chrome-web-store/price/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 
 ### Mozillla Add-on
 
-![Mozilla Add-on Version](https://img.shields.io/amo/v/betterfloat)
+[![Mozilla Add-on](https://img.shields.io/amo/v/betterfloat.svg?label=Mozilla%20Add-on&logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/betterfloat/)
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/betterfloat)
 ![Mozilla Add-on Downloads](https://img.shields.io/amo/dw/betterfloat)
 
-### APIs
+### Status
 
 ![Rums.dev Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.rums.dev%2Fstatus)
+
 
 ### Troubleshooting on Mozilla Firefox
 
@@ -71,9 +72,9 @@ In some cases, Firefox does not grant extensions necessary permissions automatic
 5. Adjust the extension settings to your liking in the extension popup
 6. Refresh the website, e.g. CSFloat
 
-## Development
+## ⌨️ Development
 
-### The Tech Stack
+### 💻 The Tech Stack
 
 <div style="display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 1rem;">
 <img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" alt="Typescript" width="50" height="50">
@@ -134,7 +135,7 @@ npm run prettier  # runs prettier
 
 Make sure to test your changes extensively (the project supports [Mocha](https://mochajs.org/) as testing framework) and include relevant results in your pull request.
 
-## Disclaimer
+## ⚠️ Disclaimer
 
 BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
 
