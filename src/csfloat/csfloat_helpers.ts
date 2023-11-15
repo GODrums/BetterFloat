@@ -1,13 +1,12 @@
-import { CSFloat } from "../@typings/FloatTypes";
+import { CSFloat } from '../@typings/FloatTypes';
 
 export namespace CSFloatHelpers {
-
     export function storeApiItem(container: Element, item: CSFloat.ListingData) {
         // add id as class to find the element later more easily
         container.classList.add('item-' + item.id);
         container.setAttribute('data-betterfloat', JSON.stringify(item));
     }
-    
+
     export function getApiItem(container: Element | null): CSFloat.ListingData | null {
         const data = container?.getAttribute('data-betterfloat');
         if (data) {
@@ -15,7 +14,7 @@ export namespace CSFloatHelpers {
         }
         return null;
     }
-    
+
     export function addPatternBadge(container: Element, svgfile: string, svgStyle: string, tooltipText: string[], tooltipStyle: string, badgeText: string, badgeStyle: string) {
         let badgeTooltip = document.createElement('div');
         badgeTooltip.className = 'bf-tooltip-inner';
@@ -98,7 +97,7 @@ export namespace CSFloatHelpers {
         });
         topButton.appendChild(topButtonIcon);
         document.body.appendChild(topButton);
-    
+
         document.addEventListener('scroll', () => {
             if (document.body.scrollTop > 700 || document.documentElement.scrollTop > 700) {
                 topButton.style.display = 'block';

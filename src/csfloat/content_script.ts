@@ -35,10 +35,6 @@ import { fetchCSBlueGem } from '../networkhandler';
 import { CSFloatHelpers } from './csfloat_helpers';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 
-type PriceResult = {
-    price_difference: number;
-};
-
 async function init() {
     console.time('[BetterFloat] CSFloat init timer');
 
@@ -823,7 +819,7 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
     // add replacement screenshot if csfloat does not offer one and if available
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
-        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#ff5722', overprint_data.img);
+        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', overprint_data.img);
     }
 
     const getTooltipStyle = (type: typeof overprint_data.type) => {
@@ -839,17 +835,17 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
             default:
                 return '';
         }
-    }
+    };
 
     const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500;' + (overprint_data.type == 'Flower' ? ' margin-left: 5px;' : '');
-    
+
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + `/overprint-${overprint_data.type.toLowerCase()}.svg`,
         `height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);`,
         [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier == 0 ? [] : [`Tier ${overprint_data.tier}`]),
         getTooltipStyle(overprint_data.type),
-        (overprint_data.tier == 0 ? '' : 'T' + overprint_data.tier),
+        overprint_data.tier == 0 ? '' : 'T' + overprint_data.tier,
         badgeStyle
     );
 }
@@ -1452,7 +1448,13 @@ async function getBuffItem(item: CSFloat.FloatItem) {
     };
 }
 
-async function addBuffPrice(item: CSFloat.FloatItem, container: Element, isPopout = false): Promise<PriceResult> {
+async function addBuffPrice(
+    item: CSFloat.FloatItem,
+    container: Element,
+    isPopout = false
+): Promise<{
+    price_difference: number;
+}> {
     const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 
     let suggestedContainer = container.querySelector('.reference-container');

@@ -435,7 +435,7 @@ async function adjustItemPage(container: Element) {
     if (suggestedContainer) {
         generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, item.currency, true);
     }
-    // HERE
+
     const buffContainer = container.querySelector('.betterfloat-buff-container');
     if (buffContainer) {
         (<HTMLElement>buffContainer).onclick = (e: Event) => {
@@ -529,6 +529,11 @@ function storeItem(container: Element, item: Skinport.Listing) {
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
+export async function webDetection(container: Element, item: Skinport.Item) {
+    const itemHeader = container.querySelector('.TradeLock-lock');
+    if (!itemHeader) return;
+}
+
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
     let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
     const itemHeader = container.querySelector('.TradeLock-lock');
@@ -571,7 +576,9 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-right: 18px;"></a></div></div>`;
     let tableBody = '';
     for (const sale of pastSales) {
-        tableBody += `<div class="ItemHistoryList-row"><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
+        tableBody += `<div class="ItemHistoryList-row"${
+            Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
+        }><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
             extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')
         }"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
             sale.float

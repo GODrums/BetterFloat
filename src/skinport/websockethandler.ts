@@ -1,6 +1,6 @@
 import { Skinport } from '../@typings/SkinportTypes';
 import { getSetting } from '../util/extensionsettings';
-import { addBlueBadge } from './content_script';
+import { addBlueBadge, webDetection } from './content_script';
 
 export async function handleListed(data: Skinport.Item[]) {
     // do stuff here
@@ -10,6 +10,8 @@ export async function handleListed(data: Skinport.Item[]) {
             // console.debug('[BetterFloat] Found listed item:', item);
             if (item.marketHashName.includes('Case Hardened') && item.category == 'Knife' && (await getSetting('spBlueGem'))) {
                 await addBlueBadge(element, item);
+            } else if ((item.marketHashName.includes('Crimson Web') || item.marketHashName.includes('Emerald Web')) && item.category == 'Gloves') {
+                await webDetection(element, item);
             }
         }
     }

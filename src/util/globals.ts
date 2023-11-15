@@ -1,3 +1,1 @@
-export const enum Files {
-    
-}
+export const enum Files {}

@@ -204,6 +204,15 @@ export function getFloatColoring(
 export const USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+});
+
+export const BigUSDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
 });
 
 export const Euro = new Intl.NumberFormat('en-DE', {
