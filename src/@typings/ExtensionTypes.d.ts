@@ -171,8 +171,15 @@ export namespace Extension {
         };
     };
 
-    // reponse from https://csbluegem.com/api
+    export type ApiStatusResponse = {
+        site: [string];
+        message: string;
+        statusCode: number;
+    }
+    
 }
+
+// reponse from https://csbluegem.com/api
 export namespace BlueGem {
     export type PatternElement = {
         backside: number;

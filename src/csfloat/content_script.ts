@@ -31,7 +31,7 @@ import {
 } from '../util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
-import { fetchCSBlueGem } from '../networkhandler';
+import { fetchCSBlueGem, isApiStatusOK } from '../networkhandler';
 import { CSFloatHelpers } from './csfloat_helpers';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 
@@ -44,6 +44,17 @@ async function init() {
     // catch the events thrown by the script
     // this has to be done as first thing to not miss timed events
     activateHandler();
+
+    const apiStatus = await isApiStatusOK();
+    if (apiStatus.statusCode != 200 && apiStatus.site.includes('csfloat')) {
+        console.error('[BetterFloat] API status is not OK:', apiStatus);
+        const bannerPlaceholder = document.querySelector('MAT-TOOLBAR')?.parentElement?.childNodes[2];
+        if (bannerPlaceholder) {
+            bannerPlaceholder.replaceWith(CSFloatHelpers.generateWarningText(apiStatus.message));
+        }
+        return;
+    }
+
 
     extensionSettings = await initSettings();
 

@@ -193,7 +193,6 @@ async function applyMutation() {
                             // contains live button
                             addLiveFilterMenu(addedNode);
                         } else if (className.includes('CartButton-tooltip')) {
-                            console.log('[BetterFloat] Cart button added: ', addedNode);
                             autoCloseTooltip(addedNode);
                         } else if (className.includes('Message')) {
                             // contains 'item has been sold' message

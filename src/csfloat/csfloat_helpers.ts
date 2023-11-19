@@ -1,6 +1,14 @@
 import { CSFloat } from '../@typings/FloatTypes';
 
 export namespace CSFloatHelpers {
+    export function generateWarningText(text: string) {
+        const warningText = document.createElement('div');
+        warningText.className = 'bf-warning-text warning banner';
+        warningText.textContent = text;
+        warningText.setAttribute('style', 'background-color: #6d0000; color: #fff; text-align: center; line-height: 30px; cursor: pointer; z-index: 999; position: relative; padding: 0 25px;');
+        return warningText;
+    }
+
     export function storeApiItem(container: Element, item: CSFloat.ListingData) {
         // add id as class to find the element later more easily
         container.classList.add('item-' + item.id);

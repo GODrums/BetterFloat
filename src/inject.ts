@@ -1,5 +1,4 @@
 let loadNumber = 0;
-let lastRequestUrl = '';
 
 openIntercept();
 
@@ -14,11 +13,6 @@ function openIntercept() {
                 console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
                 return;
             }
-            if (target.responseURL == lastRequestUrl) {
-                console.debug('[BetterFloat] Ignoring duplicate request: ' + target.responseURL);
-                return;
-            }
-            lastRequestUrl = target.responseURL;
 
             function parseJSON(text: string): undefined | any {
                 try {
