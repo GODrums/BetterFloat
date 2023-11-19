@@ -709,8 +709,9 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         currency = parts.filter((x) => isNaN(+x))[0];
     } else {
         // format: "€1,696.00"
-        currency = priceText.charAt(0);
-        priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
+        const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
+        currency = priceText.substring(0, firstDigit);
+        priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
     }
     let price = Number(priceText);
 
