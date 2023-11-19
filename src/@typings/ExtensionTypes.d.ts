@@ -172,7 +172,7 @@ export namespace Extension {
     };
 
     export type ApiStatusResponse = {
-        site: [string];
+        sites: [string];
         message: string;
         statusCode: number;
     }

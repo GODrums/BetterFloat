@@ -46,7 +46,7 @@ async function init() {
     activateHandler();
 
     const apiStatus = await isApiStatusOK();
-    if (apiStatus.statusCode != 200 && apiStatus.site.includes('csfloat')) {
+    if (apiStatus.statusCode != 200 && apiStatus.sites.includes('csfloat')) {
         console.error('[BetterFloat] API status is not OK:', apiStatus);
         const bannerPlaceholder = document.querySelector('MAT-TOOLBAR')?.parentElement?.childNodes[2];
         if (bannerPlaceholder) {
