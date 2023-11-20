@@ -7,6 +7,7 @@ import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, hand
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
+
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 async function init() {
@@ -503,6 +504,8 @@ async function adjustItem(container: Element) {
         return;
     }
     const priceResult = await addBuffPrice(item, container);
+    const instantOrder = await addInstantOrder(item, container);
+
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
     }
@@ -849,6 +852,133 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     } else {
         container.replaceWith(buffContainer);
     }
+}
+
+async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
+    console.debug('[BetterFloat] Solving captcha.');
+    const headers = {
+        authorization: '8a953aed-ea51-4315-b343-291f11533500', // private API key, has to be customizable in UI
+    };
+    const payload = {
+        saleId: saleId,
+    };
+
+    try {
+        const captchaAPIUrl = '';
+        const response = await fetch(captchaAPIUrl, {
+            method: 'POST',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+        if (response.status === 408) {
+            console.error('[BetterFloat] Checkout: Captcha solving timed out.');
+            return false;
+        }
+        if (response.status === 200) {
+            const data = await response.json();
+            return data.token;
+        } else if (response.status === 401) {
+            console.error('[BetterFloat] Checkout: Please check your API key for validity.');
+            return false;
+        } else if (response.status === 500) {
+            console.error('[BetterFloat] Checkout: A internal server error occured.');
+        } else {
+            console.error(await response.text());
+            return false;
+        }
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+async function orderItem(item: Skinport.Listing) {
+    await fetch('https://skinport.com/api/data/')
+        .then((response) => response.json())
+        .then((response) => {
+            console.debug('[BetterFloat] Received csrf token from Skinport: ', response.csrf);
+            console.debug('[BetterFloat] Trying to order item ', item.saleId);
+
+            const csrfToken = response.csrf;
+            const postData = `sales%5B0%5D%5Bid%5D=${item.saleId}&sales%5B0%5D%5Bprice%5D=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`;
+            fetch('https://skinport.com/api/cart/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: postData,
+            })
+                .then((response) => response.json())
+                .then(async (response) => {
+                    if (response.success) {
+                        const captchaToken = await solveCaptcha(item.saleId);
+                        if (!captchaToken) {
+                            return false;
+                        }
+                        console.debug('[BetterFloat] addToCart was successful.');
+                        const postData = `sales%5B0%5D=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`;
+                        console.log(postData);
+                        await delay(2500);
+                        await fetch('https://skinport.com/api/checkout/create-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: postData,
+                        })
+                            .then((response) => response.json())
+                            .then((response) => {
+                                console.log(response);
+                            });
+                        return true;
+                    } else {
+                        console.error(`[BetterFloat] addToCart failed ${response.message}`); // maybe add a popup for error handling
+                        return false;
+                    }
+                })
+                .catch((error) => console.error('Fetch error:', error));
+        });
+}
+
+async function addInstantOrder(item: Skinport.Listing, container: Element) {
+    if (extensionSettings.spBuffLink == 'action') {
+        // what does this setting do?
+        const presentationDiv = container.querySelector('.ItemPreview-mainAction');
+        if (presentationDiv) {
+            const oneClickOrder = document.createElement('a');
+            oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
+            oneClickOrder.style.width = '60px';
+            oneClickOrder.target = '_blank';
+            oneClickOrder.innerText = 'Order';
+            (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
+                e.stopPropagation();
+                e.preventDefault();
+                // window.open(buffHref, '_blank');
+                orderItem(item).then((result) => {
+                    console.log('[Better Float] oneClickOrder result: ', result);
+                });
+            };
+
+            /* I don't know this one either */
+            if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {
+                presentationDiv.after(oneClickOrder);
+            }
+            /* -- */
+        }
+    } /* I don't know what this else does {
+        const oneClickContainer = container.querySelector('.betterfloat-oneClickContainer');
+        console.log("oneclick");
+        if (oneClickContainer) {
+            
+            (<HTMLElement>oneClickContainer).onclick = (e: Event) => {
+                e.stopPropagation();
+                e.preventDefault();
+                // window.open(buffHref, '_blank');
+                orderItem(item).then((result) => {
+                    console.log("[Better Float] oneClickOrder result: ", result)
+                })
+            };
+        } 
+    } */
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
