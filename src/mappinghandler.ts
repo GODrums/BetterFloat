@@ -96,6 +96,7 @@ export function cacheSpItems(data: Skinport.Item[]) {
 }
 
 export function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
+    // maybe cache csrf token here as well
     if (Object.keys(skinportRatesFromUSD).length > 0) {
         console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
     }
@@ -248,7 +249,6 @@ async function fetchUserData() {
         .then((data: Skinport.UserData) => {
             console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
             cacheSkinportCurrencyRates(data.rates, data.currency);
-            return data.csrf; // return the csrf token if request was successful
         });
 }
 

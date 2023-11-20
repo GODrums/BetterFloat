@@ -151,7 +151,7 @@ export namespace Skinport {
         success: boolean;
         result: {
             cart: Item[];
-            openOrders: any[]; // what is this? -> orders which are not yet paid
+            openOrders: any[]; // what is this?
         };
     };
 

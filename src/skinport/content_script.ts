@@ -55,7 +55,6 @@ async function firstLaunch() {
     const path = location.pathname;
 
     console.log('[BetterFloat] First launch, url:', path);
-
     if (path == '/') {
         const popularLists = Array.from(document.querySelectorAll('.PopularList'));
         for (const list of popularLists) {
@@ -854,49 +853,115 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     }
 }
 
+function showMessageBox(title: string, message: string, success = false) {
+    // Thank you chatGPT for this function (and css)
+    const messageContainer = document.createElement('div');
+    messageContainer.className = 'error-message-container';
+
+    // Create title element
+    const titleElement = document.createElement('div');
+    titleElement.className = 'error-message-title';
+    titleElement.textContent = title;
+
+    if (message === 'MUST_LOGIN') { // custom messages for create order request
+        message = 'You have to log in again.';
+    } else if (message === 'RATE_LIMIT_REACHED') {
+        message = 'You are ordering too fast!'
+    } else if (message === 'CART_OUTDATED') {
+        message = 'Your cart is outdated. Someone was probably faster than you.'
+    } else if (message === 'CAPTCHA') {
+        message = 'There was an error while ordering.'
+    } else if (message === 'SALE_PRICE_CHANGED') {
+        message = 'Item price got changed.'
+    } else if (message ==='ITEM_NOT_LISTED') {
+        message = 'The item you are trying to order is not listed (anymore).'
+    }
+    if (success) {
+        messageContainer.style.backgroundColor = '#66ff66';
+    }
+
+    // Create message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'error-message-content';
+    messageElement.textContent = message;
+
+    // Append title and message to the container
+    messageContainer.appendChild(titleElement);
+    messageContainer.appendChild(messageElement);
+
+    // Append message container to the main container
+    const container = document.getElementsByClassName('MessageContainer')[0];
+    if (container) {
+        container.appendChild(messageContainer);
+
+        // Set a timeout to remove the message after 3 seconds
+        setTimeout(() => {
+            // Add fade-out effect
+            messageContainer.style.opacity = '0';
+            // Remove the message from the DOM after the fade-out effect
+            setTimeout(() => {
+                container.removeChild(messageContainer);
+            }, 500); // Adjust the duration of the fade-out effect here (in milliseconds)
+        }, 4500); // Adjust the time the message is displayed (in milliseconds)
+    }
+}
+
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
     console.debug('[BetterFloat] Solving captcha.');
-    const headers = {
-        authorization: '8a953aed-ea51-4315-b343-291f11533500', // private API key, has to be customizable in UI
-    };
-    const payload = {
-        saleId: saleId,
-    };
+    extensionSettings.ocoAPIKey = ''; // remove line in prod
+    if (!extensionSettings.ocoAPIKey) {
+        showMessageBox('API Key', 'Please set an API Key for oneClickOrder');
+        console.debug('[BetterFloat] No API key provided');
+        return false;
+    }
 
+    const headers = {
+        authorization: extensionSettings.ocoAPIKey, // private API key, has to be customizable in UI
+    };
     try {
-        const captchaAPIUrl = '';
-        const response = await fetch(captchaAPIUrl, {
-            method: 'POST',
+        const captchaAPIUrl = 'https://api.gamingtechinsider.com/captcha/betterfloat/';
+        const response = await fetch(captchaAPIUrl + saleId, {
+            method: 'GET',
             headers: {
                 ...headers,
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(payload),
         });
+        let responseJson = await response.json();
         if (response.status === 408) {
             console.error('[BetterFloat] Checkout: Captcha solving timed out.');
+            showMessageBox('Server timed out.', 'Please try to order again.');
             return false;
         }
         if (response.status === 200) {
-            const data = await response.json();
-            return data.token;
+            return responseJson.token;
         } else if (response.status === 401) {
             console.error('[BetterFloat] Checkout: Please check your API key for validity.');
+            showMessageBox('Problem with your API key.', responseJson.message);
             return false;
         } else if (response.status === 500) {
             console.error('[BetterFloat] Checkout: A internal server error occured.');
+            showMessageBox('Server error.', responseJson.message);
+            return false
+        } else if (response.status === 429) {
+            console.error('[BetterFloat] Checkout: Rate limit reached. No tokens available anymore.');
+            showMessageBox('Rate limit reached.', responseJson.message);
+            return false
         } else {
             console.error(await response.text());
+            console.error('[BetterFloat] Checkout: Unkown error.');
+            showMessageBox('Unkown error.', responseJson.message);
             return false;
         }
     } catch (error) {
-        console.error(error);
+        console.error('[BetterFloat] ', error);
+
         return false;
     }
 }
 
 async function orderItem(item: Skinport.Listing) {
-    await fetch('https://skinport.com/api/data/')
+    return await fetch('https://skinport.com/api/data/')
         .then((response) => response.json())
         .then((response) => {
             console.debug('[BetterFloat] Received csrf token from Skinport: ', response.csrf);
@@ -904,7 +969,7 @@ async function orderItem(item: Skinport.Listing) {
 
             const csrfToken = response.csrf;
             const postData = `sales%5B0%5D%5Bid%5D=${item.saleId}&sales%5B0%5D%5Bprice%5D=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`;
-            fetch('https://skinport.com/api/cart/add', {
+            return fetch('https://skinport.com/api/cart/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: postData,
@@ -918,24 +983,31 @@ async function orderItem(item: Skinport.Listing) {
                         }
                         console.debug('[BetterFloat] addToCart was successful.');
                         const postData = `sales%5B0%5D=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`;
-                        console.log(postData);
-                        await delay(2500);
-                        await fetch('https://skinport.com/api/checkout/create-order', {
+                        return await fetch('https://skinport.com/api/checkout/create-order', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                             body: postData,
                         })
                             .then((response) => response.json())
                             .then((response) => {
-                                console.log(response);
+                                if (response.success) {
+                                    return true;
+                                } else {
+                                    console.debug(`[BetterFloat] createOrder failed ${response.message}`);
+                                    showMessageBox('Order creation failed', response.message);
+                                    return false;
+                                }
                             });
-                        return true;
                     } else {
-                        console.error(`[BetterFloat] addToCart failed ${response.message}`); // maybe add a popup for error handling
+                        console.debug(`[BetterFloat] addToCart failed ${response.message}`);
+                        showMessageBox('Cannot add item to cart', response.message);
                         return false;
                     }
                 })
-                .catch((error) => console.error('Fetch error:', error));
+                .catch((error) => {
+                    console.warn('[BetterFloat] addToCart error:', error);
+                    return false;
+                });
         });
 }
 
@@ -954,7 +1026,10 @@ async function addInstantOrder(item: Skinport.Listing, container: Element) {
                 e.preventDefault();
                 // window.open(buffHref, '_blank');
                 orderItem(item).then((result) => {
-                    console.log('[Better Float] oneClickOrder result: ', result);
+                    console.log('[BetterFloat] oneClickOrder result: ', result);
+                    if (result) {
+                        showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
+                    }
                 });
             };
 
@@ -974,7 +1049,7 @@ async function addInstantOrder(item: Skinport.Listing, container: Element) {
                 e.preventDefault();
                 // window.open(buffHref, '_blank');
                 orderItem(item).then((result) => {
-                    console.log("[Better Float] oneClickOrder result: ", result)
+                    console.log("[BetterFloat] oneClickOrder result: ", result)
                 })
             };
         } 

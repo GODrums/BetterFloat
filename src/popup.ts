@@ -241,6 +241,7 @@ function loadForSkinport() {
     const checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
     const stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
     const skinportBlueGem = <HTMLInputElement>document.getElementById('InputCSBlueGem');
+    const ocoAPIKey = <HTMLInputElement>document.getElementById('oneClickOrderAPIKey');
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
     const skinportAutoClosePopup = <HTMLInputElement>document.getElementById('SkinportInputClosePopup');
@@ -270,6 +271,9 @@ function loadForSkinport() {
         } else {
             skinportBlueGem.checked = false;
         }
+
+        // ocoAPIKey.value = data.ocoAPIKey
+
         if (data.skinportRates) {
             (<HTMLSelectElement>document.getElementById('SkinportCurrencyConversion')).value = data.skinportRates;
         }
