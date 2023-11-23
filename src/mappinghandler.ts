@@ -266,7 +266,7 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
     if (!crimsonWebMapping) {
         await loadCrimsonWebMapping();
     }
-    if (crimsonWebMapping && crimsonWebMapping[weapon] && crimsonWebMapping[weapon][paint_seed]) {
+    if (crimsonWebMapping?.[weapon]?.[paint_seed]) {
         return crimsonWebMapping[weapon][paint_seed];
     }
     return null;
@@ -290,7 +290,7 @@ export async function loadMapping() {
 
         let success = await new Promise<boolean>((resolve) => {
             chrome.storage.local.get('prices', (data) => {
-                if (data) {
+                if (data?.prices) {
                     priceMapping = JSON.parse(data.prices);
                     resolve(true);
                 } else {

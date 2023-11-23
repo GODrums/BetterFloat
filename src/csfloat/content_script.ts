@@ -55,7 +55,6 @@ async function init() {
         return;
     }
 
-
     extensionSettings = await initSettings();
 
     if (location.search.includes('?tab=') && extensionSettings.enableCSFloat) {
@@ -853,7 +852,7 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + `/overprint-${overprint_data.type.toLowerCase()}.svg`,
-        `height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);`,
+        'height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);',
         [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier == 0 ? [] : [`Tier ${overprint_data.tier}`]),
         getTooltipStyle(overprint_data.type),
         overprint_data.tier == 0 ? '' : 'T' + overprint_data.tier,
@@ -876,7 +875,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
         CSFloatHelpers.addPatternBadge(
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
-            `height: 30px; filter: grayscale(100%);`,
+            'height: 30px; filter: grayscale(100%);',
             ['T1 GRAY PATTERN'],
             'translate: -25px 15px; width: 80px;',
             '1',
@@ -886,7 +885,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
         CSFloatHelpers.addPatternBadge(
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
-            `height: 30px;`,
+            'height: 30px;',
             [`Tier ${ck_data.tier}`],
             'translate: -18px 15px; width: 60px;',
             String(ck_data.tier),
@@ -908,7 +907,7 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + '/gem-cyan.svg',
-        `height: 30px;`,
+        'height: 30px;',
         [`${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`, cyanbit_data.tier == 0 ? 'No Tier' : `Tier ${cyanbit_data.tier}`],
         'translate: -15px 15px; width: 90px;',
         'T' + cyanbit_data.tier,

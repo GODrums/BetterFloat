@@ -175,8 +175,7 @@ export namespace Extension {
         sites: [string];
         message: string;
         statusCode: number;
-    }
-    
+    };
 }
 
 // reponse from https://csbluegem.com/api

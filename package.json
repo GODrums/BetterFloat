@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.18.6",
-    "cs-tierlist": "^1.1.5",
+    "cs-tierlist": "^1.2.1",
     "csgo-fade-percentage-calculator": "^1.1.3",
     "currency-symbol-map": "^5.1.0",
     "rimraf": "^5.0.5"
