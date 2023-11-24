@@ -855,55 +855,69 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 
 function showMessageBox(title: string, message: string, success = false) {
     // Thank you chatGPT for this function (and css)
-    const messageContainer = document.createElement('div');
-    messageContainer.className = 'error-message-container';
+    let messageContainer = document.querySelector('.MessageContainer');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+        document.getElementById('root')?.appendChild(messageContainer);
+    } else {
+        messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+    }
+    const messageInnerContainer = document.createElement('div');
+    messageInnerContainer.className = 'Message Message--error Message-enter-done';
+    messageContainer.appendChild(messageInnerContainer);
 
     // Create title element
     const titleElement = document.createElement('div');
-    titleElement.className = 'error-message-title';
+    titleElement.className = 'Message-title';
     titleElement.textContent = title;
 
-    if (message === 'MUST_LOGIN') { // custom messages for create order request
+    if (message === 'MUST_LOGIN') {
+        // custom messages for create order request
         message = 'You have to log in again.';
     } else if (message === 'RATE_LIMIT_REACHED') {
-        message = 'You are ordering too fast!'
+        message = 'You are ordering too fast!';
     } else if (message === 'CART_OUTDATED') {
-        message = 'Your cart is outdated. Someone was probably faster than you.'
+        message = 'Your cart is outdated. Someone was probably faster than you.';
     } else if (message === 'CAPTCHA') {
-        message = 'There was an error while ordering.'
+        message = 'There was an error while ordering.';
     } else if (message === 'SALE_PRICE_CHANGED') {
-        message = 'Item price got changed.'
-    } else if (message ==='ITEM_NOT_LISTED') {
-        message = 'The item you are trying to order is not listed (anymore).'
+        message = 'Item price got changed.';
+    } else if (message === 'ITEM_NOT_LISTED') {
+        message = 'The item you are trying to order is not listed (anymore).';
     }
     if (success) {
-        messageContainer.style.backgroundColor = '#66ff66';
+        // messageContainer.style.backgroundColor = '#66ff66';
     }
 
     // Create message element
     const messageElement = document.createElement('div');
-    messageElement.className = 'error-message-content';
+    messageElement.className = 'Message-text';
     messageElement.textContent = message;
 
-    // Append title and message to the container
-    messageContainer.appendChild(titleElement);
-    messageContainer.appendChild(messageElement);
+    const messageButtons = document.createElement('div');
+    messageButtons.className = 'Message-buttons';
+    const messageCloseButton = document.createElement('button');
+    messageCloseButton.type = 'button';
+    messageCloseButton.className = 'Message-actionBtn Message-closeBtn';
+    messageCloseButton.textContent = 'Close';
 
-    // Append message container to the main container
-    const container = document.getElementsByClassName('MessageContainer')[0];
-    if (container) {
-        container.appendChild(messageContainer);
-
-        // Set a timeout to remove the message after 3 seconds
+    const fadeOutEffect = () => {
+        (<HTMLElement>messageContainer).style.opacity = '0';
         setTimeout(() => {
-            // Add fade-out effect
-            messageContainer.style.opacity = '0';
-            // Remove the message from the DOM after the fade-out effect
-            setTimeout(() => {
-                container.removeChild(messageContainer);
-            }, 500); // Adjust the duration of the fade-out effect here (in milliseconds)
-        }, 4500); // Adjust the time the message is displayed (in milliseconds)
+            messageContainer?.replaceChildren();
+            (<HTMLElement>messageContainer).style.opacity = '1';
+        }, 500);
     }
+    messageCloseButton.onclick = fadeOutEffect;
+
+    messageButtons.appendChild(messageCloseButton);
+    messageInnerContainer.appendChild(titleElement);
+    messageInnerContainer.appendChild(messageElement);
+    messageInnerContainer.appendChild(messageButtons);
+
+    // Set a timeout to remove the message after 7 seconds
+    setTimeout(fadeOutEffect, 6500);
 }
 
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
@@ -942,11 +956,11 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
         } else if (response.status === 500) {
             console.error('[BetterFloat] Checkout: A internal server error occured.');
             showMessageBox('Server error.', responseJson.message);
-            return false
+            return false;
         } else if (response.status === 429) {
             console.error('[BetterFloat] Checkout: Rate limit reached. No tokens available anymore.');
             showMessageBox('Rate limit reached.', responseJson.message);
-            return false
+            return false;
         } else {
             console.error(await response.text());
             console.error('[BetterFloat] Checkout: Unkown error.');
@@ -963,13 +977,13 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 async function orderItem(item: Skinport.Listing) {
     return await fetch('https://skinport.com/api/data/')
         .then((response) => response.json())
-        .then((response) => {
+        .then(async (response) => {
             console.debug('[BetterFloat] Received csrf token from Skinport: ', response.csrf);
             console.debug('[BetterFloat] Trying to order item ', item.saleId);
 
             const csrfToken = response.csrf;
-            const postData = `sales%5B0%5D%5Bid%5D=${item.saleId}&sales%5B0%5D%5Bprice%5D=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`;
-            return fetch('https://skinport.com/api/cart/add', {
+            const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
+            return await fetch('https://skinport.com/api/cart/add', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: postData,
@@ -981,8 +995,8 @@ async function orderItem(item: Skinport.Listing) {
                         if (!captchaToken) {
                             return false;
                         }
-                        console.debug('[BetterFloat] addToCart was successful.');
-                        const postData = `sales%5B0%5D=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`;
+                        console.debug('[BetterFloat] OCO addToCart was successful.');
+                        const postData = encodeURI(`sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`);
                         return await fetch('https://skinport.com/api/checkout/create-order', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -993,19 +1007,20 @@ async function orderItem(item: Skinport.Listing) {
                                 if (response.success) {
                                     return true;
                                 } else {
-                                    console.debug(`[BetterFloat] createOrder failed ${response.message}`);
-                                    showMessageBox('Order creation failed', response.message);
+                                    console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
+                                    showMessageBox('Failed to create the order', response.message);
                                     return false;
                                 }
                             });
                     } else {
-                        console.debug(`[BetterFloat] addToCart failed ${response.message}`);
-                        showMessageBox('Cannot add item to cart', response.message);
+                        console.debug(`[BetterFloat] OCO addToCart failed ${response.message}`);
+                        // same message as Skinport would show on 'ADD TO CART'
+                        showMessageBox('Item is sold or not listed', 'The item you try to add to the cart is not available anymore.');
                         return false;
                     }
                 })
                 .catch((error) => {
-                    console.warn('[BetterFloat] addToCart error:', error);
+                    console.warn('[BetterFloat] OCO - addToCart error:', error);
                     return false;
                 });
         });

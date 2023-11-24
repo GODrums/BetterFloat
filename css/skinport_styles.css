@@ -179,3 +179,52 @@
 .betterfloat-filterpopup-content {
     margin: 10px 20px;
 }
+
+.BetterFloat-OCO-Message {
+    bottom: 8px;
+    left: 8px;
+    position: fixed;
+    z-index: 100;
+}
+
+.BetterFloat-OCO-Message .Message {
+    animation: shakeMessage 1s .2s;
+    background-color: #fff;
+    border-radius: 2.5px;
+    box-shadow: 0 10px 40px #1d2021;
+    color: #1d2021;
+    display: flex;
+    flex-direction: column;
+    max-width: 330px;
+    padding: 16px 20px 23px;
+    position: relative;
+}
+
+.BetterFloat-OCO-Message .Message--error .Message-title {
+    color: #fa490a;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.BetterFloat-OCO-Message .Message-text {
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 14px;
+}
+
+.BetterFloat-OCO-Message .Message-buttons {
+    display: flex;
+}
+
+.BetterFloat-OCO-Message .Message-closeBtn {
+    color: #4db5da;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    margin-right: 0;
+    outline: none;
+    position: relative;
+    text-transform: uppercase;
+    transition: color .2s ease;
+}
