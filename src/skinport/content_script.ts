@@ -528,6 +528,13 @@ function storeItem(container: Element, item: Skinport.Listing) {
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
+export async function patternDetections(container: Element, item: Skinport.Item) {
+    if (item.name.includes('Case Hardened')) {
+        await caseHardenedDetection(container, item);
+    } else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
+        await webDetection(container, item);
+    }
+}
 export async function webDetection(container: Element, item: Skinport.Item) {
     const itemHeader = container.querySelector('.TradeLock-lock');
     if (!itemHeader) return;
