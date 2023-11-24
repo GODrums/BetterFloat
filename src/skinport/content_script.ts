@@ -503,7 +503,7 @@ async function adjustItem(container: Element) {
         return;
     }
     const priceResult = await addBuffPrice(item, container);
-    const instantOrder = await addInstantOrder(item, container);
+    await addInstantOrder(item, container);
 
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
@@ -908,8 +908,8 @@ function showMessageBox(title: string, message: string, success = false) {
 
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
     console.debug('[BetterFloat] Solving captcha.');
-    extensionSettings.ocoAPIKey = ''; // remove line in prod
-    if (!extensionSettings.ocoAPIKey) {
+    extensionSettings.ocoAPIKey = 'b59e6ef2-ab56-4b03-b38f-f50fd744196a'; // remove line in prod
+    if (!extensionSettings.ocoAPIKey || extensionSettings.ocoAPIKey == '') {
         showMessageBox('API Key', 'Please set an API Key for oneClickOrder');
         console.debug('[BetterFloat] No API key provided');
         return false;
