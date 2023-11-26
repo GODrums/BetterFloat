@@ -922,9 +922,8 @@ function showMessageBox(title: string, message: string, success = false) {
 
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
     console.debug('[BetterFloat] Solving captcha.');
-    extensionSettings.ocoAPIKey = 'b59e6ef2-ab56-4b03-b38f-f50fd744196a'; // remove line in prod
     if (!extensionSettings.ocoAPIKey || extensionSettings.ocoAPIKey == '') {
-        showMessageBox('API Key', 'Please set an API Key for oneClickOrder');
+        showMessageBox('Please set an API key first!', 'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.');
         console.debug('[BetterFloat] No API key provided');
         return false;
     }
@@ -942,34 +941,31 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
             },
         });
         let responseJson = await response.json();
-        if (response.status === 408) {
-            console.error('[BetterFloat] Checkout: Captcha solving timed out.');
-            showMessageBox('Server timed out.', 'Please try to order again.');
-            return false;
-        }
         if (response.status === 200) {
             return responseJson.token;
         } else if (response.status === 401) {
             console.error('[BetterFloat] Checkout: Please check your API key for validity.');
-            showMessageBox('Problem with your API key.', responseJson.message);
+            showMessageBox('A problem with your API key occured (HTTP 401)', 'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.');
             return false;
-        } else if (response.status === 500) {
-            console.error('[BetterFloat] Checkout: A internal server error occured.');
-            showMessageBox('Server error.', responseJson.message);
+        } else if (response.status === 408) {
+            console.error('[BetterFloat] Checkout: Captcha solving timed out.');
+            showMessageBox('Server timed out (HTTP 408)', 'Please try to order again.');
             return false;
         } else if (response.status === 429) {
             console.error('[BetterFloat] Checkout: Rate limit reached. No tokens available anymore.');
-            showMessageBox('Rate limit reached.', responseJson.message);
+            showMessageBox('Too many requests (HTTP 429)', 'The rate limit has been reached. Your API key has no tokens left.');
+            return false;
+        } else if (response.status === 500) {
+            console.error('[BetterFloat] Checkout: A internal server error occured.');
+            showMessageBox('Server error (HTTP 500)', 'Timeout or internal server error. Please try again or check the Discord server for more information.');
             return false;
         } else {
-            console.error(await response.text());
             console.error('[BetterFloat] Checkout: Unkown error.');
-            showMessageBox('Unkown error.', responseJson.message);
+            showMessageBox('Unkown error.', 'An unknown error has occured. Please try again or check the Discord server for more information.');
             return false;
         }
     } catch (error) {
         console.error('[BetterFloat] ', error);
-
         return false;
     }
 }
