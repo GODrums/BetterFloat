@@ -981,6 +981,7 @@ async function orderItem(item: Skinport.Listing) {
     console.debug('[BetterFloat] Trying to order item ', item.saleId);
     const csrfToken = getSpCSRF();
     const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
+
     return await fetch('https://skinport.com/api/cart/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1040,8 +1041,11 @@ async function addInstantOrder(item: Skinport.Listing, container: Element) {
         (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
             e.stopPropagation();
             e.preventDefault();
-            // window.open(buffHref, '_blank');
             const currentCart = document.querySelector('.CartButton-count')?.textContent;
+            if (currentCart && Number(currentCart) > 0) {
+                showMessageBox('Your cart is not empty', 'Please empty your cart before using OneClickOrder.');
+                return;
+            }
             orderItem(item).then((result) => {
                 console.log('[BetterFloat] oneClickOrder result: ', result);
                 if (result) {

@@ -41,8 +41,6 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Pro
     let helperPrice: number | null = null;
 
     if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name].starting_at || !priceMapping[buff_name].highest_order) {
-        console.debug(priceMapping);
-        console.debug(priceMapping[buff_name]);
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         helperPrice = 0;
     }
