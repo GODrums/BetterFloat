@@ -1,6 +1,6 @@
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
 import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
@@ -871,6 +871,9 @@ function showMessageBox(title: string, message: string, success = false) {
     const titleElement = document.createElement('div');
     titleElement.className = 'Message-title';
     titleElement.textContent = title;
+    if (success) {
+        titleElement.style.color = '#66ff66';
+    }
 
     if (message === 'MUST_LOGIN') {
         // custom messages for create order request
@@ -886,9 +889,6 @@ function showMessageBox(title: string, message: string, success = false) {
     } else if (message === 'ITEM_NOT_LISTED') {
         message = 'The item you are trying to order is not listed (anymore).';
     }
-    if (success) {
-        // messageContainer.style.backgroundColor = '#66ff66';
-    }
 
     // Create message element
     const messageElement = document.createElement('div');
@@ -903,12 +903,13 @@ function showMessageBox(title: string, message: string, success = false) {
     messageCloseButton.textContent = 'Close';
 
     const fadeOutEffect = () => {
+        if (!messageContainer) return;
         (<HTMLElement>messageContainer).style.opacity = '0';
         setTimeout(() => {
-            messageContainer?.replaceChildren();
+            messageContainer!.replaceChildren();
             (<HTMLElement>messageContainer).style.opacity = '1';
         }, 500);
-    }
+    };
     messageCloseButton.onclick = fadeOutEffect;
 
     messageButtons.appendChild(messageCloseButton);
@@ -923,7 +924,10 @@ function showMessageBox(title: string, message: string, success = false) {
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
     console.debug('[BetterFloat] Solving captcha.');
     if (!extensionSettings.ocoAPIKey || extensionSettings.ocoAPIKey == '') {
-        showMessageBox('Please set an API key first!', 'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.');
+        showMessageBox(
+            'Please set an API key first!',
+            'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.'
+        );
         console.debug('[BetterFloat] No API key provided');
         return false;
     }
@@ -945,7 +949,10 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
             return responseJson.token;
         } else if (response.status === 401) {
             console.error('[BetterFloat] Checkout: Please check your API key for validity.');
-            showMessageBox('A problem with your API key occured (HTTP 401)', 'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.');
+            showMessageBox(
+                'A problem with your API key occured (HTTP 401)',
+                'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.'
+            );
             return false;
         } else if (response.status === 408) {
             console.error('[BetterFloat] Checkout: Captcha solving timed out.');
@@ -971,100 +978,82 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 }
 
 async function orderItem(item: Skinport.Listing) {
-    return await fetch('https://skinport.com/api/data/')
+    console.debug('[BetterFloat] Trying to order item ', item.saleId);
+    const csrfToken = getSpCSRF();
+    const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
+    return await fetch('https://skinport.com/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: postData,
+    })
         .then((response) => response.json())
         .then(async (response) => {
-            console.debug('[BetterFloat] Received csrf token from Skinport: ', response.csrf);
-            console.debug('[BetterFloat] Trying to order item ', item.saleId);
-
-            const csrfToken = response.csrf;
-            const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
-            return await fetch('https://skinport.com/api/cart/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: postData,
-            })
-                .then((response) => response.json())
-                .then(async (response) => {
-                    if (response.success) {
-                        const captchaToken = await solveCaptcha(item.saleId);
-                        if (!captchaToken) {
+            if (response.success) {
+                const captchaToken = await solveCaptcha(item.saleId);
+                if (!captchaToken) {
+                    return false;
+                }
+                console.debug('[BetterFloat] OCO addToCart was successful.');
+                const postData = encodeURI(`sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`);
+                return await fetch('https://skinport.com/api/checkout/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: postData,
+                })
+                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.success) {
+                            return true;
+                        } else {
+                            console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
+                            showMessageBox('Failed to create the order', response.message);
+                            // remove item from cart again
+                            fetch('https://skinport.com/api/cart/remove', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: encodeURI(`item=${item.saleId}&_csrf=${csrfToken}`),
+                            });
                             return false;
                         }
-                        console.debug('[BetterFloat] OCO addToCart was successful.');
-                        const postData = encodeURI(`sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`);
-                        return await fetch('https://skinport.com/api/checkout/create-order', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                            body: postData,
-                        })
-                            .then((response) => response.json())
-                            .then((response) => {
-                                if (response.success) {
-                                    return true;
-                                } else {
-                                    console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
-                                    showMessageBox('Failed to create the order', response.message);
-                                    return false;
-                                }
-                            });
-                    } else {
-                        console.debug(`[BetterFloat] OCO addToCart failed ${response.message}`);
-                        // same message as Skinport would show on 'ADD TO CART'
-                        showMessageBox('Item is sold or not listed', 'The item you try to add to the cart is not available anymore.');
-                        return false;
-                    }
-                })
-                .catch((error) => {
-                    console.warn('[BetterFloat] OCO - addToCart error:', error);
-                    return false;
-                });
+                    });
+            } else {
+                console.debug(`[BetterFloat] OCO addToCart failed ${response.message}`);
+                // same message as Skinport would show on 'ADD TO CART'
+                showMessageBox('Item is sold or not listed', 'The item you try to add to the cart is not available anymore.');
+                return false;
+            }
+        })
+        .catch((error) => {
+            console.warn('[BetterFloat] OCO - addToCart error:', error);
+            return false;
         });
 }
 
 async function addInstantOrder(item: Skinport.Listing, container: Element) {
-    if (extensionSettings.spBuffLink == 'action') {
-        // what does this setting do?
-        const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-        if (presentationDiv) {
-            const oneClickOrder = document.createElement('a');
-            oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
-            oneClickOrder.style.width = '60px';
-            oneClickOrder.target = '_blank';
-            oneClickOrder.innerText = 'Order';
-            (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
-                e.stopPropagation();
-                e.preventDefault();
-                // window.open(buffHref, '_blank');
-                orderItem(item).then((result) => {
-                    console.log('[BetterFloat] oneClickOrder result: ', result);
-                    if (result) {
-                        showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
-                    }
-                });
-            };
+    const presentationDiv = container.querySelector('.ItemPreview-mainAction');
+    if (presentationDiv) {
+        const oneClickOrder = document.createElement('a');
+        oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
+        oneClickOrder.style.width = '60px';
+        oneClickOrder.target = '_blank';
+        oneClickOrder.innerText = 'Order';
+        (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
+            e.stopPropagation();
+            e.preventDefault();
+            // window.open(buffHref, '_blank');
+            const currentCart = document.querySelector('.CartButton-count')?.textContent;
+            orderItem(item).then((result) => {
+                console.log('[BetterFloat] oneClickOrder result: ', result);
+                if (result) {
+                    showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
+                }
+            });
+        };
 
-            /* I don't know this one either */
-            if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {
-                presentationDiv.after(oneClickOrder);
-            }
-            /* -- */
+        if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {
+            presentationDiv.after(oneClickOrder);
         }
-    } /* I don't know what this else does {
-        const oneClickContainer = container.querySelector('.betterfloat-oneClickContainer');
-        console.log("oneclick");
-        if (oneClickContainer) {
-            
-            (<HTMLElement>oneClickContainer).onclick = (e: Event) => {
-                e.stopPropagation();
-                e.preventDefault();
-                // window.open(buffHref, '_blank');
-                orderItem(item).then((result) => {
-                    console.log("[BetterFloat] oneClickOrder result: ", result)
-                })
-            };
-        } 
-    } */
+    }
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
