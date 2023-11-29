@@ -979,7 +979,7 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 
 async function orderItem(item: Skinport.Listing) {
     console.debug('[BetterFloat] Trying to order item ', item.saleId);
-    const csrfToken = getSpCSRF();
+    const csrfToken = await getSpCSRF();
     const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
 
     return await fetch('https://skinport.com/api/cart/add', {
