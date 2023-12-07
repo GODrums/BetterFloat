@@ -26,6 +26,7 @@ export namespace CSFloat {
         float: number;
         price: number;
         bargain: false | number;
+        currency: string;
     };
 
     export type ListingData = {
@@ -99,6 +100,22 @@ export namespace CSFloat {
         slot: number;
         stickerId: number;
         wear: number;
+    };
+
+    // https://csfloat.com/api/v1/meta/location
+    export type Location = {
+        inferred_location: {
+            currency: string;
+            long: string; // country
+            short: string; // country code
+        }
+    }
+
+    // https://csfloat.com/api/v1/meta/exchange-rates
+    export type ExchangeRates = {
+        data: {
+            [key: string]: number;
+        }
     };
 
     export type HistoryGraphData = {

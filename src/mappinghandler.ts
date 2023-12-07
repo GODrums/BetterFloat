@@ -11,6 +11,8 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 let buffMapping: { [name: string]: number } = {};
 // maps buff_name to prices and more - from csgotrader
 let priceMapping: Extension.CSGOTraderBuffMapping = {};
+// new pricempire mapping for prices
+let pricempireMapping: Extension.CustomPriceMapping = {};
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 // csfloat: cached items from api
@@ -21,6 +23,8 @@ let csfloatPopupItem: CSFloat.ListingData | null = null;
 let csfloatHistoryGraph: CSFloat.HistoryGraphData[] = [];
 // csfloat: history sales for one item
 let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
+let csfloatRates: { [key: string]: number; } = {};
+let csfloatLocation: CSFloat.Location | null = null;
 // skinport: cached items from api
 let skinportItems: Skinport.Item[] = [];
 // skinport: cached popup item from api
@@ -78,6 +82,13 @@ export function cacheSkbItems(data: Skinbid.Listing[]) {
         skinbidItems = data;
     }
 }
+export function cacheCSFExchangeRates(data: CSFloat.ExchangeRates) {
+    csfloatRates = data.data;
+}
+
+export function cacheCSFLocation(data: CSFloat.Location) {
+    csfloatLocation = data;
+}
 
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
     csfloatPopupItem = data;
@@ -116,6 +127,18 @@ export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
         console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
     }
     realRatesFromUSD = data;
+}
+
+// USD / rate = target currency
+export async function getCSFCurrencyRate(currency: string) {
+    if (Object.keys(csfloatRates).length == 0) {
+        await fetchCSFCurrencyRates();
+    }
+    return csfloatRates[currency.toLowerCase()];
+}
+
+export function getCSFUserCurrency() {
+    return csfloatLocation?.inferred_location.currency ?? 'USD';
 }
 
 export function getWholeHistory() {
@@ -202,6 +225,15 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
         starting_at: 0,
         highest_order: 0,
     };
+}
+
+async function fetchCSFCurrencyRates() {
+    await fetch('https://csfloat.com/api/v1/meta/exchange-rates')
+        .then((response) => response.json())
+        .then((data) => {
+            console.debug('[BetterFloat] Received currency rates from CSFloat: ', data);
+            cacheCSFExchangeRates(data);
+        });
 }
 
 export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {

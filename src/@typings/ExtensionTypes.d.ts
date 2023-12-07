@@ -57,6 +57,20 @@ export namespace Extension {
         skinbid: boolean;
     };
 
+    export type CustomPriceMapping = {
+        [name: string]: {
+            bid: number; // 105
+            ask: number; // 167
+            avg30: number; // 175
+            liquidity: number; // 78.14
+        };
+    }
+    export type ApiBuffResponse = {
+        data: CustomPriceMapping,
+        time: number;
+        cached: boolean;
+    };
+
     /**
      * Mapping corresponding to the response from https://prices.csgotrader.app/latest/buff163.json
      */

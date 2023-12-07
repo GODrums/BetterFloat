@@ -10,7 +10,7 @@ export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
 export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | null, mode: 'left' | 'right' = 'left') {
     const gemContainer = document.createElement('div');
     gemContainer.className = 'betterfloat-gem-container';
-    gemContainer.title = 'playsite blue% / backside blue%';
+    gemContainer.title = 'playside blue% / backside blue%';
     gemContainer.style.display = 'flex';
     if (mode == 'right') {
         gemContainer.style.flexDirection = 'row-reverse';

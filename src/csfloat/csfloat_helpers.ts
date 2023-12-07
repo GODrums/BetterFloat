@@ -59,7 +59,7 @@ export namespace CSFloatHelpers {
         badgeContainer.appendChild(badge);
     }
 
-    export function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string) {
+    export function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string, runtimePublicURL?: string) {
         detailButtons.setAttribute('style', 'display: flex;');
         const outerContainer = document.createElement('div');
         outerContainer.className = 'bf-tooltip';
@@ -73,16 +73,27 @@ export namespace CSFloatHelpers {
         iconButton.setAttribute('style', `color: ${buttonColor};`);
         const iconSpan = document.createElement('span');
         iconSpan.className = 'mat-button-wrapper';
-        const icon = document.createElement('i');
-        icon.className = 'material-icons';
-        icon.textContent = 'camera_alt';
-        iconSpan.appendChild(icon);
+        if (runtimePublicURL) {
+            const icon = document.createElement('img');
+            icon.setAttribute('style', 'width: 24px; height: 24px;');
+            icon.setAttribute('src', runtimePublicURL + '/camera-add-solid.svg');
+            iconSpan.appendChild(icon);
+        } else {
+            const icon = document.createElement('i');
+            icon.className = 'material-icons';
+            icon.textContent = 'camera_alt';
+            iconSpan.appendChild(icon);
+        }
         iconButton.appendChild(iconSpan);
         screenshotButton.appendChild(iconButton);
         let tooltip = document.createElement('div');
         tooltip.className = 'bf-tooltip-inner';
         let tooltipSpan = document.createElement('span');
-        tooltipSpan.textContent = 'Show pattern screenshot';
+        if (runtimePublicURL) {
+            tooltipSpan.textContent = 'Generate Swap.gg screenshot';
+        } else {
+            tooltipSpan.textContent = 'Show pattern screenshot';
+        }
         tooltip.appendChild(tooltipSpan);
         outerContainer.appendChild(screenshotButton);
         outerContainer.appendChild(tooltip);

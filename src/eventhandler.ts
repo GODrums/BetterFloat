@@ -13,6 +13,8 @@ import {
     cacheSkinbidUserCurrency,
     cacheSpItems,
     cacheSpPopupItem,
+    cacheCSFLocation,
+    cacheCSFExchangeRates,
 } from './mappinghandler';
 import { handleListed, handleSold } from './skinport/websockethandler';
 
@@ -162,6 +164,10 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
             // item table - last sales
             cacheCSFHistorySales(eventData.data as CSFloat.HistorySalesData[]);
         }
+    } else if (eventData.url.includes('v1/meta/location')) {
+        cacheCSFLocation(eventData.data as CSFloat.Location);
+    } else if (eventData.url.includes('v1/meta/exchange-rates')) {
+        cacheCSFExchangeRates(eventData.data as CSFloat.ExchangeRates);
     } else if (eventData.url.includes('v1/me')) {
         // user data, repeats often
     } else if (eventData.url.includes('v1/listings/') && eventData.url.split('/').length == 7) {

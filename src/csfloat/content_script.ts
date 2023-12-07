@@ -5,6 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import {
     getBuffMapping,
+    getCSFCurrencyRate,
     getCSFPopupItem,
     getCrimsonWebMapping,
     getFirstCSFItem,
@@ -566,6 +567,8 @@ function applyMutation() {
                     } else if (location.pathname == '/profile/offers' && addedNode.className.toString().includes('mat-list-item')) {
                         // offer list in offers page
                         offerItemClickListener(addedNode);
+                    } else if (addedNode.tagName.toLowerCase() == 'app-markdown-dialog') {
+                        adjustCurrencyChangeNotice(addedNode);
                     }
                 }
             }
@@ -579,6 +582,33 @@ function applyMutation() {
         }
     });
     observer.observe(document, { childList: true, subtree: true });
+}
+
+function adjustCurrencyChangeNotice(container: Element) {
+    const warningDiv = document.createElement('div');
+    warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: hsl(0deg 100% 27.25% / 50%); border-radius: 18px;');
+    const warningSymbol = document.createElement('img');
+    warningSymbol.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+    warningSymbol.style.height = '30px';
+    warningSymbol.style.margin = '0 10px';
+    warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(66%) saturate(5511%) hue-rotate(102deg) brightness(103%) contrast(104%)';
+    const warningText = document.createElement('p');
+    warningText.textContent = 'Please note that BetterFloat requires a page refresh after changing the currency.';
+    warningDiv.appendChild(warningSymbol);
+    warningDiv.appendChild(warningText);
+
+    const refreshContainer = document.createElement('div');
+    refreshContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center;     margin-top: 15px;');
+    const refreshButton = document.createElement('button');
+    refreshButton.className = 'mat-raised-button mat-warn';
+    refreshButton.textContent = 'Refresh';
+    refreshButton.onclick = () => {
+        location.reload();
+    };
+    refreshContainer.appendChild(refreshButton);
+
+    container.children[0].appendChild(warningDiv);
+    container.children[0].appendChild(refreshContainer);
 }
 
 async function adjustItemBubble(container: Element) {
@@ -656,6 +686,7 @@ async function adjustSalesTableRow(container: Element) {
 
 async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
+    // console.log('[BetterFloat] Adjusting item:', item);
     if (Number.isNaN(item.price)) return;
     const priceResult = await addBuffPrice(item, container, isPopout);
     const cachedItem = getFirstCSFItem();
@@ -681,6 +712,7 @@ async function adjustItem(container: Element, isPopout = false) {
             removeImageElements(container);
         }
         await patternDetections(container, cachedItem, false);
+        addScreenshotReplacement(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -698,11 +730,19 @@ async function adjustItem(container: Element, isPopout = false) {
                 await patternDetections(container, apiItem, true);
                 await addFloatColoring(container, apiItem);
                 addQuickLinks(container, apiItem);
+                addScreenshotReplacement(container, apiItem);
             }
 
             // last as it has to wait for history api data
             addItemHistory(container.parentElement!.parentElement!);
         }, 500);
+    }
+}
+
+function addScreenshotReplacement(container: Element, listing: CSFloat.ListingData) {
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && !detailButtons.querySelector('.bf-tooltip') && listing.item.inspect_link && listing.item.type == 'skin') {
+        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings.runtimePublicURL);
     }
 }
 
@@ -815,7 +855,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
         await badgeCKimono(container, item);
     } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
-    } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
+    } else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
         await badgeCyanbit(container, item);
     } else if (item.item_name.includes('Overprint')) {
         await badgeOverprint(container, item);
@@ -1394,12 +1434,25 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const header_details = <Element>nameContainer?.childNodes[1];
 
     const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    const priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
+    let priceText = priceContainer?.textContent?.trim().split(/\s/) ?? [];
     let price: string;
+    let currency = '$';
     if (location.pathname === '/sell') {
         price = priceText[1].split('Price')[1];
+    } else if (priceText.includes('Bids')) {
+        price = '0';
     } else {
-        price = priceText.includes('Bids') ? '0' : priceText[0];
+        let pricingText = priceText[0];
+        if (pricingText.split(/\s/).length > 1) {
+            let parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
+            price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
+            currency = parts.filter((x) => isNaN(+x))[0];
+        } else {
+            const firstDigit = Array.from(pricingText).findIndex((x) => !isNaN(Number(x)));
+            currency = pricingText.substring(0, firstDigit);
+            price = String(Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+        }
+        console.log(currency, price);
     }
     let condition: ItemCondition = '';
     let quality = '';
@@ -1410,7 +1463,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
             switch (node.nodeType) {
                 case Node.ELEMENT_NODE:
                     const text = node.textContent?.trim();
-                    if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
+                    if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker') || text.includes('Agent'))) {
                         // TODO: integrate the ItemQuality type
                         // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
                         quality = text;
@@ -1436,8 +1489,9 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : Number(price?.split(' ver')[0].split('  ')[0].trim().replace('$', '').replace(',', '')),
+        price: price?.includes('Bids') ? 0 : parseInt(price),
         bargain: false,
+        currency: currency,
     };
 }
 
@@ -1447,14 +1501,21 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    let currencyRate = await getCSFCurrencyRate(userCurrency);
+    if (!currencyRate) {
+        console.log('[BetterFloat] Could not get currency rate for ' + userCurrency);
+        currencyRate = 1;
+    }
+
     const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,
         buff_id: buff_id,
-        priceListing: priceListing,
-        priceOrder: priceOrder,
-        priceFromReference: priceFromReference,
-        difference: item.price - priceFromReference,
+        priceListing: priceListing * currencyRate,
+        priceOrder: priceOrder * currencyRate,
+        priceFromReference: priceFromReference * currencyRate,
+        difference: item.price - (priceFromReference * currencyRate),
     };
 }
 
@@ -1469,6 +1530,8 @@ async function addBuffPrice(
 
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
         suggestedContainer = document.createElement('div');
@@ -1503,7 +1566,7 @@ async function addBuffPrice(
         buffPrice.appendChild(tooltipSpan);
         const buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
-        buffPriceBid.textContent = `Bid ${USDollar.format(priceOrder)}`;
+        buffPriceBid.textContent = `Bid ${CurrencyFormatter.format(priceOrder)}`;
         buffPrice.appendChild(buffPriceBid);
         const buffPriceDivider = document.createElement('span');
         buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
@@ -1511,7 +1574,7 @@ async function addBuffPrice(
         buffPrice.appendChild(buffPriceDivider);
         const buffPriceAsk = document.createElement('span');
         buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-        buffPriceAsk.textContent = `Ask ${USDollar.format(priceListing)}`;
+        buffPriceAsk.textContent = `Ask ${CurrencyFormatter.format(priceListing)}`;
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
 
@@ -1557,18 +1620,18 @@ async function addBuffPrice(
         let differenceSymbol;
         if (difference < 0) {
             backgroundColor = extensionSettings.colors.csfloat.profit;
-            differenceSymbol = '-$';
+            differenceSymbol = '-';
         } else if (difference > 0) {
             backgroundColor = extensionSettings.colors.csfloat.loss;
-            differenceSymbol = '+$';
+            differenceSymbol = '+';
         } else {
             backgroundColor = extensionSettings.colors.csfloat.neutral;
-            differenceSymbol = '-$';
+            differenceSymbol = '-';
         }
 
-        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${Math.abs(
+        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${CurrencyFormatter.format(Math.abs(
             difference
-        ).toFixed(2)} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
+        ))} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
         if (item.price > 1999 && extensionSettings.showBuffPercentageDifference) parseHTMLString('<br>', priceContainer);
 
         parseHTMLString(buffPriceHTML, priceContainer);
@@ -1583,7 +1646,7 @@ function createBuffName(item: CSFloat.FloatItem): string {
     let full_name = `${item.name}`;
     if (item.quality.includes('Sticker')) {
         full_name = 'Sticker | ' + full_name;
-    } else if (!item.quality.includes('Container')) {
+    } else if (!item.quality.includes('Container') && !item.quality.includes('Agent')) {
         if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
             full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
         }
