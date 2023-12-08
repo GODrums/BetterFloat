@@ -1452,7 +1452,6 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
             currency = pricingText.substring(0, firstDigit);
             price = String(Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
         }
-        console.log(currency, price);
     }
     let condition: ItemCondition = '';
     let quality = '';
@@ -1489,7 +1488,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : parseInt(price),
+        price: price?.includes('Bids') ? 0 : Number(price),
         bargain: false,
         currency: currency,
     };

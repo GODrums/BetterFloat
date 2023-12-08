@@ -399,10 +399,10 @@ async function adjustItemPage(container: Element) {
     if (linkInspect) {
         const inspectButton = document.createElement('button');
         inspectButton.onclick = () => {
-            window.open(linkInspect);
+            window.open(`https://swap.gg/screenshot?inspectLink=${linkInspect}`);
         };
         inspectButton.type = 'button';
-        inspectButton.textContent = 'Inspect';
+        inspectButton.textContent = 'Swap.gg';
         newGroup.appendChild(inspectButton);
     }
     if (linkSteam) {
