@@ -19,8 +19,7 @@ import {
 import { handleListed, handleSold } from './skinport/websockethandler';
 
 type StallData = {
-    listings: CSFloat.ListingData[];
-    user: CSFloat.SellerData;
+    data: CSFloat.ListingData[];
 };
 
 type SkinportWebsocketData = {
@@ -155,7 +154,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('v1/users/')) {
         // url schema: v1/users/[:userid]
         // sellers stall, gives StallData
-        cacheCSFItems((eventData.data as StallData).listings);
+        cacheCSFItems((eventData.data as StallData).data);
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup
         if (eventData.url.includes('/graph')) {

@@ -613,8 +613,9 @@ function adjustCurrencyChangeNotice(container: Element) {
 
 async function adjustItemBubble(container: Element) {
     const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-    const bargainPrice = Number(container.querySelector('b')?.textContent?.replace('$', ''));
-    const difference = bargainPrice - buffData.priceFromReference;
+    const pricing = priceData(container.querySelector('b')!.textContent!);
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const difference = pricing.price - buffData.priceFromReference;
     const isSeller = container.textContent?.includes('Seller') ?? false;
 
     const buffContainer = document.createElement('div');
@@ -626,7 +627,7 @@ async function adjustItemBubble(container: Element) {
 
     const buffPrice = document.createElement('span');
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
-    buffPrice.textContent = `${difference > 0 ? '+' : ''}${USDollar.format(Number(difference.toFixed(2)))}`;
+    buffPrice.textContent = `${difference > 0 ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency }).format(difference)}`;
     buffContainer.appendChild(buffPrice);
 
     const personDiv = container.querySelector('div > span');
@@ -1425,6 +1426,29 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
     } else {
         return false;
     }
+}
+
+function priceData(text: string) {
+    const priceText = text.trim();
+    let price: string;
+    let currency = '$';
+    if (priceText.includes('Bids')) {
+        price = '0';
+    } else {
+        if (priceText.split(/\s/).length > 1) {
+            let parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+            price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
+            currency = parts.filter((x) => isNaN(+x))[0];
+        } else {
+            const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
+            currency = priceText.substring(0, firstDigit);
+            price = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+        }
+    }
+    return {
+        price: Number(price),
+        currency: currency,
+    };
 }
 
 function getFloatItem(container: Element): CSFloat.FloatItem {
