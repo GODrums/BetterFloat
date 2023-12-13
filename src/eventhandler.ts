@@ -151,9 +151,8 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
     } else if (eventData.url.includes('v1/me/listings')) {
         // own stall
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);
-    } else if (eventData.url.includes('v1/users/')) {
-        // url schema: v1/users/[:userid]
-        // sellers stall, gives StallData
+    } else if (eventData.url.includes('v1/users/') && eventData.url.includes('/stall')) {
+        // url schema: v1/users/[:userid]/stall
         cacheCSFItems((eventData.data as StallData).data);
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup

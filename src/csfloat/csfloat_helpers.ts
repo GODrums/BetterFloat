@@ -67,6 +67,11 @@ export namespace CSFloatHelpers {
         screenshotButton.href = href;
         screenshotButton.target = '_blank';
         screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+        screenshotButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.open(href, '_blank');
+        });
         const iconButton = document.createElement('button');
         iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
         const buttonColor = color;
