@@ -204,6 +204,7 @@ export namespace BlueGem {
         csfloat: string; // csfloat db link
         date: string;
         float: number;
+        isStattrak: boolean;
         origin: 'CSFloat' | 'BroSkins' | 'Buff';
         pattern: number;
         price: number;

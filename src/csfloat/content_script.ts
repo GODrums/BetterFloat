@@ -664,8 +664,7 @@ async function adjustSalesTableRow(container: Element) {
     }
 
     const appStickerView = container.querySelector('.cdk-column-stickers')?.firstElementChild;
-    if (appStickerView) {
-        if (appStickerView.querySelectorAll('.sticker').length == 0) return;
+    if (appStickerView && appStickerView.querySelectorAll('.sticker')?.length > 0) {
         const stickerData = cachedSale.item.stickers;
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
         const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace('$', ''));
@@ -682,6 +681,15 @@ async function adjustSalesTableRow(container: Element) {
                 (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
             }
         }
+    }
+
+    const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
+    if (cachedSale.item.fade && seedContainer) {
+        const fadeData = cachedSale.item.fade;
+        const fadeSpan = document.createElement('span');
+        fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%'+ (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
+        fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
+        seedContainer.appendChild(fadeSpan);
     }
 }
 
@@ -1189,7 +1197,15 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                 const floatCell = document.createElement('td');
                 floatCell.setAttribute('role', 'cell');
                 floatCell.className = 'mat-cell cdk-cell ng-star-inserted';
-                floatCell.textContent = sale.float.toString();
+                if (sale.isStattrak) {
+                    const stSpan = document.createElement('span');
+                    stSpan.textContent = 'StatTrak™ ';
+                    stSpan.setAttribute('style', 'color: rgb(255, 120, 44); margin-right: 5px;');
+                    floatCell.appendChild(stSpan);
+                }
+                const floatSpan = document.createElement('span');
+                floatSpan.textContent = sale.float.toString();
+                floatCell.appendChild(floatSpan);
                 newRow.appendChild(floatCell);
                 const linkCell = document.createElement('td');
                 linkCell.setAttribute('role', 'cell');

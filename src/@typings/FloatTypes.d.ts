@@ -51,6 +51,11 @@ export namespace CSFloat {
         d_param?: string;
         def_index: number;
         description?: string;
+        fade?: {
+            percentage: number;
+            rank: number;
+            seed: number;
+        }
         float_value?: number;
         has_screenshot: boolean;
         icon_url: string;
