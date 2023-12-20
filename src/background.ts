@@ -68,6 +68,10 @@ chrome.runtime.onInstalled.addListener((details) => {
     } else if (details.reason == 'update') {
         const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
+        // reset prices in storage due to breaking changes
+        chrome.storage.local.set({ prices: {} });
+        chrome.storage.local.set({ lastUpdate: 0 });
+
         chrome.storage.local.get((data) => {
             if (!data) {
                 console.log('[BetterFloat] No settings found, setting default settings.');
@@ -98,13 +102,15 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 export async function refreshPrices() {
-    return await fetch('https://prices.csgotrader.app/latest/buff163.json')
+    return await fetch('https://prices.rums.dev/v1/pricempire_usd')
         .then((response) => response.json())
-        .then(async (data) => {
+        .then(async (reponseData) => {
+            const data = reponseData as Extension.ApiBuffResponse;
+            console.log('[SkinComparison] Prices fetched from API. Length: ' + Object.keys(data.data).length + ' Time: ' + data.time);
             //set cookie and wait for finish
             return await new Promise<boolean>((resolve) => {
-                chrome.storage.local.set({ prices: JSON.stringify(data) }).then(() => {
-                    console.log('Prices updated. Current time: ' + Date.toString());
+                chrome.storage.local.set({ prices: JSON.stringify(data.data) }).then(() => {
+                    console.log('Prices updated. Current time: ' + Date.now());
                     resolve(true);
                 });
             });

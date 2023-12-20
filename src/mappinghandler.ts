@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import { Extension } from './@typings/ExtensionTypes';
 import { CSFloat } from './@typings/FloatTypes';
 import { Skinbid } from './@typings/SkinbidTypes';
@@ -9,10 +10,8 @@ import { handleSpecialStickerNames } from './util/helperfunctions';
 
 // maps buff_name to buff_id
 let buffMapping: { [name: string]: number } = {};
-// maps buff_name to prices and more - from csgotrader
-let priceMapping: Extension.CSGOTraderBuffMapping = {};
-// new pricempire mapping for prices
-let pricempireMapping: Extension.CustomPriceMapping = {};
+// maps buff_name to prices and more - custom mapping
+let priceMapping: Extension.CustomPriceMapping = {};
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 // csfloat: cached items from api
@@ -23,7 +22,7 @@ let csfloatPopupItem: CSFloat.ListingData | null = null;
 let csfloatHistoryGraph: CSFloat.HistoryGraphData[] = [];
 // csfloat: history sales for one item
 let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
-let csfloatRates: { [key: string]: number; } = {};
+let csfloatRates: { [key: string]: number } = {};
 let csfloatLocation: CSFloat.Location | null = null;
 // skinport: cached items from api
 let skinportItems: Skinport.Item[] = [];
@@ -190,7 +189,7 @@ export function getFirstSkbItem() {
         return null;
     }
 }
-export async function getPriceMapping(): Promise<Extension.CSGOTraderBuffMapping> {
+export async function getPriceMapping(): Promise<Extension.CustomPriceMapping> {
     if (Object.keys(priceMapping).length == 0) {
         await loadMapping();
     }
@@ -208,19 +207,18 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
     }
     //removing double spaces
     buff_name = handleSpecialStickerNames(buff_name.replace(/\s+/g, ' '));
-    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name].starting_at || !priceMapping[buff_name].highest_order) {
+    if (!priceMapping[buff_name]) {
         console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
         return {
             starting_at: 0,
             highest_order: 0,
         };
     }
-    if (priceMapping[buff_name]) {
-        return {
-            starting_at: priceMapping[buff_name].starting_at.price ?? 0,
-            highest_order: priceMapping[buff_name].highest_order.price ?? 0,
-        };
-    }
+    return {
+        starting_at: new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber(),
+        highest_order: new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber(),
+    };
+
     return {
         starting_at: 0,
         highest_order: 0,
