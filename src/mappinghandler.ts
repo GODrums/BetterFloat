@@ -218,11 +218,6 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
         starting_at: new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber(),
         highest_order: new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber(),
     };
-
-    return {
-        starting_at: 0,
-        highest_order: 0,
-    };
 }
 
 async function fetchCSFCurrencyRates() {
