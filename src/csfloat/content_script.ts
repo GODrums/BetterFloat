@@ -687,7 +687,7 @@ async function adjustSalesTableRow(container: Element) {
     if (cachedSale.item.fade && seedContainer) {
         const fadeData = cachedSale.item.fade;
         const fadeSpan = document.createElement('span');
-        fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%'+ (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
+        fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
         fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
         seedContainer.appendChild(fadeSpan);
     }
@@ -750,7 +750,13 @@ async function adjustItem(container: Element, isPopout = false) {
 
 function addScreenshotReplacement(container: Element, listing: CSFloat.ListingData) {
     const detailButtons = container.querySelector('.detail-buttons');
-    if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && !detailButtons.querySelector('.bf-tooltip') && listing.item.inspect_link && listing.item.type == 'skin') {
+    if (
+        detailButtons &&
+        container.querySelectorAll('.detail-buttons > button').length == 0 &&
+        !detailButtons.querySelector('.bf-tooltip') &&
+        listing.item.inspect_link &&
+        listing.item.type == 'skin'
+    ) {
         CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings.runtimePublicURL);
     }
 }
@@ -1554,7 +1560,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
         priceListing: priceListing * currencyRate,
         priceOrder: priceOrder * currencyRate,
         priceFromReference: priceFromReference * currencyRate,
-        difference: item.price - (priceFromReference * currencyRate),
+        difference: item.price - priceFromReference * currencyRate,
     };
 }
 
@@ -1668,9 +1674,9 @@ async function addBuffPrice(
             differenceSymbol = '-';
         }
 
-        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${CurrencyFormatter.format(Math.abs(
-            difference
-        ))} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
+        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${CurrencyFormatter.format(
+            Math.abs(difference)
+        )} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
         if (item.price > 1999 && extensionSettings.showBuffPercentageDifference) parseHTMLString('<br>', priceContainer);
 
         parseHTMLString(buffPriceHTML, priceContainer);

@@ -73,9 +73,9 @@ export function activateHandler() {
         if (lastUpdate == undefined) {
             lastUpdate = 0;
         }
-        // if lastUpdate is older than 8 hours, refresh prices
-        if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
-            console.debug('[BetterFloat] Prices are older than 8 hours, last update:', new Date(lastUpdate), '. Refreshing prices...');
+        // if lastUpdate is older than 1 hour, refresh prices
+        if (lastUpdate < Date.now() - 1000 * 60 * 60) {
+            console.debug('[BetterFloat] Prices are older than 1 hour, last update:', new Date(lastUpdate), '. Refreshing prices...');
             // send message to background to fetch and store new prices
             chrome.runtime.sendMessage({ message: 'fetchPrices' }, (response) => {
                 if (!response) return;
