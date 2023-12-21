@@ -13,7 +13,7 @@
         {
             "matches": ["*://*.csfloat.com/*"],
             "js": ["js/csfloat_script.js"],
-            "css": ["css/csfloat_styles.css"],
+            "css": ["css/csfloat_styles.css", "css/common_styles.css"],
             "run_at": "document_end"
         },
         {
@@ -24,13 +24,13 @@
         {
             "matches": ["*://*.skinport.com/*"],
             "js": ["js/skinport_script.js"],
-            "css": ["css/skinport_styles.css"],
+            "css": ["css/skinport_styles.css", "css/common_styles.css"],
             "run_at": "document_end"
         },
         {
             "matches": ["*://*.skinbid.com/*"],
             "js": ["js/skinbid_script.js"],
-            "css": ["css/skinbid_styles.css"],
+            "css": ["css/skinbid_styles.css", "css/common_styles.css"],
             "run_at": "document_end"
         }
     ],
