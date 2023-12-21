@@ -144,6 +144,7 @@ export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
 
 export function getSpMinOrderPrice() {
     return skinportMinOrderPrice;
+}
 
 // USD / rate = target currency
 export async function getCSFCurrencyRate(currency: string) {
