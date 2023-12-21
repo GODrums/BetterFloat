@@ -1032,7 +1032,7 @@ async function orderItem(item: Skinport.Listing) {
 
 async function addInstantOrder(item: Skinport.Listing, container: Element) {
     const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-    if (presentationDiv) {
+    if (presentationDiv && item.price >= 2) {
         const oneClickOrder = document.createElement('a');
         oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
         oneClickOrder.style.width = '60px';
