@@ -58,6 +58,20 @@ export namespace Extension {
         skinbid: boolean;
     };
 
+    export type CustomPriceMapping = {
+        [name: string]: {
+            bid: number; // 105
+            ask: number; // 167
+            avg30: number; // 175
+            liquidity: number; // 78.14
+        };
+    };
+
+    export type ApiBuffResponse = {
+        data: CustomPriceMapping;
+        time: number;
+    };
+
     /**
      * Mapping corresponding to the response from https://prices.csgotrader.app/latest/buff163.json
      */
@@ -172,8 +186,14 @@ export namespace Extension {
         };
     };
 
-    // reponse from https://csbluegem.com/api
+    export type ApiStatusResponse = {
+        sites: [string];
+        message: string;
+        statusCode: number;
+    };
 }
+
+// reponse from https://csbluegem.com/api
 export namespace BlueGem {
     export type PatternElement = {
         backside: number;
@@ -185,6 +205,7 @@ export namespace BlueGem {
         csfloat: string; // csfloat db link
         date: string;
         float: number;
+        isStattrak: boolean;
         origin: 'CSFloat' | 'BroSkins' | 'Buff';
         pattern: number;
         price: number;

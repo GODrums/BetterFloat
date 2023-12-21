@@ -14,12 +14,12 @@
 ## 🤝 Community / Support
 
 <p>
-We use the CS Market Forum for discussions and support. BetterFloat owns the thread <a href="https://discord.com/channels/664104795367538690/1140464870559584267">#BetterFloat</a>, where you can ask questions, report bugs, or suggest new features.
+We have used our thread <a href="https://discord.com/channels/664104795367538690/1140464870559584267">#BetterFloat</a> in the CS Market Forum Discord Server in the past. Now we also own a full server, where you can ask questions, report bugs, or suggest new features.
 </p>
 
-Click the badge below to join the server:
+Click the badge below to join our server:
 
-[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/csgomarket)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/EeKEVwKB)
 
 ## 🌎 Downloads
 

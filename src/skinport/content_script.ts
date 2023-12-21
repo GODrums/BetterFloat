@@ -193,7 +193,6 @@ async function applyMutation() {
                             // contains live button
                             addLiveFilterMenu(addedNode);
                         } else if (className.includes('CartButton-tooltip')) {
-                            console.log('[BetterFloat] Cart button added: ', addedNode);
                             autoCloseTooltip(addedNode);
                         } else if (className.includes('Message')) {
                             // contains 'item has been sold' message
@@ -400,10 +399,10 @@ async function adjustItemPage(container: Element) {
     if (linkInspect) {
         const inspectButton = document.createElement('button');
         inspectButton.onclick = () => {
-            window.open(linkInspect);
+            window.open(`https://swap.gg/screenshot?inspectLink=${linkInspect}`);
         };
         inspectButton.type = 'button';
-        inspectButton.textContent = 'Inspect';
+        inspectButton.textContent = 'Swap.gg';
         newGroup.appendChild(inspectButton);
     }
     if (linkSteam) {
@@ -531,6 +530,15 @@ function storeItem(container: Element, item: Skinport.Listing) {
     container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
+export async function patternDetections(container: Element, item: Skinport.Item) {
+    if (item.name.includes('Case Hardened')) {
+        await caseHardenedDetection(container, item);
+    } else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
+        await webDetection(container, item);
+    }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function webDetection(container: Element, item: Skinport.Item) {
     const itemHeader = container.querySelector('.TradeLock-lock');
     if (!itemHeader) return;
@@ -567,7 +575,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     const patternLink = <HTMLElement>linksContainer.lastElementChild!.cloneNode(true);
     patternLink.id = 'react-tabs-6';
     patternLink.setAttribute('aria-controls', 'react-tabs-7');
-    patternLink.textContent = `Buff Pattern Sales (${pastSales.length})`;
+    patternLink.textContent = `Buff Pattern Sales (${pastSales?.length ?? 0})`;
     patternLink.style.color = 'deepskyblue';
 
     const itemHistory = container.querySelector('.ItemHistory');
@@ -577,14 +585,14 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
     let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-right: 18px;"></a></div></div>`;
     let tableBody = '';
-    for (const sale of pastSales) {
+    for (const sale of pastSales ?? []) {
         tableBody += `<div class="ItemHistoryList-row"${
             Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
         }><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
             extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')
         }"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
-            sale.float
-        }</div><div class="ItemHistoryList-col" style="width: 24%;">${
+            sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
+        }${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${
             currencySymbol == '€' ? Euro.format(sale.price) : currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price
         }</div><div><a ${
             sale.url == 'No Link Available'
@@ -712,8 +720,9 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
         currency = parts.filter((x) => isNaN(+x))[0];
     } else {
         // format: "€1,696.00"
-        currency = priceText.charAt(0);
-        priceText = String(Number(priceText.replace(',', '').replace('.', '').substring(1)) / 100);
+        const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
+        currency = priceText.substring(0, firstDigit);
+        priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
     }
     let price = Number(priceText);
 

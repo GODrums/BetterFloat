@@ -5,6 +5,7 @@ import { BlueGem, Extension, FadePercentage } from '../@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
 import {
     getBuffMapping,
+    getCSFCurrencyRate,
     getCSFPopupItem,
     getCrimsonWebMapping,
     getFirstCSFItem,
@@ -31,7 +32,7 @@ import {
 } from '../util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
-import { fetchCSBlueGem } from '../networkhandler';
+import { fetchCSBlueGem, isApiStatusOK } from '../networkhandler';
 import { CSFloatHelpers } from './csfloat_helpers';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 
@@ -44,6 +45,16 @@ async function init() {
     // catch the events thrown by the script
     // this has to be done as first thing to not miss timed events
     activateHandler();
+
+    const apiStatus = await isApiStatusOK();
+    if (apiStatus.statusCode != 200 && apiStatus.sites.includes('csfloat')) {
+        console.error('[BetterFloat] API status is not OK:', apiStatus);
+        const bannerPlaceholder = document.querySelector('MAT-TOOLBAR')?.parentElement?.childNodes[2];
+        if (bannerPlaceholder) {
+            bannerPlaceholder.replaceWith(CSFloatHelpers.generateWarningText(apiStatus.message));
+        }
+        return;
+    }
 
     extensionSettings = await initSettings();
 
@@ -556,6 +567,8 @@ function applyMutation() {
                     } else if (location.pathname == '/profile/offers' && addedNode.className.toString().includes('mat-list-item')) {
                         // offer list in offers page
                         offerItemClickListener(addedNode);
+                    } else if (addedNode.tagName.toLowerCase() == 'app-markdown-dialog') {
+                        adjustCurrencyChangeNotice(addedNode);
                     }
                 }
             }
@@ -571,10 +584,38 @@ function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
+function adjustCurrencyChangeNotice(container: Element) {
+    const warningDiv = document.createElement('div');
+    warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: hsl(0deg 100% 27.25% / 50%); border-radius: 18px;');
+    const warningSymbol = document.createElement('img');
+    warningSymbol.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+    warningSymbol.style.height = '30px';
+    warningSymbol.style.margin = '0 10px';
+    warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(66%) saturate(5511%) hue-rotate(102deg) brightness(103%) contrast(104%)';
+    const warningText = document.createElement('p');
+    warningText.textContent = 'Please note that BetterFloat requires a page refresh after changing the currency.';
+    warningDiv.appendChild(warningSymbol);
+    warningDiv.appendChild(warningText);
+
+    const refreshContainer = document.createElement('div');
+    refreshContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center;     margin-top: 15px;');
+    const refreshButton = document.createElement('button');
+    refreshButton.className = 'mat-raised-button mat-warn';
+    refreshButton.textContent = 'Refresh';
+    refreshButton.onclick = () => {
+        location.reload();
+    };
+    refreshContainer.appendChild(refreshButton);
+
+    container.children[0].appendChild(warningDiv);
+    container.children[0].appendChild(refreshContainer);
+}
+
 async function adjustItemBubble(container: Element) {
     const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-    const bargainPrice = Number(container.querySelector('b')?.textContent?.replace('$', ''));
-    const difference = bargainPrice - buffData.priceFromReference;
+    const pricing = priceData(container.querySelector('b')!.textContent!);
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const difference = pricing.price - buffData.priceFromReference;
     const isSeller = container.textContent?.includes('Seller') ?? false;
 
     const buffContainer = document.createElement('div');
@@ -586,7 +627,7 @@ async function adjustItemBubble(container: Element) {
 
     const buffPrice = document.createElement('span');
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
-    buffPrice.textContent = `${difference > 0 ? '+' : ''}${USDollar.format(Number(difference.toFixed(2)))}`;
+    buffPrice.textContent = `${difference > 0 ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency }).format(difference)}`;
     buffContainer.appendChild(buffPrice);
 
     const personDiv = container.querySelector('div > span');
@@ -623,8 +664,7 @@ async function adjustSalesTableRow(container: Element) {
     }
 
     const appStickerView = container.querySelector('.cdk-column-stickers')?.firstElementChild;
-    if (appStickerView) {
-        if (appStickerView.querySelectorAll('.sticker').length == 0) return;
+    if (appStickerView && appStickerView.querySelectorAll('.sticker')?.length > 0) {
         const stickerData = cachedSale.item.stickers;
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
         const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace('$', ''));
@@ -642,10 +682,20 @@ async function adjustSalesTableRow(container: Element) {
             }
         }
     }
+
+    const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
+    if (cachedSale.item.fade && seedContainer) {
+        const fadeData = cachedSale.item.fade;
+        const fadeSpan = document.createElement('span');
+        fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
+        fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
+        seedContainer.appendChild(fadeSpan);
+    }
 }
 
 async function adjustItem(container: Element, isPopout = false) {
     const item = getFloatItem(container);
+    // console.log('[BetterFloat] Adjusting item:', item);
     if (Number.isNaN(item.price)) return;
     const priceResult = await addBuffPrice(item, container, isPopout);
     const cachedItem = getFirstCSFItem();
@@ -671,6 +721,7 @@ async function adjustItem(container: Element, isPopout = false) {
             removeImageElements(container);
         }
         await patternDetections(container, cachedItem, false);
+        addScreenshotReplacement(container, cachedItem);
     } else if (isPopout) {
         // need timeout as request is only sent after popout is loaded
         setTimeout(async () => {
@@ -688,11 +739,25 @@ async function adjustItem(container: Element, isPopout = false) {
                 await patternDetections(container, apiItem, true);
                 await addFloatColoring(container, apiItem);
                 addQuickLinks(container, apiItem);
+                addScreenshotReplacement(container, apiItem);
             }
 
             // last as it has to wait for history api data
             addItemHistory(container.parentElement!.parentElement!);
         }, 500);
+    }
+}
+
+function addScreenshotReplacement(container: Element, listing: CSFloat.ListingData) {
+    const detailButtons = container.querySelector('.detail-buttons');
+    if (
+        detailButtons &&
+        container.querySelectorAll('.detail-buttons > button').length == 0 &&
+        !detailButtons.querySelector('.bf-tooltip') &&
+        listing.item.inspect_link &&
+        listing.item.type == 'skin'
+    ) {
+        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings.runtimePublicURL);
     }
 }
 
@@ -805,7 +870,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
         await badgeCKimono(container, item);
     } else if (item.item_name.includes('Phoenix Blacklight')) {
         await badgePhoenix(container, item);
-    } else if (item.item_name.includes('Gamma Doppler') && item.phase == 'Phase 3') {
+    } else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
         await badgeCyanbit(container, item);
     } else if (item.item_name.includes('Overprint')) {
         await badgeOverprint(container, item);
@@ -842,7 +907,7 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + `/overprint-${overprint_data.type.toLowerCase()}.svg`,
-        `height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);`,
+        'height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);',
         [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier == 0 ? [] : [`Tier ${overprint_data.tier}`]),
         getTooltipStyle(overprint_data.type),
         overprint_data.tier == 0 ? '' : 'T' + overprint_data.tier,
@@ -865,7 +930,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
         CSFloatHelpers.addPatternBadge(
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
-            `height: 30px; filter: grayscale(100%);`,
+            'height: 30px; filter: grayscale(100%);',
             ['T1 GRAY PATTERN'],
             'translate: -25px 15px; width: 80px;',
             '1',
@@ -875,7 +940,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
         CSFloatHelpers.addPatternBadge(
             container,
             extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
-            `height: 30px;`,
+            'height: 30px;',
             [`Tier ${ck_data.tier}`],
             'translate: -18px 15px; width: 60px;',
             String(ck_data.tier),
@@ -897,7 +962,7 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + '/gem-cyan.svg',
-        `height: 30px;`,
+        'height: 30px;',
         [`${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`, cyanbit_data.tier == 0 ? 'No Tier' : `Tier ${cyanbit_data.tier}`],
         'translate: -15px 15px; width: 90px;',
         'T' + cyanbit_data.tier,
@@ -1005,7 +1070,7 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
-    let patternElement: BlueGem.PatternElement | null = null;
+    let patternElement: BlueGem.PatternElement | undefined = undefined;
     let type = '';
     if (item.item_name.startsWith('★')) {
         type = item.item_name.split(' | ')[0].split('★ ')[1];
@@ -1025,7 +1090,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
         await fetchCSBlueGem(type, item.paint_seed!).then((data) => {
-            pastSales = data.pastSales;
+            pastSales = data.pastSales ?? [];
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
         });
@@ -1138,7 +1203,15 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                 const floatCell = document.createElement('td');
                 floatCell.setAttribute('role', 'cell');
                 floatCell.className = 'mat-cell cdk-cell ng-star-inserted';
-                floatCell.textContent = sale.float.toString();
+                if (sale.isStattrak) {
+                    const stSpan = document.createElement('span');
+                    stSpan.textContent = 'StatTrak™ ';
+                    stSpan.setAttribute('style', 'color: rgb(255, 120, 44); margin-right: 5px;');
+                    floatCell.appendChild(stSpan);
+                }
+                const floatSpan = document.createElement('span');
+                floatSpan.textContent = sale.float.toString();
+                floatCell.appendChild(floatSpan);
                 newRow.appendChild(floatCell);
                 const linkCell = document.createElement('td');
                 linkCell.setAttribute('role', 'cell');
@@ -1377,6 +1450,29 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
     }
 }
 
+function priceData(text: string) {
+    const priceText = text.trim();
+    let price: string;
+    let currency = '$';
+    if (priceText.includes('Bids')) {
+        price = '0';
+    } else {
+        if (priceText.split(/\s/).length > 1) {
+            let parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+            price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
+            currency = parts.filter((x) => isNaN(+x))[0];
+        } else {
+            const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
+            currency = priceText.substring(0, firstDigit);
+            price = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+        }
+    }
+    return {
+        price: Number(price),
+        currency: currency,
+    };
+}
+
 function getFloatItem(container: Element): CSFloat.FloatItem {
     const nameContainer = container.querySelector('app-item-name');
     const floatContainer = container.querySelector('item-float-bar');
@@ -1384,12 +1480,24 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const header_details = <Element>nameContainer?.childNodes[1];
 
     const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    const priceText = priceContainer?.textContent?.trim().split(' ') ?? [];
+    let priceText = priceContainer?.textContent?.trim().split(/\s/) ?? [];
     let price: string;
+    let currency = '$';
     if (location.pathname === '/sell') {
         price = priceText[1].split('Price')[1];
+    } else if (priceText.includes('Bids')) {
+        price = '0';
     } else {
-        price = priceText.includes('Bids') ? '0' : priceText[0];
+        let pricingText = priceText[0];
+        if (pricingText.split(/\s/).length > 1) {
+            let parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
+            price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
+            currency = parts.filter((x) => isNaN(+x))[0];
+        } else {
+            const firstDigit = Array.from(pricingText).findIndex((x) => !isNaN(Number(x)));
+            currency = pricingText.substring(0, firstDigit);
+            price = String(Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+        }
     }
     let condition: ItemCondition = '';
     let quality = '';
@@ -1400,7 +1508,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
             switch (node.nodeType) {
                 case Node.ELEMENT_NODE:
                     const text = node.textContent?.trim();
-                    if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker'))) {
+                    if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker') || text.includes('Agent'))) {
                         // TODO: integrate the ItemQuality type
                         // https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
                         quality = text;
@@ -1426,8 +1534,9 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : Number(price?.split(' ver')[0].split('  ')[0].trim().replace('$', '').replace(',', '')),
+        price: price?.includes('Bids') ? 0 : Number(price),
         bargain: false,
+        currency: currency,
     };
 }
 
@@ -1437,14 +1546,21 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    let currencyRate = await getCSFCurrencyRate(userCurrency);
+    if (!currencyRate) {
+        console.log('[BetterFloat] Could not get currency rate for ' + userCurrency);
+        currencyRate = 1;
+    }
+
     const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
     return {
         buff_name: buff_name,
         buff_id: buff_id,
-        priceListing: priceListing,
-        priceOrder: priceOrder,
-        priceFromReference: priceFromReference,
-        difference: item.price - priceFromReference,
+        priceListing: priceListing * currencyRate,
+        priceOrder: priceOrder * currencyRate,
+        priceFromReference: priceFromReference * currencyRate,
+        difference: item.price - priceFromReference * currencyRate,
     };
 }
 
@@ -1459,6 +1575,8 @@ async function addBuffPrice(
 
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
         suggestedContainer = document.createElement('div');
@@ -1493,7 +1611,7 @@ async function addBuffPrice(
         buffPrice.appendChild(tooltipSpan);
         const buffPriceBid = document.createElement('span');
         buffPriceBid.setAttribute('style', 'color: orange;');
-        buffPriceBid.textContent = `Bid ${USDollar.format(priceOrder)}`;
+        buffPriceBid.textContent = `Bid ${CurrencyFormatter.format(priceOrder)}`;
         buffPrice.appendChild(buffPriceBid);
         const buffPriceDivider = document.createElement('span');
         buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
@@ -1501,7 +1619,7 @@ async function addBuffPrice(
         buffPrice.appendChild(buffPriceDivider);
         const buffPriceAsk = document.createElement('span');
         buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-        buffPriceAsk.textContent = `Ask ${USDollar.format(priceListing)}`;
+        buffPriceAsk.textContent = `Ask ${CurrencyFormatter.format(priceListing)}`;
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
 
@@ -1547,18 +1665,18 @@ async function addBuffPrice(
         let differenceSymbol;
         if (difference < 0) {
             backgroundColor = extensionSettings.colors.csfloat.profit;
-            differenceSymbol = '-$';
+            differenceSymbol = '-';
         } else if (difference > 0) {
             backgroundColor = extensionSettings.colors.csfloat.loss;
-            differenceSymbol = '+$';
+            differenceSymbol = '+';
         } else {
             backgroundColor = extensionSettings.colors.csfloat.neutral;
-            differenceSymbol = '-$';
+            differenceSymbol = '-';
         }
 
-        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${Math.abs(
-            difference
-        ).toFixed(2)} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
+        const buffPriceHTML = `<span class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor};" data-betterfloat="${difference}">${differenceSymbol}${CurrencyFormatter.format(
+            Math.abs(difference)
+        )} ${extensionSettings.showBuffPercentageDifference ? ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)' : ''}</span>`;
         if (item.price > 1999 && extensionSettings.showBuffPercentageDifference) parseHTMLString('<br>', priceContainer);
 
         parseHTMLString(buffPriceHTML, priceContainer);
@@ -1573,7 +1691,7 @@ function createBuffName(item: CSFloat.FloatItem): string {
     let full_name = `${item.name}`;
     if (item.quality.includes('Sticker')) {
         full_name = 'Sticker | ' + full_name;
-    } else if (!item.quality.includes('Container')) {
+    } else if (!item.quality.includes('Container') && !item.quality.includes('Agent')) {
         if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
             full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
         }

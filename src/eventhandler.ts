@@ -14,12 +14,13 @@ import {
     cacheSpItems,
     cacheSpPopupItem,
     cacheSpMinOrderPrice,
+    cacheCSFLocation,
+    cacheCSFExchangeRates,
 } from './mappinghandler';
 import { handleListed, handleSold } from './skinport/websockethandler';
 
 type StallData = {
-    listings: CSFloat.ListingData[];
-    user: CSFloat.SellerData;
+    data: CSFloat.ListingData[];
 };
 
 type SkinportWebsocketData = {
@@ -73,9 +74,9 @@ export function activateHandler() {
         if (lastUpdate == undefined) {
             lastUpdate = 0;
         }
-        // if lastUpdate is older than 8 hours, refresh prices
-        if (lastUpdate < Date.now() - 1000 * 60 * 60 * 8) {
-            console.debug('[BetterFloat] Prices are older than 8 hours, last update:', new Date(lastUpdate), '. Refreshing prices...');
+        // if lastUpdate is older than 1 hour, refresh prices
+        if (lastUpdate < Date.now() - 1000 * 60 * 60) {
+            console.debug('[BetterFloat] Prices are older than 1 hour, last update:', new Date(lastUpdate), '. Refreshing prices...');
             // send message to background to fetch and store new prices
             chrome.runtime.sendMessage({ message: 'fetchPrices' }, (response) => {
                 if (!response) return;
@@ -148,14 +149,13 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/me/watchlist')) {
         // own watchlist
-        cacheCSFItems(eventData.data as CSFloat.ListingData[]);
+        cacheCSFItems((eventData.data as any).data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/me/listings')) {
         // own stall
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);
-    } else if (eventData.url.includes('v1/users/')) {
-        // url schema: v1/users/[:userid]
-        // sellers stall, gives StallData
-        cacheCSFItems((eventData.data as StallData).listings);
+    } else if (eventData.url.includes('v1/users/') && eventData.url.includes('/stall')) {
+        // url schema: v1/users/[:userid]/stall
+        cacheCSFItems((eventData.data as StallData).data);
     } else if (eventData.url.includes('v1/history/')) {
         // item history, gets called on item popup
         if (eventData.url.includes('/graph')) {
@@ -164,6 +164,10 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
             // item table - last sales
             cacheCSFHistorySales(eventData.data as CSFloat.HistorySalesData[]);
         }
+    } else if (eventData.url.includes('v1/meta/location')) {
+        cacheCSFLocation(eventData.data as CSFloat.Location);
+    } else if (eventData.url.includes('v1/meta/exchange-rates')) {
+        cacheCSFExchangeRates(eventData.data as CSFloat.ExchangeRates);
     } else if (eventData.url.includes('v1/me')) {
         // user data, repeats often
     } else if (eventData.url.includes('v1/listings/') && eventData.url.split('/').length == 7) {

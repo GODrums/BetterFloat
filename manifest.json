@@ -1,8 +1,8 @@
 {
     "name": "BetterFloat",
     "author": "Rums",
-    "version": "1.13.0",
-    "version_name": "1.13.0",
+    "version": "1.14.0",
+    "version_name": "1.14.0",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
@@ -59,5 +59,6 @@
             "matches": ["*://*.skinbid.com/*"],
             "resources": []
         }
-    ]
+    ],
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5Sfi7IbW7uWPC7q/7qC0oe3WKq9k0wFi9H82B6PPSPlZLnlO/1mmnJ6BCsLnr8lMrg4Dbeg4ZL3mPL2VssFjSwsGDJvg0b8VAfO88WSLDzjxBRqyE/5X/Yfjs8jOmdm6caV74YZLuaAdzC7aaMn7Or3SP8ZN7WxpAUgtzNfL4E/m+BIOhXCKTYB2b4ijEJVaUiCwZovk88LS7Vawd/F6SK1nRHTWtnDdWdV4xkS3vSiIGTvimoBzisOVxVIOV1Cx/FVNXmHhh8ZVcnnNW+sJ/QiPfkqQTclZwtFKczwa78JuXWH715mKyC69O+2LyS4ng+T81ibjhuMmgMYIEnmpwwIDAQAB"
 }
