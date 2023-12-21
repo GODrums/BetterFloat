@@ -32,7 +32,7 @@ let skinportPopupItem: Skinport.ItemData | null = null;
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinport: csrf token
 let skinportCSRF = '';
-// skinport: minimum order price
+// skinport: minimum order price (e.g. 0.01)
 let skinportMinOrderPrice = 0;
 // skinbid: cached currency rates by Skinbid: EUR -> X
 let skinbidRates: Skinbid.ExchangeRates = [];
@@ -94,7 +94,7 @@ export function cacheCSFLocation(data: CSFloat.Location) {
 }
 
 export function cacheSpMinOrderPrice(price: number) {
-    skinportMinOrderPrice = price;
+    skinportMinOrderPrice = price / 100;
 }
 
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
