@@ -1,6 +1,6 @@
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
 import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
@@ -1032,7 +1032,7 @@ async function orderItem(item: Skinport.Listing) {
 
 async function addInstantOrder(item: Skinport.Listing, container: Element) {
     const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-    if (presentationDiv && item.price >= 2) {
+    if (presentationDiv && item.price >= getSpMinOrderPrice()) {
         const oneClickOrder = document.createElement('a');
         oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
         oneClickOrder.style.width = '60px';

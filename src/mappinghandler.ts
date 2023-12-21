@@ -29,6 +29,8 @@ let skinportPopupItem: Skinport.ItemData | null = null;
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinport: csrf token
 let skinportCSRF = '';
+// skinport: minimum order price
+let skinportMinOrderPrice = 0;
 // skinbid: cached currency rates by Skinbid: EUR -> X
 let skinbidRates: Skinbid.ExchangeRates = [];
 // skinport: cached currency rates by exchangerate.host: USD -> X
@@ -81,6 +83,10 @@ export function cacheSkbItems(data: Skinbid.Listing[]) {
     }
 }
 
+export function cacheSpMinOrderPrice(price: number) {
+    skinportMinOrderPrice = price;
+}
+
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
     csfloatPopupItem = data;
 }
@@ -123,6 +129,10 @@ export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
         console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
     }
     realRatesFromUSD = data;
+}
+
+export function getSpMinOrderPrice() {
+    return skinportMinOrderPrice;
 }
 
 export function getWholeHistory() {
