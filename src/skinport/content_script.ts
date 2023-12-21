@@ -502,7 +502,9 @@ async function adjustItem(container: Element) {
         return;
     }
     const priceResult = await addBuffPrice(item, container);
-    await addInstantOrder(item, container);
+    if (location.pathname.startsWith('/market')) {
+        await addInstantOrder(item, container);
+    }
 
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);

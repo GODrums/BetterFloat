@@ -99,6 +99,8 @@ chrome.runtime.onInstalled.addListener((details) => {
                 chrome.storage.local.set(newSettings);
             }
         });
+
+        chrome.storage.local.set({ displayUpdateMessage: true });
     }
 });
 

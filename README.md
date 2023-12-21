@@ -19,7 +19,7 @@ We have used our thread <a href="https://discord.com/channels/664104795367538690
 
 Click the badge below to join our server:
 
-[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/EeKEVwKB)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/VQWXp33nSW)
 
 ## 🌎 Downloads
 
