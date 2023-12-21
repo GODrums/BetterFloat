@@ -1064,7 +1064,7 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
-    let patternElement: BlueGem.PatternElement | null = null;
+    let patternElement: BlueGem.PatternElement | undefined = undefined;
     let type = '';
     if (item.item_name.startsWith('★')) {
         type = item.item_name.split(' | ')[0].split('★ ')[1];
@@ -1084,7 +1084,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
         await fetchCSBlueGem(type, item.paint_seed!).then((data) => {
-            pastSales = data.pastSales;
+            pastSales = data.pastSales ?? [];
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
         });

@@ -571,7 +571,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     const patternLink = <HTMLElement>linksContainer.lastElementChild!.cloneNode(true);
     patternLink.id = 'react-tabs-6';
     patternLink.setAttribute('aria-controls', 'react-tabs-7');
-    patternLink.textContent = `Buff Pattern Sales (${pastSales.length})`;
+    patternLink.textContent = `Buff Pattern Sales (${pastSales?.length ?? 0})`;
     patternLink.style.color = 'deepskyblue';
 
     const itemHistory = container.querySelector('.ItemHistory');
@@ -581,7 +581,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
     tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
     let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-right: 18px;"></a></div></div>`;
     let tableBody = '';
-    for (const sale of pastSales) {
+    for (const sale of pastSales ?? []) {
         tableBody += `<div class="ItemHistoryList-row"${
             Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
         }><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${

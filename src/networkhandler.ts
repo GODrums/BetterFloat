@@ -5,8 +5,8 @@ export async function fetchCSBlueGem(type: string, paint_seed: number, currency 
         .then((res) => res.json())
         .then((data) => {
             const { pastSales, patternElement } = {
-                pastSales: data.pop() as BlueGem.PastSale[],
-                patternElement: data.pop() as BlueGem.PatternElement | null,
+                pastSales: data.pop() as BlueGem.PastSale[] | undefined,
+                patternElement: data.pop() as BlueGem.PatternElement | undefined,
             };
             return { patternElement, pastSales };
         });

@@ -7,7 +7,7 @@ export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     return element;
 }
 
-export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | null, mode: 'left' | 'right' = 'left') {
+export function genGemContainer(runtimePublicURL: string, patternElement: BlueGem.PatternElement | undefined, mode: 'left' | 'right' = 'left') {
     const gemContainer = document.createElement('div');
     gemContainer.className = 'betterfloat-gem-container';
     gemContainer.title = 'playside blue% / backside blue%';
