@@ -1,10 +1,12 @@
 type PatternType = {
     [skin: string]: {
         [weapon: string]: {
-            [pattern: string]: number | {
-                img: string,
-                rank: number,
-            };
+            [pattern: string]:
+                | number
+                | {
+                      img: string;
+                      rank: number;
+                  };
         };
     };
 };
@@ -387,7 +389,7 @@ const patterns: PatternType = {
                 rank: 1,
             },
         },
-    }
+    },
 };
 
 export default patterns;

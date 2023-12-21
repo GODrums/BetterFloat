@@ -64,11 +64,11 @@ export namespace Extension {
             avg30: number; // 175
             liquidity: number; // 78.14
         };
-    }
+    };
+
     export type ApiBuffResponse = {
-        data: CustomPriceMapping,
+        data: CustomPriceMapping;
         time: number;
-        cached: boolean;
     };
 
     /**

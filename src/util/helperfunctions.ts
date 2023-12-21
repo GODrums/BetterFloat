@@ -1,3 +1,5 @@
+import Decimal from 'decimal.js';
+import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../mappinghandler';
 
@@ -37,10 +39,10 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
  * @returns
  */
 export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Promise<{ priceListing: number; priceOrder: number }> {
-    const priceMapping = await getPriceMapping();
+    const priceMapping: Extension.CustomPriceMapping = await getPriceMapping();
     let helperPrice: number | null = null;
 
-    if (!priceMapping[buff_name] || !priceMapping[buff_name] || !priceMapping[buff_name].starting_at || !priceMapping[buff_name].highest_order) {
+    if (!priceMapping[buff_name]) {
         console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
         helperPrice = 0;
     }
@@ -53,11 +55,12 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Pro
         priceOrder = helperPrice;
     } else if (priceMapping[buff_name]) {
         if (itemStyle !== '' && itemStyle !== 'Vanilla') {
-            priceListing = priceMapping[buff_name].starting_at.doppler![itemStyle] ?? 0;
-            priceOrder = priceMapping[buff_name].highest_order.doppler![itemStyle] ?? 0;
+            const dopplerName = buff_name + ' - ' + itemStyle;
+            priceListing = new Decimal(priceMapping[dopplerName].ask ?? 0).div(100).toNumber();
+            priceOrder = new Decimal(priceMapping[dopplerName].bid ?? 0).div(100).toNumber();
         } else {
-            priceListing = priceMapping[buff_name].starting_at.price;
-            priceOrder = priceMapping[buff_name].highest_order.price;
+            priceListing = new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber();
+            priceOrder = new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber();
         }
     }
     if (priceListing === undefined) {

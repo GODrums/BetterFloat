@@ -55,7 +55,7 @@ export namespace CSFloat {
             percentage: number;
             rank: number;
             seed: number;
-        }
+        };
         float_value?: number;
         has_screenshot: boolean;
         icon_url: string;
@@ -113,14 +113,14 @@ export namespace CSFloat {
             currency: string;
             long: string; // country
             short: string; // country code
-        }
-    }
+        };
+    };
 
     // https://csfloat.com/api/v1/meta/exchange-rates
     export type ExchangeRates = {
         data: {
             [key: string]: number;
-        }
+        };
     };
 
     export type HistoryGraphData = {
