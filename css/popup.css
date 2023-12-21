@@ -157,6 +157,16 @@ input[type='checkbox'] {
     margin-right: 15px;
 }
 
+input[type='text'] {
+    width: 150px;
+    height: 30px;
+    border-radius: 5px;
+    margin-right: 15px;
+    background: var(--color-background, #303030);
+    border: 0;
+    color: white;
+}
+
 input[type="color"] {
     width: 23px;
     height: 23px;
@@ -393,6 +403,15 @@ input[type="color"]::-webkit-color-swatch-wrapper {
             animation: rotating 1.2s linear infinite;
         }
     }
+}
+
+.LabelNew {
+    background: var(--color-accent, #ff5722);
+    border-radius: 5px;
+    padding: 3px 7px;
+    color: white;
+    font-size: 12px;
+    margin-left: 5px;
 }
 
 @keyframes rotating {

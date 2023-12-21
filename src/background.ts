@@ -19,6 +19,7 @@ export const defaultSettings: Extension.Settings = {
     spCheckBoxes: true,
     spStickerPrices: true,
     spBlueGem: true,
+    ocoAPIKey: '',
     spPriceReference: 0,
     skinportRates: 'real',
     spSteamPrice: false,

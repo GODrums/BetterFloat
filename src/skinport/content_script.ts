@@ -1,12 +1,13 @@
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinport } from '../@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
 import { getAllSettings } from '../util/extensionsettings';
 import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
+
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 async function init() {
@@ -54,7 +55,6 @@ async function firstLaunch() {
     const path = location.pathname;
 
     console.log('[BetterFloat] First launch, url:', path);
-
     if (path == '/') {
         const popularLists = Array.from(document.querySelectorAll('.PopularList'));
         for (const list of popularLists) {
@@ -502,6 +502,8 @@ async function adjustItem(container: Element) {
         return;
     }
     const priceResult = await addBuffPrice(item, container);
+    await addInstantOrder(item, container);
+
     if (extensionSettings.spStickerPrices) {
         await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
     }
@@ -857,6 +859,213 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
         container.after(divider);
     } else {
         container.replaceWith(buffContainer);
+    }
+}
+
+function showMessageBox(title: string, message: string, success = false) {
+    // Thank you chatGPT for this function (and css)
+    let messageContainer = document.querySelector('.MessageContainer');
+    if (!messageContainer) {
+        messageContainer = document.createElement('div');
+        messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+        document.getElementById('root')?.appendChild(messageContainer);
+    } else {
+        messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+    }
+    const messageInnerContainer = document.createElement('div');
+    messageInnerContainer.className = 'Message Message--error Message-enter-done';
+    messageContainer.appendChild(messageInnerContainer);
+
+    // Create title element
+    const titleElement = document.createElement('div');
+    titleElement.className = 'Message-title';
+    titleElement.textContent = title;
+    if (success) {
+        titleElement.style.color = '#66ff66';
+    }
+
+    if (message === 'MUST_LOGIN') {
+        // custom messages for create order request
+        message = 'You have to log in again.';
+    } else if (message === 'RATE_LIMIT_REACHED') {
+        message = 'You are ordering too fast!';
+    } else if (message === 'CART_OUTDATED') {
+        message = 'Your cart is outdated. Someone was probably faster than you.';
+    } else if (message === 'CAPTCHA') {
+        message = 'There was an error while ordering.';
+    } else if (message === 'SALE_PRICE_CHANGED') {
+        message = 'Item price got changed.';
+    } else if (message === 'ITEM_NOT_LISTED') {
+        message = 'The item you are trying to order is not listed (anymore).';
+    }
+
+    // Create message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'Message-text';
+    messageElement.textContent = message;
+
+    const messageButtons = document.createElement('div');
+    messageButtons.className = 'Message-buttons';
+    const messageCloseButton = document.createElement('button');
+    messageCloseButton.type = 'button';
+    messageCloseButton.className = 'Message-actionBtn Message-closeBtn';
+    messageCloseButton.textContent = 'Close';
+
+    const fadeOutEffect = () => {
+        if (!messageContainer) return;
+        (<HTMLElement>messageContainer).style.opacity = '0';
+        setTimeout(() => {
+            messageContainer!.replaceChildren();
+            (<HTMLElement>messageContainer).style.opacity = '1';
+        }, 500);
+    };
+    messageCloseButton.onclick = fadeOutEffect;
+
+    messageButtons.appendChild(messageCloseButton);
+    messageInnerContainer.appendChild(titleElement);
+    messageInnerContainer.appendChild(messageElement);
+    messageInnerContainer.appendChild(messageButtons);
+
+    // Set a timeout to remove the message after 7 seconds
+    setTimeout(fadeOutEffect, 6500);
+}
+
+async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
+    console.debug('[BetterFloat] Solving captcha.');
+    if (!extensionSettings.ocoAPIKey || extensionSettings.ocoAPIKey == '') {
+        showMessageBox(
+            'Please set an API key first!',
+            'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.'
+        );
+        console.debug('[BetterFloat] No API key provided');
+        return false;
+    }
+
+    const headers = {
+        authorization: extensionSettings.ocoAPIKey, // private API key, has to be customizable in UI
+    };
+    try {
+        const captchaAPIUrl = 'https://api.gamingtechinsider.com/captcha/betterfloat/';
+        const response = await fetch(captchaAPIUrl + saleId, {
+            method: 'GET',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json',
+            },
+        });
+        let responseJson = await response.json();
+        if (response.status === 200) {
+            return responseJson.token;
+        } else if (response.status === 401) {
+            console.error('[BetterFloat] Checkout: Please check your API key for validity.');
+            showMessageBox(
+                'A problem with your API key occured (HTTP 401)',
+                'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.'
+            );
+            return false;
+        } else if (response.status === 408) {
+            console.error('[BetterFloat] Checkout: Captcha solving timed out.');
+            showMessageBox('Server timed out (HTTP 408)', 'Please try to order again.');
+            return false;
+        } else if (response.status === 429) {
+            console.error('[BetterFloat] Checkout: Rate limit reached. No tokens available anymore.');
+            showMessageBox('Too many requests (HTTP 429)', 'The rate limit has been reached. Your API key has no tokens left.');
+            return false;
+        } else if (response.status === 500) {
+            console.error('[BetterFloat] Checkout: A internal server error occured.');
+            showMessageBox('Server error (HTTP 500)', 'Timeout or internal server error. Please try again or check the Discord server for more information.');
+            return false;
+        } else {
+            console.error('[BetterFloat] Checkout: Unkown error.');
+            showMessageBox('Unkown error.', 'An unknown error has occured. Please try again or check the Discord server for more information.');
+            return false;
+        }
+    } catch (error) {
+        console.error('[BetterFloat] ', error);
+        return false;
+    }
+}
+
+async function orderItem(item: Skinport.Listing) {
+    console.debug('[BetterFloat] Trying to order item ', item.saleId);
+    const csrfToken = await getSpCSRF();
+    const postData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
+
+    return await fetch('https://skinport.com/api/cart/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: postData,
+    })
+        .then((response) => response.json())
+        .then(async (response) => {
+            if (response.success) {
+                const captchaToken = await solveCaptcha(item.saleId);
+                if (!captchaToken) {
+                    return false;
+                }
+                console.debug('[BetterFloat] OCO addToCart was successful.');
+                const postData = encodeURI(`sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`);
+                return await fetch('https://skinport.com/api/checkout/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: postData,
+                })
+                    .then((response) => response.json())
+                    .then((response) => {
+                        if (response.success) {
+                            return true;
+                        } else {
+                            console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
+                            showMessageBox('Failed to create the order', response.message);
+                            // remove item from cart again
+                            fetch('https://skinport.com/api/cart/remove', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                                body: encodeURI(`item=${item.saleId}&_csrf=${csrfToken}`),
+                            });
+                            return false;
+                        }
+                    });
+            } else {
+                console.debug(`[BetterFloat] OCO addToCart failed ${response.message}`);
+                // same message as Skinport would show on 'ADD TO CART'
+                showMessageBox('Item is sold or not listed', 'The item you try to add to the cart is not available anymore.');
+                return false;
+            }
+        })
+        .catch((error) => {
+            console.warn('[BetterFloat] OCO - addToCart error:', error);
+            return false;
+        });
+}
+
+async function addInstantOrder(item: Skinport.Listing, container: Element) {
+    const presentationDiv = container.querySelector('.ItemPreview-mainAction');
+    if (presentationDiv && item.price >= getSpMinOrderPrice()) {
+        const oneClickOrder = document.createElement('a');
+        oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
+        oneClickOrder.style.width = '60px';
+        oneClickOrder.target = '_blank';
+        oneClickOrder.innerText = 'Order';
+        (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const currentCart = document.querySelector('.CartButton-count')?.textContent;
+            if (currentCart && Number(currentCart) > 0) {
+                showMessageBox('Your cart is not empty', 'Please empty your cart before using OneClickOrder.');
+                return;
+            }
+            orderItem(item).then((result) => {
+                console.log('[BetterFloat] oneClickOrder result: ', result);
+                if (result) {
+                    showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
+                }
+            });
+        };
+
+        if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {
+            presentationDiv.after(oneClickOrder);
+        }
     }
 }
 

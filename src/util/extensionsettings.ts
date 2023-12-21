@@ -73,6 +73,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.spBlueGem) {
             settings.spBlueGem = Boolean(data.spBlueGem);
         }
+        if (data.ocoAPIKey) {
+            settings.ocoAPIKey = String(data.ocoAPIKey);
+        }
         if (data.skinportRates) {
             settings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
         }

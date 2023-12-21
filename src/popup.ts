@@ -55,6 +55,18 @@ function addListeners() {
         $('.MainContent').css('height', '528px');
         $('.Warning').show(100);
     });
+    $('input[type=text]').on('change', function () {
+        const attrName = $(this).attr('name');
+        if (attrName) {
+            chrome.storage.local.set({
+                [attrName]: $(this).val(),
+            });
+        }
+        $('.SideBar').css('height', '528px');
+        $('.MainContent').css('height', '528px');
+        $('.Warning').show(100);
+    });
+
     // add listeners to all dropdowns
     $('select').on('change', function () {
         const attrName = $(this).attr('name');
@@ -241,6 +253,7 @@ function loadForSkinport() {
     const checkBoxesElement = <HTMLInputElement>document.getElementById('SkinportCheckboxes');
     const stickerPriceElement = <HTMLInputElement>document.getElementById('SkinportStickerPrices');
     const skinportBlueGem = <HTMLInputElement>document.getElementById('InputCSBlueGem');
+    const skinportOneClickBuy = <HTMLInputElement>document.getElementById('InputOneClickBuy');
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
     const skinportAutoClosePopup = <HTMLInputElement>document.getElementById('SkinportInputClosePopup');
@@ -270,6 +283,10 @@ function loadForSkinport() {
         } else {
             skinportBlueGem.checked = false;
         }
+        if (data.ocoAPIKey) {
+            skinportOneClickBuy.value = data.ocoAPIKey;
+        }
+
         if (data.skinportRates) {
             (<HTMLSelectElement>document.getElementById('SkinportCurrencyConversion')).value = data.skinportRates;
         }

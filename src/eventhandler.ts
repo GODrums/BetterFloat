@@ -13,6 +13,7 @@ import {
     cacheSkinbidUserCurrency,
     cacheSpItems,
     cacheSpPopupItem,
+    cacheSpMinOrderPrice,
     cacheCSFLocation,
     cacheCSFExchangeRates,
 } from './mappinghandler';
@@ -131,6 +132,7 @@ function processSkinportEvent(eventData: EventData<unknown>) {
         // Data from first page load
         const data = eventData.data as Skinport.UserData;
         cacheSkinportCurrencyRates(data.rates, data.currency);
+        cacheSpMinOrderPrice(data.limits.minOrderValue);
     }
 }
 

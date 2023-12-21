@@ -30,6 +30,10 @@ let skinportItems: Skinport.Item[] = [];
 let skinportPopupItem: Skinport.ItemData | null = null;
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
+// skinport: csrf token
+let skinportCSRF = '';
+// skinport: minimum order price
+let skinportMinOrderPrice = 0;
 // skinbid: cached currency rates by Skinbid: EUR -> X
 let skinbidRates: Skinbid.ExchangeRates = [];
 // skinport: cached currency rates by exchangerate.host: USD -> X
@@ -89,6 +93,10 @@ export function cacheCSFLocation(data: CSFloat.Location) {
     csfloatLocation = data;
 }
 
+export function cacheSpMinOrderPrice(price: number) {
+    skinportMinOrderPrice = price;
+}
+
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
     csfloatPopupItem = data;
 }
@@ -106,11 +114,16 @@ export function cacheSpItems(data: Skinport.Item[]) {
 }
 
 export function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
+    // maybe cache csrf token here as well
     if (Object.keys(skinportRatesFromUSD).length > 0) {
         console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
     }
     skinportRatesFromUSD = data;
     skinportUserCurrency = user;
+}
+
+export function cacheSkinportCSRF(token: string) {
+    skinportCSRF = token;
 }
 
 export function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
@@ -128,6 +141,11 @@ export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
     realRatesFromUSD = data;
 }
 
+
+export function getSpMinOrderPrice() {
+    return skinportMinOrderPrice;
+}
+
 // USD / rate = target currency
 export async function getCSFCurrencyRate(currency: string) {
     if (Object.keys(csfloatRates).length == 0) {
@@ -138,6 +156,7 @@ export async function getCSFCurrencyRate(currency: string) {
 
 export function getCSFUserCurrency() {
     return csfloatLocation?.inferred_location.currency ?? 'USD';
+
 }
 
 export function getWholeHistory() {
@@ -240,6 +259,13 @@ export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real')
     return rates == 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD[skinportUserCurrency];
 }
 
+export async function getSpCSRF() {
+    if (skinportCSRF == '') {
+        await fetchUserData();
+    }
+    return skinportCSRF;
+}
+
 export async function getSkbUserCurrencyRate() {
     if (skinbidUserCurrency == '') {
         skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
@@ -273,6 +299,7 @@ async function fetchUserData() {
         .then((data: Skinport.UserData) => {
             console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
             cacheSkinportCurrencyRates(data.rates, data.currency);
+            cacheSkinportCSRF(data.csrf);
         });
 }
 

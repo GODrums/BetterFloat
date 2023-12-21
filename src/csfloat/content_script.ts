@@ -1020,7 +1020,7 @@ async function webDetection(container: Element, item: CSFloat.Item) {
     // add replacement screenshot if csfloat does not offer one and if available
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0 && cw_data.img) {
-        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)', cw_data.img);
+        CSFloatHelpers.addReplacementScreenshotButton(container, item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)', cw_data.img);
     }
 }
 

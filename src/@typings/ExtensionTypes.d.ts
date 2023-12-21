@@ -18,6 +18,7 @@ export namespace Extension {
         spCheckBoxes: boolean;
         spStickerPrices: boolean;
         spBlueGem: boolean;
+        ocoAPIKey: string;
         spPriceReference: 0 | 1;
         spSteamPrice: boolean;
         spBuffDifference: boolean;
