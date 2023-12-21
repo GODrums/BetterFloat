@@ -165,7 +165,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/me/watchlist')) {
         // own watchlist
-        cacheCSFItems((eventData.data as any).data as CSFloat.ListingData[]);
+        cacheCSFItems((eventData.data as CSFloat.WatchlistData).data);
     } else if (eventData.url.includes('v1/me/listings')) {
         // own stall
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);

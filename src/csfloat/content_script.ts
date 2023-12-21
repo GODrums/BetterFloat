@@ -983,7 +983,7 @@ async function badgePhoenix(container: Element, item: CSFloat.Item) {
     CSFloatHelpers.addPatternBadge(
         container,
         extensionSettings.runtimePublicURL + '/phoenix-icon.svg',
-        `height: 30px;`,
+        'height: 30px;',
         [`Position: ${phoenix_data.type}`, `Tier ${phoenix_data.tier}`].concat(phoenix_data.rank ? [`Rank #${phoenix_data.rank}`] : []),
         'translate: -15px 15px; width: 90px;',
         'T' + phoenix_data.tier,

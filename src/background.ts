@@ -103,7 +103,6 @@ chrome.runtime.onInstalled.addListener((details) => {
         chrome.storage.local.set({ displayUpdateMessage: true });
     }
 });
-chrome.storage.local.set({ displayUpdateMessage: true });
 
 export async function refreshPrices() {
     return await fetch('https://prices.rums.dev/v1/pricempire_usd')

@@ -116,6 +116,10 @@ export namespace CSFloat {
         };
     };
 
+    export type WatchlistData = {
+        data: CSFloat.ListingData[];
+    };
+
     // https://csfloat.com/api/v1/meta/exchange-rates
     export type ExchangeRates = {
         data: {

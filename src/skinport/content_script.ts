@@ -503,7 +503,7 @@ async function adjustItem(container: Element) {
     }
     const priceResult = await addBuffPrice(item, container);
     if (location.pathname.startsWith('/market')) {
-        await addInstantOrder(item, container);
+        addInstantOrder(item, container);
     }
 
     if (extensionSettings.spStickerPrices) {
@@ -955,7 +955,7 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
                 'Content-Type': 'application/json',
             },
         });
-        let responseJson = await response.json();
+        const responseJson = await response.json();
         if (response.status === 200) {
             return responseJson.token;
         } else if (response.status === 401) {
@@ -1013,14 +1013,14 @@ async function orderItem(item: Skinport.Listing) {
                     body: postData,
                 })
                     .then((response) => response.json())
-                    .then((response) => {
+                    .then(async (response) => {
                         if (response.success) {
                             return true;
                         } else {
                             console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
                             showMessageBox('Failed to create the order', response.message);
                             // remove item from cart again
-                            fetch('https://skinport.com/api/cart/remove', {
+                            await fetch('https://skinport.com/api/cart/remove', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                 body: encodeURI(`item=${item.saleId}&_csrf=${csrfToken}`),
@@ -1041,7 +1041,7 @@ async function orderItem(item: Skinport.Listing) {
         });
 }
 
-async function addInstantOrder(item: Skinport.Listing, container: Element) {
+function addInstantOrder(item: Skinport.Listing, container: Element) {
     const presentationDiv = container.querySelector('.ItemPreview-mainAction');
     if (presentationDiv && item.price >= getSpMinOrderPrice()) {
         const oneClickOrder = document.createElement('a');
