@@ -56,8 +56,13 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Pro
     } else if (priceMapping[buff_name]) {
         if (itemStyle !== '' && itemStyle !== 'Vanilla') {
             const dopplerName = buff_name + ' - ' + itemStyle;
-            priceListing = new Decimal(priceMapping[dopplerName].ask ?? 0).div(100).toNumber();
-            priceOrder = new Decimal(priceMapping[dopplerName].bid ?? 0).div(100).toNumber();
+            if (priceMapping[dopplerName]) {
+                priceListing = new Decimal(priceMapping[dopplerName].ask ?? 0).div(100).toNumber();
+                priceOrder = new Decimal(priceMapping[dopplerName].bid ?? 0).div(100).toNumber();
+            } else {
+                priceListing = 0;
+                priceOrder = 0;
+            }
         } else {
             priceListing = new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber();
             priceOrder = new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber();

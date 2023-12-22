@@ -300,6 +300,7 @@ async function fetchUserData() {
             console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
             cacheSkinportCurrencyRates(data.rates, data.currency);
             cacheSkinportCSRF(data.csrf);
+            cacheSpMinOrderPrice(data.limits.minOrderValue);
         });
 }
 
@@ -354,7 +355,7 @@ export async function loadMapping() {
         if (success) {
             console.debug('[BetterFloat] Price mapping successfully initialized');
         } else {
-            console.error('[BetterFloat] CSGOTrader price load failed.');
+            console.error('[BetterFloat] Rums.dev price load failed.');
             return false;
         }
     }

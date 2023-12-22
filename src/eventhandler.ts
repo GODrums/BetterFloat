@@ -68,7 +68,7 @@ export function activateHandler() {
         }
     });
 
-    // refresh prices if they are older than 8 hours
+    // refresh prices if they are older than 1 hour
     chrome.storage.local.get('lastUpdate', (result) => {
         let lastUpdate = result.lastUpdate;
         if (lastUpdate == undefined) {

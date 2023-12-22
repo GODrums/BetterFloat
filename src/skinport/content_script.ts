@@ -1054,8 +1054,17 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
             e.stopPropagation();
             e.preventDefault();
             const currentCart = document.querySelector('.CartButton-count')?.textContent;
+            const isLoggedOut = document.querySelector('.HeaderContainer-link--login') != null;
+            if (isLoggedOut) {
+                showMessageBox('You are not logged in', 'Please log in to Skinport before using BetterFloat\'s OneClickOrder.');
+                return;
+            }
             if (currentCart && Number(currentCart) > 0) {
                 showMessageBox('Your cart is not empty', 'Please empty your cart before using OneClickOrder.');
+                return;
+            }
+            if (container.closest('.ItemPreview-status') != null) {
+                showMessageBox('Item is sold or not listed', 'The item you try to add to purchase is not available anymore.');
                 return;
             }
             oneClickOrder.innerHTML = '<span class="loader"></span>';
