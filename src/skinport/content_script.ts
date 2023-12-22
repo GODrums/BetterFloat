@@ -1046,6 +1046,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
     if (presentationDiv && item.price >= getSpMinOrderPrice()) {
         const oneClickOrder = document.createElement('a');
         oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
+        oneClickOrder.style.borderRadius = '0';
         oneClickOrder.style.width = '60px';
         oneClickOrder.target = '_blank';
         oneClickOrder.innerText = 'Order';
@@ -1057,7 +1058,9 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 showMessageBox('Your cart is not empty', 'Please empty your cart before using OneClickOrder.');
                 return;
             }
+            oneClickOrder.innerHTML = '<span class="loader"></span>';
             orderItem(item).then((result) => {
+                oneClickOrder.innerText = 'Order';
                 console.log('[BetterFloat] oneClickOrder result: ', result);
                 if (result) {
                     showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
@@ -1088,6 +1091,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
         if (presentationDiv) {
             const buffLink = document.createElement('a');
             buffLink.className = 'ItemPreview-sideAction betterskinport-bufflink';
+            buffLink.style.borderRadius = '0';
             buffLink.style.width = '60px';
             buffLink.target = '_blank';
             buffLink.innerText = 'Buff';
