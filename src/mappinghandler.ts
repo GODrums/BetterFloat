@@ -141,7 +141,6 @@ export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
     realRatesFromUSD = data;
 }
 
-
 export function getSpMinOrderPrice() {
     return skinportMinOrderPrice;
 }
@@ -156,7 +155,6 @@ export async function getCSFCurrencyRate(currency: string) {
 
 export function getCSFUserCurrency() {
     return csfloatLocation?.inferred_location.currency ?? 'USD';
-
 }
 
 export function getWholeHistory() {
@@ -367,22 +365,27 @@ export async function loadCrimsonWebMapping() {
         // load from local storage first to avoid unnecessary requests
         console.debug('[BetterFloat] Attempting to load crimson web mapping from local storage');
         await new Promise<boolean>((resolve) => {
-            chrome.storage.local.get(['crimsonWebMapping'], async (data) => {
-                if (data.crimsonWebMapping) {
-                    crimsonWebMapping = JSON.parse(data.crimsonWebMapping);
-                } else {
-                    console.debug('[BetterFloat] No CW mapping found in local storage. Loading from Github ...');
-                    await fetch('https://raw.githubusercontent.com/GODrums/cs-tierlist/main/generated/crimson_web.json')
-                        .then((response) => response.json())
-                        .then((data) => {
-                            crimsonWebMapping = data;
-                            chrome.storage.local.set({ crimsonWebMapping: JSON.stringify(data) });
-                            console.debug('[BetterFloat] Crimson web mapping successfully loaded from Github');
-                        })
-                        .catch((err) => console.error(err));
-                }
-                resolve(true);
-            });
+            try {
+                chrome.storage.local.get(['crimsonWebMapping'], async (data) => {
+                    if (data.crimsonWebMapping) {
+                        crimsonWebMapping = JSON.parse(data.crimsonWebMapping);
+                    } else {
+                        console.debug('[BetterFloat] No CW mapping found in local storage. Loading from Github ...');
+                        await fetch('https://raw.githubusercontent.com/GODrums/cs-tierlist/main/generated/crimson_web.json')
+                            .then((response) => response.json())
+                            .then((data) => {
+                                crimsonWebMapping = data;
+                                chrome.storage.local.set({ crimsonWebMapping: JSON.stringify(data) });
+                                console.debug('[BetterFloat] Crimson web mapping successfully loaded from Github');
+                            })
+                            .catch((err) => console.error(err));
+                    }
+                    resolve(true);
+                });
+            } catch (err) {
+                console.error(err);
+                resolve(false);
+            }
         });
     }
     return true;

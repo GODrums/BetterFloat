@@ -69,9 +69,6 @@ chrome.runtime.onInstalled.addListener((details) => {
     } else if (details.reason == 'update') {
         const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
-        // reset prices in storage due to breaking changes
-        // chrome.storage.local.set({ prices: {} });
-        chrome.storage.local.set({ lastUpdate: 0 });
 
         chrome.storage.local.get((data) => {
             if (!data) {
