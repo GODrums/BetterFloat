@@ -322,6 +322,10 @@ function loadForSkinport() {
             neutralColor.value = data.colors.skinport.neutral;
         }
     });
+
+    document.querySelector('#discord-link')?.addEventListener('click', () => {
+        chrome.tabs.create({ url: 'https://discord.gg/VQWXp33nSW' });
+    });
 }
 
 function loadForAbout() {
