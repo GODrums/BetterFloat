@@ -62,9 +62,8 @@ async function firstLaunch() {
         }
     } else if (location.pathname.includes('/shop/')) {
         let items = document.querySelectorAll('.items-desktop .auction-item-card');
-        console.log('[BetterFloat] Found items: ', items);
         for (let i = 0; i < items.length; i++) {
-            await adjustItem(items[i], itemSelectors.card);
+            await adjustItem(items[i].parentElement!, itemSelectors.card);
         }
     }
 }
@@ -160,6 +159,8 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
     let hashHTML: string | undefined = undefined;
     if (selector.self == 'page') {
         hashHTML = location.pathname.split('/')[2];
+    } else if (container.tagName.includes('APP-AUCTION-CARD-ITEM')) {
+        hashHTML = container.parentElement?.getAttribute('href')?.split('/')[2];
     } else {
         hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
     }
