@@ -99,7 +99,7 @@ async function applyMutation() {
                             // big item page
                             await adjustItem(document.querySelector('.item')!, itemSelectors.page);
                         } else if (addedNode.tagName === 'APP-PRICE-CHART') {
-                            console.log('Found price chart: ', addedNode);
+                            // console.log('Found price chart: ', addedNode);
                         }
                     }
                 }
@@ -340,8 +340,9 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
         buffPrice.style.fontSize = '18px';
     }
     let tooltipSpan = document.createElement('span');
-    tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
-    tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
+    // rework tooltip for list view
+    // tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
+    // tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
     buffPrice.appendChild(tooltipSpan);
     let buffPriceBid = document.createElement('span');
     buffPriceBid.setAttribute('style', 'color: orange;');
@@ -366,147 +367,18 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 }
 
 async function calculateBuffPrice(item: Skinbid.Item): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
-    // let buff_name = handleSpecialStickerNames(createBuffName(item));
-    let buff_name = handleSpecialStickerNames(item.fullName);
-    let { priceListing, priceOrder } = await getBuffPrice(buff_name, '');
+    const buff_name = handleSpecialStickerNames(item.fullName);
+    const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex == 0 ? 'Vanilla' : '');
+    let { priceListing, priceOrder } = await getBuffPrice(buff_name, style);
 
     // convert prices to user's currency
-    let currencyRate = await getSkbUserCurrencyRate();
+    const currencyRate = await getSkbUserCurrencyRate();
     if (currencyRate !== 1) {
         priceListing = priceListing * currencyRate;
         priceOrder = priceOrder * currencyRate;
     }
 
     return { buff_name, priceListing, priceOrder };
-}
-
-function createBuffName(item: Skinbid.HTMLItem): string {
-    let full_name = `${item.name}`;
-    if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
-        full_name = item.type + ' | ' + full_name;
-    } else if (
-        item.type.includes('Case') ||
-        item.type.includes('Collectible') ||
-        item.type.includes('Gift') ||
-        item.type.includes('Key') ||
-        item.type.includes('Pass') ||
-        item.type.includes('Pin') ||
-        item.type.includes('Tool') ||
-        item.style == 'Vanilla'
-    ) {
-        full_name = item.name;
-    } else if (item.type.includes('Agent')) {
-        full_name = `${item.name} | ${item.category}`;
-    } else if (item.name.includes('Dragon King')) {
-        full_name = `M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
-    } else {
-        full_name = `${item.type.includes('Knife') || item.type.includes('Gloves') ? '★ ' : ''}${item.name.includes('StatTrak') ? 'StatTrak™ ' : ''}${item.type.split(' • ')[1]} | ${item.name.replace(
-            'StatTrak™ ',
-            ''
-        )} (${item.wear_name})`;
-    }
-    return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
-}
-
-function getSkinbidFullItem(container: Element): Skinbid.HTMLItem | null {
-    let name = container.querySelector('.item-title')?.textContent?.trim() ?? '';
-    let category = '';
-    let style: ItemStyle = '';
-    if (name == '') {
-        return null;
-    } else if (name.includes('Marble Fade')) {
-        name = 'Marble Fade';
-        category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
-    } else if (name.includes('Doppler')) {
-        style = name.split('Doppler ')[1] as ItemStyle;
-        name = 'Doppler';
-    } else if (name.includes('★')) {
-        style = 'Vanilla';
-    }
-    let priceText = container.querySelector('.item-bids-time-info')?.children[0].children[1]?.textContent?.trim() ?? '';
-    let price = Number(priceText.replace(/[^0-9.-]+/g, ''));
-    let type = container.querySelector('.item-category')?.textContent?.trim() ?? '';
-    let itemDetails = container.querySelectorAll('.details-actions-section .item-detail');
-    let wearText = itemDetails[0]?.children[1]?.textContent ?? '';
-    let wear = Number(itemDetails[1]?.children[1]?.textContent ?? 0);
-    return {
-        name: name,
-        price: price,
-        type: type,
-        style: style,
-        wear: wear,
-        wear_name: wearText,
-        category: category,
-    };
-}
-
-function getSkinbidItem(container: Element, selector: ItemSelectors): Skinbid.HTMLItem | null {
-    let name = container.querySelector(selector.name)?.textContent?.trim() ?? '';
-    let category = '';
-    let style: ItemStyle = '';
-    if (name == '') {
-        return null;
-    } else if (name.includes('💎')) {
-        name = name.split('💎')[1].trim();
-        category = '💎';
-    } else if (name.includes('Marble Fade')) {
-        name = 'Marble Fade';
-        category = name.includes('(') ? name.split('(')[1].split(')')[0] : '';
-    } else if (name.includes('Doppler')) {
-        style = name.split('Doppler ')[1] as ItemStyle;
-        name = 'Doppler';
-    } else if (name.includes('★')) {
-        style = 'Vanilla';
-    }
-
-    let priceText = container.querySelector(selector.price)?.textContent ?? '';
-    if (priceText.includes('K')) {
-        priceText = priceText.replace('.', '').replace('K', '0.00');
-    }
-    if (container.querySelector(selector.price + ' .item-buynow')) {
-        priceText = container.querySelector(selector.price + ' .item-buynow')?.textContent ?? '';
-    }
-    let price = Number(priceText.replace(/[^0-9.-]+/g, '').trim());
-    let type = container.querySelector(selector.type)?.textContent?.trim() ?? '';
-    const getWear = (wearDiv: HTMLElement) => {
-        let wear = '';
-
-        if (wearDiv) {
-            let w = wearDiv.textContent?.trim().split(' ')[0];
-            switch (w) {
-                case 'FN':
-                    wear = 'Factory New';
-                    break;
-                case 'MW':
-                    wear = 'Minimal Wear';
-                    break;
-                case 'FT':
-                    wear = 'Field-Tested';
-                    break;
-                case 'WW':
-                    wear = 'Well-Worn';
-                    break;
-                case 'BS':
-                    wear = 'Battle-Scarred';
-                    break;
-                default:
-                    wear = '';
-                    break;
-            }
-        }
-        return wear;
-    };
-    let wearDiv = container.querySelector(selector.wear);
-    let wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
-    return {
-        name: name,
-        price: price,
-        type: type,
-        style: style,
-        wear: Number(wearDiv?.textContent?.split('/')[1]),
-        wear_name: wear,
-        category: category,
-    };
 }
 
 let extensionSettings: Extension.Settings;
