@@ -2,7 +2,7 @@ import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getItemPrice, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { initSettings } from '../util/extensionsettings';
 import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
@@ -157,39 +157,23 @@ function isMobileItem(container: Element) {
 }
 
 async function adjustItem(container: Element, selector: ItemSelectors) {
-    const item = selector.self == 'page' ? getSkinbidFullItem(container) : getSkinbidItem(container, selector);
-    if (!item) return;
-    const { priceResult, cachedItem } = await handleSkbNameIssues(item, container, selector);
+    let hashHTML: string | undefined = undefined;
+    if (selector.self == 'page') {
+        hashHTML = location.pathname.split('/')[2];
+    } else {
+        hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
+    }
+    if (!hashHTML) return;
+    let cachedItem = getSpecificSkbItem(hashHTML);
+    const priceResult = await addBuffPrice(cachedItem, container, selector);
     if (cachedItem) {
         if (extensionSettings.skbListingAge || selector.self == 'page') {
             addListingAge(container, cachedItem, selector.self);
         }
-        if (extensionSettings.skbStickerPrices || selector.self == 'page') {
-            await addStickerInfo(container, cachedItem, selector, priceResult?.price_difference ?? 0);
+        if ((extensionSettings.skbStickerPrices || selector.self == 'page') && priceResult?.price_difference) {
+            await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
         }
     }
-}
-
-async function handleSkbNameIssues(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
-    let priceResult;
-    let cachedItem;
-    if (item.type === 'Agent') {
-        cachedItem = getFirstSkbItem();
-        if (!cachedItem?.items) {
-            console.log('[BetterFloat] No cached item found: ', cachedItem);
-            return { priceResult, cachedItem };
-        }
-        let apiItem = cachedItem?.items?.at(0)?.item;
-        if (apiItem) {
-            item.name = apiItem.subCategory;
-            item.category = apiItem.name;
-        }
-        priceResult = await addBuffPrice(item, container, selector);
-    } else {
-        priceResult = await addBuffPrice(item, container, selector);
-        cachedItem = getFirstSkbItem();
-    }
-    return { priceResult, cachedItem };
 }
 
 async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: number) {
@@ -254,9 +238,13 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
     }
 }
 
-async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector: ItemSelectors) {
+async function addBuffPrice(cachedItem: Skinbid.Listing, container: Element, selector: ItemSelectors): Promise<{
+    price_difference: number,
+} | void> {
     await loadMapping();
-    let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
+    const listingItem = cachedItem?.items?.at(0)?.item;
+    if (!listingItem) return;
+    let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
     let buff_id = await getBuffMapping(buff_name);
 
     if (priceListing === 0 && priceOrder === 0) {
@@ -301,7 +289,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
         }
     }
 
-    const difference = item.price - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
+    const difference = cachedItem.nextMinimumBid - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
     if (extensionSettings.skbBuffDifference) {
         let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
@@ -309,7 +297,7 @@ async function addBuffPrice(item: Skinbid.HTMLItem, container: Element, selector
             discountContainer.className = selector.discount.substring(1);
             container.querySelector(selector.discountDiv)?.appendChild(discountContainer);
         }
-        if (item.price !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+        if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             if (selector == itemSelectors.page) {
                 let discountSpan = document.createElement('span');
                 discountSpan.style.marginLeft = '5px';
@@ -377,9 +365,10 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     }
 }
 
-async function calculateBuffPrice(item: Skinbid.HTMLItem): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
-    let buff_name = handleSpecialStickerNames(createBuffName(item));
-    let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+async function calculateBuffPrice(item: Skinbid.Item): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
+    // let buff_name = handleSpecialStickerNames(createBuffName(item));
+    let buff_name = handleSpecialStickerNames(item.fullName);
+    let { priceListing, priceOrder } = await getBuffPrice(buff_name, '');
 
     // convert prices to user's currency
     let currencyRate = await getSkbUserCurrencyRate();
