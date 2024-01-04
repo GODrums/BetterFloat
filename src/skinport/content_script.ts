@@ -178,14 +178,15 @@ async function applyMutation() {
                     const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
+                    console.debug('[BetterFloat] Mutation observer: ', addedNode);
 
                     if (addedNode.className) {
                         const className = addedNode.className.toString();
-                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item')) {
+                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item')) {
                             await adjustItem(addedNode);
                         } else if (className.includes('Cart-container')) {
                             await adjustCart(addedNode);
-                        } else if (className == 'ItemPage') {
+                        } else if (className.includes('ItemPage')) {
                             await adjustItemPage(addedNode);
                         } else if (className.includes('PopularList')) {
                             await handlePopularList(addedNode);
@@ -472,6 +473,11 @@ async function adjustItemPage(container: Element) {
     const popupItem = getSpPopupItem();
     if (popupItem && extensionSettings.spBlueGem) {
         await caseHardenedDetection(container, popupItem.data.item);
+    }
+
+    const embeddedItems = Array.from(document.querySelectorAll('.ItemList-item'));
+    for (const item of embeddedItems) {
+        await adjustItem(item);
     }
 }
 
