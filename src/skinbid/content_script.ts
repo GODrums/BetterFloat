@@ -156,7 +156,7 @@ function isMobileItem(container: Element) {
 }
 
 async function adjustItem(container: Element, selector: ItemSelectors) {
-    let hashHTML: string | undefined = undefined;
+    let hashHTML: string | undefined;
     if (selector.self == 'page') {
         hashHTML = location.pathname.split('/')[2];
     } else if (container.tagName.includes('APP-AUCTION-CARD-ITEM')) {
@@ -165,7 +165,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
         hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
     }
     if (!hashHTML) return;
-    let cachedItem = getSpecificSkbItem(hashHTML);
+    const cachedItem = getSpecificSkbItem(hashHTML);
     const priceResult = await addBuffPrice(cachedItem, container, selector);
     if (cachedItem) {
         if (extensionSettings.skbListingAge || selector.self == 'page') {
@@ -245,15 +245,15 @@ async function addBuffPrice(cachedItem: Skinbid.Listing, container: Element, sel
     await loadMapping();
     const listingItem = cachedItem?.items?.at(0)?.item;
     if (!listingItem) return;
-    let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
-    let buff_id = await getBuffMapping(buff_name);
+    const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
+    const buff_id = await getBuffMapping(buff_name);
 
     if (priceListing === 0 && priceOrder === 0) {
         console.debug('[BetterFloat] No buff price found for ', buff_name);
         return;
     }
 
-    let priceDiv = container.querySelector(selector.priceDiv);
+    const priceDiv = container.querySelector(selector.priceDiv);
     if (!priceDiv?.firstChild) {
         console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
         return;

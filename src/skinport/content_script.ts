@@ -9,6 +9,7 @@ import { Extension } from '../@typings/ExtensionTypes';
 import { fetchCSBlueGem } from '../networkhandler';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
+import Decimal from 'decimal.js';
 
 async function init() {
     if (!location.hostname.includes('skinport.com')) {
@@ -178,7 +179,6 @@ async function applyMutation() {
                     const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
                     if (!(addedNode instanceof HTMLElement)) continue;
-                    console.debug('[BetterFloat] Mutation observer: ', addedNode);
 
                     if (addedNode.className) {
                         const className = addedNode.className.toString();
@@ -471,8 +471,16 @@ async function adjustItemPage(container: Element) {
     await addFloatColoring(container, item);
 
     const popupItem = getSpPopupItem();
-    if (popupItem && extensionSettings.spBlueGem) {
-        await caseHardenedDetection(container, popupItem.data.item);
+    if (popupItem) {
+        if (extensionSettings.spBlueGem) {
+            await caseHardenedDetection(container, popupItem.data.item);
+        }
+        const suggestedText = container.querySelector('.ItemPage-suggested');
+        if (suggestedText) {
+            const currencySymbol = getSymbolFromCurrency(popupItem.data.item.currency);
+            const lowPrice = new Decimal(popupItem.data.offers.lowPrice).div(100).toDP(2).toNumber();
+            suggestedText.innerHTML += `<br>Lowest on Skinport: ${(currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice)} (${popupItem.data.offers.offerCount} offers)`;
+        }
     }
 
     const embeddedItems = Array.from(document.querySelectorAll('.ItemList-item'));
@@ -829,7 +837,9 @@ async function calculateBuffPrice(item: Skinport.Listing): Promise<{ buff_name: 
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
-    container.className += ' betterfloat-buffprice';
+    if (!isItemPage) {
+        container.className += ' betterfloat-buffprice';
+    }
     const buffContainer = document.createElement('div');
     buffContainer.className = 'betterfloat-buff-container';
     buffContainer.style.display = 'flex';
