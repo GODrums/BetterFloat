@@ -1059,7 +1059,7 @@ async function orderItem(item: Skinport.Listing) {
 
 function addInstantOrder(item: Skinport.Listing, container: Element) {
     const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-    if (presentationDiv && item.price >= getSpMinOrderPrice()) {
+    if (presentationDiv && item.price >= getSpMinOrderPrice() && extensionSettings.ocoAPIKey && extensionSettings.ocoAPIKey.length > 0) {
         const oneClickOrder = document.createElement('a');
         oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
         oneClickOrder.style.borderRadius = '0';
