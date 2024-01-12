@@ -1152,7 +1152,15 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
             discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
                 difference == 0 ? extensionSettings.colors.skinport.neutral : difference < 0 ? extensionSettings.colors.skinport.profit : extensionSettings.colors.skinport.loss
             })`;
-            saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
+            let saleText: string;
+            if (difference == 0) {
+                saleText = `-${item.currency}0`;
+            } else {
+                const sign = difference > 0 ? '+' : '-';
+                const percentage = extensionSettings.spShowBuffPercentageDifference ? (' (' + ((item.price / (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)') : '';
+                saleText = `${sign}${item.currency}${Math.abs(difference).toFixed(2)}${percentage}`;
+            }
+            saleTag.textContent = saleText;
         }
     } else {
         if (container.querySelector('.sale-tag')) {

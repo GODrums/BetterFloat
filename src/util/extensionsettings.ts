@@ -88,6 +88,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.spBuffDifference) {
             settings.spBuffDifference = Boolean(data.spBuffDifference);
         }
+        if (data.spShowBuffPercentageDifference) {
+            settings.spShowBuffPercentageDifference = Boolean(data.spShowBuffPercentageDifference);
+        }
         if (data.spBuffLink) {
             settings.spBuffLink = data.spBuffLink as Extension.Settings['spBuffLink'];
         }

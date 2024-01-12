@@ -24,6 +24,7 @@ export const defaultSettings: Extension.Settings = {
     skinportRates: 'real',
     spSteamPrice: false,
     spBuffDifference: true,
+    spShowBuffPercentageDifference: false,
     spBuffLink: 'action',
     spAutoclosePopup: true,
     spFilter: {

@@ -22,6 +22,7 @@ export namespace Extension {
         spPriceReference: 0 | 1;
         spSteamPrice: boolean;
         spBuffDifference: boolean;
+        spShowBuffPercentageDifference: boolean;
         skinportRates: 'skinport' | 'real';
         spBuffLink: 'action' | 'text';
         spAutoclosePopup: boolean;

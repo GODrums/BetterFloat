@@ -256,6 +256,7 @@ function loadForSkinport() {
     const skinportOneClickBuy = <HTMLInputElement>document.getElementById('InputOneClickBuy');
     const skinportSteamPrice = <HTMLInputElement>document.getElementById('SkinportSteamPrice');
     const skinportInputBuffDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffDifference');
+    const skinportShowBuffPercentageDifference = <HTMLInputElement>document.getElementById('SkinportInputBuffPercentageDifference');
     const skinportAutoClosePopup = <HTMLInputElement>document.getElementById('SkinportInputClosePopup');
     const floatColoring = <HTMLInputElement>document.getElementById('FloatColoring');
     const profitColor = <HTMLInputElement>document.getElementById('InputProfitColor');
@@ -302,6 +303,16 @@ function loadForSkinport() {
             skinportInputBuffDifference.checked = true;
         } else {
             skinportInputBuffDifference.checked = false;
+        }
+        if (data.spBuffDifference) {
+            skinportInputBuffDifference.checked = true;
+        } else {
+            skinportInputBuffDifference.checked = false;
+        }
+        if (data.spShowBuffPercentageDifference) {
+            skinportShowBuffPercentageDifference.checked = true;
+        } else {
+            skinportShowBuffPercentageDifference.checked = false;
         }
         if (data.spBuffLink) {
             (<HTMLInputElement>document.getElementById('SkinportBuffLink')).value = data.spBuffLink;
