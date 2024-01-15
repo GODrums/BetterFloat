@@ -1622,6 +1622,12 @@ async function addBuffPrice(
         buffPriceAsk.textContent = `Ask ${CurrencyFormatter.format(priceListing)}`;
         buffPrice.appendChild(buffPriceAsk);
         buffContainer.appendChild(buffPrice);
+        if (priceOrder > priceListing * 1.1) {
+            const warningImage = document.createElement('img');
+            warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+            warningImage.setAttribute('style', 'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);');
+            buffContainer.appendChild(warningImage);
+        }
 
         if (!container.querySelector('.betterfloat-buffprice')) {
             if (showBoth) {

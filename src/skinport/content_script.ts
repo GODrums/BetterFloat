@@ -871,6 +871,12 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
     buffPrice.appendChild(buffPriceAsk);
     buffContainer.appendChild(buffPrice);
+    if (priceOrder > priceListing * 1.1) {
+        const warningImage = document.createElement('img');
+        warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+        warningImage.setAttribute('style', `height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${isItemPage ? 'margin-bottom: 1px;' : ''}`);
+        buffContainer.appendChild(warningImage);
+    }
     if (extensionSettings.spSteamPrice || isItemPage) {
         const divider = document.createElement('div');
         container.after(buffContainer);
