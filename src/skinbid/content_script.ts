@@ -217,7 +217,7 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
         let listingContainer = referenceDiv?.cloneNode(true);
         if (listingContainer.childNodes.length > 1) {
             listingContainer.firstChild!.textContent = ' Time of Listing ';
-            listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created);
+            listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created, 1);
         }
         referenceDiv.after(listingContainer);
     } else {
@@ -228,7 +228,7 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
         listingAge.classList.add('betterfloat-age-' + page);
         listingIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/clock-solid.svg');
 
-        listingAgeText.textContent = calculateTime(cachedItem.auction.created);
+        listingAgeText.textContent = calculateTime(cachedItem.auction.created, 1);
         listingAge.appendChild(listingIcon);
         listingAge.appendChild(listingAgeText);
 

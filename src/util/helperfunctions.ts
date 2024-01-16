@@ -101,10 +101,10 @@ export function cutSubstring(text: string, startChar: string, endChar: string) {
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
  */
-export function calculateTime(created_at: string) {
+export function calculateTime(created_at: string, timeOffset = 0) {
     const timeDiff = (strDate: string) => {
         const now = new Date();
-        const diff = now.getTime() - Date.parse(strDate);
+        const diff = now.getTime() - Date.parse(strDate) - timeOffset * 60 * 60_000;
         return Math.floor(diff / 60_000);
     };
     const timeMin = timeDiff(created_at);
