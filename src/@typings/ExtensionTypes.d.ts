@@ -19,6 +19,11 @@ export namespace Extension {
         spStickerPrices: boolean;
         spBlueGem: boolean;
         ocoAPIKey: string;
+        ocoLastOrder: {
+            time: number;
+            id: number;
+            status: 'paid' | 'closed' | 'unknown';
+        }
         spPriceReference: 0 | 1;
         spSteamPrice: boolean;
         spBuffDifference: boolean;

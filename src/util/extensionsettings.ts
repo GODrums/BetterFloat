@@ -76,6 +76,9 @@ export async function initSettings(): Promise<Extension.Settings> {
         if (data.ocoAPIKey) {
             settings.ocoAPIKey = String(data.ocoAPIKey);
         }
+        if (data.ocoLastOrder) {
+            settings.ocoLastOrder = data.ocoLastOrder as Extension.Settings['ocoLastOrder'];
+        }
         if (data.skinportRates) {
             settings.skinportRates = data.skinportRates as Extension.Settings['skinportRates'];
         }

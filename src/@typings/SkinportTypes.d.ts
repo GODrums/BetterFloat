@@ -155,6 +155,38 @@ export namespace Skinport {
         };
     };
 
+    export type OrderHistoryData = {
+        message: string | null;
+        requestId: string;
+        success: boolean;
+        result: {
+            counts: {
+                closed: number;
+                paid: number;
+            };
+            orders: {
+                created: string;
+                fee: {
+                    value: number;
+                    currency: string;
+                };
+                id: number;
+                price: {
+                    value: number;
+                    currency: string;
+                };
+                sales: Item[];
+                status: 'paid' | 'closed';
+                value: {
+                    value: number;
+                    currency: string;
+                };
+            }[];
+            page: number;
+            pages: number;
+        };
+    };
+
     export type Listing = {
         name: string;
         type: string;

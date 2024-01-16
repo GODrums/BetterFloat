@@ -1072,7 +1072,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
         oneClickOrder.style.width = '60px';
         oneClickOrder.target = '_blank';
         oneClickOrder.innerText = 'Order';
-        (<HTMLElement>oneClickOrder).onclick = (e: Event) => {
+        (<HTMLElement>oneClickOrder).onclick = async (e: Event) => {
             e.stopPropagation();
             e.preventDefault();
             const currentCart = document.querySelector('.CartButton-count')?.textContent;
@@ -1089,6 +1089,26 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 showMessageBox('Item is sold or not listed', 'The item you try to add to purchase is not available anymore.');
                 return;
             }
+            // only allow one order every 24 hours
+            if (extensionSettings.ocoLastOrder.time > Date.now() - 86400000) {
+                let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
+                if (extensionSettings.ocoLastOrder.status == 'unknown') {
+                    const response = await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json()) as Skinport.OrderHistoryData;
+                    if (response.success) {
+                        const order = response.result.orders.find(order => order.id == 5105140);
+                        if (order) {
+                            extensionSettings.ocoLastOrder.status = order.status;
+                            chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
+                            statusCheck = order.status == 'paid';
+                        }
+                    }
+                }
+                if (!statusCheck) {
+                    showMessageBox('Please pay your OCO-orders!', 'To avoid item hoarding and abuse of the OneClickOrder feature, the failure to pay your OneClickOrder purchases leads to a 24 hour timeout.');
+                    return;
+                }
+            }
+
             oneClickOrder.innerHTML = '<span class="loader"></span>';
             orderItem(item).then((result) => {
                 oneClickOrder.innerText = 'Order';

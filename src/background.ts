@@ -20,6 +20,7 @@ export const defaultSettings: Extension.Settings = {
     spStickerPrices: true,
     spBlueGem: true,
     ocoAPIKey: '',
+    ocoLastOrder: { time: 0, id: 0, status: 'unknown'},
     spPriceReference: 0,
     skinportRates: 'real',
     spSteamPrice: false,
@@ -70,6 +71,11 @@ chrome.runtime.onInstalled.addListener((details) => {
     } else if (details.reason == 'update') {
         const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
+        chrome.storage.local.get('ocoLastOrder').then((data) => {
+            if (!data.ocoLastOrder) {
+                chrome.storage.local.set({ ocoLastOrder: { time: 0, id: 0, status: 'unknown' } });
+            }
+        });
 
         chrome.storage.local.get((data) => {
             if (!data) {
