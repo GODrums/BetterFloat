@@ -478,8 +478,12 @@ async function adjustItemPage(container: Element) {
         const suggestedText = container.querySelector('.ItemPage-suggested');
         if (suggestedText) {
             const currencySymbol = getSymbolFromCurrency(popupItem.data.item.currency);
-            const lowPrice = new Decimal(popupItem.data.offers.lowPrice).div(100).toDP(2).toNumber();
-            suggestedText.innerHTML += `<br>Lowest on Skinport: ${(currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice)} (${popupItem.data.offers.offerCount} offers)`;
+            let formattedPrice = '-';
+            if (popupItem.data.offers?.lowPrice) {
+                const lowPrice = new Decimal(popupItem.data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
+                formattedPrice = currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice
+            }
+            suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${popupItem.data.offers?.offerCount} offers)`;
         }
     }
 
@@ -1037,6 +1041,12 @@ async function orderItem(item: Skinport.Listing) {
                     .then((response) => response.json())
                     .then(async (response) => {
                         if (response.success) {
+                            extensionSettings.ocoLastOrder = {
+                                id: item.saleId,
+                                time: Date.now(),
+                                status: 'unknown',
+                            };
+                            chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
                             return true;
                         } else {
                             console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
@@ -1090,12 +1100,14 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 return;
             }
             // only allow one order every 24 hours
+            console.log('[BetterFloat] OCO last order: ', extensionSettings.ocoLastOrder);
             if (extensionSettings.ocoLastOrder.time > Date.now() - 86400000) {
                 let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
                 if (extensionSettings.ocoLastOrder.status == 'unknown') {
                     const response = await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json()) as Skinport.OrderHistoryData;
+                    console.log('[BetterFloat] OCO order history: ', response);
                     if (response.success) {
-                        const order = response.result.orders.find(order => order.id == 5105140);
+                        const order = response.result.orders.find(order => order.id == extensionSettings.ocoLastOrder.id);
                         if (order) {
                             extensionSettings.ocoLastOrder.status = order.status;
                             chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
