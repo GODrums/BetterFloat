@@ -176,7 +176,7 @@ export namespace Skinport {
                     currency: string;
                 };
                 sales: Item[];
-                status: 'paid' | 'closed';
+                status: 'paid' | 'closed' | 'open';
                 value: {
                     value: number;
                     currency: string;
@@ -184,6 +184,15 @@ export namespace Skinport {
             }[];
             page: number;
             pages: number;
+        };
+    };
+
+    export type CreateOrderResponse = {
+        message: string | null;
+        requestId: string;
+        success: boolean;
+        result: {
+            id: number;
         };
     };
 

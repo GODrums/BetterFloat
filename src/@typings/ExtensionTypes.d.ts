@@ -1,3 +1,5 @@
+import { Skinport } from "./SkinportTypes";
+
 export namespace Extension {
     export type Settings = {
         runtimePublicURL: string;
@@ -22,7 +24,7 @@ export namespace Extension {
         ocoLastOrder: {
             time: number;
             id: number;
-            status: 'paid' | 'closed' | 'unknown';
+            status: 'paid' | 'closed' | 'open' | 'unknown';
         }
         spPriceReference: 0 | 1;
         spSteamPrice: boolean;

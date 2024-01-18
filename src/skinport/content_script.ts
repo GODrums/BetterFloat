@@ -1038,19 +1038,21 @@ async function orderItem(item: Skinport.Listing) {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: postData,
                 })
-                    .then((response) => response.json())
+                    .then((response) => response.json() as Promise<Skinport.CreateOrderResponse>)
                     .then(async (response) => {
+                        console.debug('[BetterFloat] OCO createOrder response: ', response);
                         if (response.success) {
+                            // save last order to prevent spamming
                             extensionSettings.ocoLastOrder = {
-                                id: item.saleId,
+                                id: response.result.id,
                                 time: Date.now(),
-                                status: 'unknown',
+                                status: 'open',
                             };
                             chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
                             return true;
                         } else {
-                            console.debug(`[BetterFloat] OCO createOrder failed ${response.message}`);
-                            showMessageBox('Failed to create the order', response.message);
+                            console.debug(`[BetterFloat] OCO createOrder failed ${response.requestId}`);
+                            showMessageBox('Failed to create the order: ', response.requestId);
                             // remove item from cart again
                             await fetch('https://skinport.com/api/cart/remove', {
                                 method: 'POST',
@@ -1102,12 +1104,14 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
             // only allow one order every 24 hours
             console.log('[BetterFloat] OCO last order: ', extensionSettings.ocoLastOrder);
             if (extensionSettings.ocoLastOrder.time > Date.now() - 86400000) {
+                console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
                 let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
-                if (extensionSettings.ocoLastOrder.status == 'unknown') {
+                if (extensionSettings.ocoLastOrder.status == 'open' || extensionSettings.ocoLastOrder.status == 'unknown') {
                     const response = await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json()) as Skinport.OrderHistoryData;
                     console.log('[BetterFloat] OCO order history: ', response);
                     if (response.success) {
                         const order = response.result.orders.find(order => order.id == extensionSettings.ocoLastOrder.id);
+                        console.log('[BetterFloat] OCO found order: ', order);
                         if (order) {
                             extensionSettings.ocoLastOrder.status = order.status;
                             chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
