@@ -1055,8 +1055,8 @@ async function orderItem(item: Skinport.Listing) {
                             chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
                             return true;
                         } else {
-                            console.debug(`[BetterFloat] OCO createOrder failed ${response.requestId}`);
-                            showMessageBox('Failed to create the order: ', response.requestId);
+                            console.debug(`[BetterFloat] OCO createOrder failed ${response.message ?? response.requestId}`);
+                            showMessageBox('Failed to create the order: ', response.message ?? response.requestId);
                             // remove item from cart again
                             await fetch('https://skinport.com/api/cart/remove', {
                                 method: 'POST',
