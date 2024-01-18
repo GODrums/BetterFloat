@@ -840,7 +840,7 @@ async function calculateBuffPrice(item: Skinport.Listing): Promise<{ buff_name: 
     return { buff_name, priceListing, priceOrder };
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
+function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false, containerIsParent = false) {
     if (!isItemPage) {
         container.className += ' betterfloat-buffprice';
     }
@@ -881,7 +881,11 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
         warningImage.setAttribute('style', `height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${isItemPage ? 'margin-bottom: 1px;' : ''}`);
         buffContainer.appendChild(warningImage);
     }
-    if (extensionSettings.spSteamPrice || isItemPage) {
+    if (containerIsParent) {
+        const divider = document.createElement('div');
+        container.appendChild(divider);
+        container.appendChild(buffContainer);
+    } else if (extensionSettings.spSteamPrice || isItemPage) {
         const divider = document.createElement('div');
         container.after(buffContainer);
         container.after(divider);
@@ -1148,7 +1152,11 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
     const priceDiv = container.querySelector('.ItemPreview-oldPrice');
-    if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
+    if (!priceDiv) {
+        const priceParent = container.querySelector('.ItemPreview-priceValue');
+        generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, false, true);
+        priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
+    } else if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
     }
 
@@ -1179,7 +1187,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
     }
 
     const difference = item.price - (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder);
-    if (extensionSettings.spBuffDifference) {
+    if (extensionSettings.spBuffDifference && location.pathname !== '/myitems/inventory') {
         let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
         if (!discountContainer || !discountContainer.firstChild) {
             discountContainer = document.createElement('div');
