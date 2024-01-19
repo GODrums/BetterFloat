@@ -1152,12 +1152,14 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
     const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
     const priceDiv = container.querySelector('.ItemPreview-oldPrice');
-    if (!priceDiv) {
-        const priceParent = container.querySelector('.ItemPreview-priceValue');
-        generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, false, true);
-        priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
-    } else if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
-        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
+    if (!container.querySelector('.betterfloat-buffprice')) {
+        if (!priceDiv) {
+            const priceParent = container.querySelector('.ItemPreview-priceValue');
+            generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, false, true);
+            priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
+        } else {
+            generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
+        }
     }
 
     const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
