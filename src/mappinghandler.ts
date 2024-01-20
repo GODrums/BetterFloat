@@ -199,7 +199,7 @@ export function getFirstSpItem() {
 }
 
 export function getSpecificSkbItem(auction_hash: string) {
-    const index = skinbidItems.findIndex((item) => item.auction.auctionHash == auction_hash);
+    const index = skinbidItems.findIndex((item) => item.auction?.auctionHash == auction_hash);
     const item = skinbidItems[index];
     skinbidItems.splice(index, 1);
     return item;
