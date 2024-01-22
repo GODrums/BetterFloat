@@ -106,7 +106,10 @@ export function activateHandler() {
 }
 
 function processSkinbidEvent(eventData: EventData<unknown>) {
-    console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+    if (!eventData.url.includes('ping')) {
+        console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+    }
+    
     if (eventData.url.includes('api/search/auctions')) {
         // Skinbid.MarketData
         cacheSkbItems((eventData.data as Skinbid.MarketData).items);
@@ -155,6 +158,7 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 // process intercepted data
 function processCSFloatEvent(eventData: EventData<unknown>) {
     console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+
     if (eventData.url.includes('v1/listings?')) {
         cacheCSFItems(eventData.data as CSFloat.ListingData[]);
     } else if (eventData.url.includes('v1/listings/recommended')) {

@@ -263,6 +263,10 @@ export async function getSpCSRF() {
     return skinportCSRF;
 }
 
+export function getSkbCurrency() {
+    return skinbidUserCurrency;
+}
+
 export async function getSkbUserCurrencyRate() {
     if (skinbidUserCurrency == '') {
         skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';

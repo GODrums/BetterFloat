@@ -2,9 +2,10 @@ import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getItemPrice, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { fetchCSBlueGem } from '../networkhandler';
 import { initSettings } from '../util/extensionsettings';
-import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
+import { Euro, USDollar, calculateTime, convertCurrency, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
 async function init() {
     if (!location.hostname.includes('skinbid.com')) {
@@ -53,7 +54,7 @@ async function firstLaunch() {
         for (let i = 0; i < items.length; i++) {
             await adjustItem(items[i], itemSelectors.list);
         }
-    } else if (location.pathname.includes('/market/')) {
+    } else if (location.pathname.startsWith('/market/') || location.pathname.startsWith('/auctions/')) {
         let items = document.querySelectorAll('.item');
         // first one is big item
         await adjustItem(items[0], itemSelectors.page);
@@ -174,7 +175,122 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
         if ((extensionSettings.skbStickerPrices || selector.self == 'page') && priceResult?.price_difference) {
             await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
         }
+        if (selector.self == 'page') {
+            await caseHardenedDetection(container, cachedItem);
+        }
     }
+}
+
+async function caseHardenedDetection(container: Element, listing: Skinbid.Listing) {
+    const chartContainer = container.querySelector('.price-chart-and-history');
+    const item = listing.items?.at(0)?.item;
+    if (!chartContainer || !item || item.name !== 'Case Hardened') return;
+
+    let currency = getSkbCurrency();
+    if (currency.length === 0) {
+        currency = 'USD';
+    }
+    const { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.paintSeed, currency);
+
+    const newTab = document.createElement('div');
+    newTab.className = 'tab ng-tns-c187-0 betterfloat-tab-bluegem';
+    newTab.style.cursor = 'pointer';
+    newTab.style.color = 'deepskyblue';
+    newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.paintSeed}&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub;"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-left: 10px;"></a>`;
+    newTab.addEventListener('click', () => {
+        chartContainer.querySelector('.tab.active')?.classList.remove('active');
+        newTab.classList.add('active');
+        newTab.style.borderBottom = '2px solid #a3a3cb';
+
+        // chartContainer.querySelector('app-price-chart')?.replaceWith(document.createComment(''));
+        // chartContainer.querySelector('app-previous-sales')?.replaceWith(document.createComment(''));
+        
+        chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: none;');
+        chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: none;');
+
+        const salesTable = document.createElement('app-bluegem-sales');
+        const thStyle = 'text-align: start; padding-bottom: 6px; font-size: 12px; color: #a3a3cb;'
+        const tdStyle = 'padding: 8px 0;text-align: start;border-top: 1px solid #21212b;';
+        const getWear = (float: number) => {
+            let wear = '';
+            if (float < 0.07) {
+                wear = 'Factory New';
+            } else if (float < 0.15) {
+                wear = 'Minimal Wear';
+            } else if (float < 0.38) {
+                wear = 'Field-Tested';
+            } else if (float < 0.45) {
+                wear = 'Well-Worn';
+            } else {
+                wear = 'Battle-Scarred';
+            }
+            return wear;
+        };
+        salesTable.innerHTML = `
+            <div class="content">
+                <table class="main-table" style="margin-top: 32px; width: 100%;">
+                    <thead class="from-sm-table-cell">
+                        <th style="${thStyle}">Source</th>
+                        <th style="${thStyle}">Float</th>
+                        <th style="${thStyle}">Pattern ID</th>
+                        <th style="${thStyle}">Details</th>
+                        <th style="${thStyle}">Date</th>
+                        <th style="${thStyle}">Price</th>
+                    </thead>
+                <tbody style="font-size: 14px;">
+                    ${pastSales
+                        ?.map(
+                            (sale) => `
+                        <tr class="has-wear" style="vertical-align: top;">
+                            <td class="main-td img" style="${tdStyle}">
+                                <img style="height: 24px;" src="${extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')}"></img>
+                            </td>
+                            <td class="main-td wear" style="${tdStyle}">
+                                <div>${getWear(sale.float)}</div>
+                                <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.float.toFixed(6)}</div>
+                            </td>
+                            <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
+                            <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex;">
+                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™ </span>' : ''}
+                                <a ${
+                                    sale.url == 'No Link Available'
+                                        ? 'style="pointer-events: none;cursor: default;"><img src="' +
+                                          extensionSettings.runtimePublicURL +
+                                          '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
+                                        : 'href="' +
+                                          (!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
+                                          '" target="_blank"><img src="' +
+                                          extensionSettings.runtimePublicURL +
+                                          '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
+                                }height: 20px;"></img></a>
+                            </td>
+                            <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
+                                ${sale.date}
+                            </td>
+                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${
+                                currency == 'EUR' ? Euro.format(sale.price) : currency == 'USD' ? USDollar.format(sale.price) : convertCurrency(sale.price, currency)
+                            }</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                </table>
+            </div>
+        `;
+        chartContainer.childNodes[5].replaceWith(salesTable);
+    });
+    Array.from(chartContainer.querySelectorAll('.tab')).forEach((tabContainer) => {
+        console.log(tabContainer);
+        if (tabContainer.className.includes('betterfloat-tab-bluegem')) return;
+        tabContainer.addEventListener('click', (e) => {
+            newTab.classList.remove('active');
+            newTab.style.borderBottom = 'none';
+            chartContainer.querySelector('app-bluegem-sales')?.replaceWith(document.createComment(''));
+            chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: block;');
+            chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: block;');
+        });
+    });
+
+    chartContainer.querySelector('.tabs')?.appendChild(newTab);
 }
 
 async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: number) {
@@ -239,8 +355,12 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
     }
 }
 
-async function addBuffPrice(cachedItem: Skinbid.Listing, container: Element, selector: ItemSelectors): Promise<{
-    price_difference: number,
+async function addBuffPrice(
+    cachedItem: Skinbid.Listing,
+    container: Element,
+    selector: ItemSelectors
+): Promise<{
+    price_difference: number;
 } | void> {
     await loadMapping();
     const listingItem = cachedItem?.items?.at(0)?.item;
