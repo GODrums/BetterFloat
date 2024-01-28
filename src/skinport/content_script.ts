@@ -178,26 +178,24 @@ async function applyMutation() {
                 for (let i = 0; i < mutation.addedNodes.length; i++) {
                     const addedNode = mutation.addedNodes[i];
                     // some nodes are not elements, so we need to check
-                    if (!(addedNode instanceof HTMLElement)) continue;
+                    if (!(addedNode instanceof HTMLElement) || !addedNode.className) continue;
 
-                    if (addedNode.className) {
-                        const className = addedNode.className.toString();
-                        if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item')) {
-                            await adjustItem(addedNode);
-                        } else if (className.includes('Cart-container')) {
-                            await adjustCart(addedNode);
-                        } else if (className.includes('ItemPage')) {
-                            await adjustItemPage(addedNode);
-                        } else if (className.includes('PopularList')) {
-                            await handlePopularList(addedNode);
-                        } else if (className.includes('CatalogHeader-tooltipLive')) {
-                            // contains live button
-                            addLiveFilterMenu(addedNode);
-                        } else if (className.includes('CartButton-tooltip')) {
-                            autoCloseTooltip(addedNode);
-                        } else if (className.includes('Message')) {
-                            // contains 'item has been sold' message
-                        }
+                    const className = addedNode.className.toString();
+                    if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item')) {
+                        await adjustItem(addedNode);
+                    } else if (className.includes('Cart-container')) {
+                        await adjustCart(addedNode);
+                    } else if (className.includes('ItemPage')) {
+                        await adjustItemPage(addedNode);
+                    } else if (className.includes('PopularList')) {
+                        await handlePopularList(addedNode);
+                    } else if (className.includes('CatalogHeader-tooltipLive')) {
+                        // contains live button
+                        addLiveFilterMenu(addedNode);
+                    } else if (className.includes('CartButton-tooltip')) {
+                        autoCloseTooltip(addedNode);
+                    } else if (className.includes('Message')) {
+                        // contains 'item has been sold' message
                     }
                 }
             }
@@ -279,15 +277,27 @@ function addLiveFilterMenu(container: Element) {
     popupPriceLow.min = '0';
     popupPriceLow.max = '999999';
     popupPriceLow.step = '0.01';
-    popupPriceLow.value = extensionSettings.spFilter.priceLow.toString();
+    popupPriceLow.value = extensionSettings.spFilter.priceLow?.toString() ?? 0;
     const popupPriceHigh = popupPriceLow.cloneNode() as HTMLInputElement;
-    popupPriceHigh.value = extensionSettings.spFilter.priceHigh.toString();
+    popupPriceHigh.value = extensionSettings.spFilter.priceHigh?.toString() ?? 0;
     const popupPriceDivider = document.createElement('span');
     popupPriceDivider.textContent = '-';
+    const popupNewDiv = document.createElement('div');
+    popupNewDiv.setAttribute('style', 'display: flex; align-items: center; margin: 0 0 3px 5px;');
+    const popupNewLabel = document.createElement('label');
+    popupNewLabel.textContent = 'NEW ONLY';
+    popupNewLabel.setAttribute('style', 'margin-right: 5px; font-size: 15px;');
+    const popupNewCheckbox = document.createElement('input');
+    popupNewCheckbox.type = 'checkbox';
+    popupNewCheckbox.value = 'new';
+    popupNewCheckbox.checked = extensionSettings.spFilter.new;
+    popupNewDiv.appendChild(popupNewCheckbox);
+    popupNewDiv.appendChild(popupNewLabel);
     popupPriceDiv.appendChild(popupPriceLabel);
     popupPriceDiv.appendChild(popupPriceLow);
     popupPriceDiv.appendChild(popupPriceDivider);
     popupPriceDiv.appendChild(popupPriceHigh);
+    popupPriceDiv.appendChild(popupNewDiv);
     const popupNameDiv = document.createElement('div');
     popupNameDiv.style.display = 'flex';
     popupNameDiv.style.flexDirection = 'column';
@@ -342,6 +352,7 @@ function addLiveFilterMenu(container: Element) {
         extensionSettings.spFilter.types = Array.from(typeCheckboxes)
             .filter((el) => !(<HTMLInputElement>el).checked)
             .map((el) => (<HTMLInputElement>el).value);
+        extensionSettings.spFilter.new = popupNewCheckbox.checked;
         console.debug('[BetterFloat] New filter settings: ', extensionSettings.spFilter);
         chrome.storage.local.set({ spFilter: extensionSettings.spFilter });
         filterPopup.style.display = 'none';
@@ -481,7 +492,7 @@ async function adjustItemPage(container: Element) {
             let formattedPrice = '-';
             if (popupItem.data.offers?.lowPrice) {
                 const lowPrice = new Decimal(popupItem.data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
-                formattedPrice = currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice
+                formattedPrice = currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
             }
             suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${popupItem.data.offers?.offerCount} offers)`;
         }
@@ -509,7 +520,7 @@ async function adjustItem(container: Element) {
 
     storeItem(container, item);
 
-    const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item) : false;
+    const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item, container) : false;
     if (filterItem) {
         console.log('[BetterFloat] Filtered item: ', item.name);
         (<HTMLElement>container).style.display = 'none';
@@ -658,13 +669,18 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 }
 
 // true: remove item, false: display item
-function applyFilter(item: Skinport.Listing) {
+function applyFilter(item: Skinport.Listing, container: Element) {
     const targetName = extensionSettings.spFilter.name.toLowerCase();
     // if true, item should be filtered
     const nameCheck = targetName != '' && !(item.type + ' | ' + item.name).toLowerCase().includes(targetName);
     const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
     const typeCheck = extensionSettings.spFilter.types.includes(item.category);
-    return nameCheck || priceCheck || typeCheck;
+
+    const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
+    const tradeLock = tradeLockText?.length == 3 ? parseInt(tradeLockText[1]) : undefined;
+    const newCheck = extensionSettings.spFilter.new && (!tradeLock || tradeLock < 7);
+    
+    return nameCheck || priceCheck || typeCheck || newCheck;
 }
 
 async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
@@ -878,7 +894,12 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     if (priceOrder > priceListing) {
         const warningImage = document.createElement('img');
         warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
-        warningImage.setAttribute('style', `height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${isItemPage ? 'margin-bottom: 1px;' : ''}`);
+        warningImage.setAttribute(
+            'style',
+            `height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${
+                isItemPage ? 'margin-bottom: 1px;' : ''
+            }`
+        );
         buffContainer.appendChild(warningImage);
     }
     if (containerIsParent) {
@@ -1094,7 +1115,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
             const currentCart = document.querySelector('.CartButton-count')?.textContent;
             const isLoggedOut = document.querySelector('.HeaderContainer-link--login') != null;
             if (isLoggedOut) {
-                showMessageBox('You are not logged in', 'Please log in to Skinport before using BetterFloat\'s OneClickOrder.');
+                showMessageBox('You are not logged in', "Please log in to Skinport before using BetterFloat's OneClickOrder.");
                 return;
             }
             if (currentCart && Number(currentCart) > 0) {
@@ -1111,10 +1132,10 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
                 let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
                 if (extensionSettings.ocoLastOrder.status == 'open' || extensionSettings.ocoLastOrder.status == 'unknown') {
-                    const response = await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json()) as Skinport.OrderHistoryData;
+                    const response = (await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json())) as Skinport.OrderHistoryData;
                     console.log('[BetterFloat] OCO order history: ', response);
                     if (response.success) {
-                        const order = response.result.orders.find(order => order.id == extensionSettings.ocoLastOrder.id);
+                        const order = response.result.orders.find((order) => order.id == extensionSettings.ocoLastOrder.id);
                         console.log('[BetterFloat] OCO found order: ', order);
                         if (order) {
                             extensionSettings.ocoLastOrder.status = order.status;
@@ -1124,7 +1145,10 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                     }
                 }
                 if (!statusCheck) {
-                    showMessageBox('Please pay your OCO-orders!', 'To avoid item hoarding and abuse of the OneClickOrder feature, the failure to pay your OneClickOrder purchases leads to a 24 hour timeout.');
+                    showMessageBox(
+                        'Please pay your OCO-orders!',
+                        'To avoid item hoarding and abuse of the OneClickOrder feature, the failure to pay your OneClickOrder purchases leads to a 24 hour timeout.'
+                    );
                     return;
                 }
             }
@@ -1209,7 +1233,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
                 saleText = `-${item.currency}0`;
             } else {
                 const sign = difference > 0 ? '+' : '-';
-                const percentage = extensionSettings.spShowBuffPercentageDifference ? (' (' + ((item.price / (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)') : '';
+                const percentage = extensionSettings.spShowBuffPercentageDifference
+                    ? ' (' + ((item.price / (extensionSettings.spPriceReference == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)'
+                    : '';
                 saleText = `${sign}${item.currency}${Math.abs(difference).toFixed(2)}${percentage}`;
             }
             saleTag.textContent = saleText;

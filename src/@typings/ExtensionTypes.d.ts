@@ -38,6 +38,7 @@ export namespace Extension {
             priceHigh: number;
             name: string;
             types: string[];
+            new: boolean;
         };
         enableSkinbid: boolean;
         skbPriceReference: 0 | 1;
