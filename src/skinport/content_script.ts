@@ -283,7 +283,7 @@ function addLiveFilterMenu(container: Element) {
     const popupPriceDivider = document.createElement('span');
     popupPriceDivider.textContent = '-';
     const popupNewDiv = document.createElement('div');
-    popupNewDiv.setAttribute('style', 'display: flex; align-items: center; margin: 0 0 3px 5px;');
+    popupNewDiv.setAttribute('style', 'display: flex; align-items: center; margin: 10px 0 3px 5px;');
     const popupNewLabel = document.createElement('label');
     popupNewLabel.textContent = 'NEW ONLY';
     popupNewLabel.setAttribute('style', 'margin-right: 5px; font-size: 15px;');
