@@ -35,6 +35,7 @@ import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-ca
 import { fetchCSBlueGem, isApiStatusOK } from '../networkhandler';
 import { CSFloatHelpers } from './csfloat_helpers';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 async function init() {
     console.time('[BetterFloat] CSFloat init timer');
@@ -1071,6 +1072,8 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
     let patternElement: BlueGem.PatternElement | undefined = undefined;
+    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
     let type = '';
     if (item.item_name.startsWith('★')) {
         type = item.item_name.split(' | ')[0].split('★ ')[1];
@@ -1089,7 +1092,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     }
     // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
-        await fetchCSBlueGem(type, item.paint_seed!).then((data) => {
+        await fetchCSBlueGem(type, item.paint_seed!, userCurrency).then((data) => {
             pastSales = data.pastSales ?? [];
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
@@ -1198,7 +1201,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                 const priceCell = document.createElement('td');
                 priceCell.setAttribute('role', 'cell');
                 priceCell.className = 'mat-cell cdk-cell ng-star-inserted';
-                priceCell.textContent = USDollar.format(sale.price);
+                priceCell.textContent = `${currencySymbol}${sale.price}`;
                 newRow.appendChild(priceCell);
                 const floatCell = document.createElement('td');
                 floatCell.setAttribute('role', 'cell');

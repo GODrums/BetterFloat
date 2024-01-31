@@ -1,3 +1,4 @@
+import getSymbolFromCurrency from 'currency-symbol-map';
 import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
@@ -5,7 +6,7 @@ import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { fetchCSBlueGem } from '../networkhandler';
 import { initSettings } from '../util/extensionsettings';
-import { Euro, USDollar, calculateTime, convertCurrency, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
+import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
 
 async function init() {
     if (!location.hostname.includes('skinbid.com')) {
@@ -190,7 +191,8 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
     if (currency.length === 0) {
         currency = 'USD';
     }
-    const { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.paintSeed, currency);
+    const currencySymbol = getSymbolFromCurrency(currency);
+    const { pastSales } = await fetchCSBlueGem(item.subCategory, item.paintSeed, currency);
 
     const newTab = document.createElement('div');
     newTab.className = 'tab ng-tns-c187-0 betterfloat-tab-bluegem';
@@ -250,8 +252,8 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                                 <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.float.toFixed(6)}</div>
                             </td>
                             <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
-                            <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex;">
-                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™ </span>' : ''}
+                            <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
+                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
                                 <a ${
                                     sale.url == 'No Link Available'
                                         ? 'style="pointer-events: none;cursor: default;"><img src="' +
@@ -267,9 +269,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
                                 ${sale.date}
                             </td>
-                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${
-                                currency == 'EUR' ? Euro.format(sale.price) : currency == 'USD' ? USDollar.format(sale.price) : convertCurrency(sale.price, currency)
-                            }</td>
+                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.price}`}</td>
                         </tr>
                     `).join('')}
                 </tbody>
@@ -281,7 +281,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
     Array.from(chartContainer.querySelectorAll('.tab')).forEach((tabContainer) => {
         console.log(tabContainer);
         if (tabContainer.className.includes('betterfloat-tab-bluegem')) return;
-        tabContainer.addEventListener('click', (e) => {
+        tabContainer.addEventListener('click', () => {
             newTab.classList.remove('active');
             newTab.style.borderBottom = 'none';
             chartContainer.querySelector('app-bluegem-sales')?.replaceWith(document.createComment(''));

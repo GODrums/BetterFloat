@@ -211,13 +211,14 @@ export namespace BlueGem {
         screenshot: string;
     };
     export type PastSale = {
+        csbluegem_screenshot: number;
         csfloat: string; // csfloat db link
         date: string;
         float: number;
         isStattrak: boolean;
         origin: 'CSFloat' | 'BroSkins' | 'Buff';
         pattern: number;
-        price: number;
+        price: string;
         url: string;
     };
 

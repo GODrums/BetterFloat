@@ -623,9 +623,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
             extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')
         }"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
             sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
-        }${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${
-            currencySymbol == '€' ? Euro.format(sale.price) : currencySymbol == '$' ? USDollar.format(sale.price) : currencySymbol + ' ' + sale.price
-        }</div><div><a ${
+        }${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div><div><a ${
             sale.url == 'No Link Available'
                 ? 'style="pointer-events: none;cursor: default;"><img src="' +
                   extensionSettings.runtimePublicURL +
