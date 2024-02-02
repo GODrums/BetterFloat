@@ -781,13 +781,26 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
             link: createPricempireURL(container, listing.item),
         },
     ];
+    // inventory link if seller stall is public
+    if (listing.seller.stall_public) {
+        quickLinks.push({
+            icon: 'steam',
+            name: 'Steam',
+            link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
+        });
+    }
+
     for (let i = 0; i < quickLinks.length; i++) {
         const toolTip = document.createElement('div');
         toolTip.className = 'bf-tooltip-inner';
         toolTip.style.translate = '-60px 10px';
         toolTip.style.width = '140px';
         let toolTipSpan = document.createElement('span');
-        toolTipSpan.textContent = `Show ${quickLinks[i].name} Page`;
+        if (quickLinks[i].name === 'Steam') {
+            toolTipSpan.textContent = `Show in seller's inventory`;
+        } else {
+            toolTipSpan.textContent = `Show ${quickLinks[i].name} Page`;
+        }
         toolTip.appendChild(toolTipSpan);
         const linkContainer = document.createElement('a');
         linkContainer.href = quickLinks[i].link;

@@ -60,7 +60,7 @@
         },
         {
             "matches": ["https://csfloat.com/*"],
-            "resources": ["public/icon-pricempire.png", "public/icon-csgostash.png"]
+            "resources": ["public/icon-pricempire.png", "public/icon-csgostash.png", "public/icon-steam.png"]
         },
         {
             "matches": ["*://*.skinport.com/*"],
