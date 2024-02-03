@@ -65,6 +65,7 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 ### Status
 
 ![Rums.dev Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.rums.dev%2Fstatus)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat?ref=badge_shield)
 
 
 ### Troubleshooting on Mozilla Firefox
@@ -146,3 +147,6 @@ Make sure to test your changes extensively (the project supports [Mocha](https:/
 BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
 
 Built with 🖤 in Munich.
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat?ref=badge_large)

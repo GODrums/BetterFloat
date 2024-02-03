@@ -777,12 +777,12 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     quickLinksContainer.setAttribute('style', 'display: flex; justify-content: space-evenly;');
     const quickLinks: QuickLink[] = [
         {
-            icon: 'csgostash',
+            icon: 'csgostash.png',
             tooltip: 'Show CSGOStash Page',
             link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
         },
         {
-            icon: 'pricempire',
+            icon: 'pricempire.png',
             tooltip: 'Show Pricempire Page',
             link: createPricempireURL(container, listing.item),
         },
@@ -790,7 +790,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     // inventory link if seller stall is public
     if (listing.seller.stall_public) {
         quickLinks.push({
-            icon: 'steam',
+            icon: 'steam.svg',
             tooltip: 'Show in Seller\'s Inventory',
             link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
         });
@@ -808,7 +808,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         linkContainer.href = quickLinks[i].link;
         linkContainer.target = '_blank';
         const icon = document.createElement('img');
-        icon.setAttribute('src', extensionSettings.runtimePublicURL + '/icon-' + quickLinks[i].icon + '.png');
+        icon.setAttribute('src', `${extensionSettings.runtimePublicURL}/icon-${quickLinks[i].icon}`);
         icon.setAttribute('style', 'height: 24px; border-radius: 5px; vertical-align: middle;');
         linkContainer.appendChild(icon);
         let toolTipOuter = document.createElement('div');
