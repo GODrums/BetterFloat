@@ -615,7 +615,7 @@ function adjustCurrencyChangeNotice(container: Element) {
 async function adjustItemBubble(container: Element) {
     const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
     const pricing = priceData(container.querySelector('b')!.textContent!);
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const userCurrency = getCurrency()
     const difference = pricing.price - buffData.priceFromReference;
     const isSeller = container.textContent?.includes('Seller') ?? false;
 
@@ -740,7 +740,7 @@ async function adjustItem(container: Element, isPopout = false) {
                 await patternDetections(container, apiItem, true);
                 await addFloatColoring(container, apiItem);
                 addQuickLinks(container, apiItem);
-                addScreenshotReplacement(container, apiItem);
+                addScreenshotReplacement(container, apiItem); 
             }
 
             // last as it has to wait for history api data
@@ -1086,7 +1086,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
     let patternElement: BlueGem.PatternElement | undefined = undefined;
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const userCurrency = getCurrency()
     const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
     let type = '';
     if (item.item_name.startsWith('★')) {
@@ -1562,8 +1562,8 @@ async function getBuffItem(item: CSFloat.FloatItem) {
     const buff_id = await getBuffMapping(buff_name);
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
-
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    
+    const userCurrency = getCurrency()
     let currencyRate = await getCSFCurrencyRate(userCurrency);
     if (!currencyRate) {
         console.log('[BetterFloat] Could not get currency rate for ' + userCurrency);
@@ -1592,7 +1592,7 @@ async function addBuffPrice(
 
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const userCurrency = getCurrency()
     const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
@@ -1730,6 +1730,32 @@ function createBuffName(item: CSFloat.FloatItem): string {
 
 function getTabNumber() {
     return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
+}
+
+// Not ideal but we cannot use currency-symbol-map to perform the opposite operation Symbol -> Code
+function getCurrency() {
+    const userCurrencyRaw = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+    const symbolToCurrencyCodeMap: { [key: string]: string } = {
+        'C$': 'CAD',
+        'AED': 'AED',
+        'A$': 'AUD',
+        'R$': 'BRL',
+        'CHF': 'CHF',
+        '¥': 'CNY',
+        'Kč': 'CZK',
+        'kr': 'DKK',
+        '£': 'GBP',
+        'PLN': 'PLN',
+        'SAR': 'SAR',
+        'SEK': 'SEK',
+        'S$': 'SGD',
+    };
+    const currencyCodeFromSymbol = symbolToCurrencyCodeMap[userCurrencyRaw];
+    if (currencyCodeFromSymbol) {
+        return currencyCodeFromSymbol;
+    }
+    const isValidCurrency: boolean = /^[A-Z]{3}$/.test(userCurrencyRaw);
+    return isValidCurrency ? userCurrencyRaw : 'USD';
 }
 
 const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
