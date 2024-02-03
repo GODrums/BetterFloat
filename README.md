@@ -55,7 +55,6 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store Price](https://img.shields.io/chrome-web-store/price/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat?ref=badge_shield)
 
 ### Mozillla Add-on
 
@@ -66,6 +65,7 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 ### Status
 
 ![Rums.dev Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.rums.dev%2Fstatus)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat?ref=badge_shield)
 
 
 ### Troubleshooting on Mozilla Firefox
