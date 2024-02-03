@@ -791,7 +791,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     if (listing.seller.stall_public) {
         quickLinks.push({
             icon: 'steam',
-            tooltip: 'Show in seller\'s inventory',
+            tooltip: 'Show in Seller\'s Inventory',
             link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
         });
     }
@@ -799,18 +799,17 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     for (let i = 0; i < quickLinks.length; i++) {
         const toolTip = document.createElement('div');
         toolTip.className = 'bf-tooltip-inner';
-        toolTip.style.translate = '-60px 10px';
-        toolTip.style.width = '140px';
+        toolTip.setAttribute('style', 'translate: -60px 10px; width: 140px;');
         let toolTipSpan = document.createElement('span');
         toolTipSpan.textContent = quickLinks[i].tooltip;
         toolTip.appendChild(toolTipSpan);
         const linkContainer = document.createElement('a');
+        linkContainer.className = 'mat-icon-button';
         linkContainer.href = quickLinks[i].link;
         linkContainer.target = '_blank';
         const icon = document.createElement('img');
         icon.setAttribute('src', extensionSettings.runtimePublicURL + '/icon-' + quickLinks[i].icon + '.png');
-        icon.style.height = '24px';
-        icon.style.borderRadius = '5px';
+        icon.setAttribute('style', 'height: 24px; border-radius: 5px; vertical-align: middle;');
         linkContainer.appendChild(icon);
         let toolTipOuter = document.createElement('div');
         toolTipOuter.className = 'bf-tooltip';
