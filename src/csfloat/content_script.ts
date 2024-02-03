@@ -762,6 +762,12 @@ function addScreenshotReplacement(container: Element, listing: CSFloat.ListingDa
     }
 }
 
+type QuickLink = {
+    icon: string;
+    tooltip: string;
+    link: string;
+};
+
 function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     const actionsContainer = document.querySelector('.item-actions');
     if (!actionsContainer) return;
@@ -769,15 +775,15 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     const quickLinksContainer = document.createElement('div');
     quickLinksContainer.className = 'betterfloat-quicklinks';
     quickLinksContainer.setAttribute('style', 'display: flex; justify-content: space-evenly;');
-    const quickLinks = [
+    const quickLinks: QuickLink[] = [
         {
             icon: 'csgostash',
-            name: 'CSGOStash',
+            tooltip: 'Show CSGOStash Page',
             link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
         },
         {
             icon: 'pricempire',
-            name: 'Pricempire',
+            tooltip: 'Show Pricempire Page',
             link: createPricempireURL(container, listing.item),
         },
     ];
@@ -785,7 +791,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     if (listing.seller.stall_public) {
         quickLinks.push({
             icon: 'steam',
-            name: 'Steam',
+            tooltip: 'Show in seller\'s inventory',
             link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
         });
     }
@@ -796,11 +802,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         toolTip.style.translate = '-60px 10px';
         toolTip.style.width = '140px';
         let toolTipSpan = document.createElement('span');
-        if (quickLinks[i].name === 'Steam') {
-            toolTipSpan.textContent = `Show in seller's inventory`;
-        } else {
-            toolTipSpan.textContent = `Show ${quickLinks[i].name} Page`;
-        }
+        toolTipSpan.textContent = quickLinks[i].tooltip;
         toolTip.appendChild(toolTipSpan);
         const linkContainer = document.createElement('a');
         linkContainer.href = quickLinks[i].link;

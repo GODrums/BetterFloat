@@ -4,7 +4,7 @@
         "name": "Rums",
         "url": "https://github.com/GODrums"
     },
-    "version": "1.15.2",
+    "version": "1.15.3",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://prices.csgotrader.app/*", "*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
@@ -56,19 +56,11 @@
     "web_accessible_resources": [
         {
             "matches": ["https://csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
-            "resources": ["public/*.svg", "js/inject.js", "public/buff_favicon.png", "public/csfloat_logo.png"]
-        },
-        {
-            "matches": ["https://csfloat.com/*"],
-            "resources": ["public/icon-pricempire.png", "public/icon-csgostash.png", "public/icon-steam.png"]
+            "resources": ["public/*.svg", "public/*.png", "js/inject.js"]
         },
         {
             "matches": ["*://*.skinport.com/*"],
             "resources": ["js/socketConnection.js", "public/socket.io_4.4.1.min.js"]
-        },
-        {
-            "matches": ["*://*.skinbid.com/*"],
-            "resources": []
         }
     ]
 }
