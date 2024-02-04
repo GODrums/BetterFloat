@@ -612,7 +612,7 @@ function adjustCurrencyChangeNotice(container: Element) {
     container.children[0].appendChild(refreshContainer);
 }
 
-async function adjustItemBubble(container: Element) {
+function adjustItemBubble(container: Element) {
     const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
     const pricing = priceData(container.querySelector('b')!.textContent!);
     const difference = pricing.price - buffData.priceFromReference;
@@ -1563,7 +1563,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     let currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency);
     if (!currencyRate) {
-        console.log('[BetterFloat] Could not get currency rate for ' + CSFloatHelpers.userCurrency);
+        console.warn(`[BetterFloat] Could not get currency rate for ${CSFloatHelpers.userCurrency}`);
         currencyRate = 1;
     }
 
