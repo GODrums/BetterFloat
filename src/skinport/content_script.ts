@@ -61,7 +61,7 @@ async function firstLaunch() {
         for (const list of popularLists) {
             await handlePopularList(list);
         }
-    } else if (path.startsWith('/market')) {
+    } else if (path.startsWith('/market') || path.startsWith('/shop/')) {
         const catalogItems = Array.from(document.querySelectorAll('.CatalogPage-item'));
         for (const item of catalogItems) {
             await adjustItem(item);
