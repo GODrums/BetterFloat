@@ -1,6 +1,8 @@
 import { CSFloat } from '../@typings/FloatTypes';
 
 export namespace CSFloatHelpers {
+    export const userCurrency = localStorage.getItem('selected_currency') ?? 'USD';
+
     export function generateWarningText(text: string) {
         const warningText = document.createElement('div');
         warningText.className = 'bf-warning-text warning banner';

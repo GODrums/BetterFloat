@@ -615,7 +615,6 @@ function adjustCurrencyChangeNotice(container: Element) {
 async function adjustItemBubble(container: Element) {
     const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
     const pricing = priceData(container.querySelector('b')!.textContent!);
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
     const difference = pricing.price - buffData.priceFromReference;
     const isSeller = container.textContent?.includes('Seller') ?? false;
 
@@ -628,7 +627,7 @@ async function adjustItemBubble(container: Element) {
 
     const buffPrice = document.createElement('span');
     buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
-    buffPrice.textContent = `${difference > 0 ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency }).format(difference)}`;
+    buffPrice.textContent = `${difference > 0 ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency }).format(difference)}`;
     buffContainer.appendChild(buffPrice);
 
     const personDiv = container.querySelector('div > span');
@@ -1086,8 +1085,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     if (!item.item_name.includes('Case Hardened')) return;
     let pastSales: BlueGem.PastSale[] = [];
     let patternElement: BlueGem.PatternElement | undefined = undefined;
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
-    const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
+    const currencySymbol = getSymbolFromCurrency(CSFloatHelpers.userCurrency) ?? '$';
     let type = '';
     if (item.item_name.startsWith('★')) {
         type = item.item_name.split(' | ')[0].split('★ ')[1];
@@ -1106,7 +1104,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     }
     // if there is no cached data, fetch it and store it
     if (pastSales.length == 0 && !patternElement) {
-        await fetchCSBlueGem(type, item.paint_seed!, userCurrency).then((data) => {
+        await fetchCSBlueGem(type, item.paint_seed!, CSFloatHelpers.userCurrency).then((data) => {
             pastSales = data.pastSales ?? [];
             patternElement = data.patternElement;
             container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
@@ -1563,10 +1561,9 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
     const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
-    let currencyRate = await getCSFCurrencyRate(userCurrency);
+    let currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency);
     if (!currencyRate) {
-        console.log('[BetterFloat] Could not get currency rate for ' + userCurrency);
+        console.log('[BetterFloat] Could not get currency rate for ' + CSFloatHelpers.userCurrency);
         currencyRate = 1;
     }
 
@@ -1592,8 +1589,7 @@ async function addBuffPrice(
 
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
-    const userCurrency = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
-    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency:  CSFloatHelpers.userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
         suggestedContainer = document.createElement('div');
