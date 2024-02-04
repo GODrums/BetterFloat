@@ -120,7 +120,7 @@ async function firstLaunch() {
         await waitForElement('.betterfloat-buffprice');
         const offerBubbles = document.querySelectorAll('.offer-bubble');
         for (let i = 0; i < offerBubbles.length; i++) {
-            await adjustItemBubble(offerBubbles[i]);
+            adjustItemBubble(offerBubbles[i]);
         }
     } else if (location.pathname.includes('/stall/')) {
         // await customStall(location.pathname.split('/').pop() ?? '');
@@ -564,7 +564,7 @@ function applyMutation() {
                         }
                     } else if (addedNode.className.toString().includes('offer-bubble')) {
                         // offer bubbles in offers page
-                        await adjustItemBubble(addedNode);
+                        adjustItemBubble(addedNode);
                     } else if (location.pathname == '/profile/offers' && addedNode.className.toString().includes('mat-list-item')) {
                         // offer list in offers page
                         offerItemClickListener(addedNode);
