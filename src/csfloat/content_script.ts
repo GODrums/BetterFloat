@@ -1495,7 +1495,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const header_details = <Element>nameContainer?.childNodes[1];
 
     const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    let priceText = priceContainer?.textContent?.trim().split(/\s/) ?? [];
+    const regex = /([A-Za-z]+)\s+(\d+)/;
+    let priceText = priceContainer?.textContent?.trim().replace(regex, '$1$2').split(/\s/) ?? [];
     let price: string;
     let currency = '$';
     if (location.pathname === '/sell') {
