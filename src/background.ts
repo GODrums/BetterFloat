@@ -33,6 +33,7 @@ export const defaultSettings: Extension.Settings = {
         priceHigh: 999999,
         name: '',
         types: [],
+        new: false,
     },
     enableSkinbid: true,
     skbPriceReference: 0,
