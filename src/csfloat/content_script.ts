@@ -667,15 +667,16 @@ async function adjustSalesTableRow(container: Element) {
     if (appStickerView && appStickerView.querySelectorAll('.sticker')?.length > 0) {
         const stickerData = cachedSale.item.stickers;
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
-        const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace('$', ''));
+        const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace(/[^0-9.]/g, ''));
+        const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency)
+        const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate
 
         if (priceData && stickerData.length > 0) {
             const stickerContainer = document.createElement('div');
             stickerContainer.className = 'betterfloat-table-sp';
             (<HTMLElement>appStickerView).style.display = 'flex';
             (<HTMLElement>appStickerView).style.alignItems = 'center';
-
-            const doChange = await changeSpContainer(stickerContainer, stickerData, sellPrice - Number(priceData.priceFromReference));
+            const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD);
             if (doChange) {
                 appStickerView.appendChild(stickerContainer);
                 (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
@@ -698,6 +699,10 @@ async function adjustItem(container: Element, isPopout = false) {
     // console.log('[BetterFloat] Adjusting item:', item);
     if (Number.isNaN(item.price)) return;
     const priceResult = await addBuffPrice(item, container, isPopout);
+    // Currency up until this moment is stricly the user's local currency, however the sticker %
+    // is done stricly in USD, we have to make sure the price difference reflects that
+    const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency) 
+    const priceResultUSD = priceResult.price_difference / currencyRate 
     const cachedItem = getFirstCSFItem();
     if (cachedItem) {
         if (item.name != cachedItem.item.item_name) {
@@ -705,7 +710,7 @@ async function adjustItem(container: Element, isPopout = false) {
             return;
         }
         if (extensionSettings.stickerPrices && item.price > 0) {
-            await addStickerInfo(container, cachedItem, priceResult.price_difference);
+            await addStickerInfo(container, cachedItem, priceResultUSD);
         } else {
             adjustExistingSP(container);
         }
@@ -732,9 +737,8 @@ async function adjustItem(container: Element, isPopout = false) {
             if (!apiItem) {
                 apiItem = getCSFPopupItem();
             }
-            if (apiItem) {
-                // console.log(apiItem);
-                await addStickerInfo(container, apiItem, priceResult.price_difference);
+            if (apiItem) {        
+                await addStickerInfo(container, apiItem, priceResultUSD);
                 await addListingAge(container, apiItem);
                 await patternDetections(container, apiItem, true);
                 await addFloatColoring(container, apiItem);
@@ -1447,8 +1451,8 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
     const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
     const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
-    const spPercentage = price_difference / priceSum;
 
+    const spPercentage = price_difference / priceSum;
     // don't display SP if total price is below $1
     if (priceSum >= 2) {
         const backgroundImageColor = getSPBackgroundColor(spPercentage);
