@@ -669,13 +669,13 @@ async function adjustSalesTableRow(container: Element) {
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
         const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace(/[^0-9.]/g, ''));
         const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency)
-        const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate
 
         if (priceData && stickerData.length > 0) {
             const stickerContainer = document.createElement('div');
             stickerContainer.className = 'betterfloat-table-sp';
             (<HTMLElement>appStickerView).style.display = 'flex';
             (<HTMLElement>appStickerView).style.alignItems = 'center';
+            const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate
             const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD);
             if (doChange) {
                 appStickerView.appendChild(stickerContainer);
