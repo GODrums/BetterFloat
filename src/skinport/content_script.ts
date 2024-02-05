@@ -6,7 +6,7 @@ import { getAllSettings } from '../util/extensionsettings';
 import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '../util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '../util/uigeneration';
 import { Extension } from '../@typings/ExtensionTypes';
-import { fetchCSBlueGem } from '../networkhandler';
+import { fetchCSBlueGem, saveOCOPurchase } from '../networkhandler';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
@@ -1156,6 +1156,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 console.log('[BetterFloat] oneClickOrder result: ', result);
                 if (result) {
                     showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
+                    saveOCOPurchase(item);
                 }
             });
         };
