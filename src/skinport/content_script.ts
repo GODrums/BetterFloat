@@ -576,9 +576,9 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 }
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
-    let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
     const itemHeader = container.querySelector('.TradeLock-lock');
-    if (!itemHeader) return;
+    if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
+    let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
     const gemContainer = genGemContainer(extensionSettings.runtimePublicURL, patternElement, 'right');
     gemContainer.style.fontSize = '11px';
     gemContainer.style.fontWeight = '600';
@@ -1131,7 +1131,6 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
                 if (extensionSettings.ocoLastOrder.status == 'open' || extensionSettings.ocoLastOrder.status == 'unknown') {
                     const response = (await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json())) as Skinport.OrderHistoryData;
-                    console.log('[BetterFloat] OCO order history: ', response);
                     if (response.success) {
                         const order = response.result.orders.find((order) => order.id == extensionSettings.ocoLastOrder.id);
                         console.log('[BetterFloat] OCO found order: ', order);
