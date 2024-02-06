@@ -1,7 +1,34 @@
 import { CSFloat } from '../@typings/FloatTypes';
 
 export namespace CSFloatHelpers {
-    export const userCurrency = localStorage.getItem('selected_currency') ?? 'USD';
+    export const userCurrency = () => {
+        // const localCur = localStorage.getItem('selected_currency');
+        // if (localCur) {
+        //     return localCur;
+        // }
+        const userCurrencyRaw = document.querySelector('mat-select-trigger')?.textContent?.trim() ?? 'USD';
+        const symbolToCurrencyCodeMap: { [key: string]: string } = {
+            'C$': 'CAD',
+            'AED': 'AED',
+            'A$': 'AUD',
+            'R$': 'BRL',
+            'CHF': 'CHF',
+            '¥': 'CNY',
+            'Kč': 'CZK',
+            'kr': 'DKK',
+            '£': 'GBP',
+            'PLN': 'PLN',
+            'SAR': 'SAR',
+            'SEK': 'SEK',
+            'S$': 'SGD',
+        };
+        const currencyCodeFromSymbol = symbolToCurrencyCodeMap[userCurrencyRaw];
+        if (currencyCodeFromSymbol) {
+            return currencyCodeFromSymbol;
+        }
+        const isValidCurrency: boolean = /^[A-Z]{3}$/.test(userCurrencyRaw);
+        return isValidCurrency ? userCurrencyRaw : 'USD';
+    }
 
     export function generateWarningText(text: string) {
         const warningText = document.createElement('div');
