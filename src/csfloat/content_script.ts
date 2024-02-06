@@ -668,14 +668,14 @@ async function adjustSalesTableRow(container: Element) {
         const stickerData = cachedSale.item.stickers;
         const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
         const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace(/[^0-9.]/g, ''));
-        const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency)
+        const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
 
         if (priceData && stickerData.length > 0) {
             const stickerContainer = document.createElement('div');
             stickerContainer.className = 'betterfloat-table-sp';
             (<HTMLElement>appStickerView).style.display = 'flex';
             (<HTMLElement>appStickerView).style.alignItems = 'center';
-            const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate
+            const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate;
             const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD);
             if (doChange) {
                 appStickerView.appendChild(stickerContainer);
@@ -701,8 +701,8 @@ async function adjustItem(container: Element, isPopout = false) {
     const priceResult = await addBuffPrice(item, container, isPopout);
     // Currency up until this moment is stricly the user's local currency, however the sticker %
     // is done stricly in USD, we have to make sure the price difference reflects that
-    const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency) 
-    const priceResultUSD = priceResult.price_difference / currencyRate 
+    const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
+    const priceResultUSD = priceResult.price_difference / currencyRate;
     const cachedItem = getFirstCSFItem();
     if (cachedItem) {
         if (item.name != cachedItem.item.item_name) {
@@ -737,7 +737,7 @@ async function adjustItem(container: Element, isPopout = false) {
             if (!apiItem) {
                 apiItem = getCSFPopupItem();
             }
-            if (apiItem) {        
+            if (apiItem) {
                 await addStickerInfo(container, apiItem, priceResultUSD);
                 await addListingAge(container, apiItem);
                 await patternDetections(container, apiItem, true);
@@ -794,7 +794,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     if (listing.seller.stall_public) {
         quickLinks.push({
             icon: 'steam.svg',
-            tooltip: 'Show in Seller\'s Inventory',
+            tooltip: "Show in Seller's Inventory",
             link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
         });
     }
@@ -1597,7 +1597,7 @@ async function addBuffPrice(
 
     let suggestedContainer = container.querySelector('.reference-container');
     const showBoth = extensionSettings.showSteamPrice || isPopout;
-    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency:  CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
         suggestedContainer = document.createElement('div');
@@ -1646,7 +1646,10 @@ async function addBuffPrice(
         if (priceOrder > priceListing * 1.1) {
             const warningImage = document.createElement('img');
             warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
-            warningImage.setAttribute('style', 'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);');
+            warningImage.setAttribute(
+                'style',
+                'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);'
+            );
             buffContainer.appendChild(warningImage);
         }
 
