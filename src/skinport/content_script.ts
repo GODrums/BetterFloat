@@ -877,7 +877,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
     buffPrice.appendChild(tooltipSpan);
     const buffPriceBid = document.createElement('span');
-    buffPriceBid.setAttribute('style', 'color: orange;');
+    buffPriceBid.setAttribute('style', 'color: orange; font-weight: 600;');
     buffPriceBid.textContent = `Bid ${currencySymbol}${priceOrder.toFixed(2)}`;
     buffPrice.appendChild(buffPriceBid);
     const buffPriceDivider = document.createElement('span');
@@ -885,7 +885,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     buffPriceDivider.textContent = '|';
     buffPrice.appendChild(buffPriceDivider);
     const buffPriceAsk = document.createElement('span');
-    buffPriceAsk.setAttribute('style', 'color: greenyellow;');
+    buffPriceAsk.setAttribute('style', 'color: greenyellow; font-weight: 600;');
     buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
     buffPrice.appendChild(buffPriceAsk);
     buffContainer.appendChild(buffPrice);
