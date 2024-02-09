@@ -253,7 +253,7 @@ export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real')
     if (rates == 'real' && Object.keys(realRatesFromUSD).length == 0) {
         await fetchCurrencyRates();
     }
-    return rates == 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD[skinportUserCurrency];
+    return rates == 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD["USD"];
 }
 
 export async function getSpCSRF() {

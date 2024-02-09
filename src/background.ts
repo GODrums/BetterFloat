@@ -65,14 +65,19 @@ export const defaultSettings: Extension.Settings = {
 };
 
 // Check whether new version is installed
-chrome.runtime.onInstalled.addListener((details) => {
+chrome.runtime.onInstalled.addListener(async (details) => {
     if (details.reason == 'install') {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
-        chrome.storage.local.set(defaultSettings);
+        await chrome.storage.local.set(defaultSettings);
     } else if (details.reason == 'update') {
         const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
-        chrome.storage.local.get('ocoLastOrder').then((data) => {
+
+        if (thisVersion === '1.16.2') {
+            await chrome.storage.local.set({ buffMapping: null });
+        }
+
+        await chrome.storage.local.get('ocoLastOrder').then((data) => {
             if (!data.ocoLastOrder) {
                 chrome.storage.local.set({ ocoLastOrder: { time: 0, id: 0, status: 'unknown' } });
             }
