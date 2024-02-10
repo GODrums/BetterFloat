@@ -761,7 +761,10 @@ function addScreenshotReplacement(container: Element, listing: CSFloat.ListingDa
         listing.item.inspect_link &&
         listing.item.type == 'skin'
     ) {
-        CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings.runtimePublicURL);
+        const decodedLink = decodeURI(listing.item.inspect_link);
+        if (decodedLink.split(' ').at(-1)?.startsWith('S')) {
+            CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings.runtimePublicURL);
+        }
     }
 }
 

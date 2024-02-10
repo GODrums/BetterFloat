@@ -38,7 +38,7 @@ async function init() {
     // mutation observer is only needed once
     if (!isObserverActive) {
         isObserverActive = true;
-        await applyMutation();
+        applyMutation();
         console.log('[BetterFloat] Observer started');
     }
 }
@@ -70,7 +70,7 @@ async function firstLaunch() {
     }
 }
 
-async function applyMutation() {
+function applyMutation() {
     let observer = new MutationObserver(async (mutations) => {
         if (extensionSettings.enableSkinbid) {
             for (let mutation of mutations) {
@@ -179,16 +179,14 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
     }
     if (!cachedItem) return;
     const priceResult = await addBuffPrice(cachedItem, container, selector);
-    if (cachedItem) {
-        if (extensionSettings.skbListingAge || selector.self == 'page') {
-            addListingAge(container, cachedItem, selector.self);
-        }
-        if ((extensionSettings.skbStickerPrices || selector.self == 'page') && priceResult?.price_difference) {
-            await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
-        }
-        if (selector.self == 'page') {
-            await caseHardenedDetection(container, cachedItem);
-        }
+    if (extensionSettings.skbListingAge || selector.self == 'page') {
+        addListingAge(container, cachedItem, selector.self);
+    }
+    if ((extensionSettings.skbStickerPrices || selector.self == 'page') && priceResult?.price_difference) {
+        await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
+    }
+    if (selector.self == 'page') {
+        await caseHardenedDetection(container, cachedItem);
     }
 }
 
