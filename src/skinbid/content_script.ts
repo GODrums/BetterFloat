@@ -178,6 +178,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
         cachedItem = getFirstSkbItem();
     }
     if (!cachedItem) return;
+
     const priceResult = await addBuffPrice(cachedItem, container, selector);
     if (extensionSettings.skbListingAge || selector.self == 'page') {
         addListingAge(container, cachedItem, selector.self);
@@ -391,8 +392,12 @@ async function addBuffPrice(
         console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
         return;
     }
-    const currencySymbol = priceDiv.firstElementChild?.lastChild?.textContent?.trim().charAt(0);
+
+    let currencySymbol = priceDiv.firstElementChild?.lastChild?.textContent?.trim().charAt(0);
     if (!container.querySelector('.betterfloat-buffprice')) {
+        if (!currencySymbol || currencySymbol.length === 0) {
+            currencySymbol = container.querySelector('.bid-price')?.lastChild?.textContent?.trim().charAt(0);
+        }
         if (selector == itemSelectors.list) {
             generateBuffContainer(priceDiv.firstElementChild as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
         } else {
@@ -420,12 +425,28 @@ async function addBuffPrice(
     }
 
     const difference = cachedItem.nextMinimumBid - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
+    console.debug('[BetterFloat] Buff price difference: ', cachedItem, container);
     if (extensionSettings.skbBuffDifference) {
         let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
             discountContainer = document.createElement('div');
             discountContainer.className = selector.discount.substring(1);
-            container.querySelector(selector.discountDiv)?.appendChild(discountContainer);
+            const bidPrice = container.querySelector('.bid-price');
+            if (bidPrice) {
+                bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+                bidPrice.appendChild(discountContainer);
+            } else {
+                const discountDiv = container.querySelector(selector.discountDiv);
+                if (discountDiv) {
+                    discountDiv.appendChild(discountContainer);
+                }
+            }
+        } else {
+            const bidPrice = container.querySelector('.bid-price');
+            if (bidPrice) {
+                bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+                bidPrice.appendChild(discountContainer);
+            }
         }
         if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
             if (selector == itemSelectors.page) {
@@ -438,7 +459,7 @@ async function addBuffPrice(
             discountContainer.style.color =
                 difference === 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
             discountContainer.style.fontWeight = '400';
-            discountContainer.style.fontSize = '15px';
+            discountContainer.style.fontSize = '14px';
             discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         }
     } else {
