@@ -3,7 +3,7 @@ import { Extension } from '../@typings/ExtensionTypes';
 import { ItemStyle } from '../@typings/FloatTypes';
 import { Skinbid } from '../@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
-import { getBuffMapping, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { fetchCSBlueGem } from '../networkhandler';
 import { initSettings } from '../util/extensionsettings';
 import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../util/helperfunctions';
@@ -51,7 +51,7 @@ async function firstLaunch() {
             await adjustItem(items[i], itemSelectors.card);
         }
     } else if (location.pathname == '/listings') {
-        let items = document.getElementsByClassName('item');
+        let items = document.getElementsByClassName('item-card');
         for (let i = 0; i < items.length; i++) {
             await adjustItem(items[i], itemSelectors.list);
         }
@@ -89,6 +89,13 @@ async function applyMutation() {
                             // Items in user shop
                             await adjustItem(firstChild, itemSelectors.card);
                             continue;
+                        } else if (firstChild.tagName.includes('APP-ITEM-CARD')) {
+                            if (location.pathname == '/listings') {
+                                await adjustItem(firstChild, itemSelectors.list);
+                            } else {
+                                await adjustItem(firstChild, itemSelectors.card);
+                            }
+                            continue;
                         }
                     }
                     if (addedNode.className) {
@@ -125,13 +132,13 @@ const itemSelectors = {
     },
     list: {
         self: 'list',
-        name: '.item-category-and-stickers .first-row',
-        type: '.item-category-and-stickers .second-row',
-        price: '.section-price .price',
-        priceDiv: '.section-price-first-row',
+        name: '.item-name',
+        type: '.item-type',
+        price: '.item-price .price',
+        priceDiv: '.item-price',
         wear: '.quality-float-row',
-        discount: '.section-discount',
-        discountDiv: '.section-discount',
+        discount: '.price-discount',
+        discountDiv: '.price-discount',
         listingAge: '.stickers-and-fade',
         stickerDiv: '.stickers',
     },
@@ -161,13 +168,16 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
     let hashHTML: string | undefined;
     if (selector.self == 'page') {
         hashHTML = location.pathname.split('/')[2];
-    } else if (container.tagName.includes('APP-AUCTION-CARD-ITEM')) {
-        hashHTML = container.parentElement?.getAttribute('href')?.split('/')[2];
-    } else {
+    } else if (selector.self == 'card') {
         hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
     }
-    if (!hashHTML) return;
-    const cachedItem = getSpecificSkbItem(hashHTML);
+    let cachedItem: Skinbid.Listing | null | undefined;
+    if (hashHTML) {
+        cachedItem = getSpecificSkbItem(hashHTML);
+    } else {
+        cachedItem = getFirstSkbItem();
+    }
+    if (!cachedItem) return;
     const priceResult = await addBuffPrice(cachedItem, container, selector);
     if (cachedItem) {
         if (extensionSettings.skbListingAge || selector.self == 'page') {
@@ -198,7 +208,11 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
     newTab.className = 'tab ng-tns-c187-0 betterfloat-tab-bluegem';
     newTab.style.cursor = 'pointer';
     newTab.style.color = 'deepskyblue';
-    newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.paintSeed}&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub;"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-left: 10px;"></a>`;
+    newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
+        item.paintSeed
+    }&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub;"><img src="${
+        extensionSettings.runtimePublicURL
+    }/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-left: 10px;"></a>`;
     newTab.addEventListener('click', () => {
         chartContainer.querySelector('.tab.active')?.classList.remove('active');
         newTab.classList.add('active');
@@ -206,12 +220,12 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 
         // chartContainer.querySelector('app-price-chart')?.replaceWith(document.createComment(''));
         // chartContainer.querySelector('app-previous-sales')?.replaceWith(document.createComment(''));
-        
+
         chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: none;');
         chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: none;');
 
         const salesTable = document.createElement('app-bluegem-sales');
-        const thStyle = 'text-align: start; padding-bottom: 6px; font-size: 12px; color: #a3a3cb;'
+        const thStyle = 'text-align: start; padding-bottom: 6px; font-size: 12px; color: #a3a3cb;';
         const tdStyle = 'padding: 8px 0;text-align: start;border-top: 1px solid #21212b;';
         const getWear = (float: number) => {
             let wear = '';
@@ -271,7 +285,9 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             </td>
                             <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.price}`}</td>
                         </tr>
-                    `).join('')}
+                    `
+                        )
+                        .join('')}
                 </tbody>
                 </table>
             </div>
@@ -362,7 +378,6 @@ async function addBuffPrice(
 ): Promise<{
     price_difference: number;
 } | void> {
-    await loadMapping();
     const listingItem = cachedItem?.items?.at(0)?.item;
     if (!listingItem) return;
     const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
@@ -374,13 +389,17 @@ async function addBuffPrice(
     }
 
     const priceDiv = container.querySelector(selector.priceDiv);
-    if (!priceDiv?.firstChild) {
+    if (!priceDiv?.firstElementChild) {
         console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
         return;
     }
-    const currencySymbol = (<HTMLElement>priceDiv.firstChild).textContent?.trim().charAt(0);
-    if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
-        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+    const currencySymbol = priceDiv.firstElementChild?.lastChild?.textContent?.trim().charAt(0);
+    if (!container.querySelector('.betterfloat-buffprice')) {
+        if (selector == itemSelectors.list) {
+            generateBuffContainer(priceDiv.firstElementChild as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+        } else {
+            generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+        }
     }
 
     const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
@@ -391,15 +410,7 @@ async function addBuffPrice(
             e.preventDefault();
             window.open(buffHref, '_blank');
         };
-        if (selector == itemSelectors.list) {
-            (<HTMLElement>buffContainer).style.alignItems = 'center';
-            let suggestContainer = <HTMLElement>buffContainer.querySelector('.suggested-price');
-            suggestContainer.style.display = 'flex';
-            suggestContainer.style.flexDirection = 'column';
-            suggestContainer.children[2].remove();
-            let buffIcon = <HTMLElement>buffContainer.children[0];
-            buffIcon.style.height = '30px';
-        } else if (selector == itemSelectors.page) {
+        if (selector == itemSelectors.page) {
             let parentDiv = container.querySelector('.item-bids-time-info');
             if (parentDiv) {
                 // buffContainer.parentElement?.removeChild(buffContainer);
@@ -429,12 +440,20 @@ async function addBuffPrice(
             discountContainer.style.color =
                 difference === 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
             discountContainer.style.fontWeight = '400';
-            discountContainer.style.fontSize = '14px';
+            discountContainer.style.fontSize = '15px';
             discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
         }
     } else {
         if (container.querySelector('.discount')) {
             (<HTMLElement>container.querySelector('.discount')).className += 'betterfloat-sale-tag';
+        }
+    }
+
+    if (selector == itemSelectors.list) {
+        const nameLength = container.querySelector(selector.name)?.textContent?.length;
+        if (nameLength && nameLength > 30) {
+            container.querySelector(selector.type)?.setAttribute('style', 'display: none;');
+            (<HTMLElement>container.querySelector('.betterfloat-buff-container')).style.margin = '2px 0';
         }
     }
 
