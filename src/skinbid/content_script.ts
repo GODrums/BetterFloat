@@ -139,8 +139,8 @@ const itemSelectors = {
         wear: '.quality-float-row',
         discount: '.price-discount',
         discountDiv: '.price-discount',
-        listingAge: '.stickers-and-fade',
-        stickerDiv: '.stickers',
+        listingAge: '.quality-float-row',
+        stickerDiv: '.card-top-section',
     },
     page: {
         self: 'page',
@@ -311,6 +311,9 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: number) {
     if (!item.items) return;
     let stickers = item.items[0].item.stickers;
+    if (item.items[0].item.isSouvenir) {
+        stickers = stickers.filter((s) => !s.name.includes('(Gold)'));
+    }
     const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice('Sticker | ' + s.name)));
     const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
     const spPercentage = priceDifference / priceSum;
@@ -334,6 +337,10 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
         stickerDiv.style.backgroundColor = backgroundImageColor;
         if (selector == itemSelectors.page) {
             stickerDiv.style.marginLeft = '15px';
+        } else if (selector == itemSelectors.list) {
+            stickerDiv.style.position = 'absolute';
+            stickerDiv.style.bottom = '10px';
+            stickerDiv.style.right = '5px';
         }
 
         overlayContainer?.appendChild(stickerDiv);
@@ -425,7 +432,7 @@ async function addBuffPrice(
     }
 
     const difference = cachedItem.nextMinimumBid - (extensionSettings.skbPriceReference == 1 ? priceListing : priceOrder);
-    console.debug('[BetterFloat] Buff price difference: ', cachedItem, container);
+    // console.debug('[BetterFloat] Buff price difference: ', cachedItem, container);
     if (extensionSettings.skbBuffDifference) {
         let discountContainer = <HTMLElement>container.querySelector(selector.discount);
         if (!discountContainer) {
@@ -439,6 +446,8 @@ async function addBuffPrice(
                 const discountDiv = container.querySelector(selector.discountDiv);
                 if (discountDiv) {
                     discountDiv.appendChild(discountContainer);
+                } else {
+                    priceDiv.appendChild(discountContainer);
                 }
             }
         } else {
