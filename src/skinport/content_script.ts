@@ -921,7 +921,7 @@ function showMessageBox(title: string, message: string, success = false) {
         messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
         document.getElementById('root')?.appendChild(messageContainer);
     } else {
-        messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+        messageContainer.className += ' BetterFloat-OCO-Message';
     }
     const messageInnerContainer = document.createElement('div');
     messageInnerContainer.className = 'Message Message--error Message-enter-done';
@@ -966,8 +966,8 @@ function showMessageBox(title: string, message: string, success = false) {
         if (!messageContainer) return;
         (<HTMLElement>messageContainer).style.opacity = '0';
         setTimeout(() => {
-            messageContainer!.replaceChildren();
-            (<HTMLElement>messageContainer).style.opacity = '1';
+            messageContainer!.removeChild(messageInnerContainer);
+            messageContainer?.setAttribute('style', '');
         }, 500);
     };
     messageCloseButton.onclick = fadeOutEffect;
