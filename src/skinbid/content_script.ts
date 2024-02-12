@@ -450,7 +450,7 @@ async function addBuffPrice(
                     priceDiv.appendChild(discountContainer);
                 }
             }
-        } else {
+        } else if (selector.self !== 'page') {
             const bidPrice = container.querySelector('.bid-price');
             if (bidPrice) {
                 bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
