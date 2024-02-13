@@ -117,18 +117,19 @@ function applyMutation() {
     observer.observe(document, { childList: true, subtree: true });
 }
 
+// TODO: rework as card and list are very similar / the same in the new design
 const itemSelectors = {
     card: {
         self: 'card',
         name: '.item-name',
         type: '.item-type',
-        price: '.item-price-wrapper > div',
-        priceDiv: '.item-price-wrapper',
+        price: '.item-price .price',
+        priceDiv: '.item-price',
         wear: '.quality-float-row',
-        discount: '.discount',
-        discountDiv: '.item-price-wrapper',
+        discount: '.price-discount',
+        discountDiv: '.price-discount',
         listingAge: '.left.flex > app-quality-float-row',
-        stickerDiv: '.on-top-of-image .items-center',
+        stickerDiv: '.card-top-section',
     },
     list: {
         self: 'list',
@@ -320,9 +321,7 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 
     if (priceSum >= 2) {
         let overlayContainer = container.querySelector(selector.stickerDiv);
-        if (selector == itemSelectors.card) {
-            (<HTMLElement>overlayContainer).style.justifyContent = 'flex-end';
-        } else if (selector === itemSelectors.page) {
+        if (selector === itemSelectors.page) {
             (<HTMLElement>overlayContainer).style.display = 'flex';
         }
 
@@ -337,7 +336,7 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
         stickerDiv.style.backgroundColor = backgroundImageColor;
         if (selector == itemSelectors.page) {
             stickerDiv.style.marginLeft = '15px';
-        } else if (selector == itemSelectors.list) {
+        } else if (selector == itemSelectors.list || selector == itemSelectors.card) {
             stickerDiv.style.position = 'absolute';
             stickerDiv.style.bottom = '10px';
             stickerDiv.style.right = '5px';
@@ -400,16 +399,12 @@ async function addBuffPrice(
         return;
     }
 
-    let currencySymbol = priceDiv.firstElementChild?.lastChild?.textContent?.trim().charAt(0);
+    let currencySymbol = priceDiv.firstElementChild?.textContent?.trim().charAt(0);
     if (!container.querySelector('.betterfloat-buffprice')) {
         if (!currencySymbol || currencySymbol.length === 0) {
             currencySymbol = container.querySelector('.bid-price')?.lastChild?.textContent?.trim().charAt(0);
         }
-        if (selector == itemSelectors.list) {
-            generateBuffContainer(priceDiv.firstElementChild as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
-        } else {
-            generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
-        }
+        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
     }
 
     const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
@@ -428,6 +423,8 @@ async function addBuffPrice(
                 parentDiv.before(buffContainer);
             }
             (<HTMLElement>buffContainer).style.margin = '20px 0 0 0';
+        } else {
+            container.querySelector(selector.priceDiv)?.setAttribute('style', 'flex-direction: column;');
         }
     }
 
@@ -467,21 +464,9 @@ async function addBuffPrice(
             discountContainer.className += ' betterfloat-sale-tag';
             discountContainer.style.color =
                 difference === 0 ? extensionSettings.colors.skinbid.neutral : difference < 0 ? extensionSettings.colors.skinbid.profit : extensionSettings.colors.skinbid.loss;
-            discountContainer.style.fontWeight = '400';
             discountContainer.style.fontSize = '14px';
+            discountContainer.style.background = 'transparent';
             discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
-        }
-    } else {
-        if (container.querySelector('.discount')) {
-            (<HTMLElement>container.querySelector('.discount')).className += 'betterfloat-sale-tag';
-        }
-    }
-
-    if (selector == itemSelectors.list) {
-        const nameLength = container.querySelector(selector.name)?.textContent?.length;
-        if (nameLength && nameLength > 30) {
-            container.querySelector(selector.type)?.setAttribute('style', 'display: none;');
-            (<HTMLElement>container.querySelector('.betterfloat-buff-container')).style.margin = '2px 0';
         }
     }
 
@@ -528,9 +513,9 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     buffContainer.appendChild(buffPrice);
     let parentDiv = container.parentElement;
     if (parentDiv) {
-        parentDiv.after(buffContainer);
-        let divider = document.createElement('div');
-        parentDiv.after(divider);
+        parentDiv.before(buffContainer);
+        // let divider = document.createElement('div');
+        // parentDiv.before(divider);
     }
 }
 
