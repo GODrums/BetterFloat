@@ -399,11 +399,8 @@ async function addBuffPrice(
         return;
     }
 
-    let currencySymbol = priceDiv.firstElementChild?.textContent?.trim().charAt(0);
+    let currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
     if (!container.querySelector('.betterfloat-buffprice')) {
-        if (!currencySymbol || currencySymbol.length === 0) {
-            currencySymbol = container.querySelector('.bid-price')?.lastChild?.textContent?.trim().charAt(0);
-        }
         generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
     }
 
