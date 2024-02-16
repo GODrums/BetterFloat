@@ -937,17 +937,17 @@ function showMessageBox(title: string, message: string, success = false) {
 
     if (message === 'MUST_LOGIN') {
         // custom messages for create order request
-        message = 'You have to log in again.';
+        message = 'Your login session has expired. Please log in again!';
     } else if (message === 'RATE_LIMIT_REACHED') {
-        message = 'You are ordering too fast!';
+        message = 'You are ordering too fast! Please wait a few moments before trying again.';
     } else if (message === 'CART_OUTDATED') {
         message = 'Your cart is outdated. Someone was probably faster than you.';
     } else if (message === 'CAPTCHA') {
-        message = 'There was an error while ordering.';
+        message = 'There was an error with the captcha while ordering. If this problem persists, please report it to the BetterFloat Discord server.';
     } else if (message === 'SALE_PRICE_CHANGED') {
-        message = 'Item price got changed.';
+        message = 'The item price got changed. Please review the new price and try again.';
     } else if (message === 'ITEM_NOT_LISTED') {
-        message = 'The item you are trying to order is not listed (anymore).';
+        message = 'The item you are trying to order is not listed anymore.';
     }
 
     // Create message element
