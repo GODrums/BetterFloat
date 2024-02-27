@@ -1742,7 +1742,7 @@ function getTabNumber() {
     return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
 }
 
-const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell'];
+const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell', '/ref/'];
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: Extension.Settings;

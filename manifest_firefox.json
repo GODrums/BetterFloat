@@ -4,7 +4,7 @@
         "name": "Rums",
         "url": "https://github.com/GODrums"
     },
-    "version": "1.16.5",
+    "version": "1.16.8",
     "description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
     "manifest_version": 3,
     "host_permissions": ["*://*.csfloat.com/*", "*://*.skinport.com/*", "*://*.skinbid.com/*"],
