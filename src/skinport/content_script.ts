@@ -1125,18 +1125,23 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
                 return;
             }
             // only allow one order every 24 hours
-            console.log('[BetterFloat] OCO last order: ', extensionSettings.ocoLastOrder);
-            if (extensionSettings.ocoLastOrder.time > Date.now() - 86400000) {
+            const ocoLastOrder: {
+                time: number;
+                id: number;
+                status: "paid" | "closed" | "open" | "unknown";
+            } = JSON.parse(localStorage.getItem('ocoLastOrder') ?? '{"time": 0, "id": 0, "status": "unknown"}');
+            console.log('[BetterFloat] OCO last order: ', ocoLastOrder);
+            if (ocoLastOrder.time > Date.now() - 86400000) {
                 console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
-                let statusCheck = extensionSettings.ocoLastOrder.status == 'paid';
-                if (extensionSettings.ocoLastOrder.status == 'open' || extensionSettings.ocoLastOrder.status == 'unknown') {
+                let statusCheck = ocoLastOrder.status == 'paid';
+                if (ocoLastOrder.status == 'open' || ocoLastOrder.status == 'unknown') {
                     const response = (await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json())) as Skinport.OrderHistoryData;
                     if (response.success) {
-                        const order = response.result.orders.find((order) => order.id == extensionSettings.ocoLastOrder.id);
+                        const order = response.result.orders.find((order) => order.id == ocoLastOrder.id);
                         console.log('[BetterFloat] OCO found order: ', order);
                         if (order) {
-                            extensionSettings.ocoLastOrder.status = order.status;
-                            chrome?.storage?.local?.set({ ocoLastOrder: extensionSettings.ocoLastOrder });
+                            ocoLastOrder.status = order.status;
+                            localStorage.setItem('ocoLastOrder', JSON.stringify(ocoLastOrder));
                             statusCheck = order.status == 'paid';
                         }
                     }
