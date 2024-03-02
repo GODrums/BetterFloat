@@ -1,119 +1,29 @@
-import { Extension } from './@typings/ExtensionTypes';
+import browser from "webextension-polyfill"
+import type { Extension } from "~lib/@typings/ExtensionTypes";
+import { DEFAULT_SETTINGS, ExtensionStorage } from "~lib/util/storage";
 
-export const defaultSettings: Extension.Settings = {
-    runtimePublicURL: chrome.runtime.getURL('/public'),
-    enableCSFloat: true,
-    autorefresh: true,
-    stickerPrices: true,
-    csBlueGem: true,
-    priceReference: 0,
-    refreshInterval: 30,
-    showSteamPrice: false,
-    showBuffDifference: true,
-    showBuffPercentageDifference: false,
-    listingAge: 1,
-    showTopButton: true,
-    useTabStates: true,
-    csfRemoveClustering: false,
-    enableSkinport: true,
-    spCheckBoxes: true,
-    spStickerPrices: true,
-    spBlueGem: true,
-    ocoAPIKey: '',
-    ocoLastOrder: { time: 0, id: 0, status: 'unknown'},
-    spPriceReference: 0,
-    skinportRates: 'real',
-    spSteamPrice: false,
-    spBuffDifference: true,
-    spShowBuffPercentageDifference: false,
-    spBuffLink: 'action',
-    spAutoclosePopup: true,
-    spFilter: {
-        priceLow: 0,
-        priceHigh: 999999,
-        name: '',
-        types: [],
-        new: false,
-    },
-    enableSkinbid: true,
-    skbPriceReference: 0,
-    skbBuffDifference: true,
-    skbListingAge: true,
-    skbStickerPrices: true,
-    floatColoring: {
-        csfloat: true,
-        skinport: true,
-        skinbid: false,
-    },
-    colors: {
-        csfloat: {
-            profit: '#008000',
-            loss: '#ce0000',
-            neutral: '#708090',
-        },
-        skinport: {
-            profit: '#008000',
-            loss: '#ce0000',
-            neutral: '#000000',
-        },
-        skinbid: {
-            profit: '#0cb083',
-            loss: '#ce0000',
-            neutral: '#FFFFFF',
-        },
-    },
-};
+export {}
+ 
+ExtensionStorage.sync.getAll().then((data) => {
+    console.log(data);
+});
+
 
 // Check whether new version is installed
-chrome.runtime.onInstalled.addListener(async (details) => {
+browser.runtime.onInstalled.addListener(async (details) => {
     if (details.reason == 'install') {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
-        await chrome.storage.local.set(defaultSettings);
+        await chrome.storage.sync.set(DEFAULT_SETTINGS);
     } else if (details.reason == 'update') {
-        const thisVersion = chrome.runtime.getManifest().version;
+        const thisVersion = browser.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
-
-        if (thisVersion === '1.16.2') {
-            await chrome.storage.local.set({ buffMapping: null });
-        }
-
-        await chrome.storage.local.get('ocoLastOrder').then((data) => {
-            if (!data.ocoLastOrder) {
-                chrome.storage.local.set({ ocoLastOrder: { time: 0, id: 0, status: 'unknown' } });
-            }
-        });
-
-        chrome.storage.local.get((data) => {
-            if (!data) {
-                console.log('[BetterFloat] No settings found, setting default settings.');
-                chrome.storage.local.set(defaultSettings);
-                return;
-            }
-            const storedSettings = data as Extension.Settings;
-            console.debug('[BetterFloat] Loaded settings: ', storedSettings);
-            const newSettings: {
-                [x: string]: (typeof defaultSettings)[keyof typeof defaultSettings];
-            } = {};
-            let update = false;
-            for (const key in defaultSettings) {
-                const settingKey = key as keyof Extension.Settings;
-                if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
-                    // add missing settings
-                    console.log('[BetterFloat] Adding missing setting: ', key);
-                    update = true;
-                    newSettings[key] = defaultSettings[settingKey];
-                }
-            }
-            if (update) {
-                console.debug('[BetterFloat] Updating settings: ', newSettings);
-                chrome.storage.local.set(newSettings);
-            }
-        });
+        await chrome.storage.sync.set(DEFAULT_SETTINGS);
     }
 });
 
 export async function refreshPrices() {
-    return await fetch('https://prices.rums.dev/v1/pricempire_usd')
+    // return await fetch('https://prices.rums.dev/v1/pricempire_usd', {
+    return await fetch('https://prices.rums.dev/v2/pricempire_usd?api_key=' + process.env.PLASMO_PUBLIC_RUMSDEV_KEY)
         .then((response) => response.json())
         .then(async (reponseData) => {
             const data = reponseData as Extension.ApiBuffResponse;
@@ -129,7 +39,7 @@ export async function refreshPrices() {
         .catch((err) => console.error(err));
 }
 
-// receive message from content script to re-fetch prices
+// rewrite for webextension-polyfill
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.message == 'fetchPrices') {
         refreshPrices().then((value) => {

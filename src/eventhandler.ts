@@ -1,6 +1,6 @@
-import { EventData, CSFloat } from './@typings/FloatTypes';
-import { Skinbid } from './@typings/SkinbidTypes';
-import { Skinport } from './@typings/SkinportTypes';
+import type { EventData, CSFloat } from './lib/@typings/FloatTypes';
+import type { Skinbid } from './lib/@typings/SkinbidTypes';
+import type { Skinport } from './lib/@typings/SkinportTypes';
 import {
     cacheCSFHistoryGraph,
     cacheCSFHistorySales,
@@ -17,7 +17,7 @@ import {
     cacheCSFLocation,
     cacheCSFExchangeRates,
 } from './mappinghandler';
-import { handleListed, handleSold } from './skinport/websockethandler';
+import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 type StallData = {
     data: CSFloat.ListingData[];
@@ -44,11 +44,10 @@ export function activateHandler() {
 
     document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async function (e) {
         const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
-        if (eventData.eventType == 'listed') {
-            // console.debug('[BetterFloat] Received data from websocket "listed":', eventData);
+        // console.debug('[BetterFloat] Received data from websocket:', eventData);
+        if (eventData.eventType === 'listed') {
             await handleListed(eventData.data);
-        } else if (eventData.eventType == 'sold') {
-            // console.debug('[BetterFloat] Received data from websocket "sold":', eventData);
+        } else if (eventData.eventType === 'sold') {
             await handleSold(eventData.data);
         }
     });

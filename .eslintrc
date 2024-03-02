@@ -11,8 +11,7 @@
   ],
   "env": {
     "browser": true,
-    "node": true,
-    "mocha": true
+    "node": true
   },
   "rules": {
     "@typescript-eslint/no-non-null-assertion": 0,

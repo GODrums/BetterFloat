@@ -7,27 +7,21 @@
         {
             "label": "install",
             "type": "shell",
-            "command": "npm",
+            "command": "pnpm",
             "args": ["install"]
         },
         {
             "label": "update",
             "type": "shell",
-            "command": "npm",
+            "command": "pnpm",
             "args": ["update"]
-        },
-        {
-            "label": "test",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "test"]
         },
         {
             "label": "build",
             "type": "shell",
             "group": "build",
-            "command": "npm",
-            "args": ["run", "watch"]
+            "command": "pnpm",
+            "args": ["dev"]
         }
     ]
 }

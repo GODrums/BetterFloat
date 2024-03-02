@@ -1,5 +1,5 @@
-import { BlueGem, Extension } from './@typings/ExtensionTypes';
-import { Skinport } from './@typings/SkinportTypes';
+import type { BlueGem, Extension } from './lib/@typings/ExtensionTypes';
+import type { Skinport } from './lib/@typings/SkinportTypes';
 
 export async function fetchCSBlueGem(type: string, paint_seed: number, currency = 'USD') {
     return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
