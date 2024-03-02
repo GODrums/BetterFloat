@@ -20,11 +20,7 @@ export const SettingsSelect = ({
     icon,
     tooltipText
 }: SelectProps) => {
-    const [value, setValue, {
-        setRenderValue,
-        setStoreValue,
-        remove
-    }] = useStorage(id);
+    const [value, setValue] = useStorage(id);
 
     let width = options[value ?? 0].length * 8 + 50 + "px";
 
@@ -43,9 +39,9 @@ export const SettingsSelect = ({
                     </SettingsTooltip>
                 }
             </div>
-            <Select value={value} onValueChange={setStoreValue}>
+            <Select value={value} onValueChange={setValue}>
                 <SelectTrigger style={{ width: width }}>
-                    <SelectValue>
+                    <SelectValue aria-label={value}>
                         <SelectValue>{options[value ?? 0]}</SelectValue>
                     </SelectValue>
                 </SelectTrigger>

@@ -3,30 +3,48 @@ import { useStorage } from "@plasmohq/storage/hook"
 import { MaterialSymbolsHelpOutline } from "~lib/icons";
 import { DISCORD_URL } from "~lib/util/globals";
 import { z } from "zod";
+import { useEffect, useState } from "react";
+import { error } from "console";
+import { cn } from "~lib/utils";
 
 export const SettingsOCO = () => {
     const [value, setValue, {
         setRenderValue,
         setStoreValue,
         remove
-    }] = useStorage("sp-ocoapikey", "");
+    }] = useStorage<string>("sp-ocoapikey", "");
+    const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-    const keySchema = z.string().regex(/^[a-zA-Z0-9]{36}$/, "Invalid API key format");
+    // Regex for all symbols of this key: 9b4f075d-0009-41c3-83c1-c000307d1126
+    // /^[0-9a-f\-]$/;
+    const keyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+    const keySchema = z.string().regex(keyRegex, "Invalid API key format");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // replace string symbols
         let value = event.target.value;
-        if (value.includes("\"")) {
-            value = value.replace(/"/g, "");
+        
+        if (value.length === 0) {
+            setStatus("idle");
+        } else {
+            const parseResult = keySchema.safeParse(value);
+            if (parseResult.success === false) {
+                setStatus("error");
+            } else {
+                setStatus("success");
+            }
+            console.log(parseResult);
         }
-        const parseResult = keySchema.safeParse(value);
-        if (parseResult.success === false) {
-            console.warn('Invalid API key format: ' + parseResult.error.message);
-            return;
-        }
-        console.log(value);
         setStoreValue(value);
     };
+
+    // useEffect(() => {
+    //     const parseResult = keySchema.safeParse(value);
+    //     if (parseResult.success === false) {
+    //         setStatus("error");
+    //     } else {
+    //         setStatus("success");
+    //     }
+    // }, []);
 
     return (
         <div className="flex justify-between items-center align-middle gap-4">
@@ -44,7 +62,10 @@ export const SettingsOCO = () => {
                     </Tooltip>
                 </TooltipProvider>
             </div>
-            <Input type="text" placeholder="Your API key..." value={value} onChange={handleChange} />
+            <Input type="text" placeholder="Your API key..." value={value} onChange={handleChange} className={cn(
+                (status === "success" ? "focus:border-green-500" : (status === 'error' ? "focus:border-red-500" : "focus:border-slate-600")), 
+                ''
+            )} />
         </div>
     );
 };

@@ -11,7 +11,7 @@ export const SettingsTooltip = ({
 }) => {
     return (
         <TooltipProvider>
-            <Tooltip open={open ?? false}>
+            <Tooltip defaultOpen={open ?? false}>
                 <TooltipTrigger>
                     {children}
                 </TooltipTrigger>

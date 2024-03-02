@@ -1,8 +1,8 @@
 import Decimal from 'decimal.js';
-import { Extension } from './lib/@typings/ExtensionTypes';
-import { CSFloat } from './lib/@typings/FloatTypes';
-import { Skinbid } from './lib/@typings/SkinbidTypes';
-import { Skinport } from './lib/@typings/SkinportTypes';
+import type { Extension } from './lib/@typings/ExtensionTypes';
+import type { CSFloat } from './lib/@typings/FloatTypes';
+import type { Skinbid } from './lib/@typings/SkinbidTypes';
+import type { Skinport } from './lib/@typings/SkinportTypes';
 import { handleSpecialStickerNames } from './lib/util/helperfunctions';
 
 // most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue

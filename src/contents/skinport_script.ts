@@ -2,7 +2,7 @@ import type { ItemStyle } from '../lib/@typings/FloatTypes';
 import type { Skinport } from '../lib/@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { activateHandler } from '../eventhandler';
-import { Euro, USDollar, createUrlListener, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '~lib/util/helperfunctions';
+import { Euro, USDollar, createUrlListener, delay, getBuffPrice, getFloatColoring, handleSpecialStickerNames, waitForElement } from '~lib/util/helperfunctions';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { fetchCSBlueGem, saveOCOPurchase } from '../networkhandler';
 
@@ -13,13 +13,11 @@ import { getAllSettings, type IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.skinport.com/*"],
-    run_at: "document_idle",
+    run_at: "document_end",
     css: ["../css/skinport_styles.css"],
 }
 
-window.addEventListener("load", () => {
-    init();
-});
+init();
 
 async function init() {
     if (!location.hostname.includes('skinport.com')) {
@@ -48,8 +46,6 @@ async function init() {
 
     console.timeEnd('[BetterFloat] Skinport init timer');
 
-    // wait for 1 second to ensure that the page is fully loaded
-    await new Promise(resolve => { setTimeout(resolve, 500); });
     createLiveLink();
 
     await firstLaunch();
@@ -67,6 +63,7 @@ async function firstLaunch() {
 
     const path = location.pathname;
 
+    await delay(2000);
     console.log('[BetterFloat] First launch, url:', path);
     
     if (path === '/') {
@@ -1203,7 +1200,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
     }
 
     const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-    if (extensionSettings['sp-bufflink'] == 'action') {
+    console.debug('[BetterFloat] Buff link: ', extensionSettings['sp-bufflink']);
+    if (extensionSettings['sp-bufflink'] === "0") {
         const presentationDiv = container.querySelector('.ItemPreview-mainAction');
         if (presentationDiv) {
             const buffLink = document.createElement('a');

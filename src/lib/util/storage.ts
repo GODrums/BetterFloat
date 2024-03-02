@@ -43,7 +43,7 @@ export const DEFAULT_SETTINGS = {
     "sp-steamprices": false,
     "sp-buffdifference": true,
     "sp-buffdifferencepercent": false,
-    "sp-bufflink": 'action',
+    "sp-bufflink": "0",
     "sp-autoclosepopup": true,
     "sp-floatcoloring": true,
     "spFilter": {
