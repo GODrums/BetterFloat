@@ -1,5 +1,3 @@
-// Official documentation: https://developer.chrome.com/docs/extensions/mv3/content_scripts/
-
 import type { CSFloat, ItemStyle, ItemCondition } from '../lib/@typings/FloatTypes';
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
 import { activateHandler } from '../eventhandler';
@@ -44,9 +42,7 @@ export const config: PlasmoCSConfig = {
     css: ["../css/csfloat_styles.css"]
 }
 
-window.addEventListener("load", () => {
-    init();
-});
+init();
 
 async function init() {
     console.time('[BetterFloat] CSFloat init timer');

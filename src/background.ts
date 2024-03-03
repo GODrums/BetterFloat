@@ -1,13 +1,8 @@
 import browser from "webextension-polyfill"
 import type { Extension } from "~lib/@typings/ExtensionTypes";
-import { DEFAULT_SETTINGS, ExtensionStorage } from "~lib/util/storage";
+import { DEFAULT_SETTINGS } from "~lib/util/storage";
 
-export {}
- 
-ExtensionStorage.sync.getAll().then((data) => {
-    console.log(data);
-});
-
+export {};
 
 // Check whether new version is installed
 browser.runtime.onInstalled.addListener(async (details) => {
@@ -17,7 +12,34 @@ browser.runtime.onInstalled.addListener(async (details) => {
     } else if (details.reason == 'update') {
         const thisVersion = browser.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
-        await chrome.storage.sync.set(DEFAULT_SETTINGS);
+        // await chrome.storage.sync.set(DEFAULT_SETTINGS);
+
+        // chrome.storage.local.get((data) => {
+        //     if (!data) {
+        //         console.log('[BetterFloat] No settings found, setting default settings.');
+        //         chrome.storage.local.set(DEFAULT_SETTINGS);
+        //         return;
+        //     }
+        //     const storedSettings = data as Extension.Settings;
+        //     console.debug('[BetterFloat] Loaded settings: ', storedSettings);
+        //     const newSettings: {
+        //         [x: string]: (typeof DEFAULT_SETTINGS)[keyof typeof DEFAULT_SETTINGS];
+        //     } = {};
+        //     let update = false;
+        //     for (const key in DEFAULT_SETTINGS) {
+        //         const settingKey = key as keyof Extension.Settings;
+        //         if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
+        //             // add missing settings
+        //             console.log('[BetterFloat] Adding missing setting: ', key);
+        //             update = true;
+        //             newSettings[key] = DEFAULT_SETTINGS[settingKey];
+        //         }
+        //     }
+        //     if (update) {
+        //         console.debug('[BetterFloat] Updating settings: ', newSettings);
+        //         chrome.storage.local.set(newSettings);
+        //     }
+        // });
     }
 });
 

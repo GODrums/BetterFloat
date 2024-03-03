@@ -1,4 +1,4 @@
-import { BlueGem } from '../@typings/ExtensionTypes';
+import type { BlueGem } from '../@typings/ExtensionTypes';
 
 export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     const element = document.createElement('div');

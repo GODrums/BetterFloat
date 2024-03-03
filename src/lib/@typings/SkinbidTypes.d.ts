@@ -1,4 +1,4 @@
-import { ItemStyle } from './FloatTypes';
+import type { ItemStyle } from './FloatTypes';
 
 export namespace Skinbid {
     // https://api.skinbid.com/api/search/auctions?

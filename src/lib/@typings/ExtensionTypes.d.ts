@@ -1,4 +1,4 @@
-import { Skinport } from "./SkinportTypes";
+import type { Skinport } from "./SkinportTypes";
 
 export namespace Extension {
     export type Settings = {

@@ -4,7 +4,7 @@ import type { Skinbid } from '../lib/@typings/SkinbidTypes';
 import { activateHandler } from '../eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { fetchCSBlueGem } from '../networkhandler';
-import { calculateTime, delay, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../lib/util/helperfunctions';
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 
