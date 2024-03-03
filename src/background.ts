@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill"
 import type { Extension } from "~lib/@typings/ExtensionTypes";
-import { DEFAULT_SETTINGS } from "~lib/util/storage";
+import { DEFAULT_SETTINGS, ExtensionStorage } from "~lib/util/storage";
 
 export {};
 
@@ -83,3 +83,10 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         return true;
     }
 });
+
+if (process.env.NODE_ENV === 'development') {
+    const apikey = process.env.PLASMO_PUBLIC_OCO_KEY;
+    if (apikey !== undefined) {
+        await ExtensionStorage.sync.set("sp-ocoapikey", apikey);
+    }
+}

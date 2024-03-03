@@ -14,7 +14,7 @@ import { fetchCSBlueGem, saveOCOPurchase } from '../networkhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
-	run_at: 'document_end',
+	run_at: 'document_idle',
 	css: ['../css/skinport_styles.css'],
 };
 
@@ -99,7 +99,7 @@ async function firstLaunch() {
 		for (const item of inventoryItems) {
 			await adjustItem(item);
 		}
-	} else if (path.startsWith('/checkout/confirmation')) {
+	} else if (path.startsWith('/checkout/')) {
 		const cartItems = Array.from(document.querySelectorAll('.CheckoutConfirmation-item'));
 		for (const item of cartItems) {
 			await adjustItem(item);
