@@ -196,6 +196,19 @@ export namespace Skinport {
         };
     };
 
+    export type AddToCartResponse = {
+        message: string | null;
+        requestId: string;
+        success: boolean;
+        notification: {
+            action: boolean;
+            error: boolean;
+            footer: any;
+            text: string;
+            title: string;
+        };
+    };
+
     export type Listing = {
         name: string;
         type: string;

@@ -3,6 +3,14 @@ import type { Extension } from '../@typings/ExtensionTypes';
 import type { ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../../mappinghandler';
 
+export async function formFetch<T = any>(url: string, body: string): Promise<T> {
+	return fetch(url, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: body,
+	}).then((response) => response.json() as Promise<T>);
+}
+
 export async function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -75,15 +75,6 @@
           "public/*.png",
           "inject.ts"
         ]
-      },
-      {
-        "matches": [
-          "*://*.skinport.com/*"
-        ],
-        "resources": [
-          "js/socketConnection.js",
-          "public/socket.io_4.4.1.min.js"
-        ]
       }
     ],
     "key": "$CRX_PUBLIC_KEY"

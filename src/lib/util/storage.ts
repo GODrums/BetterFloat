@@ -13,8 +13,15 @@ export function getSetting(key: keyof IStorage) {
     return ExtensionStorage.sync.get(key);
 }
 
-export function getAllSettings() {
-    return ExtensionStorage.sync.getAll() as unknown as Promise<IStorage>;
+export async function getAllSettings() {
+    const settings = await ExtensionStorage.sync.getAll() as unknown as IStorage;
+    // iterate through settings and set default values if they don't exist
+    for (const key in DEFAULT_SETTINGS) {
+        if (typeof settings[key] === 'string' && settings[key].startsWith('\"')) {
+            settings[key] = JSON.parse(settings[key]);
+        }
+    }
+    return settings;
 }
 
 export const DEFAULT_SETTINGS = {
@@ -43,7 +50,7 @@ export const DEFAULT_SETTINGS = {
     "sp-steamprices": false,
     "sp-buffdifference": true,
     "sp-buffdifferencepercent": false,
-    "sp-bufflink": "0",
+    "sp-bufflink": 0,
     "sp-autoclosepopup": true,
     "sp-floatcoloring": true,
     "spFilter": {

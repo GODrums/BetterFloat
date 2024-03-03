@@ -6,7 +6,6 @@ import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
 import { SettingsColorPicker } from "~lib/components/SettingsColorPicker";
 import { SettingsEnable } from "~lib/components/SettingsEnable";
-import { SettingsTextbox } from "~lib/components/SettingsTextbox";
 import { SettingsOCO } from "~lib/components/SettingsOCO";
 
 export const SkinportSettings = () => {
