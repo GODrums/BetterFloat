@@ -11,6 +11,7 @@ import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../networkhandler';
+import { ICON_BUFF } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -876,7 +877,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.style.marginTop = '5px';
 	buffContainer.style.alignItems = 'center';
 	const buffImage = document.createElement('img');
-	buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
+	buffImage.setAttribute('src', ICON_BUFF);
 	buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
 	buffContainer.appendChild(buffImage);
 	const buffPrice = document.createElement('div');

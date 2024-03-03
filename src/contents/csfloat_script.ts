@@ -35,6 +35,9 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, getSetting, type IStorage } from '~lib/util/storage';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
+import iconCsgostash from "data-base64:~/../assets/icons/icon-csgostash.png";
+import iconPricempire from "data-base64:~/../assets/icons/icon-pricempire.png";
+import iconSteam from "data-base64:~/../assets/icons/icon-steam.svg";
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.csfloat.com/*"],
@@ -791,12 +794,12 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     quickLinksContainer.setAttribute('style', 'display: flex; justify-content: space-evenly;');
     const quickLinks: QuickLink[] = [
         {
-            icon: 'csgostash.png',
+            icon: iconCsgostash,
             tooltip: 'Show CSGOStash Page',
             link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
         },
         {
-            icon: 'pricempire.png',
+            icon: iconPricempire,
             tooltip: 'Show Pricempire Page',
             link: createPricempireURL(container, listing.item),
         },
@@ -804,7 +807,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
     // inventory link if seller stall is public
     if (listing.seller.stall_public) {
         quickLinks.push({
-            icon: 'steam.svg',
+            icon: iconSteam,
             tooltip: "Show in Seller's Inventory",
             link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
         });
@@ -822,7 +825,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         linkContainer.href = quickLinks[i].link;
         linkContainer.target = '_blank';
         const icon = document.createElement('img');
-        icon.setAttribute('src', `${extensionSettings["runtimePublicURL"]}/icon-${quickLinks[i].icon}`);
+        icon.setAttribute('src', quickLinks[i].icon);
         icon.setAttribute('style', 'height: 24px; border-radius: 5px; vertical-align: middle;');
         linkContainer.appendChild(icon);
         let toolTipOuter = document.createElement('div');
@@ -1422,7 +1425,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingAgeText.textContent = calculateTime(cachedItem.created_at);
     listingAge.appendChild(listingAgeText);
     listingAge.appendChild(listingIcon);
-    if (extensionSettings['csf-listingage'] == 1) {
+    if (extensionSettings['csf-listingage'] == 0) {
         listingAge.style.marginBottom = '5px';
         listingAgeText.style.color = 'darkgray';
         container.querySelector('.online-container')?.after(listingAge);

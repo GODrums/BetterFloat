@@ -15,7 +15,7 @@ export function getSetting(key: keyof IStorage) {
 
 export async function getAllSettings() {
     const settings = await ExtensionStorage.sync.getAll() as unknown as IStorage;
-    // iterate through settings and set default values if they don't exist
+    // iterate through settings and parse JSON strings. Still TODO: convert to correct type (i.e. number)
     for (const key in DEFAULT_SETTINGS) {
         if (typeof settings[key] === 'string' && settings[key].startsWith('\"')) {
             settings[key] = JSON.parse(settings[key]);
