@@ -1,6 +1,6 @@
 import { SettingsCard } from "~lib/components/SettingsCard";
 import betterfloatLogo from "data-base64:~/../assets/icon.png";
-import { Button, ScrollArea, TabsContent } from "../shadcn";
+import { Button, ScrollArea, TabsContent } from "../components/Shadcn";
 import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { Spotlight } from "~lib/components/Spotlight";
 

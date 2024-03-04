@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Popover, PopoverColorPicker, PopoverContent, PopoverTrigger } from "../shadcn";
+import { Button, Card, CardContent, Popover, PopoverColorPicker, PopoverContent, PopoverTrigger } from "./Shadcn";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { useStorage } from "@plasmohq/storage/hook";
 import { useEffect, useState } from "react";

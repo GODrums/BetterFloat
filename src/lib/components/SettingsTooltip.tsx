@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../shadcn";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./Shadcn";
 
 export const SettingsTooltip = ({
     text,
@@ -10,7 +10,7 @@ export const SettingsTooltip = ({
     open?: boolean;
 }) => {
     return (
-        <TooltipProvider>
+        <TooltipProvider delayDuration={300}>
             <Tooltip defaultOpen={open ?? false}>
                 <TooltipTrigger>
                     {children}

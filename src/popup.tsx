@@ -1,11 +1,10 @@
 import "~style.css"
-import { Button, Tabs, TabsList, TabsTrigger } from "~lib/shadcn"
-import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from "~lib/icons"
+import { Button, Tabs, TabsList, TabsTrigger } from "~lib/components/Shadcn"
+import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from "~lib/components/Icons"
 import betterfloatLogo from "data-base64:~/../assets/icon.png"
 import csfloatLogo from "data-base64:~/../assets/csfloat.png"
 import skinportLogo from "data-base64:~/../assets/skinport.ico"
 import { CSFloatSettings } from "~lib/pages/Csfloat"
-import { SettingsTooltip } from "~lib/components/SettingsTooltip"
 import { SkinportSettings } from "~lib/pages/Skinport"
 import { DISCORD_URL, GITHUB_URL } from "~lib/util/globals"
 import { SkinbidSettings } from "~lib/pages/Skinbid"
@@ -19,8 +18,6 @@ export default function IndexPopup() {
 
   const hostpermissions = chrome.runtime.getManifest().host_permissions;
 
-  const [openPermissions, setOpenPermissions] = useState(false);
-
   const requestPermissions = () => {
     chrome.permissions.request({
       origins: hostpermissions
@@ -29,7 +26,6 @@ export default function IndexPopup() {
         console.log("Permission denied");
       } else {
         document.getElementById("permissions-warning").classList.add("hidden");
-        setOpenPermissions(false);
       }
     });
   };
@@ -42,7 +38,6 @@ export default function IndexPopup() {
     }).then((result) => {
       if (!result) {
         document.getElementById("permissions-warning").classList.remove("hidden");
-        setOpenPermissions(true);
       }
     })
   });
@@ -55,23 +50,17 @@ export default function IndexPopup() {
           <p id="version" className="text-sm font-bold text-muted-foreground">v. 2.0.0</p>
         </div>
         <div className="flex gap-1">
-          <SettingsTooltip text="The extension is missing some permissions!" open={openPermissions}>
-            <Button variant="ghost" size="icon" className="hidden" id="permissions-warning">
-              <IcRoundWarning height={30} width={30} filter="invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" onClick={requestPermissions} />
-            </Button>
-          </SettingsTooltip>
+          <Button variant="ghost" size="icon" className="hidden" id="permissions-warning</div>" onClick={requestPermissions}>
+            <IcRoundWarning height={30} width={30} filter="invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" />
+          </Button>
 
-          <SettingsTooltip text={DISCORD_URL}>
-            <Button variant="ghost" size="icon" onClick={(e) => window.open(DISCORD_URL)}>
-              <SkillIconsDiscord height={30} width={30} />
-            </Button>
-          </SettingsTooltip>
+          <Button variant="ghost" size="icon" onClick={() => window.open(DISCORD_URL)} title={DISCORD_URL}>
+            <SkillIconsDiscord height={30} width={30} />
+          </Button>
 
-          <SettingsTooltip text={GITHUB_URL}>
-            <Button variant="ghost" size="icon" onClick={() => window.open(GITHUB_URL)}>
-              <MdiGithub height={30} width={30} color="white" />
-            </Button>
-          </SettingsTooltip>
+          <Button variant="ghost" size="icon" onClick={() => window.open(GITHUB_URL)} title={GITHUB_URL}>
+            <MdiGithub height={30} width={30} color="white" />
+          </Button>
         </div>
       </header>
       <div className="h-[40rem] relative w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">

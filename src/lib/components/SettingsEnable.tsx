@@ -1,4 +1,4 @@
-import { EnableSwitch, Label } from "../shadcn";
+import { EnableSwitch, Label } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 
 export const SettingsEnable = ({

@@ -1,6 +1,6 @@
-import { ScrollArea, TabsContent } from "../shadcn";
+import { ScrollArea, TabsContent } from "../components/Shadcn";
 import { SettingsCard } from "~lib/components/SettingsCard";
-import { IcOutlineDiscount, IcRoundAccessTime, PhSticker } from "~lib/icons";
+import { IcOutlineDiscount, IcRoundAccessTime, PhSticker } from "~lib/components/Icons";
 import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
 import { SettingsColorPicker } from "~lib/components/SettingsColorPicker";

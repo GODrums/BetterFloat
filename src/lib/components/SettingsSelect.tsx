@@ -1,9 +1,9 @@
 import { useEffect, type ReactElement } from "react";
-import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../shadcn";
+import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 import type { IconProps } from "@radix-ui/react-icons/dist/types";
 import { SettingsTooltip } from "./SettingsTooltip";
-import { MaterialSymbolsHelpOutline } from "~lib/icons";
+import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";
 
 type SelectProps = {
     id: string;

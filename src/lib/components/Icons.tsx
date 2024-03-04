@@ -26,13 +26,13 @@ export function PhSticker(props: SVGProps<SVGSVGElement>) {
 
 export function SolarDocumentTextLinear(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" stroke-width="1.5"><path d="M3 10c0-3.771 0-5.657 1.172-6.828C5.343 2 7.229 2 11 2h2c3.771 0 5.657 0 6.828 1.172C21 4.343 21 6.229 21 10v4c0 3.771 0 5.657-1.172 6.828C18.657 22 16.771 22 13 22h-2c-3.771 0-5.657 0-6.828-1.172C3 19.657 3 17.771 3 14z"></path><path stroke-linecap="round" d="M8 12h8M8 8h8m-8 8h5"></path></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" strokeWidth={1.5}><path d="M3 10c0-3.771 0-5.657 1.172-6.828C5.343 2 7.229 2 11 2h2c3.771 0 5.657 0 6.828 1.172C21 4.343 21 6.229 21 10v4c0 3.771 0 5.657-1.172 6.828C18.657 22 16.771 22 13 22h-2c-3.771 0-5.657 0-6.828-1.172C3 19.657 3 17.771 3 14z"></path><path strokeLinecap="round" d="M8 12h8M8 8h8m-8 8h5"></path></g></svg>
     )
 }
 
 export function SolarInfoSquareLinear(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none"><path stroke="#888888" stroke-linecap="round" stroke-width="1.5" d="M12 17v-6"></path><circle cx="1" cy="1" r="1" fill="#888888" transform="matrix(1 0 0 -1 11 9)"></circle><path stroke="#888888" stroke-width="1.5" d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"></path></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none"><path stroke="#888888" strokeLinecap="round" strokeWidth={1.5} d="M12 17v-6"></path><circle cx="1" cy="1" r="1" fill="#888888" transform="matrix(1 0 0 -1 11 9)"></circle><path stroke="#888888" strokeWidth={1.5} d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"></path></g></svg>
     )
 }
 
@@ -70,7 +70,7 @@ export function MdiSteam(props: SVGProps<SVGSVGElement>) {
 
 export function LucideMousePointerSquare(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 11V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6"></path><path d="m12 12l4 10l1.7-4.3L22 16Z"></path></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" strokeLinecap="round" strokeWidth={2}><path d="M21 11V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6"></path><path d="m12 12l4 10l1.7-4.3L22 16Z"></path></g></svg>
     )
 }
 
@@ -94,13 +94,13 @@ export function IcRoundAccessTime(props: SVGProps<SVGSVGElement>) {
 
 export function TablerCircleChevronUp(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m9 13l3-3l3 3"></path><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0"></path></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><g fill="none" stroke="#888888" strokeLinecap="round" strokeWidth={2}><path d="m9 13l3-3l3 3"></path><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0"></path></g></svg>
     )
 }
 
 export function StreamlineDiscountPercentCoupon(props: SVGProps<SVGSVGElement>) {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" {...props}><g fill="none" stroke="#888888" stroke-linecap="round" stroke-linejoin="round"><path d="M.5 11a1 1 0 0 0 .998 1h11.004a1 1 0 0 0 .998-1V8.966a2.037 2.037 0 0 1 0-3.932V3a1 1 0 0 0-.998-1H1.498A1 1 0 0 0 .5 3v2.03a2.037 2.037 0 0 1 0 3.94zm4.02-1.5l5-5"></path><path d="M5.02 5.5a.5.5 0 1 0 0-1a.5.5 0 0 0 0 1m4 4a.5.5 0 1 0 0-1a.5.5 0 0 0 0 1"></path></g></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 14 14" {...props}><g fill="none" stroke="#888888" strokeLinecap="round"><path d="M.5 11a1 1 0 0 0 .998 1h11.004a1 1 0 0 0 .998-1V8.966a2.037 2.037 0 0 1 0-3.932V3a1 1 0 0 0-.998-1H1.498A1 1 0 0 0 .5 3v2.03a2.037 2.037 0 0 1 0 3.94zm4.02-1.5l5-5"></path><path d="M5.02 5.5a.5.5 0 1 0 0-1a.5.5 0 0 0 0 1m4 4a.5.5 0 1 0 0-1a.5.5 0 0 0 0 1"></path></g></svg>
     )
 }
 
@@ -113,7 +113,7 @@ export function IcOutlineDiscount(props: SVGProps<SVGSVGElement>) {
 export function SkinBidIcon(props: SVGProps<SVGSVGElement>) {
     return (
         <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" {...props}>
-            <g fill="none" fill-rule="nonzero">
+            <g fill="none" fillRule="nonzero">
                 <rect fill="#13131A" width="48" height="48" rx="8" />
                 <path d="M17.702 31c.572 0 1.111-.111 1.617-.333a4.134 4.134 0 001.318-.908c.373-.383.669-.83.889-1.341.22-.511.329-1.056.329-1.634 0-.578-.11-1.12-.33-1.624a4.335 4.335 0 00-.898-1.331 4.287 4.287 0 00-1.318-.908 3.912 3.912 0 00-1.607-.333h-6.549c-.386 0-.712-.135-.978-.404a1.351 1.351 0 01-.4-.988c0-.39.133-.72.4-.989.266-.268.592-.403.978-.403h12.586L19.31 17h-8.156c-.572 0-1.111.111-1.617.333a4.217 4.217 0 00-1.318.898c-.373.376-.669.82-.889 1.331A4.094 4.094 0 007 21.196c0 .578.11 1.123.33 1.634.22.511.515.955.888 1.331.373.377.812.676 1.318.898a3.981 3.981 0 001.617.333h6.549c.386 0 .712.134.978.403.267.27.4.599.4.989s-.133.723-.4.998a1.307 1.307 0 01-.978.414H7L8.378 31h9.324zm9.173 0v-2.949c-.002-.225-.005-.469-.01-.733-.007-.329.026-.635.1-.917.074-.283.208-.518.402-.706.194-.189.492-.283.894-.283h8.38c.388 0 .717.135.985.404.267.269.401.598.401.988s-.134.723-.401.999a1.32 1.32 0 01-.985.413H25.1L25.307 31h11.334c.576 0 1.119-.111 1.628-.333.509-.222.954-.524 1.336-.908a4.181 4.181 0 001.216-2.976c0-1.062-.355-1.99-1.065-2.783.71-.793 1.065-1.715 1.065-2.764 0-.578-.108-1.126-.322-1.644a4.133 4.133 0 00-.894-1.351 4.282 4.282 0 00-1.336-.908A4.029 4.029 0 0036.64 17H24.08v5.608l3.1-1.372v-1.432h9.46c.388 0 .717.138.985.414.267.275.401.608.401.998s-.134.72-.401.989a1.336 1.336 0 01-.985.403h-8.38c-.576 0-1.118.111-1.627.333-.51.222-.952.521-1.327.898-.375.376-.673.82-.894 1.331a4.072 4.072 0 00-.331 1.634V31h2.793z" fill="#FFF" />
             </g>

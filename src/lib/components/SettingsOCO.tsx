@@ -1,6 +1,6 @@
-import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../shadcn";
+import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
-import { MaterialSymbolsHelpOutline } from "~lib/icons";
+import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";
 import { DISCORD_URL } from "~lib/util/globals";
 import { z } from "zod";
 import { useEffect, useState } from "react";

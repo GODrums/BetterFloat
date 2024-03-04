@@ -1,5 +1,5 @@
 import { SettingsCard } from "~lib/components/SettingsCard";
-import { ScrollArea, TabsContent } from "../shadcn";
+import { ScrollArea, TabsContent } from "../components/Shadcn";
 
 export const Changelogs = () => {
     return (
