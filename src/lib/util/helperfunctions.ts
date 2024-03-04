@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { ItemStyle } from '../@typings/FloatTypes';
-import { getPriceMapping } from '../../mappinghandler';
+import { getPriceMapping } from '../handlers/mappinghandler';
 
 export async function formFetch<T = any>(url: string, body: string): Promise<T> {
 	return fetch(url, {

@@ -1,6 +1,6 @@
-import type { EventData, CSFloat } from './lib/@typings/FloatTypes';
-import type { Skinbid } from './lib/@typings/SkinbidTypes';
-import type { Skinport } from './lib/@typings/SkinportTypes';
+import type { EventData, CSFloat } from '../@typings/FloatTypes';
+import type { Skinbid } from '../@typings/SkinbidTypes';
+import type { Skinport } from '../@typings/SkinportTypes';
 import {
     cacheCSFHistoryGraph,
     cacheCSFHistorySales,

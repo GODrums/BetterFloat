@@ -1,9 +1,9 @@
 import Decimal from 'decimal.js';
-import type { Extension } from './lib/@typings/ExtensionTypes';
-import type { CSFloat } from './lib/@typings/FloatTypes';
-import type { Skinbid } from './lib/@typings/SkinbidTypes';
-import type { Skinport } from './lib/@typings/SkinportTypes';
-import { handleSpecialStickerNames } from './lib/util/helperfunctions';
+import type { Extension } from '../@typings/ExtensionTypes';
+import type { CSFloat } from '../@typings/FloatTypes';
+import type { Skinbid } from '../@typings/SkinbidTypes';
+import type { Skinport } from '../@typings/SkinportTypes';
+import { handleSpecialStickerNames } from '../util/helperfunctions';
 
 // most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };

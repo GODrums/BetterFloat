@@ -1,6 +1,6 @@
 import type { CSFloat, ItemStyle, ItemCondition } from '../lib/@typings/FloatTypes';
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
-import { activateHandler } from '../eventhandler';
+import { activateHandler } from '../lib/handlers/eventhandler';
 import {
     getBuffMapping,
     getCSFCurrencyRate,
@@ -13,7 +13,7 @@ import {
     getWholeHistory,
     loadBuffMapping,
     loadMapping,
-} from '../mappinghandler';
+} from '../lib/handlers/mappinghandler';
 import {
     USDollar,
     calculateTime,
@@ -29,7 +29,7 @@ import {
 } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
 import { AmberFadeCalculator, AcidFadeCalculator } from 'csgo-fade-percentage-calculator';
-import { fetchCSBlueGem, isApiStatusOK } from '../networkhandler';
+import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import type { PlasmoCSConfig } from 'plasmo';

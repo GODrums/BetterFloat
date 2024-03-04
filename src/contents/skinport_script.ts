@@ -6,11 +6,11 @@ import { createUrlListener, delay, Euro, formFetch, getBuffPrice, getFloatColori
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
-import { activateHandler } from '../eventhandler';
+import { activateHandler } from '../lib/handlers/eventhandler';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../mappinghandler';
-import { fetchCSBlueGem, saveOCOPurchase } from '../networkhandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
+import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 import { ICON_BUFF } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {

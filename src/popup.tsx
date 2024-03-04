@@ -1,4 +1,3 @@
-import "~base.css"
 import "~style.css"
 import { Button, Tabs, TabsList, TabsTrigger } from "~lib/shadcn"
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from "~lib/icons"
