@@ -5,16 +5,6 @@ import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { Spotlight } from "~lib/components/Spotlight";
 
 export const About = () => {
-    const words = [
-        {
-            text: "Our ",
-        },
-        {
-            text: "Partners",
-            className: "text-blue-500 dark:text-blue-500",
-        },
-    ];
-
     return (
         <TabsContent value="about" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full gap-2">

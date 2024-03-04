@@ -1,5 +1,5 @@
 import "~style.css"
-import { Button, Tabs, TabsList, TabsTrigger } from "~lib/components/Shadcn"
+import { Badge, Button, Tabs, TabsList, TabsTrigger } from "~lib/components/Shadcn"
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from "~lib/components/Icons"
 import betterfloatLogo from "data-base64:~/../assets/icon.png"
 import csfloatLogo from "data-base64:~/../assets/csfloat.png"
@@ -11,7 +11,8 @@ import { SkinbidSettings } from "~lib/pages/Skinbid"
 import { SparklesCore } from "~lib/components/Sparkles"
 import { Changelogs } from "~lib/pages/Changelog"
 import { About } from "~lib/pages/About"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { Toaster } from "~lib/components/Toaster"
 
 export default function IndexPopup() {
   // TODO: Add warning banner when changing a setting
@@ -47,7 +48,7 @@ export default function IndexPopup() {
       <header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
         <div className="flex gap-2 align-middle items-center">
           <img className="h-[38px]" src={betterfloatLogo} />
-          <p id="version" className="text-sm font-bold text-muted-foreground">v. 2.0.0</p>
+          <Badge id="version" variant="outline" className="border-muted">v. 2.0.0</Badge>
         </div>
         <div className="flex gap-1">
           <Button variant="ghost" size="icon" className="hidden" id="permissions-warning</div>" onClick={requestPermissions}>
@@ -104,6 +105,7 @@ export default function IndexPopup() {
           <Changelogs />
           <About />
         </Tabs>
+        <Toaster />
       </div>
 
     </div>

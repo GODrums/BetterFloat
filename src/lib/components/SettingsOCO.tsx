@@ -3,20 +3,13 @@ import { useStorage } from "@plasmohq/storage/hook"
 import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";
 import { DISCORD_URL } from "~lib/util/globals";
 import { z } from "zod";
-import { useEffect, useState } from "react";
-import { error } from "console";
+import { useState } from "react";
 import { cn } from "~lib/utils";
 
 export const SettingsOCO = () => {
-    const [value, setValue, {
-        setRenderValue,
-        setStoreValue,
-        remove
-    }] = useStorage<string>("sp-ocoapikey", "");
+    const [value, setValue] = useStorage<string>("sp-ocoapikey", "");
     const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-    // Regex for all symbols of this key: 9b4f075d-0009-41c3-83c1-c000307d1126
-    // /^[0-9a-f\-]$/;
     const keyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
     const keySchema = z.string().regex(keyRegex, "Invalid API key format");
 
@@ -34,17 +27,8 @@ export const SettingsOCO = () => {
             }
             console.log(parseResult);
         }
-        setStoreValue(value);
+        setValue(value);
     };
-
-    // useEffect(() => {
-    //     const parseResult = keySchema.safeParse(value);
-    //     if (parseResult.success === false) {
-    //         setStatus("error");
-    //     } else {
-    //         setStatus("success");
-    //     }
-    // }, []);
 
     return (
         <div className="flex justify-between items-center align-middle gap-4">

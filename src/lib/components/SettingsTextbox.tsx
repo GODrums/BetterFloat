@@ -18,11 +18,7 @@ export const SettingsTextbox = ({
     icon,
     tooltipText
 }: TextboxProps) => {
-    const [value, setValue, {
-        setRenderValue,
-        setStoreValue,
-        remove
-    }] = useStorage(id, "");
+    const [value, setValue] = useStorage(id, "");
 
     const labelClass = (text.length > 25 ? "max-w-32" : "max-w-40") + " text-balance leading-5";
 
@@ -33,7 +29,7 @@ export const SettingsTextbox = ({
             value = value.replace(/"/g, "");
         }
         console.log(value);
-        setStoreValue(value);
+        setValue(value);
     };
 
     return (

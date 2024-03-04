@@ -4,6 +4,7 @@ import { Checkbox, Label } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";
 import { SettingsTooltip } from "./SettingsTooltip";
+import { toast } from "~lib/utils";
 
 type CheckboxProps = {
     id: string;
@@ -33,7 +34,11 @@ export const SettingsCheckbox = ({
                     </SettingsTooltip>
                 }
             </div>
-            <Checkbox id={id} checked={checked} onCheckedChange={setChecked} />
+            <Checkbox id={id} checked={checked} onCheckedChange={setChecked} onClick={() => {
+                toast({
+                    description: "Please refresh the website for changes to come into effect!",
+                })
+            }} />
         </div>
     );
 };

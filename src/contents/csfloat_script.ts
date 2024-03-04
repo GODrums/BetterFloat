@@ -1140,7 +1140,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
         tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
         tierContainer.setAttribute('style', 'gap: 5px;');
     }
-    const gemContainer = genGemContainer(extensionSettings.runtimePublicURL, patternElement);
+    const gemContainer = genGemContainer(patternElement);
     gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
     tierContainer.appendChild(gemContainer);
 

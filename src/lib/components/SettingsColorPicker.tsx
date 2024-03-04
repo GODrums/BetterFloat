@@ -1,7 +1,7 @@
-import { Button, Card, CardContent, Popover, PopoverColorPicker, PopoverContent, PopoverTrigger } from "./Shadcn";
-import { HexColorPicker, HexColorInput } from "react-colorful";
+import { Card, CardContent, Popover, PopoverColorPicker, PopoverTrigger } from "./Shadcn";
+import { HexColorPicker } from "react-colorful";
 import { useStorage } from "@plasmohq/storage/hook";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 
 const SingleColorPicker = ({

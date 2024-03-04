@@ -1,5 +1,3 @@
-import type { Skinport } from "./SkinportTypes";
-
 export namespace Extension {
     export type Settings = {
         runtimePublicURL: string;

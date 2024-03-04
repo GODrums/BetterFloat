@@ -591,7 +591,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 	let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
-	const gemContainer = genGemContainer(extensionSettings.runtimePublicURL, patternElement, 'right');
+	const gemContainer = genGemContainer(patternElement, 'right');
 	gemContainer.style.fontSize = '11px';
 	gemContainer.style.fontWeight = '600';
 	(<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
@@ -611,7 +611,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader) return;
-	itemHeader.appendChild(genGemContainer(extensionSettings.runtimePublicURL, patternElement));
+	itemHeader.appendChild(genGemContainer(patternElement));
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
 	if (!linksContainer) return;
