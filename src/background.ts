@@ -44,8 +44,9 @@ browser.runtime.onInstalled.addListener(async (details) => {
 });
 
 export async function refreshPrices() {
-    // return await fetch('https://prices.rums.dev/v1/pricempire_usd', {
-    return await fetch('https://prices.rums.dev/v2/pricempire_usd?api_key=' + process.env.PLASMO_PUBLIC_RUMSDEV_KEY)
+    // For no restrictions, use an api key from .env instead:
+    // /v2/pricempire_usd?api_key=process.env.PLASMO_PUBLIC_RUMSDEV_KEY
+    return await fetch('https://prices.rums.dev/v1/pricempire_usd')
         .then((response) => response.json())
         .then(async (reponseData) => {
             const data = reponseData as Extension.ApiBuffResponse;
@@ -64,6 +65,7 @@ export async function refreshPrices() {
 // rewrite for webextension-polyfill
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (request.message == 'fetchPrices') {
+        console.time('PriceRefresh');
         refreshPrices().then((value) => {
             console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
             if (value) {
@@ -78,6 +80,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
                 });
             }
         });
+        console.timeEnd('PriceRefresh');
         // this is required to let the message listener wait for the fetch to finish
         // https://github.com/mozilla/webextension-polyfill/issues/130#issuecomment-484772327
         return true;

@@ -74,8 +74,6 @@
           "*://*.skinbid.com/*"
         ],
         "resources": [
-          "public/*.svg",
-          "public/*.png",
           "inject.ts"
         ]
       }

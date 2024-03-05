@@ -40,7 +40,8 @@ import iconCsgostash from "data-base64:/assets/icons/icon-csgostash.png";
 import iconPricempire from "data-base64:/assets/icons/icon-pricempire.png";
 import iconSteam from "data-base64:/assets/icons/icon-steam.svg";
 import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
-import { ICON_BUFF, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
+import iconCameraFlipped from "data-base64:/assets/icons/camera-flipped.svg";
+import { ICON_ARROWUP, ICON_BUFF, ICON_CLOCK, ICON_CRIMSON, ICON_CSFLOAT, ICON_GEM_CYAN, ICON_OVERPRINT_ARROW, ICON_OVERPRINT_FLOWER, ICON_OVERPRINT_MIXED, ICON_OVERPRINT_POLYGON, ICON_PHOENIX, ICON_SPIDER_WEB } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.csfloat.com/*"],
@@ -284,7 +285,7 @@ async function customStall(stall_id: string) {
         const settingsButton = document.createElement('button');
         settingsButton.setAttribute('style', 'background: none; border: none; margin-left: 60px');
         const settingsIcon = document.createElement('img');
-        settingsIcon.setAttribute('src', extensionSettings["runtimePublicURL"] + '/gear-solid.svg');
+        // settingsIcon.setAttribute('src', extensionSettings["runtimePublicURL"] + '/gear-solid.svg');
         settingsIcon.style.height = '64px';
         settingsIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
         settingsButton.onclick = () => {
@@ -939,9 +940,15 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
 
     const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500;' + (overprint_data.type == 'Flower' ? ' margin-left: 5px;' : '');
 
+    const iconMapping = {
+        Flower: ICON_OVERPRINT_FLOWER,
+        Arrow: ICON_OVERPRINT_ARROW,
+        Polygon: ICON_OVERPRINT_POLYGON,
+        Mixed: ICON_OVERPRINT_MIXED,
+    }
     CSFloatHelpers.addPatternBadge(
         container,
-        extensionSettings.runtimePublicURL + `/overprint-${overprint_data.type.toLowerCase()}.svg`,
+        iconMapping[overprint_data.type],
         'height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);',
         [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier == 0 ? [] : [`Tier ${overprint_data.tier}`]),
         getTooltipStyle(overprint_data.type),
@@ -964,7 +971,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
     if (ck_data.tier === -1) {
         CSFloatHelpers.addPatternBadge(
             container,
-            extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
+            ICON_CRIMSON,
             'height: 30px; filter: grayscale(100%);',
             ['T1 GRAY PATTERN'],
             'translate: -25px 15px; width: 80px;',
@@ -974,7 +981,7 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
     } else {
         CSFloatHelpers.addPatternBadge(
             container,
-            extensionSettings.runtimePublicURL + '/crimson-pattern.svg',
+            ICON_CRIMSON,
             'height: 30px;',
             [`Tier ${ck_data.tier}`],
             'translate: -18px 15px; width: 60px;',
@@ -996,7 +1003,7 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
 
     CSFloatHelpers.addPatternBadge(
         container,
-        extensionSettings.runtimePublicURL + '/gem-cyan.svg',
+        ICON_GEM_CYAN,
         'height: 30px;',
         [`${cyanbit_data.type == '' ? 'Unclassified' : cyanbit_data.type} Pattern`, cyanbit_data.tier == 0 ? 'No Tier' : `Tier ${cyanbit_data.tier}`],
         'translate: -15px 15px; width: 90px;',
@@ -1017,7 +1024,7 @@ async function badgePhoenix(container: Element, item: CSFloat.Item) {
 
     CSFloatHelpers.addPatternBadge(
         container,
-        extensionSettings.runtimePublicURL + '/phoenix-icon.svg',
+        ICON_PHOENIX,
         'height: 30px;',
         [`Position: ${phoenix_data.type}`, `Tier ${phoenix_data.tier}`].concat(phoenix_data.rank ? [`Rank #${phoenix_data.rank}`] : []),
         'translate: -15px 15px; width: 90px;',
@@ -1044,7 +1051,7 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 
     CSFloatHelpers.addPatternBadge(
         container,
-        extensionSettings.runtimePublicURL + '/spider-web.svg',
+        ICON_SPIDER_WEB,
         `height: 30px; filter: ${filter};`,
         [cw_data.type, `Tier ${cw_data.tier}`],
         'translate: -25px 15px; width: 80px;',
@@ -1286,7 +1293,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                     backLink.target = '_blank';
                     backLink.title = 'Show CSFloat back screenshot';
                     const backImage = document.createElement('img');
-                    backImage.setAttribute('src', extensionSettings.runtimePublicURL + '/camera-flipped.svg');
+                    backImage.setAttribute('src', iconCameraFlipped);
                     backImage.setAttribute(
                         'style',
                         'height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);'
@@ -1321,7 +1328,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
             linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
             linkHeader.setAttribute('target', '_blank');
             const linkHeaderImage = document.createElement('img');
-            linkHeaderImage.setAttribute('src', extensionSettings.runtimePublicURL + '/arrow-up-right-from-square-solid.svg');
+            linkHeaderImage.setAttribute('src', ICON_ARROWUP);
             linkHeaderImage.setAttribute('style', 'height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);');
             linkHeader.appendChild(linkHeaderImage);
             linkHeaderCell.appendChild(linkHeader);

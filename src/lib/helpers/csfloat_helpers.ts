@@ -1,5 +1,6 @@
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import iconCameraAdd from "data-base64:/assets/icons/camera-add-solid.svg";
+import iconChevronUp from "data-base64:/assets/icons/chevron-up-solid.svg";
 
 export namespace CSFloatHelpers {
     export function intervalMapping(setting: number) {
@@ -158,7 +159,7 @@ export namespace CSFloatHelpers {
             'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none; transition: visibility 0s, opacity 0.5s linear;'
         );
         const topButtonIcon = document.createElement('img');
-        topButtonIcon.setAttribute('src', runtimePublicURL + '/chevron-up-solid.svg');
+        topButtonIcon.setAttribute('src', iconChevronUp);
         topButtonIcon.style.marginTop = '5px';
         topButtonIcon.style.filter = 'brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(2009%) hue-rotate(196deg) brightness(113%) contrast(93%)';
         topButton.addEventListener('click', () => {
