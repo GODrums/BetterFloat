@@ -10,7 +10,7 @@ import { useStorage } from "@plasmohq/storage/hook";
 import { cn } from "~lib/utils";
 
 export const CSFloatSettings = () => {
-    const [checked, setChecked] = useStorage('csf-enable');
+    const [checked] = useStorage('csf-enable');
 
     return (
         <TabsContent value="csfloat" className={cn("h-[530px] w-[330px]", checked ? '' : "border-destructive/80")}>

@@ -5,10 +5,14 @@ import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
 import { SettingsColorPicker } from "~lib/components/SettingsColorPicker";
 import { SettingsEnable } from "~lib/components/SettingsEnable";
+import { cn } from "~lib/utils";
+import { useStorage } from "@plasmohq/storage/hook";
 
 export const SkinbidSettings = () => {
+    const [checked] = useStorage('skb-enable');
+    
     return (
-        <TabsContent value="skinbid" className="h-[530px] w-[330px]">
+        <TabsContent value="skinbid" className={cn("h-[530px] w-[330px]", checked ? '' : "border-destructive/80")}>
             <ScrollArea className="h-full w-full py-2 px-2">
                 <SettingsEnable id="skb-enable" />
                 <div className="">

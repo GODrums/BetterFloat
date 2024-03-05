@@ -7,10 +7,14 @@ import { SettingsSelect } from "~lib/components/SettingsSelect";
 import { SettingsColorPicker } from "~lib/components/SettingsColorPicker";
 import { SettingsEnable } from "~lib/components/SettingsEnable";
 import { SettingsOCO } from "~lib/components/SettingsOCO";
+import { useStorage } from "@plasmohq/storage/hook";
+import { cn } from "~lib/utils";
 
 export const SkinportSettings = () => {
+    const [checked] = useStorage('sp-enable');
+
     return (
-        <TabsContent value="skinport" className="h-[530px] w-[330px]">
+        <TabsContent value="skinport" className={cn("h-[530px] w-[330px]", checked ? '' : "border-destructive/80")}>
             <ScrollArea className="h-full w-full py-2 px-2">
                 <SettingsEnable id="sp-enable" />
                 <div className="">

@@ -8,7 +8,6 @@ import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialSticker
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 
-import iconCsfloat from "data-base64:/assets/csfloat.png";
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {
