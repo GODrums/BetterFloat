@@ -18,7 +18,7 @@ export const CSFloatSettings = () => {
                 <SettingsEnable id="csf-enable" />
                 <div className="">
                     <div className="pt-4 pb-2">
-                        <p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
+                        <p className="text-base font-semibold leading-none tracking-tight uppercase">Features</p>
                     </div>
                     <div className="flex flex-col gap-1">
                         <SettingsCard>

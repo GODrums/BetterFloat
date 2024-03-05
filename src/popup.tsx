@@ -13,9 +13,10 @@ import { Changelogs } from "~lib/pages/Changelog"
 import { About } from "~lib/pages/About"
 import { useEffect } from "react"
 import { Toaster } from "~lib/components/Toaster"
+import { DEFAULT_SETTINGS } from "~lib/util/storage"
 
 export default function IndexPopup() {
-  const hostpermissions = chrome.runtime.getManifest().host_permissions;
+  const hostpermissions = chrome.runtime.getManifest().host_permissions as string[];
 
   const requestPermissions = () => {
     chrome.permissions.request({
@@ -25,6 +26,7 @@ export default function IndexPopup() {
         console.log("Permission denied");
       } else {
         document.getElementById("permissions-warning").classList.add("hidden");
+
       }
     });
   };
@@ -35,10 +37,21 @@ export default function IndexPopup() {
     chrome.permissions.contains({
       origins: hostpermissions
     }).then((result) => {
-      if (!result) {
-        document.getElementById("permissions-warning").classList.remove("hidden");
+      const warning = document.getElementById("permissions-warning");
+      if (result) {
+        warning.classList.add("hidden");
+      } else {
+        warning.classList.remove("hidden");
       }
-    })
+    });
+
+    chrome.storage.sync.get((data) => {
+      if (!data) {
+        console.log('[BetterFloat] No settings found, setting default settings.');
+        chrome.storage.sync.set(DEFAULT_SETTINGS);
+        return;
+      }
+    });
   });
 
   return (
@@ -49,7 +62,7 @@ export default function IndexPopup() {
           <Badge id="version" variant="outline" className="border-muted text-muted-foreground">v. 2.0.0</Badge>
         </div>
         <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="hidden" id="permissions-warning</div>" onClick={requestPermissions}>
+          <Button variant="ghost" size="icon" className="" id="permissions-warning" onClick={requestPermissions}>
             <IcRoundWarning height={30} width={30} filter="invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" />
           </Button>
 

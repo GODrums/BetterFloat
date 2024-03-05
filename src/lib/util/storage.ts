@@ -39,11 +39,11 @@ export const DEFAULT_SETTINGS = {
 	'csf-stickerprices': true,
 	'csf-csbluegem': true,
 	'csf-pricereference': 0,
-	'csf-refreshinterval': 0, // TODO: map to seconds
+	'csf-refreshinterval': 0,
 	'csf-floatappraiser': false,
 	'csf-buffdifference': true,
 	'csf-buffdifferencepercent': false,
-	'csf-listingage': 1,
+	'csf-listingage': 0,
 	'csf-topbutton': true,
 	'csf-tabstates': true,
 	'csf-floatcoloring': true,

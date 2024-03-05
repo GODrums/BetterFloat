@@ -1008,7 +1008,7 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 		authorization: extensionSettings['sp-ocoapikey'],
 	};
 	try {
-		const captchaAPIUrl = 'https://api.gamingtechinsider.com/captcha/betterfloat/';
+		const captchaAPIUrl = 'https://api.gamingtechinsider.com/api/v1/captcha/betterfloat/';
 		const response = await fetch(captchaAPIUrl + saleId, {
 			method: 'GET',
 			headers: {

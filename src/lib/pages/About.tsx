@@ -13,7 +13,7 @@ export const About = () => {
                         className="-top-28 left-0 md:left-60 md:-top-20 z-50"
                         fill="white"
                     />
-                    <div className="p-4 max-w-7xl mx-auto relative z-10 w-full pt-12 md:pt-0">
+                    <div className="max-w-7xl mx-auto relative z-10 w-full pt-12 md:pt-0">
                         <div className="flex justify-center">
                             <img className="h-20" src={betterfloatLogo} />
                         </div>
@@ -23,7 +23,7 @@ export const About = () => {
                         <h2 className="pt-4 text-lg font-semibold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
                             open-source & <span className="text-blue-500 dark:text-blue-500">community</span>-driven
                         </h2>
-                        <SettingsCard className="mt-4">
+                        <SettingsCard className="mt-4 mx-2">
                             <div className="flex flex-col">
                                 <h4 className="dark:text-white text-black font-medium text-base pb-2">Our Partners</h4>
                                 <div className="flex gap-2 items-center">
