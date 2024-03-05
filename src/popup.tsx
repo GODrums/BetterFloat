@@ -15,8 +15,6 @@ import { useEffect } from "react"
 import { Toaster } from "~lib/components/Toaster"
 
 export default function IndexPopup() {
-  // TODO: Add warning banner when changing a setting
-
   const hostpermissions = chrome.runtime.getManifest().host_permissions;
 
   const requestPermissions = () => {
@@ -48,7 +46,7 @@ export default function IndexPopup() {
       <header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
         <div className="flex gap-2 align-middle items-center">
           <img className="h-[38px]" src={betterfloatLogo} />
-          <Badge id="version" variant="outline" className="border-muted">v. 2.0.0</Badge>
+          <Badge id="version" variant="outline" className="border-muted text-muted-foreground">v. 2.0.0</Badge>
         </div>
         <div className="flex gap-1">
           <Button variant="ghost" size="icon" className="hidden" id="permissions-warning</div>" onClick={requestPermissions}>

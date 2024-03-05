@@ -1,5 +1,5 @@
 import type { BlueGem } from '../@typings/ExtensionTypes';
-import iconGemshop from "data-text:/assets/icons/gem-shop.svg";
+import iconGemshop from "data-base64:/assets/icons/gem-shop.svg";
 
 export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
     const element = document.createElement('div');
@@ -13,6 +13,7 @@ export function genGemContainer(patternElement: BlueGem.PatternElement | undefin
     gemContainer.className = 'betterfloat-gem-container';
     gemContainer.title = 'playside blue% / backside blue%';
     gemContainer.style.display = 'flex';
+    gemContainer.style.alignItems = 'center';
     if (mode == 'right') {
         gemContainer.style.flexDirection = 'row-reverse';
     }

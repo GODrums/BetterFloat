@@ -6,10 +6,14 @@ import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
 import { SettingsColorPicker } from "~lib/components/SettingsColorPicker";
 import { SettingsEnable } from "~lib/components/SettingsEnable";
+import { useStorage } from "@plasmohq/storage/hook";
+import { cn } from "~lib/utils";
 
 export const CSFloatSettings = () => {
+    const [checked, setChecked] = useStorage('csf-enable');
+
     return (
-        <TabsContent value="csfloat" className="h-[530px] w-[330px]">
+        <TabsContent value="csfloat" className={cn("h-[530px] w-[330px]", checked ? '' : "border-destructive/80")}>
             <ScrollArea className="h-full w-full py-2 px-2">
                 <SettingsEnable id="csf-enable" />
                 <div className="">

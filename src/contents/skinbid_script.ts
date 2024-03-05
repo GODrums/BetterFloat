@@ -8,6 +8,9 @@ import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialSticker
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 
+import iconCsfloat from "data-base64:/assets/csfloat.png";
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
+
 export const config: PlasmoCSConfig = {
     matches: ["https://*.skinbid.com/*"],
     css: ["../css/skinbid_styles.css"],
@@ -218,9 +221,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
     newTab.style.color = 'deepskyblue';
     newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
         item.paintSeed
-    }&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub;"><img src="${
-        extensionSettings.runtimePublicURL
-    }/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-left: 10px;"></a>`;
+    }&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub; margin-right: 10px;">${ICON_ARROWUP}</a>`;
     newTab.addEventListener('click', () => {
         chartContainer.querySelector('.tab.active')?.classList.remove('active');
         newTab.classList.add('active');
@@ -267,7 +268,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             (sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')}"></img>
+                                <img style="height: 24px;" src="${sale.origin == 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
                                 <div>${getWear(sale.float)}</div>
@@ -278,14 +279,10 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                                 ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
                                 <a ${
                                     sale.url == 'No Link Available'
-                                        ? 'style="pointer-events: none;cursor: default;"><img src="' +
-                                          extensionSettings.runtimePublicURL +
-                                          '/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
+                                        ? 'style="pointer-events: none;cursor: default;"><img src="' + ICON_BAN + '" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
                                         : 'href="' +
                                           (!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
-                                          '" target="_blank"><img src="' +
-                                          extensionSettings.runtimePublicURL +
-                                          '/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
+                                          '" target="_blank"><img src="' + ICON_CAMERA + '" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
                                 }height: 20px;"></img></a>
                             </td>
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
@@ -371,7 +368,7 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
         const listingIcon = document.createElement('img');
         listingAge.classList.add('betterfloat-listing-age');
         listingAge.classList.add('betterfloat-age-' + page);
-        listingIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/clock-solid.svg');
+        listingIcon.setAttribute('src', ICON_CLOCK);
 
         listingAgeText.textContent = calculateTime(cachedItem.auction.created, 1);
         listingAge.appendChild(listingIcon);
@@ -488,7 +485,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
     buffContainer.style.cursor = 'pointer';
     buffContainer.style.alignItems = 'center';
     let buffImage = document.createElement('img');
-    buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
+    buffImage.setAttribute('src', ICON_BUFF);
     buffImage.setAttribute('style', `height: 20px; margin-right: 5px; border: 1px solid #323c47; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
     buffContainer.appendChild(buffImage);
     let buffPrice = document.createElement('div');

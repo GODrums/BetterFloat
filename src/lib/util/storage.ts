@@ -73,21 +73,15 @@ export const DEFAULT_SETTINGS = {
 	'skb-buffdifference': true,
 	'skb-listingage': true,
 	'skb-stickerprices': true,
-	'csf-colors': {
-		profit: '#008000',
-		loss: '#ce0000',
-		neutral: '#708090',
-	},
-	'sp-colors': {
-		profit: '#008000',
-		loss: '#ce0000',
-		neutral: '#000000',
-	},
-	'skb-colors': {
-		profit: '#0cb083',
-		loss: '#ce0000',
-		neutral: '#FFFFFF',
-	},
+	'csf-color-profit': '#008000',
+	'csf-color-loss': '#ce0000',
+	'csf-color-neutral': '#708090',
+	'sp-color-profit': '#008000',
+	'sp-color-loss': '#ce0000',
+	'sp-color-neutral': '#000000',
+	'skb-color-profit': '#0cb083',
+	'skb-color-loss': '#ce0000',
+	'skb-color-neutral': '#FFFFFF',
 };
 
 export type IStorage = typeof DEFAULT_SETTINGS;

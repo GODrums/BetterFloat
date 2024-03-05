@@ -35,9 +35,12 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, getSetting, type IStorage } from '~lib/util/storage';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
-import iconCsgostash from "data-base64:~/../assets/icons/icon-csgostash.png";
-import iconPricempire from "data-base64:~/../assets/icons/icon-pricempire.png";
-import iconSteam from "data-base64:~/../assets/icons/icon-steam.svg";
+
+import iconCsgostash from "data-base64:/assets/icons/icon-csgostash.png";
+import iconPricempire from "data-base64:/assets/icons/icon-pricempire.png";
+import iconSteam from "data-base64:/assets/icons/icon-steam.svg";
+import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
+import { ICON_BUFF, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.csfloat.com/*"],
@@ -632,7 +635,7 @@ function adjustItemBubble(container: Element) {
     const buffContainer = document.createElement('div');
     buffContainer.setAttribute('style', `width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-start' : 'flex-end'}; translate: 0 3px;`);
     const buffImage = document.createElement('img');
-    buffImage.setAttribute('src', extensionSettings["runtimePublicURL"] + '/buff_favicon.png');
+    buffImage.setAttribute('src', ICON_BUFF);
     buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
     buffContainer.appendChild(buffImage);
 
@@ -662,12 +665,12 @@ async function adjustSalesTableRow(container: Element) {
         const aLink = document.createElement('a');
         aLink.href = 'https://csfloat.com/item/' + cachedSale.id;
         aLink.target = '_blank';
+        aLink.setAttribute('style', 'display: flex; align-items: center; justify-content: center;');
         const linkIcon = document.createElement('img');
-        linkIcon.setAttribute('src', extensionSettings["runtimePublicURL"] + '/arrow-up-right-from-square-solid.svg');
-        linkIcon.style.height = '18px';
-        linkIcon.style.marginRight = '10px';
+        linkIcon.setAttribute('src', iconArrowup);
+        linkIcon.style.marginRight = '5px';
         linkIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
-        linkIcon.style.translate = '0 3px';
+        linkIcon.style.translate = '0 -2px';
         (<HTMLElement>ageSpan).style.color = 'white';
         aLink.appendChild(linkIcon);
         aLink.appendChild(firstRow.firstChild as Node);
@@ -774,7 +777,7 @@ function addScreenshotReplacement(container: Element, listing: CSFloat.ListingDa
     ) {
         const decodedLink = decodeURI(listing.item.inspect_link);
         if (decodedLink.split(' ').at(-1)?.startsWith('S')) {
-            CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, extensionSettings["runtimePublicURL"]);
+            CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, true);
         }
     }
 }
@@ -1220,7 +1223,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                 sourceCell.setAttribute('role', 'cell');
                 sourceCell.className = 'mat-cell cdk-cell ng-star-inserted';
                 const sourceImage = document.createElement('img');
-                sourceImage.setAttribute('src', extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png'));
+                sourceImage.setAttribute('src', sale.origin == 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF);
                 sourceImage.setAttribute('style', 'height: 24px;');
                 sourceCell.appendChild(sourceImage);
                 newRow.appendChild(sourceCell);
@@ -1418,7 +1421,7 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
     listingAgeText.style.margin = '0 5px 0 0';
     listingAgeText.style.fontSize = '15px';
     listingIcon.classList.add('betterfloat-listing-age-icon');
-    listingIcon.setAttribute('src', extensionSettings.runtimePublicURL + '/clock-solid.svg');
+    listingIcon.setAttribute('src', ICON_CLOCK);
     listingIcon.style.height = '20px';
     listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
@@ -1628,7 +1631,7 @@ async function addBuffPrice(
         buffContainer.setAttribute('style', `${showBoth ? '' : 'margin-top: 5px; '}display: inline-flex; align-items: center;`);
 
         const buffImage = document.createElement('img');
-        buffImage.setAttribute('src', extensionSettings.runtimePublicURL + '/buff_favicon.png');
+        buffImage.setAttribute('src', ICON_BUFF);
         buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
         buffContainer.appendChild(buffImage);
         const buffPrice = document.createElement('div');
@@ -1708,13 +1711,13 @@ async function addBuffPrice(
         let backgroundColor: string;
         let differenceSymbol: string;
         if (difference < 0) {
-            backgroundColor = extensionSettings['csf-colors'].profit;
+            backgroundColor = extensionSettings['csf-color-profit'];
             differenceSymbol = '-';
         } else if (difference > 0) {
-            backgroundColor = extensionSettings['csf-colors'].loss;
+            backgroundColor = extensionSettings['csf-color-loss'];
             differenceSymbol = '+';
         } else {
-            backgroundColor = extensionSettings['csf-colors'].neutral;
+            backgroundColor = extensionSettings['csf-color-neutral'];
             differenceSymbol = '-';
         }
 

@@ -1,7 +1,8 @@
-import { Card, CardContent, Popover, PopoverColorPicker, PopoverTrigger } from "./Shadcn";
+import { Card, CardContent, Label, Popover, PopoverColorPicker, PopoverTrigger } from "./Shadcn";
 import { HexColorPicker } from "react-colorful";
 import { useStorage } from "@plasmohq/storage/hook";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { IcOutlineColorLens } from "./Icons";
 
 
 const SingleColorPicker = ({
@@ -16,6 +17,10 @@ const SingleColorPicker = ({
             setStoreValue(color);
         }
     };
+
+    useEffect(() => {
+        setColor(initColor);
+    }, [initColor]);
 
     return (
         <Popover onOpenChange={saveColor}>
@@ -39,41 +44,21 @@ export const SettingsColorPicker = ({
         neutral: '#708090'
     };
 
-    const [colors, setColors, {
-        setRenderValue,
-        setStoreValue,
-        remove
-    }] = useStorage(`${prefix}-colors`);
-
-
-    const setProfitColor = async (newColor: string) => {
-        if (!colors) await setColors(defaultColors);
-        colors.profit = newColor;
-        await setColors({ profit: newColor, ...colors });
-        await setStoreValue(colors);
-    };
-
-    const setLossColor = async (newColor: string) => {
-        if (!colors) await setColors(defaultColors);
-        colors.loss = newColor;
-        await setColors({ loss: newColor, ...colors });
-        await setStoreValue(colors);
-    };
-
-    const setNeutralColor = async (newColor: string) => {
-        if (!colors) await setColors(defaultColors);
-        colors.neutral = newColor;
-        await setColors({ loss: newColor, ...colors });
-        await setStoreValue(colors);
-    };
+    const [profitColor, setProfitColor] = useStorage(`${prefix}-color-profit`, defaultColors.profit);
+    const [lossColor, setLossColor] = useStorage(`${prefix}-color-loss`, defaultColors.loss);
+    const [neutralColor, setNeutralColor] = useStorage(`${prefix}-color-neutral`, defaultColors.neutral);
 
     return (
         <Card className="shadow-md border-muted mx-1">
             <CardContent className="space-y-3 flex flex-col justify-center">
+                <div className="flex items-center gap-2">
+                    <IcOutlineColorLens className="h-6 w-6" />
+                    <Label className="text-balance leading-5">Tag Color Picker</Label>
+                </div>
                 <div className="w-full flex justify-evenly items-center align-middle">
-                    <SingleColorPicker text="Profit" initColor={colors?.profit ?? '#008000'} setStoreValue={setProfitColor} />
-                    <SingleColorPicker text="Loss" initColor={colors?.loss ?? '#ce0000'} setStoreValue={setLossColor} />
-                    <SingleColorPicker text="Neutral" initColor={colors?.neutral ?? '#708090'} setStoreValue={setNeutralColor} />
+                    <SingleColorPicker text="Profit" initColor={profitColor} setStoreValue={setProfitColor} />
+                    <SingleColorPicker text="Loss" initColor={lossColor} setStoreValue={setLossColor} />
+                    <SingleColorPicker text="Neutral" initColor={neutralColor} setStoreValue={setNeutralColor} />
                 </div>
             </CardContent>
         </Card>

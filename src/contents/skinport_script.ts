@@ -11,7 +11,9 @@ import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
-import { ICON_BUFF } from '~lib/util/globals';
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
+
+import iconFilter from "data-base64:/assets/icons/filter-solid.svg";
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -142,7 +144,7 @@ function createLanguagePopup() {
 	popupHeaderDiv.style.justifyContent = 'space-between';
 	popupHeaderDiv.style.margin = '0 10px';
 	const warningIcon = document.createElement('img');
-	warningIcon.src = extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg';
+	warningIcon.src = ICON_EXCLAMATION;
 	warningIcon.style.width = '32px';
 	warningIcon.style.height = '32px';
 	warningIcon.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%)';
@@ -382,7 +384,7 @@ function addLiveFilterMenu(container: Element) {
 
 	const filterButton = document.createElement('button');
 	const filterIcon = document.createElement('img');
-	filterIcon.src = extensionSettings.runtimePublicURL + '/filter-solid.svg';
+	filterIcon.src = iconFilter;
 	filterIcon.style.width = '24px';
 	filterIcon.style.height = '24px';
 	filterIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
@@ -482,7 +484,8 @@ async function adjustItemPage(container: Element) {
 		newContainer.style.paddingTop = '2px';
 		saleTag.style.margin = '5px';
 		saleTag.style.fontWeight = '700';
-		saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2);
+		const percentage = ' (' + ((item.price / (extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)';
+		saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2) + percentage;
 		newContainer.appendChild(saleTag);
 		priceContainer.appendChild(newContainer);
 	}
@@ -626,25 +629,21 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-	let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank"><img src="${extensionSettings.runtimePublicURL}/arrow-up-right-from-square-solid.svg" style="height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%); margin-right: 18px;"></a></div></div>`;
+	let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP}</a></div></div>`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
 		tableBody += `<div class="ItemHistoryList-row"${
 			Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
 		}><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
-			extensionSettings.runtimePublicURL + (sale.origin == 'CSFloat' ? '/csfloat_logo.png' : '/buff_favicon.png')
+			sale.origin == 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF
 		}"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
 			sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
 		}${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div><div><a ${
 			sale.url == 'No Link Available'
-				? 'style="pointer-events: none;cursor: default;"><img src="' +
-					extensionSettings.runtimePublicURL +
-					'/ban-solid.svg" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
+				? 'style="pointer-events: none;cursor: default;"><img src="' + ICON_BAN + '" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
 				: 'href="' +
 					(!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
-					'" target="_blank"><img src="' +
-					extensionSettings.runtimePublicURL +
-					'/camera-solid.svg" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
+					'" target="_blank"><img src="' + ICON_CAMERA + '" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
 		}height: 20px;"></img></a></div></div>`;
 	}
 	let tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
@@ -904,7 +903,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.appendChild(buffPrice);
 	if (priceOrder > priceListing) {
 		const warningImage = document.createElement('img');
-		warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+		warningImage.setAttribute('src', ICON_EXCLAMATION);
 		warningImage.setAttribute(
 			'style',
 			`height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${
@@ -1221,7 +1220,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
 			saleTag.className = 'sale-tag betterfloat-sale-tag';
 			discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
-				difference == 0 ? extensionSettings['sp-colors'].neutral : difference < 0 ? extensionSettings['sp-colors'].profit : extensionSettings['sp-colors'].loss
+				difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 			})`;
 			let saleText: string;
 			if (difference == 0) {

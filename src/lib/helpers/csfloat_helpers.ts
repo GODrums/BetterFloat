@@ -1,4 +1,5 @@
 import type { CSFloat } from '~lib/@typings/FloatTypes';
+import iconCameraAdd from "data-base64:/assets/icons/camera-add-solid.svg";
 
 export namespace CSFloatHelpers {
     export function intervalMapping(setting: number) {
@@ -103,7 +104,7 @@ export namespace CSFloatHelpers {
         badgeContainer.appendChild(badge);
     }
 
-    export function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string, runtimePublicURL?: string) {
+    export function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string, customIcon = false) {
         detailButtons.setAttribute('style', 'display: flex;');
         const outerContainer = document.createElement('div');
         outerContainer.className = 'bf-tooltip';
@@ -122,10 +123,10 @@ export namespace CSFloatHelpers {
         iconButton.setAttribute('style', `color: ${buttonColor};`);
         const iconSpan = document.createElement('span');
         iconSpan.className = 'mat-button-wrapper';
-        if (runtimePublicURL) {
+        if (customIcon) {
             const icon = document.createElement('img');
             icon.setAttribute('style', 'width: 24px; height: 24px;');
-            icon.setAttribute('src', runtimePublicURL + '/camera-add-solid.svg');
+            icon.setAttribute('src', iconCameraAdd);
             iconSpan.appendChild(icon);
         } else {
             const icon = document.createElement('i');
@@ -138,7 +139,7 @@ export namespace CSFloatHelpers {
         let tooltip = document.createElement('div');
         tooltip.className = 'bf-tooltip-inner';
         let tooltipSpan = document.createElement('span');
-        if (runtimePublicURL) {
+        if (customIcon) {
             tooltipSpan.textContent = 'Generate Swap.gg screenshot';
         } else {
             tooltipSpan.textContent = 'Show pattern screenshot';
