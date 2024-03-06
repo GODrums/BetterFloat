@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
-import { createUrlListener, delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
+import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
@@ -540,7 +540,7 @@ async function adjustItem(container: Element) {
 		await addFloatColoring(container, item);
 	}
 
-	let cachedItem = getFirstSpItem();
+	const cachedItem = getFirstSpItem();
 	if (cachedItem) {
 		if (cachedItem.name != item.name) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
@@ -576,7 +576,7 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-	let { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
+	const { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
 	const gemContainer = genGemContainer(patternElement, 'right');
 	gemContainer.style.fontSize = '11px';
 	gemContainer.style.fontWeight = '600';
@@ -593,7 +593,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	let { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern, usedCurrency);
+	const { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern, usedCurrency);
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader) return;
@@ -612,7 +612,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-	let tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP}</a></div></div>`;
+	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP}</a></div></div>`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
 		tableBody += `<div class="ItemHistoryList-row"${
@@ -629,12 +629,12 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 					'" target="_blank"><img src="' + ICON_CAMERA + '" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
 		}height: 20px;"></img></a></div></div>`;
 	}
-	let tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
+	const tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
 	tableTab.innerHTML = tableHTML;
 	itemHistory?.appendChild(tableTab);
 
 	patternLink.onclick = () => {
-		let currActive = document.querySelector('.ItemHistory-link.active');
+		const currActive = document.querySelector('.ItemHistory-link.active');
 		if (currActive) {
 			currActive.classList.remove('active');
 			currActive.setAttribute('aria-selected', 'false');
@@ -645,7 +645,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 		document.querySelector('.ItemHistory-tab.active')?.classList.remove('active');
 		tableTab.classList.add('active');
 	};
-	for (let child of Array.from(linksContainer.children)) {
+	for (const child of Array.from(linksContainer.children)) {
 		(<HTMLElement>child).onclick = () => {
 			patternLink.classList.remove('active');
 			patternLink.setAttribute('aria-selected', 'false');
@@ -743,7 +743,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	// regex also detects &nbsp as whitespace!
 	if (priceText.split(/\s/).length > 1) {
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
-		let parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
 		priceText = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
 		currency = parts.filter((x) => isNaN(+x))[0];
 	} else {

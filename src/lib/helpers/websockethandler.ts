@@ -5,8 +5,8 @@ import iconBan from "data-base64:~/../assets/icons/ban-solid.svg";
 
 export async function handleListed(data: Skinport.Item[]) {
     setTimeout(async () => {
-        for (let item of data) {
-            let element = document.querySelector('.sale-' + item.saleId);
+        for (const item of data) {
+            const element = document.querySelector('.sale-' + item.saleId);
             if (element) {
                 // console.debug('[BetterFloat] Found listed item:', item);
                 if (item.marketHashName.includes('Case Hardened') && item.category == 'Knife' && (await getSetting('sp-csbluegem'))) {
@@ -20,8 +20,8 @@ export async function handleListed(data: Skinport.Item[]) {
 }
 
 export async function handleSold(data: Skinport.Item[]) {
-    for (let item of data) {
-        let element = document.querySelector('.sale-' + item.saleId);
+    for (const item of data) {
+        const element = document.querySelector('.sale-' + item.saleId);
         if (element) {
             // console.debug('[BetterFloat] Found sold item:', item);
             element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay());
@@ -33,7 +33,7 @@ export async function handleSold(data: Skinport.Item[]) {
 }
 
 function createSoldOverlay() {
-    let soldElement = document.createElement('div');
+    const soldElement = document.createElement('div');
     soldElement.className = 'ItemPreview-status';
     soldElement.style.background = 'rgb(69, 10, 10)';
     const banIcon = document.createElement('img');

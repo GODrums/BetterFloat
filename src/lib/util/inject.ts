@@ -53,6 +53,6 @@ function openIntercept() {
             }
         });
 
-        return open.apply(this, <any>arguments);
+        return open.apply(this, arguments);
     };
 }

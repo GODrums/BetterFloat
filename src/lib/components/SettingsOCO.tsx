@@ -14,7 +14,7 @@ export const SettingsOCO = () => {
     const keySchema = z.string().regex(keyRegex, "Invalid API key format");
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let value = event.target.value;
+        const value = event.target.value;
         
         if (value.length === 0) {
             setStatus("idle");

@@ -70,24 +70,24 @@ export namespace CSFloatHelpers {
     }
 
     export function addPatternBadge(container: Element, svgfile: string, svgStyle: string, tooltipText: string[], tooltipStyle: string, badgeText: string, badgeStyle: string) {
-        let badgeTooltip = document.createElement('div');
+        const badgeTooltip = document.createElement('div');
         badgeTooltip.className = 'bf-tooltip-inner';
         badgeTooltip.setAttribute('style', tooltipStyle);
         for (let i = 0; i < tooltipText.length; i++) {
-            let badgeTooltipSpan = document.createElement('span');
+            const badgeTooltipSpan = document.createElement('span');
             badgeTooltipSpan.textContent = tooltipText[i];
             badgeTooltip.appendChild(badgeTooltipSpan);
         }
-        let badge = document.createElement('div');
+        const badge = document.createElement('div');
         badge.className = 'bf-tooltip';
-        let badgeDiv = document.createElement('div');
+        const badgeDiv = document.createElement('div');
         badgeDiv.className = 'bf-badge-text';
         const bgImage = document.createElement('img');
         bgImage.className = 'betterfloat-cw-image';
         bgImage.setAttribute('src', svgfile);
         bgImage.setAttribute('style', svgStyle);
         badgeDiv.appendChild(bgImage);
-        let badgeSpan = document.createElement('span');
+        const badgeSpan = document.createElement('span');
         badgeSpan.textContent = badgeText;
         badgeSpan.setAttribute('style', badgeStyle);
         badgeDiv.appendChild(badgeSpan);
@@ -137,9 +137,9 @@ export namespace CSFloatHelpers {
         }
         iconButton.appendChild(iconSpan);
         screenshotButton.appendChild(iconButton);
-        let tooltip = document.createElement('div');
+        const tooltip = document.createElement('div');
         tooltip.className = 'bf-tooltip-inner';
-        let tooltipSpan = document.createElement('span');
+        const tooltipSpan = document.createElement('span');
         if (customIcon) {
             tooltipSpan.textContent = 'Generate Swap.gg screenshot';
         } else {

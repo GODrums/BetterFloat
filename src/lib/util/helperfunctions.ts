@@ -3,7 +3,7 @@ import type { Extension } from '../@typings/ExtensionTypes';
 import type { ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 
-export async function formFetch<T = any>(url: string, body: string): Promise<T> {
+export async function formFetch<T>(url: string, body: string): Promise<T> {
 	return fetch(url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

@@ -56,7 +56,7 @@ export function activateHandler() {
 	});
 
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
-	chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+	chrome.runtime.onMessage.addListener(async (message) => {
 		if (message.type === 'BetterFloat_URL_CHANGED') {
 			const state: Extension.URLState = message.state;
 

@@ -234,7 +234,7 @@ async function customStall(stall_id: string) {
                 return;
             }
             // send get to /api/v1/me to get obfuscated user id
-            let obfuscated_id: string = await fetch('https://csfloat.com/api/v1/me')
+            const obfuscated_id: string = await fetch('https://csfloat.com/api/v1/me')
                 .then((res) => res.json())
                 .then((data) => data?.user?.obfuscated_id);
             if (!obfuscated_id) {
@@ -302,7 +302,7 @@ async function customStall(stall_id: string) {
         }
 
         // get stall id from input field to still load custom stall
-        let newID = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
+        const newID = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
         if (newID) {
             stall_id = newID;
         } else {
@@ -310,7 +310,7 @@ async function customStall(stall_id: string) {
             return;
         }
     }
-    let stallData = await getStallData(stall_id);
+    const stallData = await getStallData(stall_id);
     if (!stallData || !stall_id.includes(stallData.stall_id)) {
         console.log('[BetterFloat] Could not load stall data');
         return;
@@ -323,7 +323,7 @@ async function customStall(stall_id: string) {
 
     document.body.classList.add('betterfloat-custom-stall');
 
-    let backgroundVideo = document.createElement('video');
+    const backgroundVideo = document.createElement('video');
     backgroundVideo.setAttribute('playsinline', '');
     backgroundVideo.setAttribute('autoplay', '');
     backgroundVideo.setAttribute('muted', '');
@@ -333,10 +333,10 @@ async function customStall(stall_id: string) {
         'style',
         `position: absolute; width: 100%; height: 100%; z-index: -100; background-size: cover; background-position: center center; object-fit: cover; background-color: ${stallData.options['background-color']}`
     );
-    let sourceWebm = document.createElement('source');
+    const sourceWebm = document.createElement('source');
     sourceWebm.setAttribute('src', stallData.options.video.webm);
     sourceWebm.setAttribute('type', 'video/webm');
-    let sourceMp4 = document.createElement('source');
+    const sourceMp4 = document.createElement('source');
     sourceMp4.setAttribute('src', stallData.options.video.mp4);
     sourceMp4.setAttribute('type', 'video/mp4');
 
@@ -351,19 +351,19 @@ async function customStall(stall_id: string) {
     });
 
     if (stallData.options.transparent_elements) {
-        let stallHeader = document.querySelector('.betterfloat-custom-stall .mat-card.header');
+        const stallHeader = document.querySelector('.betterfloat-custom-stall .mat-card.header');
         if (stallHeader) {
             (<HTMLElement>stallHeader).style.backgroundColor = 'transparent';
         }
-        let stallFooter = document.querySelector('.betterfloat-custom-stall > app-root > div > div.footer');
+        const stallFooter = document.querySelector('.betterfloat-custom-stall > app-root > div > div.footer');
         if (stallFooter) {
             (<HTMLElement>stallFooter).style.backgroundColor = 'transparent';
         }
     }
 
-    let matChipWrapper = document.querySelector('.mat-chip-list-wrapper');
+    const matChipWrapper = document.querySelector('.mat-chip-list-wrapper');
     if (matChipWrapper?.firstElementChild) {
-        let bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
+        const bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
         bfChip.style.backgroundColor = 'purple';
         bfChip.textContent = 'BetterFloat ' + stallData.roles[0];
         matChipWrapper.appendChild(bfChip);
@@ -414,6 +414,7 @@ function createTabListeners() {
 
 /**
  * Updates the document title according to the current site
+ * TODO: Rewrite with new url listener from background
  * @async setInterval executed every 200ms
  */
 function titleChanger() {
@@ -438,7 +439,7 @@ function titleChanger() {
         } else if (location.pathname == '/profile/deposit') {
             newTitle = 'Deposit';
         } else if (location.pathname.includes('/stall/')) {
-            let username = document.querySelector('.username')?.textContent;
+            const username = document.querySelector('.username')?.textContent;
             if (username) {
                 newTitle = username + "'s Stall";
             }
@@ -573,7 +574,7 @@ function applyMutation() {
                         await adjustSalesTableRow(addedNode);
                     } else if (location.pathname == '/profile/offers' && addedNode.className.includes('reference-container')) {
                         // item in the offers page when switching from another page
-                        let itemCard = document.querySelector('item-card');
+                        const itemCard = document.querySelector('item-card');
                         if (itemCard) {
                             await adjustItem(itemCard);
                         }
@@ -821,7 +822,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         const toolTip = document.createElement('div');
         toolTip.className = 'bf-tooltip-inner';
         toolTip.setAttribute('style', 'translate: -60px 10px; width: 140px;');
-        let toolTipSpan = document.createElement('span');
+        const toolTipSpan = document.createElement('span');
         toolTipSpan.textContent = quickLinks[i].tooltip;
         toolTip.appendChild(toolTipSpan);
         const linkContainer = document.createElement('a');
@@ -832,7 +833,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
         icon.setAttribute('src', quickLinks[i].icon);
         icon.setAttribute('style', 'height: 24px; border-radius: 5px; vertical-align: middle;');
         linkContainer.appendChild(icon);
-        let toolTipOuter = document.createElement('div');
+        const toolTipOuter = document.createElement('div');
         toolTipOuter.className = 'bf-tooltip';
         toolTipOuter.appendChild(linkContainer);
         toolTipOuter.appendChild(toolTip);
@@ -1077,20 +1078,20 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
         fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed!), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
     }
     if (fadePercentage != null) {
-        let fadeTooltip = document.createElement('div');
+        const fadeTooltip = document.createElement('div');
         fadeTooltip.className = 'bf-tooltip-inner';
-        let fadePercentageSpan = document.createElement('span');
+        const fadePercentageSpan = document.createElement('span');
         fadePercentageSpan.textContent = `Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%`;
-        let fadeRankingSpan = document.createElement('span');
+        const fadeRankingSpan = document.createElement('span');
         fadeRankingSpan.textContent = `Rank #${fadePercentage.ranking}`;
         fadeTooltip.appendChild(fadePercentageSpan);
         fadeTooltip.appendChild(fadeRankingSpan);
-        let fadeBadge = document.createElement('div');
+        const fadeBadge = document.createElement('div');
         fadeBadge.className = 'bf-tooltip';
-        let percentageDiv = document.createElement('div');
+        const percentageDiv = document.createElement('div');
         percentageDiv.className = 'bf-badge-text';
         percentageDiv.setAttribute('style', `background-position-x: 10.7842%; background-image: ${fadePercentage.background};`);
-        let fadeBadgePercentageSpan = document.createElement('span');
+        const fadeBadgePercentageSpan = document.createElement('span');
         fadeBadgePercentageSpan.style.color = '#00000080';
         fadeBadgePercentageSpan.textContent = toTruncatedString(fadePercentage.percentage, 1);
         percentageDiv.appendChild(fadeBadgePercentageSpan);
@@ -1158,7 +1159,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
     const detailButtons = container.querySelector('.detail-buttons');
     if (detailButtons && container.querySelectorAll('.detail-buttons > button').length == 0) {
         // get closest item float-wise that has a screenshot
-        let sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value!) - Math.abs(b.float - item.float_value!));
+        const sortedSales = pastSales.filter((x) => x.url != 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value!) - Math.abs(b.float - item.float_value!));
         if (sortedSales.length > 0 || patternElement?.screenshot) {
             const closestSale = sortedSales[0];
             detailButtons.setAttribute('style', 'display: flex;');
@@ -1188,9 +1189,9 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
             iconSpan.appendChild(icon);
             iconButton.appendChild(iconSpan);
             screenshotButton.appendChild(iconButton);
-            let tooltip = document.createElement('div');
+            const tooltip = document.createElement('div');
             tooltip.className = 'bf-tooltip-inner';
-            let tooltipSpan = document.createElement('span');
+            const tooltipSpan = document.createElement('span');
             tooltipSpan.textContent = 'Show Buff pattern screenshot';
             tooltip.appendChild(tooltipSpan);
             outerContainer.appendChild(screenshotButton);
@@ -1206,7 +1207,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
         const divider = document.createElement('span');
         divider.textContent = ' | ';
         divider.setAttribute('style', 'margin: 0 5px;');
-        let salesHeader = document.createElement('span');
+        const salesHeader = document.createElement('span');
         salesHeader.textContent = `Buff Pattern Sales (${pastSales.length})`;
         salesHeader.setAttribute('style', 'color: deepskyblue;');
         salesHeader.addEventListener('click', () => {
@@ -1313,7 +1314,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
             table.setAttribute('style', 'width: 100%;');
             const header = document.createElement('thead');
             header.setAttribute('role', 'rowgroup');
-            let headerValues = ['Source', 'Date', 'Price', 'Float Value'];
+            const headerValues = ['Source', 'Date', 'Price', 'Float Value'];
             for (let i = 0; i < headerValues.length; i++) {
                 const headerCell = document.createElement('th');
                 headerCell.setAttribute('role', 'columnheader');
@@ -1502,7 +1503,7 @@ function priceData(text: string) {
         price = '0';
     } else {
         if (priceText.split(/\s/).length > 1) {
-            let parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+            const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
             price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
             currency = parts.filter((x) => isNaN(+x))[0];
         } else {
@@ -1526,7 +1527,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
     // replace potential spaces between currency characters and price
     const regex = /([A-Za-z]+)\s+(\d+)/;
-    let priceText = priceContainer?.textContent?.trim().replace(regex, '$1$2').split(/\s/) ?? [];
+    const priceText = priceContainer?.textContent?.trim().replace(regex, '$1$2').split(/\s/) ?? [];
     let price: string;
     let currency = '$';
     if (location.pathname === '/sell') {
@@ -1534,9 +1535,9 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     } else if (priceText.includes('Bids')) {
         price = '0';
     } else {
-        let pricingText = priceText[0];
+        const pricingText = priceText[0];
         if (pricingText.split(/\s/).length > 1) {
-            let parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
+            const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
             price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
             currency = parts.filter((x) => isNaN(+x))[0];
         } else {

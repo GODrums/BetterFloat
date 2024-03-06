@@ -13,7 +13,7 @@
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
 		"clean": "rimraf dist && rimraf build",
-		"lint": "eslint ./src --ext .ts,.tsx"
+		"lint": "eslint ./src --ext .ts,.tsx -c .eslintrc"
 	},
 	"dependencies": {
 		"@plasmohq/messaging": "^0.6.2",

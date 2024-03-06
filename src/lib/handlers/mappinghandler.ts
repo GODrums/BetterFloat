@@ -288,12 +288,12 @@ export async function getSkbUserCurrencyRate() {
 }
 
 export async function getStallData(stall_id: string) {
-    let request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
+    const request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
     if (request.status != 200) {
         console.warn('[BetterFloat] Invalid stall data from Rums.dev: ', request);
         return null;
     }
-    let response = (await request.json()) as Extension.CustomStallData;
+    const response = (await request.json()) as Extension.CustomStallData;
     console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
     if (response && response.status == 'OK' && response.data) {
         return response.data;
@@ -351,7 +351,7 @@ export async function loadMapping() {
     if (Object.keys(priceMapping).length == 0) {
         console.debug('[BetterFloat] Attempting to load price mapping from local storage');
 
-        let success = await new Promise<boolean>((resolve) => {
+        const success = await new Promise<boolean>((resolve) => {
             chrome.storage.local.get('prices', (data) => {
                 if (data?.prices) {
                     priceMapping = JSON.parse(data.prices);
