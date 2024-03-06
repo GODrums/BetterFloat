@@ -26,12 +26,15 @@
 ## 🤝 Community / Support
 
 <p>
-We have used our thread <a href="https://discord.com/channels/664104795367538690/1140464870559584267">#BetterFloat</a> in the CS Market Forum Discord Server in the past. Now we also own a full server, where you can ask questions, report bugs, or suggest new features.
+We maintain a very active Discord server, where you can share your snipes, ask questions, report bugs, or suggest new features. Join here:
 </p>
 
-Click the badge below to join our server:
-
-[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/VQWXp33nSW)
+<p align="center">
+  <a href="https://discord.gg/VQWXp33nSW">
+    <picture>
+      <source srcset="https://i.postimg.cc/Fzj7T05w/discord.png" media="(prefers-color-scheme: dark)">
+      <img height="58" src="https://i.postimg.cc/Fzj7T05w/discord.png" alt="Discord"></picture></a>
+</p>
 
 ## 📄 Highlights
 
@@ -54,7 +57,6 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 [![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/rating-count/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
-[![Chrome Web Store Price](https://img.shields.io/chrome-web-store/price/bphfhlfhnohppnleaehnlfigkkccpglk.svg)](https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk)
 
 ### Mozillla Add-on
 
@@ -70,14 +72,13 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 
 ### Troubleshooting on Mozilla Firefox
 
-In some cases, Firefox does not grant extensions necessary permissions automatically. This can be fixed by following these steps:
+In some cases, Firefox does not grant extensions the necessary permissions automatically. This can be fixed by following these steps:
 
-1. Open the Add-ons Manager page: [about:addons](about:addons)
-2. Click on the BetterFloat extension -> "Permissions"
-3. Check all of the required AND optional "Access your data for ..." checkboxes
-4. Reload the extension by dis- and reenabling it
-5. Adjust the extension settings to your liking in the extension popup
-6. Refresh the website, e.g. CSFloat
+1. Open the BetterFloat popup by clicking on the icon in the toolbar
+2. Look for a warning symbol in the top bar of the popup
+3. Click on the warning symbol and grant the necessary permissions in the newly opened popup of your browser
+4. Open the BetterFloat popup again and check if the warning symbol is gone
+5. If the warning symbol is still there, please report this issue in our Discord server
 
 ## ⌨️ Development
 
@@ -116,23 +117,32 @@ vim .env
 Build the extension in development or production mode:
 
 ```bash
-# development mode
-pnpm dev 
-# production mode
+# development mode (Chrome or Firefox)
+pnpm dev
+pnpm dev:firefox
+# production mode (Chrome or Firefox)
 pnpm build
+pnpm build:firefox
 ```
 
 When working with multiple version, the build process may benefit from clean builds. This can be achieved by running the following command before building:
 
 ```bash
+# careful, this will delete the build folder
 pnpm clean
 ```
 
 ### Loading
 
-The built extension will be located in the `build` folder. For each created subversion (browser and manifest version), there will be a seperate subfolder. Load that folder as unpacked extension in your browser or pack it first and then load the packed version:
+The built extension will be located in the `build` folder. For each created subversion (browser and manifest version), there will be a seperate subfolder. Load that folder as unpacked extension in your browser or pack it first and then load the packed version
+
+**Chrome:**
 - Go to `chrome://extensions` or `about:addons` and enable developer mode
 - Click on "Load unpacked" and select the `build/{version}` folder
+
+**Firefox:**
+- Go to `about:debugging#/runtime/this-firefox`
+- Click on "Load Temporary Add-on" and select the `build/{version}/manifest.json` file
 
 ### Contributing
 
@@ -141,10 +151,10 @@ Please follow the [conventional commits](https://www.conventionalcommits.org/en/
 
 ```bash
 pnpm lint  # runs eslint
-pnpm prettier  # runs prettier
+pnpm prettier  # currently not available, format with CTRL+SHIFT+F
 ```
 
-Make sure to test your changes extensively and include relevant results in your pull request.
+Make sure to test your changes extensively on both browsers and include relevant results in your pull request.
 
 ## ⚠️ Disclaimer
 
