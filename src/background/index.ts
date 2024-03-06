@@ -1,4 +1,3 @@
-import browser from "webextension-polyfill"
 import type { Extension } from "~lib/@typings/ExtensionTypes";
 import { DEFAULT_SETTINGS, ExtensionStorage, type IStorage } from "~lib/util/storage";
 
@@ -10,7 +9,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
         console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
         await chrome.storage.sync.set(DEFAULT_SETTINGS);
     } else if (details.reason == 'update') {
-        const thisVersion = browser.runtime.getManifest().version;
+        const thisVersion = chrome.runtime.getManifest().version;
         console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
         // await chrome.storage.sync.set(DEFAULT_SETTINGS);
 
@@ -62,8 +61,8 @@ export async function refreshPrices() {
         .catch((err) => console.error(err));
 }
 
-// rewrite for webextension-polyfill
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+    // TODO: Switch to @plasmohq/messaging
     if (request.message == 'fetchPrices') {
         console.time('PriceRefresh');
         refreshPrices().then((value) => {
@@ -84,6 +83,25 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
         // this is required to let the message listener wait for the fetch to finish
         // https://github.com/mozilla/webextension-polyfill/issues/130#issuecomment-484772327
         return true;
+    }
+});
+
+const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https://skinbid.com'];
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (tab.url && changeInfo.status === 'complete' && urlsToListenFor.some((url) => tab.url.startsWith(url))) {
+        const url = new URL(tab.url);
+        const state: Extension.URLState = {
+            site: url.hostname,
+            path: url.pathname,
+            search: url.search,
+            hash: url.hash,
+        };
+        console.debug('[BetterFloat] URL changed to: ', state);
+        chrome.tabs.sendMessage(tabId, {
+            type: 'BetterFloat_URL_CHANGED',
+            state
+        });
     }
 });
 

@@ -151,7 +151,7 @@ export namespace CSFloatHelpers {
         detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
     }
 
-    export function createTopButton(runtimePublicURL: string) {
+    export function createTopButton() {
         const topButton = document.createElement('button');
         topButton.classList.add('betterfloat-top-button');
         topButton.setAttribute(

@@ -14,6 +14,7 @@ import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler'
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 
 import iconFilter from "data-base64:/assets/icons/filter-solid.svg";
+import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -50,8 +51,6 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
 
-	createLiveLink();
-
 	await firstLaunch();
 
 	// mutation observer is only needed once
@@ -60,6 +59,7 @@ async function init() {
 		await applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
+
 }
 
 async function firstLaunch() {
@@ -70,6 +70,9 @@ async function firstLaunch() {
 	await delay(2000);
 	console.log('[BetterFloat] First launch, url:', path);
 
+	createLiveLink();
+	filterDisplay();
+	
 	if (path === '/') {
 		const popularLists = Array.from(document.querySelectorAll('.PopularList'));
 		for (const list of popularLists) {
@@ -110,26 +113,6 @@ async function firstLaunch() {
 	}
 }
 
-function createLiveLink() {
-	const generateLink = () => {
-		const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
-		if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
-		marketLink.style.marginRight = '30px';
-		const liveLink = marketLink.cloneNode(true) as HTMLAnchorElement;
-		liveLink.setAttribute('href', '/market?sort=date&order=desc&bf=live');
-		liveLink.setAttribute('class', 'HeaderContainer-link HeaderContainer-link--market betterfloat-liveLink');
-		liveLink.textContent = 'Live';
-		marketLink.after(liveLink);
-	};
-
-	generateLink();
-
-	createUrlListener(() => {
-		if (!document.querySelector('.betterfloat-liveLink')) {
-			generateLink();
-		}
-	});
-}
 
 function createLanguagePopup() {
 	const popupOuter = document.createElement('div');

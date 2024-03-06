@@ -33,7 +33,6 @@ export async function getAllSettings() {
 }
 
 export const DEFAULT_SETTINGS = {
-	runtimePublicURL: chrome.runtime.getURL('/public'),
 	'csf-enable': true,
 	'csf-autorefresh': true,
 	'csf-stickerprices': true,

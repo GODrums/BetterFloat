@@ -1,68 +1,9 @@
 export namespace Extension {
-    export type Settings = {
-        runtimePublicURL: string;
-        enableCSFloat: boolean;
-        autorefresh: boolean;
-        stickerPrices: boolean;
-        csBlueGem: boolean;
-        priceReference: 0 | 1;
-        refreshInterval: 10 | 30 | 60 | 120 | 300;
-        showSteamPrice: boolean;
-        listingAge: 0 | 1 | 2;
-        showBuffDifference: boolean;
-        showBuffPercentageDifference: boolean;
-        showTopButton: boolean;
-        useTabStates: boolean;
-        csfRemoveClustering: boolean;
-        enableSkinport: boolean;
-        spCheckBoxes: boolean;
-        spStickerPrices: boolean;
-        spBlueGem: boolean;
-        ocoAPIKey: string;
-        ocoLastOrder: {
-            time: number;
-            id: number;
-            status: 'paid' | 'closed' | 'open' | 'unknown';
-        }
-        spPriceReference: 0 | 1;
-        spSteamPrice: boolean;
-        spBuffDifference: boolean;
-        spShowBuffPercentageDifference: boolean;
-        skinportRates: 'skinport' | 'real';
-        spBuffLink: 'action' | 'text';
-        spAutoclosePopup: boolean;
-        spFilter: {
-            priceLow: number;
-            priceHigh: number;
-            name: string;
-            types: string[];
-            new: boolean;
-        };
-        enableSkinbid: boolean;
-        skbPriceReference: 0 | 1;
-        skbBuffDifference: boolean;
-        skbListingAge: boolean;
-        skbStickerPrices: boolean;
-        floatColoring: IFloatColoringSites;
-        colors: IColorsSites;
-    };
-
-    export type IColors = {
-        profit: string;
-        loss: string;
-        neutral: string;
-    };
-
-    export type IColorsSites = {
-        csfloat: IColors;
-        skinport: IColors;
-        skinbid: IColors;
-    };
-
-    export type IFloatColoringSites = {
-        csfloat: boolean;
-        skinport: boolean;
-        skinbid: boolean;
+    export type URLState = {
+        site: string;
+        path: string;
+        search: string;
+        hash: string;
     };
 
     export type CustomPriceMapping = {

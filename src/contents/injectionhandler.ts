@@ -13,8 +13,13 @@ if (!location.hostname.includes('blog.')) {
 }
 // some markets like skinport use websockets to update the page
 if (location.hostname === 'skinport.com') {
-    // injectWebsocketListener();
-    startSocket();
+    // startSocket();
+    const interval = setInterval(() => {
+        if (document.querySelector('.LiveBtn--isActive')) {
+            startSocket();
+            clearInterval(interval);
+        }
+    }, 10000);
 }
 
 // inject script into page

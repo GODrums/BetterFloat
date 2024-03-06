@@ -41,7 +41,7 @@ import iconPricempire from "data-base64:/assets/icons/icon-pricempire.png";
 import iconSteam from "data-base64:/assets/icons/icon-steam.svg";
 import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
 import iconCameraFlipped from "data-base64:/assets/icons/camera-flipped.svg";
-import { ICON_ARROWUP, ICON_BUFF, ICON_CLOCK, ICON_CRIMSON, ICON_CSFLOAT, ICON_GEM_CYAN, ICON_OVERPRINT_ARROW, ICON_OVERPRINT_FLOWER, ICON_OVERPRINT_MIXED, ICON_OVERPRINT_POLYGON, ICON_PHOENIX, ICON_SPIDER_WEB } from '~lib/util/globals';
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CLOCK, ICON_CRIMSON, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_GEM_CYAN, ICON_OVERPRINT_ARROW, ICON_OVERPRINT_FLOWER, ICON_OVERPRINT_MIXED, ICON_OVERPRINT_POLYGON, ICON_PHOENIX, ICON_SPIDER_WEB } from '~lib/util/globals';
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.csfloat.com/*"],
@@ -85,7 +85,7 @@ async function init() {
     console.timeEnd('[BetterFloat] CSFloat init timer');
 
     if (extensionSettings['csf-topbutton']) {
-        CSFloatHelpers.createTopButton(extensionSettings["runtimePublicURL"]);
+        CSFloatHelpers.createTopButton();
     }
 
     //check if url is in supported subpages
@@ -604,7 +604,7 @@ function adjustCurrencyChangeNotice(container: Element) {
     const warningDiv = document.createElement('div');
     warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: hsl(0deg 100% 27.25% / 50%); border-radius: 18px;');
     const warningSymbol = document.createElement('img');
-    warningSymbol.setAttribute('src', extensionSettings["runtimePublicURL"] + '/triangle-exclamation-solid.svg');
+    warningSymbol.setAttribute('src', ICON_EXCLAMATION);
     warningSymbol.style.height = '30px';
     warningSymbol.style.margin = '0 10px';
     warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(66%) saturate(5511%) hue-rotate(102deg) brightness(103%) contrast(104%)';
@@ -1264,7 +1264,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
                 if (sale.url === 'No Link Available') {
                     link.setAttribute('style', 'pointer-events: none;cursor: default;');
                     const linkImage = document.createElement('img');
-                    linkImage.setAttribute('src', extensionSettings.runtimePublicURL + '/ban-solid.svg');
+                    linkImage.setAttribute('src', ICON_BAN);
                     linkImage.setAttribute(
                         'style',
                         'height: 20px; translate: 0px 1px; filter: brightness(0) saturate(100%) invert(11%) sepia(8%) saturate(633%) hue-rotate(325deg) brightness(95%) contrast(89%);'
@@ -1669,7 +1669,7 @@ async function addBuffPrice(
         buffContainer.appendChild(buffPrice);
         if (priceOrder > priceListing * 1.1) {
             const warningImage = document.createElement('img');
-            warningImage.setAttribute('src', extensionSettings.runtimePublicURL + '/triangle-exclamation-solid.svg');
+            warningImage.setAttribute('src', ICON_EXCLAMATION);
             warningImage.setAttribute(
                 'style',
                 'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);'
