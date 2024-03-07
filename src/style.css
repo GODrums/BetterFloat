@@ -53,8 +53,22 @@
   }
 }
 
+@font-face {
+  font-family: "Inter";
+  src: url("data-base64:/assets/Inter.ttf")
+    format("truetype");
+  font-weight: 500 600 700 800;
+}
+
 body {
   font-family: 'Inter', sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+#plasmo-shadow-container {
+  font-size: 16px !important;
+  font-family: "Inter", sans-serif;
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
 }

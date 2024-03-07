@@ -397,6 +397,11 @@ async function addBuffPrice(
         return;
     }
 
+    // restyle layout to make it more compact
+    if (selector == itemSelectors.card && container.querySelector('.offers')) {
+        container.querySelector('.item-type').setAttribute('style', 'display: none;');
+    }
+
     const priceDiv = container.querySelector(selector.priceDiv);
     if (!priceDiv?.firstElementChild) {
         console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
