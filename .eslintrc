@@ -11,17 +11,12 @@
   ],
   "env": {
     "browser": true,
-    "node": true,
-    "mocha": true
+    "node": true
   },
   "rules": {
-    "@typescript-eslint/no-non-null-assertion": 0,
-    "@typescript-eslint/no-var-requires": 0,
     "prefer-rest-params": 0,
     "no-case-declarations": 0,
     "@typescript-eslint/no-explicit-any": 0,
-    "@typescript-eslint/prefer-const": 0,
-    "@typescript-eslint/no-namespace": 0,
-    "prefer-const": 0
+    "@typescript-eslint/no-namespace": 0
   }
 }
