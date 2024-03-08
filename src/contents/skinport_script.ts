@@ -1,20 +1,19 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
+import iconFilter from 'data-base64:/assets/icons/filter-solid.svg';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
+import type { ItemStyle } from '~lib/@typings/FloatTypes';
+import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
 import { activateHandler } from '../lib/handlers/eventhandler';
-import type { ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
-import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
-
-import iconFilter from "data-base64:/assets/icons/filter-solid.svg";
-import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -59,11 +58,13 @@ async function init() {
 		await applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
-
 }
 
 async function firstLaunch() {
 	if (!extensionSettings['sp-enable']) return;
+
+	const gameTitle = document.querySelector('.GameSwitcherButton-title')?.textContent;
+	if (!gameTitle || !gameTitle.includes('CS2')) return;
 
 	const path = location.pathname;
 
@@ -72,7 +73,7 @@ async function firstLaunch() {
 
 	createLiveLink();
 	filterDisplay();
-	
+
 	if (path === '/') {
 		const popularLists = Array.from(document.querySelectorAll('.PopularList'));
 		for (const list of popularLists) {
@@ -112,7 +113,6 @@ async function firstLaunch() {
 		}
 	}
 }
-
 
 function createLanguagePopup() {
 	const popupOuter = document.createElement('div');
@@ -171,6 +171,8 @@ function createLanguagePopup() {
 async function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		if (extensionSettings['sp-enable']) {
+			const gameTitle = document.querySelector('.GameSwitcherButton-title')?.textContent;
+			if (!gameTitle || !gameTitle.includes('CS2')) return;
 			for (const mutation of mutations) {
 				for (let i = 0; i < mutation.addedNodes.length; i++) {
 					const addedNode = mutation.addedNodes[i];
@@ -600,8 +602,8 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	itemHeader.appendChild(genGemContainer(patternElement));
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
-	if (!linksContainer) return;
-	const patternLink = <HTMLElement>linksContainer.lastElementChild!.cloneNode(true);
+	if (!linksContainer || !linksContainer.lastElementChild) return;
+	const patternLink = <HTMLElement>linksContainer.lastElementChild.cloneNode(true);
 	patternLink.id = 'react-tabs-6';
 	patternLink.setAttribute('aria-controls', 'react-tabs-7');
 	patternLink.textContent = `Buff Pattern Sales (${pastSales?.length ?? 0})`;
@@ -623,10 +625,14 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 			sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
 		}${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div><div><a ${
 			sale.url == 'No Link Available'
-				? 'style="pointer-events: none;cursor: default;"><img src="' + ICON_BAN + '" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
+				? 'style="pointer-events: none;cursor: default;"><img src="' +
+					ICON_BAN +
+					'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
 				: 'href="' +
 					(!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
-					'" target="_blank"><img src="' + ICON_CAMERA + '" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
+					'" target="_blank"><img src="' +
+					ICON_CAMERA +
+					'" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
 		}height: 20px;"></img></a></div></div>`;
 	}
 	const tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
@@ -961,7 +967,7 @@ function showMessageBox(title: string, message: string, success = false) {
 		if (!messageContainer) return;
 		(<HTMLElement>messageContainer).style.opacity = '0';
 		setTimeout(() => {
-			messageContainer!.removeChild(messageInnerContainer);
+			messageContainer?.removeChild(messageInnerContainer);
 			messageContainer?.setAttribute('style', '');
 		}, 500);
 	};
@@ -1128,16 +1134,18 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 			}
 
 			oneClickOrder.innerHTML = '<span class="loader"></span>';
-			orderItem(item).then((result) => {
-				oneClickOrder.innerText = 'Order';
-				console.log('[BetterFloat] oneClickOrder result: ', result);
-				if (result) {
-					showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
-					saveOCOPurchase(item);
-				}
-			}).catch((error) => {
-                console.warn('[BetterFloat] OCO - addToCart error:', error);
-            });;
+			orderItem(item)
+				.then((result) => {
+					oneClickOrder.innerText = 'Order';
+					console.log('[BetterFloat] oneClickOrder result: ', result);
+					if (result) {
+						showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
+						saveOCOPurchase(item);
+					}
+				})
+				.catch((error) => {
+					console.warn('[BetterFloat] OCO - addToCart error:', error);
+				});
 		};
 
 		if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {

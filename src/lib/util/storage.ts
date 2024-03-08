@@ -31,6 +31,10 @@ export async function getAllSettings() {
 				result = false;
 			}
 			settings[key] = result;
+		} else if (settings[key] === 'true') {
+			settings[key] = true;
+		} else if (settings[key] === 'false') {
+			settings[key] = false;
 		}
 	}
 	return settings;

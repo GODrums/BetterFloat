@@ -103,17 +103,6 @@ export function activateHandler() {
 			});
 		}
 	});
-	
-	// chrome.storage.sync.get('display-updatepopup', (result) => {
-	// 	console.debug('[BetterFloat] Display update message:', result);
-	// 	let displayUpdateMessage = result["display-updatepopup"] as boolean | undefined;
-	// 	if (displayUpdateMessage == undefined) {
-	// 		displayUpdateMessage = true;
-	// 	}
-	// 	if (displayUpdateMessage) {
-	// 		renderBoxWithText();	
-	// 	}
-	// });
 }
 
 function processSkinbidEvent(eventData: EventData<unknown>) {

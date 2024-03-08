@@ -356,8 +356,8 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
 
     if (page == 'page') {
         const listingContainer = referenceDiv?.cloneNode(true);
-        if (listingContainer.childNodes.length > 1) {
-            listingContainer.firstChild!.textContent = ' Time of Listing ';
+        if (listingContainer.firstChild) {
+            listingContainer.firstChild.textContent = ' Time of Listing ';
             listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created, 1);
         }
         referenceDiv.after(listingContainer);
