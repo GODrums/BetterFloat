@@ -462,7 +462,7 @@ async function adjustItemPage(container: Element) {
 		const saleTag = document.createElement('span');
 		newContainer.className = 'ItemPage-discount betterfloat-discount-container';
 		newContainer.style.background = `linear-gradient(135deg,#0073d5,${
-			difference == 0 ? extensionSettings['sp-colors'].neutral : difference < 0 ? extensionSettings['sp-colors'].profit : extensionSettings['sp-colors'].loss
+			difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 		})`;
 		newContainer.style.transform = 'skewX(-15deg)';
 		newContainer.style.borderRadius = '3px';

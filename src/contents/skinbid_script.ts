@@ -469,7 +469,7 @@ async function addBuffPrice(
             }
             discountContainer.className += ' betterfloat-sale-tag';
             discountContainer.style.color =
-                difference === 0 ? extensionSettings['skb-colors'].neutral : difference < 0 ? extensionSettings['skb-colors'].profit : extensionSettings['skb-colors'].loss;
+                difference === 0 ? extensionSettings['skb-color-neutral'] : difference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-profit'];
             discountContainer.style.fontSize = '14px';
             discountContainer.style.background = 'transparent';
             discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
