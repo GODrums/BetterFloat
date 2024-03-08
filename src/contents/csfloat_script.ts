@@ -735,7 +735,7 @@ async function adjustItem(container: Element, isPopout = false) {
         }
         CSFloatHelpers.storeApiItem(container, cachedItem);
 
-        if (extensionSettings["csf-floatappraiser"]) {
+        if (extensionSettings["csf-floatcoloring"]) {
             await addFloatColoring(container, cachedItem);
         }
         if (extensionSettings["csf-removeclustering"]) {
