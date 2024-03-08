@@ -85,7 +85,7 @@ export const DEFAULT_SETTINGS = {
 	'skb-color-profit': '#0cb083',
 	'skb-color-loss': '#ce0000',
 	'skb-color-neutral': '#FFFFFF',
-	"csf-showupdatepopup": true,
+	"display-updatepopup": true,
 };
 
 export type IStorage = typeof DEFAULT_SETTINGS;
