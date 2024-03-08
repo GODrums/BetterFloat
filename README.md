@@ -1,11 +1,12 @@
 <p align="center">
   <a href="https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk">
-    <img width="128" src="https://raw.githubusercontent.com/GODrums/BetterFloat/main/public/betterfloat_logo128.png"/>
+    <img width="128" src="https://raw.githubusercontent.com/GODrums/BetterFloat/main/assets/icon.png"/>
   </a>
   <h1 align="center">BetterFloat</h1>
 </p>
 
-![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/GODrums/betterfloat)
+![GitHub package.json dynamic](https://img.shields.io/github/package-json/version/GODrums/BetterFloat)
+[![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GODrums/betterfloat)
 ![GitHub repo size](https://img.shields.io/github/repo-size/GODrums/betterfloat)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
@@ -161,6 +162,3 @@ Make sure to test your changes extensively on both browsers and include relevant
 BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
 
 Built with 🖤 in Munich.
-
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FGODrums%2FBetterFloat?ref=badge_large)
