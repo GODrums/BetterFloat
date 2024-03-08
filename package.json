@@ -91,9 +91,6 @@
 			"https://*.csfloat.com/*",
 			"https://*.skinport.com/*",
 			"https://*.skinbid.com/*"
-		],
-		"permissions": [
-			"scripting"
 		]
 	},
 	"pnpm": {

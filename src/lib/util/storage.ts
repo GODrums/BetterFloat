@@ -25,6 +25,10 @@ export async function getAllSettings() {
 			let result = JSON.parse(settings[key]);
 			if (isNumeric(result)) {
 				result = parseInt(result);
+			} else if (result === 'true') {
+				result = true;
+			} else if (result === 'false') {
+				result = false;
 			}
 			settings[key] = result;
 		}

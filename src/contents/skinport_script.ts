@@ -148,7 +148,7 @@ function createLanguagePopup() {
 	const popupText = document.createElement('p');
 	popupText.style.marginTop = '30px';
 	popupText.textContent =
-		"BetterFloat currently only supports the English language on Skinport. If you prefer to pass on most of BetterFloat's features on Skinport, please disable the 'Buff Price Calculation'-feature in the extension settings.";
+		"BetterFloat currently only supports the English language on Skinport. Please use the button below to change the language to English. If it doesn't work, scroll to the bottom of the page and change the language manually.";
 	const buttonDiv = document.createElement('div');
 	buttonDiv.style.display = 'flex';
 	buttonDiv.style.justifyContent = 'center';

@@ -1,8 +1,8 @@
-import { Card, CardContent, Label, Popover, PopoverColorPicker, PopoverTrigger } from "./Shadcn";
+import { Button, Card, CardContent, Label, Popover, PopoverColorPicker, PopoverTrigger } from "./Shadcn";
 import { HexColorPicker } from "react-colorful";
 import { useStorage } from "@plasmohq/storage/hook";
 import { useEffect, useState } from "react";
-import { IcOutlineColorLens } from "./Icons";
+import { IcOutlineColorLens, MaterialSymbolsRefresh } from "./Icons";
 
 
 const SingleColorPicker = ({
@@ -51,9 +51,18 @@ export const SettingsColorPicker = ({
     return (
         <Card className="shadow-md border-muted mx-1">
             <CardContent className="space-y-3 flex flex-col justify-center">
-                <div className="flex items-center gap-2">
-                    <IcOutlineColorLens className="h-6 w-6" />
-                    <Label className="text-balance leading-5">Tag Color Picker</Label>
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <IcOutlineColorLens className="h-6 w-6" />
+                        <Label className="text-balance leading-5">Tag Color Picker</Label>
+                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => {
+                        setProfitColor(defaultColors.profit);
+                        setLossColor(defaultColors.loss);
+                        setNeutralColor(defaultColors.neutral);
+                    }}>
+                        <MaterialSymbolsRefresh className="h-6 w-6" />
+                    </Button>
                 </div>
                 <div className="w-full flex justify-evenly items-center align-middle">
                     <SingleColorPicker text="Profit" initColor={profitColor} setStoreValue={setProfitColor} />
