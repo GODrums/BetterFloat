@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement } from "react";
+import { useEffect, type ReactElement, useState } from "react";
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 import type { IconProps } from "@radix-ui/react-icons/dist/types";
@@ -21,8 +21,15 @@ export const SettingsSelect = ({
     tooltipText
 }: SelectProps) => {
     const [value, setValue] = useStorage(id);
+    // the radix-ui select component is bugged and needs manual open/close handling
+    const [open, setOpen] = useState(false);
 
     let width = options[value ?? 0].length * 8 + 50 + "px";
+
+    const onValueChange = (value: string) => {
+        setValue(value);
+        setOpen(false);
+    }
 
     useEffect(() => {
         width = options[value ?? 0].length * 8 + 50 + "px";
@@ -39,8 +46,8 @@ export const SettingsSelect = ({
                     </SettingsTooltip>
                 }
             </div>
-            <Select value={value} onValueChange={setValue}>
-                <SelectTrigger style={{ width: width }}>
+            <Select open={open} value={value} onValueChange={onValueChange}>
+                <SelectTrigger style={{ width: width }} onClick={(e) => setOpen(!open)}>
                     <SelectValue aria-label={value}>
                         <SelectValue>{options[value ?? 0]}</SelectValue>
                     </SelectValue>

@@ -115,7 +115,7 @@
 
 .betterfloat-filterpopup {
     position: fixed;
-    z-index: 999;
+    z-index: 9999;
     width: 450px;
     height: 400px;
     background-color: #232728;
