@@ -41,6 +41,7 @@ import iconSteam from "data-base64:/assets/icons/icon-steam.svg";
 import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
 import iconCameraFlipped from "data-base64:/assets/icons/camera-flipped.svg";
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CLOCK, ICON_CRIMSON, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_GEM_CYAN, ICON_OVERPRINT_ARROW, ICON_OVERPRINT_FLOWER, ICON_OVERPRINT_MIXED, ICON_OVERPRINT_POLYGON, ICON_PHOENIX, ICON_SPIDER_WEB } from '~lib/util/globals';
+import Decimal from 'decimal.js';
 
 export const config: PlasmoCSConfig = {
     matches: ["https://*.csfloat.com/*"],
@@ -136,6 +137,8 @@ async function firstLaunch() {
         }
     } else if (location.pathname.includes('/stall/')) {
         // await customStall(location.pathname.split('/').pop() ?? '');
+    } else if (location.pathname === '/checkout') {
+        adjustCheckout(document.querySelector('app-checkout')!);
     }
 }
 
@@ -544,6 +547,8 @@ function applyMutation() {
                         offerItemClickListener(addedNode);
                     } else if (addedNode.tagName.toLowerCase() == 'app-markdown-dialog') {
                         adjustCurrencyChangeNotice(addedNode);
+                    }  else if (addedNode.tagName.toLowerCase() == 'app-checkout') {
+                        adjustCheckout(addedNode);
                     }
                 }
             }
@@ -557,6 +562,39 @@ function applyMutation() {
         }
     });
     observer.observe(document, { childList: true, subtree: true });
+}
+
+async function adjustCheckout(container: Element) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const priceElements = container.querySelectorAll('.betterfloat-buffprice');
+    if (priceElements.length === 0) return;
+    const itemData = Array.from(priceElements).map((el) => JSON.parse(el.getAttribute('data-betterfloat') ?? '{}'));
+    const itemPriceSum = itemData.reduce((acc, el) => acc + el.priceFromReference, 0);
+    const totalPriceElement = container.querySelector('h2');
+    const totalPriceText = totalPriceElement?.textContent?.split('Price: ')[1];
+    if (totalPriceElement && totalPriceText) {
+        const csfPrice = Number(parsePrice(totalPriceText).price);
+        console.log('[BetterFloat] Checkout price:', csfPrice, itemPriceSum);
+        const priceDiff = csfPrice - itemPriceSum;
+        
+        let backgroundColor: string;
+        let differenceSymbol: string;
+        if (priceDiff < 0) {
+            backgroundColor = extensionSettings['csf-color-profit'];
+            differenceSymbol = '-';
+        } else if (priceDiff > 0) {
+            backgroundColor = extensionSettings['csf-color-loss'];
+            differenceSymbol = '+';
+        } else {
+            backgroundColor = extensionSettings['csf-color-neutral'];
+            differenceSymbol = '-';
+        }
+
+        const currencyFormat = Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() });
+        const element = `<div style="display: flex; justify-content: center; align-items: center;"><h2>Total Buff Value: ${currencyFormat.format(itemPriceSum)}</h2><span style="font-size: 15px;border-radius: 5px;padding: 5px; margin-left: 5px; font-weight: 600; background-color: ${backgroundColor};" data-betterfloat="${priceDiff}">${differenceSymbol}${currencyFormat.format(Math.abs(priceDiff))} (${new Decimal(csfPrice).div(itemPriceSum).mul(100).toDP(2).toNumber()}%)</span></div>`;
+        totalPriceElement.insertAdjacentHTML('afterend', element);
+        totalPriceElement.style.marginBottom = '0';
+    }
 }
 
 function adjustCurrencyChangeNotice(container: Element) {
@@ -1476,20 +1514,13 @@ function priceData(text: string) {
     };
 }
 
-function getFloatItem(container: Element): CSFloat.FloatItem {
-    const nameContainer = container.querySelector('app-item-name');
-    const floatContainer = container.querySelector('item-float-bar');
-    const priceContainer = container.querySelector('.price');
-    const header_details = <Element>nameContainer?.childNodes[1];
-
-    const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
-    // replace potential spaces between currency characters and price
+const parsePrice = (textContent: string) => {
     const regex = /([A-Za-z]+)\s+(\d+)/;
-    const priceText = priceContainer?.textContent?.trim().replace(regex, '$1$2').split(/\s/) ?? [];
-    let price: string;
+    const priceText = textContent.trim().replace(regex, '$1$2').split(/\s/) ?? [];
+    let price: number;
     let currency = '$';
     if (priceText.includes('Bids')) {
-        price = '0';
+        price = 0;
     } else {
         let pricingText: string;
         if (location.pathname === '/sell') {
@@ -1499,14 +1530,26 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
         }
         if (pricingText.split(/\s/).length > 1) {
             const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
-            price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
+            price = Number(parts.filter((x) => !isNaN(+x)).join('')) / 100;
             currency = parts.filter((x) => isNaN(+x))[0];
         } else {
             const firstDigit = Array.from(pricingText).findIndex((x) => !isNaN(Number(x)));
             currency = pricingText.substring(0, firstDigit);
-            price = String(Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+            price = Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100;
         }
     }
+    return { price, currency };
+};
+
+function getFloatItem(container: Element): CSFloat.FloatItem {
+    const nameContainer = container.querySelector('app-item-name');
+    const floatContainer = container.querySelector('item-float-bar');
+    const priceContainer = container.querySelector('.price');
+    const header_details = <Element>nameContainer?.childNodes[1];
+
+    const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
+    // replace potential spaces between currency characters and price
+    const { price, currency } = parsePrice(priceContainer?.textContent ?? '');
     let condition: ItemCondition = '';
     let quality = '';
     let style: ItemStyle = '';
@@ -1542,7 +1585,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
         style: style,
         condition: condition,
         float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
-        price: price?.includes('Bids') ? 0 : Number(price),
+        price: price,
         bargain: false,
         currency: currency,
     };
@@ -1586,7 +1629,6 @@ async function addBuffPrice(
     const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
-        console.log('[BetterFloat] Item: ', item);
         suggestedContainer = document.createElement('div');
         suggestedContainer.setAttribute('class', 'reference-container');
         container.querySelector('.price')?.after(suggestedContainer);
@@ -1726,7 +1768,7 @@ function getTabNumber() {
     return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
 }
 
-const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell', '/ref/'];
+const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell', '/ref/', '/checkout'];
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: IStorage;
