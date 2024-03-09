@@ -8,7 +8,7 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
-import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { ExtensionStorage, getAllSettings, type IStorage } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
 import { activateHandler } from '../lib/handlers/eventhandler';
@@ -353,7 +353,7 @@ function addLiveFilterMenu(container: Element) {
 			.map((el) => (<HTMLInputElement>el).value);
 		extensionSettings.spFilter.new = popupNewCheckbox.checked;
 		console.debug('[BetterFloat] New filter settings: ', extensionSettings.spFilter);
-		chrome.storage.local.set({ spFilter: extensionSettings.spFilter });
+		ExtensionStorage.sync.setItem('spFilter', extensionSettings.spFilter);
 		filterPopup.style.display = 'none';
 	};
 	popupButtonDiv.appendChild(popupSaveButton);

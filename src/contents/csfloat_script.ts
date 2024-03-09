@@ -17,7 +17,6 @@ import {
 import {
     USDollar,
     calculateTime,
-    createUrlListener,
     cutSubstring,
     getBuffPrice,
     getFloatColoring,
@@ -112,7 +111,6 @@ async function init() {
 async function firstLaunch() {
     if (!extensionSettings['csf-enable']) return;
 
-    titleChanger();
     createTabListeners();
 
     const items = document.querySelectorAll('item-card');
@@ -410,46 +408,6 @@ function createTabListeners() {
             }
         });
     }
-}
-
-/**
- * Updates the document title according to the current site
- * TODO: Rewrite with new url listener from background
- * @async setInterval executed every 200ms
- */
-function titleChanger() {
-    createUrlListener(() => {
-        let newTitle = '';
-        if (location.pathname == '/' && location.search == '') {
-            newTitle = 'Home';
-        } else if (location.pathname == '/profile/offers') {
-            newTitle = 'Offers';
-        } else if (location.pathname == '/profile/watchlist') {
-            newTitle = 'Watchlist';
-        } else if (location.pathname == '/profile/trades') {
-            newTitle = 'Trades';
-        } else if (location.pathname == '/sell') {
-            newTitle = 'Selling';
-        } else if (location.pathname == '/profile') {
-            newTitle = 'Profile';
-        } else if (location.pathname == '/support') {
-            newTitle = 'Support';
-        } else if (location.pathname == '/search') {
-            newTitle = 'Search';
-        } else if (location.pathname == '/profile/deposit') {
-            newTitle = 'Deposit';
-        } else if (location.pathname.includes('/stall/')) {
-            const username = document.querySelector('.username')?.textContent;
-            if (username) {
-                newTitle = username + "'s Stall";
-            }
-        } else if (location.pathname.includes('/item/')) {
-            // item titles are fine as they are
-        }
-        if (newTitle != '') {
-            document.title = newTitle + ' - CSFloat';
-        }
-    });
 }
 
 async function refreshButton() {
@@ -1530,12 +1488,15 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
     const priceText = priceContainer?.textContent?.trim().replace(regex, '$1$2').split(/\s/) ?? [];
     let price: string;
     let currency = '$';
-    if (location.pathname === '/sell') {
-        price = priceText[1].split('Price')[1];
-    } else if (priceText.includes('Bids')) {
+    if (priceText.includes('Bids')) {
         price = '0';
     } else {
-        const pricingText = priceText[0];
+        let pricingText: string;
+        if (location.pathname === '/sell') {
+            pricingText = priceText[1].split('Price')[1];
+        }else {
+            pricingText = priceText[0];
+        }
         if (pricingText.split(/\s/).length > 1) {
             const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
             price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
@@ -1625,6 +1586,7 @@ async function addBuffPrice(
     const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 });
 
     if (!suggestedContainer && location.pathname === '/sell') {
+        console.log('[BetterFloat] Item: ', item);
         suggestedContainer = document.createElement('div');
         suggestedContainer.setAttribute('class', 'reference-container');
         container.querySelector('.price')?.after(suggestedContainer);

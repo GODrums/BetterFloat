@@ -21,6 +21,7 @@ import {
 } from './mappinghandler';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -62,7 +63,9 @@ export function activateHandler() {
 
 			console.debug('[BetterFloat] URL changed to: ', state);
 
-			if (state.site === 'skinport.com') {
+			if (state.site === 'csfloat.com') {
+				CSFloatHelpers.adjustCSFTitle(state);
+			}else if (state.site === 'skinport.com') {
 				createLiveLink();
                 filterDisplay();
 			}

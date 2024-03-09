@@ -1,8 +1,36 @@
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import iconCameraAdd from "data-base64:/assets/icons/camera-add-solid.svg";
 import iconChevronUp from "data-base64:/assets/icons/chevron-up-solid.svg";
+import type { Extension } from '~lib/@typings/ExtensionTypes';
 
 export namespace CSFloatHelpers {
+
+    export function adjustCSFTitle(state: Extension.URLState) {
+        let newTitle = '';
+        const titleMap = {
+            '/': 'Home',
+            '/profile/offers': 'Offers',
+            '/profile/watchlist': 'Watchlist',
+            '/profile/trades': 'Trades',
+            '/sell': 'Selling',
+            '/profile': 'Profile',
+            '/support': 'Support',
+            '/search': 'Search',
+            '/profile/deposit': 'Deposit',
+        }
+        if (state.path in titleMap) {
+            newTitle = titleMap[state.path];
+        } else if (location.pathname.includes('/stall/')) {
+            const username = document.querySelector('.username')?.textContent;
+            if (username) {
+                newTitle = username + "'s Stall";
+            }
+        }
+        if (newTitle != '') {
+            document.title = newTitle + ' - CSFloat';
+        }
+    }
+
     export function intervalMapping(setting: number) {
         switch (setting) {
             case 0:
