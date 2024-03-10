@@ -1514,7 +1514,7 @@ function priceData(text: string) {
     };
 }
 
-const parsePrice = (textContent: string) => {
+const parsePrice = (textContent: string | undefined) => {
     const regex = /([A-Za-z]+)\s+(\d+)/;
     const priceText = textContent.trim().replace(regex, '$1$2').split(/\s/) ?? [];
     let price: number;

@@ -944,6 +944,7 @@ function showMessageBox(title: string, message: string, success = false) {
 	} else if (message === 'CART_OUTDATED') {
 		message = 'Your cart is outdated. Someone was probably faster than you.';
 	} else if (message === 'CAPTCHA') {
+		message = 'The order was not successful. Please note that this may happen sporadically. If the issue persists, please report it to the BetterFloat Discord server.';
 		message = 'There was an error with the captcha while ordering. If this problem persists, please report it to the BetterFloat Discord server.';
 	} else if (message === 'SALE_PRICE_CHANGED') {
 		message = 'The item price got changed. Please review the new price and try again.';
@@ -1126,7 +1127,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 				}
 				if (!statusCheck) {
 					showMessageBox(
-						'Please pay your OCO-orders!',
+						'You received a 24h OCO cooldown!',
 						'To avoid item hoarding and abuse of the OneClickOrder feature, the failure to pay your OneClickOrder purchases leads to a 24 hour timeout.'
 					);
 					return;
