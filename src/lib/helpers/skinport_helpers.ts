@@ -10,7 +10,7 @@ export function createLiveLink() {
 }
 
 export function filterDisplay() {
-    const filterDisplay = <HTMLElement>document.querySelector('button.FilterButton-filter');
+    const filterDisplay = document.querySelector<HTMLElement>('button.FilterButton-filter');
     if (!filterDisplay) return;
     
     let filterSetting = localStorage.getItem('displayFilterMenu');

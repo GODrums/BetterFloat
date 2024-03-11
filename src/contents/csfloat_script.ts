@@ -1324,10 +1324,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
             const linkHeader = document.createElement('a');
             linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
             linkHeader.setAttribute('target', '_blank');
-            const linkHeaderImage = document.createElement('img');
-            linkHeaderImage.setAttribute('src', ICON_ARROWUP);
-            linkHeaderImage.setAttribute('style', 'height: 18px; filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%);');
-            linkHeader.appendChild(linkHeaderImage);
+            linkHeader.innerHTML = ICON_ARROWUP;
             linkHeaderCell.appendChild(linkHeader);
             header.appendChild(linkHeaderCell);
             table.appendChild(header);

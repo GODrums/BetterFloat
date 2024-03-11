@@ -14,11 +14,12 @@ import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigenerat
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
 	run_at: 'document_idle',
-	css: ['../css/skinport_styles.css'],
+	css: ['./skinport_styles.css'],
 };
 
 init();
@@ -58,6 +59,7 @@ async function init() {
 		await applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
+	dynamicUIHandler();
 }
 
 async function firstLaunch() {
@@ -86,7 +88,7 @@ async function firstLaunch() {
 		}
 		if (location.search.includes('sort=date')) {
 			await waitForElement('.CatalogHeader-tooltipLive');
-			addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
+			// addLiveFilterMenu(document.querySelector('.CatalogHeader-tooltipLive') as Element);
 		}
 		if (location.search.includes('bf=live')) {
 			(<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
@@ -96,7 +98,7 @@ async function firstLaunch() {
 		if (cartContainer) {
 			await adjustCart(cartContainer);
 		}
-	} else if (path.startsWith('/item')) {
+	} else if (path.startsWith('/item/') || path.startsWith('/i/')) {
 		const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
 		for (const item of itemPage) {
 			await adjustItemPage(item);
@@ -190,7 +192,7 @@ async function applyMutation() {
 						await handlePopularList(addedNode);
 					} else if (className.includes('CatalogHeader-tooltipLive')) {
 						// contains live button
-						addLiveFilterMenu(addedNode);
+						// addLiveFilterMenu(addedNode);
 					} else if (className.includes('CartButton-tooltip')) {
 						autoCloseTooltip(addedNode);
 					} else if (className.includes('Message')) {

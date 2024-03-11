@@ -19,9 +19,7 @@ import {
 	cacheSpPopupItem,
 	loadMapping,
 } from './mappinghandler';
-import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
+import { urlHandler } from './urlhandler';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -56,21 +54,7 @@ export function activateHandler() {
 		}
 	});
 
-	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
-	chrome.runtime.onMessage.addListener(async (message) => {
-		if (message.type === 'BetterFloat_URL_CHANGED') {
-			const state: Extension.URLState = message.state;
-
-			console.debug('[BetterFloat] URL changed to: ', state);
-
-			if (state.site === 'csfloat.com') {
-				CSFloatHelpers.adjustCSFTitle(state);
-			}else if (state.site === 'skinport.com') {
-				createLiveLink();
-                filterDisplay();
-			}
-		}
-	});
+	urlHandler();
 
 	//listener for messages from background
 	chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {

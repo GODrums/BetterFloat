@@ -1,4 +1,5 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage, type IStorage } from '~lib/util/storage';
 
 export {};
@@ -94,7 +95,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		};
 		console.debug('[BetterFloat] URL changed to: ', state);
 		chrome.tabs.sendMessage(tabId, {
-			type: 'BetterFloat_URL_CHANGED',
+			type: EVENT_URL_CHANGED,
 			state,
 		});
 	}

@@ -17,6 +17,7 @@ import iconPhoenix from "data-base64:/assets/patterns/phoenix-icon.svg";
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
+
 export const ICON_BUFF = iconBuff;
 export const ICON_CSFLOAT = iconCsfloat;
 export const ICON_EXCLAMATION = iconExclamation;
@@ -32,3 +33,5 @@ export const ICON_OVERPRINT_POLYGON = iconOverprintPolygon;
 export const ICON_GEM_CYAN = iconGemCyan;
 export const ICON_PHOENIX = iconPhoenix;
 export const ICON_SPIDER_WEB = iconSpiderWeb;
+
+export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';

@@ -56,7 +56,7 @@ export const SettingsColorPicker = ({
                         <IcOutlineColorLens className="h-6 w-6" />
                         <Label className="text-balance leading-5">Tag Color Picker</Label>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => {
+                    <Button variant="ghost" size="icon" className="w-8 h-8" onClick={() => {
                         setProfitColor(defaultColors.profit);
                         setLossColor(defaultColors.loss);
                         setNeutralColor(defaultColors.neutral);
