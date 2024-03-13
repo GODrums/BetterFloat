@@ -7,7 +7,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root, :host {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -62,13 +62,13 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: hsl(var(--background));
+  background-color: transparent;
   color: hsl(var(--foreground));
 }
 
 #plasmo-shadow-container {
   font-size: 16px !important;
   font-family: "Inter", sans-serif;
-  background-color: hsl(var(--background));
+  background-color: transparent;
   color: hsl(var(--foreground));
 }

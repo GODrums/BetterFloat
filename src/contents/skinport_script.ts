@@ -1,5 +1,4 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
-import iconFilter from 'data-base64:/assets/icons/filter-solid.svg';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
@@ -8,7 +7,7 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
-import { ExtensionStorage, getAllSettings, type IStorage } from '~lib/util/storage';
+import { DEFAULT_FILTER, getAllSettings, type IStorage, type SPFilter } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
 import { activateHandler } from '../lib/handlers/eventhandler';
@@ -232,158 +231,6 @@ function autoCloseTooltip(container: Element) {
 			(<HTMLButtonElement>links.querySelector('button.ButtonSimple')).click();
 		}
 	}, 1000);
-}
-
-function addLiveFilterMenu(container: Element) {
-	const filterDiv = document.createElement('div');
-
-	const filterPopup = document.createElement('div');
-	filterPopup.className = 'betterfloat-filterpopup';
-	const popupHeader = document.createElement('h3');
-	popupHeader.textContent = 'ITEM FILTER';
-	popupHeader.style.fontWeight = '600';
-	popupHeader.style.fontSize = '18px';
-	popupHeader.style.lineHeight = '0.5';
-	popupHeader.style.marginTop = '20px';
-	const popupSubHeader = document.createElement('h4');
-	popupSubHeader.style.fontSize = '16px';
-	popupSubHeader.style.color = '#828282';
-	popupSubHeader.textContent = 'by BetterFloat';
-	const popupCloseButton = document.createElement('button');
-	popupCloseButton.type = 'button';
-	popupCloseButton.className = 'betterfloat-filterpopup-close';
-	popupCloseButton.textContent = 'x';
-	popupCloseButton.onclick = () => {
-		filterPopup.style.display = 'none';
-	};
-	const popupContent = document.createElement('div');
-	popupContent.className = 'betterfloat-filterpopup-content';
-	const popupHorizonalDiv = document.createElement('div');
-	popupHorizonalDiv.style.display = 'flex';
-	popupHorizonalDiv.style.justifyContent = 'space-between';
-	popupHorizonalDiv.style.marginTop = '5px';
-	const popupPriceDiv = document.createElement('div');
-	popupPriceDiv.style.display = 'flex';
-	popupPriceDiv.style.flexDirection = 'column';
-	popupPriceDiv.style.alignItems = 'center';
-	popupPriceDiv.style.marginRight = '10px';
-	popupPriceDiv.style.padding = '0 20px';
-	const popupPriceLabel = document.createElement('label');
-	popupPriceLabel.textContent = 'PRICE';
-	popupPriceLabel.style.fontWeight = '600';
-	popupPriceLabel.style.margin = '5px 0';
-	const popupPriceLow = document.createElement('input');
-	popupPriceLow.style.fontSize = '15px';
-	popupPriceLow.type = 'number';
-	popupPriceLow.min = '0';
-	popupPriceLow.max = '999999';
-	popupPriceLow.step = '0.01';
-	popupPriceLow.value = extensionSettings.spFilter.priceLow?.toString() ?? '0';
-	const popupPriceHigh = popupPriceLow.cloneNode() as HTMLInputElement;
-	popupPriceHigh.value = extensionSettings.spFilter.priceHigh?.toString() ?? '0';
-	const popupPriceDivider = document.createElement('span');
-	popupPriceDivider.textContent = '-';
-	const popupNewDiv = document.createElement('div');
-	popupNewDiv.setAttribute('style', 'display: flex; align-items: center; margin: 10px 0 3px 5px;');
-	const popupNewLabel = document.createElement('label');
-	popupNewLabel.textContent = 'NEW ONLY';
-	popupNewLabel.setAttribute('style', 'margin-right: 5px; font-size: 15px;');
-	const popupNewCheckbox = document.createElement('input');
-	popupNewCheckbox.type = 'checkbox';
-	popupNewCheckbox.value = 'new';
-	popupNewCheckbox.checked = extensionSettings.spFilter.new;
-	popupNewDiv.appendChild(popupNewCheckbox);
-	popupNewDiv.appendChild(popupNewLabel);
-	popupPriceDiv.appendChild(popupPriceLabel);
-	popupPriceDiv.appendChild(popupPriceLow);
-	popupPriceDiv.appendChild(popupPriceDivider);
-	popupPriceDiv.appendChild(popupPriceHigh);
-	popupPriceDiv.appendChild(popupNewDiv);
-	const popupNameDiv = document.createElement('div');
-	popupNameDiv.style.display = 'flex';
-	popupNameDiv.style.flexDirection = 'column';
-	popupNameDiv.style.alignItems = 'flex-start';
-	const popupNameLabel = document.createElement('label');
-	popupNameLabel.style.fontWeight = '600';
-	popupNameLabel.textContent = 'NAME';
-	popupNameLabel.style.margin = '5px 0';
-	const popupNameInput = document.createElement('input');
-	popupNameInput.type = 'text';
-	popupNameInput.value = extensionSettings.spFilter.name;
-	popupNameInput.style.fontSize = '15px';
-	popupNameDiv.appendChild(popupNameLabel);
-	popupNameDiv.appendChild(popupNameInput);
-	const popupTypeDiv = document.createElement('div');
-	popupTypeDiv.style.display = 'flex';
-	popupTypeDiv.style.flexDirection = 'column';
-	popupTypeDiv.style.alignItems = 'flex-start';
-	const typeContainerHeader = document.createElement('label');
-	typeContainerHeader.textContent = 'TYPE';
-	typeContainerHeader.style.fontWeight = '600';
-	typeContainerHeader.style.margin = '5px 0';
-	popupTypeDiv.appendChild(typeContainerHeader);
-	const types = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
-	for (const type of types) {
-		const typeDiv = document.createElement('div');
-		typeDiv.style.display = 'flex';
-		typeDiv.style.alignItems = 'center';
-		typeDiv.style.margin = '0 0 3px 5px';
-		const typeLabel = document.createElement('label');
-		typeLabel.textContent = type;
-		typeLabel.style.marginRight = '5px';
-		typeLabel.style.fontSize = '15px';
-		const typeCheckbox = document.createElement('input');
-		typeCheckbox.type = 'checkbox';
-		typeCheckbox.value = type;
-		typeCheckbox.checked = !extensionSettings.spFilter.types.includes(type);
-		typeDiv.appendChild(typeCheckbox);
-		typeDiv.appendChild(typeLabel);
-		popupTypeDiv.appendChild(typeDiv);
-	}
-	const popupButtonDiv = document.createElement('div');
-	popupButtonDiv.className = 'betterfloat-filterpopup-buttondiv';
-	const popupSaveButton = document.createElement('button');
-	popupSaveButton.type = 'button';
-	popupSaveButton.textContent = 'Save';
-	popupSaveButton.onclick = () => {
-		extensionSettings.spFilter.priceLow = parseFloat(popupPriceLow.value);
-		extensionSettings.spFilter.priceHigh = parseFloat(popupPriceHigh.value);
-		extensionSettings.spFilter.name = popupNameInput.value;
-		const typeCheckboxes = popupTypeDiv.querySelectorAll('input[type=checkbox]');
-		extensionSettings.spFilter.types = Array.from(typeCheckboxes)
-			.filter((el) => !(<HTMLInputElement>el).checked)
-			.map((el) => (<HTMLInputElement>el).value);
-		extensionSettings.spFilter.new = popupNewCheckbox.checked;
-		console.debug('[BetterFloat] New filter settings: ', extensionSettings.spFilter);
-		ExtensionStorage.sync.setItem('spFilter', extensionSettings.spFilter);
-		filterPopup.style.display = 'none';
-	};
-	popupButtonDiv.appendChild(popupSaveButton);
-	filterPopup.appendChild(popupHeader);
-	filterPopup.appendChild(popupSubHeader);
-	filterPopup.appendChild(popupCloseButton);
-	popupHorizonalDiv.appendChild(popupTypeDiv);
-	popupHorizonalDiv.appendChild(popupPriceDiv);
-	popupContent.appendChild(popupNameDiv);
-	popupContent.appendChild(popupHorizonalDiv);
-	filterPopup.appendChild(popupContent);
-	filterPopup.appendChild(popupButtonDiv);
-
-	const filterButton = document.createElement('button');
-	const filterIcon = document.createElement('img');
-	filterIcon.src = iconFilter;
-	filterIcon.style.width = '24px';
-	filterIcon.style.height = '24px';
-	filterIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
-	filterButton.style.marginRight = '25px';
-	filterButton.appendChild(filterIcon);
-	filterButton.onclick = () => {
-		filterPopup.style.display = 'block';
-	};
-
-	filterDiv.appendChild(filterPopup);
-	filterDiv.appendChild(filterButton);
-	container.before(filterDiv);
 }
 
 async function handlePopularList(list: Element) {
@@ -670,15 +517,16 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 
 // true: remove item, false: display item
 function applyFilter(item: Skinport.Listing, container: Element) {
-	const targetName = extensionSettings.spFilter.name.toLowerCase();
+	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
+	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
 	const nameCheck = targetName != '' && !(item.type + ' | ' + item.name).toLowerCase().includes(targetName);
-	const priceCheck = item.price < extensionSettings.spFilter.priceLow || item.price > extensionSettings.spFilter.priceHigh;
-	const typeCheck = extensionSettings.spFilter.types.includes(item.category);
+	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
+	const typeCheck = !spFilter.types[item.category.toLowerCase()];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
 	const tradeLock = tradeLockText?.length == 3 ? parseInt(tradeLockText[1]) : undefined;
-	const newCheck = extensionSettings.spFilter.new && (!tradeLock || tradeLock < 7);
+	const newCheck = spFilter.new && (!tradeLock || tradeLock < 7);
 
 	return nameCheck || priceCheck || typeCheck || newCheck;
 }

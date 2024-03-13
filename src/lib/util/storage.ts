@@ -68,13 +68,6 @@ export const DEFAULT_SETTINGS = {
 	'sp-bufflink': 0,
 	'sp-autoclosepopup': true,
 	'sp-floatcoloring': true,
-	spFilter: {
-		priceLow: 0,
-		priceHigh: 999999,
-		name: '',
-		types: [],
-		new: false,
-	},
 	'skb-enable': true,
 	'skb-pricereference': 0,
 	'skb-buffdifference': true,
@@ -92,5 +85,22 @@ export const DEFAULT_SETTINGS = {
 	"display-updatepopup": true,
 };
 
+export const DEFAULT_FILTER = {
+	priceLow: 0,
+	priceHigh: 999999,
+	name: '',
+	types: {
+		knife: true,
+		gloves: true,
+		agent: true,
+		weapon: true,
+		collectible: true,
+		container: true,
+		sticker: true,
+	},
+	new: false,
+}
+
 export type IStorage = typeof DEFAULT_SETTINGS;
 export type EStorage = { key: keyof IStorage; value: IStorage[keyof IStorage] }[];
+export type SPFilter = typeof DEFAULT_FILTER;

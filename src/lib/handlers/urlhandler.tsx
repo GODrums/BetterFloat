@@ -7,7 +7,6 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/pages/LiveFilter';
-import { EVENT_URL_CHANGED } from '~lib/util/globals';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -73,7 +72,7 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 		css: {
 			url: globalStyle,
 		},
-		isolateEvents: true,
+		isolateEvents: false,
 	});
 
 	// Mount our UI inside the isolated element
