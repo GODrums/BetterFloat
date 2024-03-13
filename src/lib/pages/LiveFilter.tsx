@@ -25,7 +25,7 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
         <div className={cn('flex items-center pb-1 pl-1.5 gap-0.5', props.className)}>
             {/* <Checkbox id={id} checked={checked} onCheckedChange={setChecked} /> */}
             <input type="checkbox" id={id} checked={checked} onChange={handleChecked} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
-            <label className='mr-1.5 text-sm'>{props.label}</label>
+            <label className='mr-1.5 text-sm' htmlFor={id}>{props.label}</label>
         </div>
     );
 }
@@ -105,12 +105,12 @@ const LiveFilter: React.FC = () => {
                         <MaterialSymbolsCloseSmallOutlineRounded className='h-8 w-8' />
                     </Button>
                     <div className="flex flex-col items-start w-4/5 mx-5 my-2.5">
-                        <label className='font-semibold my-1 mx-0'>NAME</label>
-                        <input type="text" className="w-full h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base" value={name} onChange={(e) => setName(e.target.value)} />
+                        <label className='font-semibold my-1 mx-0' htmlFor='filter-name'>NAME</label>
+                        <input type="text" id="filter-name" className="w-full h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base" value={name} onChange={(e) => setName(e.target.value)} />
                     </div>
                     <div className='flex justify-between w-4/5 mt-1.5'>
                         <div className='flex flex-col gap-1 items-start'>
-                            <Label htmlFor='' className='font-semibold my-1.5'>TYPE</Label>
+                            <Label className='font-semibold my-1.5'>TYPE</Label>
                             {filterLabels.map((type, index) => {
                                 return (
                                     <TypeCheckbox key={index} label={type} types={types} setTypes={setTypes} />
@@ -127,8 +127,8 @@ const LiveFilter: React.FC = () => {
                                 setPriceHigh(parseInt(e.target.value));
                             }} />
                             <div className='flex items-center pb-1 pl-1.5 gap-0.5 mt-2'>
-                                <input type="checkbox" id="new-only" checked={newOnly} onChange={(e) => setNewOnly(e.target.checked)} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
-                                <label className='mr-1.5 text-sm'>NEW ONLY</label>
+                                <input type="checkbox" id="filter-new-only" checked={newOnly} onChange={(e) => setNewOnly(e.target.checked)} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
+                                <label className='mr-1.5 text-sm' htmlFor='filter-new-only'>NEW ONLY</label>
                             </div>
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/pages/LiveFilter';
+import { waitForElement } from '~lib/util/helperfunctions';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -52,10 +53,14 @@ async function handleChange(state: Extension.URLState) {
 
 	if (state.site === 'skinport.com') {
 		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
-			await mountShadowRoot(<LiveFilter />, {
-				tagName: 'betterfloat-live-filter',
-				parent: document.querySelector('.CatalogHeader-tooltipLive'),
-				position: 'before'
+			waitForElement('.CatalogHeader-tooltipLive', 100, 10).then(async (success) => {
+				if (success) {
+					await mountShadowRoot(<LiveFilter />, {
+						tagName: 'betterfloat-live-filter',
+						parent: document.querySelector('.CatalogHeader-tooltipLive'),
+						position: 'before'
+					});
+				}
 			});
 		}
 	}
