@@ -86,13 +86,13 @@ In some cases, Firefox does not grant extensions the necessary permissions autom
 ### 💻 The Tech Stack
 
 <div style="display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 1rem;">
-<img align="center" src="./assets/plasmo.png" alt="Plasmo" height="50">
-<img align="center" src="https://api.iconify.design/logos:react.svg?color=%23888888" alt="React" height="50">
-<img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" alt="Aceternity UI" height="50">
-<img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" alt="shadcn/ui" height="50">
-<img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" alt="Typescript" height="50">
-<img align="center" src="https://api.iconify.design/logos:eslint.svg?color=%23888888" alt="ESLint" height="50">
-<img align="center" src="https://api.iconify.design/logos:prettier.svg?color=%23888888" alt="Prettier" height="50">
+<img align="center" src="./assets/plasmo.png" title="Plasmo" height="50">
+<img align="center" src="https://api.iconify.design/logos:react.svg?color=%23888888" title="React" height="50">
+<img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" title="Aceternity UI" height="50">
+<img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" title="shadcn/ui" height="50">
+<img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" title="Typescript" height="50">
+<img align="center" src="https://api.iconify.design/logos:eslint.svg?color=%23888888" title="ESLint" height="50">
+<img align="center" src="https://api.iconify.design/logos:prettier.svg?color=%23888888" title="Prettier" height="50">
 </div>
 
 ### Installation
