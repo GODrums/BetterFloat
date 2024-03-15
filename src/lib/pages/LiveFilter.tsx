@@ -68,10 +68,8 @@ const LiveFilter: React.FC = () => {
         if (spFilter.name.length > 0) {
             count++;
         }
-        for (const type in spFilter.types) {
-            if (spFilter.types[type] === false) {
-                count++;
-            }
+        if(Object.values(spFilter.types).some(value => !value)) {
+            count++;
         }
         if (spFilter.priceLow > 0) {
             count++;
@@ -89,7 +87,7 @@ const LiveFilter: React.FC = () => {
         <div className='mr-4 bg-transparent' style={{ fontFamily: 'Montserrat,sans-serif' }}>
             <Button variant='invisible' size='icon' className='hover:bg-neutral-700' onClick={toggleOpen}>
                 {filterCount > 0 &&
-                    <div className="absolute inline-flex items-center justify-center w-5 h-5 bg-green-800 text-xs text-white border-2 rounded-full border-gray-900 translate-x-3 -translate-y-3">{filterCount}</div>
+                    <div className="absolute inline-flex items-center justify-center w-4 text-xs text-white font-semibold bg-[#fa490a] rounded-[8px] translate-x-3 -translate-y-3">{filterCount}</div>
                 }
                 <MaterialSymbolsFilterAlt className={cn('h-8 w-8', (filterCount > 0) ? 'text-white' : 'text-gray-600')} />
             </Button>
