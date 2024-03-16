@@ -101,8 +101,8 @@ dependencies:
 
 devDependencies:
   '@ianvs/prettier-plugin-sort-imports':
-    specifier: 4.1.1
-    version: 4.1.1(prettier@3.2.5)
+    specifier: 4.2.0
+    version: 4.2.0(prettier@3.2.5)
   '@radix-ui/colors':
     specifier: 3.0.0
     version: 3.0.0
@@ -657,10 +657,10 @@ packages:
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
     dev: true
 
-  /@ianvs/prettier-plugin-sort-imports@4.1.1(prettier@3.2.5):
-    resolution: {integrity: sha512-kJhXq63ngpTQ2dxgf5GasbPJWsJA3LgoOdd7WGhpUSzLgLgI4IsIzYkbJf9kmpOHe7Vdm/o3PcRA3jmizXUuAQ==}
+  /@ianvs/prettier-plugin-sort-imports@4.2.0(prettier@3.2.5):
+    resolution: {integrity: sha512-WemEN61+hI4sQs+Ndp7TJAG5pMl7pY+tVAw+kt+Lj8vbgxRZaFQ8bU9nhjH2C45G9AABqFOQnY6j9drFGMmkyA==}
     peerDependencies:
-      '@vue/compiler-sfc': '>=3.0.0'
+      '@vue/compiler-sfc': 2.7.x || 3.x
       prettier: 2 || 3
     peerDependenciesMeta:
       '@vue/compiler-sfc':
@@ -1059,7 +1059,7 @@ packages:
       json5: 2.2.3
       msgpackr: 1.10.1
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /@parcel/diagnostic@2.8.3:
@@ -1200,7 +1200,7 @@ packages:
       '@parcel/fs': 2.9.3(@parcel/core@2.9.3)
       '@parcel/utils': 2.9.3
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - '@parcel/core'
     dev: false
@@ -1323,7 +1323,7 @@ packages:
       '@parcel/types': 2.9.3(@parcel/core@2.9.3)
       '@parcel/utils': 2.9.3
       '@parcel/workers': 2.9.3(@parcel/core@2.9.3)
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /@parcel/packager-css@2.9.3(@parcel/core@2.9.3):
@@ -1518,7 +1518,7 @@ packages:
       browserslist: 4.23.0
       json5: 2.2.3
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - '@parcel/core'
     dev: false
@@ -1560,7 +1560,7 @@ packages:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.0
       srcset: 4.0.0
     transitivePeerDependencies:
       - '@parcel/core'
@@ -1604,7 +1604,7 @@ packages:
       browserslist: 4.23.0
       nullthrows: 1.1.1
       regenerator-runtime: 0.13.11
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /@parcel/transformer-json@2.9.3(@parcel/core@2.9.3):
@@ -1639,7 +1639,7 @@ packages:
       clone: 2.1.2
       nullthrows: 1.1.1
       postcss-value-parser: 4.2.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - '@parcel/core'
     dev: false
@@ -1654,7 +1654,7 @@ packages:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - '@parcel/core'
     dev: false
@@ -1714,7 +1714,7 @@ packages:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.0
     transitivePeerDependencies:
       - '@parcel/core'
     dev: false
@@ -6347,7 +6347,7 @@ packages:
     resolution: {integrity: sha512-fZjdhDOeRcaS+rcpve7XuwHBmktS1nS1gzgghwKUQQ8nTy2FdSDr6ZT8k6YhvlJeHmmQMYiT/IH9hfco5zeW2Q==}
     engines: {node: '>=10'}
     dependencies:
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /node-addon-api@4.3.0:
@@ -6496,7 +6496,7 @@ packages:
       got: 12.6.1
       registry-auth-token: 5.0.2
       registry-url: 6.0.1
-      semver: 7.5.4
+      semver: 7.6.0
     dev: false
 
   /parent-module@1.0.1:
@@ -7115,7 +7115,6 @@ packages:
     hasBin: true
     dependencies:
       lru-cache: 6.0.0
-    dev: true
 
   /set-function-length@1.2.1:
     resolution: {integrity: sha512-j4t6ccc+VsKwYHso+kElc5neZpjtq9EnRICFZtWyBsLojhmeF/ZBd/elqm22WJh/BziDe/SBiOeAt0m2mfLD0g==}
@@ -7138,7 +7137,7 @@ packages:
       detect-libc: 2.0.2
       node-addon-api: 6.1.0
       prebuild-install: 7.1.2
-      semver: 7.5.4
+      semver: 7.6.0
       simple-get: 4.0.1
       tar-fs: 3.0.5
       tunnel-agent: 0.6.0
