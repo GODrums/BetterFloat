@@ -47,7 +47,7 @@ export const SettingsSelect = ({
                 }
             </div>
             <Select open={open} value={value} onValueChange={onValueChange}>
-                <SelectTrigger style={{ width: width }} onClick={(e) => setOpen(!open)}>
+                <SelectTrigger style={{ width: width }} onClick={() => setOpen(!open)}>
                     <SelectValue aria-label={value}>
                         <SelectValue>{options[value ?? 0]}</SelectValue>
                     </SelectValue>

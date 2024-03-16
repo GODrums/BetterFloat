@@ -19,7 +19,7 @@ export const config: PlasmoCSConfig = {
 init();
 
 async function init() {
-    if (!location.hostname.includes('skinbid.com')) {
+    if (location.host !== 'skinbid.com') {
         return;
     }
 

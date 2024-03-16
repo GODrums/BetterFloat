@@ -70,7 +70,7 @@ init();
 async function init() {
 	console.time('[BetterFloat] CSFloat init timer');
 
-	if (!location.hostname.includes('csfloat.com') || location.hostname.includes('blog.')) {
+	if (location.host !== 'csfloat.com') {
 		return;
 	}
 	// catch the events thrown by the script

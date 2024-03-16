@@ -24,7 +24,7 @@ export const config: PlasmoCSConfig = {
 init();
 
 async function init() {
-	if (!location.hostname.includes('skinport.com')) {
+	if (location.host !== 'skinport.com') {
 		return;
 	}
 
