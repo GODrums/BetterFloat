@@ -36,7 +36,7 @@ export namespace CSFloat {
         is_watchlisted: boolean;
         item: Item;
         max_offer_discount: number;
-        max_offer_price: number;
+        min_offer_price: number;
         price: number;
         reference: ReferenceData;
         seller: SellerData;

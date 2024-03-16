@@ -588,21 +588,21 @@ async function adjustBargainPopup(container: Element) {
     await adjustItem(itemCard, POPOUT_ITEM.BARGAIN);
 
     // we have to wait for the sticker data to be loaded
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 600));
 
     const item = JSON.parse(itemCard.getAttribute('data-betterfloat')) as CSFloat.ListingData;
     const buff_data = JSON.parse(itemCard.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
     const stickerData = JSON.parse(itemCard.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
 
-    console.log('[BetterFloat] Bargain popup data:', item, buff_data, stickerData);
-    if (stickerData.priceSum > 0 && buff_data.priceFromReference > 0) {
+    // console.log('[BetterFloat] Bargain popup data:', item, buff_data, stickerData);
+    if (buff_data.priceFromReference > 0) {
         const currency = getSymbolFromCurrency(buff_data.userCurrency);
         const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
-        const minPercentage = minOffer.greaterThan(0) ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
+        const minPercentage = (minOffer.greaterThan(0) && stickerData.priceSum) ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
         
         const spStyle = 'border: 1px solid grey;border-radius: 7px; padding: 5px;';
         const diffStyle = `font-size: 15px; padding: 5px; margin-left: 8px; border-radius: 7px; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-        const bargainTags = `<div style="display: inline-flex; align-items: center; margin-top: 10px; gap: 8px; font-size: 15px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="${spStyle}">${minPercentage} %SP</span></div>`;
+        const bargainTags = `<div style="display: inline-flex; align-items: center; margin-top: 10px; gap: 8px; font-size: 15px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="${spStyle} display: ${stickerData.priceSum ? 'block' : 'none'}">${minPercentage} %SP</span></div>`;
         
         const minBr = container.querySelector('.details').querySelector('br');
         if (minBr) {
@@ -612,17 +612,17 @@ async function adjustBargainPopup(container: Element) {
         const inputField = container.querySelector<HTMLInputElement>('.mat-form-field-infix > input');
         const matFormField = container.querySelector('.mat-form-field');
         if (inputField && matFormField) {
-            matFormField.parentElement.insertAdjacentHTML('afterend', `<div style="display: flex; align-items: center; gap: 8px; font-size: 16px; margin-top: 10px;"><span class="betterfloat-bargain-diff" style="${diffStyle}"></span><span class="betterfloat-bargain-sp" style="${spStyle}"></span></div>`);
+            matFormField.parentElement.insertAdjacentHTML('afterend', `<div style="display: flex; align-items: center; gap: 8px; font-size: 16px; margin-top: 10px;"><span class="betterfloat-bargain-diff" style="${diffStyle}"></span>` + (stickerData.priceSum ? `<span class="betterfloat-bargain-sp" style="${spStyle}"></span></div>` : '</div>'));
             inputField.addEventListener('input', () => {
                 const inputPrice = new Decimal(inputField.value);
                 const diff = inputPrice.minus(buff_data.priceFromReference);
-                const percentage = diff.div(stickerData.priceSum).mul(100).toDP(2);
+                const percentage = stickerData.priceSum ? diff.div(stickerData.priceSum).mul(100).toDP(2) : null;
                 const diffElement = container.querySelector<HTMLElement>('.betterfloat-bargain-diff');
                 if (diffElement) {
                     diffElement.textContent = `${diff.isNegative() ? '-' : '+'}${currency}${diff.absoluteValue().toDP(2).toNumber()}`;
                     diffElement.style.backgroundColor = `${diff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
                 }
-                const spElement = container.querySelector('.betterfloat-bargain-sp');
+                const spElement = container.querySelector<HTMLElement>('.betterfloat-bargain-sp');
                 if (spElement) {
                     spElement.textContent = `${percentage.lessThan(0) ? '0' : percentage.toNumber()} %SP`;
                 }
