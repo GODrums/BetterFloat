@@ -63,7 +63,7 @@
 		"decimal.js": "^10.4.3",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
-		"postcss": "8.4.35",
+		"postcss": "8.4.36",
 		"prettier": "3.2.5",
 		"rimraf": "^5.0.5",
 		"tailwindcss": "3.4.1",
