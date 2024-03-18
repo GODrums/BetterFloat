@@ -7,7 +7,7 @@ export async function formFetch<T>(url: string, body: string): Promise<T> {
 	return fetch(url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: body,
+		body: encodeURI(body),
 	}).then((response) => response.json() as Promise<T>);
 }
 

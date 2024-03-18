@@ -3,9 +3,9 @@
   "exclude": [
     "node_modules",
     "build",
-    ".plasmo"
   ],
   "include": [
+    ".plasmo/messaging.d.ts",
     ".plasmo/index.d.ts",
     "./**/*.ts",
     "./**/*.tsx"

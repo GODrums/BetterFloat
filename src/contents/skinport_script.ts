@@ -2,8 +2,11 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
+import { sendToBackground } from '@plasmohq/messaging';
+
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
@@ -13,7 +16,6 @@ import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigenerat
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -371,7 +373,7 @@ async function adjustItem(container: Element) {
 
 	const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item, container) : false;
 	if (filterItem) {
-		console.log('[BetterFloat] Filtered item: ', item.name);
+		// console.log('[BetterFloat] Filtered item: ', item.name);
 		(<HTMLElement>container).style.display = 'none';
 		return;
 	}
@@ -844,21 +846,25 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 		return false;
 	}
 
-	const headers = {
-		authorization: extensionSettings['sp-ocoapikey'],
-	};
 	try {
-		const captchaAPIUrl = 'https://api.gamingtechinsider.com/api/v1/captcha/betterfloat/';
-		const response = await fetch(captchaAPIUrl + saleId, {
-			method: 'GET',
-			headers: {
-				...headers,
-				'Content-Type': 'application/json',
+		const response = await sendToBackground({
+			name: 'requestToken',
+			body: {
+				saleId: saleId,
+				oco_key: extensionSettings['sp-ocoapikey'],
 			},
 		});
-		const responseJson = await response.json();
+
+		// console.log(response);
 		if (response.status === 200) {
-			return responseJson.token;
+			// console.debug('[BetterFloat] Checkout: Captcha solved.', response.data.token);
+			// console.error('[BetterFloat] Checkout: Please check your API key for validity.');
+			// showMessageBox(
+			// 	'A problem with your API key occured (HTTP 401)',
+			// 	'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.'
+			// );
+			// return false;
+			return response.data.token;
 		} else if (response.status === 401) {
 			console.error('[BetterFloat] Checkout: Please check your API key for validity.');
 			showMessageBox(
@@ -892,7 +898,7 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 async function orderItem(item: Skinport.Listing) {
 	console.debug('[BetterFloat] Trying to order item ', item.saleId);
 	const csrfToken = await getSpCSRF();
-	const cartAddData = encodeURI(`sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`);
+	const cartAddData = `sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`;
 
 	const addToCartResponse = await formFetch<Skinport.AddToCartResponse>('https://skinport.com/api/cart/add', cartAddData);
 	if (!addToCartResponse.success) {
@@ -906,7 +912,7 @@ async function orderItem(item: Skinport.Listing) {
 		return false;
 	}
 	console.debug('[BetterFloat] OCO addToCart was successful.');
-	const createOrderData = encodeURI(`sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`);
+	const createOrderData = `sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`;
 	const createOrderResponse = await formFetch<Skinport.CreateOrderResponse>('https://skinport.com/api/checkout/create-order', createOrderData);
 	if (!createOrderResponse.success) {
 		console.debug(`[BetterFloat] OCO createOrder failed ${createOrderResponse.message ?? createOrderResponse.requestId}`);
