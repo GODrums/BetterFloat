@@ -955,7 +955,7 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 		names[0] = names[0].replace('★ ', '');
 	}
 	// // TODO: Handle Vanilla
-	const schemaItem = Object.values((Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons ?? [])?.find((el) => el.name === names[0]) ?? [])?.['paints'] ?? [])?.find(
+	const schemaItem = Object.values((Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0]))['paints']).find(
 		(el: any) => el.name === names[1]
 	) as CSFloat.ItemSchema.SingleSchema;
 
@@ -1390,7 +1390,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			innerContainer.appendChild(table);
 			outerContainer.appendChild(innerContainer);
 
-			const historyChild = gridHistory?.querySelector('.history-component')?.firstElementChild;
+			const historyChild = gridHistory.querySelector('.history-component')?.firstElementChild;
 			if (historyChild?.firstElementChild) {
 				historyChild.removeChild(historyChild.firstElementChild);
 				historyChild.appendChild(outerContainer);
@@ -1466,6 +1466,10 @@ function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
 }
 
 async function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
+	if (container.querySelector('.betterfloat-listing-age')) {
+		return;
+	}
+
 	const listingAge = document.createElement('div');
 	const listingAgeText = document.createElement('p');
 	const listingIcon = document.createElement('img');
@@ -1556,7 +1560,7 @@ function priceData(text: string) {
 
 const parsePrice = (textContent: string | undefined) => {
 	const regex = /([A-Za-z]+)\s+(\d+)/;
-	const priceText = textContent.trim().replace(regex, '$1$2').split(/\s/) ?? [];
+	const priceText = textContent.trim().replace(regex, '$1$2').split(/\s/);
 	let price: number;
 	let currency = '$';
 	if (priceText.includes('Bids')) {
@@ -1739,7 +1743,7 @@ async function addBuffPrice(
 	}
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
-	if (extensionSettings['csf-buffdifference'] && item.price != 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
+	if (extensionSettings['csf-buffdifference'] && !container.querySelector('.betterfloat-sale-tag') && item.price != 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
 		const priceContainer = <HTMLElement>container.querySelector('.price-row');
 		const priceIcon = priceContainer.querySelector('app-price-icon');
 		const floatAppraiser = priceContainer.querySelector('.reference-widget-container');

@@ -797,7 +797,6 @@ function showMessageBox(title: string, message: string, success = false) {
 		message = 'Your cart is outdated. Someone was probably faster than you.';
 	} else if (message === 'CAPTCHA') {
 		message = 'The order was not successful. Please note that this may happen sporadically. If the issue persists, please report it to the BetterFloat Discord server.';
-		message = 'There was an error with the captcha while ordering. If this problem persists, please report it to the BetterFloat Discord server.';
 	} else if (message === 'SALE_PRICE_CHANGED') {
 		message = 'The item price got changed. Please review the new price and try again.';
 	} else if (message === 'ITEM_NOT_LISTED') {
