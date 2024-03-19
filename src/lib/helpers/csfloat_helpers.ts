@@ -147,23 +147,17 @@ export namespace CSFloatHelpers {
             window.open(href, '_blank');
         });
         const iconButton = document.createElement('button');
-        iconButton.className = 'mat-focus-indicator mat-tooltip-trigger mat-icon-button mat-button-base ng-star-inserted';
+        iconButton.className = 'mat-mdc-tooltip-trigger action ng-star-inserted';
         const buttonColor = color;
         iconButton.setAttribute('style', `color: ${buttonColor};`);
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'mat-button-wrapper';
         if (customIcon) {
             const icon = document.createElement('img');
             icon.setAttribute('style', 'width: 24px; height: 24px;');
             icon.setAttribute('src', iconCameraAdd);
-            iconSpan.appendChild(icon);
+            iconButton.appendChild(icon);
         } else {
-            const icon = document.createElement('i');
-            icon.className = 'material-icons';
-            icon.textContent = 'camera_alt';
-            iconSpan.appendChild(icon);
+            iconButton.innerHTML = '<mat-icon _ngcontent-ng-c2631012479="" role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>';
         }
-        iconButton.appendChild(iconSpan);
         screenshotButton.appendChild(iconButton);
         const tooltip = document.createElement('div');
         tooltip.className = 'bf-tooltip-inner';
@@ -176,7 +170,7 @@ export namespace CSFloatHelpers {
         tooltip.appendChild(tooltipSpan);
         outerContainer.appendChild(screenshotButton);
         outerContainer.appendChild(tooltip);
-        detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+        detailButtons.insertBefore(outerContainer, detailButtons.firstElementChild);
     }
 
     export function createTopButton() {
@@ -184,7 +178,7 @@ export namespace CSFloatHelpers {
         topButton.classList.add('betterfloat-top-button');
         topButton.setAttribute(
             'style',
-            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #004594; border: none; outline: none; cursor: pointer; display: none; transition: visibility 0s, opacity 0.5s linear;'
+            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: transparent; border: 0.5px solid dimgray; outline: none; cursor: pointer; display: none; transition: visibility 3s, opacity 2s linear;',
         );
         const topButtonIcon = document.createElement('img');
         topButtonIcon.setAttribute('src', iconChevronUp);

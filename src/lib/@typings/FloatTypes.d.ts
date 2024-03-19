@@ -18,6 +18,38 @@ export interface EventData<T> {
 }
 
 export namespace CSFloat {
+    export namespace ItemSchema {
+        export type ItemType = "agents" | "collections" | "containers" | "custom_stickers" | "rarities" | "stickers" | "weapons";
+        
+        export type TypeSchema = {
+            [key in ItemType]: {
+                [key2: string]: WeaponSchema
+            };
+        }
+
+        export type WeaponSchema = {
+            name: string;
+            paints: {
+                [key: string]: SingleSchema
+            };
+            sticker_amount: number;
+            type: string;
+        }
+
+        export type SingleSchema = {
+            collection: string;
+            image: string;
+            index: number;
+            max: number;
+            min: number;
+            rarity: number;
+            name: string;
+            normal_prices: number[]
+            normal_volume: number[]
+            souvenir: boolean;
+        }
+    }
+
     export type FloatItem = {
         name: string;
         quality: string;

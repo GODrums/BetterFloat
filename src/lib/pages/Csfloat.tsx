@@ -63,7 +63,8 @@ export const CSFloatSettings = () => {
                     </div>
                     <div className="flex flex-col gap-1">
                         <SettingsCard>
-                            <SettingsSelect id="csf-listingage" text="Show Listing Age" options={["Below Header", "On Image", "OFF"]} icon={<IcRoundAccessTime className="h-6 w-6" />}/>
+                            <SettingsCheckbox
+                                id="csf-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />
                         </SettingsCard>
                     </div>
                 </div>
@@ -81,15 +82,11 @@ export const CSFloatSettings = () => {
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox
-                                id="csf-tabstates" text="Tab State Management" icon={<MaterialSymbolsTabMoveRounded className="h-6 w-6" />} />
-                        </SettingsCard>
-                        <SettingsCard>
-                            <SettingsCheckbox
                                 id="csf-floatcoloring" text="Low/High Float Coloring" tooltipText="Low and high floats in respect to each condition will get colored. 0.000X and 0.999X floats get the most prominent coloring." />
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox
-                                id="csf-removeclustering" text="Remove Preview Clustering" tooltipText="When enabled, this removes irrelevant icons such as the 'key' or the 'star'. Generally leads to a cleaner experience for experienced users." />
+                                id="csf-removeclustering" text="Remove Preview Clustering" tooltipText="When enabled, this removes irrelevant data such as the seller's online status or the 'key'-symbol. Generally leads to a cleaner experience for experienced users and smaller item cards." />
                         </SettingsCard>
                         <SettingsColorPicker prefix="csf" />
                     </div>

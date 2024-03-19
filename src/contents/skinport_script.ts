@@ -20,7 +20,7 @@ import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler'
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
 	run_at: 'document_idle',
-	css: ['./skinport_styles.css'],
+	css: ['../css/skinport_styles.css'],
 };
 
 init();
@@ -846,25 +846,21 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 		return false;
 	}
 
+	const headers = {
+		authorization: extensionSettings['sp-ocoapikey'],
+	};
 	try {
-		const response = await sendToBackground({
-			name: 'requestToken',
-			body: {
-				saleId: saleId,
-				oco_key: extensionSettings['sp-ocoapikey'],
+		const captchaAPIUrl = 'https://api.gamingtechinsider.com/api/v1/captcha/betterfloat/';
+		const response = await fetch(captchaAPIUrl + saleId, {
+			method: 'GET',
+			headers: {
+				...headers,
+				'Content-Type': 'application/json',
 			},
 		});
-
-		// console.log(response);
+		const responseJson = await response.json();
 		if (response.status === 200) {
-			// console.debug('[BetterFloat] Checkout: Captcha solved.', response.data.token);
-			// console.error('[BetterFloat] Checkout: Please check your API key for validity.');
-			// showMessageBox(
-			// 	'A problem with your API key occured (HTTP 401)',
-			// 	'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.'
-			// );
-			// return false;
-			return response.data.token;
+			return responseJson.token;
 		} else if (response.status === 401) {
 			console.error('[BetterFloat] Checkout: Please check your API key for validity.');
 			showMessageBox(

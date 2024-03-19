@@ -18,6 +18,7 @@ export const Changelogs = () => {
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
                 <SingleChangelog version="v2.1.0">
+                    <li>Reworked CSFloat integration, adapted it to the new design and adjusted some settings accordingly.</li>
                     <li>CSFloat's bargain popup now also enhanced by BetterFloat. Including Buff prices & %SP for both the minimum bid as well as your custom bid.</li>
                 </SingleChangelog>
                 <SingleChangelog version="v2.0.6">

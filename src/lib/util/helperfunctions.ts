@@ -97,19 +97,6 @@ export function toTruncatedString(num: number, digits: number) {
 }
 
 /**
- * Cut a substring from a string
- * @param text original string
- * @param startChar last character before the substring
- * @param endChar first character after the substring
- * @returns
- */
-export function cutSubstring(text: string, startChar: string, endChar: string) {
-    const start = text.indexOf(startChar);
-    const end = text.indexOf(endChar);
-    return text.substring(start + 1, end);
-}
-
-/**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
  */
@@ -145,16 +132,6 @@ export function getSPBackgroundColor(spPercentage: number) {
         return 'rgb(244 245 0 / 40%)';
     } else {
         return 'rgb(83 245 0 / 40%)';
-    }
-}
-
-export function parseHTMLString(htmlString: string, container: HTMLElement) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlString, 'text/html');
-    const tags = doc.getElementsByTagName('body')[0];
-
-    for (const tag of Array.from(tags.children)) {
-        container.appendChild(tag);
     }
 }
 

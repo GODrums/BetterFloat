@@ -24,7 +24,13 @@ export async function getAllSettings() {
 		if (typeof settings[key] === 'string' && (settings[key].startsWith('"') || settings[key].startsWith('{') || settings[key].startsWith('['))) {
 			let result = JSON.parse(settings[key]);
 			if (isNumeric(result)) {
-				result = parseInt(result);
+				// exception for csf-listingage
+				if (key === 'csf-listingage') {
+					result = true;
+					ExtensionStorage.sync.set('csf-listingage', true);
+				} else {
+					result = parseInt(result);
+				}
 			} else if (result === 'true') {
 				result = true;
 			} else if (result === 'false') {
@@ -50,9 +56,8 @@ export const DEFAULT_SETTINGS = {
 	'csf-floatappraiser': false,
 	'csf-buffdifference': true,
 	'csf-buffdifferencepercent': false,
-	'csf-listingage': 0,
+	'csf-listingage': true,
 	'csf-topbutton': true,
-	'csf-tabstates': true,
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
 	'sp-enable': true,
