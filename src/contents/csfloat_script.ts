@@ -781,7 +781,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			adjustExistingSP(container);
 		}
 		if (extensionSettings['csf-listingage']) {
-			await addListingAge(container, cachedItem);
+			addListingAge(container, cachedItem);
 		}
 		CSFloatHelpers.storeApiItem(container, cachedItem);
 
@@ -792,7 +792,6 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			removeClustering(container);
 		}
 		await patternDetections(container, cachedItem, false);
-		addScreenshotReplacement(container, cachedItem);
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
 		setTimeout(async () => {
@@ -806,12 +805,11 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 			if (apiItem) {
 				await addStickerInfo(container, apiItem, priceResultUSD);
-				await addListingAge(container, apiItem);
+				addListingAge(container, apiItem);
 				await patternDetections(container, apiItem, true);
 				await addFloatColoring(container, apiItem);
 				if (popout === POPOUT_ITEM.PAGE) {
 					addQuickLinks(container, apiItem);
-					addScreenshotReplacement(container, apiItem);
 					copyNameOnClick(container);
 				}
 				CSFloatHelpers.storeApiItem(container, apiItem);
@@ -842,16 +840,6 @@ function copyNameOnClick(container: Element) {
 				}, 2000);
 			}
 		});
-	}
-}
-
-function addScreenshotReplacement(container: Element, listing: CSFloat.ListingData) {
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action') && listing.item.inspect_link && listing.item.type == 'skin') {
-		const decodedLink = decodeURI(listing.item.inspect_link);
-		if (decodedLink.split(' ').at(-1)?.startsWith('S')) {
-			CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', `https://swap.gg/screenshot?inspectLink=${listing.item.inspect_link}`, true);
-		}
 	}
 }
 
@@ -946,7 +934,7 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 		return;
 	}
 
-	if (Object.keys(ITEM_SCHEMA).length === 0) {
+	if (!ITEM_SCHEMA) {
 		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA);
 	}
 
@@ -990,12 +978,6 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
 	const overprint_data = await OverprintMapping.getPattern(item.paint_seed!);
 	if (!overprint_data) return;
 
-	// add replacement screenshot if csfloat does not offer one and if available
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action')) {
-		CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#06dedf', overprint_data.img);
-	}
-
 	const getTooltipStyle = (type: typeof overprint_data.type) => {
 		switch (type) {
 			case 'Flower':
@@ -1033,12 +1015,6 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
 async function badgeCKimono(container: Element, item: CSFloat.Item) {
 	const ck_data = await CrimsonKimonoMapping.getPattern(item.paint_seed!);
 	if (!ck_data) return;
-	// add replacement screenshot if csfloat does not offer one and if available
-	// available for all kimono patterns
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action')) {
-		CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#dc143c', ck_data.img);
-	}
 
 	const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500; position: absolute; top: 6px;';
 	if (ck_data.tier === -1) {
@@ -1051,12 +1027,6 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
 async function badgeCyanbit(container: Element, item: CSFloat.Item) {
 	const cyanbit_data = await CyanbitKarambitMapping.getPattern(item.paint_seed!);
 	if (!cyanbit_data) return;
-
-	// add replacement screenshot if csfloat does not offer one and if available
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action')) {
-		CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#00ffff', cyanbit_data.img);
-	}
 
 	CSFloatHelpers.addPatternBadge(
 		container,
@@ -1072,12 +1042,6 @@ async function badgeCyanbit(container: Element, item: CSFloat.Item) {
 async function badgePhoenix(container: Element, item: CSFloat.Item) {
 	const phoenix_data = await PhoenixMapping.getPattern(item.paint_seed!);
 	if (!phoenix_data) return;
-
-	// add replacement screenshot if csfloat does not offer one and if available
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action')) {
-		CSFloatHelpers.addReplacementScreenshotButton(detailButtons, '#d946ef', phoenix_data.img);
-	}
 
 	CSFloatHelpers.addPatternBadge(
 		container,
@@ -1115,12 +1079,6 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 		cw_data.type == 'Triple Web' ? '3' : cw_data.type == 'Double Web' ? '2' : '1',
 		`color: ${item.item_name.includes('Crimson') ? 'lightgrey' : 'white'}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`
 	);
-
-	// add replacement screenshot if csfloat does not offer one and if available
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action') && cw_data.img) {
-		CSFloatHelpers.addReplacementScreenshotButton(detailButtons, item.item_name.includes('Crimson') ? 'rgb(69 10 10)' : 'rgb(101 163 13)', cw_data.img);
-	}
 }
 
 async function addFadePercentages(container: Element, item: CSFloat.Item) {
@@ -1465,7 +1423,7 @@ function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
 	};
 }
 
-async function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
+function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 	if (container.querySelector('.betterfloat-listing-age')) {
 		return;
 	}
@@ -1493,7 +1451,13 @@ async function addListingAge(container: Element, cachedItem: CSFloat.ListingData
 		parent.style.flexDirection = 'column';
 		parent.insertAdjacentElement('afterbegin', listingAge);
 		const action = parent.querySelector('.action');
-		action.outerHTML = `<div style="display: inline-flex; justify-content: flex-end;">${action.outerHTML}</div>`;
+		if (action) {
+			const newParent = document.createElement('div');
+			newParent.style.display = 'inline-flex';
+			newParent.style.justifyContent = 'flex-end';
+			newParent.appendChild(action);
+			parent.appendChild(newParent);
+		}
 	}
 }
 
@@ -1837,7 +1801,7 @@ const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', 
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: IStorage;
-let ITEM_SCHEMA: CSFloat.ItemSchema.TypeSchema | {} = {};
+let ITEM_SCHEMA: CSFloat.ItemSchema.TypeSchema | null = null;
 const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
 // time of last refresh in auto-refresh functionality
 let lastRefresh = 0;

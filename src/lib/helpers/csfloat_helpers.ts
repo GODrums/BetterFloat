@@ -133,52 +133,12 @@ export namespace CSFloatHelpers {
         badgeContainer.appendChild(badge);
     }
 
-    export function addReplacementScreenshotButton(detailButtons: Element, color: string, href: string, customIcon = false) {
-        detailButtons.setAttribute('style', 'display: flex;');
-        const outerContainer = document.createElement('div');
-        outerContainer.className = 'bf-tooltip';
-        const screenshotButton = document.createElement('a');
-        screenshotButton.href = href;
-        screenshotButton.target = '_blank';
-        screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
-        screenshotButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            window.open(href, '_blank');
-        });
-        const iconButton = document.createElement('button');
-        iconButton.className = 'mat-mdc-tooltip-trigger action ng-star-inserted';
-        const buttonColor = color;
-        iconButton.setAttribute('style', `color: ${buttonColor};`);
-        if (customIcon) {
-            const icon = document.createElement('img');
-            icon.setAttribute('style', 'width: 24px; height: 24px;');
-            icon.setAttribute('src', iconCameraAdd);
-            iconButton.appendChild(icon);
-        } else {
-            iconButton.innerHTML = '<mat-icon _ngcontent-ng-c2631012479="" role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>';
-        }
-        screenshotButton.appendChild(iconButton);
-        const tooltip = document.createElement('div');
-        tooltip.className = 'bf-tooltip-inner';
-        const tooltipSpan = document.createElement('span');
-        if (customIcon) {
-            tooltipSpan.textContent = 'Generate Swap.gg screenshot';
-        } else {
-            tooltipSpan.textContent = 'Show pattern screenshot';
-        }
-        tooltip.appendChild(tooltipSpan);
-        outerContainer.appendChild(screenshotButton);
-        outerContainer.appendChild(tooltip);
-        detailButtons.insertBefore(outerContainer, detailButtons.firstElementChild);
-    }
-
     export function createTopButton() {
         const topButton = document.createElement('button');
-        topButton.classList.add('betterfloat-top-button');
+        topButton.className = 'betterfloat-top-button';
         topButton.setAttribute(
             'style',
-            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: transparent; border: 0.5px solid dimgray; outline: none; cursor: pointer; display: none; transition: visibility 3s, opacity 2s linear;',
+            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #15171C; border: none; outline: none; cursor: pointer; display: none; transition: visibility 3s, opacity 2s linear;',
         );
         const topButtonIcon = document.createElement('img');
         topButtonIcon.setAttribute('src', iconChevronUp);
