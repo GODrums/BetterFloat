@@ -24,10 +24,6 @@ export const SkinportSettings = () => {
                     <div className="flex flex-col gap-1">
                         <SettingsCard>
                             <SettingsCheckbox
-                                id="sp-autocheckboxes" text="Auto-Checkboxes" icon={<LucideMousePointerSquare className="h-6 w-6" />} />
-                        </SettingsCard>
-                        <SettingsCard>
-                            <SettingsCheckbox
                                 id="sp-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
                         </SettingsCard>
                         <SettingsCard>

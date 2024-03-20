@@ -503,8 +503,6 @@ function applyMutation() {
 					} else if (addedNode.tagName.toLowerCase() == 'app-stall-view') {
 						// adjust stall
 						// await customStall(location.pathname.split('/').pop() ?? '');
-					} else if (addedNode.tagName.toLowerCase() == 'app-make-offer-dialog') {
-						await adjustBargainPopup(addedNode);
 					} else if (addedNode.className.toString().includes('flex-item')) {
 						await adjustItem(addedNode);
 					} else if (addedNode.className.toString().includes('mat-row cdk-row')) {
@@ -539,27 +537,28 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustBargainPopup(container: Element) {
+async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	const itemCard = container.querySelector('item-card');
 	if (!itemCard) return;
 	await adjustItem(itemCard, POPOUT_ITEM.BARGAIN);
 
 	// we have to wait for the sticker data to be loaded
-	await new Promise((r) => setTimeout(r, 1600));
+	await new Promise((r) => setTimeout(r, 1100));
 
-	const item = JSON.parse(itemCard.getAttribute('data-betterfloat')) as CSFloat.ListingData;
-	const buff_data = JSON.parse(itemCard.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-	const stickerData = JSON.parse(itemCard.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
+	const item = JSON.parse(itemContainer.getAttribute('data-betterfloat')) as CSFloat.ListingData;
+	const buff_data = JSON.parse(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
+	const stickerData = JSON.parse(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
 
-	console.log('[BetterFloat] Bargain popup data:', item, buff_data, stickerData);
+	console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
 	if (buff_data.priceFromReference > 0) {
 		const currency = getSymbolFromCurrency(buff_data.userCurrency);
 		const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
 		const minPercentage = minOffer.greaterThan(0) && stickerData.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
+		const showSP = stickerData.priceSum > 0;
 
-		const spStyle = 'border: 1px solid grey; border-radius: 7px; padding: 5px;';
-		const diffStyle = `font-size: 15px; padding: 2px 5px; border-radius: 7px; cursor: pointer; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="${spStyle} display: ${stickerData.priceSum ? 'block' : 'none'}">${minPercentage} %SP</span></div>`;
+		const spStyle = 'border: 1px solid grey; border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 15px;';
+		const diffStyle = `font-size: 15px; padding: 2px 5px; border-radius: 7px; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
+		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
 
 		const minContainer = container.querySelector('.minimum-offer');
 		if (minContainer) {
@@ -571,8 +570,8 @@ async function adjustBargainPopup(container: Element) {
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
 			'afterend',
-			`<div style="position: relative; display: inline-flex; align-items: center; gap: 8px; font-size: 16px;"><span class="betterfloat-bargain-diff" style="${diffStyle}"></span>` +
-				(stickerData.priceSum ? `<span class="betterfloat-bargain-sp" style="${spStyle}"></span></div>` : '</div>')
+			`<div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;"><span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>` +
+				(showSP ? `<span class="betterfloat-bargain-sp" style="${spStyle}"></span></div>` : '</div>')
 		);
 
 		const diffElement = container.querySelector<HTMLElement>('.betterfloat-bargain-diff');
@@ -792,10 +791,14 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			removeClustering(container);
 		}
 		await patternDetections(container, cachedItem, false);
+		addBargainListener(container);
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
 		setTimeout(async () => {
+			await new Promise((r) => setTimeout(r, 1000));
 			const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+
+			console.log('[BetterFloat] Popout item:', location.pathname.split('/').pop(), container, itemPreview);
 
 			let apiItem = CSFloatHelpers.getApiItem(itemPreview);
 			// if this is the first launch, the item has to be newly retrieved by the api
@@ -804,6 +807,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			}
 
 			if (apiItem) {
+				console.log('[BetterFloat] Popout item data:', apiItem);
 				await addStickerInfo(container, apiItem, priceResultUSD);
 				addListingAge(container, apiItem);
 				await patternDetections(container, apiItem, true);
@@ -818,8 +822,29 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			// last as it has to wait for history api data
 			if (popout === POPOUT_ITEM.PAGE) {
 				addItemHistory(container.parentElement!.parentElement!);
+				addBargainListener(container);
 			}
 		}, 1500);
+	}
+}
+
+function addBargainListener(container: Element) {
+	const bargainBtn = container.querySelector('.bargain-btn > button');
+	if (bargainBtn) {
+		bargainBtn.addEventListener('click', () => {
+			let tries = 10;
+			const interval = setInterval(async () => {
+				if (tries-- <= 0) {
+					clearInterval(interval);
+					return;
+				}
+				const bargainPopup = document.querySelector('app-make-offer-dialog');
+				if (bargainPopup) {
+					clearInterval(interval);
+					await adjustBargainPopup(container, bargainPopup);
+				}
+			}, 500);
+		});
 	}
 }
 
@@ -1463,7 +1488,8 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 
 async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
 	// quality 12 is souvenir
-	if (!cachedItem.item.stickers || cachedItem.item.quality === 12) {
+	console.log(cachedItem.item);
+	if (!cachedItem.item?.stickers || cachedItem.item?.quality === 12) {
 		return;
 	}
 
@@ -1551,13 +1577,12 @@ const parsePrice = (textContent: string | undefined) => {
 
 function getFloatItem(container: Element): CSFloat.FloatItem {
 	const nameContainer = container.querySelector('app-item-name');
-	const floatContainer = container.querySelector('item-float-bar');
 	const priceContainer = container.querySelector('.price');
 	const header_details = <Element>nameContainer?.querySelector('.subtext');
 
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	// replace potential spaces between currency characters and price
-	const { price, currency } = parsePrice(priceContainer?.textContent ?? '');
+	const { price } = parsePrice(priceContainer?.textContent ?? '');
 	let condition: ItemCondition = '';
 	let quality = '';
 	let style: ItemStyle = '';
@@ -1592,10 +1617,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		quality: quality,
 		style: style,
 		condition: condition,
-		float: Number(floatContainer?.querySelector('.ng-star-inserted')?.textContent ?? 0),
 		price: price,
-		bargain: false,
-		currency: currency,
 	};
 }
 
@@ -1631,8 +1653,9 @@ async function addBuffPrice(
 	price_difference: number;
 }> {
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
+	const isSellTab = location.pathname === '/sell';
 
-	let priceContainer = container.querySelector<HTMLElement>('.price-row');
+	let priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
 	const showBoth = extensionSettings['csf-floatappraiser'] || isPopout;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -1688,7 +1711,11 @@ async function addBuffPrice(
 			// } else {
 			// 	priceContainer.replaceWith(buffContainer);
 			// }
-			priceContainer.after(buffContainer);
+			if (isSellTab) {
+				priceContainer.replaceWith(buffContainer);
+			} else {
+				priceContainer.after(buffContainer);
+			}
 		}
 	} else if (container.querySelector('.betterfloat-buff-a')) {
 		const buffA = container.querySelector('.betterfloat-buff-a')!;

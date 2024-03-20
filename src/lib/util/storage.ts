@@ -61,7 +61,6 @@ export const DEFAULT_SETTINGS = {
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
 	'sp-enable': true,
-	'sp-autocheckboxes': true,
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,
 	'sp-ocoapikey': '',

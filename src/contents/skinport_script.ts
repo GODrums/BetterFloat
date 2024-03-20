@@ -356,13 +356,7 @@ async function adjustItemPage(container: Element) {
 }
 
 async function adjustCart(container: Element) {
-	if (extensionSettings['sp-autocheckboxes']) {
-		const checkboxes = Array.from(container.querySelectorAll('.Checkbox-input'));
-		for (const checkbox of checkboxes) {
-			(checkbox as HTMLInputElement).click();
-			await new Promise((r) => setTimeout(r, 50)); // to avoid bot detection
-		}
-	}
+	// adjust the cart with Buff prices?
 }
 
 async function adjustItem(container: Element) {

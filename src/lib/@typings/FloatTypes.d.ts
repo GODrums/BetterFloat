@@ -55,10 +55,7 @@ export namespace CSFloat {
         quality: string;
         style: ItemStyle;
         condition: ItemCondition;
-        float: number;
         price: number;
-        bargain: false | number;
-        currency: string;
     };
 
     export type ListingData = {
