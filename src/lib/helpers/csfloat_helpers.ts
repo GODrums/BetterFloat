@@ -1,7 +1,44 @@
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-import iconCameraAdd from "data-base64:/assets/icons/camera-add-solid.svg";
 import iconChevronUp from "data-base64:/assets/icons/chevron-up-solid.svg";
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { ICON_BUFF } from '~lib/util/globals';
+import Decimal from 'decimal.js';
+import { adjustOfferContainer } from '~contents/csfloat_script';
+
+export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
+    await new Promise((resolve) => setTimeout(resolve, 200));
+	const bubbles = document.querySelectorAll('.history .offer-bubble');
+    let buffA = document.querySelector('.betterfloat-buff-a');
+    let buff_data = JSON.parse(buffA.getAttribute('data-betterfloat') ?? '{}');
+
+    // refresh buff tag when item changes
+    if (!buff_data.itemName.includes(document.querySelector('div.prefix').firstChild.textContent.trim()) || !buff_data.itemName.includes(document.querySelector('div.suffix').firstChild.textContent.trim())) {
+        buffA.remove();
+        await adjustOfferContainer(document.querySelector('app-view-offers .container'));
+        buffA = document.querySelector('.betterfloat-buff-a');
+        buff_data = JSON.parse(buffA.getAttribute('data-betterfloat') ?? '{}');
+    }
+
+    if (bubbles.length > offers.length) {
+        console.log('[BetterFloat] Bubbles and offers length mismatch');
+        return;
+    }
+
+	for (let i = 0; i < bubbles.length; i++) {
+		const bubble = bubbles[i];
+        if (bubble.querySelector('.betterfloat-bubble-buff')) {
+            continue;
+        }
+
+        const offer = offers[i];
+	    const difference = new Decimal(offer.price).div(100).minus(buff_data.priceFromReference);
+	    const isSeller = bubble.className.includes('from-other-party');
+
+		const buffHTML = `<div class="betterfloat-bubble-buff" style="width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'}; translate: 0 4px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><span style="color: ${difference.isPositive() ? 'greenyellow' : 'orange'};">${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}</span></div>`;
+
+        bubble.querySelector('.sub-text')?.insertAdjacentHTML(isSeller ? 'beforeend' : 'afterbegin', buffHTML);
+	}
+}
 
 export namespace CSFloatHelpers {
 

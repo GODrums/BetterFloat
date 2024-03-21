@@ -9,6 +9,7 @@ import {
 	cacheCSFHistorySales,
 	cacheCSFItems,
 	cacheCSFLocation,
+	cacheCSFOffers,
 	cacheCSFPopupItem,
 	cacheSkbItems,
 	cacheSkinbidCurrencyRates,
@@ -20,6 +21,7 @@ import {
 	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -162,6 +164,11 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('v1/me/listings')) {
 		// own stall
 		cacheCSFItems(eventData.data as CSFloat.ListingData[]);
+	} else if (eventData.url.includes('v1/me/offers-timeline')) {
+		// /profile/offers
+		cacheCSFOffers((eventData.data as CSFloat.OffersTimeline).offers);
+	} else if (eventData.url.includes('v1/offers/')) {
+		adjustOfferBubbles(eventData.data as CSFloat.Offer[]);
 	} else if (eventData.url.includes('v1/users/') && eventData.url.includes('/stall')) {
 		// url schema: v1/users/[:userid]/stall
 		cacheCSFItems((eventData.data as StallData).data);

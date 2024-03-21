@@ -9,6 +9,7 @@ import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/pages/LiveFilter';
 import { waitForElement } from '~lib/util/helperfunctions';
 import CSFAutorefresh from '~lib/pages/Autorefresh';
+import { getSetting } from '~lib/util/storage';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -68,15 +69,18 @@ async function handleChange(state: Extension.URLState) {
 		}
 	} else if (state.site === 'csfloat.com') {
 		if (state.path === '/search' && state.search === '?sort_by=most_recent') {
-			waitForElement('.refresh > button', 100, 10).then(async (success) => {
-				if (success && !document.querySelector('betterfloat-autorefresh')) {
-					await mountShadowRoot(<CSFAutorefresh />, {
-						tagName: 'betterfloat-autorefresh',
-						parent: document.querySelector('.refresh'),
-						position: 'before'
-					});
-				}
-			});
+			const csfAutorefresh = await getSetting('csf-autorefresh');
+			if (csfAutorefresh) {
+				waitForElement('.refresh > button', 100, 10).then(async (success) => {
+					if (success && !document.querySelector('betterfloat-autorefresh')) {
+						await mountShadowRoot(<CSFAutorefresh />, {
+							tagName: 'betterfloat-autorefresh',
+							parent: document.querySelector('.refresh'),
+							position: 'before'
+						});
+					}
+				});
+			}
 		}
 	}
 }

@@ -175,6 +175,25 @@ export namespace CSFloat {
         watchers: number;
     };
 
+    export type OffersTimeline = {
+        count: number;
+        offers: Offer[];
+    }
+
+    export type Offer = {
+        buyer: SellerData;
+        buyer_id: string;
+        contract: ListingData;
+        contract_id: string;
+        contract_price: number;
+        created_at: string;
+        expires_at: string;
+        id: string;
+        price: number;
+        state: string;
+        type: string;
+    }
+
     export type ReferenceData = {
         base_price: number;
         float_factor: number;

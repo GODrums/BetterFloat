@@ -9,6 +9,7 @@ import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
 	ICON_ARROWUP,
@@ -39,15 +40,15 @@ import {
 	getFirstCSFItem,
 	getFirstHistorySale,
 	getItemPrice,
+	getSpecificCSFOffer,
 	getStallData,
 	getWholeHistory,
 	loadBuffMapping,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar, waitForElement } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar, waitForElement } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -122,20 +123,19 @@ async function firstLaunch() {
 	}
 
 	if (location.pathname == '/profile/offers') {
-		const matActionList = document.querySelector('.mat-action-list')?.children;
-		if (!matActionList) return;
-		for (let i = 0; i < matActionList.length; i++) {
-			const child = matActionList[i];
-			if (child?.className.includes('mat-list-item')) {
-				offerItemClickListener(child);
-			}
-		}
-
-		await waitForElement('.betterfloat-buffprice');
-		const offerBubbles = document.querySelectorAll('.offer-bubble');
-		for (let i = 0; i < offerBubbles.length; i++) {
-			adjustItemBubble(offerBubbles[i]);
-		}
+		// const matActionList = document.querySelector('.mat-action-list')?.children;
+		// if (!matActionList) return;
+		// for (let i = 0; i < matActionList.length; i++) {
+		// 	const child = matActionList[i];
+		// 	if (child?.className.includes('mat-list-item')) {
+		// 		offerItemClickListener(child);
+		// 	}
+		// }
+		// await waitForElement('.betterfloat-buffprice');
+		// const offerBubbles = document.querySelectorAll('.offer-bubble');
+		// for (let i = 0; i < offerBubbles.length; i++) {
+		// 	adjustItemBubble(offerBubbles[i]);
+		// }
 	} else if (location.pathname.includes('/stall/')) {
 		// await customStall(location.pathname.split('/').pop() ?? '');
 	} else if (location.pathname === '/checkout') {
@@ -511,15 +511,9 @@ function applyMutation() {
 					} else if (addedNode.className.toString().includes('mat-row cdk-row')) {
 						// row from the sales table in an item popup
 						await adjustSalesTableRow(addedNode);
-					} else if (location.pathname == '/profile/offers' && addedNode.className.includes('reference-container')) {
+					} else if (location.pathname == '/profile/offers' && addedNode.className.startsWith('container')) {
 						// item in the offers page when switching from another page
-						const itemCard = document.querySelector('item-card');
-						if (itemCard) {
-							await adjustItem(itemCard);
-						}
-					} else if (addedNode.className.toString().includes('offer-bubble')) {
-						// offer bubbles in offers page
-						adjustItemBubble(addedNode);
+						await adjustOfferContainer(addedNode);
 					} else if (location.pathname == '/profile/offers' && addedNode.className.toString().includes('mat-list-item')) {
 						// offer list in offers page
 						offerItemClickListener(addedNode);
@@ -538,6 +532,34 @@ function applyMutation() {
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
+}
+
+export async function adjustOfferContainer(container: Element) {
+	const offers = Array.from(document.querySelectorAll('.offers .offer'));
+	const offerIndex = offers.findIndex((el) => el.className.includes('is-selected'));
+	const offer = getSpecificCSFOffer(offerIndex);
+
+	const header = container.querySelector('.header');
+
+	const itemName = offer.contract.item.market_hash_name;
+	let itemStyle: ItemStyle = '';
+	if (offer.contract.item.phase) {
+		itemStyle = offer.contract.item.phase;
+	} else if (offer.contract.item.paint_index === 0) {
+		itemStyle = 'Vanilla';
+	}
+	const buff_id = await getBuffMapping(itemName);
+	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
+	const priceFromReference = extensionSettings['csf-pricereference'] == 1 ? priceListing : priceOrder;
+
+	const userCurrency = CSFloatHelpers.userCurrency();
+	const priceConverter = (price: number) => Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(price);
+
+	const buffContainer = `<a class="betterfloat-buff-a" target="_blank" href="${getBuffLink(buff_id)}" style="display: inline-flex; align-items: center; font-size: 15px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><div class="betterfloat-buffprice"><span style="color: orange;">Bid: ${priceConverter(priceOrder)}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask: ${priceConverter(priceListing)}</span></div></a>`;
+	header?.insertAdjacentHTML('beforeend', buffContainer);
+
+	const buffA = container.querySelector('.betterfloat-buff-a');
+	buffA?.setAttribute('data-betterfloat', JSON.stringify({ priceOrder, priceListing, userCurrency, itemName, priceFromReference }));
 }
 
 async function adjustBargainPopup(itemContainer: Element, container: Element) {
@@ -671,32 +693,6 @@ function adjustCurrencyChangeNotice(container: Element) {
 
 	container.children[0].appendChild(warningDiv);
 	container.children[0].appendChild(refreshContainer);
-}
-
-function adjustItemBubble(container: Element) {
-	const buffData: { buff_name: string; priceFromReference: number } = JSON.parse(document.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-	const pricing = priceData(container.querySelector('b')!.textContent!);
-	const difference = pricing.price - buffData.priceFromReference;
-	const isSeller = container.textContent?.includes('Seller') ?? false;
-
-	const buffContainer = document.createElement('div');
-	buffContainer.setAttribute('style', `width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-start' : 'flex-end'}; translate: 0 3px;`);
-	const buffImage = document.createElement('img');
-	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', 'height: 20px; margin-right: 5px');
-	buffContainer.appendChild(buffImage);
-
-	const buffPrice = document.createElement('span');
-	buffPrice.setAttribute('style', `color: ${difference < 0 ? 'greenyellow' : 'orange'};`);
-	buffPrice.textContent = `${difference > 0 ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference)}`;
-	buffContainer.appendChild(buffPrice);
-
-	const personDiv = container.querySelector('div > span');
-	if (isSeller && personDiv) {
-		personDiv.before(buffContainer);
-	} else {
-		container.querySelector('div')?.appendChild(buffContainer);
-	}
 }
 
 async function adjustSalesTableRow(container: Element) {
@@ -969,7 +965,7 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 		names[0] = names[0].replace('★ ', '');
 	}
 	// // TODO: Handle Vanilla
-	const schemaItem = Object.values((Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0]))['paints']).find(
+	const schemaItem = Object.values(Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0])['paints']).find(
 		(el: any) => el.name === names[1]
 	) as CSFloat.ItemSchema.SingleSchema;
 
@@ -1734,7 +1730,13 @@ async function addBuffPrice(
 	}
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
-	if (extensionSettings['csf-buffdifference'] && !container.querySelector('.betterfloat-sale-tag') && item.price != 0 && (priceFromReference > 0 || item.price < 0.06) && location.pathname !== '/sell') {
+	if (
+		extensionSettings['csf-buffdifference'] &&
+		!container.querySelector('.betterfloat-sale-tag') &&
+		item.price != 0 &&
+		(priceFromReference > 0 || item.price < 0.06) &&
+		location.pathname !== '/sell'
+	) {
 		const priceContainer = <HTMLElement>container.querySelector('.price-row');
 		const priceIcon = priceContainer.querySelector('app-price-icon');
 		const floatAppraiser = priceContainer.querySelector('.reference-widget-container');

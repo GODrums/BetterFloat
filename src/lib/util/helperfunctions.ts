@@ -1,7 +1,11 @@
 import Decimal from 'decimal.js';
 import type { Extension } from '../@typings/ExtensionTypes';
-import type { ItemStyle } from '../@typings/FloatTypes';
+import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
+
+export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
+    return `https://buff.163.com/goods/${buff_id}`;
+}
 
 export async function formFetch<T>(url: string, body: string): Promise<T> {
 	return fetch(url, {

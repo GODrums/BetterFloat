@@ -22,6 +22,8 @@ let csfloatPopupItem: CSFloat.ListingData | null = null;
 let csfloatHistoryGraph: CSFloat.HistoryGraphData[] = [];
 // csfloat: history sales for one item
 let csfloatHistorySales: CSFloat.HistorySalesData[] = [];
+// csfloat: offers timeline
+let csfloatOffers: CSFloat.Offer[] = [];
 let csfloatRates: { [key: string]: number } = {};
 let csfloatLocation: CSFloat.Location | null = null;
 // skinport: cached items from api
@@ -58,6 +60,14 @@ export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
             day: history.day,
         };
     });
+}
+
+export function cacheCSFOffers(data: CSFloat.Offer[]) {
+    if (csfloatOffers.length > 0) {
+        console.debug('[BetterFloat] Offers already cached, deleting offers: ', csfloatOffers);
+        csfloatHistorySales = [];
+    }
+    csfloatOffers = data;
 }
 
 export function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
@@ -205,6 +215,10 @@ export function getFirstSkbItem() {
     } else {
         return null;
     }
+}
+
+export function getSpecificCSFOffer(index: number) {
+    return csfloatOffers[index];
 }
 
 export function getSpecificSkbItem(auction_hash: string) {
