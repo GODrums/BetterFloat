@@ -682,10 +682,11 @@ function adjustCurrencyChangeNotice(container: Element) {
 	warningDiv.appendChild(warningText);
 
 	const refreshContainer = document.createElement('div');
-	refreshContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center;     margin-top: 15px;');
+	refreshContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center; margin-top: 15px;');
 	const refreshButton = document.createElement('button');
-	refreshButton.className = 'mat-raised-button mat-warn';
-	refreshButton.textContent = 'Refresh';
+	refreshButton.className = 'mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base';
+	refreshButton.setAttribute('color', 'primary');
+	refreshButton.innerHTML = `<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>`
 	refreshButton.onclick = () => {
 		location.reload();
 	};
@@ -1766,7 +1767,7 @@ async function addBuffPrice(
 		saleTag.style.backgroundColor = backgroundColor;
 		saleTag.setAttribute('data-betterfloat', String(difference));
 		// tags may get too long, so we may need to break them into two lines
-		const saleDiff = `<span>${differenceSymbol}${USDollar.format(Math.abs(difference))}</span>`;
+		const saleDiff = `<span>${differenceSymbol}${CurrencyFormatter.format(Math.abs(difference))}</span>`;
 		let saleTagInner = saleDiff;
 		if (extensionSettings['csf-buffdifferencepercent']) {
 			if (item.price > 999 && !isPopout) {
