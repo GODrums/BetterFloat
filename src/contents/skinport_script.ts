@@ -60,6 +60,7 @@ async function init() {
 		await applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
+	
 	dynamicUIHandler();
 }
 
@@ -839,21 +840,17 @@ async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 		return false;
 	}
 
-	const headers = {
-		authorization: extensionSettings['sp-ocoapikey'],
-	};
 	try {
-		const captchaAPIUrl = 'https://api.gamingtechinsider.com/api/v1/captcha/betterfloat/';
-		const response = await fetch(captchaAPIUrl + saleId, {
-			method: 'GET',
-			headers: {
-				...headers,
-				'Content-Type': 'application/json',
+		const response = await sendToBackground({
+			name: 'requestToken',
+			body: {
+				saleId: saleId,
+				oco_key: extensionSettings['sp-ocoapikey'],
 			},
 		});
-		const responseJson = await response.json();
+
 		if (response.status === 200) {
-			return responseJson.token;
+			return response.data.token;
 		} else if (response.status === 401) {
 			console.error('[BetterFloat] Checkout: Please check your API key for validity.');
 			showMessageBox(

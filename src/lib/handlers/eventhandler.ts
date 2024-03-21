@@ -44,15 +44,17 @@ export function activateHandler() {
 		}
 	});
 
-	document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async function (e) {
-		const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
-		// console.debug('[BetterFloat] Received data from websocket:', eventData);
-		if (eventData.eventType === 'listed') {
-			await handleListed(eventData.data);
-		} else if (eventData.eventType === 'sold') {
-			await handleSold(eventData.data);
-		}
-	});
+	if (location.host === 'skinport.com') {
+		document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async function (e) {
+			const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
+			// console.debug('[BetterFloat] Received data from websocket:', eventData);
+			if (eventData.eventType === 'listed') {
+				await handleListed(eventData.data);
+			} else if (eventData.eventType === 'sold') {
+				await handleSold(eventData.data);
+			}
+		});
+	}
 
 	urlHandler();
 

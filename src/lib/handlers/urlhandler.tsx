@@ -8,6 +8,7 @@ import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/pages/LiveFilter';
 import { waitForElement } from '~lib/util/helperfunctions';
+import CSFAutorefresh from '~lib/pages/Autorefresh';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -21,7 +22,9 @@ export function urlHandler() {
 				CSFloatHelpers.adjustCSFTitle(state);
 			} else if (state.site === 'skinport.com') {
 				createLiveLink();
-				filterDisplay();
+				if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
+					filterDisplay();
+				}
 			}
 		}
 	});
@@ -45,7 +48,7 @@ export function dynamicUIHandler() {
 			hash: location.hash,
 		};
 		await handleChange(state);
-	}, 500);
+	}, 1500);
 }
 
 async function handleChange(state: Extension.URLState) {
@@ -58,6 +61,18 @@ async function handleChange(state: Extension.URLState) {
 					await mountShadowRoot(<LiveFilter />, {
 						tagName: 'betterfloat-live-filter',
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
+						position: 'before'
+					});
+				}
+			});
+		}
+	} else if (state.site === 'csfloat.com') {
+		if (state.path === '/search' && state.search === '?sort_by=most_recent') {
+			waitForElement('.refresh > button', 100, 10).then(async (success) => {
+				if (success && !document.querySelector('betterfloat-autorefresh')) {
+					await mountShadowRoot(<CSFAutorefresh />, {
+						tagName: 'betterfloat-autorefresh',
+						parent: document.querySelector('.refresh'),
 						position: 'before'
 					});
 				}

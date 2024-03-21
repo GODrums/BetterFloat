@@ -76,6 +76,8 @@ const buttonVariants = cva(
           "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        light:
+          "bg-[#1e2025] text-white hover:bg-neutral-700 hover:text-neutral-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         invisible: "hover:bg-neutral-700 hover:text-accent-foreground",
@@ -278,6 +280,27 @@ const AvatarFallback = React.forwardRef<
   />
 ))
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+
+const Switch = React.forwardRef<
+  React.ElementRef<typeof SwitchPrimitives.Root>,
+  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+>(({ className, ...props }, ref) => (
+  <SwitchPrimitives.Root
+    className={cn(
+      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-muted-foreground data-[state=unchecked]:bg-primary",
+      className
+    )}
+    {...props}
+    ref={ref}
+  >
+    <SwitchPrimitives.Thumb
+      className={cn(
+        "pointer-events-none block h-4 w-4 rounded-full shadow-lg bg-muted ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+      )}
+    />
+  </SwitchPrimitives.Root>
+))
+Switch.displayName = SwitchPrimitives.Root.displayName
 
 const EnableSwitch = React.forwardRef<
   React.ElementRef<typeof SwitchPrimitives.Root>,
@@ -851,7 +874,8 @@ FloatingLabelInput.displayName = 'FloatingLabelInput';
 
 
 export {
-  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, Avatar, AvatarImage, AvatarFallback, Tabs, TabsList, TabsTrigger, TabsContent, Button, buttonVariants, Input, Label, EnableSwitch, Checkbox,
+  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, Avatar, AvatarImage, AvatarFallback, Tabs, TabsList, TabsTrigger, TabsContent, Button, buttonVariants, 
+  Switch, Input, Label, EnableSwitch, Checkbox,
   Select,
   SelectGroup,
   SelectValue,

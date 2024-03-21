@@ -47,6 +47,7 @@ import {
 import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
 import { calculateTime, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar, waitForElement } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -108,6 +109,8 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	dynamicUIHandler();
 }
 
 // required as mutation does not detect initial DOM
@@ -798,8 +801,6 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			await new Promise((r) => setTimeout(r, 1000));
 			const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 
-			console.log('[BetterFloat] Popout item:', location.pathname.split('/').pop(), container, itemPreview);
-
 			let apiItem = CSFloatHelpers.getApiItem(itemPreview);
 			// if this is the first launch, the item has to be newly retrieved by the api
 			if (!apiItem) {
@@ -1488,7 +1489,6 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 
 async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
 	// quality 12 is souvenir
-	console.log(cachedItem.item);
 	if (!cachedItem.item?.stickers || cachedItem.item?.quality === 12) {
 		return;
 	}

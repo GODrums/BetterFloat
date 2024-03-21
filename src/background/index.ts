@@ -2,8 +2,6 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage, type IStorage } from '~lib/util/storage';
 
-export {};
-
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
 	if (details.reason == 'install') {

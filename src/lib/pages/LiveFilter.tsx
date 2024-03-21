@@ -1,6 +1,6 @@
 import React, { useState, type SVGProps, useEffect } from 'react';
 import { Button, Label } from '~lib/components/Shadcn';
-import { MaterialSymbolsFilterAlt } from '~lib/components/Icons';
+import { MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
 import { cn } from '~lib/utils';
 import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -29,12 +29,6 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
             <label className='mr-1.5 text-sm' htmlFor={id}>{props.label}</label>
         </div>
     );
-}
-
-export function MaterialSymbolsCloseSmallOutlineRounded(props: SVGProps<SVGSVGElement>) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}><path fill="#888888" d="m12 13.4l-2.9 2.9q-.275.275-.7.275t-.7-.275q-.275-.275-.275-.7t.275-.7l2.9-2.9l-2.9-2.875q-.275-.275-.275-.7t.275-.7q.275-.275.7-.275t.7.275l2.9 2.9l2.875-2.9q.275-.275.7-.275t.7.275q.3.3.3.713t-.3.687L13.375 12l2.9 2.9q.275.275.275.7t-.275.7q-.3.3-.712.3t-.688-.3z"></path></svg>
-    )
 }
 
 
