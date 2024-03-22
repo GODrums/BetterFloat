@@ -1,4 +1,4 @@
-import React, { useState, type SVGProps, useEffect } from 'react';
+import React, { useState, type SVGProps } from 'react';
 import { Badge, Button, Switch } from '~lib/components/Shadcn';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~lib/components/Icons';
 import { cn } from '~lib/utils';

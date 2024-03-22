@@ -1,10 +1,10 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
-import type { ItemStyle } from '../lib/@typings/FloatTypes';
+import type { DopplerPhase, ItemStyle } from '../lib/@typings/FloatTypes';
 import type { Skinbid } from '../lib/@typings/SkinbidTypes';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../lib/util/helperfunctions';
 import type { PlasmoCSConfig } from 'plasmo';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 
@@ -409,18 +409,12 @@ async function addBuffPrice(
     }
 
     const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
+    const buffHref = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
     if (!container.querySelector('.betterfloat-buffprice')) {
-        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$');
+        generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
     }
-
-    const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
     const buffContainer = container.querySelector('.betterfloat-buff-container');
     if (buffContainer) {
-        (<HTMLElement>buffContainer).onclick = (e: Event) => {
-            e.stopPropagation();
-            e.preventDefault();
-            window.open(buffHref, '_blank');
-        };
         if (selector == itemSelectors.page) {
             const parentDiv = container.querySelector('.item-bids-time-info');
             if (parentDiv) {
@@ -481,9 +475,11 @@ async function addBuffPrice(
     };
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false) {
-    const buffContainer = document.createElement('div');
+function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, href: string, isItemPage = false) {
+    const buffContainer = document.createElement('a');
     buffContainer.className = 'betterfloat-buff-container';
+    buffContainer.target = '_blank';
+    buffContainer.href = href;
     buffContainer.style.display = 'flex';
     buffContainer.style.margin = '5px 0';
     buffContainer.style.cursor = 'pointer';

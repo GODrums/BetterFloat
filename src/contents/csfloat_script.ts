@@ -30,7 +30,7 @@ import {
 import { getAllSettings, getSetting, type IStorage } from '~lib/util/storage';
 
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
-import type { CSFloat, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
+import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import {
 	getBuffMapping,
@@ -47,7 +47,7 @@ import {
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar, waitForElement } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -1522,29 +1522,6 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	}
 }
 
-function priceData(text: string) {
-	const priceText = text.trim();
-	let price: string;
-	let currency = '$';
-	if (priceText.includes('Bids')) {
-		price = '0';
-	} else {
-		if (priceText.split(/\s/).length > 1) {
-			const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
-			price = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
-			currency = parts.filter((x) => isNaN(+x))[0];
-		} else {
-			const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
-			currency = priceText.substring(0, firstDigit);
-			price = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
-		}
-	}
-	return {
-		price: Number(price),
-		currency: currency,
-	};
-}
-
 const parsePrice = (textContent: string | undefined) => {
 	const regex = /([A-Za-z]+)\s+(\d+)/;
 	const priceText = textContent.trim().replace(regex, '$1$2').split(/\s/);
@@ -1652,15 +1629,16 @@ async function addBuffPrice(
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 	const isSellTab = location.pathname === '/sell';
 
-	let priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
-	const showBoth = extensionSettings['csf-floatappraiser'] || isPopout;
+	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
+	// const showBoth = extensionSettings['csf-floatappraiser'] || isPopout;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const isDoppler = item.name.includes('Doppler');
 
 	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = document.createElement('a');
 		buffContainer.setAttribute('class', 'betterfloat-buff-a');
-		const buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		const buff_url = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 		buffContainer.setAttribute('href', buff_url);
 		buffContainer.setAttribute('target', '_blank');
 		buffContainer.setAttribute('style', 'display: inline-flex; align-items: center; font-size: 15px;');
@@ -1716,7 +1694,7 @@ async function addBuffPrice(
 		}
 	} else if (container.querySelector('.betterfloat-buff-a')) {
 		const buffA = container.querySelector('.betterfloat-buff-a')!;
-		const buff_url = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		const buff_url = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 		buffA.setAttribute('href', buff_url);
 		const buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
 		buffPriceDiv.setAttribute(

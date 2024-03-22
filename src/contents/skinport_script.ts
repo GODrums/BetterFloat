@@ -4,12 +4,12 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import { sendToBackground } from '@plasmohq/messaging';
 
-import type { ItemStyle } from '~lib/@typings/FloatTypes';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
-import { delay, Euro, formFetch, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
+import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings, type IStorage, type SPFilter } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
@@ -281,8 +281,9 @@ async function adjustItemPage(container: Element) {
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
-	const buffid = await getBuffMapping(buff_name);
-	const buffLink = buffid > 0 ? `https://buff.163.com/goods/${buffid}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const buff_id = await getBuffMapping(buff_name);
+	const isDoppler = item.name.includes('Doppler');
+	const buffLink = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
@@ -1013,8 +1014,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
 		}
 	}
+	const isDoppler = item.name.includes('Doppler');
 
-	const buffHref = buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const buffHref = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {

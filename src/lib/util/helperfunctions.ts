@@ -2,9 +2,15 @@ import Decimal from 'decimal.js';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
+import { phaseMapping } from './patterns';
 
 export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
-    return `https://buff.163.com/goods/${buff_id}`;
+    const baseUrl = `https://buff.163.com/goods/${buff_id}`;
+    if (phase) {
+        return `${baseUrl}#tag_ids=${phaseMapping[buff_id][phase]}`;
+    } else {
+        return baseUrl;
+    }
 }
 
 export async function formFetch<T>(url: string, body: string): Promise<T> {

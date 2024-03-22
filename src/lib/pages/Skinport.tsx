@@ -1,6 +1,6 @@
 import { ScrollArea, TabsContent } from "../components/Shadcn";
 import { SettingsCard } from "~lib/components/SettingsCard";
-import { IcOutlineDiscount, LucideMousePointerSquare, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from "~lib/components/Icons";
+import { IcOutlineDiscount, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from "~lib/components/Icons";
 import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
