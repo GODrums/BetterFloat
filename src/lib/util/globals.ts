@@ -13,12 +13,14 @@ import iconOverprintMixed from "data-base64:/assets/patterns/overprint-mixed.svg
 import iconOverprintPolygon from "data-base64:/assets/patterns/overprint-polygon.svg";
 import iconGemCyan from "data-base64:/assets/patterns/gem-cyan.svg";
 import iconPhoenix from "data-base64:/assets/patterns/phoenix-icon.svg";
+import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
 
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
 
 export const ICON_BUFF = iconBuff;
+export const ICON_STEAM = iconSteam;
 export const ICON_CSFLOAT = iconCsfloat;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;

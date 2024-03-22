@@ -1,7 +1,7 @@
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import iconChevronUp from "data-base64:/assets/icons/chevron-up-solid.svg";
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { ICON_BUFF } from '~lib/util/globals';
+import { ICON_BUFF, ICON_STEAM } from '~lib/util/globals';
 import Decimal from 'decimal.js';
 import { adjustOfferContainer } from '~contents/csfloat_script';
 
@@ -34,9 +34,20 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 	    const difference = new Decimal(offer.price).div(100).minus(buff_data.priceFromReference);
 	    const isSeller = bubble.className.includes('from-other-party');
 
-		const buffHTML = `<div class="betterfloat-bubble-buff" style="width: 80%; display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'}; translate: 0 4px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><span style="color: ${difference.isPositive() ? 'greenyellow' : 'orange'};">${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}</span></div>`;
+        const subText = bubble.querySelector<HTMLElement>('.sub-text');
+        if (subText) {
+            subText.setAttribute('style', 'display: flex; align-items: center; width: 100%; justify-content: space-between;');
+            const steamHTML = `<a target="_blank" href="https://steamcommunity.com/profiles/${offer.buyer_id}" style="display: flex; align-items: center;"><img src="${ICON_STEAM}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"></a>`;
+            subText.innerHTML = `<div style="display: inline-flex; align-items: center;">${subText.textContent}</div>`
+            if (isSeller) {
+                subText.firstElementChild.insertAdjacentHTML('afterbegin', steamHTML);
+            }
 
-        bubble.querySelector('.sub-text')?.insertAdjacentHTML(isSeller ? 'beforeend' : 'afterbegin', buffHTML);
+            const buffHTML = `<div class="betterfloat-bubble-buff" style="display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'};"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><span style="color: ${difference.isPositive() ? 'greenyellow' : 'orange'};">${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}</span></div>`;
+            subText.insertAdjacentHTML(isSeller ? 'beforeend' : 'afterbegin', buffHTML);
+        }
+
+
 	}
 }
 

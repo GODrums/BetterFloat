@@ -5,7 +5,6 @@ import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-so
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
 import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
-import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
@@ -26,6 +25,7 @@ import {
 	ICON_OVERPRINT_POLYGON,
 	ICON_PHOENIX,
 	ICON_SPIDER_WEB,
+	ICON_STEAM,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting, type IStorage } from '~lib/util/storage';
 
@@ -895,7 +895,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	// inventory link if seller stall is public
 	if (listing.seller.stall_public) {
 		quickLinks.push({
-			icon: iconSteam,
+			icon: ICON_STEAM,
 			tooltip: "Show in Seller's Inventory",
 			link: 'https://steamcommunity.com/profiles/' + listing.seller.steam_id + '/inventory/#730_2_' + listing.item.asset_id,
 		});

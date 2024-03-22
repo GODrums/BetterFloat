@@ -418,7 +418,6 @@ async function addBuffPrice(
         if (selector == itemSelectors.page) {
             const parentDiv = container.querySelector('.item-bids-time-info');
             if (parentDiv) {
-                // buffContainer.parentElement?.removeChild(buffContainer);
                 (<HTMLElement>parentDiv).style.marginTop = '0';
                 parentDiv.before(buffContainer);
             }
