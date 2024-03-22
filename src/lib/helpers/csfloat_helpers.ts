@@ -37,7 +37,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
         const subText = bubble.querySelector<HTMLElement>('.sub-text');
         if (subText) {
             subText.setAttribute('style', 'display: flex; align-items: center; width: 100%; justify-content: space-between;');
-            const steamHTML = `<a target="_blank" href="https://steamcommunity.com/profiles/${offer.buyer_id}" style="display: flex; align-items: center;"><img src="${ICON_STEAM}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"></a>`;
+            const steamHTML = `<a target="_blank" href="https://steamcommunity.com/profiles/${offer.buyer_id}" style="display: flex; align-items: center;"><img src="${ICON_STEAM}" style="height: 20px; margin-right: 5px;"></a>`;
             subText.innerHTML = `<div style="display: inline-flex; align-items: center;">${subText.textContent}</div>`
             if (isSeller) {
                 subText.firstElementChild.insertAdjacentHTML('afterbegin', steamHTML);

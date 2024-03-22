@@ -7,9 +7,10 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/pages/LiveFilter';
-import { waitForElement } from '~lib/util/helperfunctions';
+import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import CSFAutorefresh from '~lib/pages/Autorefresh';
 import { getSetting } from '~lib/util/storage';
+import CSFMenuControl from '~lib/inline/MenuControl';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -68,16 +69,32 @@ async function handleChange(state: Extension.URLState) {
 			});
 		}
 	} else if (state.site === 'csfloat.com') {
+		const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
+		if (sideMenu?.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
+			await mountShadowRoot(<CSFMenuControl />, {
+				tagName: 'betterfloat-menucontrol',
+				parent: document.querySelector('.search-bar .drill-down'),
+				position: 'before'
+			});
+		}
+
 		if (state.path === '/search' && state.search === '?sort_by=most_recent') {
 			const csfAutorefresh = await getSetting('csf-autorefresh');
 			if (csfAutorefresh) {
 				waitForElement('.refresh > button', 100, 10).then(async (success) => {
 					if (success && !document.querySelector('betterfloat-autorefresh')) {
-						await mountShadowRoot(<CSFAutorefresh />, {
+						const root = await mountShadowRoot(<CSFAutorefresh />, {
 							tagName: 'betterfloat-autorefresh',
 							parent: document.querySelector('.refresh'),
 							position: 'before'
 						});
+						// unmount on url change
+						const interval = createUrlListener(() => {
+							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent.includes('Newest')){
+								root.unmount();
+								clearInterval(interval);
+							}
+						}, 1000);
 					}
 				});
 			}
@@ -117,4 +134,6 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 	parentElement.addEventListener('remove', () => {
 		root.unmount();
 	});
+
+	return root;
 }

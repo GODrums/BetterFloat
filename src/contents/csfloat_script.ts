@@ -122,21 +122,7 @@ async function firstLaunch() {
 		await adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ? POPOUT_ITEM.PAGE : POPOUT_ITEM.NONE);
 	}
 
-	if (location.pathname == '/profile/offers') {
-		// const matActionList = document.querySelector('.mat-action-list')?.children;
-		// if (!matActionList) return;
-		// for (let i = 0; i < matActionList.length; i++) {
-		// 	const child = matActionList[i];
-		// 	if (child?.className.includes('mat-list-item')) {
-		// 		offerItemClickListener(child);
-		// 	}
-		// }
-		// await waitForElement('.betterfloat-buffprice');
-		// const offerBubbles = document.querySelectorAll('.offer-bubble');
-		// for (let i = 0; i < offerBubbles.length; i++) {
-		// 	adjustItemBubble(offerBubbles[i]);
-		// }
-	} else if (location.pathname.includes('/stall/')) {
+	if (location.pathname.includes('/stall/')) {
 		// await customStall(location.pathname.split('/').pop() ?? '');
 	} else if (location.pathname === '/checkout') {
 		adjustCheckout(document.querySelector('app-checkout')!);
@@ -574,7 +560,7 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	const buff_data = JSON.parse(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
 	const stickerData = JSON.parse(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
 
-	console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
+	// console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
 	if (buff_data.priceFromReference > 0) {
 		const currency = getSymbolFromCurrency(buff_data.userCurrency);
 		const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
@@ -790,8 +776,8 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		if (extensionSettings['csf-removeclustering']) {
 			removeClustering(container);
 		}
-		await patternDetections(container, cachedItem, false);
 		addBargainListener(container);
+		patternDetections(container, cachedItem, false);
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
 		setTimeout(async () => {
@@ -801,10 +787,10 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			let apiItem = CSFloatHelpers.getApiItem(itemPreview);
 			// if this is the first launch, the item has to be newly retrieved by the api
 			if (!apiItem) {
-				apiItem = popout === POPOUT_ITEM.PAGE ? getCSFPopupItem() : JSON.parse(container.getAttribute('data-betterfloat') ?? '{}');
+				apiItem = popout === POPOUT_ITEM.PAGE ? getCSFPopupItem() : JSON.parse(container.getAttribute('data-betterfloat'));
 			}
 
-			if (apiItem) {
+			if (apiItem?.id) {
 				console.log('[BetterFloat] Popout item data:', apiItem);
 				await addStickerInfo(container, apiItem, priceResultUSD);
 				addListingAge(container, apiItem);
