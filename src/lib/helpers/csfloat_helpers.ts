@@ -186,7 +186,7 @@ export namespace CSFloatHelpers {
         topButton.className = 'betterfloat-top-button';
         topButton.setAttribute(
             'style',
-            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #15171C; border: none; outline: none; cursor: pointer; display: none; transition: visibility 3s, opacity 2s linear;',
+            'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: #1b1d2480; border: none; outline: none; cursor: pointer; display: none; backdrop-filter: blur(10px); transition: visibility 3s, opacity 2s linear;',
         );
         const topButtonIcon = document.createElement('img');
         topButtonIcon.setAttribute('src', iconChevronUp);

@@ -25,7 +25,13 @@ export async function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// return if element has been successfully waited for, else limit has been reached
+/**
+ * Wait of an element to appear in the DOM
+ * @param selector css selector for the element
+ * @param interval time in ms between each check
+ * @param maxTries amount of tries before returning false
+ * @returns true if element was found, false if not
+ */
 export async function waitForElement(selector: string, interval = 200, maxTries = 10) {
     let tries = 0;
     while (!document.querySelector(selector) && tries < maxTries) {

@@ -113,7 +113,7 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 		css: {
 			url: globalStyle,
 		},
-		isolateEvents: false,
+		isolateEvents: true,
 	});
 
 	// Mount our UI inside the isolated element

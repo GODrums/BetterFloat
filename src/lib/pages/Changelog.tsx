@@ -17,6 +17,14 @@ export const Changelogs = () => {
         <TabsContent value="changelog" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+                <SingleChangelog version="v2.2.0">
+                    <li>CSFloat - New 'Hide Side Menu'-button</li>
+                    <li>CSFloat - Added Steam profile links to incoming offers</li>
+                </SingleChangelog>
+                <SingleChangelog version="v2.1.3">
+                    <li>Reintroduction of the auto-refresh feature on CSFloat with redesigned and simplified UI.</li>
+                    <li>Fix of BetterFloat's enhancements on CSF's offers page.</li>
+                </SingleChangelog>
                 <SingleChangelog version="v2.1.0">
                     <li>Reworked CSFloat integration, adapted it to the new design and adjusted some settings accordingly.</li>
                     <li>CSFloat's bargain popup now also enhanced by BetterFloat. Including Buff prices & %SP for both the minimum bid as well as your custom bid.</li>

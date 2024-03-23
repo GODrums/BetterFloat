@@ -567,9 +567,9 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 		const minPercentage = minOffer.greaterThan(0) && stickerData.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
 		const showSP = stickerData.priceSum > 0;
 
-		const spStyle = 'border: 1px solid grey; border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 15px;';
-		const diffStyle = `font-size: 15px; padding: 2px 5px; border-radius: 7px; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
+		const spStyle = 'border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 14px;';
+		const diffStyle = `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
+		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="border: 1px solid grey; ${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
 
 		const minContainer = container.querySelector('.minimum-offer');
 		if (minContainer) {
@@ -605,7 +605,8 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 					diffElement.style.backgroundColor = `${diff.lessThan(100) ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
 				}
 				if (spElement) {
-					spElement.textContent = `${percentage.lessThan(0) ? '0' : percentage.toNumber()} %SP`;
+					spElement.textContent = `${percentage.lessThan(0) ? '0' : percentage.toNumber()}% SP`;
+					spElement.style.border = '1px solid grey';
 				}
 			}
 		};
@@ -805,14 +806,15 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 			// last as it has to wait for history api data
 			if (popout === POPOUT_ITEM.PAGE) {
-				addItemHistory(container.parentElement!.parentElement!);
 				addBargainListener(container);
+				addItemHistory(container?.parentElement?.parentElement);
 			}
 		}, 1500);
 	}
 }
 
-function addBargainListener(container: Element) {
+function addBargainListener(container: Element | null) {
+	if (!container) return;
 	const bargainBtn = container.querySelector('.bargain-btn > button');
 	if (bargainBtn) {
 		bargainBtn.addEventListener('click', () => {
@@ -1377,7 +1379,8 @@ function adjustExistingSP(container: Element) {
 	(<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
 }
 
-function addItemHistory(container: Element) {
+function addItemHistory(container: Element | null) {
+	if (!container) return;
 	const itemHistory = calculateHistoryValues(getWholeHistory());
 	const headerContainer = <HTMLElement>container.querySelector('#header');
 	if (!headerContainer || !itemHistory) {
@@ -1445,10 +1448,10 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 	listingAge.style.alignItems = 'center';
 	listingAgeText.style.display = 'inline';
 	listingAgeText.style.margin = '0 5px 0 0';
-	listingAgeText.style.fontSize = '15px';
+	listingAgeText.style.fontSize = '13px';
 	listingAgeText.style.color = '#9EA7B1';
 	listingIcon.setAttribute('src', ICON_CLOCK);
-	listingIcon.style.height = '20px';
+	listingIcon.style.height = '16px';
 	listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
 
 	listingAgeText.textContent = calculateTime(cachedItem.created_at);
