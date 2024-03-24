@@ -6,9 +6,9 @@ import { createRoot } from "react-dom/client";
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import LiveFilter from '~lib/pages/LiveFilter';
+import LiveFilter from '~lib/inline/LiveFilter';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
-import CSFAutorefresh from '~lib/pages/Autorefresh';
+import CSFAutorefresh from '~lib/inline/Autorefresh';
 import { getSetting } from '~lib/util/storage';
 import CSFMenuControl from '~lib/inline/MenuControl';
 
@@ -71,11 +71,15 @@ async function handleChange(state: Extension.URLState) {
 	} else if (state.site === 'csfloat.com') {
 		const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
 		if (sideMenu?.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
-			await mountShadowRoot(<CSFMenuControl />, {
+			const root = await mountShadowRoot(<CSFMenuControl />, {
 				tagName: 'betterfloat-menucontrol',
 				parent: document.querySelector('.search-bar .drill-down'),
 				position: 'before'
 			});
+			if (Array.from(document.querySelectorAll('betterfloat-menucontrol')).length > 1) {
+				root.unmount();
+			}
+
 		}
 
 		if (state.path === '/search' && state.search === '?sort_by=most_recent') {
