@@ -59,7 +59,7 @@
 		"cs-tierlist": "^1.2.1",
 		"csgo-fade-percentage-calculator": "^1.1.4",
 		"currency-symbol-map": "^5.1.0",
-		"daisyui": "^4.7.3",
+		"daisyui": "^4.8.0",
 		"decimal.js": "^10.4.3",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",

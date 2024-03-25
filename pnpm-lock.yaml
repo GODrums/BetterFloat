@@ -131,8 +131,8 @@ devDependencies:
     specifier: ^5.1.0
     version: 5.1.0
   daisyui:
-    specifier: ^4.7.3
-    version: 4.7.3(postcss@8.4.38)
+    specifier: ^4.8.0
+    version: 4.8.0(postcss@8.4.38)
   decimal.js:
     specifier: ^10.4.3
     version: 10.4.3
@@ -4759,8 +4759,8 @@ packages:
     resolution: {integrity: sha512-LO/lzYRw134LMDVnLyAf1dHE5tyO6axEFkR3TXjQIOmMkAM9YL6QsiUwuXzZAmFnuDJcs4hayOgyIYtViXFrLw==}
     dev: true
 
-  /daisyui@4.7.3(postcss@8.4.38):
-    resolution: {integrity: sha512-R8jUpBMAUm4rSyxzGa9QqFdJTkzREtb1QahXdDoOfElGiF4VbSuu5bfqQoOro1kkSagPy+aTKu5WtSSXmH3u3g==}
+  /daisyui@4.8.0(postcss@8.4.38):
+    resolution: {integrity: sha512-SXy6MVzhqaa1vPZIdo5K/QAyRaQ4dbRHG+oXy7BFqJnZlwOB6bGkQRqqvClBUY2wCyiiyhk4gY5Ngi1m2JRIEA==}
     engines: {node: '>=16.9.0'}
     dependencies:
       css-selector-tokenizer: 0.8.0
