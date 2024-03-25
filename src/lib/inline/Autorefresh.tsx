@@ -60,14 +60,14 @@ const CSFAutorefresh: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (event?.target?.tagName !== 'BETTERFLOAT-AUTOREFRESH') {
-                onClickOutside?.();
+                onClickOutside();
             }
         };
         document.addEventListener('click', handleClickOutside, true);
         return () => {
             document.removeEventListener('click', handleClickOutside, true);
         };
-    }, [onClickOutside]);
+    });
 
     return (
         <div className='bg-transparent' style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>

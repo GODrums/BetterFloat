@@ -194,8 +194,8 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
     if (extensionSettings['skb-listingage'] || selector.self == 'page') {
         addListingAge(container, cachedItem, selector.self);
     }
-    if ((extensionSettings['skb-stickerprices'] || selector.self == 'page') && (<any>priceResult)?.price_difference) {
-        await addStickerInfo(container, cachedItem, selector, (<any>priceResult).price_difference);
+    if ((extensionSettings['skb-stickerprices'] || selector.self == 'page') && priceResult && priceResult.price_difference) {
+        await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
     }
     if (selector.self == 'page') {
         await caseHardenedDetection(container, cachedItem);

@@ -78,6 +78,7 @@ async function handleChange(state: Extension.URLState) {
 			});
 			if (Array.from(document.querySelectorAll('betterfloat-menucontrol')).length > 1) {
 				root.unmount();
+				document.querySelector('betterfloat-menucontrol')?.remove();
 			}
 
 		}
@@ -96,6 +97,7 @@ async function handleChange(state: Extension.URLState) {
 						const interval = createUrlListener(() => {
 							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent.includes('Newest')){
 								root.unmount();
+								document.querySelector('betterfloat-autorefresh')?.remove();
 								clearInterval(interval);
 							}
 						}, 1000);
@@ -121,8 +123,10 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 	});
 
 	// Mount our UI inside the isolated element
-	const root = createRoot(isolatedElement);
+	const domRoot = document.createElement('div');
+	const root = createRoot(domRoot);
 	root.render(component);
+	isolatedElement.appendChild(domRoot);
 
 	const parent = options.parent || document.getElementById('root') || document.body;
 	// Mount the UI to the DOM

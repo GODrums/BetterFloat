@@ -42,10 +42,6 @@ const Label = React.forwardRef<
 ))
 Label.displayName = LabelPrimitive.Root.displayName
 
-
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
-
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (

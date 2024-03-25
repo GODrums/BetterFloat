@@ -673,7 +673,7 @@ function adjustCurrencyChangeNotice(container: Element) {
 	const refreshButton = document.createElement('button');
 	refreshButton.className = 'mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base';
 	refreshButton.setAttribute('color', 'primary');
-	refreshButton.innerHTML = `<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>`
+	refreshButton.innerHTML = '<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>';
 	refreshButton.onclick = () => {
 		location.reload();
 	};
@@ -955,7 +955,7 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 	}
 	// // TODO: Handle Vanilla
 	const schemaItem = Object.values(Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0])['paints']).find(
-		(el: any) => el.name === names[1]
+		(el) => el.name === names[1]
 	) as CSFloat.ItemSchema.SingleSchema;
 
 	const element = container.querySelector<HTMLElement>('div.wear');
@@ -1293,7 +1293,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 						link.title = 'Show CSFloat font screenshot';
 					}
 					link.target = '_blank';
-					const linkImage = `<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>`;
+					const linkImage = '<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>';
 					link.innerHTML = linkImage;
 				}
 				linkCell.appendChild(link);
