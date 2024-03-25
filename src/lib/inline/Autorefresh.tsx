@@ -60,7 +60,7 @@ const CSFAutorefresh: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (event?.target?.tagName !== 'BETTERFLOAT-AUTOREFRESH') {
-                onClickOutside && onClickOutside();
+                onClickOutside?.();
             }
         };
         document.addEventListener('click', handleClickOutside, true);
