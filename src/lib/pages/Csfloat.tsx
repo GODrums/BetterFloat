@@ -45,7 +45,7 @@ export const CSFloatSettings = () => {
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox
-                                id="csf-floatappraiser" text="Show FloatAppraiser" icon={<MaterialSymbolsTravelExplore className="h-6 w-6" />} />
+                                id="csf-floatappraiser" text="Show FloatAppraiser" icon={<MaterialSymbolsTravelExplore className="h-6 w-6" />} disabled={true} />
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox

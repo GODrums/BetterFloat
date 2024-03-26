@@ -3,11 +3,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./Shad
 export const SettingsTooltip = ({
     text,
     children,
-    open
+    open,
+    className,
 }: {
     text: string;
     children: React.ReactNode;
     open?: boolean;
+    className?: string;
 }) => {
     return (
         <TooltipProvider delayDuration={300}>
@@ -15,7 +17,7 @@ export const SettingsTooltip = ({
                 <TooltipTrigger>
                     {children}
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className={className}>
                     <p>{text}</p>
                 </TooltipContent>
             </Tooltip>
