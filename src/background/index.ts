@@ -99,6 +99,25 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
+chrome.runtime.onMessageExternal.addListener(
+	function(request, sender, sendResponse) {
+		console.log('Received message from external extension', request, sender);
+
+		if (sender.origin !== 'https://betterfloat.rums.dev') {
+			sendResponse({ success: false, message: 'Invalid origin' });
+			return;
+		}
+
+		const newSettings = request.newSettings;
+
+		console.log('[BetterFloat] Received new settings: ', newSettings);
+		for (const key in newSettings) {
+			ExtensionStorage.sync.set(key, newSettings[key]);
+		}
+		sendResponse({ success: true });
+	}
+);
+
 if (process.env.NODE_ENV === 'development') {
 	const apikey = process.env.PLASMO_PUBLIC_OCO_KEY;
 	if (apikey !== undefined) {
