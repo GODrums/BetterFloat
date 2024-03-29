@@ -20,6 +20,7 @@ export const Changelogs = () => {
                 <SingleChangelog version="v2.2.0">
                     <li>CSFloat - New 'Hide Side Menu'-button</li>
                     <li>CSFloat - Added Steam profile links to incoming offers</li>
+                    <li>Fixed a bug where the 0.45-0.5 float range for BS skins has not been highlighted by the float coloring setting.</li>
                 </SingleChangelog>
                 <SingleChangelog version="v2.1.3">
                     <li>Reintroduction of the auto-refresh feature on CSFloat with redesigned and simplified UI.</li>
