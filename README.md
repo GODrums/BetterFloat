@@ -7,10 +7,9 @@
 
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/version/GODrums/BetterFloat)
 [![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/GODrums/betterfloat)
 ![GitHub repo size](https://img.shields.io/github/repo-size/GODrums/betterfloat)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-CC_BY_NC_SA_4.0-orange)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/betterfloat/bphfhlfhnohppnleaehnlfigkkccpglk">
@@ -93,6 +92,10 @@ In some cases, Firefox does not grant extensions the necessary permissions autom
 <img align="center" src="https://api.iconify.design/logos:eslint.svg?color=%23888888" title="ESLint" height="50">
 <img align="center" src="https://api.iconify.design/logos:prettier.svg?color=%23888888" title="Prettier" height="50">
 </div>
+
+### Limitations of self-building
+
+Due to the nature of the extension, some features are not available when building the extension yourself. This includes the pricing service and the OCO-feature. If you still want to use these features, please set up your own servers for it or use the official extension from the Chrome Web Store or Mozilla Add-on Store.
 
 ### Installation
 

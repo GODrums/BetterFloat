@@ -62,6 +62,7 @@ const LiveFilter: React.FC = () => {
         setPriceHigh(DEFAULT_FILTER.priceHigh);
         setTypes(DEFAULT_FILTER.types);
         setNewOnly(DEFAULT_FILTER.new);
+        localStorage.setItem('spFilter', JSON.stringify(DEFAULT_FILTER));
     }
 
     const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
