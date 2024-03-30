@@ -150,10 +150,18 @@ export namespace BlueGem {
         screenshot: string;
     };
     export type PastSale = {
+        blue_percent: {
+            backside: number;
+            playside: number;
+            double_sided: number;
+        }
         csbluegem_screenshot: number;
         csfloat: string; // csfloat db link
         date: string;
         float: number;
+        inspect?: string; // only for Buff
+        inspect_backside?: string; // only for CSFloat
+        inspect_playside?: string; // only for CSFloat
         isStattrak: boolean;
         origin: 'CSFloat' | 'BroSkins' | 'Buff';
         pattern: number;

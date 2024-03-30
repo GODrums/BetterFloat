@@ -476,7 +476,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 					ICON_BAN +
 					'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
 				: 'href="' +
-					(!isNaN(Number(sale.url)) ? 'https://s.csgofloat.com/' + sale.url + '-front.png' : sale.url) +
+					(sale.inspect ?? sale.inspect_playside) +
 					'" target="_blank"><img src="' +
 					ICON_CAMERA +
 					'" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'

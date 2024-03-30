@@ -1285,11 +1285,11 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 					linkImage.setAttribute('style', 'height: 24px;');
 					link.appendChild(linkImage);
 				} else {
-					if (isNaN(Number(sale.url))) {
-						link.href = sale.url;
+					if (sale.inspect) {
+						link.href = sale.inspect;
 						link.title = 'Show Buff screenshot';
-					} else {
-						link.href = 'https://s.csgofloat.com/' + sale.url + '-front.png';
+					} else if (sale.inspect_playside) {
+						link.href = sale.inspect_playside;
 						link.title = 'Show CSFloat font screenshot';
 					}
 					link.target = '_blank';
@@ -1298,9 +1298,9 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 				}
 				linkCell.appendChild(link);
 
-				if (!isNaN(Number(sale.url))) {
+				if (sale.inspect_backside) {
 					const backLink = document.createElement('a');
-					backLink.href = 'https://s.csgofloat.com/' + sale.url + '-back.png';
+					backLink.href = sale.inspect_backside;
 					backLink.target = '_blank';
 					backLink.title = 'Show CSFloat back screenshot';
 					const backImage = document.createElement('img');
