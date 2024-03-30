@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Label } from '~lib/components/Shadcn';
-import { MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
+import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
 import { cn } from '~lib/utils';
 import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -54,6 +54,14 @@ const LiveFilter: React.FC = () => {
         spFilter.new = newOnly;
         localStorage.setItem('spFilter', JSON.stringify(spFilter));
         setOpen(false);
+    }
+
+    const handleReset = () => {
+        setName(DEFAULT_FILTER.name);
+        setPriceLow(DEFAULT_FILTER.priceLow);
+        setPriceHigh(DEFAULT_FILTER.priceHigh);
+        setTypes(DEFAULT_FILTER.types);
+        setNewOnly(DEFAULT_FILTER.new);
     }
 
     const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
@@ -132,7 +140,12 @@ const LiveFilter: React.FC = () => {
                                 </div>
                             </div>
                         </div>
-                        <Button className='absolute bottom-5 right-7 font-semibold bg-[#4db5da]' onClick={handleSave}>SAVE</Button>
+                        <div className='absolute bottom-5 right-7 flex items-center gap-4'>
+                            <Button variant='invisible' size='icon' className={cn('hover:bg-neutral-700', filterCount === 0 && 'hidden')} onClick={handleReset}>
+                                <CarbonFilterReset className='h-7 w-7 text-gray-600' />
+                            </Button>
+                            <Button className='font-semibold bg-[#4db5da]' onClick={handleSave}>SAVE</Button>
+                        </div>
                     </motion.div>
                 }
             </AnimatePresence>
