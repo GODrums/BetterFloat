@@ -12,11 +12,10 @@
   ],
   "compilerOptions": {
     "paths": {
-      "~*": [
-        "./src/*"
-      ],
-      "@/*": ["./src/*"]
+      "~*": ["./src/*"],
+      "@/*": ["./*"]
     },
-    "baseUrl": "."
+    "baseUrl": ".",
+    "resolveJsonModule": true
   }
 }

@@ -4,12 +4,12 @@ import type { CSFloat } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
-
+import buffIds from '@/assets/buffids.json';
 // most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
 
 // maps buff_name to buff_id
-let buffMapping: { [name: string]: number } = {};
+let buffMapping: { [name: string]: number } = buffIds;
 // maps buff_name to prices and more - custom mapping
 let priceMapping: Extension.CustomPriceMapping = {};
 // crimson web mapping
@@ -351,7 +351,7 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 
 export async function getBuffMapping(name: string) {
     if (Object.keys(buffMapping).length == 0) {
-        await loadBuffMapping();
+        console.error('[BetterFloat] Buff mapping not loaded yet');
     }
     if (buffMapping[name]) {
         return buffMapping[name];
@@ -412,33 +412,6 @@ export async function loadCrimsonWebMapping() {
                 console.error(err);
                 resolve(false);
             }
-        });
-    }
-    return true;
-}
-
-// get mapping from rums.dev
-export async function loadBuffMapping() {
-    if (Object.keys(buffMapping).length == 0) {
-        // load from local storage first to avoid unnecessary requests
-        console.debug('[BetterFloat] Attempting to load buff mapping from local storage');
-        await new Promise<boolean>((resolve) => {
-            chrome.storage.local.get(['buffMapping']).then(async (data) => {
-                if (data.buffMapping) {
-                    buffMapping = JSON.parse(data.buffMapping);
-                } else {
-                    console.debug('[BetterFloat] No mapping found in local storage. Fetching new one from rums.dev ...');
-                    await fetch('https://api.rums.dev/file/buff_name_to_id')
-                        .then((response) => response.json())
-                        .then((data) => {
-                            buffMapping = data;
-                            chrome.storage.local.set({ buffMapping: JSON.stringify(data) });
-                            console.debug('[BetterFloat] Buff mapping successfully loaded from rums.dev');
-                        })
-                        .catch((err) => console.error(err));
-                }
-                resolve(true);
-            });
         });
     }
     return true;

@@ -43,7 +43,6 @@ import {
 	getSpecificCSFOffer,
 	getStallData,
 	getWholeHistory,
-	loadBuffMapping,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
@@ -84,7 +83,6 @@ async function init() {
 
 	console.group('[BetterFloat] Loading mappings...');
 	await loadMapping();
-	await loadBuffMapping();
 	console.groupEnd();
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 

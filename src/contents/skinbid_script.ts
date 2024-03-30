@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import type { DopplerPhase, ItemStyle } from '../lib/@typings/FloatTypes';
 import type { Skinbid } from '../lib/@typings/SkinbidTypes';
 import { activateHandler } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '../lib/util/helperfunctions';
 import type { PlasmoCSConfig } from 'plasmo';
@@ -38,7 +38,6 @@ async function init() {
 
     console.group('[BetterFloat] Loading mappings...');
     await loadMapping();
-    await loadBuffMapping();
     console.groupEnd();
 
     console.timeEnd('[BetterFloat] Skinbid init timer');

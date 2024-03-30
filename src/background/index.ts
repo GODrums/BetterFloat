@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 		// await chrome.storage.sync.set(DEFAULT_SETTINGS);
+        chrome.storage.local.remove('buffMapping');
 
 		const data = await ExtensionStorage.sync.getAll();
 		if (!data) {

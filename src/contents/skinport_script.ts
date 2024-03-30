@@ -14,7 +14,7 @@ import { DEFAULT_FILTER, getAllSettings, type IStorage, type SPFilter } from '~l
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 
 import { activateHandler } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadBuffMapping, loadMapping } from '../lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 
 export const config: PlasmoCSConfig = {
@@ -47,7 +47,6 @@ async function init() {
 
 	console.group('[BetterFloat] Loading mappings...');
 	await loadMapping();
-	await loadBuffMapping();
 	console.groupEnd();
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
