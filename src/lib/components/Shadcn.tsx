@@ -23,7 +23,7 @@ import {
   DividerHorizontalIcon
 } from "@radix-ui/react-icons"
 
-import { cn } from "@/lib/utils"
+import { cn } from "~lib/utils"
 
 const labelVariants = cva(
   "text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
