@@ -24,7 +24,6 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
 
     return (
         <div className={cn('flex items-center pb-1 pl-1.5 gap-0.5', props.className)}>
-            {/* <Checkbox id={id} checked={checked} onCheckedChange={setChecked} /> */}
             <input type="checkbox" id={id} checked={checked} onChange={handleChecked} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
             <label className='mr-1.5 text-sm' htmlFor={id}>{props.label}</label>
         </div>
@@ -129,11 +128,11 @@ const LiveFilter: React.FC = () => {
                             <div className='flex flex-col gap-1 items-center'>
                                 <Label htmlFor='' className='font-semibold my-1.5'>PRICE</Label>
                                 <input type="number" min="0" max="999999" className="w-[100px] h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" value={priceLow} onChange={(e) => {
-                                    setPriceLow(parseInt(e.target.value));
+                                    setPriceLow(parseFloat(e.target.value));
                                 }} />
                                 <span className='text-white'>-</span>
                                 <input type="number" min="0" max="999999" className="w-[100px] h-9 pb-1 pl-3.5 mb-2 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" value={priceHigh} onChange={(e) => {
-                                    setPriceHigh(parseInt(e.target.value));
+                                    setPriceHigh(parseFloat(e.target.value));
                                 }} />
                                 <div className='flex items-center pb-1 pl-1.5 gap-0.5 mt-2'>
                                     <input type="checkbox" id="filter-new-only" checked={newOnly} onChange={(e) => setNewOnly(e.target.checked)} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
