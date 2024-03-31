@@ -671,7 +671,8 @@ function adjustCurrencyChangeNotice(container: Element) {
 	const refreshButton = document.createElement('button');
 	refreshButton.className = 'mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base';
 	refreshButton.setAttribute('color', 'primary');
-	refreshButton.innerHTML = '<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>';
+	refreshButton.innerHTML =
+		'<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>';
 	refreshButton.onclick = () => {
 		location.reload();
 	};
@@ -1625,7 +1626,10 @@ async function addBuffPrice(
 	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = document.createElement('a');
 		buffContainer.setAttribute('class', 'betterfloat-buff-a');
-		const buff_url = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		const buff_url =
+			buff_id > 0
+				? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
+				: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 		buffContainer.setAttribute('href', buff_url);
 		buffContainer.setAttribute('target', '_blank');
 		buffContainer.setAttribute('style', 'display: inline-flex; align-items: center; font-size: 15px;');
@@ -1665,23 +1669,27 @@ async function addBuffPrice(
 		}
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
-			// if (showBoth) {
-			// 	priceContainer.setAttribute('href', 'https://steamcommunity.com/market/listings/730/' + encodeURIComponent(buff_name));
-			// 	const divider = document.createElement('div');
-			// 	priceContainer.after(buffContainer);
-			// 	priceContainer.after(divider);
-			// } else {
-			// 	priceContainer.replaceWith(buffContainer);
-			// }
 			if (isSellTab) {
 				priceContainer.replaceWith(buffContainer);
 			} else {
 				priceContainer.after(buffContainer);
 			}
 		}
+
+		// replace with setting for showsteam
+		if (extensionSettings['csf-steamlink']) {
+			const flexGrow = container.querySelector('div.seller-details > div');
+			if (flexGrow) {
+				const steamImg = `<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank"><img src="${ICON_STEAM}" style="height: 18px; translate: 0px 2px;"></a>`;
+				flexGrow?.insertAdjacentHTML('afterend', steamImg);
+			}
+		}
 	} else if (container.querySelector('.betterfloat-buff-a')) {
 		const buffA = container.querySelector('.betterfloat-buff-a')!;
-		const buff_url = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		const buff_url =
+			buff_id > 0
+				? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
+				: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 		buffA.setAttribute('href', buff_url);
 		const buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
 		buffPriceDiv.setAttribute(
@@ -1703,7 +1711,7 @@ async function addBuffPrice(
 		(priceFromReference > 0 || item.price < 0.06) &&
 		location.pathname !== '/sell'
 	) {
-		const priceContainer = <HTMLElement>container.querySelector('.price-row');
+		const priceContainer = container.querySelector<HTMLElement>('.price-row');
 		const priceIcon = priceContainer.querySelector('app-price-icon');
 		const floatAppraiser = priceContainer.querySelector('.reference-widget-container');
 

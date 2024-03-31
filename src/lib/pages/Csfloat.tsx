@@ -1,6 +1,6 @@
 import { ScrollArea, TabsContent } from "../components/Shadcn";
 import { SettingsCard } from "~lib/components/SettingsCard";
-import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsAvgTimeOutlineRounded, MaterialSymbolsTravelExplore, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon, TablerCircleChevronUp } from "~lib/components/Icons";
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsAvgTimeOutlineRounded, MaterialSymbolsTravelExplore, MaterialSymbolsUpdate, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon, TablerCircleChevronUp } from "~lib/components/Icons";
 import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
@@ -42,6 +42,10 @@ export const CSFloatSettings = () => {
                     <div className="flex flex-col gap-1">
                         <SettingsCard>
                             <SettingsSelect id="csf-pricereference" text="Buff Price Reference" options={["Bid", "Ask"]} />
+                        </SettingsCard>
+                        <SettingsCard>
+                            <SettingsCheckbox
+                                id="csf-steamlink" text="Link to Steam Market Page" icon={<MdiSteam className="h-6 w-6" />} />
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox

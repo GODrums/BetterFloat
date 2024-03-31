@@ -54,6 +54,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-pricereference': 0,
 	'csf-refreshinterval': 0,
 	'csf-floatappraiser': false,
+	'csf-steamlink': true,
 	'csf-buffdifference': true,
 	'csf-buffdifferencepercent': false,
 	'csf-listingage': true,

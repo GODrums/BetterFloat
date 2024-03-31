@@ -20,6 +20,7 @@ export const Changelogs = () => {
                 <SingleChangelog version="v2.2.1">
                     <li>Reworked Buff ID mapping for better performance</li>
                     <li>Skinport - LIVE-filter now has a button to reset it to defaults (no filtering)</li>
+                    <li>CSFloat - Setting to add a link to the Steam markt page. Steam icon will be placed at the bottom of an item's card.</li>
                 </SingleChangelog>
                 <SingleChangelog version="v2.2.0">
                     <li>CSFloat - New 'Hide Side Menu'-button</li>
