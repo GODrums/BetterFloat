@@ -588,7 +588,7 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 		let absolute = false;
 
 		const calculateDiff = () => {
-			const inputPrice = new Decimal(inputField.value);
+			const inputPrice = new Decimal(inputField.value ?? 0);
 			if (absolute) {
 				const diff = inputPrice.minus(buff_data.priceFromReference);
 				if (diffElement) {

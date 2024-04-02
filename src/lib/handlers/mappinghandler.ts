@@ -9,7 +9,7 @@ import buffIds from '@/assets/buffids.json';
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
 
 // maps buff_name to buff_id
-let buffMapping: { [name: string]: number } = buffIds;
+const buffMapping: { [name: string]: number } = buffIds;
 // maps buff_name to prices and more - custom mapping
 let priceMapping: Extension.CustomPriceMapping = {};
 // crimson web mapping

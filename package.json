@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "2.2.1",
+	"version": "2.2.2",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "MIT",
@@ -53,7 +53,7 @@
 		"@types/node": "20.12.2",
 		"@types/react": "18.2.73",
 		"@types/react-dom": "18.2.23",
-		"@typescript-eslint/eslint-plugin": "^7.4.0",
+		"@typescript-eslint/eslint-plugin": "^7.5.0",
 		"cs-tierlist": "^1.2.1",
 		"csgo-fade-percentage-calculator": "^1.1.4",
 		"currency-symbol-map": "^5.1.0",

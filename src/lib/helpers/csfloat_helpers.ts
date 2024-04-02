@@ -4,6 +4,7 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { ICON_BUFF, ICON_STEAM } from '~lib/util/globals';
 import Decimal from 'decimal.js';
 import { adjustOfferContainer } from '~contents/csfloat_script';
+import { getSetting } from '~lib/util/storage';
 
 export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
     await new Promise((resolve) => setTimeout(resolve, 200));
@@ -37,10 +38,13 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
         const subText = bubble.querySelector<HTMLElement>('.sub-text');
         if (subText) {
             subText.setAttribute('style', 'display: flex; align-items: center; width: 100%; justify-content: space-between;');
-            const steamHTML = `<a target="_blank" href="https://steamcommunity.com/profiles/${offer.buyer_id}" style="display: flex; align-items: center;"><img src="${ICON_STEAM}" style="height: 20px; margin-right: 5px;"></a>`;
             subText.innerHTML = `<div style="display: inline-flex; align-items: center;">${subText.textContent}</div>`
-            if (isSeller) {
-                subText.firstElementChild.insertAdjacentHTML('afterbegin', steamHTML);
+
+            if (await getSetting('csf-steamlink')) {
+                const steamHTML = `<a target="_blank" href="https://steamcommunity.com/profiles/${offer.buyer_id}" style="display: flex; align-items: center;"><img src="${ICON_STEAM}" style="height: 20px; margin-right: 5px;"></a>`;
+                if (isSeller) {
+                    subText.firstElementChild.insertAdjacentHTML('afterbegin', steamHTML);
+                }
             }
 
             const buffHTML = `<div class="betterfloat-bubble-buff" style="display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'};"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><span style="color: ${difference.isPositive() ? 'greenyellow' : 'orange'};">${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}</span></div>`;
