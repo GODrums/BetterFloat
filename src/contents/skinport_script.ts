@@ -1,21 +1,21 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
 
-import { sendToBackground } from '@plasmohq/messaging';
-
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
-import { DEFAULT_FILTER, getAllSettings, type IStorage, type SPFilter } from '~lib/util/storage';
+import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
-
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
+import { sendToBackground } from '@plasmohq/messaging';
+
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { Skinport } from '~lib/@typings/SkinportTypes';
+import type { IStorage, SPFilter } from '~lib/util/storage';
+import type { PlasmoCSConfig } from 'plasmo';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -59,7 +59,7 @@ async function init() {
 		await applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
-	
+
 	dynamicUIHandler();
 }
 
@@ -282,7 +282,8 @@ async function adjustItemPage(container: Element) {
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
 	const buff_id = await getBuffMapping(buff_name);
 	const isDoppler = item.name.includes('Doppler');
-	const buffLink = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const buffLink =
+		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
@@ -528,9 +529,8 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	return nameCheck || priceCheck || typeCheck || newCheck;
 }
 
-async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
+async function addStickerInfo(container: Element, item: Skinport.Listing | Skinport.Item, selector: ItemSelectors, price_difference: number, isItemPage = false) {
 	if (item.text.includes('Agent')) return;
-	const itemInfoDiv = container.querySelector(selector.info);
 	const stickers = item.stickers;
 	if (item.stickers.length == 0 || item.text.includes('Souvenir')) {
 		return;
@@ -539,6 +539,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
 	const spPercentage = price_difference / priceSum;
 
+	const itemInfoDiv = container.querySelector(selector.info);
 	// don't display SP if total price is below $1
 	if (itemInfoDiv && priceSum >= 2) {
 		if (isItemPage) {
@@ -557,7 +558,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	}
 }
 
-async function addFloatColoring(container: Element, item: Skinport.Listing) {
+async function addFloatColoring(container: Element, item: Skinport.Listing | Skinport.Item) {
 	const floatContainer = container.querySelector('.WearBar-value');
 	if (!floatContainer) return;
 
@@ -923,7 +924,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 	const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 	if (presentationDiv && item.price >= getSpMinOrderPrice() && extensionSettings['sp-ocoapikey'] && extensionSettings['sp-ocoapikey'].length > 0) {
 		const oneClickOrder = document.createElement('a');
-		oneClickOrder.className = 'ItemPreview-sideAction betterskinport-oneClickOrder';
+		oneClickOrder.className = 'ItemPreview-sideAction betterfloat-oneClickOrder';
 		oneClickOrder.style.borderRadius = '0';
 		oneClickOrder.style.width = '60px';
 		oneClickOrder.target = '_blank';
@@ -991,7 +992,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 				});
 		};
 
-		if (!presentationDiv.querySelector('.betterskinport-oneClickOrder')) {
+		if (!container.querySelector('.betterfloat-oneClickOrder')) {
 			presentationDiv.after(oneClickOrder);
 		}
 	}
@@ -1015,18 +1016,19 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	}
 	const isDoppler = item.name.includes('Doppler');
 
-	const buffHref = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? item.style as DopplerPhase : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const buffHref =
+		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {
 			const buffLink = document.createElement('a');
-			buffLink.className = 'ItemPreview-sideAction betterskinport-bufflink';
+			buffLink.className = 'ItemPreview-sideAction betterfloat-bufflink';
 			buffLink.style.borderRadius = '0';
 			buffLink.style.width = '60px';
 			buffLink.target = '_blank';
 			buffLink.innerText = 'Buff';
 			buffLink.href = buffHref;
-			if (!presentationDiv.querySelector('.betterskinport-bufflink')) {
+			if (!container.querySelector('.betterfloat-bufflink')) {
 				presentationDiv.after(buffLink);
 			}
 		}

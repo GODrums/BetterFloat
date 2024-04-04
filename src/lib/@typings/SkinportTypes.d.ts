@@ -26,7 +26,7 @@ export namespace Skinport {
                     value: number;
                 };
                 saleId: number;
-                wear: string;
+                wear: string; // e.g. "Field-Tested 0.349"
             }[];
             item: Item;
             offers: {
