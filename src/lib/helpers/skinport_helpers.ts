@@ -10,7 +10,7 @@ export function createLiveLink() {
 }
 
 export function filterDisplay() {
-    const filterDisplay = document.querySelector<HTMLElement>('button.FilterButton-filter');
+    const filterDisplay = document.querySelector<HTMLButtonElement>('button.FilterButton-filter');
     if (!filterDisplay) return;
     
     let filterSetting = localStorage.getItem('displayFilterMenu');
@@ -18,7 +18,13 @@ export function filterDisplay() {
         localStorage.setItem('displayFilterMenu', 'true');
         filterSetting = 'true';
     } else if (filterSetting === 'false') {
-        filterDisplay.click();
+        const sideMenu = document.querySelector("#CatalogFilter-1");
+        const interval = setInterval(() => {
+            if (sideMenu.clientWidth > 0) {
+                filterDisplay.click();
+                clearInterval(interval);
+            }
+        }, 100);
     }
     
     if (document.querySelector('#betterfloat-filter-checkbox')) return;
