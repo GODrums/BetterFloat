@@ -37,3 +37,5 @@ export const ICON_PHOENIX = iconPhoenix;
 export const ICON_SPIDER_WEB = iconSpiderWeb;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
+
+export const isDevMode = process.env.NODE_ENV === 'development';

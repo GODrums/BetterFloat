@@ -1,12 +1,7 @@
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
-import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
-import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
-import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
 
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
@@ -27,10 +22,7 @@ import {
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 } from '~lib/util/globals';
-import { getAllSettings, getSetting, type IStorage } from '~lib/util/storage';
-
-import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
-import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
+import { getAllSettings, getSetting } from '~lib/util/storage';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import {
 	getBuffMapping,
@@ -48,6 +40,16 @@ import {
 import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
 import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
+
+import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
+import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
+import type { IStorage } from '~lib/util/storage';
+import type { PlasmoCSConfig } from 'plasmo';
+
+import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
+import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
+import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
+import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],

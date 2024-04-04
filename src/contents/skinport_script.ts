@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION } from '~lib/util/globals';
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
@@ -953,7 +953,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 				status: 'paid' | 'closed' | 'open' | 'unknown';
 			} = JSON.parse(localStorage.getItem('ocoLastOrder') ?? '{"time": 0, "id": 0, "status": "unknown"}');
 			console.log('[BetterFloat] OCO last order: ', ocoLastOrder);
-			if (ocoLastOrder.time > Date.now() - 86400000) {
+			if (!isDevMode && ocoLastOrder.time > Date.now() - 86400000) {
 				console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
 				let statusCheck = ocoLastOrder.status == 'paid';
 				if (ocoLastOrder.status == 'open' || ocoLastOrder.status == 'unknown') {

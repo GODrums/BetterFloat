@@ -1,6 +1,8 @@
+import { EVENT_URL_CHANGED, isDevMode } from '~lib/util/globals';
+import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
+
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { EVENT_URL_CHANGED } from '~lib/util/globals';
-import { DEFAULT_SETTINGS, ExtensionStorage, type IStorage } from '~lib/util/storage';
+import type { IStorage } from '~lib/util/storage';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -11,13 +13,13 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 		// await chrome.storage.sync.set(DEFAULT_SETTINGS);
-        chrome.storage.local.remove('buffMapping');
+		chrome.storage.local.remove('buffMapping');
 
 		const data = await ExtensionStorage.sync.getAll();
 		if (!data) {
 			console.log('[BetterFloat] No settings found, setting default settings.');
 			for (const key in DEFAULT_SETTINGS) {
-                const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
+				const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
 				ExtensionStorage.sync.set(key, value);
 			}
 			return;
@@ -30,8 +32,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 			if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
 				// add missing settings
 				console.log('[BetterFloat] Adding missing setting: ', key);
-                const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
-                ExtensionStorage.sync.set(key, value);
+				const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
+				ExtensionStorage.sync.set(key, value);
 			}
 		}
 	}
@@ -106,26 +108,24 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
-chrome.runtime.onMessageExternal.addListener(
-	function(request, sender, sendResponse) {
-		console.log('Received message from external extension', request, sender);
+chrome.runtime.onMessageExternal.addListener(function (request, sender, sendResponse) {
+	console.log('Received message from external extension', request, sender);
 
-		if (sender.origin !== 'https://betterfloat.rums.dev') {
-			sendResponse({ success: false, message: 'Invalid origin' });
-			return;
-		}
-
-		const newSettings = request.newSettings;
-
-		console.log('[BetterFloat] Received new settings: ', newSettings);
-		for (const key in newSettings) {
-			ExtensionStorage.sync.set(key, newSettings[key]);
-		}
-		sendResponse({ success: true });
+	if (sender.origin !== 'https://betterfloat.rums.dev') {
+		sendResponse({ success: false, message: 'Invalid origin' });
+		return;
 	}
-);
 
-if (process.env.NODE_ENV === 'development') {
+	const newSettings = request.newSettings;
+
+	console.log('[BetterFloat] Received new settings: ', newSettings);
+	for (const key in newSettings) {
+		ExtensionStorage.sync.set(key, newSettings[key]);
+	}
+	sendResponse({ success: true });
+});
+
+if (isDevMode) {
 	const apikey = process.env.PLASMO_PUBLIC_OCO_KEY;
 	if (apikey !== undefined) {
 		ExtensionStorage.sync.set('sp-ocoapikey', apikey);

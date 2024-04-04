@@ -1,3 +1,5 @@
+import { waitForElement } from "~lib/util/helperfunctions";
+
 export function createLiveLink() {
 	const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
 	if (!marketLink || document.querySelector('.betterfloat-liveLink')) return;
@@ -18,13 +20,10 @@ export function filterDisplay() {
         localStorage.setItem('displayFilterMenu', 'true');
         filterSetting = 'true';
     } else if (filterSetting === 'false') {
-        const sideMenu = document.querySelector("#CatalogFilter-1");
-        const interval = setInterval(() => {
-            if (sideMenu.clientWidth > 0) {
-                filterDisplay.click();
-                clearInterval(interval);
-            }
-        }, 100);
+        const elementWait = waitForElement('#CatalogFilter-1', 200, 10);
+        if (elementWait && document.querySelector("#CatalogFilter-1").clientWidth > 0) {
+            filterDisplay.click();
+        }
     }
     
     if (document.querySelector('#betterfloat-filter-checkbox')) return;

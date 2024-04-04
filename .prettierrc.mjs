@@ -23,6 +23,7 @@ export default {
     "",
     "<TYPES>", // Imports that are TypeScript type declarations
     "",
+    "^url:(.*)$",
     "^data-(.*)$",
   ]
 }
