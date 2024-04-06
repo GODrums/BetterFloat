@@ -42,11 +42,11 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 export async function refreshPrices() {
 	// For no dev restrictions, use an api key from .env instead:
 	// /v2/pricempire_usd?api_key=process.env.PLASMO_PUBLIC_RUMSDEV_KEY
-	return await fetch('https://prices.rums.dev/v1/pricempire_usd', {
+	return await fetch('https://prices.rums.dev/v1/betterfloat', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
-			'X-Via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
 		},
 	})
 		.then((response) => response.json())

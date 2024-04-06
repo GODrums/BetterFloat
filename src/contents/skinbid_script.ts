@@ -432,8 +432,9 @@ async function addBuffPrice(
 		}
 	}
 
-	const difference = cachedItem.nextMinimumBid - (extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder);
-	// console.debug('[BetterFloat] Buff price difference: ', cachedItem, container);
+	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
+	const difference = cachedItem.nextMinimumBid - priceFromReference;
+	console.debug('[BetterFloat] Buff price difference: ', cachedItem);
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
 		if (!discountContainer) {
@@ -471,11 +472,35 @@ async function addBuffPrice(
 			discountContainer.style.background = 'transparent';
 			discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
 		}
+
+		if (selector.self === 'page' && cachedItem.auction.sellType === 'AUCTION') {
+			const bids = container.querySelectorAll('.bids .bid-price');
+			for (let i = 0; i < bids.length; i++) {
+				const bidPrice = bids[i];
+				const bidData = cachedItem.bids[i];
+				const bidDifference = bidData.amount - priceFromReference;
+				const bidDiscountContainer = document.createElement('div');
+				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
+				bidDiscountContainer.setAttribute('style', `padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference === 0 ? extensionSettings['skb-color-neutral'] : bidDifference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`);
+				bidDiscountContainer.textContent = bidDifference === 0 ? `-${currencySymbol}0` : (bidDifference > 0 ? '+' : '-') + currencySymbol + Math.abs(bidDifference).toFixed(2);
+				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
+				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
+			}
+
+		}
 	}
 
 	return {
 		price_difference: difference,
 	};
+}
+
+function getListingPrice(listing: Skinbid.Listing): number {
+	if (listing.auction.sellType === 'FIXED_PRICE') {
+		return listing.auction.startBid;
+	} else {
+		return listing.currentHighestBid;
+	}
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, href: string, isItemPage = false) {

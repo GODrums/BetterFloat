@@ -222,7 +222,7 @@ export namespace Skinbid {
         allowOffers: boolean;
         auctionHash: string;
         auctionName: string | null;
-        auctionType: string;
+        auctionType: "REGULAR" | "LIGHTNING";
         bargainReservePriceAmount: number | null;
         bundleId: number;
         buyNowPrice: number | null;
