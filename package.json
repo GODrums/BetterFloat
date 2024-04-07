@@ -12,7 +12,7 @@
 		"build": "plasmo build",
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
-		"lint": "eslint ./src -c .eslintrc --ext .ts,.tsx"
+		"lint": "eslint ./src --ext .ts,.tsx -c .eslintrc"
 	},
 	"dependencies": {
 		"@plasmohq/messaging": "^0.6.2",
@@ -58,7 +58,7 @@
 		"csgo-fade-percentage-calculator": "^1.1.4",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.4.3",
-		"eslint": "^8.56.0",
+		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"postcss": "8.4.38",
 		"prettier": "3.2.5",

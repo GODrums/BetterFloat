@@ -313,7 +313,6 @@ export async function getSkbUserCurrencyRate() {
 	if (skinbidUserCurrency == '') {
 		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
 	}
-	console.debug('[BetterFloat] Skinbid user currency: ', skinbidUserCurrency, skinbidRates);
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}

@@ -475,7 +475,6 @@ async function addBuffPrice(
 	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
 	const listingPrice = getListingPrice(cachedItem);
 	const difference = listingPrice - priceFromReference;
-	console.debug('[BetterFloat] Buff price difference: ', cachedItem);
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
 		if (cachedItem.auction.sellType === 'FIXED_PRICE' || selector.self !== 'page') {
