@@ -1,17 +1,17 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
+import Decimal from 'decimal.js';
 
-import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
-import { getAllSettings } from '~lib/util/storage';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
+import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
+import { getAllSettings } from '~lib/util/storage';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import type { IStorage } from '~lib/util/storage';
 import type { PlasmoCSConfig } from 'plasmo';
-import Decimal from 'decimal.js';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
@@ -208,6 +208,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
 	}
 	if (selector.self == 'page') {
+		await addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
 	}
 }
@@ -233,9 +234,22 @@ async function adjustInventoryItem(container: Element) {
 		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
 			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
 		}
-
-
 	}
+}
+
+async function addBrowserInspect(container: Element, item: Skinbid.Listing) {
+	const bottomLeft = container.querySelector('.bottom-left');
+	if (!bottomLeft) return;
+
+	const inspectButton = document.createElement('button');
+	inspectButton.setAttribute('style', 'font-weight: 400; padding: 12px;');
+	inspectButton.className = 'skb-button-ghost';
+	inspectButton.innerHTML = `<img src="${ICON_CAMERA}" style="height: 1em; margin-right: 7px; filter: brightness(0) saturate(100%) invert(88%) sepia(7%) saturate(4339%) hue-rotate(189deg) brightness(85%) contrast(84%);"> Inspect in browser `;
+	inspectButton.onclick = (event) => {
+		event.stopPropagation();
+		window.open(`https://swap.gg/screenshot?inspectLink=${item.items?.at(0)?.item.inspectLink}`);
+	};
+	bottomLeft.appendChild(inspectButton);
 }
 
 async function caseHardenedDetection(container: Element, listing: Skinbid.Listing) {
@@ -448,63 +462,78 @@ async function addBuffPrice(
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
 	}
-	const buffContainer = container.querySelector('.betterfloat-buff-container');
-	if (buffContainer) {
-		if (selector == itemSelectors.page) {
-			const parentDiv = container.querySelector('.item-bids-time-info');
-			if (parentDiv) {
-				(<HTMLElement>parentDiv).style.marginTop = '0';
-				parentDiv.before(buffContainer);
-			}
-			(<HTMLElement>buffContainer).style.margin = '20px 0 0 0';
-		} else {
-			container.querySelector(selector.priceDiv)?.setAttribute('style', 'flex-direction: column;');
+	const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
+	if (buffContainer && selector === itemSelectors.page) {
+		const parentDiv = container.querySelector<HTMLElement>('.item-bids-time-info');
+		if (parentDiv) {
+			parentDiv.style.marginTop = '0';
+			parentDiv.before(buffContainer);
 		}
+		buffContainer.style.margin = '20px 0 0 0';
 	}
 
 	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
-	const difference = cachedItem.nextMinimumBid - priceFromReference;
+	const listingPrice = getListingPrice(cachedItem);
+	const difference = listingPrice - priceFromReference;
 	console.debug('[BetterFloat] Buff price difference: ', cachedItem);
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
-		if (!discountContainer) {
-			discountContainer = document.createElement('div');
-			discountContainer.className = selector.discount.substring(1);
-			const bidPrice = container.querySelector('.bid-price');
-			if (bidPrice) {
-				bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
-				bidPrice.appendChild(discountContainer);
-			} else {
-				const discountDiv = container.querySelector(selector.discountDiv);
-				if (discountDiv) {
-					discountDiv.appendChild(discountContainer);
+		if (cachedItem.auction.sellType === 'FIXED_PRICE' || selector.self !== 'page') {
+			if (!discountContainer) {
+				discountContainer = document.createElement('div');
+				discountContainer.className = selector.discount.substring(1);
+				const bidPrice = container.querySelector('.bid-price');
+				if (bidPrice) {
+					bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+					bidPrice.appendChild(discountContainer);
 				} else {
-					priceDiv.appendChild(discountContainer);
+					const discountDiv = container.querySelector(selector.discountDiv);
+					if (discountDiv) {
+						discountDiv.appendChild(discountContainer);
+					} else {
+						priceDiv.appendChild(discountContainer);
+					}
+				}
+			} else if (selector.self !== 'page') {
+				const bidPrice = container.querySelector('.bid-price');
+				if (bidPrice) {
+					bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+					bidPrice.appendChild(discountContainer);
 				}
 			}
-		} else if (selector.self !== 'page') {
-			const bidPrice = container.querySelector('.bid-price');
-			if (bidPrice) {
-				bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
-				bidPrice.appendChild(discountContainer);
-			}
-		}
 
-		if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
-			if (selector == itemSelectors.page) {
-				const discountSpan = document.createElement('span');
-				discountSpan.style.marginLeft = '5px';
-				discountContainer.appendChild(discountSpan);
-				discountContainer = discountSpan;
+			if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+				if (selector === itemSelectors.page) {
+					const discountSpan = document.createElement('span');
+					discountSpan.style.marginLeft = '5px';
+					discountContainer.appendChild(discountSpan);
+					discountContainer = discountSpan;
+				}
+				discountContainer.className += ' betterfloat-sale-tag';
+				discountContainer.setAttribute('style', `color: ${difference === 0 ? extensionSettings['skb-color-neutral'] : difference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}; font-size: 14px; background: transparent; margin-left: 5px;`);
+				discountContainer.innerHTML = `<span style="translate: 0 -1px;">${difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2)}</span>`;
+				if (extensionSettings['skb-buffdifferencepercent']) {
+					discountContainer.style.display = 'flex';
+					discountContainer.style.flexDirection = 'column';
+					const percentage = new Decimal(listingPrice).div(priceFromReference).times(100);
+					const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
+					discountContainer.innerHTML += `<span>(${percentage.toDP(decimalPlaces).toNumber()}%)</span>`;
+				}
 			}
-			discountContainer.className += ' betterfloat-sale-tag';
-			discountContainer.style.color = difference === 0 ? extensionSettings['skb-color-neutral'] : difference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss'];
-			discountContainer.style.fontSize = '14px';
-			discountContainer.style.background = 'transparent';
-			discountContainer.textContent = difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2);
-		}
+		} else if (selector.self === 'page') {
+			const startingPriceDiv = container.querySelector('.item-bids-time-info .item-detail');
+			if (startingPriceDiv) {
+				const startingDifference = new Decimal(cachedItem.auction.startBid).minus(priceFromReference);
+				const startingPrice = document.createElement('div');
+				startingPrice.className = 'betterfloat-sale-tag';
+				startingPrice.setAttribute(
+					'style',
+					`font-size: 14px; margin-left: 5px; color: ${startingDifference.isZero() ? extensionSettings['skb-color-neutral'] : startingDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`
+				);
+				startingPrice.textContent = startingDifference.isZero() ? `-${currencySymbol}0` : (startingDifference.isPos() ? '+' : '-') + currencySymbol + startingDifference.abs().toDP(2);
+				startingPriceDiv.querySelector('.value')?.appendChild(startingPrice);
+			}
 
-		if (selector.self === 'page' && cachedItem.auction.sellType === 'AUCTION') {
 			const bids = container.querySelectorAll('.bids .bid-price');
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
@@ -512,12 +541,14 @@ async function addBuffPrice(
 				const bidDifference = new Decimal(bidData.amount).minus(priceFromReference);
 				const bidDiscountContainer = document.createElement('div');
 				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
-				bidDiscountContainer.setAttribute('style', `padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`);
+				bidDiscountContainer.setAttribute(
+					'style',
+					`padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`
+				);
 				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? '+' : '-') + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
 				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
 				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
 			}
-
 		}
 	}
 
@@ -530,7 +561,7 @@ function getListingPrice(listing: Skinbid.Listing): number {
 	if (listing.auction.sellType === 'FIXED_PRICE') {
 		return listing.auction.startBid;
 	} else {
-		return listing.currentHighestBid;
+		return listing.currentHighestBid > 0 ? listing.currentHighestBid : listing.auction.startBid;
 	}
 }
 

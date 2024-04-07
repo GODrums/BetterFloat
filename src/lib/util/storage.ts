@@ -76,6 +76,7 @@ export const DEFAULT_SETTINGS = {
 	'skb-enable': true,
 	'skb-pricereference': 0,
 	'skb-buffdifference': true,
+	'skb-buffdifferencepercent': false,
 	'skb-listingage': true,
 	'skb-stickerprices': true,
 	'csf-color-profit': '#008000',
