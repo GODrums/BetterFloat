@@ -49,6 +49,8 @@ let skinportUserCurrency = '';
 let skinbidUserCurrency = '';
 // skinbid: cached items from api
 let skinbidItems: Skinbid.Listing[] = [];
+// skinbid: inventory items
+let skinbidInventory: Skinbid.ListedItem[] = [];
 
 export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
 	if (csfloatHistoryGraph.length > 0) {
@@ -98,6 +100,16 @@ export function cacheSkbItems(data: Skinbid.Listing[]) {
 		skinbidItems = data;
 	}
 }
+
+export function cacheSkbInventory(data: Skinbid.ListedItem[]) {
+	if (skinbidInventory.length > 0) {
+		console.debug('[BetterFloat] Inventory already cached, added more items: ', skinbidInventory.length);
+		skinbidInventory = skinbidInventory.concat(data);
+	} else {
+		skinbidInventory = data;
+	}
+}
+
 export function cacheCSFExchangeRates(data: CSFloat.ExchangeRates) {
 	csfloatRates = data.data;
 }
@@ -218,6 +230,10 @@ export function getFirstSkbItem() {
 	} else {
 		return null;
 	}
+}
+
+export function getSpecificSkbInventoryItem(steamImage: string) {
+	return skinbidInventory.find((item) => item?.item.imageUrl === steamImage);
 }
 
 export function getSpecificCSFOffer(index: number) {

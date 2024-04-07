@@ -11,6 +11,7 @@ import {
 	cacheCSFLocation,
 	cacheCSFOffers,
 	cacheCSFPopupItem,
+	cacheSkbInventory,
 	cacheSkbItems,
 	cacheSkinbidCurrencyRates,
 	cacheSkinbidUserCurrency,
@@ -41,7 +42,7 @@ export function activateHandler() {
 			processCSFloatEvent(eventData);
 		} else if (location.host === 'skinport.com') {
 			processSkinportEvent(eventData);
-		} else if (location.host === 'skinbid.com') {
+		} else if (location.host === 'skinbid.com' || location.host === 'api.skinbid.com') {
 			processSkinbidEvent(eventData);
 		}
 	});
@@ -125,6 +126,9 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('api/user/preferences')) {
 		// Skinbid.UserPreferences
 		cacheSkinbidUserCurrency((eventData.data as Skinbid.UserPreferences).currency);
+	} else if (eventData.url.includes('api/user/me/inventory') || eventData.url.includes('api/inventory?')) {
+		// Skinbid.UserPreferences
+		cacheSkbInventory((eventData.data as Skinbid.Inventory).items);
 	}
 }
 

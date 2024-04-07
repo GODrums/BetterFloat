@@ -3,7 +3,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { getAllSettings } from '~lib/util/storage';
 import { activateHandler } from '~lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
 
@@ -11,6 +11,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import type { IStorage } from '~lib/util/storage';
 import type { PlasmoCSConfig } from 'plasmo';
+import Decimal from 'decimal.js';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
@@ -78,6 +79,11 @@ async function firstLaunch() {
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i].parentElement!, itemSelectors.card);
 		}
+	} else if (location.pathname.includes('/inventory')) {
+		const items = document.querySelectorAll('APP-INVENTORY-LIST-ITEM');
+		for (let i = 0; i < items.length; i++) {
+			await adjustInventoryItem(items[i]);
+		}
 	}
 }
 
@@ -93,14 +99,14 @@ function applyMutation() {
 
 					if (addedNode.children.length == 1) {
 						const firstChild = addedNode.children[0];
-						if (firstChild.tagName.includes('AUCTION-LIST-ITEM')) {
+						if (firstChild.tagName === 'AUCTION-LIST-ITEM') {
 							await adjustItem(firstChild, itemSelectors.list);
 							continue;
-						} else if (firstChild.tagName.includes('APP-AUCTION-CARD-ITEM')) {
+						} else if (firstChild.tagName === 'APP-AUCTION-CARD-ITEM') {
 							// Items in user shop
 							await adjustItem(firstChild, itemSelectors.card);
 							continue;
-						} else if (firstChild.tagName.includes('APP-ITEM-CARD')) {
+						} else if (firstChild.tagName === 'APP-ITEM-CARD') {
 							if (location.pathname == '/listings') {
 								await adjustItem(firstChild, itemSelectors.list);
 							} else {
@@ -108,6 +114,9 @@ function applyMutation() {
 							}
 							continue;
 						}
+					}
+					if (addedNode.tagName === 'APP-INVENTORY-LIST-ITEM') {
+						await adjustInventoryItem(addedNode);
 					}
 					if (addedNode.className) {
 						const className = addedNode.className.toString();
@@ -200,6 +209,32 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	}
 	if (selector.self == 'page') {
 		await caseHardenedDetection(container, cachedItem);
+	}
+}
+
+async function adjustInventoryItem(container: Element) {
+	// on the first item, wait for the api data
+	if (!document.querySelector('.betterfloat-buffprice')) {
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+	}
+	const steamImage = container.querySelector('.item-image > img').getAttribute('src');
+	const listedItem = getSpecificSkbInventoryItem(steamImage);
+	console.log('[BetterFloat] Inventory item: ', listedItem);
+	if (!listedItem) return;
+
+	const item = listedItem.item;
+	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
+	const buff_id = await getBuffMapping(buff_name);
+	const buffHref = buff_id > 0 ? getBuffLink(buff_id, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+
+	if (priceListing > 0 || priceOrder > 0) {
+		const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
+		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
+		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
+			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
+		}
+
+
 	}
 }
 
@@ -408,11 +443,6 @@ async function addBuffPrice(
 	}
 
 	const priceDiv = container.querySelector(selector.priceDiv);
-	if (!priceDiv?.firstElementChild) {
-		console.debug('[BetterFloat] No currency symbol found. ', selector.priceDiv);
-		return;
-	}
-
 	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
 	const buffHref = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 	if (!container.querySelector('.betterfloat-buffprice')) {
@@ -459,6 +489,7 @@ async function addBuffPrice(
 				bidPrice.appendChild(discountContainer);
 			}
 		}
+
 		if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
 			if (selector == itemSelectors.page) {
 				const discountSpan = document.createElement('span');
@@ -478,11 +509,11 @@ async function addBuffPrice(
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
 				const bidData = cachedItem.bids[i];
-				const bidDifference = bidData.amount - priceFromReference;
+				const bidDifference = new Decimal(bidData.amount).minus(priceFromReference);
 				const bidDiscountContainer = document.createElement('div');
 				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
-				bidDiscountContainer.setAttribute('style', `padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference === 0 ? extensionSettings['skb-color-neutral'] : bidDifference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`);
-				bidDiscountContainer.textContent = bidDifference === 0 ? `-${currencySymbol}0` : (bidDifference > 0 ? '+' : '-') + currencySymbol + Math.abs(bidDifference).toFixed(2);
+				bidDiscountContainer.setAttribute('style', `padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`);
+				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? '+' : '-') + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
 				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
 				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
 			}

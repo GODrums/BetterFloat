@@ -1,4 +1,4 @@
-import type { ItemStyle } from './FloatTypes';
+import type { DopplerPhase, ItemStyle } from './FloatTypes';
 
 export namespace Skinbid {
     // https://api.skinbid.com/api/search/auctions?
@@ -28,6 +28,11 @@ export namespace Skinbid {
         rate: number;
         updated: string;
     }[];
+
+    export type Inventory = {
+        items: ListedItem[];
+        totalItems: number;
+    }
 
     export type HTMLItem = {
         name: string;
@@ -156,7 +161,7 @@ export namespace Skinbid {
             isLowFloat: boolean;
             isRarePattern: boolean;
             recommendPrice: any | null;
-        };
+        } | null;
         tradeLockExpireDate: string | null;
     };
 
@@ -166,7 +171,7 @@ export namespace Skinbid {
         classId: string;
         color: string | null;
         defIndex: number;
-        dopplerPhase: any | null;
+        dopplerPhase: DopplerPhase | null;
         fade: number;
         fireIce: any | null;
         float: number;
