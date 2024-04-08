@@ -208,7 +208,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
 	}
 	if (selector.self == 'page') {
-		await addBrowserInspect(container, cachedItem);
+		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
 	}
 }
@@ -237,7 +237,7 @@ async function adjustInventoryItem(container: Element) {
 	}
 }
 
-async function addBrowserInspect(container: Element, item: Skinbid.Listing) {
+function addBrowserInspect(container: Element, item: Skinbid.Listing) {
 	const bottomLeft = container.querySelector('.bottom-left');
 	if (!bottomLeft) return;
 

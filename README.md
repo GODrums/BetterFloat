@@ -9,7 +9,7 @@
 [![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/GODrums/betterfloat)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
-[![GitHub license](https://img.shields.io/badge/license-CC_BY_NC_SA_4.0-orange)](https://raw.githubusercontent.com/GODrums/BetterEsportal/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-CC_BY_NC_SA_4.0-orange)](https://github.com/GODrums/BetterFloat/blob/main/LICENSE.md)
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/betterfloat/bphfhlfhnohppnleaehnlfigkkccpglk">
