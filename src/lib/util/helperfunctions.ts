@@ -66,44 +66,33 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
  * @param itemStyle e.g. Vanilla, Phase 1, Phase 2, ...
  * @returns
  */
-export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle): Promise<{ priceListing: number; priceOrder: number }> {
+export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle) {
     const priceMapping: Extension.CustomPriceMapping = await getPriceMapping();
-    let helperPrice: number | null = null;
+    let [priceListing, priceOrder, priceAvg30, liquidity] = [0, 0, 0, 0];
 
-    if (!priceMapping[buff_name]) {
-        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
-        helperPrice = 0;
-    }
+    if (priceMapping[buff_name]) {
+        let queryName = buff_name; 
 
-    // we cannot use the getItemPrice function here as it does not return the correct price for doppler skins
-    let priceListing = 0;
-    let priceOrder = 0;
-    if (typeof helperPrice == 'number') {
-        priceListing = helperPrice;
-        priceOrder = helperPrice;
-    } else if (priceMapping[buff_name]) {
         if (itemStyle !== '' && itemStyle !== 'Vanilla') {
-            const dopplerName = buff_name + ' - ' + itemStyle;
-            if (priceMapping[dopplerName]) {
-                priceListing = new Decimal(priceMapping[dopplerName].ask ?? 0).div(100).toNumber();
-                priceOrder = new Decimal(priceMapping[dopplerName].bid ?? 0).div(100).toNumber();
-            } else {
-                priceListing = 0;
-                priceOrder = 0;
-            }
-        } else {
-            priceListing = new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber();
-            priceOrder = new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber();
+            queryName = buff_name + ' - ' + itemStyle;
         }
-    }
-    if (priceListing === undefined) {
-        priceListing = 0;
-    }
-    if (priceOrder === undefined) {
-        priceOrder = 0;
+
+        priceListing = new Decimal(priceMapping[queryName].ask ?? 0).div(100).toNumber();
+        priceOrder = new Decimal(priceMapping[queryName].bid ?? 0).div(100).toNumber();
+        priceAvg30 = new Decimal(priceMapping[queryName].avg30 ?? 0).div(100).toNumber();
+        liquidity = new Decimal(priceMapping[queryName].liquidity ?? 0).toNumber();
+        
+        if (priceListing === undefined) {
+            priceListing = 0;
+        }
+        if (priceOrder === undefined) {
+            priceOrder = 0;
+        }
+    } else {
+        console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
     }
 
-    return { priceListing, priceOrder };
+    return { priceListing, priceOrder, priceAvg30, liquidity };
 }
 
 // truncats a number to a given amount of digits

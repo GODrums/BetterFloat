@@ -8,9 +8,10 @@ import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/inline/LiveFilter';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
-import CSFAutorefresh from '~lib/inline/Autorefresh';
+import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
 import { getSetting } from '~lib/util/storage';
 import CSFMenuControl from '~lib/inline/MenuControl';
+import SPBuffContainer from '~lib/inline/SpBuffContainer';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -106,6 +107,14 @@ async function handleChange(state: Extension.URLState) {
 			}
 		}
 	}
+}
+
+export async function mountSpItemPageBuffContainer() {
+	await mountShadowRoot(<SPBuffContainer />, {
+		tagName: 'betterfloat-buff-container',
+		parent: document.querySelector('.ItemPage-btns'),
+		position: 'before'
+	});
 }
 
 /**

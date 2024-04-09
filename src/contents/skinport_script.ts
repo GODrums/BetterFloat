@@ -1,7 +1,7 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
@@ -279,11 +279,13 @@ async function adjustItemPage(container: Element) {
 
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
-	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
-	const buff_id = await getBuffMapping(buff_name);
+	const buffItem = await calculateBuffPrice(item);
+	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler');
 	const buffLink =
-		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buffItem.buff_name)}`;
+
+	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem}));
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
@@ -296,7 +298,8 @@ async function adjustItemPage(container: Element) {
 
 	const suggestedContainer = container.querySelector('.ItemPage-suggested');
 	if (suggestedContainer) {
-		generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, item.currency, true);
+		// generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, item.currency, true);
+		await mountSpItemPageBuffContainer();
 	}
 
 	const buffContainer = container.querySelector('.betterfloat-buff-container');
@@ -308,7 +311,8 @@ async function adjustItemPage(container: Element) {
 		};
 	}
 
-	const difference = item.price - (extensionSettings['sp-pricereference'] == 0 ? priceOrder : priceListing);
+	const priceFromReference = extensionSettings['sp-pricereference'] == 0 ? buffItem.priceOrder : buffItem.priceListing;
+	const difference = item.price - priceFromReference;
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
 		const newContainer = document.createElement('div');
@@ -322,7 +326,7 @@ async function adjustItemPage(container: Element) {
 		newContainer.style.paddingTop = '2px';
 		saleTag.style.margin = '5px';
 		saleTag.style.fontWeight = '700';
-		const percentage = ' (' + ((item.price / (extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)';
+		const percentage = ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)';
 		saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2) + percentage;
 		newContainer.appendChild(saleTag);
 		priceContainer.appendChild(newContainer);
@@ -414,7 +418,7 @@ function addPattern(container: Element, item: Skinport.Item) {
 	const santizeText = (text: string) => {
 		let parts = text.split(' ');
 		if (parts.length > 2) {
-			parts = parts.slice(0, 2);
+			parts = parts.slice(0, parts[0].indexOf('-') > -1 ? 1 : 2);
 		}
 		return `${parts.join(' ')} <br> Pattern: <span style="color: mediumpurple; font-weight: 600; font-size: 13px;">${item.pattern}</span>`;
 	};
@@ -701,24 +705,24 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	};
 }
 
-async function calculateBuffPrice(item: Skinport.Listing): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
+async function calculateBuffPrice(item: Skinport.Listing) {
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, item.style);
 
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
 	if (settingRate == 'skinport') {
 		// origin price of rate is non-USD, so we need to divide
-		priceListing = priceListing / currencyRate;
-		priceOrder = priceOrder / currencyRate;
+		priceListing = new Decimal(priceListing).div(currencyRate).toDP(2).toNumber();
+		priceOrder = new Decimal(priceOrder).div(currencyRate).toDP(2).toNumber();
 	} else {
 		// origin price of rate is USD, so we need to multiply
-		priceListing = priceListing * currencyRate;
-		priceOrder = priceOrder * currencyRate;
+		priceListing = new Decimal(priceListing).mul(currencyRate).toDP(2).toNumber();
+		priceOrder = new Decimal(priceOrder).mul(currencyRate).toDP(2).toNumber();
 	}
 
-	return { buff_name, priceListing, priceOrder };
+	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity };
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false, containerIsParent = false) {
@@ -732,12 +736,15 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.style.alignItems = 'center';
 	const buffImage = document.createElement('img');
 	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', `height: 20px; margin-right: 5px; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
+	buffImage.setAttribute('style', ` border: 1px solid #323c47; ${isItemPage ? 'height: 24px;' : 'height: 20px; margin-right: 5px;'}`);
 	buffContainer.appendChild(buffImage);
 	const buffPrice = document.createElement('div');
 	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
 	if (isItemPage) {
+		buffContainer.style.gap = '10px';
 		buffPrice.style.fontSize = '18px';
+		buffPrice.style.display = 'flex';
+		buffPrice.style.gap = '5px';
 	}
 	const tooltipSpan = document.createElement('span');
 	tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
