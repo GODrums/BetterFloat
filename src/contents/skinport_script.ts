@@ -396,11 +396,29 @@ async function adjustItem(container: Element) {
 			return;
 		}
 		// console.log('[BetterFloat] Cached item: ', cachedItem);
+		addPattern(container, cachedItem);
 
 		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
 			await addBlueBadge(container, cachedItem);
 		}
+
 	}
+}
+
+function addPattern(container: Element, item: Skinport.Item) {
+	if (!item.pattern) return;
+
+	const itemText = container.querySelector('.ItemPreview-itemText');
+	if (!itemText) return;
+
+	const santizeText = (text: string) => {
+		let parts = text.split(' ');
+		if (parts.length > 2) {
+			parts = parts.slice(0, 2);
+		}
+		return `${parts.join(' ')} <br> Pattern: <span style="color: mediumpurple; font-weight: 600; font-size: 13px;">${item.pattern}</span>`;
+	};
+	itemText.innerHTML = santizeText(itemText.textContent);
 }
 
 function storeItem(container: Element, item: Skinport.Listing) {
@@ -932,6 +950,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 		(<HTMLElement>oneClickOrder).onclick = async (e: Event) => {
 			e.stopPropagation();
 			e.preventDefault();
+			if (!e.isTrusted) return;
 			const currentCart = document.querySelector('.CartButton-count')?.textContent;
 			const isLoggedOut = document.querySelector('.HeaderContainer-link--login') != null;
 			if (isLoggedOut) {
