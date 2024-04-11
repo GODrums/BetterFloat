@@ -33,7 +33,7 @@ const SPBuffContainer: React.FC = () => {
     portal.id = 'bf-portal';
 
     const BuffSaleTag: React.FC<{ buffPrice: number }> = ({ buffPrice }) => {
-        const diff = buffPrice - data.itemPrice;
+        const diff = data.itemPrice - buffPrice;
         const color = diff < 0 ? 'bg-green-500' : 'bg-red-500';
 
         return (
@@ -72,7 +72,7 @@ const SPBuffContainer: React.FC = () => {
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button variant='ghost' className='px-1 flex items-center gap-2 hover:bg-neutral-500/70'>
-                            <img src={ICON_BUFF} className='h-6 w-6 border border-[#323c47]' />
+                            <img src={ICON_BUFF} className='h-6 w-6 border border-[#323c47] rounded-md' />
                             <div className='flex gap-1.5 font-semibold text-lg'>
                                 <span className='text-[#ffa500]'>Bid: {formatCurrency(data.priceOrder)}</span>
                                 <span className='text-[#808080]'>|</span>

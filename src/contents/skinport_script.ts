@@ -114,6 +114,11 @@ async function firstLaunch() {
 		for (const item of cartItems) {
 			await adjustItem(item);
 		}
+	} else if (path.startsWith('/sell')) {
+		const sellItems = Array.from(document.querySelectorAll('.SellPage-item'));
+		for (const item of sellItems) {
+			await adjustItem(item);
+		}
 	}
 }
 
@@ -183,7 +188,7 @@ async function applyMutation() {
 					if (!(addedNode instanceof HTMLElement) || !addedNode.className) continue;
 
 					const className = addedNode.className.toString();
-					if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item')) {
+					if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item') || className.includes('SellPage-item')) {
 						await adjustItem(addedNode);
 					} else if (className.includes('Cart-container')) {
 						await adjustCart(addedNode);
@@ -386,7 +391,7 @@ async function adjustItem(container: Element) {
 		addInstantOrder(item, container);
 	}
 
-	if (extensionSettings['sp-stickerprices']) {
+	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
 		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
 	}
 	if (extensionSettings['sp-floatcoloring']) {
@@ -720,7 +725,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.style.alignItems = 'center';
 	const buffImage = document.createElement('img');
 	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', 'border: 1px solid #323c47; height: 20px; margin-right: 5px;');
+	buffImage.setAttribute('style', 'border: 1px solid #323c47; height: 20px; margin-right: 5px; border-radius: 5px');
 	buffContainer.appendChild(buffImage);
 	const buffPrice = document.createElement('div');
 	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
@@ -1046,7 +1051,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	}
 
 	const difference = item.price - (extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder);
-	if (extensionSettings['sp-buffdifference'] && location.pathname !== '/myitems/inventory') {
+	if (extensionSettings['sp-buffdifference'] && location.pathname !== '/myitems/inventory' && !location.pathname.startsWith('/sell/')) {
 		let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
 		if (!discountContainer || !discountContainer.firstChild) {
 			discountContainer = document.createElement('div');

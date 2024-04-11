@@ -37,7 +37,7 @@
 		"@webext-core/isolated-element": "^1.1.1",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
-		"framer-motion": "^11.0.25",
+		"framer-motion": "^11.0.27",
 		"plasmo": "0.85.2",
 		"react": "18.2.0",
 		"react-colorful": "^5.6.1",
@@ -50,8 +50,8 @@
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "4.2.1",
 		"@types/chrome": "0.0.266",
-		"@types/node": "20.12.5",
-		"@types/react": "18.2.74",
+		"@types/node": "20.12.7",
+		"@types/react": "18.2.75",
 		"@types/react-dom": "18.2.24",
 		"@typescript-eslint/eslint-plugin": "^7.6.0",
 		"cs-tierlist": "^1.2.1",
@@ -63,7 +63,7 @@
 		"postcss": "8.4.38",
 		"prettier": "3.2.5",
 		"tailwindcss": "3.4.3",
-		"typescript": "5.4.4"
+		"typescript": "5.4.5"
 	},
 	"manifest": {
 		"web_accessible_resources": [
