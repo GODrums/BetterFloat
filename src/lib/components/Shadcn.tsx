@@ -480,13 +480,13 @@ const SelectSeparator = React.forwardRef<
 ))
 
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
- 
+
 const TooltipProvider = TooltipPrimitive.Provider
- 
+
 const Tooltip = TooltipPrimitive.Root
- 
+
 const TooltipTrigger = TooltipPrimitive.Trigger
- 
+
 const TooltipContent = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
@@ -520,7 +520,7 @@ const ScrollArea = React.forwardRef<
   </ScrollAreaPrimitive.Root>
 ))
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
- 
+
 const ScrollBar = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
@@ -531,9 +531,9 @@ const ScrollBar = React.forwardRef<
     className={cn(
       "flex touch-none select-none transition-colors",
       orientation === "vertical" &&
-        "h-full w-2.5 border-l border-l-transparent p-[1px]",
+      "h-full w-2.5 border-l border-l-transparent p-[1px]",
       orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+      "h-2.5 flex-col border-t border-t-transparent p-[1px]",
       className
     )}
     {...props}
@@ -544,22 +544,28 @@ const ScrollBar = React.forwardRef<
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
 
 const Popover = PopoverPrimitive.Root
- 
+
 const PopoverTrigger = PopoverPrimitive.Trigger
- 
+
 const PopoverAnchor = PopoverPrimitive.Anchor
- 
+
+const PopoverClose = PopoverPrimitive.Close
+
+interface PopoverProps extends React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content> {
+  portal?: HTMLElement
+}
+
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
-  <PopoverPrimitive.Portal>
+  PopoverProps
+>(({ className, align = "center", sideOffset = 4, portal = document.body, ...props }, ref) => (
+  <PopoverPrimitive.Portal container={portal}>
     <PopoverPrimitive.Content
       ref={ref}
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "z-50 w-72 rounded-md border border-border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
       {...props}
@@ -588,7 +594,7 @@ const PopoverColorPicker = React.forwardRef<
 PopoverColorPicker.displayName = PopoverPrimitive.Content.displayName
 
 const Accordion = AccordionPrimitive.Root
- 
+
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
@@ -600,7 +606,7 @@ const AccordionItem = React.forwardRef<
   />
 ))
 AccordionItem.displayName = "AccordionItem"
- 
+
 const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
@@ -620,7 +626,7 @@ const AccordionTrigger = React.forwardRef<
   </AccordionPrimitive.Header>
 ))
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
- 
+
 const AccordionContent = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
@@ -654,11 +660,11 @@ const badgeVariants = cva(
     },
   }
 )
- 
+
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
- 
+  VariantProps<typeof badgeVariants> { }
+
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (
     <div className={cn(badgeVariants({ variant }), className)} {...props} />
@@ -680,7 +686,7 @@ const alertVariants = cva(
     },
   }
 )
- 
+
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
@@ -693,7 +699,7 @@ const Alert = React.forwardRef<
   />
 ))
 Alert.displayName = "Alert"
- 
+
 const AlertTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
@@ -705,7 +711,7 @@ const AlertTitle = React.forwardRef<
   />
 ))
 AlertTitle.displayName = "AlertTitle"
- 
+
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
@@ -719,7 +725,7 @@ const AlertDescription = React.forwardRef<
 AlertDescription.displayName = "AlertDescription"
 
 const ToastProvider = ToastPrimitives.Provider
- 
+
 const ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
@@ -734,7 +740,7 @@ const ToastViewport = React.forwardRef<
   />
 ))
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName
- 
+
 const toastVariants = cva(
   "group pointer-events-auto relative flex w-full items-center justify-between space-x-2 overflow-hidden rounded-md border border-green-600/60 p-4 pr-6 shadow-lg transition-all data-[swipe=cancel]:translate-y-0 data-[swipe=end]:translate-y-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-y-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-top-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
   {
@@ -750,11 +756,11 @@ const toastVariants = cva(
     },
   }
 )
- 
+
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
-    VariantProps<typeof toastVariants>
+  VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
   return (
     <ToastPrimitives.Root
@@ -765,7 +771,7 @@ const Toast = React.forwardRef<
   )
 })
 Toast.displayName = ToastPrimitives.Root.displayName
- 
+
 const ToastAction = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Action>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Action>
@@ -780,7 +786,7 @@ const ToastAction = React.forwardRef<
   />
 ))
 ToastAction.displayName = ToastPrimitives.Action.displayName
- 
+
 const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
@@ -798,7 +804,7 @@ const ToastClose = React.forwardRef<
   </ToastPrimitives.Close>
 ))
 ToastClose.displayName = ToastPrimitives.Close.displayName
- 
+
 const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
@@ -810,7 +816,7 @@ const ToastTitle = React.forwardRef<
   />
 ))
 ToastTitle.displayName = ToastPrimitives.Title.displayName
- 
+
 const ToastDescription = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Description>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Description>
@@ -822,12 +828,12 @@ const ToastDescription = React.forwardRef<
   />
 ))
 ToastDescription.displayName = ToastPrimitives.Description.displayName
- 
+
 type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>
- 
+
 type ToastActionElement = React.ReactElement<typeof ToastAction>
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => {
@@ -870,7 +876,7 @@ FloatingLabelInput.displayName = 'FloatingLabelInput';
 
 
 export {
-  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, Avatar, AvatarImage, AvatarFallback, Tabs, TabsList, TabsTrigger, TabsContent, Button, buttonVariants, 
+  Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, Avatar, AvatarImage, AvatarFallback, Tabs, TabsList, TabsTrigger, TabsContent, Button, buttonVariants,
   Switch, Input, Label, EnableSwitch, Checkbox,
   Select,
   SelectGroup,
@@ -884,7 +890,7 @@ export {
   SelectScrollDownButton,
   Tooltip, TooltipTrigger, TooltipContent, TooltipProvider,
   ScrollArea, ScrollBar,
-  Popover, PopoverTrigger, PopoverContent, PopoverColorPicker, PopoverAnchor,
+  Popover, PopoverTrigger, PopoverContent, PopoverColorPicker, PopoverAnchor, PopoverClose,
   Accordion, AccordionItem, AccordionTrigger, AccordionContent,
   Badge, badgeVariants,
   Alert, AlertTitle, AlertDescription,

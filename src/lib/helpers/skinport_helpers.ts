@@ -1,4 +1,21 @@
+import type { Skinport } from "~lib/@typings/SkinportTypes";
 import { waitForElement } from "~lib/util/helperfunctions";
+
+export function addPattern(container: Element, item: Skinport.Item) {
+	if (!item.pattern) return;
+
+	const itemText = container.querySelector('.ItemPreview-itemText');
+	if (!itemText) return;
+
+	const santizeText = (text: string) => {
+		let parts = text.split(' ');
+		if (parts.length > 2) {
+			parts = parts.slice(0, parts[0].indexOf('-') > -1 ? 1 : 2);
+		}
+		return `${parts.join(' ')} <br> Pattern: <span style="color: mediumpurple; font-weight: 600; font-size: 13px;">${item.pattern}</span>`;
+	};
+	itemText.innerHTML = santizeText(itemText.textContent);
+}
 
 export function createLiveLink() {
 	const marketLink = <HTMLElement>document.querySelector('.HeaderContainer-link--market');
@@ -13,7 +30,7 @@ export function createLiveLink() {
 
 export function filterDisplay() {
     const filterDisplay = document.querySelector<HTMLButtonElement>('button.FilterButton-filter');
-    if (!filterDisplay) return;
+    if (!filterDisplay || location.pathname !== '/market') return;
     
     let filterSetting = localStorage.getItem('displayFilterMenu');
     if (filterSetting === null) {
@@ -21,7 +38,7 @@ export function filterDisplay() {
         filterSetting = 'true';
     } else if (filterSetting === 'false') {
         const elementWait = waitForElement('#CatalogFilter-1', 200, 10);
-        if (elementWait && document.querySelector("#CatalogFilter-1").clientWidth > 0) {
+        if (elementWait && document.querySelector("#CatalogFilter-1")?.clientWidth > 0) {
             filterDisplay.click();
         }
     }

@@ -6,12 +6,13 @@ import Decimal from 'decimal.js';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
-	ICON_ARROWUP,
+	ICON_ARROWUP_text,
 	ICON_BAN,
 	ICON_BUFF,
 	ICON_CLOCK,
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
+	ICON_CSGOSTASH,
 	ICON_EXCLAMATION,
 	ICON_GEM_CYAN,
 	ICON_OVERPRINT_ARROW,
@@ -19,6 +20,7 @@ import {
 	ICON_OVERPRINT_MIXED,
 	ICON_OVERPRINT_POLYGON,
 	ICON_PHOENIX,
+	ICON_PRICEMPIRE,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 } from '~lib/util/globals';
@@ -48,8 +50,6 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
-import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
-import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -871,12 +871,12 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	quickLinksContainer.setAttribute('style', 'flex-basis: 100%; display: flex; justify-content: space-evenly;');
 	const quickLinks: QuickLink[] = [
 		{
-			icon: iconCsgostash,
+			icon: ICON_CSGOSTASH,
 			tooltip: 'Show CSGOStash Page',
 			link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
 		},
 		{
-			icon: iconPricempire,
+			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
 			link: createPricempireURL(container, listing.item),
 		},
@@ -1351,7 +1351,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			const linkHeader = document.createElement('a');
 			linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
 			linkHeader.setAttribute('target', '_blank');
-			linkHeader.innerHTML = ICON_ARROWUP;
+			linkHeader.innerHTML = ICON_ARROWUP_text;
 			linkHeaderCell.appendChild(linkHeader);
 			tableTr.appendChild(linkHeaderCell);
 			header.appendChild(tableTr);

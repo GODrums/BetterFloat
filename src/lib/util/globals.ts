@@ -4,7 +4,8 @@ import iconExclamation from "data-base64:/assets/icons/triangle-exclamation-soli
 import iconCamera from "data-base64:/assets/icons/camera-solid.svg";
 import iconBan from "data-base64:/assets/icons/ban-solid.svg";
 import iconClock from "data-base64:/assets/icons/clock-solid.svg";
-import iconArrowup from "data-text:/assets/icons/arrow-up-right-from-square-solid.svg";
+import iconArrowupText from "data-text:/assets/icons/arrow-up-right-from-square-solid.svg";
+import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
 import iconCrimson from "data-base64:/assets/patterns/crimson-pattern.svg";
 import iconSpiderWeb from "data-base64:/assets/patterns/spider-web.svg";
 import iconOverprintArrow from "data-base64:/assets/patterns/overprint-arrow.svg";
@@ -14,6 +15,8 @@ import iconOverprintPolygon from "data-base64:/assets/patterns/overprint-polygon
 import iconGemCyan from "data-base64:/assets/patterns/gem-cyan.svg";
 import iconPhoenix from "data-base64:/assets/patterns/phoenix-icon.svg";
 import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
+import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
+import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
@@ -27,6 +30,7 @@ export const ICON_CAMERA = iconCamera;
 export const ICON_BAN = iconBan;
 export const ICON_CLOCK = iconClock;
 export const ICON_ARROWUP = iconArrowup;
+export const ICON_ARROWUP_text = iconArrowupText;
 export const ICON_CRIMSON = iconCrimson;
 export const ICON_OVERPRINT_ARROW = iconOverprintArrow;
 export const ICON_OVERPRINT_FLOWER = iconOverprintFlower;
@@ -35,6 +39,8 @@ export const ICON_OVERPRINT_POLYGON = iconOverprintPolygon;
 export const ICON_GEM_CYAN = iconGemCyan;
 export const ICON_PHOENIX = iconPhoenix;
 export const ICON_SPIDER_WEB = iconSpiderWeb;
+export const ICON_CSGOSTASH = iconCsgostash;
+export const ICON_PRICEMPIRE = iconPricempire;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

@@ -17,6 +17,10 @@ export const Changelogs = () => {
         <TabsContent value="changelog" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+                <SingleChangelog version="v2.3.0">
+                    <li>Skinport - New Buff Prices popup on item pages with advanced Buff details</li>
+                    <li>Skinport - Item previews now display the pattern index</li>
+                </SingleChangelog>
                 <SingleChangelog version="v2.2.3">
                     <li>Skinbid - New feature: Buff difference percentage</li>
                     <li>Skinbid - Buff differences for various different prices and elements, such as individual bids</li>

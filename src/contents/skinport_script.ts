@@ -2,8 +2,8 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
-import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode } from '~lib/util/globals';
+import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
@@ -409,22 +409,6 @@ async function adjustItem(container: Element) {
 	}
 }
 
-function addPattern(container: Element, item: Skinport.Item) {
-	if (!item.pattern) return;
-
-	const itemText = container.querySelector('.ItemPreview-itemText');
-	if (!itemText) return;
-
-	const santizeText = (text: string) => {
-		let parts = text.split(' ');
-		if (parts.length > 2) {
-			parts = parts.slice(0, parts[0].indexOf('-') > -1 ? 1 : 2);
-		}
-		return `${parts.join(' ')} <br> Pattern: <span style="color: mediumpurple; font-weight: 600; font-size: 13px;">${item.pattern}</span>`;
-	};
-	itemText.innerHTML = santizeText(itemText.textContent);
-}
-
 function storeItem(container: Element, item: Skinport.Listing) {
 	container.className += ' sale-' + item.saleId;
 	container.setAttribute('data-betterfloat', JSON.stringify(item));
@@ -483,7 +467,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP}</a></div></div>`;
+	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP_text}</a></div></div>`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
 		tableBody += `<div class="ItemHistoryList-row"${
@@ -716,19 +700,19 @@ async function calculateBuffPrice(item: Skinport.Listing) {
 		// origin price of rate is non-USD, so we need to divide
 		priceListing = new Decimal(priceListing).div(currencyRate).toDP(2).toNumber();
 		priceOrder = new Decimal(priceOrder).div(currencyRate).toDP(2).toNumber();
+		priceAvg30 = new Decimal(priceAvg30).div(currencyRate).toDP(2).toNumber();
 	} else {
 		// origin price of rate is USD, so we need to multiply
 		priceListing = new Decimal(priceListing).mul(currencyRate).toDP(2).toNumber();
 		priceOrder = new Decimal(priceOrder).mul(currencyRate).toDP(2).toNumber();
+		priceAvg30 = new Decimal(priceAvg30).mul(currencyRate).toDP(2).toNumber();
 	}
 
 	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity };
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, isItemPage = false, containerIsParent = false) {
-	if (!isItemPage) {
-		container.className += ' betterfloat-buffprice';
-	}
+function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, containerIsParent = false) {
+	container.className += ' betterfloat-buffprice';
 	const buffContainer = document.createElement('div');
 	buffContainer.className = 'betterfloat-buff-container';
 	buffContainer.style.display = 'flex';
@@ -736,16 +720,10 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.style.alignItems = 'center';
 	const buffImage = document.createElement('img');
 	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', ` border: 1px solid #323c47; ${isItemPage ? 'height: 24px;' : 'height: 20px; margin-right: 5px;'}`);
+	buffImage.setAttribute('style', 'border: 1px solid #323c47; height: 20px; margin-right: 5px;');
 	buffContainer.appendChild(buffImage);
 	const buffPrice = document.createElement('div');
 	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
-	if (isItemPage) {
-		buffContainer.style.gap = '10px';
-		buffPrice.style.fontSize = '18px';
-		buffPrice.style.display = 'flex';
-		buffPrice.style.gap = '5px';
-	}
 	const tooltipSpan = document.createElement('span');
 	tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
 	tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
@@ -768,9 +746,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 		warningImage.setAttribute('src', ICON_EXCLAMATION);
 		warningImage.setAttribute(
 			'style',
-			`height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);${
-				isItemPage ? 'margin-bottom: 1px;' : ''
-			}`
+			'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);'
 		);
 		buffContainer.appendChild(warningImage);
 	}
@@ -778,7 +754,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 		const divider = document.createElement('div');
 		container.appendChild(divider);
 		container.appendChild(buffContainer);
-	} else if (extensionSettings['sp-steamprices'] || isItemPage) {
+	} else if (extensionSettings['sp-steamprices']) {
 		const divider = document.createElement('div');
 		container.after(buffContainer);
 		container.after(divider);
@@ -1034,7 +1010,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		if (!priceDiv) {
 			const priceParent = container.querySelector('.ItemPreview-priceValue');
-			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, false, true);
+			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, true);
 			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
 		} else {
 			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);

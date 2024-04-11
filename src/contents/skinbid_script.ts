@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
+import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
@@ -270,7 +270,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 	newTab.style.color = 'deepskyblue';
 	newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
 		item.paintSeed
-	}&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub; margin-right: 10px;">${ICON_ARROWUP}</a>`;
+	}&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub; margin-right: 10px;">${ICON_ARROWUP_text}</a>`;
 	newTab.addEventListener('click', () => {
 		chartContainer.querySelector('.tab.active')?.classList.remove('active');
 		newTab.classList.add('active');
