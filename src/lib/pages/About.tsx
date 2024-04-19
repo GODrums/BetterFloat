@@ -3,6 +3,7 @@ import betterfloatLogo from "data-base64:~/../assets/icon.png";
 import { Button, ScrollArea, TabsContent } from "../components/Shadcn";
 import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { Spotlight } from "~lib/components/Spotlight";
+import { WEBSITE_URL } from "~lib/util/globals";
 
 export const About = () => {
     return (
@@ -15,7 +16,9 @@ export const About = () => {
                     />
                     <div className="max-w-7xl mx-auto relative z-10 w-full pt-12 md:pt-0">
                         <div className="flex justify-center">
-                            <img className="h-20" src={betterfloatLogo} />
+                            <Button variant="ghost" className="p-0 m-0 size-20 rounded-full" onClick={() => window.open(WEBSITE_URL)}>
+                                <img className="h-20" src={betterfloatLogo} />
+                            </Button>
                         </div>
                         <h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
                             BetterFloat

@@ -21,6 +21,7 @@ import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
+export const WEBSITE_URL = 'https://betterfloat.rums.dev/';
 
 export const ICON_BUFF = iconBuff;
 export const ICON_STEAM = iconSteam;

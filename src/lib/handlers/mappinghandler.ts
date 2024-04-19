@@ -359,8 +359,7 @@ async function fetchSpUserData() {
 		});
 }
 
-// fetches currency rates from freecurrencyapi via my own server to avoid rate limits
-// source code of the server endpoint can be found here: https://gist.github.com/GODrums/9206e8d7ff07bc548c5a28aaeb3f3e74
+// fetches currency rates from freecurrencyapi through my api to avoid rate limits
 async function fetchCurrencyRates() {
 	await fetch('https://api.rums.dev/v1/currencyrates')
 		.then((response) => response.json())

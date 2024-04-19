@@ -6,7 +6,7 @@ import csfloatLogo from "data-base64:~/../assets/csfloat.png"
 import skinportLogo from "data-base64:~/../assets/skinport.ico"
 import { CSFloatSettings } from "~lib/pages/Csfloat"
 import { SkinportSettings } from "~lib/pages/Skinport"
-import { DISCORD_URL, GITHUB_URL } from "~lib/util/globals"
+import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from "~lib/util/globals"
 import { SkinbidSettings } from "~lib/pages/Skinbid"
 import { SparklesCore } from "~lib/components/Sparkles"
 import { Changelogs } from "~lib/pages/Changelog"
@@ -58,7 +58,7 @@ export default function IndexPopup() {
     <div className="dark flex flex-col bg-card justify-between h-[600px] w-[430px]">
       <header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
         <div className="flex gap-2 align-middle items-center">
-          <img className="h-[38px]" src={betterfloatLogo} />
+          <img className="h-[38px] cursor-pointer" src={betterfloatLogo} onClick={() => window.open(WEBSITE_URL)} />
           <Badge id="version" variant="outline" className="border-muted text-muted-foreground">v. 2.0.0</Badge>
         </div>
         <div className="flex gap-1">
