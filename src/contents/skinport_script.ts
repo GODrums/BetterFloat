@@ -188,7 +188,13 @@ async function applyMutation() {
 					if (!(addedNode instanceof HTMLElement) || !addedNode.className) continue;
 
 					const className = addedNode.className.toString();
-					if (className.includes('CatalogPage-item') || className.includes('InventoryPage-item') || className.includes('CheckoutConfirmation-item') || className.includes('ItemList-item') || className.includes('SellPage-item')) {
+					if (
+						className.includes('CatalogPage-item') ||
+						className.includes('InventoryPage-item') ||
+						className.includes('CheckoutConfirmation-item') ||
+						className.includes('ItemList-item') ||
+						className.includes('SellPage-item')
+					) {
 						await adjustItem(addedNode);
 					} else if (className.includes('Cart-container')) {
 						await adjustCart(addedNode);
@@ -288,9 +294,11 @@ async function adjustItemPage(container: Element) {
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler');
 	const buffLink =
-		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buffItem.buff_name)}`;
+		buff_id > 0
+			? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
+			: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buffItem.buff_name)}`;
 
-	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem}));
+	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
@@ -392,7 +400,7 @@ async function adjustItem(container: Element) {
 	}
 
 	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
-		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
+		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference.toNumber());
 	}
 	if (extensionSettings['sp-floatcoloring']) {
 		await addFloatColoring(container, item);
@@ -410,7 +418,6 @@ async function adjustItem(container: Element) {
 		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
 			await addBlueBadge(container, cachedItem);
 		}
-
 	}
 }
 
@@ -1050,9 +1057,11 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		}
 	}
 
-	const difference = item.price - (extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder);
-	if (extensionSettings['sp-buffdifference'] && location.pathname !== '/myitems/inventory' && !location.pathname.startsWith('/sell/')) {
-		let discountContainer = <HTMLElement>container.querySelector('.ItemPreview-discount');
+	const priceFromReference = extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder;
+	const difference = new Decimal(item.price).minus(priceFromReference);
+	const percentage = new Decimal(item.price).div(priceFromReference).mul(100);
+	if ((extensionSettings['sp-buffdifference'] || extensionSettings['sp-buffdifferencepercent']) && location.pathname !== '/myitems/inventory' && !location.pathname.startsWith('/sell/')) {
+		let discountContainer = container.querySelector<HTMLElement>('.ItemPreview-discount');
 		if (!discountContainer || !discountContainer.firstChild) {
 			discountContainer = document.createElement('div');
 			discountContainer.className = 'GradientLabel ItemPreview-discount';
@@ -1060,27 +1069,21 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			discountContainer.appendChild(newSaleTag);
 			container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
 		}
-		const saleTag = <HTMLElement>discountContainer.firstChild;
+		const saleTag = discountContainer.firstChild as HTMLElement;
 		if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
 			saleTag.className = 'sale-tag betterfloat-sale-tag';
 			discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
-				difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
+				difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 			})`;
-			let saleText: string;
-			if (difference == 0) {
-				saleText = `-${item.currency}0`;
-			} else {
-				const sign = difference > 0 ? '+' : '-';
-				const percentage = extensionSettings['sp-buffdifferencepercent']
-					? ' (' + ((item.price / (extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder)) * 100).toFixed(2) + '%)'
-					: '';
-				saleText = `${sign}${item.currency}${Math.abs(difference).toFixed(2)}${percentage}`;
-			}
-			saleTag.textContent = saleText;
-		}
-	} else {
-		if (container.querySelector('.sale-tag')) {
-			(<HTMLElement>container.querySelector('.sale-tag')).className += 'betterfloat-sale-tag';
+
+			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center;';
+
+			let buffPriceHTML = `<div style="${saleTagStyle}">${
+				extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''
+			}${extensionSettings['sp-buffdifferencepercent'] ? `<span>(${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%)</span>` : ''}</div>`;
+
+			saleTag.innerHTML = buffPriceHTML;
+			saleTag.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference, difference, percentage }));
 		}
 	}
 
