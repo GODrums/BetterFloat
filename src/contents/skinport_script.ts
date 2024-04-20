@@ -1078,7 +1078,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center;';
 
-			let buffPriceHTML = `<div style="${saleTagStyle}">${
+			const buffPriceHTML = `<div style="${saleTagStyle}">${
 				extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''
 			}${extensionSettings['sp-buffdifferencepercent'] ? `<span>(${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%)</span>` : ''}</div>`;
 

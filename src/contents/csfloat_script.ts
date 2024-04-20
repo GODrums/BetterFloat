@@ -1168,18 +1168,20 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	}
 
 	// add gem icon and blue gem percent if item is a knife
-	let tierContainer = container.querySelector('.badge-container');
-	if (!tierContainer) {
-		tierContainer = document.createElement('div');
-		tierContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-		container.querySelector('.item-img')?.after(tierContainer);
-	} else {
-		tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
-		tierContainer.setAttribute('style', 'gap: 5px;');
+	if (item.rarity === 6 && !item.item_name.includes('Gloves')) {
+		let tierContainer = container.querySelector('.badge-container');
+		if (!tierContainer) {
+			tierContainer = document.createElement('div');
+			tierContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+			container.querySelector('.item-img')?.after(tierContainer);
+		} else {
+			tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
+			tierContainer.setAttribute('style', 'gap: 5px;');
+		}
+		const gemContainer = genGemContainer(patternElement);
+		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
+		tierContainer.appendChild(gemContainer);
 	}
-	const gemContainer = genGemContainer(patternElement);
-	gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-	tierContainer.appendChild(gemContainer);
 
 	// add screenshot if csfloat does not offer one
 	const detailButtons = container.querySelector('.detail-buttons');

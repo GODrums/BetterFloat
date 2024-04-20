@@ -19,7 +19,7 @@ export function addPattern(container: Element, item: Skinport.Item) {
 	itemText.innerHTML = santizeText(itemText.textContent);
 }
 
-export async function addTotalInventoryPrice(page?: 'inventory' | 'listed') {
+export async function addTotalInventoryPrice() {
     const selectors = {
         countContainer: '.InventoryPage-gameHeaderItems',
         item: '.InventoryPage-item',

@@ -21,14 +21,17 @@ export function genGemContainer(patternElement: BlueGem.PatternElement | undefin
     gemImage.setAttribute('src', iconGemshop);
     gemImage.setAttribute(
         'style',
-        `height: ${mode == 'left' ? '25' : '18'}px; margin-${
-            mode == 'left' ? 'right' : 'left'
+        `height: ${mode === 'left' ? '16' : '18'}px; margin-${
+            mode === 'right' ? 'left' : 'right'
         }: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
     );
     gemContainer.appendChild(gemImage);
     if (patternElement) {
         const gemValue = document.createElement('span');
         gemValue.style.color = 'deepskyblue';
+        if (mode === 'left' && !location.pathname.includes('/item/')) {
+            gemValue.style.fontSize = '13px';
+        }
         gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
         gemContainer.appendChild(gemValue);
     }
