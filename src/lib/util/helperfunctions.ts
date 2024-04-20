@@ -44,7 +44,7 @@ export async function waitForElement(selector: string, interval = 200, maxTries 
 /**
  * Listens for url changes and executes the callback function
  * @param urlChangeCallback callback function
- * @param delay interval in ms
+ * @param delay interval in ms, default 2000
  * @returns interval id for use with clearInterval
  * @async setInterval executed every 200ms
  */

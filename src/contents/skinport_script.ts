@@ -724,7 +724,6 @@ async function calculateBuffPrice(item: Skinport.Listing) {
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, containerIsParent = false) {
-	container.className += ' betterfloat-buffprice';
 	const buffContainer = document.createElement('div');
 	buffContainer.className = 'betterfloat-buff-container';
 	buffContainer.style.display = 'flex';
@@ -736,6 +735,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 	buffContainer.appendChild(buffImage);
 	const buffPrice = document.createElement('div');
 	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
+	buffPrice.setAttribute('data-betterfloat', JSON.stringify({ priceListing, priceOrder, currencySymbol }));
 	const tooltipSpan = document.createElement('span');
 	tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
 	tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
@@ -1057,7 +1057,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		}
 	}
 
-	const priceFromReference = extensionSettings['sp-pricereference'] == 1 ? priceListing : priceOrder;
+	const priceFromReference = extensionSettings['sp-pricereference'] === 1 ? priceListing : priceOrder;
 	const difference = new Decimal(item.price).minus(priceFromReference);
 	const percentage = new Decimal(item.price).div(priceFromReference).mul(100);
 	if ((extensionSettings['sp-buffdifference'] || extensionSettings['sp-buffdifferencepercent']) && location.pathname !== '/myitems/inventory' && !location.pathname.startsWith('/sell/')) {

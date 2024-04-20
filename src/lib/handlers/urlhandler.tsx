@@ -5,7 +5,7 @@ import { createRoot } from "react-dom/client";
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
-import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { addTotalInventoryPrice, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import LiveFilter from '~lib/inline/LiveFilter';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
@@ -27,6 +27,15 @@ export function urlHandler() {
 				createLiveLink();
 				if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
 					filterDisplay();
+				} else if (state.path === "/myitems/inventory" || state.path === "/myitems/listed") {
+					addTotalInventoryPrice();
+
+					const interval = createUrlListener((newURL) => {
+						clearInterval(interval);
+						if (!newURL.includes('/myitems/inventory') && !newURL.includes('myitems/listed')) {
+							document.querySelector('.betterfloat-totalbuffprice')?.remove();
+						}
+					});
 				}
 			}
 		}
