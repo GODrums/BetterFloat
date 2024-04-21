@@ -1081,7 +1081,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 				difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 			})`;
 
-			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center;';
+			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;';
 
 			const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
 			const buffPriceHTML = `<div style="${saleTagStyle}">${

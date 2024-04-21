@@ -9,6 +9,9 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 	if (details.reason == 'install') {
 		console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
 		await chrome.storage.sync.set(DEFAULT_SETTINGS);
+		// get extension url
+		// const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+		// await chrome.tabs.create({ url: onboardingUrl });
 	} else if (details.reason == 'update') {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
