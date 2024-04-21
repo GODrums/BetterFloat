@@ -1078,9 +1078,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center;';
 
+			const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
 			const buffPriceHTML = `<div style="${saleTagStyle}">${
 				extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''
-			}${extensionSettings['sp-buffdifferencepercent'] ? `<span>(${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%)</span>` : ''}</div>`;
+			}${extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''}</div>`;
 
 			saleTag.innerHTML = buffPriceHTML;
 			saleTag.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference, difference, percentage }));

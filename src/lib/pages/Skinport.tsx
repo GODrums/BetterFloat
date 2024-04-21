@@ -53,7 +53,7 @@ export const SkinportSettings = () => {
                         </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox
-                                id="sp-buffdifferencepercent" text="Show Buff Price Percentage Difference" tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%." icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />} />
+                                id="sp-buffdifferencepercent" text="Show Buff Price Percentage Difference" tooltipText="Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%." icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />} />
                         </SettingsCard>
                     </div>
                 </div>
