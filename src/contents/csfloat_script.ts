@@ -69,16 +69,6 @@ async function init() {
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
 
-	const apiStatus = await isApiStatusOK();
-	if (apiStatus.statusCode != 200 && apiStatus.sites.includes('csfloat')) {
-		console.error('[BetterFloat] API status is not OK:', apiStatus);
-		const bannerPlaceholder = document.querySelector('MAT-TOOLBAR')?.parentElement?.childNodes[2];
-		if (bannerPlaceholder) {
-			bannerPlaceholder.replaceWith(CSFloatHelpers.generateWarningText(apiStatus.message));
-		}
-		return;
-	}
-
 	extensionSettings = await getAllSettings();
 
 	if (!extensionSettings['csf-enable']) return;

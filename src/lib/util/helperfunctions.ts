@@ -62,7 +62,7 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
 
 /**
  * Wrapper for price mapping. Returns the price of an item with respect to its style
- * @param buff_name has to exacty follow Buff's naming convention.
+ * @param buff_name has to follow the exact Buff's naming convention.
  * @param itemStyle e.g. Vanilla, Phase 1, Phase 2, ...
  * @returns
  */

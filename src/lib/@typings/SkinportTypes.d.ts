@@ -2,20 +2,67 @@ import type { ItemStyle } from './FloatTypes';
 
 export namespace Skinport {
     export type MarketData = {
-        filter: {
-            components: {
-                appid: number;
-                data: any;
-                name: string;
-                type: string;
-            }[];
-            total: number;
-        };
+        filter: MarketFilter;
         items: Item[];
         message: string | null;
         requestId: string;
         success: boolean;
     };
+
+    export type InventoryAccount = {
+        filter: MarketFilter & {
+            games: {
+                [appid: string]: number;
+            }
+        };
+        items: Item[];
+        message: string | null;
+        openOrders: any[];
+        requestId: string;
+        success: boolean;
+        tabs: {
+            inventory: number;
+            listed: number;
+            followed: number;
+        };
+        totalPrice: {
+            currency: string;
+            value: number;
+        }
+        tradeOffers: Record<string, any>;
+    }
+
+    export type InventoryListed = {
+        filter: MarketFilter & {
+            games: {
+                [appid: string]: number;
+            }
+        };
+        items: Item[];
+        message: string | null;
+        promo: any;
+        requestId: string;
+        success: boolean;
+        tabs: {
+            inventory: number;
+            listed: number;
+            followed: number;
+        };
+        totalPrice: {
+            currency: string;
+            value: number;
+        }
+    }
+
+    export type MarketFilter = {
+        components: {
+            appid: number;
+            data: any;
+            name: string;
+            type: string;
+        }[];
+        total: number;
+    }
 
     export type ItemData = {
         data: {

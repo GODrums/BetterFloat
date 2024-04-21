@@ -703,7 +703,12 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 
 async function calculateBuffPrice(item: Skinport.Listing) {
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, item.style);
+
+	return await getConvertedCurrency(buff_name, item.style);
+}
+
+export async function getConvertedCurrency(buff_name: string, itemStyle: ItemStyle) {
+	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle);
 
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';

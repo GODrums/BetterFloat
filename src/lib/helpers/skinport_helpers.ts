@@ -1,6 +1,9 @@
+import getSymbolFromCurrency from "currency-symbol-map";
+import { getConvertedCurrency } from "~contents/skinport_script";
+import type { ItemStyle } from "~lib/@typings/FloatTypes";
 import type { Skinport } from "~lib/@typings/SkinportTypes";
 import { ICON_BUFF } from "~lib/util/globals";
-import { waitForElement } from "~lib/util/helperfunctions";
+import { getBuffPrice, waitForElement } from "~lib/util/helperfunctions";
 import { getSetting } from "~lib/util/storage";
 
 export function addPattern(container: Element, item: Skinport.Item) {
@@ -19,36 +22,29 @@ export function addPattern(container: Element, item: Skinport.Item) {
 	itemText.innerHTML = santizeText(itemText.textContent);
 }
 
-export async function addTotalInventoryPrice() {
-    const selectors = {
-        countContainer: '.InventoryPage-gameHeaderItems',
-        item: '.InventoryPage-item',
-    };
-    
-    const countContainer = document.querySelector(selectors.countContainer);
-    if (!countContainer) return;
+export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Skinport.InventoryAccount) {
+    const countContainer = document.querySelector('.InventoryPage-gameHeaderItems');
+    if (!countContainer || !data.items?.[0]?.currency) return;
 
     const reference = Number(await getSetting('sp-pricereference'));
 
-    let items = Array.from(document.querySelectorAll(selectors.item));
-
-    while(!items?.at(-1)?.querySelector('.betterfloat-buffprice')) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        items = Array.from(document.querySelectorAll(selectors.item));
-    }
-
     let total = 0;
-    let currency: string | null = null;
+    let currency = getSymbolFromCurrency(data.items[0].currency);
 
-    items.forEach((item) => {
-        const buffData = JSON.parse(item.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') || '{}');
-        if (Object.keys(buffData).length === 0) return;
-
-        total += reference === 1 ? buffData.priceListing : buffData.priceOrder;
-        if (!currency && buffData.currencySymbol) {
-            currency = buffData.currencySymbol;
+    const getStyle: (itemName: string) => ItemStyle = (itemName) => {
+        if (itemName.includes('Doppler')) {
+            return itemName.split('(')[1].split(')')[0] as ItemStyle;
+        } else if (itemName.includes('Vanilla')) {
+            return 'Vanilla';
+        } else {
+            return '';
         }
-    });
+    };
+
+    for (const item of data.items) {
+        const buffData = await getConvertedCurrency(item.marketHashName, getStyle(item.name));
+        total += reference === 1 ? buffData.priceListing : buffData.priceOrder;
+    };
 
     if (countContainer.querySelector('.betterfloat-totalbuffprice')) {
         const totalText = countContainer.querySelector('.betterfloat-totalbuffprice > span');

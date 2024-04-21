@@ -23,6 +23,7 @@ import {
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
+import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -147,6 +148,16 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 		const data = eventData.data as Skinport.UserData;
 		cacheSkinportCurrencyRates(data.rates, data.currency);
 		cacheSpMinOrderPrice(data.limits.minOrderValue);
+	} else if (eventData.url.includes('api/inventory/listed')) {
+		const items = (eventData.data as Skinport.InventoryListed).items.map((x) => x);
+		cacheSpItems(items);
+		addTotalInventoryPrice(eventData.data as Skinport.InventoryListed);
+	} else if (eventData.url.includes('api/inventory/account')) {
+		const items = (eventData.data as Skinport.InventoryAccount).items.map((x) => x);
+		cacheSpItems(items);
+		addTotalInventoryPrice(eventData.data as Skinport.InventoryAccount);
+	} else if (eventData.url.includes('api/inventory/followed')) {
+		document.querySelector('.betterfloat-totalbuffprice')?.remove();
 	}
 }
 
