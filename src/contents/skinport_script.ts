@@ -1033,8 +1033,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
 		}
 	}
-	console.debug('[BetterFloat] Buff price for ', item.name, ': ', priceListing, priceOrder);
-	const isDoppler = item.name.includes('Doppler');
+	
+	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
 
 	const buffHref =
 		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
