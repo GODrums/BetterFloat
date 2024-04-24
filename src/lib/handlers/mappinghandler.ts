@@ -7,6 +7,7 @@ import type { Extension } from '../@typings/ExtensionTypes';
 import type { CSFloat } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
+import { fetchCurrencyRates } from './networkhandler';
 
 // most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
@@ -356,16 +357,6 @@ async function fetchSpUserData() {
 			cacheSkinportCurrencyRates(data.rates, data.currency);
 			cacheSkinportCSRF(data.csrf);
 			cacheSpMinOrderPrice(data.limits.minOrderValue);
-		});
-}
-
-// fetches currency rates from freecurrencyapi through my api to avoid rate limits
-async function fetchCurrencyRates() {
-	await fetch('https://api.rums.dev/v1/currencyrates')
-		.then((response) => response.json())
-		.then((data) => {
-			console.debug('[BetterFloat] Received currency rates from Freecurrencyapi: ', data);
-			cacheRealCurrencyRates(data.rates);
 		});
 }
 

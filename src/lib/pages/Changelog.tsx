@@ -17,6 +17,10 @@ export const Changelogs = () => {
         <TabsContent value="changelog" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+                <SingleChangelog version="v2.3.2">
+                    <li>Provide default currency rates in case the API in unavailable for now.</li>
+                    <li>Skinport - Fixed a case where Doppler Poison Frog stickers crashed the Buff calculation.</li>
+                </SingleChangelog>
                 <SingleChangelog version="v2.3.1">
                     <li>Skinport - The absolute and percentage price difference settings can now be used independently from each other. If both are activated, they now are seperated by a line break.</li>
                     <li>Skinport - Total Buff prices for the listed and Skinport inventory items</li>

@@ -39,7 +39,7 @@ import {
 	getWholeHistory,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGem, isApiStatusOK } from '../lib/handlers/networkhandler';
+import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar } from '../lib/util/helperfunctions';
 import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
 
@@ -937,7 +937,11 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 	}
 
 	if (!ITEM_SCHEMA) {
-		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA);
+		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA || '{}');
+	}
+
+	if (Object.keys(ITEM_SCHEMA).length === 0) {
+		return;
 	}
 
 	const names = listing.item.item_name.split(' | ');

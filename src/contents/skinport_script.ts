@@ -645,7 +645,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	}
 
 	let style: ItemStyle = '';
-	if (name.includes('Doppler')) {
+	if (name.includes('Doppler') && category === 'Knife') {
 		style = name.split('(')[1].split(')')[0] as ItemStyle;
 	} else if (name.includes('Vanilla')) {
 		style = 'Vanilla';
@@ -1033,6 +1033,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
 		}
 	}
+	console.debug('[BetterFloat] Buff price for ', item.name, ': ', priceListing, priceOrder);
 	const isDoppler = item.name.includes('Doppler');
 
 	const buffHref =
