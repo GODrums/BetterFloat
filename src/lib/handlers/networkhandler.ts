@@ -1,3 +1,4 @@
+import { ExtensionStorage } from '~lib/util/storage';
 import { cacheRealCurrencyRates } from './mappinghandler';
 
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
@@ -17,16 +18,23 @@ export async function fetchCSBlueGem(type: string, paint_seed: number, currency 
 
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
-	await fetch('https://api.rums.dev/v1/currencyrates')
-		.then((response) => response.json())
-		.then((data) => {
-			console.debug('[BetterFloat] Received currency rates from Freecurrencyapi: ', data);
-			cacheRealCurrencyRates(data.rates);
-		})
-		.catch((err) => {
-			console.error(err);
-			cacheRealCurrencyRates(DEFAULT_CURRENCY_RATES.rates);
-		});
+	let currencyRates = await ExtensionStorage.local.getItem<typeof DEFAULT_CURRENCY_RATES>('currencyrates');
+	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
+		cacheRealCurrencyRates(currencyRates.rates);
+	} else {
+		await fetch('https://api.rums.dev/v1/currencyrates')
+			.then((response) => response.json())
+			.then(async (data) => {
+				console.debug('[BetterFloat] Received currency rates from Freecurrencyapi: ', data);
+				cacheRealCurrencyRates(data.rates);
+				await ExtensionStorage.local.setItem('currencyrates', data);
+			})
+			.catch(async (err) => {
+				console.error(err);
+				cacheRealCurrencyRates(DEFAULT_CURRENCY_RATES.rates);
+				await ExtensionStorage.local.setItem('currencyrates', DEFAULT_CURRENCY_RATES);
+			});
+	}
 }
 
 /**

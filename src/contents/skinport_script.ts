@@ -292,7 +292,7 @@ async function adjustItemPage(container: Element) {
 	if (!item) return;
 	const buffItem = await calculateBuffPrice(item);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
-	const isDoppler = item.name.includes('Doppler');
+	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
 	const buffLink =
 		buff_id > 0
 			? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
