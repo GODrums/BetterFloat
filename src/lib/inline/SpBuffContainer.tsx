@@ -15,11 +15,7 @@ type BuffItem = {
     liquidity: number;
 }
 
-type ContainerProps = {
-    child: HTMLDivElement;
-}
-
-const Container: React.FC<ContainerProps> = ({ child }: { child: HTMLDivElement }) => {
+const Container: React.FC<{ child: HTMLDivElement; }> = ({ child }) => {
     return (
         <div className='fixed z-[99]' ref={ref => ref.appendChild(child)}></div>
     )

@@ -61,11 +61,20 @@ async function handleChange(state: Extension.URLState) {
 		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
 			waitForElement('.CatalogHeader-tooltipLive', 100, 10).then(async (success) => {
 				if (success && !document.querySelector('betterfloat-live-filter')) {
-					await mountShadowRoot(<LiveFilter />, {
+					const root = await mountShadowRoot(<LiveFilter />, {
 						tagName: 'betterfloat-live-filter',
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
 						position: 'before'
 					});
+					// unmount on url change
+					const interval = createUrlListener((newUrl) => {
+						const url = new URL(newUrl);
+						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
+							root.unmount();
+							document.querySelector('betterfloat-live-filter')?.remove();
+							clearInterval(interval);
+						}
+					}, 1000);
 				}
 			});
 		}

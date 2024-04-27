@@ -23,13 +23,12 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
     }
 
     return (
-        <div className={cn('flex items-center pb-1 pl-1.5 gap-0.5', props.className)}>
+        <div className={cn('flex items-center pb-0.5 pl-1.5 gap-0.5', props.className)}>
             <input type="checkbox" id={id} checked={checked} onChange={handleChecked} className="w-5 h-5 mr-1 text-white" style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }} />
             <label className='mr-1.5 text-sm' htmlFor={id}>{props.label}</label>
         </div>
     );
 }
-
 
 const LiveFilter: React.FC = () => {
     const [open, setOpen] = useState(false);
@@ -64,7 +63,7 @@ const LiveFilter: React.FC = () => {
         localStorage.setItem('spFilter', JSON.stringify(DEFAULT_FILTER));
     }
 
-    const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker'];
+    const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker', 'Equipment', 'Pass'];
 
     useEffect(() => {
         let count = 0;
@@ -117,7 +116,7 @@ const LiveFilter: React.FC = () => {
                             <input type="text" id="filter-name" className="w-full h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base" value={name} onChange={(e) => setName(e.target.value)} />
                         </div>
                         <div className='flex justify-between w-4/5 mt-1.5'>
-                            <div className='flex flex-col gap-1 items-start'>
+                            <div className='flex flex-col gap-0.5 items-start'>
                                 <Label className='font-semibold my-1.5'>TYPE</Label>
                                 {filterLabels.map((type, index) => {
                                     return (

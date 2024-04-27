@@ -103,6 +103,8 @@ export const DEFAULT_FILTER = {
 		collectible: true,
 		container: true,
 		sticker: true,
+		equipment: true,
+		pass: true,
 	},
 	new: false,
 }

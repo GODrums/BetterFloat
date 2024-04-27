@@ -20,6 +20,13 @@ export namespace Extension {
         time: number;
     };
 
+    export type CurrenyRates = {
+        lastUpdate: number;
+        rates: {
+            [currency: string]: number;
+        };
+    };
+
     /**
      * Mapping corresponding to the response from https://prices.csgotrader.app/latest/buff163.json
      */
