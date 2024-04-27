@@ -737,6 +737,9 @@ enum POPOUT_ITEM {
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
+	if (popout === POPOUT_ITEM.PAGE) {
+		await new Promise((r) => setTimeout(r, 1000));
+	}
 	const item = getFloatItem(container);
 	// console.log('[BetterFloat] Adjusting item:', item);
 	if (Number.isNaN(item.price)) return;
@@ -1199,10 +1202,10 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 				screenshotButton.href = patternElement?.screenshot ?? '';
 			}
 			screenshotButton.target = '_blank';
-			screenshotButton.setAttribute('style', 'vertical-align: middle; padding: 0; min-width: 0;');
+			screenshotButton.setAttribute('style', 'vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);');
 			const iconButton = document.createElement('mat-icon');
 			iconButton.className = 'mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color';
-			iconButton.setAttribute('style', 'color: cyan;');
+			iconButton.setAttribute('style', 'font-size: 20px; width: 20px; height: 20px; color: cyan;');
 			iconButton.textContent = 'photo_camera';
 			screenshotButton.appendChild(iconButton);
 			const tooltip = document.createElement('div');

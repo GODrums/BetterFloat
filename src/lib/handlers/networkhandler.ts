@@ -22,7 +22,13 @@ export async function fetchCurrencyRates() {
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
 	} else {
-		await fetch('https://api.rums.dev/v1/currencyrates')
+		await fetch('https://cdn.rums.dev/currencyrates.json', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+			},
+		})
 			.then((response) => response.json())
 			.then(async (data) => {
 				console.debug('[BetterFloat] Received currency rates from Freecurrencyapi: ', data);

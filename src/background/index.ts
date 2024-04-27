@@ -15,8 +15,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 	} else if (details.reason == 'update') {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
-		// await chrome.storage.sync.set(DEFAULT_SETTINGS);
-		chrome.storage.local.remove('buffMapping');
 
 		const data = await ExtensionStorage.sync.getAll();
 		if (!data) {
@@ -45,7 +43,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 export async function refreshPrices() {
 	// For no dev restrictions, use an api key from .env instead:
 	// /v2/pricempire_usd?api_key=process.env.PLASMO_PUBLIC_RUMSDEV_KEY
-	return await fetch('https://prices.rums.dev/v1/betterfloat', {
+	return await fetch('https://cdn.rums.dev/prices.json', {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',

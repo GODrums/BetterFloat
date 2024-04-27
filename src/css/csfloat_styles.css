@@ -159,21 +159,23 @@ button.betterfloat-top-button:hover {
 .bf-tooltip-inner {
 	/* Positioning the tooltip text */
 	position: absolute;
-	z-index: 1;
-    translate: -30px 15px;
+	z-index: 9999;
+    translate: -60px 15px;
 
     display: flex;
     flex-direction: column;
 	visibility: hidden;
 	color: #fff;
 	text-align: center;
-    background-color: #171920c4;
+    background-color: #171920ee;
     padding: 5px 3px;
     border-radius: 5px;
     border: 1px solid #3f3f3f;
     font-size: 13px;
     font-weight: 400;
     width: 100px;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 
 	/* Fade in tooltip */
 	opacity: 0;
