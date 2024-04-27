@@ -3,7 +3,7 @@ import { getConvertedCurrency } from "~contents/skinport_script";
 import type { ItemStyle } from "~lib/@typings/FloatTypes";
 import type { Skinport } from "~lib/@typings/SkinportTypes";
 import { ICON_BUFF } from "~lib/util/globals";
-import { getBuffPrice, waitForElement } from "~lib/util/helperfunctions";
+import { waitForElement } from "~lib/util/helperfunctions";
 import { getSetting } from "~lib/util/storage";
 
 export function addPattern(container: Element, item: Skinport.Item) {
@@ -29,7 +29,7 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
     const reference = Number(await getSetting('sp-pricereference'));
 
     let total = 0;
-    let currency = getSymbolFromCurrency(data.items[0].currency);
+    const currency = getSymbolFromCurrency(data.items[0].currency);
 
     const getStyle: (itemName: string) => ItemStyle = (itemName) => {
         if (itemName.includes('Doppler')) {

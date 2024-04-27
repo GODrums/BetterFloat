@@ -41,8 +41,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 export async function refreshPrices() {
-	// For no dev restrictions, use an api key from .env instead:
-	// /v2/pricempire_usd?api_key=process.env.PLASMO_PUBLIC_RUMSDEV_KEY
+	// for self builds, replace with your own API / local file
 	return await fetch('https://cdn.rums.dev/prices.json', {
 		method: 'GET',
 		headers: {
