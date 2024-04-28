@@ -290,7 +290,7 @@ async function adjustItemPage(container: Element) {
 
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
-	const buffItem = await calculateBuffPrice(item);
+	const buffItem = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
 	const buffLink =
@@ -536,7 +536,7 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
 	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
-	const nameCheck = targetName != '' && !(item.type + ' | ' + item.name).toLowerCase().includes(targetName);
+	const nameCheck = targetName != '' && !(item.full_name).toLowerCase().includes(targetName);
 	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
 	const typeCheck = !spFilter.types[item.category.toLowerCase()];
 
@@ -591,6 +591,7 @@ const itemSelectors = {
 		stickers: '.ItemPreview-stickers',
 		price: '.ItemPreview-price',
 		info: '.ItemPreview-itemInfo',
+		alt: '.ItemPreview-itemImage > img',
 	},
 	page: {
 		name: '.ItemPage-name',
@@ -599,6 +600,7 @@ const itemSelectors = {
 		stickers: '.ItemPage-include',
 		price: '.ItemPage-price',
 		info: '.ItemPage-include',
+		alt: '.ItemPage-image > img',
 	},
 } as const;
 
@@ -685,6 +687,8 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	const wearDiv = container.querySelector('.WearBar-value');
 	const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
 
+	const full_name = container.querySelector(selector.alt)?.getAttribute('alt') ?? '';
+
 	const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
 	return {
 		name: name,
@@ -698,16 +702,11 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 		wear_name: wear,
 		currency: currency,
 		saleId: saleId,
+		full_name: full_name,
 	};
 }
 
-async function calculateBuffPrice(item: Skinport.Listing) {
-	const buff_name = handleSpecialStickerNames(createBuffName(item));
-
-	return await getConvertedCurrency(buff_name, item.style);
-}
-
-export async function getConvertedCurrency(buff_name: string, itemStyle: ItemStyle) {
+export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle);
 
 	//convert prices to user's currency
@@ -1019,7 +1018,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	await loadMapping();
-	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
+	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buff_name);
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;

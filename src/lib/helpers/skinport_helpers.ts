@@ -1,5 +1,5 @@
 import getSymbolFromCurrency from "currency-symbol-map";
-import { getConvertedCurrency } from "~contents/skinport_script";
+import { getBuffItem } from "~contents/skinport_script";
 import type { ItemStyle } from "~lib/@typings/FloatTypes";
 import type { Skinport } from "~lib/@typings/SkinportTypes";
 import { ICON_BUFF } from "~lib/util/globals";
@@ -42,7 +42,7 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
     };
 
     for (const item of data.items) {
-        const buffData = await getConvertedCurrency(item.marketHashName, getStyle(item.name));
+        const buffData = await getBuffItem(item.marketHashName, getStyle(item.name));
         total += reference === 1 ? buffData.priceListing : buffData.priceOrder;
     };
 

@@ -374,8 +374,9 @@ export async function getBuffMapping(name: string) {
 	if (Object.keys(buffMapping).length == 0) {
 		console.error('[BetterFloat] Buff mapping not loaded yet');
 	}
-	if (buffMapping[name]) {
-		return buffMapping[name];
+	const queryName = name.replace(/\s+/g, ' ');
+	if (buffMapping[queryName]) {
+		return buffMapping[queryName];
 	} else {
 		console.log(`[BetterFloat] No buff mapping found for ${name}`);
 		return 0;
