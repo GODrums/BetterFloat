@@ -90,10 +90,9 @@ async function handleChange(state: Extension.URLState) {
 				root.unmount();
 				document.querySelector('betterfloat-menucontrol')?.remove();
 			}
-
 		}
 
-		if (state.path === '/search' && state.search === '?sort_by=most_recent') {
+		if (state.path === '/search' && state.search.includes('sort_by=most_recent')) {
 			const csfAutorefresh = await getSetting('csf-autorefresh');
 			if (csfAutorefresh) {
 				waitForElement('.refresh > button', 100, 10).then(async (success) => {

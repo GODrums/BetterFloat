@@ -547,10 +547,9 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	return nameCheck || priceCheck || typeCheck || newCheck;
 }
 
-async function addStickerInfo(container: Element, item: Skinport.Listing | Skinport.Item, selector: ItemSelectors, price_difference: number, isItemPage = false) {
-	if (item.text.includes('Agent')) return;
+async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
 	const stickers = item.stickers;
-	if (item.stickers.length == 0 || item.text.includes('Souvenir')) {
+	if (item.stickers.length == 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
 		return;
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
@@ -572,6 +571,22 @@ async function addStickerInfo(container: Element, item: Skinport.Listing | Skinp
 			itemInfoDiv.firstChild?.before(wrapperDiv);
 		} else {
 			itemInfoDiv.before(generateSpStickerContainer(priceSum, spPercentage));
+		}
+	}
+}
+
+async function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
+	const stickers = item.stickers;
+	if (stickers.length == 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
+		return;
+	}
+	
+	const stickersDiv = Array.from(container.querySelectorAll<HTMLImageElement>('.ItemPreview-stickers img'));
+
+	for (const sticker of stickers) {
+		if (sticker.wear > 0) {
+			const stickerDiv = stickersDiv.at(stickers.indexOf(sticker));
+			stickerDiv.style.filter = 'brightness(0.4) contrast(0.4)';
 		}
 	}
 }

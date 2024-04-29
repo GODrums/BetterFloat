@@ -332,7 +332,7 @@ export namespace Skinport {
         url: string;
         version: string;
         versionType: string;
-        wear: number;
+        wear: number | null;
     };
 
     export type StickerData = {
