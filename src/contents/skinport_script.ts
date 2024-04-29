@@ -292,7 +292,7 @@ async function adjustItemPage(container: Element) {
 	if (!item) return;
 	const buffItem = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
-	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
+	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 	const buffLink =
 		buff_id > 0
 			? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
@@ -414,6 +414,8 @@ async function adjustItem(container: Element) {
 		}
 		// console.log('[BetterFloat] Cached item: ', cachedItem);
 		addPattern(container, cachedItem);
+
+		addAdditionalStickerInfo(container, cachedItem);
 
 		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
 			await addBlueBadge(container, cachedItem);
@@ -575,7 +577,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	}
 }
 
-async function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
+function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	const stickers = item.stickers;
 	if (stickers.length == 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
 		return;
@@ -662,7 +664,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	}
 
 	let style: ItemStyle = '';
-	if (name.includes('Doppler') && category === 'Knife') {
+	if (name.includes('Doppler') && (category === 'Knife' || category === 'Weapon')) {
 		style = name.split('(')[1].split(')')[0] as ItemStyle;
 	} else if (name.includes('Vanilla')) {
 		style = 'Vanilla';
@@ -1048,7 +1050,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		}
 	}
 	
-	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
+	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon')
 
 	const buffHref =
 		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
