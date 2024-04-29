@@ -13,19 +13,21 @@ export const SettingsOCO = () => {
     const keyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
     const keySchema = z.string().regex(keyRegex, "Invalid API key format");
 
+    const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
-        
+
         if (value.length === 0) {
             setStatus("idle");
         } else {
             const parseResult = keySchema.safeParse(value);
             if (parseResult.success === false) {
                 setStatus("error");
+                return;
             } else {
                 setStatus("success");
             }
-            console.log(parseResult);
         }
         setValue(value);
     };
@@ -41,15 +43,18 @@ export const SettingsOCO = () => {
                         </TooltipTrigger>
                         <TooltipContent>
                             <p>Enter your API-key for the OneClickBuy-feature. Leave empty to disable.
-                                A valid key can be generated on the <a className="text-blue-600 cursor-pointer" onClick={() => window.open(DISCORD_URL)}>BetterFloat Discord server</a>.</p>
+                                A valid key can be generated on the <a className="text-blue-600 cursor-pointer" onClick={() => window.open(DISCORD_URL)}>BetterFloat Discord server</a>. Unavailable on Firefox.</p>
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
             </div>
-            <Input type="text" placeholder="Your API key..." value={value} onChange={handleChange} className={cn(
-                (status === "success" ? "focus:border-green-500" : (status === 'error' ? "focus:border-red-500" : "focus:border-slate-600")), 
-                ''
-            )} />
+            <div className="flex flex-col items-center gap-1">
+                <Input type="text" placeholder="Your API key..." value={value} onChange={handleChange} className={cn(
+                    (status === "success" ? "focus:border-green-500" : (status === 'error' ? "border border-red-500" : "focus:border-slate-600")),
+                    ''
+                )} disabled={isFirefox} />
+                {status === "error" && <p className="text-red-500 text-xs">Invalid API key format</p>}
+            </div>
         </div>
     );
 };
