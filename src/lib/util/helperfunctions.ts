@@ -169,6 +169,7 @@ export function getFloatColoring(
     w: number,
     l = 0,
     h = 1,
+    isVanilla = false,
     colors = {
         good: 'turquoise',
         bad: 'indianred',
@@ -177,6 +178,17 @@ export function getFloatColoring(
     }
 ): string {
     // use relative deviation to determine color. 0.2% / 1.3% are used as thresholds
+    if (isVanilla) {
+        if (w < 0.07) {
+            return colors.perfect;
+        } else if (w < 0.09) {
+            return colors.good;
+        } else if (w >= 0.99) {
+            return colors.bad;
+        } else if (w >= 0.999) {
+            return colors.worst;
+        }
+    } 
     if (l > 0) {
         const deviation = Math.abs((l - w) / l);
         if (deviation < 0.002) {
@@ -194,9 +206,9 @@ export function getFloatColoring(
         }
     }
     if (w < 0.01 || (w >= 0.07 && w < 0.08) || (w >= 0.15 && w < 0.18) || (w >= 0.38 && w < 0.39) || (w >= 0.45 && w < 0.5)) {
-        return w === 0 ? colors.perfect : colors.good;
+        return w < 0.001 ? colors.perfect : colors.good;
     } else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-        return w === 0.999 ? colors.worst : colors.bad;
+        return w >= 0.999 ? colors.worst : colors.bad;
     }
     return '';
 }

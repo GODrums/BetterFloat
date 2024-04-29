@@ -951,6 +951,13 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 	if (names[0].includes('★')) {
 		names[0] = names[0].replace('★ ', '');
 	}
+	if (listing.item.paint_index === 0) {
+		names[1] = 'Vanilla';
+	}
+	if (listing.item.phase) {
+		names[1] += ` (${listing.item.phase})`;
+	}
+
 	// // TODO: Handle Vanilla
 	const schemaItem = Object.values(Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0])['paints']).find(
 		(el) => el.name === names[1]
