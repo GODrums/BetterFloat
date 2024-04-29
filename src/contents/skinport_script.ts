@@ -288,6 +288,21 @@ async function adjustItemPage(container: Element) {
 		newGroup.appendChild(steamButton);
 	}
 
+	let popupItem = getSpPopupItem();
+	let tries = 0;
+	while (!popupItem && tries++ < 5) {
+		await delay(500);
+		popupItem = getSpPopupItem();
+	}
+	if (tries >= 5) {
+		console.error('[BetterFloat] Could not fetch popup item');
+	}
+
+
+	if (popupItem && container.querySelector('.ItemPage-notListed')) {
+		addSoldPrice(container, popupItem);
+	}
+
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
 	const buffItem = await getBuffItem(item.full_name, item.style);
@@ -311,7 +326,6 @@ async function adjustItemPage(container: Element) {
 
 	const suggestedContainer = container.querySelector('.ItemPage-suggested');
 	if (suggestedContainer) {
-		// generateBuffContainer(suggestedContainer as HTMLElement, priceListing, priceOrder, item.currency, true);
 		await mountSpItemPageBuffContainer();
 	}
 
@@ -351,7 +365,6 @@ async function adjustItemPage(container: Element) {
 
 	await addFloatColoring(container, item);
 
-	const popupItem = getSpPopupItem();
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
 			await caseHardenedDetection(container, popupItem.data.item);
@@ -376,6 +389,16 @@ async function adjustItemPage(container: Element) {
 
 async function adjustCart(container: Element) {
 	// adjust the cart with Buff prices?
+}
+
+function addSoldPrice(container: Element, popupData: Skinport.ItemData) {
+	const item = popupData.data.item;
+	const currencySymbol = getSymbolFromCurrency(item.currency);
+	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
+
+	const priceContainer = `<div class="ItemPage-price"><div class="ItemPage-value"><div class="Tooltip-link">${currencySymbol}${new Decimal(item.salePrice).div(100).toFixed(2)}</div></div><div class="ItemPage-discount"><div class="GradientLabel"><span>− ${differencePercentage.toFixed(0)}%</span></div></div></div><div class="ItemPage-suggested">Suggested price ${currencySymbol}${new Decimal(item.suggestedPrice).div(100).toFixed(2)}</div>`;
+
+	container.querySelector('.ItemPage-notListed')?.insertAdjacentHTML('beforebegin', priceContainer);
 }
 
 async function adjustItem(container: Element) {

@@ -120,7 +120,7 @@ async function handleChange(state: Extension.URLState) {
 export async function mountSpItemPageBuffContainer() {
 	await mountShadowRoot(<SPBuffContainer />, {
 		tagName: 'betterfloat-buff-container',
-		parent: document.querySelector('.ItemPage-btns'),
+		parent: document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns'),
 		position: 'before'
 	});
 }
