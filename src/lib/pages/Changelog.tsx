@@ -19,6 +19,7 @@ export const Changelogs = () => {
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
                 <SingleChangelog version="v2.4.0">
                     <li>Skinport - Sold items now still display their original price as well as additional available information.</li>
+                    <li>Skinport - Scraping on applied stickers is now indicated by a lack of contrast in the image.</li>
                     <li>Disabled the OCO option for Firefox users. Added additional key validation for Chrome users.</li>
                 </SingleChangelog>
                 <SingleChangelog version="v2.3.2">

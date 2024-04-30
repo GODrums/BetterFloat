@@ -299,11 +299,11 @@ async function adjustItemPage(container: Element) {
 		console.error('[BetterFloat] Could not fetch popup item');
 	}
 
-
 	if (popupItem && container.querySelector('.ItemPage-notListed')) {
 		addSoldPrice(container, popupItem);
 	}
 
+	await waitForElement('.ItemPage-image > img', 200);
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
 	const buffItem = await getBuffItem(item.full_name, item.style);
@@ -1166,7 +1166,7 @@ function createBuffName(item: Skinport.Listing): string {
 	} else if (item.text.includes('Agent')) {
 		full_name = `${item.name} | ${item.type}`;
 	} else if (item.name.includes('Dragon King')) {
-		full_name = `M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
+		full_name = `${item.text.includes('StatTrak') ? 'StatTrak™ ' : ''}M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
 	} else {
 		full_name = `${(item.text.includes('Knife') || item.text.includes('Gloves')) && !item.text.includes('StatTrak') ? '★ ' : ''}${item.type}${
 			item.name.includes('Vanilla') ? '' : ' | ' + item.name.split(' (')[0].trim()
