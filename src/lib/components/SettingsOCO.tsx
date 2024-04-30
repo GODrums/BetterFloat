@@ -1,7 +1,7 @@
 import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";
-import { DISCORD_URL } from "~lib/util/globals";
+import { DISCORD_URL, ocoKeyRegex } from "~lib/util/globals";
 import { z } from "zod";
 import { useState } from "react";
 import { cn } from "~lib/utils";
@@ -10,8 +10,7 @@ export const SettingsOCO = () => {
     const [value, setValue] = useStorage<string>("sp-ocoapikey", "");
     const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-    const keyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-    const keySchema = z.string().regex(keyRegex, "Invalid API key format");
+    const keySchema = z.string().regex(ocoKeyRegex, "Invalid API key format");
 
     const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
@@ -24,7 +23,6 @@ export const SettingsOCO = () => {
             const parseResult = keySchema.safeParse(value);
             if (parseResult.success === false) {
                 setStatus("error");
-                return;
             } else {
                 setStatus("success");
             }

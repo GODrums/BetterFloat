@@ -3,19 +3,20 @@ import Decimal from 'decimal.js';
 
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode } from '~lib/util/globals';
-import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, handleSpecialStickerNames, USDollar, waitForElement } from '~lib/util/helperfunctions';
+import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
+import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
+import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import { sendToBackground } from '@plasmohq/messaging';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import type { PlasmoCSConfig } from 'plasmo';
+import { z } from 'zod';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -1004,6 +1005,13 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 				showMessageBox('Item is sold or not listed', 'The item you try to add to purchase is not available anymore.');
 				return;
 			}
+
+			const keySchema = z.string().regex(ocoKeyRegex);
+			const parseResult = keySchema.safeParse(extensionSettings['sp-ocoapikey']);
+			if (parseResult.success === false) {
+				showMessageBox('Invalid API key format', 'Please check your API key in the extension settings.');
+				return;
+			}
 			// only allow one order every 24 hours
 			const ocoLastOrder: {
 				time: number;
@@ -1042,7 +1050,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 					console.log('[BetterFloat] oneClickOrder result: ', result);
 					if (result) {
 						showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
-						saveOCOPurchase(item);
+						// saveOCOPurchase(item);
 					}
 				})
 				.catch((error) => {

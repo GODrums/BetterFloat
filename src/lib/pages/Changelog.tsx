@@ -17,6 +17,10 @@ export const Changelogs = () => {
         <TabsContent value="changelog" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+                <SingleChangelog version="v2.4.0">
+                    <li>Skinport - Sold items now still display their original price as well as additional available information.</li>
+                    <li>Disabled the OCO option for Firefox users. Added additional key validation for Chrome users.</li>
+                </SingleChangelog>
                 <SingleChangelog version="v2.3.2">
                     <li>Provide default currency rates in case the API in unavailable for now.</li>
                     <li>Skinport - Fixed a case where Doppler Poison Frog stickers crashed the Buff calculation.</li>

@@ -46,3 +46,4 @@ export const ICON_PRICEMPIRE = iconPricempire;
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
 export const isDevMode = process.env.NODE_ENV === 'development';
+export const ocoKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;

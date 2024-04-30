@@ -43,6 +43,11 @@ export async function isApiStatusOK(): Promise<Extension.ApiStatusResponse> {
 	return fetch('https://api.rums.dev/v1/betterfloat/status').then((res) => res.json());
 }
 
+/**
+ * Saves items purchased through the OneClickBuy feature
+ * @deprecated Not used anymore
+ * @returns {Promise<Response>}
+ */
 export async function saveOCOPurchase(item: Skinport.Listing) {
 	return fetch('https://api.rums.dev/v1/oco/store', {
 		method: 'POST',
