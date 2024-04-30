@@ -603,7 +603,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 
 function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	const stickers = item.stickers;
-	if (stickers.length == 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
+	if (stickers.length == 0 || item.text.includes('Agent')) {
 		return;
 	}
 	
@@ -612,7 +612,7 @@ function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	for (const sticker of stickers) {
 		if (sticker.wear > 0) {
 			const stickerDiv = stickersDiv.at(stickers.indexOf(sticker));
-			stickerDiv.style.filter = 'brightness(0.4) contrast(0.4)';
+			stickerDiv.style.filter = `brightness(${0.8 - (sticker.wear)*0.6}) contrast(${0.8 - (sticker.wear*0.6)})`;
 		}
 	}
 }
