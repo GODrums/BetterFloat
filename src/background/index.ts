@@ -1,4 +1,4 @@
-import { EVENT_URL_CHANGED, isDevMode } from '~lib/util/globals';
+import { EVENT_URL_CHANGED, WEBSITE_URL, isDevMode } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
@@ -111,7 +111,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 chrome.runtime.onMessageExternal.addListener(function (request, sender, sendResponse) {
 	console.log('Received message from external extension', request, sender);
 
-	if (sender.origin !== 'https://betterfloat.rums.dev') {
+	if (sender.origin !== WEBSITE_URL) {
 		sendResponse({ success: false, message: 'Invalid origin' });
 		return;
 	}
