@@ -324,6 +324,18 @@ export async function getSkbUserCurrencyRate() {
 	else return (skinbidRates.find((rate) => rate.currencyCode == skinbidUserCurrency)?.rate ?? 1) / skinbidRates[0].rate;
 }
 
+export async function getSkbUserConversion() {
+	if (skinbidUserCurrency == '') {
+		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
+	}
+	if (skinbidRates.length === 0) {
+		await fetchSkbExchangeRates();
+	}
+
+	if (skinbidUserCurrency == 'EUR') return 1;
+	else return skinbidRates.find((rate) => rate.currencyCode == skinbidUserCurrency)?.rate ?? 1;
+}
+
 export async function getStallData(stall_id: string) {
 	const request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
 	if (request.status != 200) {

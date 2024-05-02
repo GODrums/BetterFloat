@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { activateHandler } from '~lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
@@ -474,7 +474,7 @@ async function addBuffPrice(
 	}
 
 	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
-	const listingPrice = getListingPrice(cachedItem);
+	let listingPrice = await getListingPrice(cachedItem);
 	const difference = listingPrice - priceFromReference;
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
@@ -523,7 +523,7 @@ async function addBuffPrice(
 		} else if (selector.self === 'page') {
 			const startingPriceDiv = container.querySelector('.item-bids-time-info .item-detail');
 			if (startingPriceDiv) {
-				const startingDifference = new Decimal(cachedItem.auction.startBid).minus(priceFromReference);
+				const startingDifference = new Decimal(listingPrice).minus(priceFromReference);
 				const startingPrice = document.createElement('div');
 				startingPrice.className = 'betterfloat-sale-tag';
 				startingPrice.setAttribute(
@@ -557,11 +557,19 @@ async function addBuffPrice(
 	};
 }
 
-function getListingPrice(listing: Skinbid.Listing): number {
-	if (listing.auction.sellType === 'FIXED_PRICE') {
-		return listing.auction.startBid;
+async function getListingPrice(listing: Skinbid.Listing) {
+	if (listing.currentHighestBid > 0 && listing.auction?.sellType === 'AUCTION') {
+		if (listing.currentHighestBidEur === 0) {
+			return listing.currentHighestBid * (await getSkbUserConversion());
+		} else {
+			return listing.currentHighestBid;
+		}
 	} else {
-		return listing.currentHighestBid > 0 ? listing.currentHighestBid : listing.auction.startBid;
+		if (listing.auction.startBidEur === 0) {
+			return listing.auction.startBid * (await getSkbUserConversion());
+		} else {
+			return listing.auction.startBid;
+		}
 	}
 }
 
