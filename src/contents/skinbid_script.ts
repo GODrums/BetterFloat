@@ -198,6 +198,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	} else {
 		cachedItem = getFirstSkbItem();
 	}
+	console.log('[BetterFloat] Cached item: ', cachedItem);
 	if (!cachedItem) return;
 
 	const priceResult = await addBuffPrice(cachedItem, container, selector);
@@ -452,7 +453,7 @@ async function addBuffPrice(
 	}
 
 	// restyle layout to make it more compact
-	if (selector == itemSelectors.card && container.querySelector('.offers')) {
+	if ((selector == itemSelectors.card || selector == itemSelectors.list) && container.querySelector('.offers')) {
 		container.querySelector('.item-type').setAttribute('style', 'display: none;');
 	}
 
