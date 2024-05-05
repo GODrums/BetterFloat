@@ -41,14 +41,13 @@ import {
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar } from '../lib/util/helperfunctions';
-import { genGemContainer, genRefreshButton } from '../lib/util/uigeneration';
+import { genGemContainer } from '../lib/util/uigeneration';
 
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
 import type { IStorage } from '~lib/util/storage';
 import type { PlasmoCSConfig } from 'plasmo';
 
-import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 
 export const config: PlasmoCSConfig = {
@@ -367,98 +366,6 @@ function offerItemClickListener(listItem: Element) {
 	});
 }
 
-async function refreshButton() {
-	const matChipList = document.querySelector('.mat-chip-list-wrapper');
-	const refreshInterval = CSFloatHelpers.intervalMapping(extensionSettings['csf-refreshinterval']);
-
-	const refreshChip = document.createElement('div');
-	refreshChip.classList.add('betterfloat-refresh');
-	refreshChip.setAttribute('style', 'display: inline-flex; margin-left: 20px;');
-
-	const refreshContainer = document.createElement('div');
-	const autorefreshContainer = document.createElement('span');
-	const refreshText = document.createElement('span');
-	const intervalContainer = document.createElement('span');
-	refreshContainer.classList.add('betterfloat-refreshContainer');
-	autorefreshContainer.textContent = 'Auto-Refresh: ';
-	refreshText.classList.add('betterfloat-refreshText');
-	refreshText.setAttribute('style', 'color: #ce0000;');
-	refreshText.textContent = 'inactive';
-	intervalContainer.setAttribute('style', 'color: gray;');
-	intervalContainer.textContent = `Interval: ${refreshInterval}s`;
-
-	refreshContainer.appendChild(autorefreshContainer);
-	refreshContainer.appendChild(refreshText);
-	refreshContainer.appendChild(intervalContainer);
-	refreshChip.appendChild(refreshContainer);
-
-	const startStopContainer = document.createElement('div');
-	const startElement = genRefreshButton('Start');
-	const stopElement = genRefreshButton('Stop');
-	startStopContainer.style.display = 'flex';
-	startStopContainer.style.flexDirection = 'row';
-	startStopContainer.appendChild(startElement);
-	startStopContainer.appendChild(stopElement);
-
-	if (matChipList) {
-		if (!matChipList.innerHTML.includes('betterfloat-refresh')) {
-			matChipList.appendChild(refreshChip);
-			refreshChip.after(startStopContainer);
-		}
-		//while (!document.getElementsByClassName('betterfloat-refresh')[0]) await new Promise((r) => setTimeout(r, 100));
-
-		startElement.addEventListener('click', () => {
-			// somehow Angular calls the eventlistener multiple times, this prevents side effects
-			if (refreshThreads.length > 1) {
-				console.debug('[BetterFloat] Auto-refresh already active');
-				return;
-			}
-			console.log('[BetterFloat] Starting auto-refresh, interval: 30s, current time: ' + Date.now());
-
-			const refreshDelay = refreshInterval * 1000;
-			const refreshText = document.querySelector('.betterfloat-refreshText');
-
-			if (!refreshText) return;
-			refreshText.textContent = 'active';
-			refreshText.setAttribute('style', 'color: greenyellow;');
-
-			// save timer to avoid uncoordinated executions
-			refreshThreads.push(
-				setInterval(() => {
-					const refreshButton = document.querySelector('.mat-chip-list-wrapper')?.querySelector('.mat-tooltip-trigger')?.children[0] as HTMLElement;
-					// time should be lower than interval due to inconsistencies
-					if (refreshButton && lastRefresh + refreshDelay * 0.9 < Date.now()) {
-						lastRefresh = Date.now();
-						refreshButton.click();
-					}
-				}, refreshDelay)
-			);
-		});
-		stopElement.addEventListener('click', () => {
-			// gets called multiple times, maybe needs additional handling in the future
-			console.log('[BetterFloat] Stopping auto-refresh, current time: ' + Date.now(), ', #active threads: ' + refreshThreads.length);
-
-			const refreshText = document.querySelector('.betterfloat-refreshText');
-			if (!refreshText) return;
-			refreshText.textContent = 'inactive';
-			refreshText.setAttribute('style', 'color: #ce0000;');
-
-			//clearinterval for every entry in refreshInterval
-			for (let i = 0; i < refreshThreads.length; i++) {
-				clearInterval(refreshThreads[i] ?? 0);
-				refreshThreads.splice(i, 1);
-			}
-			setTimeout(() => {
-				//for some weird reason one element stays in the array
-				if (refreshThreads.length > 0) {
-					clearInterval(refreshThreads[0] ?? 0);
-					refreshThreads.splice(0, 1);
-				}
-			}, 1000);
-		});
-	}
-}
-
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		if (await getSetting('csf-enable')) {
@@ -485,7 +392,7 @@ function applyMutation() {
 					} else if (addedNode.className.toString().includes('flex-item')) {
 						await adjustItem(addedNode);
 					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
-						// row of the latest sales table of an item popup 
+						// row of the latest sales table of an item popup
 						await adjustSalesTableRow(addedNode);
 					} else if (location.pathname == '/profile/offers' && addedNode.className.startsWith('container')) {
 						// item in the offers page when switching from another page
@@ -500,11 +407,6 @@ function applyMutation() {
 					}
 				}
 			}
-		}
-
-		const activeTab = getTabNumber();
-		if (activeTab == 4 && extensionSettings['csf-autorefresh']) {
-			await refreshButton();
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
@@ -680,26 +582,38 @@ async function adjustSalesTableRow(container: Element) {
 		return;
 	}
 
+	const priceData = JSON.parse(document.querySelector('.betterfloat-big-price').getAttribute('data-betterfloat') ?? '{}');
+	const priceDiff = new Decimal(cachedSale.price).div(100).minus(priceData.priceFromReference);
+	// add Buff price difference
+	const priceContainer = container.querySelector('.price-wrapper');
+	if (priceContainer && priceData.priceFromReference) {
+		priceContainer.querySelector('app-reference-widget')?.remove();
+		const priceDiffElement = document.createElement('span');
+		priceDiffElement.className = 'betterfloat-table-item-sp';
+		priceDiffElement.textContent = `${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}`;
+		priceDiffElement.setAttribute(
+			'style',
+			`font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`
+		);
+		priceDiffElement.setAttribute('data-betterfloat', priceDiff.toNumber().toString());
+		priceContainer.appendChild(priceDiffElement);
+	}
+
 	// add sticker percentage
 	const appStickerView = container.querySelector<HTMLElement>('app-sticker-view');
-	if (appStickerView && appStickerView.querySelectorAll('.sticker')?.length > 0) {
+	const stickerData = cachedSale.item.stickers;
+	if (appStickerView && stickerData) {
 		appStickerView.style.justifyContent = 'center';
-		const stickerData = cachedSale.item.stickers;
-		const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
-		const sellPrice = Number(container.querySelector('.price')?.textContent?.replace(/[^0-9.]/g, ''));
-		const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
-
-		if (priceData && stickerData.length > 0) {
+		if (stickerData.length > 0) {
 			const stickerContainer = document.createElement('div');
 			stickerContainer.className = 'betterfloat-table-sp';
 			(<HTMLElement>appStickerView).style.display = 'flex';
 			(<HTMLElement>appStickerView).style.alignItems = 'center';
 
-			const priceDiffUSD = new Decimal(sellPrice).div(priceData.priceFromReference).div(currencyRate);
-			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD.toNumber());
+			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiff.toNumber());
 			if (doChange) {
 				appStickerView.appendChild(stickerContainer);
-				(<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
+				// (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
 			}
 		}
 	}
@@ -725,22 +639,8 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add row coloring if same item
 	const itemWear = document.querySelector('item-detail .wear')?.textContent;
-	if (itemWear && (new Decimal(itemWear).minus(cachedSale.item.float_value).absoluteValue().lt(0.0001))) {
+	if (itemWear && new Decimal(itemWear).minus(cachedSale.item.float_value).absoluteValue().lt(0.0001)) {
 		container.setAttribute('style', 'background-color: #0b255d;');
-	}
-
-	// add Buff price difference
-	const priceContainer = container.querySelector('.price-wrapper');
-	if (priceContainer) {
-		const priceData = JSON.parse(document.querySelector('.betterfloat-big-price').getAttribute('data-betterfloat') ?? '{}');
-		if (priceData.priceFromReference) {
-			priceContainer.querySelector('app-reference-widget')?.remove();
-			const priceDiff = new Decimal(cachedSale.price).div(100).minus(priceData.priceFromReference);
-			const priceDiffElement = document.createElement('span');
-			priceDiffElement.textContent = `${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}`;
-			priceDiffElement.setAttribute('style', `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`);
-			priceContainer.appendChild(priceDiffElement);
-		}
 	}
 }
 
@@ -780,7 +680,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		CSFloatHelpers.storeApiItem(container, cachedItem);
 
 		if (extensionSettings['csf-floatcoloring']) {
-			await addFloatColoring(container, cachedItem);
+			addFloatColoring(container, cachedItem);
 		}
 		if (extensionSettings['csf-removeclustering']) {
 			removeClustering(container);
@@ -804,7 +704,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 				await addStickerInfo(container, apiItem, priceResultUSD);
 				addListingAge(container, apiItem);
 				await patternDetections(container, apiItem, true);
-				await addFloatColoring(container, apiItem);
+				addFloatColoring(container, apiItem);
 				if (popout === POPOUT_ITEM.PAGE) {
 					addQuickLinks(container, apiItem);
 					copyNameOnClick(container);
@@ -948,9 +848,9 @@ function removeClustering(container: Element) {
 	}
 }
 
-function getItemSchema(item: CSFloat.Item) {
+function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
 	if (item.type !== 'skin') {
-		return;
+		return null;
 	}
 
 	if (!ITEM_SCHEMA) {
@@ -958,7 +858,7 @@ function getItemSchema(item: CSFloat.Item) {
 	}
 
 	if (Object.keys(ITEM_SCHEMA).length === 0) {
-		return;
+		return null;
 	}
 
 	const names = item.item_name.split(' | ');
@@ -979,7 +879,7 @@ function getItemSchema(item: CSFloat.Item) {
 	return schemaItem;
 }
 
-async function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
+function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
 	const itemSchema = getItemSchema(listing.item);
 
 	const element = container.querySelector<HTMLElement>('div.wear');
@@ -1228,7 +1128,10 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 				screenshotButton.href = patternElement?.screenshot ?? '';
 			}
 			screenshotButton.target = '_blank';
-			screenshotButton.setAttribute('style', 'vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);');
+			screenshotButton.setAttribute(
+				'style',
+				'vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);'
+			);
 			const iconButton = document.createElement('mat-icon');
 			iconButton.className = 'mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color';
 			iconButton.setAttribute('style', 'font-size: 20px; width: 20px; height: 20px; color: cyan;');
@@ -1516,8 +1419,10 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
+	const currencyRate = await getCurrencyRate();
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
-	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+	
+	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
 
 	const spPercentage = price_difference / priceSum;
 	// don't display SP if total price is below $1
@@ -1610,18 +1515,23 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	};
 }
 
-async function getBuffItem(item: CSFloat.FloatItem) {
-	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	const buff_id = await getBuffMapping(buff_name);
-
-	const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
-
+async function getCurrencyRate() {
 	const userCurrency = CSFloatHelpers.userCurrency();
 	let currencyRate = await getCSFCurrencyRate(userCurrency);
 	if (!currencyRate) {
 		console.warn(`[BetterFloat] Could not get currency rate for ${userCurrency}`);
 		currencyRate = 1;
 	}
+	return currencyRate;
+}
+
+async function getBuffItem(item: CSFloat.FloatItem) {
+	const buff_name = handleSpecialStickerNames(createBuffName(item));
+	const buff_id = await getBuffMapping(buff_name);
+
+	const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+
+	const currencyRate = await getCurrencyRate();
 
 	const priceFromReference = extensionSettings['csf-pricereference'] == 1 ? priceListing : priceOrder;
 	return {
@@ -1821,10 +1731,6 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		.replace(/ +(?= )/g, '')
 		.replace(/\//g, '-')
 		.trim();
-}
-
-function getTabNumber() {
-	return Number(document.querySelector('.mat-tab-label-active')?.getAttribute('aria-posinset') ?? 0);
 }
 
 const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell', '/ref/', '/checkout'];

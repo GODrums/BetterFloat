@@ -1,13 +1,6 @@
 import type { BlueGem } from '../@typings/ExtensionTypes';
 import iconGemshop from "data-base64:/assets/icons/gem-shop.svg";
 
-export function genRefreshButton(name: 'Start' | 'Stop'): HTMLDivElement {
-    const element = document.createElement('div');
-    element.classList.add('betterfloat-refresh' + name.toString());
-    element.textContent = name.toString();
-    return element;
-}
-
 export function genGemContainer(patternElement: BlueGem.PatternElement | undefined, mode: 'left' | 'right' = 'left') {
     const gemContainer = document.createElement('div');
     gemContainer.className = 'betterfloat-gem-container';
