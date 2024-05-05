@@ -484,8 +484,8 @@ function applyMutation() {
 						// await customStall(location.pathname.split('/').pop() ?? '');
 					} else if (addedNode.className.toString().includes('flex-item')) {
 						await adjustItem(addedNode);
-					} else if (addedNode.className.toString().includes('mat-row cdk-row')) {
-						// row from the sales table in an item popup
+					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
+						// row of the latest sales table of an item popup 
 						await adjustSalesTableRow(addedNode);
 					} else if (location.pathname == '/profile/offers' && addedNode.className.startsWith('container')) {
 						// item in the offers page when switching from another page
@@ -680,30 +680,13 @@ async function adjustSalesTableRow(container: Element) {
 		return;
 	}
 
-	// link to item page
-	const firstRow = container.firstElementChild;
-	const ageSpan = firstRow?.firstElementChild;
-	if (firstRow && ageSpan) {
-		const aLink = document.createElement('a');
-		aLink.href = 'https://csfloat.com/item/' + cachedSale.id;
-		aLink.target = '_blank';
-		aLink.setAttribute('style', 'display: flex; align-items: center; justify-content: center;');
-		const linkIcon = document.createElement('img');
-		linkIcon.setAttribute('src', iconArrowup);
-		linkIcon.style.marginRight = '5px';
-		linkIcon.style.filter = 'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7461%) hue-rotate(14deg) brightness(94%) contrast(106%)';
-		linkIcon.style.translate = '0 -2px';
-		(<HTMLElement>ageSpan).style.color = 'white';
-		aLink.appendChild(linkIcon);
-		aLink.appendChild(firstRow.firstChild as Node);
-		firstRow.appendChild(aLink);
-	}
-
-	const appStickerView = container.querySelector('.cdk-column-stickers')?.firstElementChild;
+	// add sticker percentage
+	const appStickerView = container.querySelector<HTMLElement>('app-sticker-view');
 	if (appStickerView && appStickerView.querySelectorAll('.sticker')?.length > 0) {
+		appStickerView.style.justifyContent = 'center';
 		const stickerData = cachedSale.item.stickers;
 		const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '');
-		const sellPrice = Number(container.querySelector('.mat-column-price')?.textContent?.replace(/[^0-9.]/g, ''));
+		const sellPrice = Number(container.querySelector('.price')?.textContent?.replace(/[^0-9.]/g, ''));
 		const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
 
 		if (priceData && stickerData.length > 0) {
@@ -711,8 +694,9 @@ async function adjustSalesTableRow(container: Element) {
 			stickerContainer.className = 'betterfloat-table-sp';
 			(<HTMLElement>appStickerView).style.display = 'flex';
 			(<HTMLElement>appStickerView).style.alignItems = 'center';
-			const priceDiffUSD = (sellPrice - Number(priceData.priceFromReference)) / currencyRate;
-			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD);
+
+			const priceDiffUSD = new Decimal(sellPrice).div(priceData.priceFromReference).div(currencyRate);
+			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiffUSD.toNumber());
 			if (doChange) {
 				appStickerView.appendChild(stickerContainer);
 				(<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
@@ -720,6 +704,7 @@ async function adjustSalesTableRow(container: Element) {
 		}
 	}
 
+	// add fade percentage
 	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
 	if (cachedSale.item.fade && seedContainer) {
 		const fadeData = cachedSale.item.fade;
@@ -727,6 +712,35 @@ async function adjustSalesTableRow(container: Element) {
 		fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
 		fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
 		seedContainer.appendChild(fadeSpan);
+	}
+
+	// add float coloring
+	const itemSchema = getItemSchema(cachedSale.item);
+	if (itemSchema) {
+		const floatContainer = container.querySelector('td.mat-column-wear').firstElementChild;
+		if (floatContainer) {
+			floatContainer.setAttribute('style', 'color: ' + getFloatColoring(cachedSale.item.float_value, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0));
+		}
+	}
+
+	// add row coloring if same item
+	const itemWear = document.querySelector('item-detail .wear')?.textContent;
+	if (itemWear && (new Decimal(itemWear).minus(cachedSale.item.float_value).absoluteValue().lt(0.0001))) {
+		container.setAttribute('style', 'background-color: #0b255d;');
+	}
+
+	// add Buff price difference
+	const priceContainer = container.querySelector('.price-wrapper');
+	if (priceContainer) {
+		const priceData = JSON.parse(document.querySelector('.betterfloat-big-price').getAttribute('data-betterfloat') ?? '{}');
+		if (priceData.priceFromReference) {
+			priceContainer.querySelector('app-reference-widget')?.remove();
+			const priceDiff = new Decimal(cachedSale.price).div(100).minus(priceData.priceFromReference);
+			const priceDiffElement = document.createElement('span');
+			priceDiffElement.textContent = `${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}`;
+			priceDiffElement.setAttribute('style', `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`);
+			priceContainer.appendChild(priceDiffElement);
+		}
 	}
 }
 
@@ -934,8 +948,8 @@ function removeClustering(container: Element) {
 	}
 }
 
-async function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
-	if (listing.item.type !== 'skin') {
+function getItemSchema(item: CSFloat.Item) {
+	if (item.type !== 'skin') {
 		return;
 	}
 
@@ -947,25 +961,30 @@ async function addFloatColoring(container: Element, listing: CSFloat.ListingData
 		return;
 	}
 
-	const names = listing.item.item_name.split(' | ');
+	const names = item.item_name.split(' | ');
 	if (names[0].includes('★')) {
 		names[0] = names[0].replace('★ ', '');
 	}
-	if (listing.item.paint_index === 0) {
+	if (item.paint_index === 0) {
 		names[1] = 'Vanilla';
 	}
-	if (listing.item.phase) {
-		names[1] += ` (${listing.item.phase})`;
+	if (item.phase) {
+		names[1] += ` (${item.phase})`;
 	}
 
-	// // TODO: Handle Vanilla
 	const schemaItem = Object.values(Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0])['paints']).find(
 		(el) => el.name === names[1]
 	) as CSFloat.ItemSchema.SingleSchema;
 
+	return schemaItem;
+}
+
+async function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
+	const itemSchema = getItemSchema(listing.item);
+
 	const element = container.querySelector<HTMLElement>('div.wear');
-	if (element && schemaItem) {
-		element.style.color = getFloatColoring(listing.item.float_value, schemaItem.min, schemaItem.max);
+	if (element) {
+		element.style.color = getFloatColoring(listing.item.float_value, itemSchema?.min ?? 0, itemSchema?.max ?? 1);
 	}
 }
 
