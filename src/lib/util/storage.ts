@@ -61,6 +61,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-topbutton': true,
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
+	'csf-showbargainprice': true,
 	'sp-enable': true,
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,

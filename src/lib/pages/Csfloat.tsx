@@ -70,6 +70,18 @@ export const CSFloatSettings = () => {
                             <SettingsCheckbox
                                 id="csf-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />
                         </SettingsCard>
+                        <SettingsCard>
+                            <SettingsCheckbox
+                                id="csf-floatcoloring" text="Low/High Float Coloring" tooltipText="Low and high floats in respect to each condition will get colored. 0.000X and 0.999X floats get the most prominent coloring." />
+                        </SettingsCard>
+                        <SettingsCard>
+                            <SettingsCheckbox
+                                id="csf-showbargainprice" text="Show Minimum Bargain Price" />
+                        </SettingsCard>
+                        <SettingsCard>
+                            <SettingsCheckbox
+                                id="csf-removeclustering" text="Remove Preview Clustering" tooltipText="When enabled, this removes irrelevant data such as the seller's online status or the 'key'-symbol. Generally leads to a cleaner experience for experienced users and smaller item cards." />
+                        </SettingsCard>
                     </div>
                 </div>
                 <div className="mb-2">
@@ -83,14 +95,6 @@ export const CSFloatSettings = () => {
                         <SettingsCard>
                             <SettingsCheckbox
                                 id="csf-topbutton" text="Show 'Back to Top'-Button" icon={<TablerCircleChevronUp className="h-6 w-6" />} />
-                        </SettingsCard>
-                        <SettingsCard>
-                            <SettingsCheckbox
-                                id="csf-floatcoloring" text="Low/High Float Coloring" tooltipText="Low and high floats in respect to each condition will get colored. 0.000X and 0.999X floats get the most prominent coloring." />
-                        </SettingsCard>
-                        <SettingsCard>
-                            <SettingsCheckbox
-                                id="csf-removeclustering" text="Remove Preview Clustering" tooltipText="When enabled, this removes irrelevant data such as the seller's online status or the 'key'-symbol. Generally leads to a cleaner experience for experienced users and smaller item cards." />
                         </SettingsCard>
                         <SettingsColorPicker prefix="csf" />
                     </div>

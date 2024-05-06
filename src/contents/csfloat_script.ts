@@ -549,12 +549,12 @@ async function adjustCheckout(container: Element) {
 
 function adjustCurrencyChangeNotice(container: Element) {
 	const warningDiv = document.createElement('div');
-	warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: hsl(0deg 100% 27.25% / 50%); border-radius: 18px;');
+	warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: #7f101080; border-radius: 18px;');
 	const warningSymbol = document.createElement('img');
 	warningSymbol.setAttribute('src', ICON_EXCLAMATION);
 	warningSymbol.style.height = '30px';
 	warningSymbol.style.margin = '0 10px';
-	warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(87%) sepia(66%) saturate(5511%) hue-rotate(102deg) brightness(103%) contrast(104%)';
+	warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(19%) sepia(64%) saturate(3289%) hue-rotate(212deg) brightness(89%) contrast(98%)';
 	const warningText = document.createElement('p');
 	warningText.textContent = 'Please note that BetterFloat requires a page refresh after changing the currency.';
 	warningDiv.appendChild(warningSymbol);
@@ -685,7 +685,12 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		if (extensionSettings['csf-removeclustering']) {
 			removeClustering(container);
 		}
+
 		addBargainListener(container);
+		if (extensionSettings['csf-showbargainprice']) {
+			showBargainPrice(container, cachedItem);
+		}
+
 		patternDetections(container, cachedItem, false);
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
@@ -718,6 +723,13 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 				addItemHistory(container?.parentElement?.parentElement);
 			}
 		}, 1500);
+	}
+}
+
+function showBargainPrice(container: Element, listing: CSFloat.ListingData) {
+	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
+	if (listing.min_offer_price && buttonLabel) {
+		buttonLabel.textContent += ` (${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(listing.min_offer_price / 100)})`;
 	}
 }
 
@@ -1684,8 +1696,10 @@ async function addBuffPrice(
 				saleTag.style.flexDirection = 'column';
 			}
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
-			const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
-			saleTagInner += `<span style="${isPopout || item.price <= 999 ? 'margin-left: 5px;' : ''}">(${percentage.toDP(decimalPlaces).toNumber()}%)</span>`;
+			if (percentage.isFinite()) {
+				const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
+				saleTagInner += `<span style="${isPopout || item.price <= 999 ? 'margin-left: 5px;' : ''}">(${percentage.toDP(decimalPlaces).toNumber()}%)</span>`;
+			}
 		}
 		saleTag.innerHTML = saleTagInner;
 
