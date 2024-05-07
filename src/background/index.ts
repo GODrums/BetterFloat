@@ -41,8 +41,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 export async function refreshPrices() {
-	// for self builds, replace with your own API / local file
-	return await fetch('https://cdn.rums.dev/prices.json', {
+	// for self builds, make sure to link your own API
+	return await fetch(process.env.PLASMO_PUBLIC_PRICINGAPI, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
