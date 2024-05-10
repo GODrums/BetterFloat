@@ -9,7 +9,7 @@ import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
+import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 import { sendToBackground } from '@plasmohq/messaging';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -1050,7 +1050,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 					console.log('[BetterFloat] oneClickOrder result: ', result);
 					if (result) {
 						showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
-						// saveOCOPurchase(item);
+						saveOCOPurchase(item);
 					}
 				})
 				.catch((error) => {

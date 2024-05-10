@@ -45,11 +45,9 @@ export async function isApiStatusOK(): Promise<Extension.ApiStatusResponse> {
 
 /**
  * Saves items purchased through the OneClickBuy feature
- * @deprecated Not used anymore
- * @returns {Promise<Response>}
  */
 export async function saveOCOPurchase(item: Skinport.Listing) {
-	return fetch('https://api.rums.dev/v1/oco/store', {
+	return fetch(process.env.PLASMO_PUBLIC_OCO_DB_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
