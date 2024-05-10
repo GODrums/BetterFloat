@@ -6,7 +6,7 @@ import Decimal from 'decimal.js';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
-	ICON_ARROWUP_text,
+	ICON_ARROWUP_SMALL,
 	ICON_BAN,
 	ICON_BUFF,
 	ICON_CLOCK,
@@ -1291,7 +1291,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			const linkHeader = document.createElement('a');
 			linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
 			linkHeader.setAttribute('target', '_blank');
-			linkHeader.innerHTML = ICON_ARROWUP_text;
+			linkHeader.innerHTML = ICON_ARROWUP_SMALL;
 			linkHeaderCell.appendChild(linkHeader);
 			tableTr.appendChild(linkHeaderCell);
 			header.appendChild(tableTr);

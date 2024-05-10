@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
+import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
 import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
@@ -505,7 +505,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP_text}</a></div></div>`;
+	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP_SMALL}</a></div></div>`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
 		tableBody += `<div class="ItemHistoryList-row"${

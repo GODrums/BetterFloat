@@ -4,7 +4,7 @@ import iconExclamation from "data-base64:/assets/icons/triangle-exclamation-soli
 import iconCamera from "data-base64:/assets/icons/camera-solid.svg";
 import iconBan from "data-base64:/assets/icons/ban-solid.svg";
 import iconClock from "data-base64:/assets/icons/clock-solid.svg";
-import iconArrowupText from "data-text:/assets/icons/arrow-up-right-from-square-solid.svg";
+import iconArrowupSmall from "data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg";
 import iconArrowup from "data-base64:/assets/icons/arrow-up-right-from-square-solid.svg";
 import iconCrimson from "data-base64:/assets/patterns/crimson-pattern.svg";
 import iconSpiderWeb from "data-base64:/assets/patterns/spider-web.svg";
@@ -31,7 +31,7 @@ export const ICON_CAMERA = iconCamera;
 export const ICON_BAN = iconBan;
 export const ICON_CLOCK = iconClock;
 export const ICON_ARROWUP = iconArrowup;
-export const ICON_ARROWUP_text = iconArrowupText;
+export const ICON_ARROWUP_SMALL = iconArrowupSmall;
 export const ICON_CRIMSON = iconCrimson;
 export const ICON_OVERPRINT_ARROW = iconOverprintArrow;
 export const ICON_OVERPRINT_FLOWER = iconOverprintFlower;

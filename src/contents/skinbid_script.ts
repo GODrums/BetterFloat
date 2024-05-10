@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP_text, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
+import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
@@ -266,12 +266,11 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 	const { pastSales } = await fetchCSBlueGem(item.subCategory, item.paintSeed, currency);
 
 	const newTab = document.createElement('div');
-	newTab.className = 'tab ng-tns-c187-0 betterfloat-tab-bluegem';
-	newTab.style.cursor = 'pointer';
-	newTab.style.color = 'deepskyblue';
-	newTab.innerHTML = `Buff Pattern Sales (${pastSales?.length ?? 0}) <a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
+	newTab.className = 'tab betterfloat-tab-bluegem';
+	newTab.setAttribute('style', 'display: flex; cursor: pointer; color: deepskyblue; padding-bottom: 9px; border-bottom: 2px solid transparent;');
+	newTab.innerHTML = `<div>Buff Pattern Sales (${pastSales?.length ?? 0})</div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
 		item.paintSeed
-	}&currency=CNY&filter=date&sort=descending" target="_blank" style="vertical-align: sub; margin-right: 10px;">${ICON_ARROWUP_text}</a>`;
+	}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-left: 10px;">${ICON_ARROWUP_SMALL}</a>`;
 	newTab.addEventListener('click', () => {
 		chartContainer.querySelector('.tab.active')?.classList.remove('active');
 		newTab.classList.add('active');
