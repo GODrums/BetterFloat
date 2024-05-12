@@ -579,7 +579,11 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 		return;
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
-	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
+
+	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
+	const currencyRate = await getSpUserCurrencyRate(settingRate);
+
+	const priceSum = convertCurrency(stickerPrices.reduce((a, b) => a + b.starting_at, 0), currencyRate, settingRate);
 	const spPercentage = price_difference / priceSum;
 
 	const itemInfoDiv = container.querySelector(selector.info);
@@ -593,14 +597,17 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 				itemInfoDiv.removeChild(itemInfoDiv.firstChild);
 				wrapperDiv.appendChild(h3);
 			}
-			wrapperDiv.appendChild(generateSpStickerContainer(priceSum, spPercentage, true));
+			wrapperDiv.appendChild(generateSpStickerContainer(priceSum, spPercentage, item.currency, true));
 			itemInfoDiv.firstChild?.before(wrapperDiv);
 		} else {
-			itemInfoDiv.before(generateSpStickerContainer(priceSum, spPercentage));
+			itemInfoDiv.before(generateSpStickerContainer(priceSum, spPercentage, item.currency));
 		}
 	}
 }
 
+/**
+ * Adds a visual sticker wear effect if its stickers are scraped
+ */
 function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	const stickers = item.stickers;
 	if (stickers.length == 0 || item.text.includes('Agent')) {
@@ -753,19 +760,18 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
-	if (settingRate == 'skinport') {
-		// origin price of rate is non-USD, so we need to divide
-		priceListing = new Decimal(priceListing).div(currencyRate).toDP(2).toNumber();
-		priceOrder = new Decimal(priceOrder).div(currencyRate).toDP(2).toNumber();
-		priceAvg30 = new Decimal(priceAvg30).div(currencyRate).toDP(2).toNumber();
-	} else {
-		// origin price of rate is USD, so we need to multiply
-		priceListing = new Decimal(priceListing).mul(currencyRate).toDP(2).toNumber();
-		priceOrder = new Decimal(priceOrder).mul(currencyRate).toDP(2).toNumber();
-		priceAvg30 = new Decimal(priceAvg30).mul(currencyRate).toDP(2).toNumber();
-	}
+	priceListing = convertCurrency(priceListing, currencyRate, settingRate);
+	priceOrder = convertCurrency(priceOrder, currencyRate, settingRate);
+	priceAvg30 = convertCurrency(priceAvg30, currencyRate, settingRate);
 
 	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity };
+}
+
+function convertCurrency(price: number, currencyRate: number, settingRate: string) {
+	const conversion = (price: Decimal, setting: string) => {
+		return setting === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
+	}
+	return conversion(new Decimal(price), settingRate).toDP(2).toNumber();
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, containerIsParent = false) {

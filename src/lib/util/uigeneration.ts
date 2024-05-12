@@ -31,7 +31,11 @@ export function genGemContainer(patternElement: BlueGem.PatternElement | undefin
     return gemContainer;
 }
 
-export function generateSpStickerContainer(priceSum: number, spPercentage: number, isItemPage = false) {
+/**
+ * Generates a container for the Sticker Price (SP) with a background color based on the SP percentage
+ * If the SP is above 200% or below 0.5% the SP is displayed in the currency, otherwise in %
+ */
+export function generateSpStickerContainer(priceSum: number, spPercentage: number, currency = '$', isItemPage = false) {
     const outerContainer = document.createElement('div');
     const spContainer = document.createElement('span');
     spContainer.classList.add('betterfloat-sticker-price');
@@ -53,7 +57,7 @@ export function generateSpStickerContainer(priceSum: number, spPercentage: numbe
     spContainer.style.borderRadius = '7px';
     // if SP is above 200% or below 0.5% display SP in $, otherwise in %
     if (spPercentage > 2 || spPercentage < 0.005) {
-        spContainer.textContent = `SP: $${priceSum.toFixed(0)}`;
+        spContainer.textContent = `SP: ${currency}${priceSum.toFixed(0)}`;
     } else {
         spContainer.textContent = `SP: ${(spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1)}%`;
     }
