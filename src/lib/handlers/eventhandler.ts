@@ -201,8 +201,13 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 		cacheCSFExchangeRates(eventData.data as CSFloat.ExchangeRates);
 	} else if (eventData.url.includes('v1/me')) {
 		// user data, repeats often
-	} else if (eventData.url.includes('v1/listings/') && eventData.url.split('/').length == 7) {
-		// item popup
-		cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
+	} else if (eventData.url.includes('v1/listings/')) {
+		if (eventData.url.split('/').length == 7) {
+			// item popup
+			cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
+		} else if (eventData.url.includes('/similar')) {
+			// item page
+			cacheCSFItems(eventData.data as CSFloat.ListingData[]);
+		}
 	}
 }

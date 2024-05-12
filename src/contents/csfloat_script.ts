@@ -389,8 +389,8 @@ function applyMutation() {
 					} else if (addedNode.tagName.toLowerCase() == 'app-stall-view') {
 						// adjust stall
 						// await customStall(location.pathname.split('/').pop() ?? '');
-					} else if (addedNode.className.toString().includes('flex-item')) {
-						await adjustItem(addedNode);
+					} else if (addedNode.tagName === 'ITEM-CARD') {
+						await adjustItem(addedNode, addedNode.className.includes('flex-item') ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR);
 					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
 						// row of the latest sales table of an item popup
 						await adjustSalesTableRow(addedNode);
@@ -648,16 +648,17 @@ enum POPOUT_ITEM {
 	NONE,
 	PAGE,
 	BARGAIN,
+	SIMILAR,
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	if (popout === POPOUT_ITEM.PAGE) {
-		await new Promise((r) => setTimeout(r, 1000));
+		await new Promise((r) => setTimeout(r, 500));
 	}
 	const item = getFloatItem(container);
 	// console.log('[BetterFloat] Adjusting item:', item);
 	if (Number.isNaN(item.price)) return;
-	const priceResult = await addBuffPrice(item, container, popout > 0);
+	const priceResult = await addBuffPrice(item, container, popout);
 	// Currency up until this moment is stricly the user's local currency, however the sticker %
 	// is done stricly in USD, we have to make sure the price difference reflects that
 	const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
@@ -688,7 +689,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 		addBargainListener(container);
 		if (extensionSettings['csf-showbargainprice']) {
-			showBargainPrice(container, cachedItem);
+			showBargainPrice(container, cachedItem, popout);
 		}
 
 		patternDetections(container, cachedItem, false);
@@ -715,6 +716,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 					copyNameOnClick(container);
 				}
 				CSFloatHelpers.storeApiItem(container, apiItem);
+				showBargainPrice(container, apiItem, popout);
 			}
 
 			// last as it has to wait for history api data
@@ -726,10 +728,15 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	}
 }
 
-function showBargainPrice(container: Element, listing: CSFloat.ListingData) {
+function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
 	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
-	if (listing.min_offer_price && buttonLabel) {
-		buttonLabel.textContent += ` (${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(listing.min_offer_price / 100)})`;
+	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
+		const minBargainLabel = `<span class="betterfloat-minbargain-label" style="color: slategrey;">(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(listing.min_offer_price / 100)})</span>`;
+
+		buttonLabel.insertAdjacentHTML('beforeend', minBargainLabel);
+		if (popout === POPOUT_ITEM.PAGE) {
+			buttonLabel.setAttribute('style', 'display: flex; flex-direction: column;');
+		}
 	}
 }
 
@@ -1377,7 +1384,7 @@ function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
 }
 
 function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
-	if (container.querySelector('.betterfloat-listing-age')) {
+	if (container.querySelector('.item-card.large .betterfloat-listing-age')) {
 		return;
 	}
 
@@ -1386,7 +1393,7 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 	const listingIcon = document.createElement('img');
 	listingAge.classList.add('betterfloat-listing-age');
 	listingAge.style.display = 'flex';
-	listingAge.style.alignItems = 'center';
+	listingAge.style.alignItems = 'flex-end';
 	listingAgeText.style.display = 'inline';
 	listingAgeText.style.margin = '0 5px 0 0';
 	listingAgeText.style.fontSize = '13px';
@@ -1402,6 +1409,7 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 	const parent = container.querySelector<HTMLElement>('.top-right-container');
 	if (parent) {
 		parent.style.flexDirection = 'column';
+		parent.style.alignItems = 'flex-end';
 		parent.insertAdjacentElement('afterbegin', listingAge);
 		const action = parent.querySelector('.action');
 		if (action) {
@@ -1433,7 +1441,7 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
 	const currencyRate = await getCurrencyRate();
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
-	
+
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
 
 	const spPercentage = price_difference / priceSum;
@@ -1559,12 +1567,13 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 async function addBuffPrice(
 	item: CSFloat.FloatItem,
 	container: Element,
-	isPopout = false
+	popout: POPOUT_ITEM
 ): Promise<{
 	price_difference: number;
 }> {
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 	const isSellTab = location.pathname === '/sell';
+	const isPopout = popout === POPOUT_ITEM.PAGE;
 
 	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
 	// const showBoth = extensionSettings['csf-floatappraiser'] || isPopout;
@@ -1572,7 +1581,7 @@ async function addBuffPrice(
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
 
-	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice')) {
+	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR) {
 		const buffContainer = document.createElement('a');
 		buffContainer.setAttribute('class', 'betterfloat-buff-a');
 		const buff_url =
@@ -1617,7 +1626,7 @@ async function addBuffPrice(
 			buffContainer.appendChild(warningImage);
 		}
 
-		if (!container.querySelector('.betterfloat-buffprice')) {
+		if (!priceContainer.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
 				priceContainer.replaceWith(buffContainer);
 			} else {
@@ -1625,7 +1634,7 @@ async function addBuffPrice(
 			}
 		}
 
-		// replace with setting for showsteam
+		// add link to steam market
 		if (extensionSettings['csf-steamlink']) {
 			const flexGrow = container.querySelector('div.seller-details > div');
 			if (flexGrow) {
@@ -1655,7 +1664,7 @@ async function addBuffPrice(
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
 	if (
 		extensionSettings['csf-buffdifference'] &&
-		!container.querySelector('.betterfloat-sale-tag') &&
+		!priceContainer.querySelector('.betterfloat-sale-tag') &&
 		item.price != 0 &&
 		(priceFromReference > 0 || item.price < 0.06) &&
 		location.pathname !== '/sell'

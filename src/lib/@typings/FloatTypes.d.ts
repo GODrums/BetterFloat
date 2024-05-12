@@ -18,6 +18,47 @@ export interface EventData<T> {
 }
 
 export namespace CSFloat {
+    export type Me = {
+        actionable_trades: number;
+        pending_offers: number;
+        user: {
+            avatar: string;
+            away: boolean;
+            background_url: string;
+            balance: number;
+            email: string;
+            extension_setup_at: string;
+            fee: number;
+            flags: number;
+            has_2fa: boolean;
+            has_valid_steam_api_key: boolean;
+            know_your_customer: string;
+            obfuscated_id: string;
+            online: boolean;
+            payment_accounts: any;
+            pending_balance: number;
+            preferences: {
+                max_offer_discount: number;
+                offers_enabled: boolean;
+            };
+            stall_public: boolean;
+            statistics: {
+                median_trade_time: number;
+                total_avoided_trades: number;
+                total_failed_trades: number;
+                total_sales: number;
+                total_trades: number;
+                total_verified_trades: number;
+            };
+            steam_api_key: string;
+            steam_id: string;
+            subscriptions: string[];
+            trade_token: string;
+            username: string;
+            verification_mode: string;
+            withdraw_fee: number;
+        };
+    }
     export namespace ItemSchema {
         export type ItemType = "agents" | "collections" | "containers" | "custom_stickers" | "rarities" | "stickers" | "weapons";
         
