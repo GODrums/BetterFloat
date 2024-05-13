@@ -689,7 +689,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 		addBargainListener(container);
 		if (extensionSettings['csf-showbargainprice']) {
-			showBargainPrice(container, cachedItem, popout);
+			await showBargainPrice(container, cachedItem, popout);
 		}
 
 		patternDetections(container, cachedItem, false);
@@ -716,7 +716,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 					copyNameOnClick(container);
 				}
 				CSFloatHelpers.storeApiItem(container, apiItem);
-				showBargainPrice(container, apiItem, popout);
+				await showBargainPrice(container, apiItem, popout);
 			}
 
 			// last as it has to wait for history api data
@@ -728,10 +728,11 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	}
 }
 
-function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
+async function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
 	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
 	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
-		const minBargainLabel = `<span class="betterfloat-minbargain-label" style="color: slategrey;">(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency(), minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(listing.min_offer_price / 100)})</span>`;
+		const { userCurrency, currencyRate } = await getCurrencyRate();
+		const minBargainLabel = `<span class="betterfloat-minbargain-label" style="color: slategrey;">(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber())})</span>`;
 
 		buttonLabel.insertAdjacentHTML('beforeend', minBargainLabel);
 		if (popout === POPOUT_ITEM.PAGE) {
@@ -1439,7 +1440,7 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
-	const currencyRate = await getCurrencyRate();
+	const { userCurrency, currencyRate } = await getCurrencyRate();
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
 
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
@@ -1450,7 +1451,8 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	if (priceSum >= 2) {
 		const backgroundImageColor = getSPBackgroundColor(spPercentage);
 		if (spPercentage > 2 || spPercentage < 0.005) {
-			csfSP.textContent = `${USDollar.format(Number(priceSum.toFixed(0)))} SP`;
+			const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+			csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
 		} else {
 			csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
 		}
@@ -1542,7 +1544,7 @@ async function getCurrencyRate() {
 		console.warn(`[BetterFloat] Could not get currency rate for ${userCurrency}`);
 		currencyRate = 1;
 	}
-	return currencyRate;
+	return {userCurrency, currencyRate};
 }
 
 async function getBuffItem(item: CSFloat.FloatItem) {
@@ -1551,7 +1553,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
-	const currencyRate = await getCurrencyRate();
+	const { currencyRate } = await getCurrencyRate();
 
 	const priceFromReference = extensionSettings['csf-pricereference'] == 1 ? priceListing : priceOrder;
 	return {
@@ -1701,9 +1703,6 @@ async function addBuffPrice(
 		const saleDiff = `<span>${differenceSymbol}${CurrencyFormatter.format(Math.abs(difference))}</span>`;
 		let saleTagInner = saleDiff;
 		if (extensionSettings['csf-buffdifferencepercent']) {
-			if (item.price > 999 && !isPopout) {
-				saleTag.style.flexDirection = 'column';
-			}
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
@@ -1716,6 +1715,9 @@ async function addBuffPrice(
 			priceContainer.insertBefore(saleTag, floatAppraiser);
 		} else {
 			priceContainer.appendChild(saleTag);
+		}
+		if ((item.price > 999 || priceContainer.textContent.length > 24) && !isPopout) {
+			saleTag.style.flexDirection = 'column';
 		}
 	}
 
