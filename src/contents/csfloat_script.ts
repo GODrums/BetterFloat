@@ -1,3 +1,4 @@
+import { html } from 'common-tags';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -113,8 +114,6 @@ async function firstLaunch() {
 
 	if (location.pathname.includes('/stall/')) {
 		// await customStall(location.pathname.split('/').pop() ?? '');
-	} else if (location.pathname === '/checkout') {
-		adjustCheckout(document.querySelector('app-checkout')!);
 	}
 }
 
@@ -402,8 +401,6 @@ function applyMutation() {
 						offerItemClickListener(addedNode);
 					} else if (addedNode.tagName.toLowerCase() == 'app-markdown-dialog') {
 						adjustCurrencyChangeNotice(addedNode);
-					} else if (addedNode.tagName.toLowerCase() == 'app-checkout') {
-						adjustCheckout(addedNode);
 					}
 				}
 			}
@@ -448,7 +445,7 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	// we have to wait for the sticker data to be loaded
 	await new Promise((r) => setTimeout(r, 1100));
 
-	const item = JSON.parse(itemContainer.getAttribute('data-betterfloat')) as CSFloat.ListingData;
+	const item = JSON.parse(itemContainer.getAttribute('data-betterfloat') ?? '{}') as CSFloat.ListingData;
 	const buff_data = JSON.parse(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
 	const stickerData = JSON.parse(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
 
@@ -473,8 +470,11 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
 			'afterend',
-			`<div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;"><span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>` +
-				(showSP ? `<span class="betterfloat-bargain-sp" style="${spStyle}"></span></div>` : '</div>')
+			html`
+				<div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;">
+					<span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
+					${showSP && `<span class="betterfloat-bargain-sp" style="${spStyle}"></span>`}
+				</div>`
 		);
 
 		const diffElement = container.querySelector<HTMLElement>('.betterfloat-bargain-diff');
@@ -514,66 +514,23 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	}
 }
 
-async function adjustCheckout(container: Element) {
-	await new Promise((r) => setTimeout(r, 2000));
-	const priceElements = container.querySelectorAll('.betterfloat-buffprice');
-	if (priceElements.length === 0) return;
-	const itemData = Array.from(priceElements).map((el) => JSON.parse(el.getAttribute('data-betterfloat') ?? '{}'));
-	const itemPriceSum = itemData.reduce((acc, el) => acc + el.priceFromReference, 0);
-	const totalPriceElement = container.querySelector('h2');
-	const totalPriceText = totalPriceElement?.textContent?.split('Price: ')[1];
-	if (totalPriceElement && totalPriceText) {
-		const csfPrice = Number(parsePrice(totalPriceText).price);
-		console.log('[BetterFloat] Checkout price:', csfPrice, itemPriceSum);
-		const priceDiff = csfPrice - itemPriceSum;
-
-		let backgroundColor: string;
-		let differenceSymbol: string;
-		if (priceDiff < 0) {
-			backgroundColor = extensionSettings['csf-color-profit'];
-			differenceSymbol = '-';
-		} else if (priceDiff > 0) {
-			backgroundColor = extensionSettings['csf-color-loss'];
-			differenceSymbol = '+';
-		} else {
-			backgroundColor = extensionSettings['csf-color-neutral'];
-			differenceSymbol = '-';
-		}
-
-		const currencyFormat = Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() });
-		const element = `<div style="display: flex; justify-content: center; align-items: center;"><h2>Total Buff Value: ${currencyFormat.format(itemPriceSum)}</h2><span style="font-size: 15px;border-radius: 5px;padding: 5px; margin-left: 5px; font-weight: 600; background-color: ${backgroundColor};" data-betterfloat="${priceDiff}">${differenceSymbol}${currencyFormat.format(Math.abs(priceDiff))} (${new Decimal(csfPrice).div(itemPriceSum).mul(100).toDP(2).toNumber()}%)</span></div>`;
-		totalPriceElement.insertAdjacentHTML('afterend', element);
-		totalPriceElement.style.marginBottom = '0';
-	}
-}
-
 function adjustCurrencyChangeNotice(container: Element) {
-	const warningDiv = document.createElement('div');
-	warningDiv.setAttribute('style', 'display: flex; align-items: center; background-color: #7f101080; border-radius: 18px;');
-	const warningSymbol = document.createElement('img');
-	warningSymbol.setAttribute('src', ICON_EXCLAMATION);
-	warningSymbol.style.height = '30px';
-	warningSymbol.style.margin = '0 10px';
-	warningSymbol.style.filter = 'brightness(0) saturate(100%) invert(19%) sepia(64%) saturate(3289%) hue-rotate(212deg) brightness(89%) contrast(98%)';
-	const warningText = document.createElement('p');
-	warningText.textContent = 'Please note that BetterFloat requires a page refresh after changing the currency.';
-	warningDiv.appendChild(warningSymbol);
-	warningDiv.appendChild(warningText);
-
-	const refreshContainer = document.createElement('div');
-	refreshContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center; margin-top: 15px;');
-	const refreshButton = document.createElement('button');
-	refreshButton.className = 'mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base';
-	refreshButton.setAttribute('color', 'primary');
-	refreshButton.innerHTML =
-		'<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>';
-	refreshButton.onclick = () => {
+	const warningDiv = html`
+		<div style="display: flex; align-items: center; background-color: #7f101080; border-radius: 18px;">
+			<img src="${ICON_EXCLAMATION}" style="height: 30px; margin: 0 10px; filter: brightness(0) saturate(100%) invert(19%) sepia(64%) saturate(3289%) hue-rotate(212deg) brightness(89%) contrast(98%);">
+			<p>Please note that BetterFloat requires a page refresh after changing the currency.</p>
+		</div>
+		<div style="display: flex; align-items: center; justify-content: center; margin-top: 15px;">
+			<button class="bf-reload mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base" color="primary">
+				<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
+				<span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>
+			</button>
+		</div>
+	`;
+	container.children[0].insertAdjacentHTML('beforeend', warningDiv);
+	container.children[0].querySelector('button.bf-reload')?.addEventListener('click', () => {
 		location.reload();
-	};
-	refreshContainer.appendChild(refreshButton);
-
-	container.children[0].appendChild(warningDiv);
-	container.children[0].appendChild(refreshContainer);
+	});
 }
 
 async function adjustSalesTableRow(container: Element) {
@@ -588,15 +545,12 @@ async function adjustSalesTableRow(container: Element) {
 	const priceContainer = container.querySelector('.price-wrapper');
 	if (priceContainer && priceData.priceFromReference) {
 		priceContainer.querySelector('app-reference-widget')?.remove();
-		const priceDiffElement = document.createElement('span');
-		priceDiffElement.className = 'betterfloat-table-item-sp';
-		priceDiffElement.textContent = `${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}`;
-		priceDiffElement.setAttribute(
-			'style',
-			`font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`
-		);
-		priceDiffElement.setAttribute('data-betterfloat', priceDiff.toNumber().toString());
-		priceContainer.appendChild(priceDiffElement);
+		const priceDiffElement = html`
+			<div class="betterfloat-table-item-sp" style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}" data-betterfloat="${priceDiff.toDP(2).toNumber()}">
+				${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}
+			</div>
+		`;
+		priceContainer.insertAdjacentHTML('beforeend', priceDiffElement);
 	}
 
 	// add sticker percentage
@@ -717,12 +671,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 				}
 				CSFloatHelpers.storeApiItem(container, apiItem);
 				await showBargainPrice(container, apiItem, popout);
-			}
-
-			// last as it has to wait for history api data
-			if (popout === POPOUT_ITEM.PAGE) {
 				addBargainListener(container);
-				addItemHistory(container?.parentElement?.parentElement);
 			}
 		}, 1500);
 	}
@@ -732,7 +681,11 @@ async function showBargainPrice(container: Element, listing: CSFloat.ListingData
 	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
 	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
 		const { userCurrency, currencyRate } = await getCurrencyRate();
-		const minBargainLabel = `<span class="betterfloat-minbargain-label" style="color: slategrey;">(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber())})</span>`;
+		const minBargainLabel = html`
+			<span class="betterfloat-minbargain-label" style="color: slategrey;">
+				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber())})
+			</span>
+		`;
 
 		buttonLabel.insertAdjacentHTML('beforeend', minBargainLabel);
 		if (popout === POPOUT_ITEM.PAGE) {
@@ -793,9 +746,6 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	if (!actionsContainer) return;
 
 	actionsContainer.setAttribute('style', 'flex-wrap: wrap;');
-	const quickLinksContainer = document.createElement('div');
-	quickLinksContainer.className = 'betterfloat-quicklinks';
-	quickLinksContainer.setAttribute('style', 'flex-basis: 100%; display: flex; justify-content: space-evenly;');
 	const quickLinks: QuickLink[] = [
 		{
 			icon: ICON_CSGOSTASH,
@@ -817,29 +767,22 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 		});
 	}
 
-	for (let i = 0; i < quickLinks.length; i++) {
-		const toolTip = document.createElement('div');
-		toolTip.className = 'bf-tooltip-inner';
-		toolTip.setAttribute('style', 'translate: -60px 10px; width: 140px;');
-		const toolTipSpan = document.createElement('span');
-		toolTipSpan.textContent = quickLinks[i].tooltip;
-		toolTip.appendChild(toolTipSpan);
-		const linkContainer = document.createElement('a');
-		linkContainer.className = 'mat-icon-button';
-		linkContainer.href = quickLinks[i].link;
-		linkContainer.target = '_blank';
-		const icon = document.createElement('img');
-		icon.setAttribute('src', quickLinks[i].icon);
-		icon.setAttribute('style', 'height: 24px; border-radius: 5px; vertical-align: middle;');
-		linkContainer.appendChild(icon);
-		const toolTipOuter = document.createElement('div');
-		toolTipOuter.className = 'bf-tooltip';
-		toolTipOuter.appendChild(linkContainer);
-		toolTipOuter.appendChild(toolTip);
-		quickLinksContainer.appendChild(toolTipOuter);
-	}
+	const quickLinksContainer = html`
+		<div class="betterfloat-quicklinks" style="flex-basis: 100%; display: flex; justify-content: space-evenly;">
+			${quickLinks.map((link) => html`
+				<div class="bf-tooltip">
+					<a class="mat-icon-button" href="${link.link}" target="_blank">
+						<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
+					</a>
+					<div class="bf-tooltip-inner" style="translate: -60px 10px; width: 140px;">
+						<span>${link.tooltip}</span>
+					</div>
+				</div>
+			`).join('')}
+		</div>
+	`;
 
-	actionsContainer.appendChild(quickLinksContainer);
+	actionsContainer.insertAdjacentHTML('beforeend', quickLinksContainer);
 }
 
 function createPricempireURL(container: Element, item: CSFloat.Item) {
@@ -852,13 +795,7 @@ function createPricempireURL(container: Element, item: CSFloat.Item) {
 	const sanitizeURL = (url: string) => {
 		return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
 	};
-	return (
-		'https://pricempire.com/item/cs2/' +
-		pricempireType(item) +
-		'/' +
-		sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase()) +
-		(item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : '')
-	);
+	return `https://pricempire.com/item/cs2/${pricempireType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''}`;
 }
 
 function removeClustering(container: Element) {
@@ -1046,26 +983,18 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 	} else if (itemName.includes('Acid Fade')) {
 		fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed!), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
 	}
-	if (fadePercentage != null) {
-		const fadeTooltip = document.createElement('div');
-		fadeTooltip.className = 'bf-tooltip-inner';
-		const fadePercentageSpan = document.createElement('span');
-		fadePercentageSpan.textContent = `Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%`;
-		const fadeRankingSpan = document.createElement('span');
-		fadeRankingSpan.textContent = `Rank #${fadePercentage.ranking}`;
-		fadeTooltip.appendChild(fadePercentageSpan);
-		fadeTooltip.appendChild(fadeRankingSpan);
-		const fadeBadge = document.createElement('div');
-		fadeBadge.className = 'bf-tooltip';
-		const percentageDiv = document.createElement('div');
-		percentageDiv.className = 'bf-badge-text';
-		percentageDiv.setAttribute('style', `background-position-x: ${fadePercentage.percentage}%; background-image: ${fadePercentage.background};`);
-		const fadeBadgePercentageSpan = document.createElement('span');
-		fadeBadgePercentageSpan.style.color = '#00000080';
-		fadeBadgePercentageSpan.textContent = toTruncatedString(fadePercentage.percentage, 1);
-		percentageDiv.appendChild(fadeBadgePercentageSpan);
-		fadeBadge.appendChild(percentageDiv);
-		fadeBadge.appendChild(fadeTooltip);
+	if (fadePercentage) {
+		const fadeContainer = html`
+			<div class="bf-tooltip" style="display: flex; align-items: center; justify-content: center;">
+				<div class="bf-badge-text" style="background-position-x: ${fadePercentage.percentage}%; background-image: ${fadePercentage.background};">
+					<span style="color: #00000080;">${toTruncatedString(fadePercentage.percentage, 1)}</span>
+				</div>
+				<div class="bf-tooltip-inner" style="translate: 0 50px">
+					<span>Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%</span>
+					<span>Rank #${fadePercentage.ranking}</span>
+				</div>
+			</div>
+		`;
 		let badgeContainer = container.querySelector('.badge-container');
 		if (!badgeContainer) {
 			badgeContainer = document.createElement('div');
@@ -1075,7 +1004,7 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 			badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
 			badgeContainer.setAttribute('style', 'gap: 5px;');
 		}
-		badgeContainer.appendChild(fadeBadge);
+		badgeContainer.insertAdjacentHTML('beforeend', fadeContainer);
 	}
 }
 
@@ -1101,13 +1030,12 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			patternElement = csbluegemData.patternElement;
 		}
 	}
-	// if there is no cached data, fetch it and store it
+	// if there is no cached data, fetch and store it
 	if (pastSales.length == 0 && !patternElement) {
-		await fetchCSBlueGem(type, item.paint_seed!, userCurrency).then((data) => {
-			pastSales = data.pastSales ?? [];
-			patternElement = data.patternElement;
-			container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
-		});
+		const data = await fetchCSBlueGem(type, item.paint_seed!, userCurrency);
+		pastSales = data.pastSales ?? [];
+		patternElement = data.patternElement;
+		container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
 	}
 
 	// add gem icon and blue gem percent if item is a knife
@@ -1134,37 +1062,22 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		if (sortedSales.length > 0 || patternElement?.screenshot) {
 			const closestSale = sortedSales[0];
 			detailButtons.setAttribute('style', 'display: flex;');
-			const outerContainer = document.createElement('div');
-			outerContainer.className = 'bf-tooltip';
-			const screenshotButton = document.createElement('a');
-			// if closest sale is csfloat but has no screenshot, it will lead to an error page
-			if (closestSale?.url) {
-				if (isNaN(Number(closestSale.url))) {
-					screenshotButton.href = closestSale.url;
-				} else {
-					screenshotButton.href = 'https://s.csgofloat.com/' + closestSale.url + '-front.png';
-				}
-			} else {
-				screenshotButton.href = patternElement?.screenshot ?? '';
-			}
-			screenshotButton.target = '_blank';
-			screenshotButton.setAttribute(
-				'style',
-				'vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);'
-			);
-			const iconButton = document.createElement('mat-icon');
-			iconButton.className = 'mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color';
-			iconButton.setAttribute('style', 'font-size: 20px; width: 20px; height: 20px; color: cyan;');
-			iconButton.textContent = 'photo_camera';
-			screenshotButton.appendChild(iconButton);
-			const tooltip = document.createElement('div');
-			tooltip.className = 'bf-tooltip-inner';
-			const tooltipSpan = document.createElement('span');
-			tooltipSpan.textContent = 'Show Buff pattern screenshot';
-			tooltip.appendChild(tooltipSpan);
-			outerContainer.appendChild(screenshotButton);
-			outerContainer.appendChild(tooltip);
-			detailButtons.insertBefore(outerContainer, detailButtons.firstChild);
+			const ssContainer = html`
+				<div class="bf-tooltip" style="display: flex; align-items: center; justify-content: center;">
+					<a
+						href="${closestSale?.url ?? patternElement?.screenshot ?? ''}"
+						target="_blank"
+						style="vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);">
+						<mat-icon class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" style="font-size: 20px; width: 20px; height: 20px; color: cyan;"
+							>photo_camera</mat-icon
+						>
+					</a>
+					<div class="bf-tooltip-inner">
+						<span>Show Buff pattern screenshot</span>
+					</div>
+				</div>
+			`;
+			detailButtons.insertAdjacentHTML('afterbegin', ssContainer);
 		}
 	}
 
@@ -1328,90 +1241,23 @@ function adjustExistingSP(container: Element) {
 	(<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
 }
 
-function addItemHistory(container: Element | null) {
-	if (!container) return;
-	const itemHistory = calculateHistoryValues(getWholeHistory());
-	const headerContainer = <HTMLElement>container.querySelector('#header');
-	if (!headerContainer || !itemHistory) {
-		console.log('[BetterFloat] Could not add item history: ', itemHistory);
-		return;
-	}
-
-	headerContainer.style.display = 'flex';
-	headerContainer.style.justifyContent = 'space-between';
-	const replacementContainer = document.createElement('div');
-	while (headerContainer.firstChild) {
-		replacementContainer.appendChild(headerContainer.firstChild);
-	}
-	headerContainer.appendChild(replacementContainer);
-
-	const historyContainer = document.createElement('div');
-	historyContainer.classList.add('betterfloat-history-container');
-	historyContainer.style.display = 'flex';
-	historyContainer.style.justifyContent = 'flex-end';
-	historyContainer.style.color = '#a9a9a9';
-	historyContainer.style.marginTop = '2px';
-
-	const highestContainer = document.createElement('span');
-	highestContainer.classList.add('betterfloat-history-highest');
-	highestContainer.textContent = 'High: ' + USDollar.format(itemHistory.highest.avg_price);
-
-	const lowestContainer = document.createElement('span');
-	lowestContainer.classList.add('betterfloat-history-lowest');
-	lowestContainer.textContent = 'Low: ' + USDollar.format(itemHistory.lowest.avg_price);
-
-	const divider = document.createElement('span');
-	divider.textContent = ' | ';
-	divider.style.margin = '0 5px';
-
-	historyContainer.appendChild(lowestContainer);
-	historyContainer.appendChild(divider);
-	historyContainer.appendChild(highestContainer);
-	headerContainer.appendChild(historyContainer);
-}
-
-function calculateHistoryValues(itemHistory: CSFloat.HistoryGraphData[]) {
-	if (itemHistory.length === 0) {
-		return null;
-	}
-	const highestElement = itemHistory.reduce((prev, current) => (prev.avg_price > current.avg_price ? prev : current));
-	const lowestElement = itemHistory.reduce((prev, current) => (prev.avg_price < current.avg_price ? prev : current));
-
-	return {
-		total: itemHistory,
-		highest: highestElement,
-		lowest: lowestElement,
-	};
-}
-
 function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
 	if (container.querySelector('.item-card.large .betterfloat-listing-age')) {
 		return;
 	}
 
-	const listingAge = document.createElement('div');
-	const listingAgeText = document.createElement('p');
-	const listingIcon = document.createElement('img');
-	listingAge.classList.add('betterfloat-listing-age');
-	listingAge.style.display = 'flex';
-	listingAge.style.alignItems = 'flex-end';
-	listingAgeText.style.display = 'inline';
-	listingAgeText.style.margin = '0 5px 0 0';
-	listingAgeText.style.fontSize = '13px';
-	listingAgeText.style.color = '#9EA7B1';
-	listingIcon.setAttribute('src', ICON_CLOCK);
-	listingIcon.style.height = '16px';
-	listingIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
-
-	listingAgeText.textContent = calculateTime(cachedItem.created_at);
-	listingAge.appendChild(listingAgeText);
-	listingAge.appendChild(listingIcon);
+	const listingAge = html`
+		<div class="betterfloat-listing-age" style="display: flex; align-items: flex-end;">
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(cachedItem.created_at)}</p>
+			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
+		</div>
+	`;
 
 	const parent = container.querySelector<HTMLElement>('.top-right-container');
 	if (parent) {
 		parent.style.flexDirection = 'column';
 		parent.style.alignItems = 'flex-end';
-		parent.insertAdjacentElement('afterbegin', listingAge);
+		parent.insertAdjacentHTML('afterbegin', listingAge);
 		const action = parent.querySelector('.action');
 		if (action) {
 			const newParent = document.createElement('div');
@@ -1544,7 +1390,7 @@ async function getCurrencyRate() {
 		console.warn(`[BetterFloat] Could not get currency rate for ${userCurrency}`);
 		currencyRate = 1;
 	}
-	return {userCurrency, currencyRate};
+	return { userCurrency, currencyRate };
 }
 
 async function getBuffItem(item: CSFloat.FloatItem) {
@@ -1578,61 +1424,44 @@ async function addBuffPrice(
 	const isPopout = popout === POPOUT_ITEM.PAGE;
 
 	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
-	// const showBoth = extensionSettings['csf-floatappraiser'] || isPopout;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
 
 	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR) {
-		const buffContainer = document.createElement('a');
-		buffContainer.setAttribute('class', 'betterfloat-buff-a');
-		const buff_url =
-			buff_id > 0
-				? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
-				: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-		buffContainer.setAttribute('href', buff_url);
-		buffContainer.setAttribute('target', '_blank');
-		buffContainer.setAttribute('style', 'display: inline-flex; align-items: center; font-size: 15px;');
-
-		const buffImage = document.createElement('img');
-		buffImage.setAttribute('src', ICON_BUFF);
-		buffImage.setAttribute('style', 'height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;');
-		buffContainer.appendChild(buffImage);
-		const buffPrice = document.createElement('div');
-		buffPrice.setAttribute('class', `betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}`);
-		buffPrice.setAttribute('data-betterfloat', JSON.stringify({ buff_name, priceFromReference, userCurrency }));
-		const tooltipSpan = document.createElement('span');
-		tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
-		tooltipSpan.innerHTML = 'Bid: Highest buy order price; <br /> Ask: Lowest listing price';
-		buffPrice.appendChild(tooltipSpan);
-		const buffPriceBid = document.createElement('span');
-		buffPriceBid.setAttribute('style', 'color: orange;');
-		buffPriceBid.textContent = `${priceOrder < 1000 ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder)}`;
-		buffPrice.appendChild(buffPriceBid);
-		const buffPriceDivider = document.createElement('span');
-		buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
-		buffPriceDivider.textContent = '|';
-		buffPrice.appendChild(buffPriceDivider);
-		const buffPriceAsk = document.createElement('span');
-		buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-		buffPriceAsk.textContent = `${priceOrder < 1000 ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing)}`;
-		buffPrice.appendChild(buffPriceAsk);
-		buffContainer.appendChild(buffPrice);
-		if (priceOrder > priceListing * 1.1) {
-			const warningImage = document.createElement('img');
-			warningImage.setAttribute('src', ICON_EXCLAMATION);
-			warningImage.setAttribute(
-				'style',
-				'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);'
-			);
-			buffContainer.appendChild(warningImage);
-		}
+		const buffContainer = html`
+			<a
+				class="betterfloat-buff-a"
+				href="${buff_id > 0
+					? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
+					: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`}"
+				target="_blank"
+				style="display: inline-flex; align-items: center; font-size: 15px;">
+				<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
+				<div class="betterfloat-buffprice ${isPopout && 'betterfloat-big-price'}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
+					<span class="betterfloat-buff-tooltip">
+						Bid: Highest buy order price;
+						<br />
+						Ask: Lowest listing price
+					</span>
+					<span style="color: orange;"> ${priceOrder < 1000 && 'Bid '}${CurrencyFormatter.format(priceOrder)} </span>
+					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
+					<span style="color: greenyellow;"> ${priceOrder < 1000 && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
+					${priceOrder > priceListing &&
+					html`
+						<img
+							src="${ICON_EXCLAMATION}"
+							style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
+					`}
+				</div>
+			</a>
+		`;
 
 		if (!priceContainer.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
-				priceContainer.replaceWith(buffContainer);
+				priceContainer.outerHTML = buffContainer;
 			} else {
-				priceContainer.after(buffContainer);
+				priceContainer.insertAdjacentHTML('afterend', buffContainer);
 			}
 		}
 
@@ -1640,27 +1469,14 @@ async function addBuffPrice(
 		if (extensionSettings['csf-steamlink']) {
 			const flexGrow = container.querySelector('div.seller-details > div');
 			if (flexGrow) {
-				const steamImg = `<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank"><img src="${ICON_STEAM}" style="height: 18px; translate: 0px 2px;"></a>`;
+				const steamImg = html`
+					<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank">
+						<img src="${ICON_STEAM}" style="height: 18px; translate: 0px 2px;" />
+					</a>
+				`;
 				flexGrow?.insertAdjacentHTML('afterend', steamImg);
 			}
 		}
-	} else if (container.querySelector('.betterfloat-buff-a')) {
-		const buffA = container.querySelector('.betterfloat-buff-a')!;
-		const buff_url =
-			buff_id > 0
-				? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
-				: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-		buffA.setAttribute('href', buff_url);
-		const buffPriceDiv = buffA.querySelector('.betterfloat-buffprice')!;
-		buffPriceDiv.setAttribute(
-			'data-betterfloat',
-			JSON.stringify({
-				buff_name: buff_name,
-				priceFromReference: priceFromReference,
-			})
-		);
-		buffPriceDiv.children[1].textContent = `Bid ${USDollar.format(priceOrder)}`;
-		buffPriceDiv.children[3].textContent = `Ask ${USDollar.format(priceListing)}`;
 	}
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
@@ -1700,13 +1516,13 @@ async function addBuffPrice(
 		saleTag.style.backgroundColor = backgroundColor;
 		saleTag.setAttribute('data-betterfloat', String(difference));
 		// tags may get too long, so we may need to break them into two lines
-		const saleDiff = `<span>${differenceSymbol}${CurrencyFormatter.format(Math.abs(difference))}</span>`;
+		const saleDiff = html` <span> ${differenceSymbol}${CurrencyFormatter.format(Math.abs(difference))} </span> `;
 		let saleTagInner = saleDiff;
 		if (extensionSettings['csf-buffdifferencepercent']) {
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
-				saleTagInner += `<span style="${isPopout || item.price <= 999 ? 'margin-left: 5px;' : ''}">(${percentage.toDP(decimalPlaces).toNumber()}%)</span>`;
+				saleTagInner += html` <span class="betterfloat-sale-tag-percentage" style="margin-left: 5px;"> (${percentage.toDP(decimalPlaces).toNumber()}%) </span> `;
 			}
 		}
 		saleTag.innerHTML = saleTagInner;
@@ -1718,6 +1534,7 @@ async function addBuffPrice(
 		}
 		if ((item.price > 999 || priceContainer.textContent.length > 24) && !isPopout) {
 			saleTag.style.flexDirection = 'column';
+			saleTag.querySelector('.betterfloat-sale-tag-percentage')?.setAttribute('style', 'margin-left: 0;');
 		}
 	}
 

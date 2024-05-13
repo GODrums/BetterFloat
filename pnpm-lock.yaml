@@ -62,6 +62,9 @@ importers:
       '@tsparticles/slim':
         specifier: ^3.3.0
         version: 3.3.0
+      '@types/common-tags':
+        specifier: ^1.8.4
+        version: 1.8.4
       '@types/webextension-polyfill':
         specifier: ^0.10.7
         version: 0.10.7
@@ -74,6 +77,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      common-tags:
+        specifier: ^1.8.2
+        version: 1.8.2
       framer-motion:
         specifier: ^11.1.9
         version: 11.1.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1973,6 +1979,9 @@ packages:
   '@types/chrome@0.0.266':
     resolution: {integrity: sha512-QSQWJTL7NjZElvq/6/E5C1+pHgEP8UAJzwoz7M4vSJ7AECt6NNehJ+tU6snnvuTqZOBjFCivvitYo5+8tNPmhg==}
 
+  '@types/common-tags@1.8.4':
+    resolution: {integrity: sha512-S+1hLDJPjWNDhcGxsxEbepzaxWqURP/o+3cP4aa2w7yBXgdcmKGQtZzP8JbyfOd0m+33nh+8+kvxYE2UJtBDkg==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -2389,6 +2398,10 @@ packages:
   commander@7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
+
+  common-tags@1.8.2:
+    resolution: {integrity: sha512-gk/Z852D2Wtb//0I+kRFNKKE9dIIVirjoqPoA1wJU+XePVXZfGeBpk45+A1rKO4Q43prqWBNY/MiIeRLbPWUaA==}
+    engines: {node: '>=4.0.0'}
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -6457,6 +6470,8 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.15
 
+  '@types/common-tags@1.8.4': {}
+
   '@types/estree@1.0.5': {}
 
   '@types/filesystem@0.0.36':
@@ -6933,6 +6948,8 @@ snapshots:
   commander@4.1.1: {}
 
   commander@7.2.0: {}
+
+  common-tags@1.8.2: {}
 
   concat-map@0.0.1: {}
 
