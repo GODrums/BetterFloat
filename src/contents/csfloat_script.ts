@@ -1072,7 +1072,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 							>photo_camera</mat-icon
 						>
 					</a>
-					<div class="bf-tooltip-inner">
+					<div class="bf-tooltip-inner" style="translate: 0px 50px;">
 						<span>Show Buff pattern screenshot</span>
 					</div>
 				</div>

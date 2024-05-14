@@ -288,6 +288,14 @@ async function fetchCSFCurrencyRates() {
 		});
 }
 
+export async function getSpUserCurrency() {
+	if (skinportUserCurrency == '') {
+		await fetchSpUserData();
+	}
+	return skinportUserCurrency;
+
+}
+
 export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
 	if (Object.keys(skinportRatesFromUSD).length == 0) {
 		await fetchSpUserData();

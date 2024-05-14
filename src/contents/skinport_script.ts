@@ -8,7 +8,7 @@ import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, US
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 import { sendToBackground } from '@plasmohq/messaging';
 
@@ -17,6 +17,7 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import type { PlasmoCSConfig } from 'plasmo';
 import { z } from 'zod';
+import { html } from 'common-tags';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -124,57 +125,37 @@ async function firstLaunch() {
 }
 
 function createLanguagePopup() {
-	const popupOuter = document.createElement('div');
-	popupOuter.className = 'betterfloat-popup-outer';
-	popupOuter.style.backdropFilter = 'blur(2px)';
-	popupOuter.style.fontSize = '16px';
-	const popup = document.createElement('div');
-	popup.className = 'betterfloat-popup-language';
-	const popupHeaderDiv = document.createElement('div');
-	popupHeaderDiv.style.display = 'flex';
-	popupHeaderDiv.style.alignItems = 'center';
-	popupHeaderDiv.style.justifyContent = 'space-between';
-	popupHeaderDiv.style.margin = '0 10px';
-	const warningIcon = document.createElement('img');
-	warningIcon.src = ICON_EXCLAMATION;
-	warningIcon.style.width = '32px';
-	warningIcon.style.height = '32px';
-	warningIcon.style.filter = 'brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%)';
-	const popupHeaderText = document.createElement('h2');
-	popupHeaderText.style.fontWeight = '700';
-	popupHeaderText.textContent = 'Warning: Language not supported';
-	const closeButton = document.createElement('a');
-	closeButton.className = 'close';
-	closeButton.style.marginBottom = '10px';
-	closeButton.textContent = 'x';
-	closeButton.style.cursor = 'pointer';
-	closeButton.onclick = () => {
-		popupOuter.remove();
-	};
-	popupHeaderDiv.appendChild(warningIcon);
-	popupHeaderDiv.appendChild(popupHeaderText);
-	popupHeaderDiv.appendChild(closeButton);
-	const popupText = document.createElement('p');
-	popupText.style.marginTop = '30px';
-	popupText.textContent =
-		"BetterFloat currently only supports the English language on Skinport. Please use the button below to change the language to English. If it doesn't work, scroll to the bottom of the page and change the language manually.";
-	const buttonDiv = document.createElement('div');
-	buttonDiv.style.display = 'flex';
-	buttonDiv.style.justifyContent = 'center';
-	const changeLanguageButton = document.createElement('button');
-	changeLanguageButton.type = 'button';
-	changeLanguageButton.className = 'betterfloat-language-button';
-	changeLanguageButton.textContent = 'Change language';
-	changeLanguageButton.onclick = () => {
-		(<HTMLButtonElement>document.querySelector('.Dropdown-button')).click();
-		(<HTMLButtonElement>document.querySelector('.Dropdown-dropDownItem')).click();
-	};
-	buttonDiv.appendChild(changeLanguageButton);
-	popup.appendChild(popupHeaderDiv);
-	popup.appendChild(popupText);
-	popup.appendChild(buttonDiv);
-	popupOuter.appendChild(popup);
-	document.body.appendChild(popupOuter);
+	const newPopup = html`
+		<div class="betterfloat-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">
+			<div class="betterfloat-popup-language">
+				<div style="display: flex; align-items: center; justify-content: space-between; margin: 0 10px;">
+					<img src="${ICON_EXCLAMATION}" style="width: 32px; height: 32px; filter: brightness(0) saturate(100%) invert(42%) sepia(99%) saturate(1934%) hue-rotate(339deg) brightness(101%) contrast(105%);">
+					<h2 style="font-weight: 700;">Warning: Language not supported</h2>
+					<a class="close" style="margin-bottom: 10px; cursor: pointer;">x</a>
+				</div>
+				<p style="margin-top: 30px;">BetterFloat currently only supports the English language on Skinport. Please use the button below to change the language to English. If it doesn't work, scroll to the bottom of the page and change the language manually.</p>
+				<div style="display: flex; justify-content: center;">
+					<button type="button" class="betterfloat-language-button">Change language</button>
+				</div>
+			</div>
+		</div>
+	`;
+	document.body.insertAdjacentHTML('beforeend', newPopup);
+
+	const closeButton = document.querySelector<HTMLButtonElement>('.betterfloat-popup-language .close');
+	if (closeButton) {
+		closeButton.onclick = () => {
+			document.querySelector('.betterfloat-popup-outer')?.remove();
+		};
+	}
+	const changeLanguageButton = document.querySelector<HTMLButtonElement>('.betterfloat-language-button');
+	if (changeLanguageButton) {
+		changeLanguageButton.onclick = () => {
+			(<HTMLButtonElement>document.querySelector('.Dropdown-button')).click();
+			(<HTMLButtonElement>document.querySelector('.Dropdown-dropDownItem')).click();
+		};
+	}
+
 }
 
 async function applyMutation() {
@@ -300,7 +281,7 @@ async function adjustItemPage(container: Element) {
 	}
 
 	if (popupItem && container.querySelector('.ItemPage-notListed')) {
-		addSoldPrice(container, popupItem);
+		await addSoldPrice(container, popupItem);
 	}
 
 	await waitForElement('.ItemPage-image > img', 200);
@@ -343,21 +324,12 @@ async function adjustItemPage(container: Element) {
 	const difference = item.price - priceFromReference;
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
-		const newContainer = document.createElement('div');
-		const saleTag = document.createElement('span');
-		newContainer.className = 'ItemPage-discount betterfloat-discount-container';
-		newContainer.style.background = `linear-gradient(135deg,#0073d5,${
-			difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
-		})`;
-		newContainer.style.transform = 'skewX(-15deg)';
-		newContainer.style.borderRadius = '3px';
-		newContainer.style.paddingTop = '2px';
-		saleTag.style.margin = '5px';
-		saleTag.style.fontWeight = '700';
-		const percentage = ' (' + ((item.price / priceFromReference) * 100).toFixed(2) + '%)';
-		saleTag.textContent = difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2) + percentage;
-		newContainer.appendChild(saleTag);
-		priceContainer.appendChild(newContainer);
+		const newContainer = html`
+			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
+				<span style="margin: 5px; font-weight: 700;">${difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span>
+			</div>
+		`;
+		priceContainer.insertAdjacentHTML('beforeend', newContainer);
 	}
 
 	if (extensionSettings['sp-stickerprices']) {
@@ -392,12 +364,27 @@ async function adjustCart(container: Element) {
 	// adjust the cart with Buff prices?
 }
 
-function addSoldPrice(container: Element, popupData: Skinport.ItemData) {
+async function addSoldPrice(container: Element, popupData: Skinport.ItemData) {
 	const item = popupData.data.item;
-	const currencySymbol = getSymbolFromCurrency(item.currency);
+	const currency = await getSpUserCurrency();
 	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
 
-	const priceContainer = `<div class="ItemPage-price"><div class="ItemPage-value"><div class="Tooltip-link">${currencySymbol}${new Decimal(item.salePrice).div(100).toFixed(2)}</div></div><div class="ItemPage-discount"><div class="GradientLabel"><span>− ${differencePercentage.toFixed(0)}%</span></div></div></div><div class="ItemPage-suggested">Suggested price ${currencySymbol}${new Decimal(item.suggestedPrice).div(100).toFixed(2)}</div>`;
+	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const priceContainer = html`
+		<div class="ItemPage-price">
+			<div class="ItemPage-value">
+				<div class="Tooltip-link">${CurrencyFormatter.format(new Decimal(item.salePrice).div(100).toNumber())}</div>
+			</div>
+			<div class="ItemPage-discount">
+				<div class="GradientLabel">
+					<span>− ${differencePercentage.toFixed(0)}%</span>
+				</div>
+			</div>
+		</div>
+		<div class="ItemPage-suggested">
+			Suggested price ${CurrencyFormatter.format(new Decimal(item.suggestedPrice).div(100).toNumber())}
+		</div>
+	`;
 
 	container.querySelector('.ItemPage-notListed')?.insertAdjacentHTML('beforebegin', priceContainer);
 }
@@ -775,77 +762,44 @@ function convertCurrency(price: number, currencyRate: number, settingRate: strin
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, containerIsParent = false) {
-	const buffContainer = document.createElement('div');
-	buffContainer.className = 'betterfloat-buff-container';
-	buffContainer.style.display = 'flex';
-	buffContainer.style.marginTop = '5px';
-	buffContainer.style.alignItems = 'center';
-	const buffImage = document.createElement('img');
-	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', 'border: 1px solid #323c47; height: 20px; margin-right: 5px; border-radius: 5px');
-	buffContainer.appendChild(buffImage);
-	const buffPrice = document.createElement('div');
-	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
-	buffPrice.setAttribute('data-betterfloat', JSON.stringify({ priceListing, priceOrder, currencySymbol }));
-	const tooltipSpan = document.createElement('span');
-	tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
-	tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
-	buffPrice.appendChild(tooltipSpan);
-	const buffPriceBid = document.createElement('span');
-	buffPriceBid.setAttribute('style', 'color: orange; font-weight: 600;');
-	buffPriceBid.textContent = `Bid ${currencySymbol}${priceOrder.toFixed(2)}`;
-	buffPrice.appendChild(buffPriceBid);
-	const buffPriceDivider = document.createElement('span');
-	buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
-	buffPriceDivider.textContent = '|';
-	buffPrice.appendChild(buffPriceDivider);
-	const buffPriceAsk = document.createElement('span');
-	buffPriceAsk.setAttribute('style', 'color: greenyellow; font-weight: 600;');
-	buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
-	buffPrice.appendChild(buffPriceAsk);
-	buffContainer.appendChild(buffPrice);
-	if (priceOrder > priceListing) {
-		const warningImage = document.createElement('img');
-		warningImage.setAttribute('src', ICON_EXCLAMATION);
-		warningImage.setAttribute(
-			'style',
-			'height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);'
-		);
-		buffContainer.appendChild(warningImage);
-	}
+	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currencySymbol, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const buffContainer = html`
+		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
+			<img src="${ICON_BUFF}" style="border: 1px solid #323c47; height: 22px; margin-right: 5px; border-radius: 5px">
+			<div class="suggested-price betterfloat-buffprice" data-betterfloat='${JSON.stringify({ priceListing, priceOrder, currencySymbol })}'>
+				<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
+				<span style="color: orange; font-weight: 600;">${priceOrder < 100 && 'Bid '}${CurrencyFormatter.format(priceOrder)}</span>
+				<span style="color: gray;margin: 0 3px 0 3px;">|</span>
+				<span style="color: greenyellow; font-weight: 600;">${priceOrder < 100 && 'Ask '}${CurrencyFormatter.format(priceListing)}</span>
+				${priceOrder > priceListing && html`
+					<img src="${ICON_EXCLAMATION}" style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
+				`}
+			</div>
+		</div>
+	`;
+
 	if (containerIsParent) {
 		const divider = document.createElement('div');
 		container.appendChild(divider);
-		container.appendChild(buffContainer);
+		container.insertAdjacentHTML('beforeend', buffContainer);
 	} else if (extensionSettings['sp-steamprices']) {
 		const divider = document.createElement('div');
-		container.after(buffContainer);
+		container.insertAdjacentHTML('beforeend', buffContainer);
 		container.after(divider);
 	} else {
-		container.replaceWith(buffContainer);
+		container.outerHTML = buffContainer;
 	}
 }
 
 function showMessageBox(title: string, message: string, success = false) {
 	// Thank you chatGPT for this function (and css)
-	let messageContainer = document.querySelector('.MessageContainer');
+	let messageContainer = document.querySelector<HTMLElement>('.MessageContainer');
 	if (!messageContainer) {
 		messageContainer = document.createElement('div');
 		messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
 		document.getElementById('root')?.appendChild(messageContainer);
 	} else {
 		messageContainer.className += ' BetterFloat-OCO-Message';
-	}
-	const messageInnerContainer = document.createElement('div');
-	messageInnerContainer.className = 'Message Message--error Message-enter-done';
-	messageContainer.appendChild(messageInnerContainer);
-
-	// Create title element
-	const titleElement = document.createElement('div');
-	titleElement.className = 'Message-title';
-	titleElement.textContent = title;
-	if (success) {
-		titleElement.style.color = '#66ff66';
 	}
 
 	if (message === 'MUST_LOGIN') {
@@ -863,32 +817,27 @@ function showMessageBox(title: string, message: string, success = false) {
 		message = 'The item you are trying to order is not listed anymore.';
 	}
 
-	// Create message element
-	const messageElement = document.createElement('div');
-	messageElement.className = 'Message-text';
-	messageElement.textContent = message;
+	const messageInnerContainer = html`
+		<div class="Message Message--error Message-enter-done">
+			<div class="Message-title" style="${success && 'color: #66ff66'}">${title}</div>
+			<div class="Message-text">${message}</div>
+			<div class="Message-buttons">
+				<button type="button" class="Message-actionBtn Message-closeBtn">Close</button>
+			</div>
+		</div>
+	`;
+	messageContainer.insertAdjacentHTML('beforeend', messageInnerContainer);
 
-	const messageButtons = document.createElement('div');
-	messageButtons.className = 'Message-buttons';
-	const messageCloseButton = document.createElement('button');
-	messageCloseButton.type = 'button';
-	messageCloseButton.className = 'Message-actionBtn Message-closeBtn';
-	messageCloseButton.textContent = 'Close';
-
+	const messageCloseButton = messageContainer.querySelector<HTMLButtonElement>('.Message-closeBtn');
 	const fadeOutEffect = () => {
 		if (!messageContainer) return;
-		(<HTMLElement>messageContainer).style.opacity = '0';
+		messageContainer.style.opacity = '0';
 		setTimeout(() => {
-			messageContainer?.removeChild(messageInnerContainer);
+			messageContainer?.removeChild(messageContainer.firstElementChild);
 			messageContainer?.setAttribute('style', '');
 		}, 500);
 	};
 	messageCloseButton.onclick = fadeOutEffect;
-
-	messageButtons.appendChild(messageCloseButton);
-	messageInnerContainer.appendChild(titleElement);
-	messageInnerContainer.appendChild(messageElement);
-	messageInnerContainer.appendChild(messageButtons);
 
 	// Set a timeout to remove the message after 7 seconds
 	setTimeout(fadeOutEffect, 6500);
@@ -1077,13 +1026,14 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
+	const currencyRate = await getSpUserCurrency();
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		if (!priceDiv) {
 			const priceParent = container.querySelector('.ItemPreview-priceValue');
-			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, item.currency, true);
+			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, true);
 			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
 		} else {
-			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, item.currency);
+			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencyRate);
 		}
 	}
 	
@@ -1138,10 +1088,11 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;';
 
 			const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
-			const buffPriceHTML = `<div style="${saleTagStyle}">${
-				extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''
-			}${extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''}</div>`;
-
+			const buffPriceHTML = html`
+				<div style="${saleTagStyle}">
+					${extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''}${extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''}
+				</div>
+			`;
 			saleTag.innerHTML = buffPriceHTML;
 			saleTag.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference, difference, percentage }));
 		}
@@ -1152,6 +1103,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	};
 }
 
+/**
+ * @deprecated just left for reference
+ */
 function createBuffName(item: Skinport.Listing): string {
 	let full_name = `${item.name}`;
 	if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
