@@ -98,7 +98,7 @@ export default function IndexPopup() {
                 <img className="h-10 w-10 rounded-lg" src={skinportLogo} />
               </TabsTrigger>
               <TabsTrigger value="skinbid">
-                <SkinBidIcon height={48} width={48} />
+                <SkinBidIcon height={40} width={40} />
               </TabsTrigger>
             </div>
             <div className="flex flex-col items-center">
