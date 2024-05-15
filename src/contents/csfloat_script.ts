@@ -1447,13 +1447,13 @@ async function addBuffPrice(
 					<span style="color: orange;"> ${priceOrder < 1000 && 'Bid '}${CurrencyFormatter.format(priceOrder)} </span>
 					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 					<span style="color: greenyellow;"> ${priceOrder < 1000 && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
-					${priceOrder > priceListing &&
-					html`
-						<img
-							src="${ICON_EXCLAMATION}"
-							style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
-					`}
 				</div>
+				${priceOrder > priceListing &&
+				html`
+					<img
+						src="${ICON_EXCLAMATION}"
+						style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
+				`}
 			</a>
 		`;
 
