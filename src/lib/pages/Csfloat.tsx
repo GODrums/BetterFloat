@@ -1,6 +1,6 @@
 import { ScrollArea, TabsContent } from "../components/Shadcn";
 import { SettingsCard } from "~lib/components/SettingsCard";
-import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsAvgTimeOutlineRounded, MaterialSymbolsTravelExplore, MaterialSymbolsUpdate, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon, TablerCircleChevronUp } from "~lib/components/Icons";
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsAvgTimeOutlineRounded, MaterialSymbolsImageOutlineRounded, MaterialSymbolsTravelExplore, MaterialSymbolsUpdate, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon, TablerCircleChevronUp } from "~lib/components/Icons";
 import csbluegemLogo from "data-base64:~/../assets/csbluegem.svg"
 import { SettingsCheckbox } from "~lib/components/SettingsCheckbox";
 import { SettingsSelect } from "~lib/components/SettingsSelect";
@@ -66,6 +66,10 @@ export const CSFloatSettings = () => {
                         <p className="text-base font-bold leading-none tracking-tight uppercase">Listings</p>
                     </div>
                     <div className="flex flex-col gap-1">
+                        <SettingsCard>
+                            <SettingsCheckbox
+                                id="csf-showingamess" text="Show In-Game Pictures" icon={<MaterialSymbolsImageOutlineRounded className="h-6 w-6" />} tooltipText="Show in-game screenshots instead of the default preview image. Be careful: this uses a lot of additional bandwith and memory. If your site loads slowly, keep this option turned off." />
+                        </SettingsCard>
                         <SettingsCard>
                             <SettingsCheckbox
                                 id="csf-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />

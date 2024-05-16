@@ -57,6 +57,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-steamlink': true,
 	'csf-buffdifference': true,
 	'csf-buffdifferencepercent': false,
+	'csf-showingamess': false,
 	'csf-listingage': true,
 	'csf-topbutton': true,
 	'csf-floatcoloring': true,

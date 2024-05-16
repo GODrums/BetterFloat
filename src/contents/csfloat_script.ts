@@ -615,8 +615,6 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	const priceResult = await addBuffPrice(item, container, popout);
 	// Currency up until this moment is stricly the user's local currency, however the sticker %
 	// is done stricly in USD, we have to make sure the price difference reflects that
-	const currencyRate = await getCSFCurrencyRate(CSFloatHelpers.userCurrency());
-	const priceResultUSD = priceResult.price_difference / currencyRate;
 	const cachedItem = getFirstCSFItem();
 	// POPOUT_ITEM.NONE
 	if (cachedItem) {
@@ -625,12 +623,12 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			return;
 		}
 		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
-			await addStickerInfo(container, cachedItem, priceResultUSD);
+			await addStickerInfo(container, cachedItem, priceResult.price_difference);
 		} else {
 			adjustExistingSP(container);
 		}
 		if (extensionSettings['csf-listingage']) {
-			addListingAge(container, cachedItem);
+			addListingAge(container, cachedItem, false);
 		}
 		CSFloatHelpers.storeApiItem(container, cachedItem);
 
@@ -647,6 +645,10 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 
 		patternDetections(container, cachedItem, false);
+
+		if (extensionSettings['csf-showingamess']) {
+			addItemScreenshot(container, cachedItem.item);
+		}
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
 		setTimeout(async () => {
@@ -661,8 +663,8 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 			if (apiItem?.id) {
 				console.log('[BetterFloat] Popout item data:', apiItem);
-				await addStickerInfo(container, apiItem, priceResultUSD);
-				addListingAge(container, apiItem);
+				await addStickerInfo(container, apiItem, priceResult.price_difference);
+				addListingAge(container, apiItem, true);
 				await patternDetections(container, apiItem, true);
 				addFloatColoring(container, apiItem);
 				if (popout === POPOUT_ITEM.PAGE) {
@@ -672,9 +674,22 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 				CSFloatHelpers.storeApiItem(container, apiItem);
 				await showBargainPrice(container, apiItem, popout);
 				addBargainListener(container);
+				if (extensionSettings['csf-showingamess'] || popout === POPOUT_ITEM.PAGE) {
+					addItemScreenshot(container, apiItem.item);
+				}
 			}
 		}, 1500);
 	}
+}
+
+function addItemScreenshot(container: Element, item: CSFloat.Item) {
+	if (!item.cs2_screenshot_id) return;
+
+	const imgContainer = container.querySelector<HTMLImageElement>('app-item-image-actions img.item-img');
+	if (!imgContainer) return;
+
+	imgContainer.src = `https://s.csfloat.com/m/${item.cs2_screenshot_id}/playside.png?v=2`;
+	imgContainer.style.objectFit = 'contain';
 }
 
 async function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
@@ -782,7 +797,9 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 		</div>
 	`;
 
-	actionsContainer.insertAdjacentHTML('beforeend', quickLinksContainer);
+	if (!actionsContainer.querySelector('.betterfloat-quicklinks')) {
+		actionsContainer.insertAdjacentHTML('beforeend', quickLinksContainer);
+	}
 }
 
 function createPricempireURL(container: Element, item: CSFloat.Item) {
@@ -1241,8 +1258,8 @@ function adjustExistingSP(container: Element) {
 	(<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
 }
 
-function addListingAge(container: Element, cachedItem: CSFloat.ListingData) {
-	if (container.querySelector('.item-card.large .betterfloat-listing-age')) {
+function addListingAge(container: Element, cachedItem: CSFloat.ListingData, isPopout: boolean) {
+	if ((isPopout && container.querySelector('.item-card.large .betterfloat-listing-age')) || (!isPopout && container.querySelector('.betterfloat-listing-age'))) {
 		return;
 	}
 
@@ -1428,7 +1445,9 @@ async function addBuffPrice(
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
 
-	if (priceContainer && !priceContainer.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR) {
+	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR) {
+		const isWarning = priceOrder > priceListing;
+		const extendedDisplay = priceOrder < 100 && priceListing < 100 && !isWarning;
 		const buffContainer = html`
 			<a
 				class="betterfloat-buff-a"
@@ -1444,11 +1463,11 @@ async function addBuffPrice(
 						<br />
 						Ask: Lowest listing price
 					</span>
-					<span style="color: orange;"> ${priceOrder < 1000 && 'Bid '}${CurrencyFormatter.format(priceOrder)} </span>
+					<span style="color: orange;"> ${extendedDisplay && 'Bid '}${CurrencyFormatter.format(priceOrder)} </span>
 					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
-					<span style="color: greenyellow;"> ${priceOrder < 1000 && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
+					<span style="color: greenyellow;"> ${extendedDisplay && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
 				</div>
-				${priceOrder > priceListing &&
+				${isWarning &&
 				html`
 					<img
 						src="${ICON_EXCLAMATION}"
@@ -1457,7 +1476,7 @@ async function addBuffPrice(
 			</a>
 		`;
 
-		if (!priceContainer.querySelector('.betterfloat-buffprice')) {
+		if (!container.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
 				priceContainer.outerHTML = buffContainer;
 			} else {

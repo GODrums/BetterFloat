@@ -84,8 +84,8 @@ importers:
         specifier: ^11.1.9
         version: 11.1.9(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       plasmo:
-        specifier: 0.86.2
-        version: 0.86.2(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 0.86.3
+        version: 0.86.3(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -1142,8 +1142,8 @@ packages:
     resolution: {integrity: sha512-UxljXY+cUVO0ZdszoQRfQjbRjyWYIhGKCjFD48yOcnbSkOZmS5MPPhKrT79x+PMGSK5T6fUXaDjzqbnMb45MZw==}
     engines: {parcel: '>= 2.8.0'}
 
-  '@plasmohq/parcel-config@0.40.7':
-    resolution: {integrity: sha512-M1nOXLI8lPcI/ZS1G+UCfuXe0MWb4+sCnG5xTakm8eDRjH0Paq4pWYKXqi1Bl5V76quK9I3gjezgqEihUTAynQ==}
+  '@plasmohq/parcel-config@0.40.8':
+    resolution: {integrity: sha512-xsHPTVr5oQgAlLiEUOsFy52q2lsjo6QsjKANPHKV0OflykOi7QdRwFQbenC6MBpMb833C/5C6VO1sodhseCkgg==}
 
   '@plasmohq/parcel-core@0.1.8':
     resolution: {integrity: sha512-kMWuazvf925ZAn2yHzzrb4Zsje1titFmvi/C5cXrI0TH58eT7n6GUiRXiOYP4JgGDHs/pEygx3WPuyWVTNF2HQ==}
@@ -1185,8 +1185,8 @@ packages:
     resolution: {integrity: sha512-EUSwEowFNSgC/F1q/V4H4NXJ23wwLzlmRI6lvIr6S0mIuG/FCga+lAV3IZ+yAuXqUM2VexX6JyYYpNVidrMSxw==}
     engines: {parcel: '>= 2.7.0'}
 
-  '@plasmohq/parcel-transformer-manifest@0.18.0':
-    resolution: {integrity: sha512-6X6ubo37Ic7u1y3MjY+vt23Gb3ULtOsH1MbKw3jZMiG8nLGXqXRfiHSyNxJWAdpk7N7ASE8dHnZ+5g3E57bldA==}
+  '@plasmohq/parcel-transformer-manifest@0.19.0':
+    resolution: {integrity: sha512-cDmca0jPVFVnRQPqCWcsPPwre27/yAGxSF1+JmPVUeXZYMCrg5wdNepRDSw+/dDBO2VmNHh/Tv+Hgj1fLIM8CQ==}
     engines: {parcel: '>= 2.7.0'}
 
   '@plasmohq/parcel-transformer-svelte@0.6.0':
@@ -3565,8 +3565,8 @@ packages:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
 
-  plasmo@0.86.2:
-    resolution: {integrity: sha512-oFC8nQmhiule876jyehfZVUBPZV9YWUyfiRBHERBOlW+ezGtyZx/wvWWKE9MHmgE2Cm48H5+U9KcN+pYZNzB5g==}
+  plasmo@0.86.3:
+    resolution: {integrity: sha512-Vja9TWYthEkUK7sM1HwPyj+vBDst4qtfIzTn1Z/UGWS4wFzAddKjGGzVzj731Qxrv5m3R7fCzlA5izz/ID36Hw==}
     hasBin: true
 
   postcss-import@15.1.0:
@@ -4726,7 +4726,7 @@ snapshots:
       json5: 2.2.3
       msgpackr: 1.10.2
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.2
 
   '@parcel/diagnostic@2.8.3':
     dependencies:
@@ -4812,7 +4812,7 @@ snapshots:
       '@parcel/fs': 2.9.3(@parcel/core@2.9.3)
       '@parcel/utils': 2.9.3
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - '@parcel/core'
 
@@ -4905,7 +4905,7 @@ snapshots:
       '@parcel/types': 2.9.3(@parcel/core@2.9.3)
       '@parcel/utils': 2.9.3
       '@parcel/workers': 2.9.3(@parcel/core@2.9.3)
-      semver: 7.5.4
+      semver: 7.6.2
 
   '@parcel/packager-css@2.9.3(@parcel/core@2.9.3)':
     dependencies:
@@ -5046,7 +5046,7 @@ snapshots:
       browserslist: 4.23.0
       json5: 2.2.3
       nullthrows: 1.1.1
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - '@parcel/core'
 
@@ -5079,7 +5079,7 @@ snapshots:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.2
       srcset: 4.0.0
     transitivePeerDependencies:
       - '@parcel/core'
@@ -5110,7 +5110,7 @@ snapshots:
       browserslist: 4.23.0
       nullthrows: 1.1.1
       regenerator-runtime: 0.13.11
-      semver: 7.5.4
+      semver: 7.6.2
 
   '@parcel/transformer-json@2.9.3(@parcel/core@2.9.3)':
     dependencies:
@@ -5136,7 +5136,7 @@ snapshots:
       clone: 2.1.2
       nullthrows: 1.1.1
       postcss-value-parser: 4.2.0
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - '@parcel/core'
 
@@ -5148,7 +5148,7 @@ snapshots:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - '@parcel/core'
 
@@ -5193,7 +5193,7 @@ snapshots:
       posthtml: 0.16.6
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
-      semver: 7.5.4
+      semver: 7.6.2
     transitivePeerDependencies:
       - '@parcel/core'
 
@@ -5351,7 +5351,7 @@ snapshots:
     transitivePeerDependencies:
       - '@parcel/core'
 
-  '@plasmohq/parcel-config@0.40.7(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.2.2)':
+  '@plasmohq/parcel-config@0.40.8(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.2.2)':
     dependencies:
       '@parcel/compressor-raw': 2.9.3(@parcel/core@2.9.3)
       '@parcel/config-default': 2.9.3(@parcel/core@2.9.3)(@swc/helpers@0.5.11)(postcss@8.4.38)(typescript@5.2.2)
@@ -5385,7 +5385,7 @@ snapshots:
       '@plasmohq/parcel-runtime': 0.23.1
       '@plasmohq/parcel-transformer-inject-env': 0.2.11
       '@plasmohq/parcel-transformer-inline-css': 0.3.11
-      '@plasmohq/parcel-transformer-manifest': 0.18.0
+      '@plasmohq/parcel-transformer-manifest': 0.19.0
       '@plasmohq/parcel-transformer-svelte': 0.6.0
       '@plasmohq/parcel-transformer-vue': 0.5.0(lodash@4.17.21)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
     transitivePeerDependencies:
@@ -5546,7 +5546,7 @@ snapshots:
       browserslist: 4.22.1
       lightningcss: 1.21.8
 
-  '@plasmohq/parcel-transformer-manifest@0.18.0':
+  '@plasmohq/parcel-transformer-manifest@0.19.0':
     dependencies:
       '@mischnic/json-sourcemap': 0.1.0
       '@parcel/core': 2.9.3
@@ -7925,7 +7925,7 @@ snapshots:
 
   node-abi@3.62.0:
     dependencies:
-      semver: 7.5.4
+      semver: 7.6.2
 
   node-addon-api@4.3.0: {}
 
@@ -8010,7 +8010,7 @@ snapshots:
       got: 12.6.1
       registry-auth-token: 5.0.2
       registry-url: 6.0.1
-      semver: 7.5.4
+      semver: 7.6.2
 
   parent-module@1.0.1:
     dependencies:
@@ -8059,7 +8059,7 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  plasmo@0.86.2(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  plasmo@0.86.3(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       '@expo/spawn-async': 1.7.2
       '@parcel/core': 2.9.3
@@ -8067,7 +8067,7 @@ snapshots:
       '@parcel/package-manager': 2.9.3(@parcel/core@2.9.3)
       '@parcel/watcher': 2.2.0
       '@plasmohq/init': 0.7.0
-      '@plasmohq/parcel-config': 0.40.7(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.2.2)
+      '@plasmohq/parcel-config': 0.40.8(@swc/core@1.5.5(@swc/helpers@0.5.11))(@swc/helpers@0.5.11)(lodash@4.17.21)(postcss@8.4.38)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.2.2)
       '@plasmohq/parcel-core': 0.1.8
       buffer: 6.0.3
       chalk: 5.3.0
@@ -8408,7 +8408,7 @@ snapshots:
       detect-libc: 2.0.3
       node-addon-api: 6.1.0
       prebuild-install: 7.1.2
-      semver: 7.5.4
+      semver: 7.6.2
       simple-get: 4.0.1
       tar-fs: 3.0.6
       tunnel-agent: 0.6.0

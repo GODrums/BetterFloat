@@ -17,6 +17,10 @@ export const Changelogs = () => {
         <TabsContent value="changelog" className="h-[530px] w-[330px]">
             <ScrollArea className="h-full w-full py-2 px-2">
                 <h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+                <SingleChangelog version="v2.4.5">
+                    <li>CSFLoat - New feature replacing the default preview images with in-game screenshots. Per default: off (always on for item popups).</li>
+                    <li>Fixed cases where elements appeared multiple times on CSF and Skinport.</li>
+                </SingleChangelog>
                 <SingleChangelog version="v2.4.3">
                     <li>CSFLoat - Adjustements for the 'Latest Sales'-tab of item popups are finally back, featuring SP%, Buff sale tags, fade percentages and much more!</li>
                     <li>CSFLoat - New option to display the minimum bargain price directly as button text (default: on)</li>

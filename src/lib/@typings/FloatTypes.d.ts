@@ -105,8 +105,8 @@ export namespace CSFloat {
         is_seller: boolean;
         is_watchlisted: boolean;
         item: Item;
-        max_offer_discount: number;
-        min_offer_price: number;
+        max_offer_discount?: number;
+        min_offer_price?: number;
         price: number;
         reference: ReferenceData;
         seller: SellerData;
@@ -118,6 +118,8 @@ export namespace CSFloat {
     export type Item = {
         asset_id: string;
         collection?: string;
+        cs2_screenshot_at?: string;
+        cs2_screenshot_id?: string;
         d_param?: string;
         def_index: number;
         description?: string;

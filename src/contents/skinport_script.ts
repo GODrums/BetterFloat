@@ -369,7 +369,7 @@ async function addSoldPrice(container: Element, popupData: Skinport.ItemData) {
 	const currency = await getSpUserCurrency();
 	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
 
-	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	const priceContainer = html`
 		<div class="ItemPage-price">
 			<div class="ItemPage-value">
