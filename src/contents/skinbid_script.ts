@@ -473,7 +473,7 @@ async function addBuffPrice(
 	}
 
 	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
-	let listingPrice = await getListingPrice(cachedItem);
+	const listingPrice = await getListingPrice(cachedItem);
 	const difference = listingPrice - priceFromReference;
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);

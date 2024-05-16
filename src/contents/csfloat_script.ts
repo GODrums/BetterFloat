@@ -37,11 +37,10 @@ import {
 	getItemPrice,
 	getSpecificCSFOffer,
 	getStallData,
-	getWholeHistory,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, USDollar } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString } from '../lib/util/helperfunctions';
 import { genGemContainer } from '../lib/util/uigeneration';
 
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
@@ -1599,8 +1598,5 @@ const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: IStorage;
 let ITEM_SCHEMA: CSFloat.ItemSchema.TypeSchema | null = null;
-const refreshThreads: [ReturnType<typeof setTimeout> | null] = [null];
-// time of last refresh in auto-refresh functionality
-let lastRefresh = 0;
 // mutation observer active?
 let isObserverActive = false;

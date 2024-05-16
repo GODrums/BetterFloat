@@ -279,9 +279,10 @@ async function adjustItemPage(container: Element) {
 	if (tries >= 5) {
 		console.error('[BetterFloat] Could not fetch popup item');
 	}
+	console.log('[BetterFloat] Popup item:', popupItem);
 
 	if (popupItem && container.querySelector('.ItemPage-notListed')) {
-		await addSoldPrice(container, popupItem);
+		await addSoldPrice(container, popupItem.data.item);
 	}
 
 	await waitForElement('.ItemPage-image > img', 200);
@@ -364,8 +365,7 @@ async function adjustCart(container: Element) {
 	// adjust the cart with Buff prices?
 }
 
-async function addSoldPrice(container: Element, popupData: Skinport.ItemData) {
-	const item = popupData.data.item;
+async function addSoldPrice(container: Element, item: Skinport.Item) {
 	const currency = await getSpUserCurrency();
 	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
 
@@ -635,7 +635,7 @@ const itemSelectors = {
 		stickers: '.ItemPage-include',
 		price: '.ItemPage-price',
 		info: '.ItemPage-include',
-		alt: '.ItemPage-image > img',
+		alt: '.ItemImage-img',
 	},
 } as const;
 
