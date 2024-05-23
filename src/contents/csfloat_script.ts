@@ -469,11 +469,10 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
 			'afterend',
-			html`
-				<div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;">
-					<span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
-					${showSP && `<span class="betterfloat-bargain-sp" style="${spStyle}"></span>`}
-				</div>`
+			html` <div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;">
+				<span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
+				${showSP && `<span class="betterfloat-bargain-sp" style="${spStyle}"></span>`}
+			</div>`
 		);
 
 		const diffElement = container.querySelector<HTMLElement>('.betterfloat-bargain-diff');
@@ -545,7 +544,12 @@ async function adjustSalesTableRow(container: Element) {
 	if (priceContainer && priceData.priceFromReference) {
 		priceContainer.querySelector('app-reference-widget')?.remove();
 		const priceDiffElement = html`
-			<div class="betterfloat-table-item-sp" style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}" data-betterfloat="${priceDiff.toDP(2).toNumber()}">
+			<div
+				class="betterfloat-table-item-sp"
+				style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative()
+					? extensionSettings['csf-color-profit']
+					: extensionSettings['csf-color-loss']}"
+				data-betterfloat="${priceDiff.toDP(2).toNumber()}">
 				${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}
 			</div>
 		`;
@@ -650,34 +654,32 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 	} else if (popout > 0) {
 		// need timeout as request is only sent after popout has been loaded
-		setTimeout(async () => {
-			await new Promise((r) => setTimeout(r, 1000));
-			const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+		await new Promise((r) => setTimeout(r, 1000));
+		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 
-			let apiItem = CSFloatHelpers.getApiItem(itemPreview);
-			// if this is the first launch, the item has to be newly retrieved by the api
-			if (!apiItem) {
-				apiItem = popout === POPOUT_ITEM.PAGE ? getCSFPopupItem() : JSON.parse(container.getAttribute('data-betterfloat'));
-			}
+		let apiItem = CSFloatHelpers.getApiItem(itemPreview);
+		// if this is the first launch, the item has to be newly retrieved by the api
+		if (!apiItem) {
+			apiItem = popout === POPOUT_ITEM.PAGE ? getCSFPopupItem() : JSON.parse(container.getAttribute('data-betterfloat'));
+		}
 
-			if (apiItem?.id) {
-				console.log('[BetterFloat] Popout item data:', apiItem);
-				await addStickerInfo(container, apiItem, priceResult.price_difference);
-				addListingAge(container, apiItem, true);
-				await patternDetections(container, apiItem, true);
-				addFloatColoring(container, apiItem);
-				if (popout === POPOUT_ITEM.PAGE) {
-					addQuickLinks(container, apiItem);
-					copyNameOnClick(container);
-				}
-				CSFloatHelpers.storeApiItem(container, apiItem);
-				await showBargainPrice(container, apiItem, popout);
-				addBargainListener(container);
-				if (extensionSettings['csf-showingamess'] || popout === POPOUT_ITEM.PAGE) {
-					addItemScreenshot(container, apiItem.item);
-				}
+		if (apiItem?.id) {
+			console.log('[BetterFloat] Popout item data:', apiItem);
+			await addStickerInfo(container, apiItem, priceResult.price_difference);
+			addListingAge(container, apiItem, true);
+			await patternDetections(container, apiItem, true);
+			addFloatColoring(container, apiItem);
+			if (popout === POPOUT_ITEM.PAGE) {
+				addQuickLinks(container, apiItem);
+				copyNameOnClick(container);
 			}
-		}, 1500);
+			CSFloatHelpers.storeApiItem(container, apiItem);
+			await showBargainPrice(container, apiItem, popout);
+			if (extensionSettings['csf-showingamess'] || popout === POPOUT_ITEM.PAGE) {
+				addItemScreenshot(container, apiItem.item);
+			}
+		}
+		addBargainListener(container);
 	}
 }
 
@@ -697,7 +699,9 @@ async function showBargainPrice(container: Element, listing: CSFloat.ListingData
 		const { userCurrency, currencyRate } = await getCurrencyRate();
 		const minBargainLabel = html`
 			<span class="betterfloat-minbargain-label" style="color: slategrey;">
-				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber())})
+				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
+					new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber()
+				)})
 			</span>
 		`;
 

@@ -156,6 +156,7 @@ export namespace CSFloat {
         away: boolean;
         flags: number;
         has_valid_steam_api_key: boolean;
+        obfuscated_id: string;
         online: boolean;
         stall_public: boolean;
         statistics: {
@@ -234,8 +235,20 @@ export namespace CSFloat {
         id: string;
         price: number;
         state: string;
-        type: string;
+        type: "buyer_offer" | "seller_offer";
     }
+
+    export type OfferHistory = {
+        buyer_id: string;
+        contract_id: string;
+        contract_price: number;
+        created_at: string;
+        expires_at: string;
+        id: string;
+        price: number;
+        state: string;
+        type: string;
+    }[];
 
     export type ReferenceData = {
         base_price: number;
