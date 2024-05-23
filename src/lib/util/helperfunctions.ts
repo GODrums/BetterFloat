@@ -102,6 +102,19 @@ export function toTruncatedString(num: number, digits: number) {
 }
 
 /**
+ * Convert a string to title case
+ * @param str
+ * @returns
+ */
+export function toTitleCase(str: string) {
+    let splitStr = str.toLowerCase().split(' ');
+    for (let i = 0; i < splitStr.length; i++) {
+        splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+    }
+    return splitStr.join(' ');
+}
+
+/**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
  */
