@@ -5,7 +5,7 @@ import { activateHandler } from '~lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
-import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames } from '~lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -205,7 +205,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	if (extensionSettings['skb-listingage'] || selector.self == 'page') {
 		addListingAge(container, cachedItem, selector.self);
 	}
-	if ((extensionSettings['skb-stickerprices'] || selector.self == 'page') && priceResult && priceResult.price_difference) {
+	if ((extensionSettings['skb-stickerprices'] || selector.self == 'page') && priceResult && priceResult?.price_difference) {
 		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
 	}
 	if (selector.self == 'page') {
@@ -446,7 +446,7 @@ async function addBuffPrice(
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
 	const buff_id = await getBuffMapping(buff_name);
 
-	if (priceListing === 0 && priceOrder === 0) {
+	if (isBuffBannedItem(buff_name) || (priceListing === 0 && priceOrder === 0)) {
 		console.debug('[BetterFloat] No buff price found for ', buff_name);
 		return;
 	}

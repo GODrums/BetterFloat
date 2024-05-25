@@ -40,7 +40,7 @@ import {
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString } from '../lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTruncatedString } from '../lib/util/helperfunctions';
 import { genGemContainer } from '../lib/util/uigeneration';
 
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
@@ -513,6 +513,9 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 }
 
 function adjustCurrencyChangeNotice(container: Element) {
+	if (!container.querySelector('.title')?.textContent?.includes('Currencies on CSFloat')) {
+		return;
+	}
 	const warningDiv = html`
 		<div style="display: flex; align-items: center; background-color: #7f101080; border-radius: 18px;">
 			<img src="${ICON_EXCLAMATION}" style="height: 30px; margin: 0 10px; filter: brightness(0) saturate(100%) invert(19%) sepia(64%) saturate(3289%) hue-rotate(212deg) brightness(89%) contrast(98%);">
@@ -1415,9 +1418,15 @@ async function getCurrencyRate() {
 
 async function getBuffItem(item: CSFloat.FloatItem) {
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	const buff_id = await getBuffMapping(buff_name);
+	let buff_id = await getBuffMapping(buff_name);
 
-	const { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+
+    if (isBuffBannedItem(buff_name)) {
+		priceListing = 0;
+		priceOrder = 0;
+		buff_id = 0;
+    }
 
 	const { currencyRate } = await getCurrencyRate();
 
@@ -1447,8 +1456,8 @@ async function addBuffPrice(
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
-
-	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR) {
+	const itemExists = buff_id > 0 || priceOrder > 0;
+	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const isWarning = priceOrder > priceListing;
 		const extendedDisplay = priceOrder < 100 && priceListing < 100 && !isWarning;
 		const buffContainer = html`
@@ -1507,7 +1516,8 @@ async function addBuffPrice(
 		!priceContainer.querySelector('.betterfloat-sale-tag') &&
 		item.price != 0 &&
 		(priceFromReference > 0 || item.price < 0.06) &&
-		location.pathname !== '/sell'
+		location.pathname !== '/sell' &&
+		itemExists
 	) {
 		const priceContainer = container.querySelector<HTMLElement>('.price-row');
 		const priceIcon = priceContainer.querySelector('app-price-icon');

@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
-import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, USDollar, waitForElement } from '~lib/util/helperfunctions';
+import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, isBuffBannedItem, USDollar, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler } from '../lib/handlers/eventhandler';
@@ -1023,6 +1023,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	await loadMapping();
 	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buff_name);
+
+    if (isBuffBannedItem(buff_name)) {
+		return { price_difference: new Decimal(0) }
+    }
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');

@@ -61,13 +61,22 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
 }
 
 /**
+ * Buff regulated items are not allowed to be sold on Buff. This function checks if an item is banned.
+ * @param name 
+ * @returns 
+ */
+export function isBuffBannedItem(name: string) {
+    return name.includes('Case') || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
+}
+
+/**
  * Wrapper for price mapping. Returns the price of an item with respect to its style
  * @param buff_name has to follow the exact Buff's naming convention.
  * @param itemStyle e.g. Vanilla, Phase 1, Phase 2, ...
  * @returns
  */
 export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle) {
-    const priceMapping: Extension.CustomPriceMapping = await getPriceMapping();
+    const priceMapping = await getPriceMapping();
     let [priceListing, priceOrder, priceAvg30, liquidity] = [0, 0, 0, 0];
 
     if (priceMapping[buff_name]) {
