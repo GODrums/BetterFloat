@@ -1,7 +1,7 @@
 import { createIsolatedElement } from '@webext-core/isolated-element';
 import globalStyle from 'url:~/style.css';
 
-import { createRoot } from "react-dom/client";
+import { createRoot } from 'react-dom/client';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
@@ -64,7 +64,7 @@ async function handleChange(state: Extension.URLState) {
 					const root = await mountShadowRoot(<LiveFilter />, {
 						tagName: 'betterfloat-live-filter',
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
-						position: 'before'
+						position: 'before',
 					});
 					// unmount on url change
 					const interval = createUrlListener((newUrl) => {
@@ -84,7 +84,7 @@ async function handleChange(state: Extension.URLState) {
 			const root = await mountShadowRoot(<CSFMenuControl />, {
 				tagName: 'betterfloat-menucontrol',
 				parent: document.querySelector('.search-bar .drill-down'),
-				position: 'before'
+				position: 'before',
 			});
 			if (Array.from(document.querySelectorAll('betterfloat-menucontrol')).length > 1) {
 				root.unmount();
@@ -100,11 +100,11 @@ async function handleChange(state: Extension.URLState) {
 						const root = await mountShadowRoot(<CSFAutorefresh />, {
 							tagName: 'betterfloat-autorefresh',
 							parent: document.querySelector('.refresh'),
-							position: 'before'
+							position: 'before',
 						});
 						// unmount on url change
 						const interval = createUrlListener(() => {
-							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent.includes('Newest')){
+							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent.includes('Newest')) {
 								root.unmount();
 								document.querySelector('betterfloat-autorefresh')?.remove();
 								clearInterval(interval);
@@ -121,7 +121,7 @@ export async function mountSpItemPageBuffContainer() {
 	await mountShadowRoot(<SPBuffContainer />, {
 		tagName: 'betterfloat-buff-container',
 		parent: document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns'),
-		position: 'before'
+		position: 'before',
 	});
 }
 
@@ -130,7 +130,7 @@ export async function mountSpItemPageBuffContainer() {
  * @param component React component to mount
  * @param options mounting options, defaults to appending to document.body
  */
-async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: HTMLElement, position?: 'before' | 'after' }) {
+async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: HTMLElement; position?: 'before' | 'after' }) {
 	const { parentElement, isolatedElement } = await createIsolatedElement({
 		name: options.tagName,
 		css: {

@@ -439,7 +439,11 @@ export async function adjustOfferContainer(container: Element) {
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const priceConverter = (price: number) => Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(price);
 
-	const buffContainer = `<a class="betterfloat-buff-a" target="_blank" href="${getBuffLink(buff_id)}" style="display: inline-flex; align-items: center; font-size: 15px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><div class="betterfloat-buffprice"><span style="color: orange;">Bid: ${priceConverter(priceOrder)}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask: ${priceConverter(priceListing)}</span></div></a>`;
+	const buffContainer = `<a class="betterfloat-buff-a" target="_blank" href="${getBuffLink(
+		buff_id
+	)}" style="display: inline-flex; align-items: center; font-size: 15px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><div class="betterfloat-buffprice"><span style="color: orange;">Bid: ${priceConverter(
+		priceOrder
+	)}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask: ${priceConverter(priceListing)}</span></div></a>`;
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
 	const buffA = container.querySelector('.betterfloat-buff-a');
@@ -466,8 +470,12 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 		const showSP = stickerData.priceSum > 0;
 
 		const spStyle = 'border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 14px;';
-		const diffStyle = `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="border: 1px solid grey; ${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
+		const diffStyle = `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${
+			minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']
+		}`;
+		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${
+			minOffer.isNegative() ? '-' : '+'
+		}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="border: 1px solid grey; ${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
 
 		const minContainer = container.querySelector('.minimum-offer');
 		if (minContainer) {
@@ -559,9 +567,9 @@ async function adjustSalesTableRow(container: Element) {
 		const priceDiffElement = html`
 			<div
 				class="betterfloat-table-item-sp"
-				style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${priceDiff.isNegative()
-					? extensionSettings['csf-color-profit']
-					: extensionSettings['csf-color-loss']}"
+				style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${
+					priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']
+				}"
 				data-betterfloat="${priceDiff.toDP(2).toNumber()}">
 				${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}
 			</div>
@@ -623,7 +631,7 @@ enum POPOUT_ITEM {
 
 function addScreenshotListener(container: Element, item: CSFloat.Item) {
 	const screenshotButton = container.querySelector('.detail-buttons mat-icon');
-	if (!screenshotButton.textContent?.includes('photo_camera') || !item.cs2_screenshot_at) {
+	if (!screenshotButton?.textContent.includes('photo_camera') || !item.cs2_screenshot_at) {
 		return;
 	}
 
@@ -860,7 +868,9 @@ function createPricempireURL(container: Element, item: CSFloat.Item) {
 	const sanitizeURL = (url: string) => {
 		return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
 	};
-	return `https://pricempire.com/item/cs2/${pricempireType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''}`;
+	return `https://pricempire.com/item/cs2/${pricempireType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${
+		item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''
+	}`;
 }
 
 function removeClustering(container: Element) {
@@ -929,7 +939,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 	}
 	// else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
 	// 	await badgeCyanbit(container, item);
-	// } 
+	// }
 }
 
 async function badgeOverprint(container: Element, item: CSFloat.Item) {
@@ -1262,7 +1272,9 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			for (let i = 0; i < headerValues.length; i++) {
 				const headerCell = document.createElement('th');
 				headerCell.setAttribute('role', 'columnheader');
-				const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''}`;
+				const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
+					i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
+				}`;
 				headerCell.setAttribute('style', headerCellStyle);
 				headerCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 				headerCell.textContent = headerValues[i];
@@ -1507,9 +1519,11 @@ async function addBuffPrice(
 		const buffContainer = html`
 			<a
 				class="betterfloat-buff-a"
-				href="${buff_id > 0
-					? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
-					: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`}"
+				href="${
+					buff_id > 0
+						? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
+						: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`
+				}"
 				target="_blank"
 				style="display: inline-flex; align-items: center; font-size: 15px;">
 				<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
@@ -1523,12 +1537,14 @@ async function addBuffPrice(
 					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 					<span style="color: greenyellow;"> ${extendedDisplay && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
 				</div>
-				${isWarning &&
-				html`
+				${
+					isWarning &&
+					html`
 					<img
 						src="${ICON_EXCLAMATION}"
 						style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
-				`}
+				`
+				}
 			</a>
 		`;
 

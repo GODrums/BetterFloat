@@ -293,7 +293,6 @@ export async function getSpUserCurrency() {
 		await fetchSpUserData();
 	}
 	return skinportUserCurrency;
-
 }
 
 export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {

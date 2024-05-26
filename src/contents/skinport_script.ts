@@ -155,7 +155,6 @@ function createLanguagePopup() {
 			(<HTMLButtonElement>document.querySelector('.Dropdown-dropDownItem')).click();
 		};
 	}
-
 }
 
 async function applyMutation() {
@@ -326,8 +325,15 @@ async function adjustItemPage(container: Element) {
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
 		const newContainer = html`
-			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${difference === 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
-				<span style="margin: 5px; font-weight: 700;">${difference === 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span>
+			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${
+				difference === 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
+			}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
+				<span style="margin: 5px; font-weight: 700;">${difference === 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(
+					item.price
+				)
+					.div(priceFromReference)
+					.mul(100)
+					.toFixed(2)}%)</span>
 			</div>
 		`;
 		priceContainer.insertAdjacentHTML('beforeend', newContainer);
@@ -549,7 +555,7 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
 	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
-	const nameCheck = targetName !== '' && !(item.full_name).toLowerCase().includes(targetName);
+	const nameCheck = targetName !== '' && !item.full_name.toLowerCase().includes(targetName);
 	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
 	const typeCheck = !spFilter.types[item.category.toLowerCase()];
 
@@ -570,7 +576,11 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
 
-	const priceSum = convertCurrency(stickerPrices.reduce((a, b) => a + b.starting_at, 0), currencyRate, settingRate);
+	const priceSum = convertCurrency(
+		stickerPrices.reduce((a, b) => a + b.starting_at, 0),
+		currencyRate,
+		settingRate
+	);
 	const spPercentage = price_difference / priceSum;
 
 	const itemInfoDiv = container.querySelector(selector.info);
@@ -600,13 +610,13 @@ function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	if (stickers.length === 0 || item.text.includes('Agent')) {
 		return;
 	}
-	
+
 	const stickersDiv = Array.from(container.querySelectorAll<HTMLImageElement>('.ItemPreview-stickers img'));
 
 	for (const sticker of stickers) {
 		if (sticker.wear > 0) {
 			const stickerDiv = stickersDiv.at(stickers.indexOf(sticker));
-			stickerDiv.style.filter = `brightness(${0.8 - (sticker.wear)*0.6}) contrast(${0.8 - (sticker.wear*0.6)})`;
+			stickerDiv.style.filter = `brightness(${0.8 - sticker.wear * 0.6}) contrast(${0.8 - sticker.wear * 0.6})`;
 		}
 	}
 }
@@ -757,7 +767,7 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 function convertCurrency(price: number, currencyRate: number, settingRate: string) {
 	const conversion = (price: Decimal, setting: string) => {
 		return setting === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
-	}
+	};
 	return conversion(new Decimal(price), settingRate).toDP(2).toNumber();
 }
 
@@ -771,9 +781,12 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 				<span style="color: orange; font-weight: 600;">${priceOrder < 100 && 'Bid '}${CurrencyFormatter.format(priceOrder)}</span>
 				<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 				<span style="color: greenyellow; font-weight: 600;">${priceOrder < 100 && 'Ask '}${CurrencyFormatter.format(priceListing)}</span>
-				${priceOrder > priceListing && html`
+				${
+					priceOrder > priceListing &&
+					html`
 					<img src="${ICON_EXCLAMATION}" style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
-				`}
+				`
+				}
 			</div>
 		</div>
 	`;
@@ -1024,9 +1037,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buff_name);
 
-    if (isBuffBannedItem(buff_name)) {
-		return { price_difference: new Decimal(0) }
-    }
+	if (isBuffBannedItem(buff_name)) {
+		return { price_difference: new Decimal(0) };
+	}
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
@@ -1040,8 +1053,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencyRate);
 		}
 	}
-	
-	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon')
+
+	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
 	const buffHref =
 		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
@@ -1094,7 +1107,9 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
 			const buffPriceHTML = html`
 				<div style="${saleTagStyle}">
-					${extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''}${extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''}
+					${extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''}${
+						extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''
+					}
 				</div>
 			`;
 			saleTag.innerHTML = buffPriceHTML;

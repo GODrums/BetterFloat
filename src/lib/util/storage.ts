@@ -14,7 +14,7 @@ export function getSetting(key: keyof IStorage) {
 }
 
 function isNumeric(value: string) {
-    return /^-?\d+$/.test(value);
+	return /^-?\d+$/.test(value);
 }
 
 export async function getAllSettings() {
@@ -90,7 +90,7 @@ export const DEFAULT_SETTINGS = {
 	'skb-color-profit': '#0cb083',
 	'skb-color-loss': '#ce0000',
 	'skb-color-neutral': '#FFFFFF',
-	"display-updatepopup": true,
+	'display-updatepopup': true,
 };
 
 export const DEFAULT_FILTER = {
@@ -109,7 +109,7 @@ export const DEFAULT_FILTER = {
 		pass: true,
 	},
 	new: false,
-}
+};
 
 export type IStorage = typeof DEFAULT_SETTINGS;
 export type EStorage = { key: keyof IStorage; value: IStorage[keyof IStorage] }[];

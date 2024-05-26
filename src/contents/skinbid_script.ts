@@ -2,7 +2,17 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { activateHandler } from '~lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSkbItem, getItemPrice, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem, loadMapping } from '~lib/handlers/mappinghandler';
+import {
+	getBuffMapping,
+	getFirstSkbItem,
+	getItemPrice,
+	getSkbCurrency,
+	getSkbUserConversion,
+	getSkbUserCurrencyRate,
+	getSpecificSkbInventoryItem,
+	getSpecificSkbItem,
+	loadMapping,
+} from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
@@ -509,8 +519,15 @@ async function addBuffPrice(
 					discountContainer = discountSpan;
 				}
 				discountContainer.className += ' betterfloat-sale-tag';
-				discountContainer.setAttribute('style', `color: ${difference === 0 ? extensionSettings['skb-color-neutral'] : difference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}; font-size: 14px; background: transparent; margin-left: 5px;`);
-				discountContainer.innerHTML = `<span style="translate: 0 -1px;">${difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2)}</span>`;
+				discountContainer.setAttribute(
+					'style',
+					`color: ${
+						difference === 0 ? extensionSettings['skb-color-neutral'] : difference < 0 ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+					}; font-size: 14px; background: transparent; margin-left: 5px;`
+				);
+				discountContainer.innerHTML = `<span style="translate: 0 -1px;">${
+					difference === 0 ? `-${currencySymbol}0` : (difference > 0 ? '+' : '-') + currencySymbol + Math.abs(difference).toFixed(2)
+				}</span>`;
 				if (extensionSettings['skb-buffdifferencepercent']) {
 					discountContainer.style.display = 'flex';
 					discountContainer.style.flexDirection = 'column';
@@ -527,7 +544,9 @@ async function addBuffPrice(
 				startingPrice.className = 'betterfloat-sale-tag';
 				startingPrice.setAttribute(
 					'style',
-					`font-size: 14px; margin-left: 5px; color: ${startingDifference.isZero() ? extensionSettings['skb-color-neutral'] : startingDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`
+					`font-size: 14px; margin-left: 5px; color: ${
+						startingDifference.isZero() ? extensionSettings['skb-color-neutral'] : startingDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+					}`
 				);
 				startingPrice.textContent = startingDifference.isZero() ? `-${currencySymbol}0` : (startingDifference.isPos() ? '+' : '-') + currencySymbol + startingDifference.abs().toDP(2);
 				startingPriceDiv.querySelector('.value')?.appendChild(startingPrice);
@@ -542,7 +561,9 @@ async function addBuffPrice(
 				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
 				bidDiscountContainer.setAttribute(
 					'style',
-					`padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']}`
+					`padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${
+						bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+					}`
 				);
 				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? '+' : '-') + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
 				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');

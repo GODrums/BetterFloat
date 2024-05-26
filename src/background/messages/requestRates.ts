@@ -14,7 +14,7 @@ const storageFallback = async () => {
 		return DEFAULT_CURRENCY_RATES;
 	}
 	return currencyRates;
-}
+};
 
 const handler: PlasmoMessaging.MessageHandler<null, RatesResponse> = async (_req, res) => {
 	const response = await fetch('https://cdn.rums.dev/currencyrates.json', {
@@ -25,30 +25,30 @@ const handler: PlasmoMessaging.MessageHandler<null, RatesResponse> = async (_req
 		},
 	});
 
-    let currencyRates: Extension.CurrenyRates | null = null;
-    if (!response.ok) {
-        currencyRates = await storageFallback();
-        res.send({
-            status: response.status,
-            rates: currencyRates.rates,
-        });
-        return;
-    }
+	let currencyRates: Extension.CurrenyRates | null = null;
+	if (!response.ok) {
+		currencyRates = await storageFallback();
+		res.send({
+			status: response.status,
+			rates: currencyRates.rates,
+		});
+		return;
+	}
 	const responseJson = await response.json();
 
 	if (!responseJson?.rates) {
 		currencyRates = await storageFallback();
-        res.send({
-            status: response.status,
-            rates: currencyRates.rates,
-        });
-        return;
+		res.send({
+			status: response.status,
+			rates: currencyRates.rates,
+		});
+		return;
 	}
 
-    await ExtensionStorage.local.setItem('currencyrates', responseJson);
+	await ExtensionStorage.local.setItem('currencyrates', responseJson);
 
 	res.send({
-        status: response.status,
+		status: response.status,
 		rates: responseJson.rates,
 	});
 };
