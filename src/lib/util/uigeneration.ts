@@ -1,5 +1,5 @@
-import type { BlueGem } from '../@typings/ExtensionTypes';
 import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
+import type { BlueGem } from '../@typings/ExtensionTypes';
 
 export function genGemContainer(patternElement: BlueGem.PatternElement | undefined, mode: 'left' | 'right' = 'left') {
 	const gemContainer = document.createElement('div');

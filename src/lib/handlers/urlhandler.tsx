@@ -1,17 +1,17 @@
-import { createIsolatedElement } from '@webext-core/isolated-element';
 import globalStyle from 'url:~/style.css';
+import { createIsolatedElement } from '@webext-core/isolated-element';
 
 import { createRoot } from 'react-dom/client';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import LiveFilter from '~lib/inline/LiveFilter';
-import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
-import { getSetting } from '~lib/util/storage';
+import LiveFilter from '~lib/inline/LiveFilter';
 import CSFMenuControl from '~lib/inline/MenuControl';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
+import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
+import { getSetting } from '~lib/util/storage';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent

@@ -1,8 +1,8 @@
 import type React from 'react';
-import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
-import { cn } from '~lib/utils';
-import { ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION } from '~lib/util/globals';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~lib/components/Icons';
+import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
+import { ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION } from '~lib/util/globals';
+import { cn } from '~lib/utils';
 
 type BuffItem = {
 	currency: string;

@@ -1,21 +1,21 @@
 'use client';
 
-import * as React from 'react';
-import * as TabsPrimitive from '@radix-ui/react-tabs';
-import * as AvatarPrimitive from '@radix-ui/react-avatar';
-import * as LabelPrimitive from '@radix-ui/react-label';
-import * as SwitchPrimitives from '@radix-ui/react-switch';
-import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import * as SelectPrimitive from '@radix-ui/react-select';
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
-import * as PopoverPrimitive from '@radix-ui/react-popover';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
-import * as ToastPrimitives from '@radix-ui/react-toast';
+import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
 import { CaretSortIcon, CheckIcon, ChevronDownIcon, ChevronUpIcon, DividerHorizontalIcon } from '@radix-ui/react-icons';
+import * as LabelPrimitive from '@radix-ui/react-label';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
+import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import { Slot } from '@radix-ui/react-slot';
+import * as SwitchPrimitives from '@radix-ui/react-switch';
+import * as TabsPrimitive from '@radix-ui/react-tabs';
+import * as ToastPrimitives from '@radix-ui/react-toast';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { type VariantProps, cva } from 'class-variance-authority';
+import * as React from 'react';
 
 import { cn } from '~lib/utils';
 

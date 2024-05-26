@@ -29,9 +29,9 @@ import { getAllSettings, getSetting } from '~lib/util/storage';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import {
 	getBuffMapping,
-	getCrimsonWebMapping,
 	getCSFCurrencyRate,
 	getCSFPopupItem,
+	getCrimsonWebMapping,
 	getFirstCSFItem,
 	getFirstHistorySale,
 	getItemPrice,
@@ -53,10 +53,10 @@ import {
 } from '../lib/util/helperfunctions';
 import { genGemContainer } from '../lib/util/uigeneration';
 
+import type { PlasmoCSConfig } from 'plasmo';
+import type { IStorage } from '~lib/util/storage';
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
-import type { IStorage } from '~lib/util/storage';
-import type { PlasmoCSConfig } from 'plasmo';
 
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 

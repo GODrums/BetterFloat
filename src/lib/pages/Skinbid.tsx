@@ -1,12 +1,12 @@
-import { ScrollArea, TabsContent } from '../components/Shadcn';
-import { SettingsCard } from '~lib/components/SettingsCard';
+import { useStorage } from '@plasmohq/storage/hook';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~lib/components/Icons';
+import { SettingsCard } from '~lib/components/SettingsCard';
 import { SettingsCheckbox } from '~lib/components/SettingsCheckbox';
-import { SettingsSelect } from '~lib/components/SettingsSelect';
 import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
+import { SettingsSelect } from '~lib/components/SettingsSelect';
 import { cn } from '~lib/utils';
-import { useStorage } from '@plasmohq/storage/hook';
+import { ScrollArea, TabsContent } from '../components/Shadcn';
 
 export const SkinbidSettings = () => {
 	const [checked] = useStorage('skb-enable');

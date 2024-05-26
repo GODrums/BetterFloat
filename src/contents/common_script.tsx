@@ -1,9 +1,9 @@
+import globalStyle from 'data-text:~/style.css';
 import type { PlasmoCSConfig, PlasmoCSUIJSXContainer, PlasmoCSUIProps, PlasmoCreateShadowRoot, PlasmoRender } from 'plasmo';
 import type { FC, SVGProps } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Meteors } from '~lib/components/Meteors';
 import { Button } from '~lib/components/Shadcn';
-import globalStyle from 'data-text:~/style.css';
-import { createRoot } from 'react-dom/client';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://csfloat.com/*', 'https://skinport.com/*', 'https://skinbid.com/*'],

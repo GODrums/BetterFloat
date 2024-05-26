@@ -1,5 +1,5 @@
-import { EnableSwitch, Label } from './Shadcn';
 import { useStorage } from '@plasmohq/storage/hook';
+import { EnableSwitch, Label } from './Shadcn';
 
 export const SettingsEnable = ({ id }: { id: string }) => {
 	const [checked, setChecked] = useStorage(id);

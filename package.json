@@ -13,7 +13,7 @@
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
 		"lint": "biome lint --apply src/",
-		"format": "biome format --write src/"
+		"format": "biome format --write src/ && biome check --apply src/"
 	},
 	"dependencies": {
 		"@plasmohq/messaging": "^0.6.2",

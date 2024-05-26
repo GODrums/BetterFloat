@@ -1,10 +1,10 @@
-import type React from 'react';
-import { useState, useEffect } from 'react';
-import { Button, Label } from '~lib/components/Shadcn';
-import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
-import { cn } from '~lib/utils';
-import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
 import { AnimatePresence, motion } from 'framer-motion';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
+import { Button, Label } from '~lib/components/Shadcn';
+import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
+import { cn } from '~lib/utils';
 
 interface TypeCheckboxProps {
 	label: string;

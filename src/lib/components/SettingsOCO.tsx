@@ -1,10 +1,10 @@
-import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './Shadcn';
 import { useStorage } from '@plasmohq/storage/hook';
+import { useState } from 'react';
+import { z } from 'zod';
 import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
 import { DISCORD_URL, ocoKeyRegex } from '~lib/util/globals';
-import { z } from 'zod';
-import { useState } from 'react';
 import { cn } from '~lib/utils';
+import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './Shadcn';
 
 export const SettingsOCO = () => {
 	const [value, setValue] = useStorage<string>('sp-ocoapikey', '');

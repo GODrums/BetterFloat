@@ -1,9 +1,9 @@
-import { SettingsCard } from '~lib/components/SettingsCard';
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { Button, ScrollArea, TabsContent } from '../components/Shadcn';
 import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
+import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import { SettingsCard } from '~lib/components/SettingsCard';
 import { Spotlight } from '~lib/components/Spotlight';
 import { WEBSITE_URL } from '~lib/util/globals';
+import { Button, ScrollArea, TabsContent } from '../components/Shadcn';
 
 export const About = () => {
 	return (

@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion';
-import { Vortex } from '~lib/components/Vortex';
-import { Highlight } from '~lib/components/Highlight';
 import BetterfloatLogo from 'data-base64:~/../assets/icon.png';
 import DataImage from 'data-base64:~/../assets/illustrations/data-extraction-amico.svg';
+import { motion } from 'framer-motion';
+import { Highlight } from '~lib/components/Highlight';
+import { Vortex } from '~lib/components/Vortex';
 import '~style.css';
 import { Button } from '~lib/components/Shadcn';
 import { WEBSITE_URL } from '~lib/util/globals';

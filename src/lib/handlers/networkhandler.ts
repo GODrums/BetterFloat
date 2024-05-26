@@ -1,9 +1,9 @@
 import { ExtensionStorage } from '~lib/util/storage';
 import { cacheRealCurrencyRates } from './mappinghandler';
 
+import { sendToBackground } from '@plasmohq/messaging';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
-import { sendToBackground } from '@plasmohq/messaging';
 
 export async function fetchCSBlueGem(type: string, paint_seed: number, currency = 'USD') {
 	return fetch(`https://bluegem.azurewebsites.net/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)

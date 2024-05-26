@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Card, CardContent } from './Shadcn';
 import { cn } from '~lib/utils';
+import { Card, CardContent } from './Shadcn';
 
 export const SettingsCard = ({ children, className }: { children: ReactNode; className?: string }) => {
 	return (

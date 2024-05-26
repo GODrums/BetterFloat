@@ -1,7 +1,7 @@
+import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
 import { getSetting } from '~lib/util/storage';
 import { addBlueBadge, webDetection } from '../../contents/skinport_script';
 import type { Skinport } from '../@typings/SkinportTypes';
-import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
 import { addPattern } from './skinport_helpers';
 
 export async function handleListed(data: Skinport.Item[]) {

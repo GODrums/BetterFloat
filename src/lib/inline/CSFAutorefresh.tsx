@@ -1,10 +1,10 @@
-import type React from 'react';
-import { useState, type SVGProps, useRef, useEffect } from 'react';
-import { Badge, Button, Switch } from '~lib/components/Shadcn';
-import { MaterialSymbolsAvgTimeOutlineRounded } from '~lib/components/Icons';
-import { cn } from '~lib/utils';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useStorage } from '@plasmohq/storage/hook';
+import { AnimatePresence, motion } from 'framer-motion';
+import type React from 'react';
+import { type SVGProps, useEffect, useRef, useState } from 'react';
+import { MaterialSymbolsAvgTimeOutlineRounded } from '~lib/components/Icons';
+import { Badge, Button, Switch } from '~lib/components/Shadcn';
+import { cn } from '~lib/utils';
 
 export function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (

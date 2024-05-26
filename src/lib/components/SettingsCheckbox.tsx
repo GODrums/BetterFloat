@@ -1,10 +1,10 @@
+import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import type { ReactElement, SVGProps } from 'react';
-import { Checkbox, Label } from './Shadcn';
-import { useStorage } from '@plasmohq/storage/hook';
 import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
-import { SettingsTooltip } from './SettingsTooltip';
 import { cn, toast } from '~lib/utils';
+import { SettingsTooltip } from './SettingsTooltip';
+import { Checkbox, Label } from './Shadcn';
 
 type CheckboxProps = {
 	id: string;

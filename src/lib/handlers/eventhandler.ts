@@ -1,5 +1,7 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
+import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
+import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
@@ -22,8 +24,6 @@ import {
 	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
-import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 
 type StallData = {
 	data: CSFloat.ListingData[];

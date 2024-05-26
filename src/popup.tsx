@@ -1,18 +1,18 @@
 import '~style.css';
-import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shadcn';
-import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from '~lib/components/Icons';
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
+import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
+import { useEffect } from 'react';
+import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from '~lib/components/Icons';
+import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shadcn';
+import { SparklesCore } from '~lib/components/Sparkles';
+import { Toaster } from '~lib/components/Toaster';
+import { About } from '~lib/pages/About';
+import { Changelogs } from '~lib/pages/Changelog';
 import { CSFloatSettings } from '~lib/pages/Csfloat';
+import { SkinbidSettings } from '~lib/pages/Skinbid';
 import { SkinportSettings } from '~lib/pages/Skinport';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
-import { SkinbidSettings } from '~lib/pages/Skinbid';
-import { SparklesCore } from '~lib/components/Sparkles';
-import { Changelogs } from '~lib/pages/Changelog';
-import { About } from '~lib/pages/About';
-import { useEffect } from 'react';
-import { Toaster } from '~lib/components/Toaster';
 import { DEFAULT_SETTINGS } from '~lib/util/storage';
 
 export default function IndexPopup() {

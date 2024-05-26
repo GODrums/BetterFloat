@@ -1,23 +1,23 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
+import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
-import { delay, Euro, formFetch, getBuffLink, getBuffPrice, getFloatColoring, isBuffBannedItem, USDollar, waitForElement } from '~lib/util/helperfunctions';
+import { Euro, USDollar, delay, formFetch, getBuffLink, getBuffPrice, getFloatColoring, isBuffBannedItem, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
+import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
-import { sendToBackground } from '@plasmohq/messaging';
 
+import { html } from 'common-tags';
+import type { PlasmoCSConfig } from 'plasmo';
+import { z } from 'zod';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { IStorage, SPFilter } from '~lib/util/storage';
-import type { PlasmoCSConfig } from 'plasmo';
-import { z } from 'zod';
-import { html } from 'common-tags';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],

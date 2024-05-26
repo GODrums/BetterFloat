@@ -1,8 +1,8 @@
 'use client';
 
+import { type ClassValue, clsx } from 'clsx';
 // Inspired by react-hot-toast library
 import * as React from 'react';
-import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { ToastActionElement, ToastProps } from './components/Shadcn';
 

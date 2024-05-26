@@ -1,14 +1,14 @@
-import { ScrollArea, TabsContent } from '../components/Shadcn';
-import { SettingsCard } from '~lib/components/SettingsCard';
-import { IcOutlineDiscount, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~lib/components/Icons';
 import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
+import { useStorage } from '@plasmohq/storage/hook';
+import { IcOutlineDiscount, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~lib/components/Icons';
+import { SettingsCard } from '~lib/components/SettingsCard';
 import { SettingsCheckbox } from '~lib/components/SettingsCheckbox';
-import { SettingsSelect } from '~lib/components/SettingsSelect';
 import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsOCO } from '~lib/components/SettingsOCO';
-import { useStorage } from '@plasmohq/storage/hook';
+import { SettingsSelect } from '~lib/components/SettingsSelect';
 import { cn } from '~lib/utils';
+import { ScrollArea, TabsContent } from '../components/Shadcn';
 
 export const SkinportSettings = () => {
 	const [checked] = useStorage('sp-enable');

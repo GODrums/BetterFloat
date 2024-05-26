@@ -18,10 +18,10 @@ import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
+import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import type { IStorage } from '~lib/util/storage';
-import type { PlasmoCSConfig } from 'plasmo';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
