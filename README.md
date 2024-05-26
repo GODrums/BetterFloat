@@ -7,6 +7,7 @@
 
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/version/GODrums/BetterFloat)
 [![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml)
+[![QA / Lint](https://github.com/GODrums/BetterFloat/actions/workflows/lint.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/lint.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/GODrums/betterfloat)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
 [![GitHub license](https://img.shields.io/badge/license-CC_BY_NC_SA_4.0-orange)](https://github.com/GODrums/BetterFloat/blob/main/LICENSE.md)
@@ -64,10 +65,6 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/betterfloat)
 ![Mozilla Add-on Downloads](https://img.shields.io/amo/dw/betterfloat)
 
-### Status
-
-![Rums.dev Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.rums.dev%2Fstatus)
-
 
 ### Troubleshooting on Mozilla Firefox
 
@@ -89,8 +86,7 @@ In some cases, Firefox does not grant extensions the necessary permissions autom
 <img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" title="Aceternity UI" height="50">
 <img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" title="shadcn/ui" height="50">
 <img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" title="Typescript" height="50">
-<img align="center" src="https://api.iconify.design/logos:eslint.svg?color=%23888888" title="ESLint" height="50">
-<img align="center" src="https://api.iconify.design/logos:prettier.svg?color=%23888888" title="Prettier" height="50">
+<img align="center" src="https://avatars.githubusercontent.com/u/140182603?s=48&v=4" title="Biome" height="50">
 </div>
 
 ### Limitations of self-building
