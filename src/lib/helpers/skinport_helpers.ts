@@ -34,11 +34,11 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
     const getStyle: (itemName: string) => ItemStyle = (itemName) => {
         if (itemName.includes('Doppler')) {
             return itemName.split('(')[1].split(')')[0] as ItemStyle;
-        } else if (itemName.includes('Vanilla')) {
-            return 'Vanilla';
-        } else {
-            return '';
         }
+        if (itemName.includes('Vanilla')) {
+            return 'Vanilla';
+        }
+        return '';
     };
 
     for (const item of data.items) {
@@ -92,7 +92,7 @@ export function filterDisplay() {
     filterDisplay.setAttribute('style', 'margin-right: 15px;');
     filterDisplay.parentElement?.setAttribute('style', 'justify-content: flex-start;');
 
-    const filterState = filterSetting === 'true' ? true : false;
+    const filterState = filterSetting === 'true';
 
     const filterCheckbox = `<div role="presentation" class="Checkbox Checkbox--center ${filterState && 'Checkbox--active'}"><input class="Checkbox-input" type="checkbox" id="betterfloat-filter-checkbox" ${filterState && "checked=''"}><div class="Checkbox-overlay"></div></div>`;
 

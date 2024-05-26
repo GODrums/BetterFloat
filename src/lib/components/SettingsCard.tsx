@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Card, CardContent } from "./Shadcn";
 import { cn } from "~lib/utils";
 

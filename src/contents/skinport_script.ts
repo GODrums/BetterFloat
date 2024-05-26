@@ -41,7 +41,7 @@ async function init() {
 	extensionSettings = await getAllSettings();
 	console.debug('[BetterFloat] Settings: ', extensionSettings);
 
-	if (extensionSettings['sp-enable'] && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length == 0) {
+	if (extensionSettings['sp-enable'] && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
 		console.warn('[BetterFloat] Skinport language has to be English for this extension to work. Aborting ...');
 		createLanguagePopup();
 		return;
@@ -221,7 +221,7 @@ function autoCloseTooltip(container: Element) {
 	// start counter
 	const interval = setInterval(() => {
 		counterNumber.textContent = String(--counterValue) + 's';
-		if (counterValue == 0) {
+		if (counterValue === 0) {
 			clearInterval(interval);
 			(<HTMLButtonElement>links.querySelector('button.ButtonSimple')).click();
 		}
@@ -321,13 +321,13 @@ async function adjustItemPage(container: Element) {
 		};
 	}
 
-	const priceFromReference = extensionSettings['sp-pricereference'] == 0 ? buffItem.priceOrder : buffItem.priceListing;
+	const priceFromReference = extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
 	const difference = item.price - priceFromReference;
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
 		const newContainer = html`
-			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${difference == 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
-				<span style="margin: 5px; font-weight: 700;">${difference == 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span>
+			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${difference === 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
+				<span style="margin: 5px; font-weight: 700;">${difference === 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span>
 			</div>
 		`;
 		priceContainer.insertAdjacentHTML('beforeend', newContainer);
@@ -349,7 +349,7 @@ async function adjustItemPage(container: Element) {
 			let formattedPrice = '-';
 			if (popupItem.data.offers?.lowPrice) {
 				const lowPrice = new Decimal(popupItem.data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
-				formattedPrice = currencySymbol == '€' ? Euro.format(lowPrice) : currencySymbol == '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
+				formattedPrice = currencySymbol === '€' ? Euro.format(lowPrice) : currencySymbol === '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
 			}
 			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${popupItem.data.offers?.offerCount} offers)`;
 		}
@@ -402,7 +402,7 @@ async function adjustItem(container: Element) {
 		return;
 	}
 
-	if (item.type == 'Key') {
+	if (item.type === 'Key') {
 		return;
 	}
 	const priceResult = await addBuffPrice(item, container);
@@ -419,7 +419,7 @@ async function adjustItem(container: Element) {
 
 	const cachedItem = getFirstSpItem();
 	if (cachedItem) {
-		if (cachedItem.name != item.name) {
+		if (cachedItem.name !== item.name) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
 			return;
 		}
@@ -428,7 +428,7 @@ async function adjustItem(container: Element) {
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category == 'Knife') {
+		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category === 'Knife') {
 			await addBlueBadge(container, cachedItem);
 		}
 	}
@@ -498,11 +498,11 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 		tableBody += `<div class="ItemHistoryList-row"${
 			Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
 		}><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
-			sale.origin == 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF
+			sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF
 		}"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
 			sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
 		}${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div><div><a ${
-			sale.url == 'No Link Available'
+			sale.url === 'No Link Available'
 				? 'style="pointer-events: none;cursor: default;"><img src="' +
 					ICON_BAN +
 					'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
@@ -549,12 +549,12 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
 	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
-	const nameCheck = targetName != '' && !(item.full_name).toLowerCase().includes(targetName);
+	const nameCheck = targetName !== '' && !(item.full_name).toLowerCase().includes(targetName);
 	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
 	const typeCheck = !spFilter.types[item.category.toLowerCase()];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
-	const tradeLock = tradeLockText?.length == 3 ? parseInt(tradeLockText[1]) : undefined;
+	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1]) : undefined;
 	const newCheck = spFilter.new && (!tradeLock || tradeLock < 7);
 
 	return nameCheck || priceCheck || typeCheck || newCheck;
@@ -562,7 +562,7 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 
 async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
 	const stickers = item.stickers;
-	if (item.stickers.length == 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
+	if (item.stickers.length === 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
 		return;
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
@@ -597,7 +597,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
  */
 function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	const stickers = item.stickers;
-	if (stickers.length == 0 || item.text.includes('Agent')) {
+	if (stickers.length === 0 || item.text.includes('Agent')) {
 		return;
 	}
 	
@@ -643,7 +643,7 @@ type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
 	const name = container.querySelector(selector.name)?.textContent?.trim() ?? '';
-	if (name == '') {
+	if (name === '') {
 		return null;
 	}
 
@@ -673,9 +673,9 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	// Skinport uses more detailed item types than Buff163, they are called categories here
 	const lastWord = text.split(' ').pop() ?? '';
 	let category = '';
-	if (lastWord == 'Knife' || lastWord == 'Gloves' || lastWord == 'Agent') {
+	if (lastWord === 'Knife' || lastWord === 'Gloves' || lastWord === 'Agent') {
 		category = lastWord;
-	} else if (lastWord == 'Rifle' || lastWord == 'Pistol' || lastWord == 'SMG' || lastWord == 'Sniper' || lastWord == 'Shotgun' || lastWord == 'Machinegun') {
+	} else if (lastWord === 'Rifle' || lastWord === 'Pistol' || lastWord === 'SMG' || lastWord === 'Sniper' || lastWord === 'Shotgun' || lastWord === 'Machinegun') {
 		category = 'Weapon';
 	} else {
 		category = type;
@@ -845,7 +845,7 @@ function showMessageBox(title: string, message: string, success = false) {
 
 async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
 	console.debug('[BetterFloat] Solving captcha.');
-	if (!extensionSettings['sp-ocoapikey'] || extensionSettings['sp-ocoapikey'] == '') {
+	if (!extensionSettings['sp-ocoapikey'] || extensionSettings['sp-ocoapikey'] === '') {
 		showMessageBox(
 			'Please set an API key first!',
 			'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.'
@@ -976,16 +976,16 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 			console.log('[BetterFloat] OCO last order: ', ocoLastOrder);
 			if (!isDevMode && ocoLastOrder.time > Date.now() - 86400000) {
 				console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
-				let statusCheck = ocoLastOrder.status == 'paid';
-				if (ocoLastOrder.status == 'open' || ocoLastOrder.status == 'unknown') {
+				let statusCheck = ocoLastOrder.status === 'paid';
+				if (ocoLastOrder.status === 'open' || ocoLastOrder.status === 'unknown') {
 					const response = (await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json())) as Skinport.OrderHistoryData;
 					if (response.success) {
-						const order = response.result.orders.find((order) => order.id == ocoLastOrder.id);
+						const order = response.result.orders.find((order) => order.id === ocoLastOrder.id);
 						console.log('[BetterFloat] OCO found order: ', order);
 						if (order) {
 							ocoLastOrder.status = order.status;
 							localStorage.setItem('ocoLastOrder', JSON.stringify(ocoLastOrder));
-							statusCheck = order.status == 'paid';
+							statusCheck = order.status === 'paid';
 						}
 					}
 				}

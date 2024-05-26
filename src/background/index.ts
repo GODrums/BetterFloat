@@ -6,13 +6,13 @@ import type { IStorage } from '~lib/util/storage';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
-	if (details.reason == 'install') {
+	if (details.reason === 'install') {
 		console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
 		await chrome.storage.sync.set(DEFAULT_SETTINGS);
 		// get extension url
 		// const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
 		// await chrome.tabs.create({ url: onboardingUrl });
-	} else if (details.reason == 'update') {
+	} else if (details.reason === 'update') {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 
@@ -56,7 +56,7 @@ export async function refreshPrices() {
 			//set cookie and wait for finish
 			return await new Promise<boolean>((resolve) => {
 				chrome.storage.local.set({ prices: JSON.stringify(data.data) }).then(() => {
-					console.log('Prices updated. Current time: ' + Date.now());
+					console.log(`Prices updated. Current time: ${Date.now()}`);
 					resolve(true);
 				});
 			});
@@ -66,7 +66,7 @@ export async function refreshPrices() {
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 	// TODO: Switch to @plasmohq/messaging
-	if (request.message == 'fetchPrices') {
+	if (request.message === 'fetchPrices') {
 		console.time('PriceRefresh');
 		refreshPrices().then((value) => {
 			console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
@@ -108,7 +108,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	}
 });
 
-chrome.runtime.onMessageExternal.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
 	console.log('Received message from external extension', request, sender);
 
 	if (sender.origin !== WEBSITE_URL) {

@@ -1,5 +1,5 @@
 import type { IconProps } from "@radix-ui/react-icons/dist/types";
-import { type ReactElement, type SVGProps } from "react";
+import type { ReactElement, SVGProps } from "react";
 import { Checkbox, Label } from "./Shadcn";
 import { useStorage } from "@plasmohq/storage/hook"
 import { MaterialSymbolsHelpOutline } from "~lib/components/Icons";

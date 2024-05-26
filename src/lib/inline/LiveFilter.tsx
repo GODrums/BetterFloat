@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Label } from '~lib/components/Shadcn';
 import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
 import { cn } from '~lib/utils';

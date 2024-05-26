@@ -62,7 +62,7 @@ async function firstLaunch() {
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], itemSelectors.card);
 		}
-	} else if (location.pathname == '/listings') {
+	} else if (location.pathname === '/listings') {
 		const items = document.getElementsByClassName('item-card');
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], itemSelectors.list);
@@ -77,7 +77,7 @@ async function firstLaunch() {
 	} else if (location.pathname.includes('/shop/')) {
 		const items = document.querySelectorAll('.items-desktop .auction-item-card');
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i].parentElement!, itemSelectors.card);
+			await adjustItem(items[i].parentElement, itemSelectors.card);
 		}
 	} else if (location.pathname.includes('/inventory')) {
 		const items = document.querySelectorAll('APP-INVENTORY-LIST-ITEM');
@@ -97,7 +97,7 @@ function applyMutation() {
 					if (!(addedNode instanceof HTMLElement)) continue;
 					// console.log("Added node: ", addedNode);
 
-					if (addedNode.children.length == 1) {
+					if (addedNode.children.length === 1) {
 						const firstChild = addedNode.children[0];
 						if (firstChild.tagName === 'AUCTION-LIST-ITEM') {
 							await adjustItem(firstChild, itemSelectors.list);
@@ -107,7 +107,7 @@ function applyMutation() {
 							await adjustItem(firstChild, itemSelectors.card);
 							continue;
 						} else if (firstChild.tagName === 'APP-ITEM-CARD') {
-							if (location.pathname == '/listings') {
+							if (location.pathname === '/listings') {
 								await adjustItem(firstChild, itemSelectors.list);
 							} else {
 								await adjustItem(firstChild, itemSelectors.card);
@@ -125,7 +125,7 @@ function applyMutation() {
 							await adjustItem(addedNode, itemSelectors.card);
 						} else if (className.includes('item-category')) {
 							// big item page
-							await adjustItem(document.querySelector('.item')!, itemSelectors.page);
+							await adjustItem(document.querySelector('.item'), itemSelectors.page);
 						} else if (addedNode.tagName === 'APP-PRICE-CHART') {
 							// console.log('Found price chart: ', addedNode);
 						}
@@ -187,9 +187,9 @@ function isMobileItem(container: Element) {
 
 async function adjustItem(container: Element, selector: ItemSelectors) {
 	let hashHTML: string | undefined;
-	if (selector.self == 'page') {
+	if (selector.self === 'page') {
 		hashHTML = location.pathname.split('/')[2];
-	} else if (selector.self == 'card') {
+	} else if (selector.self === 'card') {
 		hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
 	}
 	let cachedItem: Skinbid.Listing | null | undefined;
@@ -202,13 +202,13 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	if (!cachedItem) return;
 
 	const priceResult = await addBuffPrice(cachedItem, container, selector);
-	if (extensionSettings['skb-listingage'] || selector.self == 'page') {
+	if (extensionSettings['skb-listingage'] || selector.self === 'page') {
 		addListingAge(container, cachedItem, selector.self);
 	}
-	if ((extensionSettings['skb-stickerprices'] || selector.self == 'page') && priceResult && priceResult?.price_difference) {
+	if ((extensionSettings['skb-stickerprices'] || selector.self === 'page') && priceResult && priceResult?.price_difference) {
 		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
 	}
-	if (selector.self == 'page') {
+	if (selector.self === 'page') {
 		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
 	}
@@ -317,7 +317,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 							(sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${sale.origin == 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+                                <img style="height: 24px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
                                 <div>${getWear(sale.float)}</div>
@@ -327,7 +327,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
                                 ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
                                 <a ${
-									sale.url == 'No Link Available'
+									sale.url === 'No Link Available'
 										? 'style="pointer-events: none;cursor: default;"><img src="' +
 											ICON_BAN +
 											'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
@@ -392,9 +392,9 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 			stickerDiv.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
 		}
 		stickerDiv.style.backgroundColor = backgroundImageColor;
-		if (selector == itemSelectors.page) {
+		if (selector === itemSelectors.page) {
 			stickerDiv.style.marginLeft = '15px';
-		} else if (selector == itemSelectors.list || selector == itemSelectors.card) {
+		} else if (selector === itemSelectors.list || selector === itemSelectors.card) {
 			stickerDiv.style.position = 'absolute';
 			stickerDiv.style.bottom = '10px';
 			stickerDiv.style.right = '5px';
@@ -408,7 +408,7 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
 	const referenceDiv = container.querySelector(itemSelectors[page].listingAge);
 	if (!referenceDiv) return;
 
-	if (page == 'page') {
+	if (page === 'page') {
 		const listingContainer = referenceDiv?.cloneNode(true);
 		if (listingContainer.firstChild) {
 			listingContainer.firstChild.textContent = ' Time of Listing ';
@@ -452,7 +452,7 @@ async function addBuffPrice(
 	}
 
 	// restyle layout to make it more compact
-	if ((selector == itemSelectors.card || selector == itemSelectors.list) && container.querySelector('.offers')) {
+	if ((selector === itemSelectors.card || selector === itemSelectors.list) && container.querySelector('.offers')) {
 		container.querySelector('.item-type').setAttribute('style', 'display: none;');
 	}
 
@@ -472,7 +472,7 @@ async function addBuffPrice(
 		buffContainer.style.margin = '20px 0 0 0';
 	}
 
-	const priceFromReference = extensionSettings['skb-pricereference'] == 1 ? priceListing : priceOrder;
+	const priceFromReference = extensionSettings['skb-pricereference'] === 1 ? priceListing : priceOrder;
 	const listingPrice = await getListingPrice(cachedItem);
 	const difference = listingPrice - priceFromReference;
 	if (extensionSettings['skb-buffdifference']) {
@@ -619,7 +619,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: number, pri
 
 async function calculateBuffPrice(item: Skinbid.Item): Promise<{ buff_name: string; priceListing: number; priceOrder: number }> {
 	const buff_name = handleSpecialStickerNames(item.fullName);
-	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex == 0 ? 'Vanilla' : '');
+	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex === 0 ? 'Vanilla' : '');
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style);
 
 	// convert prices to user's currency

@@ -36,7 +36,7 @@ type SkinportWebsocketData = {
 
 export function activateHandler() {
 	// important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879
-	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', function (e) {
+	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', (e) => {
 		const eventData = (<CustomEvent>e).detail;
 		//switch depending on current site
 		if (location.host === 'csfloat.com') {
@@ -49,7 +49,7 @@ export function activateHandler() {
 	});
 
 	if (location.host === 'skinport.com') {
-		document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async function (e) {
+		document.addEventListener('BetterFloat_WEBSOCKET_EVENT', async (e) => {
 			const eventData = (<CustomEvent>e).detail as SkinportWebsocketData;
 			// console.debug('[BetterFloat] Received data from websocket:', eventData);
 			if (eventData.eventType === 'listed') {
@@ -64,7 +64,7 @@ export function activateHandler() {
 
 	//listener for messages from background
 	chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-		if (request.message == 'refreshPrices') {
+		if (request.message === 'refreshPrices') {
 			loadMapping().then((value) => {
 				if (value) {
 					console.log('[BetterFloat] Prices refreshed manually via popup.');
@@ -80,7 +80,7 @@ export function activateHandler() {
 	// refresh prices if they are older than 1 hour
 	chrome.storage.local.get('lastUpdate', (result) => {
 		let lastUpdate = result.lastUpdate;
-		if (lastUpdate == undefined) {
+		if (lastUpdate === undefined) {
 			lastUpdate = 0;
 		}
 		// if lastUpdate is older than 1 hour, refresh prices
@@ -202,7 +202,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('v1/me')) {
 		// user data, repeats often
 	} else if (eventData.url.includes('v1/listings/')) {
-		if (eventData.url.split('/').length == 7) {
+		if (eventData.url.split('/').length === 7) {
 			// item popup
 			cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
 		} else if (eventData.url.includes('/similar')) {

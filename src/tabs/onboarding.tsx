@@ -10,7 +10,7 @@ import { WEBSITE_URL } from "~lib/util/globals";
 export default function OnboardingPage() {
     return (
         <div className="size-full bg-neutral-950 justify-between overflow-hidden mx-auto h-screen">
-            <img className="absolute top-5 right-5 h-20 z-10 rounded-full shadow-2xl" src={BetterfloatLogo} />
+            <img className="absolute top-5 right-5 h-20 z-10 rounded-full shadow-2xl" src={BetterfloatLogo} alt="BetterFloat Logo" />
             <Vortex
                 backgroundColor="black"
                 rangeY={800}
@@ -42,12 +42,12 @@ export default function OnboardingPage() {
                 </motion.h1>
                 <div className="flex flex-col items-center justify-center">
                     <div className="grid grid-cols-2 justify-items-center gap-4 mt-6 max-w-4xl">
-                        <img className="h-64" src={DataImage} />
+                        <img className="h-64" src={DataImage} alt="Data" />
                         <div className="flex flex-col items-center justify-center">
                             <p className="text-neutral-100 text-2xl font-semibold text-center">Check out our <span className="text-purple-500">onboarding guide</span> to get started with BetterFloat.</p>
                             <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
                                 <Button variant="light" className="px-4 py-2 transition duration-200 rounded-lg text-white shadow-[0px_2px_0px_0px_#FFFFFF40_inset]" asChild>
-                                    <a href={`${WEBSITE_URL}onboarding`} target="_blank">Get started</a>
+                                    <a href={`${WEBSITE_URL}onboarding`} target="_blank" rel="noreferrer">Get started</a>
                                 </Button>
                             </div>
                         </div>

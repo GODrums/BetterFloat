@@ -15,7 +15,7 @@ const handler: PlasmoMessaging.MessageHandler<OCORequestBody, OCOResponseBody> =
 	const response = await fetch(captchaAPIUrl + req.body.saleId, {
 		method: 'GET',
 		headers: {
-            'Authorization': req.body.oco_key,
+            Authorization: req.body.oco_key,
 			'Content-Type': 'application/json',
 		},
 	});

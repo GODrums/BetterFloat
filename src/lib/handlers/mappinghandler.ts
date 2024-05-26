@@ -173,7 +173,7 @@ export function getSpMinOrderPrice() {
 
 // USD / rate = target currency
 export async function getCSFCurrencyRate(currency: string) {
-	if (Object.keys(csfloatRates).length == 0) {
+	if (Object.keys(csfloatRates).length === 0) {
 		await fetchCSFCurrencyRates();
 	}
 	return csfloatRates[currency.toLowerCase()];
@@ -242,14 +242,14 @@ export function getSpecificCSFOffer(index: number) {
 }
 
 export function getSpecificSkbItem(auction_hash: string) {
-	const index = skinbidItems.findIndex((item) => item.auction?.auctionHash == auction_hash);
+	const index = skinbidItems.findIndex((item) => item.auction?.auctionHash === auction_hash);
 	const item = skinbidItems[index];
 	skinbidItems.splice(index, 1);
 	return item;
 }
 
 export async function getPriceMapping(): Promise<Extension.CustomPriceMapping> {
-	if (Object.keys(priceMapping).length == 0) {
+	if (Object.keys(priceMapping).length === 0) {
 		await loadMapping();
 	}
 	return priceMapping;
@@ -261,7 +261,7 @@ export async function getPriceMapping(): Promise<Extension.CustomPriceMapping> {
  * @returns
  */
 export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number }> {
-	if (Object.keys(priceMapping).length == 0) {
+	if (Object.keys(priceMapping).length === 0) {
 		await loadMapping();
 	}
 	//removing double spaces
@@ -289,7 +289,7 @@ async function fetchCSFCurrencyRates() {
 }
 
 export async function getSpUserCurrency() {
-	if (skinportUserCurrency == '') {
+	if (skinportUserCurrency === '') {
 		await fetchSpUserData();
 	}
 	return skinportUserCurrency;
@@ -297,18 +297,18 @@ export async function getSpUserCurrency() {
 }
 
 export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
-	if (Object.keys(skinportRatesFromUSD).length == 0) {
+	if (Object.keys(skinportRatesFromUSD).length === 0) {
 		await fetchSpUserData();
 	}
-	if (skinportUserCurrency == 'USD') return 1;
-	if (rates == 'real' && Object.keys(realRatesFromUSD).length == 0) {
+	if (skinportUserCurrency === 'USD') return 1;
+	if (rates === 'real' && Object.keys(realRatesFromUSD).length === 0) {
 		await fetchCurrencyRates();
 	}
-	return rates == 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD['USD'];
+	return rates === 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD['USD'];
 }
 
 export async function getSpCSRF() {
-	if (skinportCSRF == '') {
+	if (skinportCSRF === '') {
 		await fetchSpUserData();
 	}
 	return skinportCSRF;
@@ -319,40 +319,40 @@ export function getSkbCurrency() {
 }
 
 export async function getSkbUserCurrencyRate() {
-	if (skinbidUserCurrency == '') {
+	if (skinbidUserCurrency === '') {
 		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
 	}
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}
-	if (skinbidUserCurrency == 'USD') return 1;
-	else if (skinbidUserCurrency == 'EUR') return 1 / skinbidRates[0].rate;
+	if (skinbidUserCurrency === 'USD') return 1;
+	else if (skinbidUserCurrency === 'EUR') return 1 / skinbidRates[0].rate;
 	// origin is USD, first convert to EUR, then to user currency: USD -> EUR -> user currency
 	// example: 1 USD -> 1/USDrate EUR -> 1/USDrate * EURUserCurrency
-	else return (skinbidRates.find((rate) => rate.currencyCode == skinbidUserCurrency)?.rate ?? 1) / skinbidRates[0].rate;
+	else return (skinbidRates.find((rate) => rate.currencyCode === skinbidUserCurrency)?.rate ?? 1) / skinbidRates[0].rate;
 }
 
 export async function getSkbUserConversion() {
-	if (skinbidUserCurrency == '') {
+	if (skinbidUserCurrency === '') {
 		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
 	}
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}
 
-	if (skinbidUserCurrency == 'EUR') return 1;
-	else return skinbidRates.find((rate) => rate.currencyCode == skinbidUserCurrency)?.rate ?? 1;
+	if (skinbidUserCurrency === 'EUR') return 1;
+	else return skinbidRates.find((rate) => rate.currencyCode === skinbidUserCurrency)?.rate ?? 1;
 }
 
 export async function getStallData(stall_id: string) {
 	const request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
-	if (request.status != 200) {
+	if (request.status !== 200) {
 		console.warn('[BetterFloat] Invalid stall data from Rums.dev: ', request);
 		return null;
 	}
 	const response = (await request.json()) as Extension.CustomStallData;
 	console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
-	if (response && response.status == 'OK' && response.data) {
+	if (response && response.status === 'OK' && response.data) {
 		return response.data;
 	} else {
 		return null;
@@ -391,7 +391,7 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 }
 
 export async function getBuffMapping(name: string) {
-	if (Object.keys(buffMapping).length == 0) {
+	if (Object.keys(buffMapping).length === 0) {
 		console.error('[BetterFloat] Buff mapping not loaded yet');
 	}
 	const queryName = name.replace(/\s+/g, ' ');
@@ -404,7 +404,7 @@ export async function getBuffMapping(name: string) {
 }
 
 export async function loadMapping() {
-	if (Object.keys(priceMapping).length == 0) {
+	if (Object.keys(priceMapping).length === 0) {
 		console.debug('[BetterFloat] Attempting to load price mapping from local storage');
 
 		const success = await new Promise<boolean>((resolve) => {

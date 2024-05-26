@@ -1,0 +1,62 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 4,
+		"lineEnding": "lf",
+		"lineWidth": 200,
+		"attributePosition": "auto",
+		"ignore": ["**/dist", "**/node_modules"]
+	},
+	"organizeImports": { "enabled": true },
+	"linter": { 
+		"enabled": true, 
+		"rules": { 
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off",
+				"noGlobalIsNan": "off",
+				"noConfusingVoidType": "off"
+			},
+			"complexity": {
+				"useLiteralKeys": "off",
+				"noForEach": "off"
+			},
+			"a11y": {
+				"useAltText": "off",
+				"useKeyWithClickEvents": "off",
+				"noSvgWithoutTitle": "off",
+				"useValidAnchor": "off"
+			},
+			"style": {
+				"useNumberNamespace": "off",
+				"useSelfClosingElements": "off",
+				"useTemplate": "off",
+				"noUselessElse": "off",
+				"noParameterAssign": "off",
+				"noArguments": "off",
+				"noNonNullAssertion": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off"
+			}
+		},
+		"ignore": ["src/lib/utils.ts", "src/lib/components/Vortex.tsx"]
+	},
+	"javascript": {
+		"formatter": {
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"trailingComma": "es5",
+			"semicolons": "always",
+			"arrowParentheses": "always",
+			"bracketSpacing": true,
+			"bracketSameLine": false,
+			"quoteStyle": "single",
+			"attributePosition": "auto"
+		}
+	}
+}

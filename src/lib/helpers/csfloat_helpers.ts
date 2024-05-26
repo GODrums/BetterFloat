@@ -100,7 +100,7 @@ export namespace CSFloatHelpers {
 				newTitle = username + "'s Stall";
 			}
 		}
-		if (newTitle != '') {
+		if (newTitle !== '') {
 			document.title = newTitle + ' - CSFloat';
 		}
 	}

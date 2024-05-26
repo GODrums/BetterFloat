@@ -7,9 +7,9 @@ export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
     const baseUrl = `https://buff.163.com/goods/${buff_id}`;
     if (phase) {
         return `${baseUrl}#tag_ids=${phaseMapping[buff_id][phase]}`;
-    } else {
-        return baseUrl;
     }
+    return baseUrl;
+    
 }
 
 export async function formFetch<T>(url: string, body: string): Promise<T> {
@@ -56,7 +56,7 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
     let currentUrl: string = location.href;
     return setInterval(() => {
         const newUrl = location.href;
-        if (currentUrl != newUrl) {
+        if (currentUrl !== newUrl) {
             currentUrl = newUrl;
             urlChangeCallback(newUrl);
         }
@@ -119,7 +119,7 @@ export function toTruncatedString(num: number, digits: number) {
  * @returns
  */
 export function toTitleCase(str: string) {
-    let splitStr = str.toLowerCase().split(' ');
+    const splitStr = str.toLowerCase().split(' ');
     for (let i = 0; i < splitStr.length; i++) {
         splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
     }
@@ -146,7 +146,7 @@ export function calculateTime(created_at: string, timeOffset = 0) {
             textTime = `${timeHours} hour${timeHours === 1 ? '' : 's'} ago`;
         }
     } else {
-        textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) == 1 ? '' : 's'} ago`;
+        textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) === 1 ? '' : 's'} ago`;
     }
     return textTime;
 }
@@ -154,15 +154,17 @@ export function calculateTime(created_at: string, timeOffset = 0) {
 export function getSPBackgroundColor(spPercentage: number) {
     if (spPercentage < 0.005 || spPercentage > 2) {
         return '#0003';
-    } else if (spPercentage >= 1) {
-        return 'rgb(245 0 0 / 40%)';
-    } else if (spPercentage > 0.5) {
-        return 'rgb(245 164 0 / 40%)';
-    } else if (spPercentage > 0.25) {
-        return 'rgb(244 245 0 / 40%)';
-    } else {
-        return 'rgb(83 245 0 / 40%)';
     }
+    if (spPercentage >= 1) {
+        return 'rgb(245 0 0 / 40%)';
+    }
+    if (spPercentage > 0.5) {
+        return 'rgb(245 164 0 / 40%)';
+    }
+    if (spPercentage > 0.25) {
+        return 'rgb(244 245 0 / 40%)';
+    }
+    return 'rgb(83 245 0 / 40%)';
 }
 
 export function handleSpecialStickerNames(name: string): string {

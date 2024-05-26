@@ -7,16 +7,16 @@ import { addPattern } from './skinport_helpers';
 export async function handleListed(data: Skinport.Item[]) {
     setTimeout(async () => {
         for (const item of data) {
-            const element = document.querySelector('.sale-' + item.saleId);
+            const element = document.querySelector(`.sale-${item.saleId}`);
             if (element) {
                 // console.debug('[BetterFloat] Found listed item:', item);
                 if (item.pattern) {
                     addPattern(element, item);
                 }
 
-                if (item.marketHashName.includes('Case Hardened') && item.category == 'Knife' && (await getSetting('sp-csbluegem'))) {
+                if (item.marketHashName.includes('Case Hardened') && item.category === 'Knife' && (await getSetting('sp-csbluegem'))) {
                     await addBlueBadge(element, item);
-                } else if ((item.marketHashName.includes('Crimson Web') || item.marketHashName.includes('Emerald Web')) && item.category == 'Gloves') {
+                } else if ((item.marketHashName.includes('Crimson Web') || item.marketHashName.includes('Emerald Web')) && item.category === 'Gloves') {
                     await webDetection(element, item);
                 }
             }
@@ -26,7 +26,7 @@ export async function handleListed(data: Skinport.Item[]) {
 
 export async function handleSold(data: Skinport.Item[]) {
     for (const item of data) {
-        const element = document.querySelector('.sale-' + item.saleId);
+        const element = document.querySelector(`.sale-${item.saleId}`);
         if (element) {
             // console.debug('[BetterFloat] Found sold item:', item);
             element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay());

@@ -26,7 +26,7 @@ function openIntercept() {
             }
 
             // request finished loading
-            if (target.readyState == 4) {
+            if (target.readyState === 4) {
                 document.dispatchEvent(
                     new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
                         detail: {
@@ -37,7 +37,7 @@ function openIntercept() {
                     })
                 );
                 // dispatch again on first page load
-                if (loadNumber++ == 0) {
+                if (loadNumber++ === 0) {
                     setTimeout(() => {
                         document.dispatchEvent(
                             new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {

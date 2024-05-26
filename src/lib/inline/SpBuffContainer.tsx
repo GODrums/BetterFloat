@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
 import { cn } from '~lib/utils';
 import { ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION } from '~lib/util/globals';

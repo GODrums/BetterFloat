@@ -7,7 +7,7 @@ export function genGemContainer(patternElement: BlueGem.PatternElement | undefin
     gemContainer.title = 'playside blue% / backside blue%';
     gemContainer.style.display = 'flex';
     gemContainer.style.alignItems = 'center';
-    if (mode == 'right') {
+    if (mode === 'right') {
         gemContainer.style.flexDirection = 'row-reverse';
     }
     const gemImage = document.createElement('img');
