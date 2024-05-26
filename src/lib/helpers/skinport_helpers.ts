@@ -80,10 +80,11 @@ export function filterDisplay() {
         localStorage.setItem('displayFilterMenu', 'true');
         filterSetting = 'true';
     } else if (filterSetting === 'false') {
-        const elementWait = waitForElement('#CatalogFilter-1', 200, 10);
-        if (elementWait && document.querySelector("#CatalogFilter-1")?.clientWidth > 0) {
-            filterDisplay.click();
-        }
+        waitForElement('#CatalogFilter-1', 200, 10).then((result) => {
+            if (result && document.querySelector("#CatalogFilter-1")?.clientWidth > 0) {
+                filterDisplay.click();
+            }
+        });
     }
     
     if (document.querySelector('#betterfloat-filter-checkbox')) return;

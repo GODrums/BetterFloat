@@ -40,7 +40,17 @@ import {
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffLink, getBuffPrice, getFloatColoring, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTruncatedString } from '../lib/util/helperfunctions';
+import {
+	calculateTime,
+	getBuffLink,
+	getBuffPrice,
+	getFloatColoring,
+	getSPBackgroundColor,
+	handleSpecialStickerNames,
+	isBuffBannedItem,
+	toTruncatedString,
+	waitForElement,
+} from '../lib/util/helperfunctions';
 import { genGemContainer } from '../lib/util/uigeneration';
 
 import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
@@ -611,6 +621,32 @@ enum POPOUT_ITEM {
 	SIMILAR,
 }
 
+function addScreenshotListener(container: Element, item: CSFloat.Item) {
+	const screenshotButton = container.querySelector('.detail-buttons mat-icon');
+	if (!screenshotButton.textContent?.includes('photo_camera') || !item.cs2_screenshot_at) {
+		return;
+	}
+
+	screenshotButton.parentElement?.addEventListener('click', async () => {
+		waitForElement('app-screenshot-dialog').then((screenshotDialog) => {
+			if (!screenshotDialog) return;
+			const screenshotContainer = document.querySelector('app-screenshot-dialog');
+			if (!screenshotContainer) return;
+
+			const date = new Date(item.cs2_screenshot_at).toLocaleDateString('en-US');
+			const inspectedAt = html`
+				<div
+					class="betterfloat-screenshot-date"
+					style="position: absolute;left: 0;bottom: 25px;background-color: var(--dialog-background);-webkit-backdrop-filter: blur(var(--highlight-blur));backdrop-filter: blur(var(--highlight-blur));padding: 5px 10px;font-size: 14px;border-top-right-radius: 6px;color: var(--subtext-color);z-index: 2;">
+					<span>Inspected at ${date}</span>
+				</div>
+			`;
+
+			screenshotContainer.querySelector('.mat-mdc-tab-body-wrapper').insertAdjacentHTML('beforeend', inspectedAt);
+		});
+	});
+}
+
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	if (popout === POPOUT_ITEM.PAGE) {
 		await new Promise((r) => setTimeout(r, 500));
@@ -646,6 +682,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 
 		addBargainListener(container);
+		addScreenshotListener(container, cachedItem.item);
 		if (extensionSettings['csf-showbargainprice']) {
 			await showBargainPrice(container, cachedItem, popout);
 		}
@@ -790,16 +827,20 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 
 	const quickLinksContainer = html`
 		<div class="betterfloat-quicklinks" style="flex-basis: 100%; display: flex; justify-content: space-evenly;">
-			${quickLinks.map((link) => html`
-				<div class="bf-tooltip">
-					<a class="mat-icon-button" href="${link.link}" target="_blank">
-						<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
-					</a>
-					<div class="bf-tooltip-inner" style="translate: -60px 10px; width: 140px;">
-						<span>${link.tooltip}</span>
-					</div>
-				</div>
-			`).join('')}
+			${quickLinks
+				.map(
+					(link) => html`
+						<div class="bf-tooltip">
+							<a class="mat-icon-button" href="${link.link}" target="_blank">
+								<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
+							</a>
+							<div class="bf-tooltip-inner" style="translate: -60px 10px; width: 140px;">
+								<span>${link.tooltip}</span>
+							</div>
+						</div>
+					`
+				)
+				.join('')}
 		</div>
 	`;
 
@@ -1422,11 +1463,11 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
 
-    if (isBuffBannedItem(buff_name)) {
+	if (isBuffBannedItem(buff_name)) {
 		priceListing = 0;
 		priceOrder = 0;
 		buff_id = 0;
-    }
+	}
 
 	const { currencyRate } = await getCurrencyRate();
 
@@ -1469,7 +1510,7 @@ async function addBuffPrice(
 				target="_blank"
 				style="display: inline-flex; align-items: center; font-size: 15px;">
 				<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
-				<div class="betterfloat-buffprice ${isPopout && 'betterfloat-big-price'}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
+				<div class="betterfloat-buffprice ${isPopout && 'betterfloat-big-price'}" data-betterfloat="${JSON.stringify({ buff_name, priceFromReference, userCurrency })}">
 					<span class="betterfloat-buff-tooltip">
 						Bid: Highest buy order price;
 						<br />

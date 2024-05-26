@@ -1,5 +1,4 @@
 import Decimal from 'decimal.js';
-import type { Extension } from '../@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 import { phaseMapping } from './patterns';
@@ -205,10 +204,10 @@ export function getFloatColoring(
             return colors.perfect;
         } else if (w < 0.09) {
             return colors.good;
-        } else if (w >= 0.99) {
-            return colors.bad;
         } else if (w >= 0.999) {
             return colors.worst;
+        } else if (w >= 0.99) {
+            return colors.bad;
         }
     } 
     if (l > 0) {
