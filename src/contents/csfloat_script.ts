@@ -720,6 +720,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			}
 		}
 		addBargainListener(container);
+		addScreenshotListener(container, apiItem.item);
 	}
 }
 
@@ -923,11 +924,12 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgeCKimono(container, item);
 	} else if (item.item_name.includes('Phoenix Blacklight')) {
 		await badgePhoenix(container, item);
-	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
-		await badgeCyanbit(container, item);
 	} else if (item.item_name.includes('Overprint')) {
 		await badgeOverprint(container, item);
 	}
+	// else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
+	// 	await badgeCyanbit(container, item);
+	// } 
 }
 
 async function badgeOverprint(container: Element, item: CSFloat.Item) {

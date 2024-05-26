@@ -80,7 +80,7 @@ export function filterDisplay() {
         localStorage.setItem('displayFilterMenu', 'true');
         filterSetting = 'true';
     } else if (filterSetting === 'false') {
-        waitForElement('#CatalogFilter-1', 200, 10).then((result) => {
+        waitForElement('#CatalogFilter-1').then((result) => {
             if (result && document.querySelector("#CatalogFilter-1")?.clientWidth > 0) {
                 filterDisplay.click();
             }

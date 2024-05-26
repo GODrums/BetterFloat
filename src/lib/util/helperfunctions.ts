@@ -24,20 +24,24 @@ export async function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+type WaitElementOptions = {
+    interval?: number;
+    maxTries?: number;
+};
 /**
  * Wait of an element to appear in the DOM
  * @param selector css selector for the element
- * @param interval time in ms between each check
- * @param maxTries amount of tries before returning false
+ * @param interval interval in ms, default 200
+ * @param maxTries maximum tries, default 10
  * @returns true if element was found, false if not
  */
-export async function waitForElement(selector: string, interval = 200, maxTries = 10) {
+export async function waitForElement(selector: string, options: WaitElementOptions = { interval: 200, maxTries: 10 }) {
     let tries = 0;
-    while (!document.querySelector(selector) && tries < maxTries) {
+    while (!document.querySelector(selector) && tries < options.maxTries) {
         tries++;
-        await new Promise((r) => setTimeout(r, interval));
+        await new Promise((r) => setTimeout(r, options.interval));
     }
-    return tries < maxTries;
+    return tries < options.maxTries;
 }
 
 /**

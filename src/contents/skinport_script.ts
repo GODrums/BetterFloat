@@ -285,7 +285,7 @@ async function adjustItemPage(container: Element) {
 		await addSoldPrice(container, popupItem.data.item);
 	}
 
-	await waitForElement('.ItemPage-image > img', 200);
+	await waitForElement('.ItemPage-image > img');
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
 	const buffItem = await getBuffItem(item.full_name, item.style);

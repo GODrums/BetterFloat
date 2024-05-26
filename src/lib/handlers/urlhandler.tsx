@@ -59,7 +59,7 @@ async function handleChange(state: Extension.URLState) {
 
 	if (state.site === 'skinport.com') {
 		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
-			waitForElement('.CatalogHeader-tooltipLive', 100, 10).then(async (success) => {
+			waitForElement('.CatalogHeader-tooltipLive', { interval: 100 }).then(async (success) => {
 				if (success && !document.querySelector('betterfloat-live-filter')) {
 					const root = await mountShadowRoot(<LiveFilter />, {
 						tagName: 'betterfloat-live-filter',
@@ -95,7 +95,7 @@ async function handleChange(state: Extension.URLState) {
 		if (state.path === '/search' && state.search.includes('sort_by=most_recent')) {
 			const csfAutorefresh = await getSetting('csf-autorefresh');
 			if (csfAutorefresh) {
-				waitForElement('.refresh > button', 100, 10).then(async (success) => {
+				waitForElement('.refresh > button', { interval: 100 }).then(async (success) => {
 					if (success && !document.querySelector('betterfloat-autorefresh')) {
 						const root = await mountShadowRoot(<CSFAutorefresh />, {
 							tagName: 'betterfloat-autorefresh',
