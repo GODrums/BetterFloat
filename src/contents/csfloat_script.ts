@@ -1539,7 +1539,7 @@ async function addBuffPrice(
 		(source === MarketSource.Steam && (priceListing || priceOrder)) ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing);
-
+		
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine(
 			source,
@@ -1693,7 +1693,7 @@ function generatePriceLine(
 			iconStyle += ' border: 1px solid black; border-radius: 4px;';
 			break;
 	}
-	const isWarning = priceOrder?.gt(priceListing);
+	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
 	const buffContainer = html`
 			<a
@@ -1705,7 +1705,7 @@ function generatePriceLine(
 				<img src="${icon}" style="${iconStyle}" />
 				<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
 					${
-						source === MarketSource.Buff || source === MarketSource.Steam
+						[MarketSource.Buff, MarketSource.Steam].includes(source)
 							? html`
 						<span class="betterfloat-buff-tooltip">
 							Bid: Highest buy order price;

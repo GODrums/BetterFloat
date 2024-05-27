@@ -35,7 +35,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
     const sources = [
         { text: 'Buff', logo: buffLogo, source: MarketSource.Buff },
         { text: 'Steam', logo: steamLogo, source: MarketSource.Steam },
-        { text: 'YouPin', logo: youpinLogo, source: MarketSource.YouPin },
+        { text: 'YouPin / UU', logo: youpinLogo, source: MarketSource.YouPin },
         { text: 'C5Game', logo: c5gameLogo, source: MarketSource.C5Game },
     ];
 
@@ -64,7 +64,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
                 </div>
                 {(source === MarketSource.Buff || source === MarketSource.Steam) && (
                     <div className='pt-1 px-4'>
-                        <SettingsSelect id={`${prefix}-pricereference`} text="Price Reference" tooltipText='Bid => highest buy order; Ask => lowest listing' options={['Bid', 'Ask']} />
+                        <SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText='Bid => highest buy order; Ask => lowest listing' options={['Bid', 'Ask']} />
                     </div>
                 )}
             </CardContent>

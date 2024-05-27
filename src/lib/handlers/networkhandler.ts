@@ -6,7 +6,7 @@ import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 
 export async function fetchCSBlueGem(type: string, paint_seed: number, currency = 'USD') {
-	return fetch(`https://bluegem.azurewebsites.net/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
+	return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
 		.then((res) => res.json())
 		.then((data) => {
 			const { pastSales, patternElement } = {

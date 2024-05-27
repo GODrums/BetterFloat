@@ -1,10 +1,12 @@
 import type React from 'react';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~lib/components/Icons';
 import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
-import { ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION } from '~lib/util/globals';
+import { ICON_ARROWUP, ICON_BUFF, ICON_C5GAME, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
+import { MarketSource } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 
 type BuffItem = {
+	source: MarketSource;
 	currency: string;
 	buff_name: string;
 	buff_id: number;
@@ -20,7 +22,25 @@ const Container: React.FC<{ child: HTMLDivElement }> = ({ child }) => {
 };
 
 const SPBuffContainer: React.FC = () => {
-	const data = JSON.parse(document.querySelector('.ItemPage').getAttribute('data-betterfloat')) as BuffItem;
+	const jsonData = JSON.parse(document.querySelector('.ItemPage').getAttribute('data-betterfloat'));
+	const data: BuffItem = {
+		source: jsonData.source ?? MarketSource.Buff,
+		currency: jsonData.currency,
+		buff_name: jsonData.buff_name,
+		buff_id: jsonData.buff_id,
+		itemPrice: jsonData.itemPrice,
+		priceListing: parseFloat(jsonData.priceListing || 0),
+		priceOrder: parseFloat(jsonData.priceOrder || 0),
+		priceAvg30: parseFloat(jsonData.priceAvg30 || 0),
+		liquidity: parseFloat(jsonData.liquidity || 0),
+	};
+
+	const marketIcon = {
+		[MarketSource.Buff]: ICON_BUFF,
+		[MarketSource.Steam]: ICON_STEAM,
+		[MarketSource.YouPin]: ICON_YOUPIN,
+		[MarketSource.C5Game]: ICON_C5GAME,
+	};
 
 	// create a portal for the popover
 	const portal = document.createElement('div');
@@ -59,7 +79,19 @@ const SPBuffContainer: React.FC = () => {
 	};
 
 	const openBuffPage = () => {
-		window.open(`https://buff.163.com/goods/${data.buff_id}`);
+		const getMarketURL = () => {
+			switch (data.source) {
+				case MarketSource.Buff:
+					return data.buff_id > 0 ? `https://buff.163.com/goods/${data.buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(data.buff_name)}`;
+				case MarketSource.Steam:
+					return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(data.buff_name)}`;
+				case MarketSource.YouPin:
+					return `https://youpin898.com/search?keyword=${encodeURIComponent(data.buff_name)}`;
+				case MarketSource.C5Game:
+					return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(data.buff_name)}`;
+			}
+		}
+		window.open(getMarketURL(), '_blank');
 	};
 
 	return (
@@ -69,11 +101,17 @@ const SPBuffContainer: React.FC = () => {
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button variant="ghost" className="px-1 flex items-center gap-2 hover:bg-neutral-500/70">
-							<img src={ICON_BUFF} className="h-6 w-6 border border-[#323c47] rounded-md" />
+							<img src={marketIcon[data.source]} className="h-6 w-6 rounded-md" />
 							<div className="flex gap-1.5 font-semibold text-lg">
-								<span className="text-[#ffa500]">Bid: {formatCurrency(data.priceOrder)}</span>
-								<span className="text-[#808080]">|</span>
-								<span className="text-[#adff2f]">Ask: {formatCurrency(data.priceListing)}</span>
+								{[MarketSource.Buff, MarketSource.Steam].includes(data.source) ? (
+									<>
+										<span className="text-[#ffa500]">Bid: {formatCurrency(data.priceOrder)}</span>
+										<span className="text-[#808080]">|</span>
+										<span className="text-[#adff2f]">Ask: {formatCurrency(data.priceListing)}</span>
+									</>
+								) : (
+									<span className="text-white">{formatCurrency(data.priceListing)}</span>
+								)}
 								{data.priceOrder > data.priceListing && (
 									<img
 										src={ICON_EXCLAMATION}
@@ -97,10 +135,14 @@ const SPBuffContainer: React.FC = () => {
 							</div>
 						)}
 						<div className="grid grid-cols-2 gap-4 px-2 pt-4">
-							<Badge variant="secondary" className="text-sm">
-								Highest Buy Order
-							</Badge>
-							<BuffSaleTag buffPrice={data.priceOrder} />
+							{[MarketSource.Buff, MarketSource.Steam].includes(data.source) && (
+								<>
+									<Badge variant="secondary" className="text-sm">
+										Highest Buy Order
+									</Badge>
+									<BuffSaleTag buffPrice={data.priceOrder} />
+								</>
+							)}
 							<Badge variant="secondary" className="text-sm">
 								Lowest Listed Item
 							</Badge>
@@ -109,10 +151,14 @@ const SPBuffContainer: React.FC = () => {
 								Average sell price (30d)
 							</Badge>
 							<BuffSaleTag buffPrice={data.priceAvg30} />
-							<Badge variant="secondary" className="text-sm">
-								Liquidity
-							</Badge>
-							<span className="text-white">{data.liquidity.toFixed(2)}%</span>
+							{[MarketSource.Buff, MarketSource.Steam].includes(data.source) && (
+								<>
+									<Badge variant="secondary" className="text-sm">
+										Liquidity
+									</Badge>
+									<span className="text-white">{data.liquidity?.toFixed(2)}%</span>
+								</>
+							)}
 						</div>
 						<PopoverClose className="absolute top-1 right-1" asChild>
 							<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-neutral-500/70">

@@ -14,14 +14,15 @@ import {
 	loadMapping,
 } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT } from '~lib/util/globals';
-import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
+import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { MarketSource, type IStorage } from '~lib/util/storage';
+import { html } from 'common-tags';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
@@ -231,6 +232,7 @@ async function adjustInventoryItem(container: Element) {
 	if (!document.querySelector('.betterfloat-buffprice')) {
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 	}
+	const source = extensionSettings['skb-pricingsource'] as MarketSource;
 	const steamImage = container.querySelector('.item-image > img').getAttribute('src');
 	const listedItem = getSpecificSkbInventoryItem(steamImage);
 	console.log('[BetterFloat] Inventory item: ', listedItem);
@@ -245,7 +247,7 @@ async function adjustInventoryItem(container: Element) {
 		const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
 		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
 		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
-			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
+			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref, source);
 		}
 	}
 }
@@ -471,9 +473,18 @@ async function addBuffPrice(
 
 	const priceDiv = container.querySelector(selector.priceDiv);
 	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
-	const buffHref = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	let href = '';
+	if (source === MarketSource.Buff) {
+		href = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	} else if (source === MarketSource.Steam) {
+		href = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
+	} else if (source === MarketSource.C5Game) {
+		href = `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
+	} else if (source === MarketSource.YouPin) {
+		href = `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
+	}
 	if (!container.querySelector('.betterfloat-buffprice')) {
-		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', buffHref);
+		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');
 	}
 	const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
 	if (buffContainer && selector === itemSelectors.page) {
@@ -485,9 +496,10 @@ async function addBuffPrice(
 		buffContainer.style.margin = '20px 0 0 0';
 	}
 
-	const priceFromReference = extensionSettings['skb-pricereference'] === 1 ? priceListing : priceOrder;
+	const priceFromReference = ([MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['skb-pricereference'] === 0) ? priceOrder : priceListing;
 	const listingPrice = await getListingPrice(cachedItem);
 	const difference = new Decimal(listingPrice).minus(priceFromReference ?? 0);
+
 	if (extensionSettings['skb-buffdifference']) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
 		if (cachedItem.auction.sellType === 'FIXED_PRICE' || selector.self !== 'page') {
@@ -585,66 +597,64 @@ async function getListingPrice(listing: Skinbid.Listing) {
 		if (listing.currentHighestBidEur === 0) {
 			return listing.currentHighestBid * (await getSkbUserConversion());
 		} else {
-			return listing.currentHighestBid;
+			return listing.currentHighestBidEur;
 		}
 	} else {
 		if (listing.auction.startBidEur === 0) {
 			return listing.auction.startBid * (await getSkbUserConversion());
 		} else {
-			return listing.auction.startBid;
+			return listing.auction.startBidEur;
 		}
 	}
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: Decimal, priceOrder: Decimal, currencySymbol: string, href: string, isItemPage = false) {
-	const buffContainer = document.createElement('a');
-	buffContainer.className = 'betterfloat-buff-container';
-	buffContainer.target = '_blank';
-	buffContainer.href = href;
-	buffContainer.style.display = 'flex';
-	buffContainer.style.margin = '5px 0';
-	buffContainer.style.cursor = 'pointer';
-	buffContainer.style.alignItems = 'center';
-	const buffImage = document.createElement('img');
-	buffImage.setAttribute('src', ICON_BUFF);
-	buffImage.setAttribute('style', `height: 20px; margin-right: 5px; border: 1px solid #323c47; ${isItemPage ? 'margin-bottom: 1px;' : ''}`);
-	buffContainer.appendChild(buffImage);
-	const buffPrice = document.createElement('div');
-	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
-	buffPrice.setAttribute('style', 'margin: 2px 0 0 0');
-	if (isItemPage) {
-		buffPrice.style.fontSize = '18px';
+function generateBuffContainer(container: HTMLElement, priceListing: Decimal, priceOrder: Decimal, currencySymbol: string, href: string, source: MarketSource, isItemPage = false) {
+	let icon = '';
+	let iconStyle = 'height: 20px; margin-right: 5px;';
+	let containerStyle = '';
+	if (source === MarketSource.Buff) {
+		icon = ICON_BUFF;
+		iconStyle += 'border: 1px solid #323c47;';
+	} else if (source === MarketSource.Steam) {
+		icon = ICON_STEAM;
+	} else if (source === MarketSource.C5Game) {
+		icon = ICON_C5GAME;
+		iconStyle += 'border: 1px solid #323c47;';
+		containerStyle = 'justify-content: flex-start;';
+	} else if (source === MarketSource.YouPin) {
+		icon = ICON_YOUPIN;
+		iconStyle += 'border: 1px solid #323c47;';
+		containerStyle = 'justify-content: flex-start;';
 	}
-	const tooltipSpan = document.createElement('span');
-	// rework tooltip for list view
-	// tooltipSpan.setAttribute('class', 'betterfloat-buff-tooltip');
-	// tooltipSpan.textContent = 'Bid: Highest buy order price; Ask: Lowest listing price';
-	buffPrice.appendChild(tooltipSpan);
-	const buffPriceBid = document.createElement('span');
-	buffPriceBid.setAttribute('style', 'color: orange;');
-	buffPriceBid.textContent = `Bid ${currencySymbol}${priceOrder.toFixed(2)}`;
-	buffPrice.appendChild(buffPriceBid);
-	const buffPriceDivider = document.createElement('span');
-	buffPriceDivider.setAttribute('style', 'color: #323c47;margin: 0 3px 0 3px;');
-	buffPriceDivider.textContent = '|';
-	buffPrice.appendChild(buffPriceDivider);
-	const buffPriceAsk = document.createElement('span');
-	buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-	buffPriceAsk.textContent = `Ask ${currencySymbol}${priceListing.toFixed(2)}`;
-	buffPrice.appendChild(buffPriceAsk);
-	buffContainer.appendChild(buffPrice);
+	const buffContainer = html`
+		<a class="betterfloat-buff-container" target="_blank" href="${href}" style="display: flex; margin: 5px 0; cursor: pointer; align-items: center;">
+			${isItemPage ? html`
+				<div style="display: flex; align-items: center; gap: 4px; width: 50%">
+					<img src="${icon}" style="${iconStyle}">
+					<span style="font-size: 14px; font-weight: 700; color: #a3a3cb;">${toTitleCase(source)}</span>
+				</div>
+			` : html`<img src="${icon}" style="${iconStyle}">`}
+			<div class="suggested-price betterfloat-buffprice" style="margin: 2px 0 0 0; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
+				${[MarketSource.Buff, MarketSource.Steam].includes(source) ? html`
+					<span style="color: orange;">Bid ${currencySymbol}${priceOrder?.toFixed(2) ?? 0}</span>
+					<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>
+					<span style="color: greenyellow;">Ask ${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
+				` : html`
+					<span style="color: white;">${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
+				`}
+			</div>
+		</a>
+	`;
 	const parentDiv = container.parentElement;
 	if (parentDiv) {
-		parentDiv.before(buffContainer);
-		// let divider = document.createElement('div');
-		// parentDiv.before(divider);
+		parentDiv.insertAdjacentHTML('beforebegin', buffContainer);
 	}
 }
 
 async function calculateBuffPrice(item: Skinbid.Item) {
 	const buff_name = handleSpecialStickerNames(item.fullName);
 	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex === 0 ? 'Vanilla' : '');
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style);
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style, extensionSettings['skb-pricingsource'] as MarketSource);
 
 	// convert prices to user's currency
 	const currencyRate = await getSkbUserCurrencyRate();

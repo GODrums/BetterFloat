@@ -72,6 +72,19 @@ export function isBuffBannedItem(name: string) {
 	return (!name.includes("Case Hardened") && name.includes("Case")) || name.includes("Capsule") || name.includes("Package") || name.includes("Patch Pack");
 }
 
+export function getMarketURL({ source, buff_name, buff_id = 0 }: { source: MarketSource; buff_name: string; buff_id?: number; }) {
+	switch (source) {
+		case MarketSource.Buff:
+			return buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		case MarketSource.Steam:
+			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
+		case MarketSource.YouPin:
+			return `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
+		case MarketSource.C5Game:
+			return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
+	}
+}
+
 /**
  * Wrapper for price mapping. Returns the price of an item with respect to its style
  * @param buff_name has to follow the exact Buff's naming convention.
