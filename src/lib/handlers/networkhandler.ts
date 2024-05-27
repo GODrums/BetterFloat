@@ -19,7 +19,7 @@ export async function fetchCSBlueGem(type: string, paint_seed: number, currency 
 
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
-	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrenyRates>('currencyrates');
+	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
 	} else {

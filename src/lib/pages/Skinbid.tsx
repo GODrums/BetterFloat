@@ -7,6 +7,7 @@ import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsSelect } from '~lib/components/SettingsSelect';
 import { cn } from '~lib/utils';
 import { ScrollArea, TabsContent } from '../components/Shadcn';
+import { SettingsSource } from '~lib/components/SettingsSource';
 
 export const SkinbidSettings = () => {
 	const [checked] = useStorage('skb-enable');
@@ -30,9 +31,7 @@ export const SkinbidSettings = () => {
 						<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 					</div>
 					<div className="flex flex-col gap-1">
-						<SettingsCard>
-							<SettingsSelect id="skb-pricereference" text="Buff Price Reference" options={['Bid', 'Ask']} />
-						</SettingsCard>
+						<SettingsSource prefix="skb" />
 						<SettingsCard>
 							<SettingsCheckbox
 								id="skb-buffdifference"

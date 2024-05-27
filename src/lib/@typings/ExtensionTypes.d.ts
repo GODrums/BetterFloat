@@ -6,7 +6,11 @@ export namespace Extension {
 		hash: string;
 	};
 
-	export type CustomPriceMapping = {
+	export interface AbstractPriceMapping {
+		[name: string]: any;
+	};
+
+	export interface PriceMappingBuff extends AbstractPriceMapping {
 		[name: string]: {
 			bid: number; // 105
 			ask: number; // 167
@@ -15,12 +19,33 @@ export namespace Extension {
 		};
 	};
 
+	export interface PriceMappingMisc extends AbstractPriceMapping {
+		[name: string]: {
+			price: number;
+			liquidity: number;
+			count: number;
+		};
+	};
+
+	export interface PriceMappingSteam extends AbstractPriceMapping {
+		[name: string]: {
+			bid: number;
+			ask: number;
+			avg30: number;
+			lastsale: {
+				price: number;
+				date: number;
+			};
+			volume: number;
+		};
+	};
+
 	export type ApiBuffResponse = {
-		data: CustomPriceMapping;
+		data: PriceMappingBuff;
 		time: number;
 	};
 
-	export type CurrenyRates = {
+	export type CurrencyRates = {
 		lastUpdate: number;
 		rates: {
 			[currency: string]: number;
@@ -96,12 +121,12 @@ export namespace Extension {
 	type DopplerPrices = {
 		Sapphire: number;
 		Ruby: number;
-		'Black Pearl': number;
+		"Black Pearl": number;
 		Emerald: number;
-		'Phase 1': number;
-		'Phase 2': number;
-		'Phase 3': number;
-		'Phase 4': number;
+		"Phase 1": number;
+		"Phase 2": number;
+		"Phase 3": number;
+		"Phase 4": number;
 	};
 
 	export type CrimsonWebMapping = {
@@ -114,21 +139,21 @@ export namespace Extension {
 		};
 	};
 
-	export type CWWeaponTypes = 'gloves' | 'm9' | 'karambit' | 'nomad';
+	export type CWWeaponTypes = "gloves" | "m9" | "karambit" | "nomad";
 
-	type CWGloveTypes = 'Left Hand' | 'Right Hand' | 'Double Web' | 'Triple Web';
+	type CWGloveTypes = "Left Hand" | "Right Hand" | "Double Web" | "Triple Web";
 
 	// only m9 can have 3 webs
-	type CWKnifeTypes = 'Single Web' | 'Double Web' | 'Triple Web';
+	type CWKnifeTypes = "Single Web" | "Double Web" | "Triple Web";
 
 	// response from api.rums.dev/v1/csfloatstalls/:id
 	export type CustomStallData = {
-		status: 'OK' | 'ERROR';
+		status: "OK" | "ERROR";
 		data: {
 			id: number;
 			stall_id: string;
 			created_at: string;
-			roles: ('Developer' | 'Contributor' | 'Supporter' | 'Enjoyer')[];
+			roles: ("Developer" | "Contributor" | "Supporter" | "Enjoyer")[];
 			options: {
 				video: {
 					mp4: string;
@@ -136,7 +161,7 @@ export namespace Extension {
 					poster: string;
 				};
 				transparent_elements: boolean;
-				'background-color': string;
+				"background-color": string;
 			};
 		};
 	};
@@ -170,7 +195,7 @@ export namespace BlueGem {
 		inspect_backside?: string; // only for CSFloat
 		inspect_playside?: string; // only for CSFloat
 		isStattrak: boolean;
-		origin: 'CSFloat' | 'BroSkins' | 'Buff';
+		origin: "CSFloat" | "BroSkins" | "Buff";
 		pattern: number;
 		price: string;
 		url: string;

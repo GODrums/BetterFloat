@@ -1,5 +1,12 @@
 import { Storage } from '@plasmohq/storage';
 
+export enum MarketSource {
+	Buff = "buff",
+	Steam = "steam",
+	YouPin = "youpin",
+	C5Game = "c5game",
+}
+
 export const ExtensionStorage = {
 	local: new Storage({
 		area: 'local',
@@ -51,6 +58,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-autorefresh': true,
 	'csf-stickerprices': true,
 	'csf-csbluegem': true,
+	'csf-pricingsource': 'buff',
 	'csf-pricereference': 0,
 	'csf-refreshinterval': 0,
 	'csf-floatappraiser': false,
@@ -67,6 +75,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,
 	'sp-ocoapikey': '',
+	'sp-pricingsource': 'buff',
 	'sp-pricereference': 0,
 	'sp-currencyrates': 0,
 	'sp-steamprices': false,
@@ -76,6 +85,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-autoclosepopup': true,
 	'sp-floatcoloring': true,
 	'skb-enable': true,
+	'skb-pricingsource': 'buff',
 	'skb-pricereference': 0,
 	'skb-buffdifference': true,
 	'skb-buffdifferencepercent': false,

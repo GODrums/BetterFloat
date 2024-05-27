@@ -4,6 +4,8 @@ import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-so
 import iconBan from 'data-base64:/assets/icons/ban-solid.svg';
 import iconCamera from 'data-base64:/assets/icons/camera-solid.svg';
 import iconClock from 'data-base64:/assets/icons/clock-solid.svg';
+import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
+import iconC5Game from 'data-base64:/assets/icons/icon-c5game.png';
 import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
 import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
@@ -24,6 +26,8 @@ export const WEBSITE_URL = 'https://betterfloat.com/';
 
 export const ICON_BUFF = iconBuff;
 export const ICON_STEAM = iconSteam;
+export const ICON_YOUPIN = iconYouPin;
+export const ICON_C5GAME = iconC5Game;
 export const ICON_CSFLOAT = iconCsfloat;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;
