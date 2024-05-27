@@ -1,7 +1,6 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
-import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import type { MarketSource } from '~lib/util/storage';
@@ -24,7 +23,6 @@ import {
 	cacheSpItems,
 	cacheSpMinOrderPrice,
 	cacheSpPopupItem,
-	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 

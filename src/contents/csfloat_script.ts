@@ -48,6 +48,7 @@ import {
 	getBuffLink,
 	getBuffPrice,
 	getFloatColoring,
+	getMarketURL,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isBuffBannedItem,
@@ -1669,26 +1670,22 @@ function generatePriceLine(
 	isDoppler: boolean,
 	isPopout: boolean
 ) {
-	let href = '';
+	const href = getMarketURL({source, buff_id, buff_name, phase: (isDoppler ? itemStyle : undefined)});
 	let icon = '';
 	let iconStyle = 'height: 20px; margin-right: 5px;';
 	switch (source) {
 		case MarketSource.Buff:
-			href = buff_id > 0 ? getBuffLink(buff_id, isDoppler ? itemStyle : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 			icon = ICON_BUFF;
 			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
 			break;
 		case MarketSource.Steam:
-			href = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
 			icon = ICON_STEAM;
 			break;
 		case MarketSource.C5Game:
-			href = `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
 			icon = ICON_C5GAME;
 			iconStyle += ' border: 1px solid black; border-radius: 4px;';
 			break;
 		case MarketSource.YouPin:
-			href = `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
 			icon = ICON_YOUPIN;
 			iconStyle += ' border: 1px solid black; border-radius: 4px;';
 			break;

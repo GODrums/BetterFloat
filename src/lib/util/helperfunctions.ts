@@ -72,10 +72,18 @@ export function isBuffBannedItem(name: string) {
 	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
 }
 
-export function getMarketURL({ source, buff_name, buff_id = 0 }: { source: MarketSource; buff_name: string; buff_id?: number }) {
+export function getMarketURL({ source, buff_name, buff_id = 0, phase }: { source: MarketSource; buff_name: string; buff_id?: number; phase?: DopplerPhase }) {
 	switch (source) {
-		case MarketSource.Buff:
-			return buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		case MarketSource.Buff: {
+			if (buff_id === 0) {
+				return `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+			}
+			const baseUrl = `https://buff.163.com/goods/${buff_id}`;
+			if (phase) {
+				return `${baseUrl}#tag_ids=${phaseMapping[buff_id][phase]}`;
+			}
+			return baseUrl;
+		}
 		case MarketSource.Steam:
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
 		case MarketSource.YouPin:

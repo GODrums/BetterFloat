@@ -5,7 +5,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, isDevMode, ocoKeyRegex } from '~lib/util/globals';
-import { Euro, USDollar, delay, formFetch, getBuffLink, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
@@ -294,7 +294,7 @@ async function adjustItemPage(container: Element) {
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id });
+	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? item.style as DopplerPhase : undefined });
 
 	container.setAttribute('data-betterfloat', JSON.stringify({ source, itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
@@ -1082,7 +1082,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_id, buff_name });
+	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? item.style as DopplerPhase : undefined });
 
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
