@@ -45,7 +45,6 @@ import {
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
-	getBuffLink,
 	getBuffPrice,
 	getFloatColoring,
 	getMarketURL,
