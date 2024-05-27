@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import { getBuffItem } from '~contents/skinport_script';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { ICON_BUFF } from '~lib/util/globals';
+import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
 import { waitForElement } from '~lib/util/helperfunctions';
 import { MarketSource, getSetting } from '~lib/util/storage';
 
@@ -41,6 +41,16 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 		return '';
 	};
 	const source = await getSetting('sp-pricingsource') as MarketSource | undefined;
+	let icon = '';
+	if (source === MarketSource.Buff) {
+		icon = ICON_BUFF;
+	} else if (source === MarketSource.Steam) {
+		icon = ICON_STEAM;
+	} else if (source === MarketSource.YouPin) {
+		icon = ICON_YOUPIN;
+	} else if (source === MarketSource.C5Game) {
+		icon = ICON_C5GAME;
+	}
 	
 	for (const item of data.items) {
 		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name), source ?? MarketSource.Buff);
@@ -56,7 +66,7 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 		const totalElement = document.createElement('div');
 		totalElement.classList.add('betterfloat-totalbuffprice');
 		totalElement.setAttribute('style', 'display: flex; align-items: center; margin-left: 10px; gap: 5px');
-		totalElement.innerHTML = `<img src=${ICON_BUFF} style="border: 1px solid #323c47; height: 20px;border-radius: 5px; translate: 0 -1px;" /><span style="color: mediumpurple;">${currency}${total.toFixed(
+		totalElement.innerHTML = `<img src=${icon} style="height: 20px;border-radius: 5px; translate: 0 -1px;" /><span style="color: mediumpurple;">${currency}${total.toFixed(
 			2
 		)}</span>`;
 		countContainer.appendChild(totalElement);
