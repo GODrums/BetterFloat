@@ -294,7 +294,7 @@ async function adjustItemPage(container: Element) {
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? item.style as DopplerPhase : undefined });
+	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
 	container.setAttribute('data-betterfloat', JSON.stringify({ source, itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
@@ -1082,7 +1082,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? item.style as DopplerPhase : undefined });
+	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');

@@ -1670,7 +1670,7 @@ function generatePriceLine(
 	isDoppler: boolean,
 	isPopout: boolean
 ) {
-	const href = getMarketURL({source, buff_id, buff_name, phase: (isDoppler ? itemStyle : undefined)});
+	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	let icon = '';
 	let iconStyle = 'height: 20px; margin-right: 5px;';
 	switch (source) {
