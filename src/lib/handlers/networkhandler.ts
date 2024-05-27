@@ -6,7 +6,7 @@ import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 
 export async function fetchCSBlueGem(type: string, paint_seed: number, currency = 'USD') {
-	return fetch(`https://bluegem.azurewebsites.net/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
+	return fetch(`https://csbluegem.com/api?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
 		.then((res) => res.json())
 		.then((data) => {
 			const { pastSales, patternElement } = {
@@ -19,7 +19,7 @@ export async function fetchCSBlueGem(type: string, paint_seed: number, currency 
 
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
-	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrenyRates>('currencyrates');
+	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
 	} else {

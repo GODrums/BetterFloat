@@ -4,11 +4,11 @@ import Decimal from 'decimal.js';
 import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, isDevMode, ocoKeyRegex } from '~lib/util/globals';
-import { Euro, USDollar, delay, formFetch, getBuffLink, getBuffPrice, getFloatColoring, isBuffBannedItem, waitForElement } from '~lib/util/helperfunctions';
+import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, isDevMode, ocoKeyRegex } from '~lib/util/globals';
+import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
-import { activateHandler } from '../lib/handlers/eventhandler';
+import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 
@@ -17,7 +17,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { z } from 'zod';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import type { IStorage, SPFilter } from '~lib/util/storage';
+import { type IStorage, MarketSource, type SPFilter } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -36,7 +36,7 @@ async function init() {
 	console.time('[BetterFloat] Skinport init timer');
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
-	activateHandler();
+	await activateHandler();
 
 	extensionSettings = await getAllSettings();
 	console.debug('[BetterFloat] Settings: ', extensionSettings);
@@ -47,8 +47,10 @@ async function init() {
 		return;
 	}
 
+	await initPriceMapping(extensionSettings['sp-pricingsource'] as MarketSource);
+
 	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping();
+	await loadMapping(extensionSettings['sp-pricingsource'] as MarketSource);
 	console.groupEnd();
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
@@ -287,19 +289,18 @@ async function adjustItemPage(container: Element) {
 	await waitForElement('.ItemPage-image > img');
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
-	const buffItem = await getBuffItem(item.full_name, item.style);
+	const source = extensionSettings['sp-pricingsource'] as MarketSource;
+	const buffItem = await getBuffItem(item.full_name, item.style, source);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
-	const buffLink =
-		buff_id > 0
-			? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
-			: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buffItem.buff_name)}`;
 
-	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
+	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+
+	container.setAttribute('data-betterfloat', JSON.stringify({ source, itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
-		window.open(buffLink, '_blank');
+		window.open(href, '_blank');
 	};
 	buffButton.type = 'button';
 	buffButton.textContent = 'Buff';
@@ -316,24 +317,21 @@ async function adjustItemPage(container: Element) {
 		(<HTMLElement>buffContainer).onclick = (e: Event) => {
 			e.stopPropagation();
 			e.preventDefault();
-			window.open(buffLink, '_blank');
+			window.open(href, '_blank');
 		};
 	}
 
-	const priceFromReference = extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
-	const difference = item.price - priceFromReference;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
+	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
 		const newContainer = html`
 			<div class="ItemPage-discount betterfloat-discount-container" style="background: linear-gradient(135deg, #0073d5, ${
-				difference === 0 ? extensionSettings['sp-color-neutral'] : difference < 0 ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
+				difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 			}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;">
-				<span style="margin: 5px; font-weight: 700;">${difference === 0 ? `-${item.currency}0` : (difference > 0 ? '+' : '-') + item.currency + Math.abs(difference).toFixed(2)} (${new Decimal(
-					item.price
-				)
-					.div(priceFromReference)
-					.mul(100)
-					.toFixed(2)}%)</span>
+				<span style="margin: 5px; font-weight: 700;">${
+					difference.isZero() ? `-${item.currency}0` : (difference.isPos() ? '+' : '-') + item.currency + difference.abs().toFixed(2)
+				} (${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span>
 			</div>
 		`;
 		priceContainer.insertAdjacentHTML('beforeend', newContainer);
@@ -417,7 +415,7 @@ async function adjustItem(container: Element) {
 	}
 
 	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
-		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference.toNumber());
+		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
 	}
 	if (extensionSettings['sp-floatcoloring']) {
 		await addFloatColoring(container, item);
@@ -566,26 +564,22 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	return nameCheck || priceCheck || typeCheck || newCheck;
 }
 
-async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: number, isItemPage = false) {
+async function addStickerInfo(container: Element, item: Skinport.Listing, selector: ItemSelectors, price_difference: Decimal, isItemPage = false) {
 	const stickers = item.stickers;
 	if (item.stickers.length === 0 || item.text.includes('Agent') || item.text.includes('Souvenir')) {
 		return;
 	}
-	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, extensionSettings['sp-pricingsource'] as MarketSource)));
 
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
 
-	const priceSum = convertCurrency(
-		stickerPrices.reduce((a, b) => a + b.starting_at, 0),
-		currencyRate,
-		settingRate
-	);
-	const spPercentage = price_difference / priceSum;
+	const priceSum = convertCurrency(new Decimal(stickerPrices.reduce((a, b) => a + b.starting_at, 0)), currencyRate, settingRate);
+	const spPercentage = new Decimal(price_difference).div(priceSum);
 
 	const itemInfoDiv = container.querySelector(selector.info);
 	// don't display SP if total price is below $1
-	if (itemInfoDiv && priceSum >= 2) {
+	if (itemInfoDiv && priceSum.gt(2)) {
 		if (isItemPage) {
 			const wrapperDiv = document.createElement('div');
 			wrapperDiv.style.display = 'flex';
@@ -594,10 +588,10 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 				itemInfoDiv.removeChild(itemInfoDiv.firstChild);
 				wrapperDiv.appendChild(h3);
 			}
-			wrapperDiv.appendChild(generateSpStickerContainer(priceSum, spPercentage, item.currency, true));
+			wrapperDiv.appendChild(generateSpStickerContainer(priceSum.toDP(2).toNumber(), spPercentage.toNumber(), item.currency, true));
 			itemInfoDiv.firstChild?.before(wrapperDiv);
 		} else {
-			itemInfoDiv.before(generateSpStickerContainer(priceSum, spPercentage, item.currency));
+			itemInfoDiv.before(generateSpStickerContainer(priceSum.toDP(2).toNumber(), spPercentage.toNumber(), item.currency));
 		}
 	}
 }
@@ -751,38 +745,69 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	};
 }
 
-export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
-	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle);
+export async function getBuffItem(buff_name: string, itemStyle: ItemStyle, source: MarketSource) {
+	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle, source);
 
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
-	priceListing = convertCurrency(priceListing, currencyRate, settingRate);
-	priceOrder = convertCurrency(priceOrder, currencyRate, settingRate);
-	priceAvg30 = convertCurrency(priceAvg30, currencyRate, settingRate);
+	if (priceListing) {
+		priceListing = convertCurrency(priceListing, currencyRate, settingRate);
+	}
+	if (priceOrder) {
+		priceOrder = convertCurrency(priceOrder, currencyRate, settingRate);
+	}
+	if (priceAvg30) {
+		priceAvg30 = convertCurrency(priceAvg30, currencyRate, settingRate);
+	}
 
 	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity };
 }
 
-function convertCurrency(price: number, currencyRate: number, settingRate: string) {
-	const conversion = (price: Decimal, setting: string) => {
-		return setting === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
-	};
-	return conversion(new Decimal(price), settingRate).toDP(2).toNumber();
+function convertCurrency(price: Decimal, currencyRate: number, settingRate: string) {
+	return settingRate === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: number, priceOrder: number, currencySymbol: string, containerIsParent = false) {
+function generateBuffContainer(container: HTMLElement, priceListing: Decimal, priceOrder: Decimal, currencySymbol: string, source: MarketSource, containerIsParent = false) {
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currencySymbol, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	let icon = '';
+	let iconStyle = 'height: 22px; margin-right: 5px; border-radius: 5px;';
+	switch (source) {
+		case MarketSource.Buff:
+			icon = ICON_BUFF;
+			iconStyle += 'border: 1px solid #323c47;';
+			break;
+		case MarketSource.Steam:
+			icon = ICON_STEAM;
+			break;
+		case MarketSource.C5Game:
+			icon = ICON_C5GAME;
+			iconStyle += 'border: 1px solid #323c47;';
+			break;
+		case MarketSource.YouPin:
+			icon = ICON_YOUPIN;
+			iconStyle += 'border: 1px solid #323c47;';
+			break;
+	}
+
 	const buffContainer = html`
 		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
-			<img src="${ICON_BUFF}" style="border: 1px solid #323c47; height: 22px; margin-right: 5px; border-radius: 5px">
+			<img src="${icon}" style="${iconStyle}">
 			<div class="suggested-price betterfloat-buffprice" data-betterfloat='${JSON.stringify({ priceListing, priceOrder, currencySymbol })}'>
-				<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
-				<span style="color: orange; font-weight: 600;">${priceOrder < 100 && 'Bid '}${CurrencyFormatter.format(priceOrder)}</span>
-				<span style="color: gray;margin: 0 3px 0 3px;">|</span>
-				<span style="color: greenyellow; font-weight: 600;">${priceOrder < 100 && 'Ask '}${CurrencyFormatter.format(priceListing)}</span>
 				${
-					priceOrder > priceListing &&
+					[MarketSource.Buff, MarketSource.Steam].includes(source)
+						? html`
+					<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
+					<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
+					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
+					<span style="color: greenyellow; font-weight: 600;">${priceOrder?.lt(100) && 'Ask '}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
+				`
+						: html`
+					<span style="color: white; font-weight: 600;">${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
+				`
+				}
+				${
+					priceOrder?.gt(priceListing ?? 0) &&
 					html`
 					<img src="${ICON_EXCLAMATION}" style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
 				`
@@ -1033,11 +1058,12 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
-	await loadMapping();
-	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style);
-	const buff_id = await getBuffMapping(buff_name);
+	const source = extensionSettings['sp-pricingsource'] as MarketSource;
+	await loadMapping(source);
+	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style, source);
+	const buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
 
-	if (isBuffBannedItem(buff_name)) {
+	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
 		return { price_difference: new Decimal(0) };
 	}
 
@@ -1047,29 +1073,23 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		if (!priceDiv) {
 			const priceParent = container.querySelector('.ItemPreview-priceValue');
-			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, true);
+			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, source, true);
 			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
 		} else {
-			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencyRate);
+			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencyRate, source);
 		}
 	}
 
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const buffHref =
-		buff_id > 0 ? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {
-			const buffLink = document.createElement('a');
-			buffLink.className = 'ItemPreview-sideAction betterfloat-bufflink';
-			buffLink.style.borderRadius = '0';
-			buffLink.style.width = '60px';
-			buffLink.target = '_blank';
-			buffLink.innerText = 'Buff';
-			buffLink.href = buffHref;
+			const buffLink = html`<a class="ItemPreview-sideAction betterfloat-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
 			if (!container.querySelector('.betterfloat-bufflink')) {
-				presentationDiv.after(buffLink);
+				presentationDiv.insertAdjacentHTML('afterend', buffLink);
 			}
 		}
 	} else {
@@ -1078,43 +1098,46 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 			(<HTMLElement>buffContainer).onclick = (e: Event) => {
 				e.stopPropagation();
 				e.preventDefault();
-				window.open(buffHref, '_blank');
+				window.open(href, '_blank');
 			};
 		}
 	}
 
-	const priceFromReference = extensionSettings['sp-pricereference'] === 1 ? priceListing : priceOrder;
-	const difference = new Decimal(item.price).minus(priceFromReference);
-	const percentage = new Decimal(item.price).div(priceFromReference).mul(100);
-	if ((extensionSettings['sp-buffdifference'] || extensionSettings['sp-buffdifferencepercent']) && location.pathname !== '/myitems/inventory' && !location.pathname.startsWith('/sell/')) {
-		let discountContainer = container.querySelector<HTMLElement>('.ItemPreview-discount');
-		if (!discountContainer || !discountContainer.firstChild) {
-			discountContainer = document.createElement('div');
-			discountContainer.className = 'GradientLabel ItemPreview-discount';
-			const newSaleTag = document.createElement('span');
-			discountContainer.appendChild(newSaleTag);
-			container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
-		}
-		const saleTag = discountContainer.firstChild as HTMLElement;
-		if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag')) {
-			saleTag.className = 'sale-tag betterfloat-sale-tag';
-			discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
-				difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
-			})`;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? priceOrder : priceListing;
+	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
+	const percentage = new Decimal(item.price).div(priceFromReference ?? item.price).mul(100);
+	if ((!extensionSettings['sp-buffdifference'] && !extensionSettings['sp-buffdifferencepercent']) || location.pathname === '/myitems/inventory' || location.pathname.startsWith('/sell/')) {
+		return {
+			price_difference: difference,
+		};
+	}
+	let discountContainer = container.querySelector<HTMLElement>('.ItemPreview-discount');
+	if (!discountContainer || !discountContainer.firstChild) {
+		discountContainer = document.createElement('div');
+		discountContainer.className = 'GradientLabel ItemPreview-discount';
+		const newSaleTag = document.createElement('span');
+		discountContainer.appendChild(newSaleTag);
+		container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
+	}
+	const saleTag = discountContainer.firstChild as HTMLElement;
+	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
+		saleTag.className = 'sale-tag betterfloat-sale-tag';
+		discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
+			difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
+		})`;
 
-			const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;';
+		const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;';
 
-			const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
-			const buffPriceHTML = html`
+		const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
+		const buffPriceHTML = html`
 				<div style="${saleTagStyle}">
 					${extensionSettings['sp-buffdifference'] ? `<span>${difference.isPos() ? '+' : '-'}${item.currency}${difference.abs().toFixed(difference.gt(1000) ? 1 : 2)}</span>` : ''}${
 						extensionSettings['sp-buffdifferencepercent'] ? `<span>${extensionSettings['sp-buffdifference'] ? `(${percentageText})` : percentageText}</span>` : ''
 					}
 				</div>
 			`;
-			saleTag.innerHTML = buffPriceHTML;
-			saleTag.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference, difference, percentage }));
-		}
+		saleTag.innerHTML = buffPriceHTML;
+		saleTag.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference, difference, percentage }));
 	}
 
 	return {

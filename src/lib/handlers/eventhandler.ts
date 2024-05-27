@@ -1,7 +1,9 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
+import { sendToBackground } from '@plasmohq/messaging';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
+import type { MarketSource } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
@@ -21,7 +23,6 @@ import {
 	cacheSpItems,
 	cacheSpMinOrderPrice,
 	cacheSpPopupItem,
-	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 
@@ -34,7 +35,7 @@ type SkinportWebsocketData = {
 	data: Skinport.Item[];
 };
 
-export function activateHandler() {
+export async function activateHandler() {
 	// important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879
 	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', (e) => {
 		const eventData = (<CustomEvent>e).detail;
@@ -61,41 +62,28 @@ export function activateHandler() {
 	}
 
 	urlHandler();
+}
 
-	//listener for messages from background
-	chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-		if (request.message === 'refreshPrices') {
-			loadMapping().then((value) => {
-				if (value) {
-					console.log('[BetterFloat] Prices refreshed manually via popup.');
-					sendResponse({ message: 'Prices fetched successfully.' });
-				} else {
-					console.log('[BetterFloat] Error refreshing prices manually.');
-					sendResponse({ message: 'Error while fetching prices.' });
-				}
-			});
-		}
-	});
+export async function initPriceMapping(source: MarketSource) {
+	const updateSetting = `${source}-update`;
+	const storageData = await chrome.storage.local.get(updateSetting);
+	const lastUpdate = storageData[updateSetting] ?? 0;
+	console.debug('[BetterFloat] Last update: ', updateSetting, lastUpdate);
+	// if lastUpdate is older than 1 hour, refresh prices
+	if (lastUpdate < Date.now() - 1000 * 60 * 60) {
+		console.time('[BetterFloat] PriceRefresh');
+		console.debug('[BetterFloat] Prices are older than 1 hour, last update:', new Date(lastUpdate), '. Refreshing prices...');
 
-	// refresh prices if they are older than 1 hour
-	chrome.storage.local.get('lastUpdate', (result) => {
-		let lastUpdate = result.lastUpdate;
-		if (lastUpdate === undefined) {
-			lastUpdate = 0;
-		}
-		// if lastUpdate is older than 1 hour, refresh prices
-		if (lastUpdate < Date.now() - 1000 * 60 * 60) {
-			console.debug('[BetterFloat] Prices are older than 1 hour, last update:', new Date(lastUpdate), '. Refreshing prices...');
-			// send message to background to fetch and store new prices
-			chrome.runtime.sendMessage({ message: 'fetchPrices' }, (response) => {
-				if (!response) return;
-				console.debug('[BetterFloat] Prices refresh result: ' + response.message);
-				if (response.success) {
-					chrome.storage.local.set({ lastUpdate: Date.now() });
-				}
-			});
-		}
-	});
+		const response: { status: number } = await sendToBackground({
+			name: 'refreshPrices',
+			body: {
+				source: source ?? 'buff',
+			},
+		});
+
+		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+		console.timeEnd('[BetterFloat] PriceRefresh');
+	}
 }
 
 function processSkinbidEvent(eventData: EventData<unknown>) {

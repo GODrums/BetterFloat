@@ -17,6 +17,7 @@ import { SettingsCheckbox } from '~lib/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsSelect } from '~lib/components/SettingsSelect';
+import { SettingsSource } from '~lib/components/SettingsSource';
 import { cn } from '~lib/utils';
 import { ScrollArea, TabsContent } from '../components/Shadcn';
 
@@ -53,9 +54,7 @@ export const CSFloatSettings = () => {
 						<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 					</div>
 					<div className="flex flex-col gap-1">
-						<SettingsCard>
-							<SettingsSelect id="csf-pricereference" text="Buff Price Reference" options={['Bid', 'Ask']} />
-						</SettingsCard>
+						<SettingsSource prefix="csf" />
 						<SettingsCard>
 							<SettingsCheckbox id="csf-steamlink" text="Link to Steam Market Page" icon={<MdiSteam className="h-6 w-6" />} />
 						</SettingsCard>
@@ -65,16 +64,16 @@ export const CSFloatSettings = () => {
 						<SettingsCard>
 							<SettingsCheckbox
 								id="csf-buffdifference"
-								text="Show Buff Price Difference"
-								tooltipText="Recalculates and replaces the original discount tag according to the item's Buff price in absolute units."
+								text="Show Price Difference"
+								tooltipText="Recalculates and replaces the original discount tag according to the item's market price in absolute units."
 								icon={<IcOutlineDiscount className="h-6 w-6" />}
 							/>
 						</SettingsCard>
 						<SettingsCard>
 							<SettingsCheckbox
 								id="csf-buffdifferencepercent"
-								text="Show Buff Price Percentage Difference"
-								tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%."
+								text="Show Price Percentage Difference"
+								tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the market price in percentage. Price equality equates to 100%."
 								icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 							/>
 						</SettingsCard>

@@ -2,6 +2,7 @@ import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 import { phaseMapping } from './patterns';
+import { MarketSource } from './storage';
 
 export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
 	const baseUrl = `https://buff.163.com/goods/${buff_id}`;
@@ -68,7 +69,28 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
  * @returns
  */
 export function isBuffBannedItem(name: string) {
-	return name.includes('Case') || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
+	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
+}
+
+export function getMarketURL({ source, buff_name, buff_id = 0, phase }: { source: MarketSource; buff_name: string; buff_id?: number; phase?: DopplerPhase }) {
+	switch (source) {
+		case MarketSource.Buff: {
+			if (buff_id === 0) {
+				return `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+			}
+			const baseUrl = `https://buff.163.com/goods/${buff_id}`;
+			if (phase) {
+				return `${baseUrl}#tag_ids=${phaseMapping[buff_id][phase]}`;
+			}
+			return baseUrl;
+		}
+		case MarketSource.Steam:
+			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
+		case MarketSource.YouPin:
+			return `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
+		case MarketSource.C5Game:
+			return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
+	}
 }
 
 /**
@@ -77,33 +99,47 @@ export function isBuffBannedItem(name: string) {
  * @param itemStyle e.g. Vanilla, Phase 1, Phase 2, ...
  * @returns
  */
-export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle) {
-	const priceMapping = await getPriceMapping();
-	let [priceListing, priceOrder, priceAvg30, liquidity] = [0, 0, 0, 0];
+export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, source: MarketSource = MarketSource.Buff) {
+	let queryName = buff_name;
 
-	if (priceMapping[buff_name]) {
-		let queryName = buff_name;
+	if (source === MarketSource.Buff && itemStyle !== '' && itemStyle !== 'Vanilla') {
+		queryName = buff_name + ' - ' + itemStyle;
+	}
 
-		if (itemStyle !== '' && itemStyle !== 'Vanilla') {
-			queryName = buff_name + ' - ' + itemStyle;
+	const values: {
+		priceListing?: Decimal;
+		priceOrder?: Decimal;
+		priceAvg30?: Decimal;
+		liquidity?: Decimal;
+		count?: Decimal;
+	} = {};
+	const priceMapping = await getPriceMapping(source);
+
+	if (priceMapping[queryName]) {
+		const result = priceMapping[queryName];
+
+		if (result['bid'] !== undefined) {
+			values.priceOrder = new Decimal(priceMapping[queryName]['bid'] ?? 0).div(100);
 		}
-
-		priceListing = new Decimal(priceMapping[queryName].ask ?? 0).div(100).toNumber();
-		priceOrder = new Decimal(priceMapping[queryName].bid ?? 0).div(100).toNumber();
-		priceAvg30 = new Decimal(priceMapping[queryName].avg30 ?? 0).div(100).toNumber();
-		liquidity = new Decimal(priceMapping[queryName].liquidity ?? 0).toNumber();
-
-		if (priceListing === undefined) {
-			priceListing = 0;
+		if (result['ask'] !== undefined) {
+			values.priceListing = new Decimal(priceMapping[queryName]['ask']).div(100);
+		} else if (result['price'] !== undefined) {
+			values.priceListing = new Decimal(priceMapping[queryName]['price']).div(100);
 		}
-		if (priceOrder === undefined) {
-			priceOrder = 0;
+		if (result['avg30'] !== undefined) {
+			values.priceAvg30 = new Decimal(priceMapping[queryName]['avg30']).div(100);
+		}
+		if (result['liquidity'] !== undefined) {
+			values.liquidity = new Decimal(priceMapping[queryName]['liquidity']);
+		}
+		if (result['count'] !== undefined) {
+			values.count = new Decimal(priceMapping[queryName]['count']);
 		}
 	} else {
 		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
 	}
 
-	return { priceListing, priceOrder, priceAvg30, liquidity };
+	return values;
 }
 
 // truncats a number to a given amount of digits

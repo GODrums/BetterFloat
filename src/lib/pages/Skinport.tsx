@@ -7,6 +7,7 @@ import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsOCO } from '~lib/components/SettingsOCO';
 import { SettingsSelect } from '~lib/components/SettingsSelect';
+import { SettingsSource } from '~lib/components/SettingsSource';
 import { cn } from '~lib/utils';
 import { ScrollArea, TabsContent } from '../components/Shadcn';
 
@@ -40,9 +41,7 @@ export const SkinportSettings = () => {
 						<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 					</div>
 					<div className="flex flex-col gap-1">
-						<SettingsCard>
-							<SettingsSelect id="sp-pricereference" text="Buff Price Reference" options={['Bid', 'Ask']} />
-						</SettingsCard>
+						<SettingsSource prefix="sp" />
 						<SettingsCard>
 							<SettingsSelect id="sp-currencyrates" text="Currency Conversion" options={['Real', 'Skinport']} />
 						</SettingsCard>

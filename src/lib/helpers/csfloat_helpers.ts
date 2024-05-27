@@ -15,7 +15,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 	await new Promise((resolve) => setTimeout(resolve, 200));
 	const bubbles = document.querySelectorAll('.history .offer-bubble');
 	let buffA = document.querySelector('.betterfloat-buff-a');
-	let buff_data = JSON.parse(buffA.getAttribute('data-betterfloat') ?? '{}');
+	let buff_data = JSON.parse(buffA?.getAttribute('data-betterfloat') ?? '{}');
 
 	// refresh buff tag when item changes
 	if (
@@ -25,7 +25,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 		buffA.remove();
 		await adjustOfferContainer(document.querySelector('app-view-offers .container'));
 		buffA = document.querySelector('.betterfloat-buff-a');
-		buff_data = JSON.parse(buffA.getAttribute('data-betterfloat') ?? '{}');
+		buff_data = JSON.parse(buffA?.getAttribute('data-betterfloat') ?? '{}');
 	}
 
 	if (bubbles.length > offers.length) {

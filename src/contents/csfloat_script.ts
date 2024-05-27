@@ -10,6 +10,7 @@ import {
 	ICON_ARROWUP_SMALL,
 	ICON_BAN,
 	ICON_BUFF,
+	ICON_C5GAME,
 	ICON_CLOCK,
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
@@ -24,9 +25,11 @@ import {
 	ICON_PRICEMPIRE,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
+	ICON_YOUPIN,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { activateHandler } from '../lib/handlers/eventhandler';
+import { genGemContainer } from '~lib/util/uigeneration';
+import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import {
 	getBuffMapping,
 	getCSFCurrencyRate,
@@ -42,21 +45,20 @@ import {
 import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
-	getBuffLink,
 	getBuffPrice,
 	getFloatColoring,
+	getMarketURL,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isBuffBannedItem,
 	toTruncatedString,
 	waitForElement,
 } from '../lib/util/helperfunctions';
-import { genGemContainer } from '../lib/util/uigeneration';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import type { IStorage } from '~lib/util/storage';
-import type { BlueGem, Extension, FadePercentage } from '../lib/@typings/ExtensionTypes';
-import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '../lib/@typings/FloatTypes';
+import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
+import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import { type IStorage, MarketSource } from '~lib/util/storage';
 
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 
@@ -74,6 +76,7 @@ async function init() {
 	if (location.host !== 'csfloat.com') {
 		return;
 	}
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -82,8 +85,10 @@ async function init() {
 
 	if (!extensionSettings['csf-enable']) return;
 
+	await initPriceMapping(extensionSettings['csf-pricingsource'] as MarketSource);
+
 	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping();
+	await loadMapping(extensionSettings['csf-pricingsource'] as MarketSource);
 	console.groupEnd();
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 
@@ -437,13 +442,20 @@ export async function adjustOfferContainer(container: Element) {
 	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
 
 	const userCurrency = CSFloatHelpers.userCurrency();
-	const priceConverter = (price: number) => Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(price);
 
-	const buffContainer = `<a class="betterfloat-buff-a" target="_blank" href="${getBuffLink(
-		buff_id
-	)}" style="display: inline-flex; align-items: center; font-size: 15px;"><img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;"><div class="betterfloat-buffprice"><span style="color: orange;">Bid: ${priceConverter(
-		priceOrder
-	)}</span><span style="color: gray;margin: 0 3px 0 3px;">|</span><span style="color: greenyellow;">Ask: ${priceConverter(priceListing)}</span></div></a>`;
+	const buffContainer = generatePriceLine(
+		extensionSettings['csf-pricingsource'] as MarketSource,
+		buff_id,
+		itemName,
+		priceOrder,
+		priceListing,
+		priceFromReference,
+		userCurrency,
+		'' as DopplerPhase,
+		Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }),
+		false,
+		false
+	);
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
 	const buffA = container.querySelector('.betterfloat-buff-a');
@@ -570,7 +582,8 @@ async function adjustSalesTableRow(container: Element) {
 				style="font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${
 					priceDiff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']
 				}"
-				data-betterfloat="${priceDiff.toDP(2).toNumber()}">
+				data-betterfloat="${priceDiff.toDP(2).toNumber()}"
+			>
 				${priceDiff.isNegative() ? '-' : '+'}${getSymbolFromCurrency(priceData.userCurrency)}${priceDiff.absoluteValue().toDP(2).toNumber()}
 			</div>
 		`;
@@ -645,7 +658,8 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 			const inspectedAt = html`
 				<div
 					class="betterfloat-screenshot-date"
-					style="position: absolute;left: 0;bottom: 25px;background-color: var(--dialog-background);-webkit-backdrop-filter: blur(var(--highlight-blur));backdrop-filter: blur(var(--highlight-blur));padding: 5px 10px;font-size: 14px;border-top-right-radius: 6px;color: var(--subtext-color);z-index: 2;">
+					style="position: absolute;left: 0;bottom: 25px;background-color: var(--dialog-background);-webkit-backdrop-filter: blur(var(--highlight-blur));backdrop-filter: blur(var(--highlight-blur));padding: 5px 10px;font-size: 14px;border-top-right-radius: 6px;color: var(--subtext-color);z-index: 2;"
+				>
 					<span>Inspected at ${date}</span>
 				</div>
 			`;
@@ -656,7 +670,7 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
-	if (popout === POPOUT_ITEM.PAGE) {
+	if (popout === POPOUT_ITEM.PAGE || popout === POPOUT_ITEM.BARGAIN) {
 		await new Promise((r) => setTimeout(r, 500));
 	}
 	const item = getFloatItem(container);
@@ -726,9 +740,9 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (extensionSettings['csf-showingamess'] || popout === POPOUT_ITEM.PAGE) {
 				addItemScreenshot(container, apiItem.item);
 			}
+			addScreenshotListener(container, apiItem.item);
 		}
 		addBargainListener(container);
-		addScreenshotListener(container, apiItem.item);
 	}
 }
 
@@ -1143,7 +1157,8 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 					<a
 						href="${closestSale?.url ?? patternElement?.screenshot ?? ''}"
 						target="_blank"
-						style="vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);">
+						style="vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);"
+					>
 						<mat-icon class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" style="font-size: 20px; width: 20px; height: 20px; color: cyan;"
 							>photo_camera</mat-icon
 						>
@@ -1364,8 +1379,9 @@ async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingDat
 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
+	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const { userCurrency, currencyRate } = await getCurrencyRate();
-	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name)));
+	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, source)));
 
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
 
@@ -1473,27 +1489,31 @@ async function getCurrencyRate() {
 }
 
 async function getBuffItem(item: CSFloat.FloatItem) {
+	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let buff_id = await getBuffMapping(buff_name);
+	let buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
 
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+	const pricingData = await getBuffPrice(buff_name, item.style, source);
 
-	if (isBuffBannedItem(buff_name)) {
-		priceListing = 0;
-		priceOrder = 0;
-		buff_id = 0;
+	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
+		pricingData.priceListing = new Decimal(0);
+		pricingData.priceOrder = new Decimal(0);
+		buff_id = undefined;
 	}
 
 	const { currencyRate } = await getCurrencyRate();
 
-	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
+	let priceFromReference = pricingData.priceOrder && extensionSettings['csf-pricereference'] === 0 ? pricingData.priceOrder : pricingData.priceListing;
+
+	priceFromReference = priceFromReference?.mul(currencyRate);
+
 	return {
 		buff_name: buff_name,
 		buff_id: buff_id,
-		priceListing: priceListing * currencyRate,
-		priceOrder: priceOrder * currencyRate,
-		priceFromReference: priceFromReference * currencyRate,
-		difference: item.price - priceFromReference * currencyRate,
+		priceListing: pricingData.priceListing?.mul(currencyRate),
+		priceOrder: pricingData.priceOrder?.mul(currencyRate),
+		priceFromReference,
+		difference: new Decimal(item.price).minus(priceFromReference ?? 0),
 	};
 }
 
@@ -1504,7 +1524,7 @@ async function addBuffPrice(
 ): Promise<{
 	price_difference: number;
 }> {
-	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
+	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const isSellTab = location.pathname === '/sell';
 	const isPopout = popout === POPOUT_ITEM.PAGE;
 
@@ -1512,41 +1532,28 @@ async function addBuffPrice(
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
-	const itemExists = buff_id > 0 || priceOrder > 0;
+
+	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
+	const itemExists =
+		(source === MarketSource.Buff && (buff_id > 0 || priceOrder?.gt(0))) ||
+		(source === MarketSource.Steam && (priceListing || priceOrder)) ||
+		(source === MarketSource.C5Game && priceListing) ||
+		(source === MarketSource.YouPin && priceListing);
+
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
-		const isWarning = priceOrder > priceListing;
-		const extendedDisplay = priceOrder < 100 && priceListing < 100 && !isWarning;
-		const buffContainer = html`
-			<a
-				class="betterfloat-buff-a"
-				href="${
-					buff_id > 0
-						? getBuffLink(buff_id, isDoppler ? (item.style as DopplerPhase) : undefined)
-						: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`
-				}"
-				target="_blank"
-				style="display: inline-flex; align-items: center; font-size: 15px;">
-				<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
-				<div class="betterfloat-buffprice ${isPopout && 'betterfloat-big-price'}" data-betterfloat="${JSON.stringify({ buff_name, priceFromReference, userCurrency })}">
-					<span class="betterfloat-buff-tooltip">
-						Bid: Highest buy order price;
-						<br />
-						Ask: Lowest listing price
-					</span>
-					<span style="color: orange;"> ${extendedDisplay && 'Bid '}${CurrencyFormatter.format(priceOrder)} </span>
-					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
-					<span style="color: greenyellow;"> ${extendedDisplay && 'Ask '}${CurrencyFormatter.format(priceListing)} </span>
-				</div>
-				${
-					isWarning &&
-					html`
-					<img
-						src="${ICON_EXCLAMATION}"
-						style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
-				`
-				}
-			</a>
-		`;
+		const buffContainer = generatePriceLine(
+			source,
+			buff_id,
+			buff_name,
+			priceOrder,
+			priceListing,
+			priceFromReference,
+			userCurrency,
+			item.style as DopplerPhase,
+			CurrencyFormatter,
+			isDoppler,
+			isPopout
+		);
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
@@ -1575,7 +1582,7 @@ async function addBuffPrice(
 		extensionSettings['csf-buffdifference'] &&
 		!priceContainer.querySelector('.betterfloat-sale-tag') &&
 		item.price !== 0 &&
-		(priceFromReference > 0 || item.price < 0.06) &&
+		(priceFromReference?.isPositive() || item.price < 0.06) &&
 		location.pathname !== '/sell' &&
 		itemExists
 	) {
@@ -1592,10 +1599,10 @@ async function addBuffPrice(
 
 		let backgroundColor: string;
 		let differenceSymbol: string;
-		if (difference < 0) {
+		if (difference.isNegative()) {
 			backgroundColor = extensionSettings['csf-color-profit'];
 			differenceSymbol = '-';
-		} else if (difference > 0) {
+		} else if (difference.isPos()) {
 			backgroundColor = extensionSettings['csf-color-loss'];
 			differenceSymbol = '+';
 		} else {
@@ -1608,13 +1615,13 @@ async function addBuffPrice(
 		saleTag.style.backgroundColor = backgroundColor;
 		saleTag.setAttribute('data-betterfloat', String(difference));
 		// tags may get too long, so we may need to break them into two lines
-		const saleDiff = html` <span> ${differenceSymbol}${CurrencyFormatter.format(Math.abs(difference))} </span> `;
+		const saleDiff = html` <span> ${differenceSymbol}${CurrencyFormatter.format(difference.abs().toNumber())} </span> `;
 		let saleTagInner = saleDiff;
-		if (extensionSettings['csf-buffdifferencepercent']) {
+		if (extensionSettings['csf-buffdifferencepercent'] && priceFromReference) {
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
-				saleTagInner += html` <span class="betterfloat-sale-tag-percentage" style="margin-left: 5px;"> (${percentage.toDP(decimalPlaces).toNumber()}%) </span> `;
+				saleTagInner += html`<span class="betterfloat-sale-tag-percentage" style="margin-left: 5px;"> (${percentage.toDP(decimalPlaces).toNumber()}%) </span>`;
 			}
 		}
 		saleTag.innerHTML = saleTagInner;
@@ -1645,8 +1652,84 @@ async function addBuffPrice(
 	}
 
 	return {
-		price_difference: difference,
+		price_difference: difference.toNumber(),
 	};
+}
+
+function generatePriceLine(
+	source: MarketSource,
+	buff_id: number,
+	buff_name: string,
+	priceOrder: Decimal | undefined,
+	priceListing: Decimal | undefined,
+	priceFromReference: Decimal,
+	userCurrency: string,
+	itemStyle: DopplerPhase,
+	CurrencyFormatter: Intl.NumberFormat,
+	isDoppler: boolean,
+	isPopout: boolean
+) {
+	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? itemStyle : undefined });
+	let icon = '';
+	let iconStyle = 'height: 20px; margin-right: 5px;';
+	switch (source) {
+		case MarketSource.Buff:
+			icon = ICON_BUFF;
+			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
+			break;
+		case MarketSource.Steam:
+			icon = ICON_STEAM;
+			break;
+		case MarketSource.C5Game:
+			icon = ICON_C5GAME;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+		case MarketSource.YouPin:
+			icon = ICON_YOUPIN;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+	}
+	const isWarning = priceOrder?.gt(priceListing ?? 0);
+	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
+	const buffContainer = html`
+			<a
+				class="betterfloat-buff-a"
+				href="${href}"
+				target="_blank"
+				style="display: inline-flex; align-items: center; font-size: 15px;"
+			>
+				<img src="${icon}" style="${iconStyle}" />
+				<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
+					${
+						[MarketSource.Buff, MarketSource.Steam].includes(source)
+							? html`
+						<span class="betterfloat-buff-tooltip">
+							Bid: Highest buy order price;
+							<br />
+							Ask: Lowest listing price
+						</span>
+						<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
+						<span style="color: gray;margin: 0 3px 0 3px;">|</span>
+						<span style="color: greenyellow;"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
+					`
+							: html`
+						<span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
+					`
+					}
+				</div>
+				${
+					(source === MarketSource.Buff || source === MarketSource.Steam) && isWarning
+						? html`
+					<img
+						src="${ICON_EXCLAMATION}"
+						style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);"
+					/>
+				`
+						: ''
+				}
+			</a>
+		`;
+	return buffContainer;
 }
 
 function createBuffName(item: CSFloat.FloatItem): string {

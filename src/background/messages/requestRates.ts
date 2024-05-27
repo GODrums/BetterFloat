@@ -4,11 +4,11 @@ import { ExtensionStorage } from '~lib/util/storage';
 
 type RatesResponse = {
 	status: number;
-	rates: Extension.CurrenyRates['rates'];
+	rates: Extension.CurrencyRates['rates'];
 };
 
 const storageFallback = async () => {
-	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrenyRates>('currencyrates');
+	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (!currencyRates?.rates) {
 		await ExtensionStorage.local.setItem('currencyrates', DEFAULT_CURRENCY_RATES);
 		return DEFAULT_CURRENCY_RATES;
@@ -25,7 +25,7 @@ const handler: PlasmoMessaging.MessageHandler<null, RatesResponse> = async (_req
 		},
 	});
 
-	let currencyRates: Extension.CurrenyRates | null = null;
+	let currencyRates: Extension.CurrencyRates | null = null;
 	if (!response.ok) {
 		currencyRates = await storageFallback();
 		res.send({
@@ -53,7 +53,7 @@ const handler: PlasmoMessaging.MessageHandler<null, RatesResponse> = async (_req
 	});
 };
 
-const DEFAULT_CURRENCY_RATES: Extension.CurrenyRates = {
+const DEFAULT_CURRENCY_RATES: Extension.CurrencyRates = {
 	lastUpdate: 1713917552461,
 	rates: {
 		AUD: 1.5409801753,

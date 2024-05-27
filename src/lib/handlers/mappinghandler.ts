@@ -3,6 +3,7 @@ import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
+import { MarketSource } from '~lib/util/storage';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { CSFloat } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
@@ -15,7 +16,12 @@ import { fetchCurrencyRates } from './networkhandler';
 // maps buff_name to buff_id
 const buffMapping: { [name: string]: number } = buffIds;
 // maps buff_name to prices and more - custom mapping
-let priceMapping: Extension.CustomPriceMapping = {};
+const priceMapping: {
+	buff: Extension.PriceMappingBuff;
+	youpin: Extension.PriceMappingMisc;
+	c5game: Extension.PriceMappingMisc;
+	steam: Extension.PriceMappingSteam;
+} = { buff: {}, youpin: {}, c5game: {}, steam: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 // csfloat: cached items from api
@@ -248,11 +254,11 @@ export function getSpecificSkbItem(auction_hash: string) {
 	return item;
 }
 
-export async function getPriceMapping(): Promise<Extension.CustomPriceMapping> {
-	if (Object.keys(priceMapping).length === 0) {
-		await loadMapping();
+export async function getPriceMapping(source: MarketSource) {
+	if (Object.keys(priceMapping[source]).length === 0) {
+		await loadMapping(source);
 	}
-	return priceMapping;
+	return priceMapping[source];
 }
 
 /**
@@ -260,13 +266,13 @@ export async function getPriceMapping(): Promise<Extension.CustomPriceMapping> {
  * @param buff_name
  * @returns
  */
-export async function getItemPrice(buff_name: string): Promise<{ starting_at: number; highest_order: number }> {
-	if (Object.keys(priceMapping).length === 0) {
-		await loadMapping();
+export async function getItemPrice(buff_name: string, source: MarketSource): Promise<{ starting_at: number; highest_order: number }> {
+	if (Object.keys(priceMapping[source]).length === 0) {
+		await loadMapping(source);
 	}
 	//removing double spaces
 	buff_name = handleSpecialStickerNames(buff_name.replace(/\s+/g, ' '));
-	if (!priceMapping[buff_name]) {
+	if (!priceMapping[source][buff_name]) {
 		console.log(`[BetterFloat] No price mapping found for ${buff_name}`);
 		return {
 			starting_at: 0,
@@ -274,8 +280,8 @@ export async function getItemPrice(buff_name: string): Promise<{ starting_at: nu
 		};
 	}
 	return {
-		starting_at: new Decimal(priceMapping[buff_name].ask ?? 0).div(100).toNumber(),
-		highest_order: new Decimal(priceMapping[buff_name].bid ?? 0).div(100).toNumber(),
+		starting_at: new Decimal(priceMapping[source][buff_name]['ask'] ?? 0).div(100).toNumber(),
+		highest_order: new Decimal(priceMapping[source][buff_name]['bid'] ?? 0).div(100).toNumber(),
 	};
 }
 
@@ -402,29 +408,21 @@ export async function getBuffMapping(name: string) {
 	}
 }
 
-export async function loadMapping() {
-	if (Object.keys(priceMapping).length === 0) {
-		console.debug('[BetterFloat] Attempting to load price mapping from local storage');
+export async function loadMapping(source: MarketSource) {
+	if (Object.keys(priceMapping[source]).length === 0) {
+		console.debug(`[BetterFloat] Attempting to load ${source} price mapping from local storage`);
 
-		const success = await new Promise<boolean>((resolve) => {
-			chrome.storage.local.get('prices', (data) => {
-				if (data?.prices) {
-					priceMapping = JSON.parse(data.prices);
-					resolve(true);
-				} else {
-					resolve(false);
-				}
-			});
-		});
-
-		if (success) {
+		const sourceName = source !== MarketSource.Buff ? `prices_${source}` : 'prices';
+		const data = await chrome.storage.local.get(sourceName);
+		if (data?.[sourceName]) {
+			priceMapping[source] = JSON.parse(data[sourceName]);
 			console.debug('[BetterFloat] Price mapping successfully initialized');
+			return true;
 		} else {
-			console.error('[BetterFloat] Rums.dev price load failed.');
+			console.error('[BetterFloat] Price load failed.');
 			return false;
 		}
 	}
-	return true;
 }
 
 export async function loadCrimsonWebMapping() {

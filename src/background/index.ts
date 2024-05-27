@@ -40,54 +40,54 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 	}
 });
 
-export async function refreshPrices() {
-	// for self builds, make sure to link your own API
-	return await fetch(process.env.PLASMO_PUBLIC_PRICINGAPI, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
-		},
-	})
-		.then((response) => response.json())
-		.then(async (reponseData) => {
-			const data = reponseData as Extension.ApiBuffResponse;
-			console.log('[SkinComparison] Prices fetched from API. Length: ' + Object.keys(data.data).length + ' Time: ' + data.time);
-			//set cookie and wait for finish
-			return await new Promise<boolean>((resolve) => {
-				chrome.storage.local.set({ prices: JSON.stringify(data.data) }).then(() => {
-					console.log(`Prices updated. Current time: ${Date.now()}`);
-					resolve(true);
-				});
-			});
-		})
-		.catch((err) => console.error(err));
-}
+// export async function refreshPrices() {
+// 	// for self builds, make sure to link your own API
+// 	return await fetch(process.env.PLASMO_PUBLIC_PRICINGAPI, {
+// 		method: 'GET',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+// 		},
+// 	})
+// 		.then((response) => response.json())
+// 		.then(async (reponseData) => {
+// 			const data = reponseData as Extension.ApiBuffResponse;
+// 			console.log('[SkinComparison] Prices fetched from API. Length: ' + Object.keys(data.data).length + ' Time: ' + data.time);
+// 			//set cookie and wait for finish
+// 			return await new Promise<boolean>((resolve) => {
+// 				chrome.storage.local.set({ prices: JSON.stringify(data.data) }).then(() => {
+// 					console.log(`Prices updated. Current time: ${Date.now()}`);
+// 					resolve(true);
+// 				});
+// 			});
+// 		})
+// 		.catch((err) => console.error(err));
+// }
 
-chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-	// TODO: Switch to @plasmohq/messaging
-	if (request.message === 'fetchPrices') {
-		console.time('PriceRefresh');
-		refreshPrices().then((value) => {
-			console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
-			if (value) {
-				sendResponse({
-					message: 'Prices fetched successfully.',
-					success: true,
-				});
-			} else {
-				sendResponse({
-					message: 'Error while fetching prices.',
-					success: false,
-				});
-			}
-		});
-		console.timeEnd('PriceRefresh');
-		// this is required to let the message listener wait for the fetch to finish
-		// https://github.com/mozilla/webextension-polyfill/issues/130#issuecomment-484772327
-		return true;
-	}
-});
+// chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+// 	// TODO: Switch to @plasmohq/messaging
+// 	if (request.message === 'fetchPrices') {
+// 		console.time('PriceRefresh');
+// 		refreshPrices().then((value) => {
+// 			console.log('[BetterFloat] Prices refreshed via content script due to time limit.');
+// 			if (value) {
+// 				sendResponse({
+// 					message: 'Prices fetched successfully.',
+// 					success: true,
+// 				});
+// 			} else {
+// 				sendResponse({
+// 					message: 'Error while fetching prices.',
+// 					success: false,
+// 				});
+// 			}
+// 		});
+// 		console.timeEnd('PriceRefresh');
+// 		// this is required to let the message listener wait for the fetch to finish
+// 		// https://github.com/mozilla/webextension-polyfill/issues/130#issuecomment-484772327
+// 		return true;
+// 	}
+// });
 
 const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https://skinbid.com'];
 

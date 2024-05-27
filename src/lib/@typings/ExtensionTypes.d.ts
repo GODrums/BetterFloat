@@ -6,21 +6,46 @@ export namespace Extension {
 		hash: string;
 	};
 
-	export type CustomPriceMapping = {
+	export interface AbstractPriceMapping {
+		[name: string]: any;
+	}
+
+	export interface PriceMappingBuff extends AbstractPriceMapping {
 		[name: string]: {
 			bid: number; // 105
 			ask: number; // 167
 			avg30: number; // 175
 			liquidity: number; // 78.14
 		};
-	};
+	}
+
+	export interface PriceMappingMisc extends AbstractPriceMapping {
+		[name: string]: {
+			price: number;
+			liquidity: number;
+			count: number;
+		};
+	}
+
+	export interface PriceMappingSteam extends AbstractPriceMapping {
+		[name: string]: {
+			bid: number;
+			ask: number;
+			avg30: number;
+			lastsale: {
+				price: number;
+				date: number;
+			};
+			volume: number;
+		};
+	}
 
 	export type ApiBuffResponse = {
-		data: CustomPriceMapping;
+		data: PriceMappingBuff;
 		time: number;
 	};
 
-	export type CurrenyRates = {
+	export type CurrencyRates = {
 		lastUpdate: number;
 		rates: {
 			[currency: string]: number;
