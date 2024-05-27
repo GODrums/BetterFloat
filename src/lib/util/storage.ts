@@ -1,10 +1,10 @@
 import { Storage } from '@plasmohq/storage';
 
 export enum MarketSource {
-	Buff = "buff",
-	Steam = "steam",
-	YouPin = "youpin",
-	C5Game = "c5game",
+	Buff = 'buff',
+	Steam = 'steam',
+	YouPin = 'youpin',
+	C5Game = 'c5game',
 }
 
 export const ExtensionStorage = {

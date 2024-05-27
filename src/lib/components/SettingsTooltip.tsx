@@ -5,14 +5,14 @@ export const SettingsTooltip = ({
 	children,
 	open,
 	className,
-	side = "top",
+	side = 'top',
 	asChild = false,
 }: {
 	text: string;
 	children: React.ReactNode;
 	open?: boolean;
 	className?: string;
-	side?: "top" | "right" | "bottom" | "left";
+	side?: 'top' | 'right' | 'bottom' | 'left';
 	asChild?: boolean;
 }) => {
 	return (

@@ -16,7 +16,7 @@ export const Changelogs = () => {
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
 				<SingleChangelog version="v2.5.0">
-					<li className='text-green-500'>You can now customize the source market for all pricing operations of the extension. Currently available are: Buff, Steam, YouPin, C5Game</li>
+					<li className="text-green-500">You can now customize the source market for all pricing operations of the extension. Currently available are: Buff, Steam, YouPin, C5Game</li>
 					<li>CSFLoat - Fixed a case where all popups had Betterfloat's 'reload required' warning.</li>
 					<li>CSFLoat - Screenshots now display their date of creation.</li>
 				</SingleChangelog>

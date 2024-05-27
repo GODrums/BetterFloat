@@ -28,6 +28,7 @@ import {
 	ICON_YOUPIN,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
+import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import {
 	getBuffMapping,
@@ -53,12 +54,11 @@ import {
 	toTruncatedString,
 	waitForElement,
 } from '../lib/util/helperfunctions';
-import { genGemContainer } from '~lib/util/uigeneration';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import { MarketSource, type IStorage } from '~lib/util/storage';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import { type IStorage, MarketSource } from '~lib/util/storage';
 
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 
@@ -1539,7 +1539,7 @@ async function addBuffPrice(
 		(source === MarketSource.Steam && (priceListing || priceOrder)) ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing);
-		
+
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine(
 			source,

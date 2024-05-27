@@ -5,9 +5,9 @@ import { SettingsCheckbox } from '~lib/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsSelect } from '~lib/components/SettingsSelect';
+import { SettingsSource } from '~lib/components/SettingsSource';
 import { cn } from '~lib/utils';
 import { ScrollArea, TabsContent } from '../components/Shadcn';
-import { SettingsSource } from '~lib/components/SettingsSource';
 
 export const SkinbidSettings = () => {
 	const [checked] = useStorage('skb-enable');

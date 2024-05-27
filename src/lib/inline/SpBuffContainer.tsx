@@ -90,7 +90,7 @@ const SPBuffContainer: React.FC = () => {
 				case MarketSource.C5Game:
 					return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(data.buff_name)}`;
 			}
-		}
+		};
 		window.open(getMarketURL(), '_blank');
 	};
 

@@ -18,11 +18,11 @@ import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
+import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import { MarketSource, type IStorage } from '~lib/util/storage';
-import { html } from 'common-tags';
+import { type IStorage, MarketSource } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
@@ -496,7 +496,7 @@ async function addBuffPrice(
 		buffContainer.style.margin = '20px 0 0 0';
 	}
 
-	const priceFromReference = ([MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['skb-pricereference'] === 0) ? priceOrder : priceListing;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['skb-pricereference'] === 0 ? priceOrder : priceListing;
 	const listingPrice = await getListingPrice(cachedItem);
 	const difference = new Decimal(listingPrice).minus(priceFromReference ?? 0);
 
@@ -628,20 +628,28 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal, pr
 	}
 	const buffContainer = html`
 		<a class="betterfloat-buff-container" target="_blank" href="${href}" style="display: flex; margin: 5px 0; cursor: pointer; align-items: center;">
-			${isItemPage ? html`
+			${
+				isItemPage
+					? html`
 				<div style="display: flex; align-items: center; gap: 4px; width: 50%">
 					<img src="${icon}" style="${iconStyle}">
 					<span style="font-size: 14px; font-weight: 700; color: #a3a3cb;">${toTitleCase(source)}</span>
 				</div>
-			` : html`<img src="${icon}" style="${iconStyle}">`}
+			`
+					: html`<img src="${icon}" style="${iconStyle}">`
+			}
 			<div class="suggested-price betterfloat-buffprice" style="margin: 2px 0 0 0; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
-				${[MarketSource.Buff, MarketSource.Steam].includes(source) ? html`
+				${
+					[MarketSource.Buff, MarketSource.Steam].includes(source)
+						? html`
 					<span style="color: orange;">Bid ${currencySymbol}${priceOrder?.toFixed(2) ?? 0}</span>
 					<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>
 					<span style="color: greenyellow;">Ask ${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
-				` : html`
+				`
+						: html`
 					<span style="color: white;">${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
-				`}
+				`
+				}
 			</div>
 		</a>
 	`;

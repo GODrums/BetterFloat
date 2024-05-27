@@ -17,7 +17,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { z } from 'zod';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { MarketSource, type IStorage, type SPFilter } from '~lib/util/storage';
+import { type IStorage, MarketSource, type SPFilter } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -293,9 +293,9 @@ async function adjustItemPage(container: Element) {
 	const buffItem = await getBuffItem(item.full_name, item.style, source);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
-	
+
 	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id });
-	
+
 	container.setAttribute('data-betterfloat', JSON.stringify({ source, itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
 	const buffButton = document.createElement('button');
@@ -321,7 +321,7 @@ async function adjustItemPage(container: Element) {
 		};
 	}
 
-	const priceFromReference = ([MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0) ? buffItem.priceOrder : buffItem.priceListing;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer) {
@@ -789,21 +789,26 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal, pr
 			iconStyle += 'border: 1px solid #323c47;';
 			break;
 	}
-	
+
 	const buffContainer = html`
 		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
 			<img src="${icon}" style="${iconStyle}">
 			<div class="suggested-price betterfloat-buffprice" data-betterfloat='${JSON.stringify({ priceListing, priceOrder, currencySymbol })}'>
-				${[MarketSource.Buff, MarketSource.Steam].includes(source) ? html`
+				${
+					[MarketSource.Buff, MarketSource.Steam].includes(source)
+						? html`
 					<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
 					<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
 					<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 					<span style="color: greenyellow; font-weight: 600;">${priceOrder?.lt(100) && 'Ask '}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
-				` : html`
+				`
+						: html`
 					<span style="color: white; font-weight: 600;">${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
-				`}
+				`
+				}
 				${
-					priceOrder?.gt(priceListing ?? 0) && html`
+					priceOrder?.gt(priceListing ?? 0) &&
+					html`
 					<img src="${ICON_EXCLAMATION}" style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);" />
 				`
 				}
@@ -1077,7 +1082,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({source, buff_id, buff_name});
+	const href = getMarketURL({ source, buff_id, buff_name });
 
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
@@ -1098,7 +1103,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		}
 	}
 
-	const priceFromReference = ([MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0) ? priceOrder : priceListing;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? priceOrder : priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const percentage = new Decimal(item.price).div(priceFromReference ?? item.price).mul(100);
 	if ((!extensionSettings['sp-buffdifference'] && !extensionSettings['sp-buffdifferencepercent']) || location.pathname === '/myitems/inventory' || location.pathname.startsWith('/sell/')) {

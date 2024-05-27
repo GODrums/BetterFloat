@@ -7,9 +7,9 @@ import { SettingsColorPicker } from '~lib/components/SettingsColorPicker';
 import { SettingsEnable } from '~lib/components/SettingsEnable';
 import { SettingsOCO } from '~lib/components/SettingsOCO';
 import { SettingsSelect } from '~lib/components/SettingsSelect';
+import { SettingsSource } from '~lib/components/SettingsSource';
 import { cn } from '~lib/utils';
 import { ScrollArea, TabsContent } from '../components/Shadcn';
-import { SettingsSource } from '~lib/components/SettingsSource';
 
 export const SkinportSettings = () => {
 	const [checked] = useStorage('sp-enable');

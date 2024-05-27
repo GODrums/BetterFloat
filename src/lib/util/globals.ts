@@ -4,11 +4,11 @@ import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-so
 import iconBan from 'data-base64:/assets/icons/ban-solid.svg';
 import iconCamera from 'data-base64:/assets/icons/camera-solid.svg';
 import iconClock from 'data-base64:/assets/icons/clock-solid.svg';
-import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
 import iconC5Game from 'data-base64:/assets/icons/icon-c5game.png';
 import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
 import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
+import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
 import iconExclamation from 'data-base64:/assets/icons/triangle-exclamation-solid.svg';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
 import iconGemCyan from 'data-base64:/assets/patterns/gem-cyan.svg';

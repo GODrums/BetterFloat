@@ -1,8 +1,8 @@
-import Decimal from "decimal.js";
-import type { DopplerPhase, ItemStyle } from "../@typings/FloatTypes";
-import { getPriceMapping } from "../handlers/mappinghandler";
-import { phaseMapping } from "./patterns";
-import { MarketSource } from "./storage";
+import Decimal from 'decimal.js';
+import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
+import { getPriceMapping } from '../handlers/mappinghandler';
+import { phaseMapping } from './patterns';
+import { MarketSource } from './storage';
 
 export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
 	const baseUrl = `https://buff.163.com/goods/${buff_id}`;
@@ -14,8 +14,8 @@ export function getBuffLink(buff_id: number, phase?: DopplerPhase) {
 
 export async function formFetch<T>(url: string, body: string): Promise<T> {
 	return fetch(url, {
-		method: "POST",
-		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: encodeURI(body),
 	}).then((response) => response.json() as Promise<T>);
 }
@@ -69,10 +69,10 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
  * @returns
  */
 export function isBuffBannedItem(name: string) {
-	return (!name.includes("Case Hardened") && name.includes("Case")) || name.includes("Capsule") || name.includes("Package") || name.includes("Patch Pack");
+	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
 }
 
-export function getMarketURL({ source, buff_name, buff_id = 0 }: { source: MarketSource; buff_name: string; buff_id?: number; }) {
+export function getMarketURL({ source, buff_name, buff_id = 0 }: { source: MarketSource; buff_name: string; buff_id?: number }) {
 	switch (source) {
 		case MarketSource.Buff:
 			return buff_id > 0 ? `https://buff.163.com/goods/${buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
@@ -94,8 +94,8 @@ export function getMarketURL({ source, buff_name, buff_id = 0 }: { source: Marke
 export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, source: MarketSource = MarketSource.Buff) {
 	let queryName = buff_name;
 
-	if (source === MarketSource.Buff && itemStyle !== "" && itemStyle !== "Vanilla") {
-		queryName = buff_name + " - " + itemStyle;
+	if (source === MarketSource.Buff && itemStyle !== '' && itemStyle !== 'Vanilla') {
+		queryName = buff_name + ' - ' + itemStyle;
 	}
 
 	const values: {
@@ -109,7 +109,7 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, sour
 
 	if (priceMapping[queryName]) {
 		const result = priceMapping[queryName];
-		
+
 		if (result['bid'] !== undefined) {
 			values.priceOrder = new Decimal(priceMapping[queryName]['bid'] ?? 0).div(100);
 		}
@@ -137,7 +137,7 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, sour
 // truncats a number to a given amount of digits
 export function toTruncatedString(num: number, digits: number) {
 	const regex = new RegExp(`^-?\\d+(?:\\.\\d{0,${digits}})?`).exec(num.toString());
-	return regex ? regex[0] : "";
+	return regex ? regex[0] : '';
 }
 
 /**
@@ -146,11 +146,11 @@ export function toTruncatedString(num: number, digits: number) {
  * @returns
  */
 export function toTitleCase(str: string) {
-	const splitStr = str.toLowerCase().split(" ");
+	const splitStr = str.toLowerCase().split(' ');
 	for (let i = 0; i < splitStr.length; i++) {
 		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
 	}
-	return splitStr.join(" ");
+	return splitStr.join(' ');
 }
 
 /**
@@ -165,48 +165,48 @@ export function calculateTime(created_at: string, timeOffset = 0) {
 	};
 	const timeMin = timeDiff(created_at);
 	const timeHours = Math.floor(timeMin / 60);
-	let textTime = "";
+	let textTime = '';
 	if (timeHours < 49) {
 		if (timeMin < 120) {
-			textTime = `${timeMin} minute${timeMin === 1 ? "" : "s"} ago`;
+			textTime = `${timeMin} minute${timeMin === 1 ? '' : 's'} ago`;
 		} else {
-			textTime = `${timeHours} hour${timeHours === 1 ? "" : "s"} ago`;
+			textTime = `${timeHours} hour${timeHours === 1 ? '' : 's'} ago`;
 		}
 	} else {
-		textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) === 1 ? "" : "s"} ago`;
+		textTime = `${Math.floor(timeHours / 24)} day${Math.floor(timeHours / 24) === 1 ? '' : 's'} ago`;
 	}
 	return textTime;
 }
 
 export function getSPBackgroundColor(spPercentage: number) {
 	if (spPercentage < 0.005 || spPercentage > 2) {
-		return "#0003";
+		return '#0003';
 	}
 	if (spPercentage >= 1) {
-		return "rgb(245 0 0 / 40%)";
+		return 'rgb(245 0 0 / 40%)';
 	}
 	if (spPercentage > 0.5) {
-		return "rgb(245 164 0 / 40%)";
+		return 'rgb(245 164 0 / 40%)';
 	}
 	if (spPercentage > 0.25) {
-		return "rgb(244 245 0 / 40%)";
+		return 'rgb(244 245 0 / 40%)';
 	}
-	return "rgb(83 245 0 / 40%)";
+	return 'rgb(83 245 0 / 40%)';
 }
 
 export function handleSpecialStickerNames(name: string): string {
-	if (name.includes("Ninjas in Pyjamas | Katowice 2015")) {
-		return "Sticker | Ninjas in Pyjamas  | Katowice 2015";
-	} else if (name.includes("Vox Eminor | Katowice 2015")) {
-		return "Sticker | Vox Eminor  | Katowice 2015";
-	} else if (name.includes("PENTA Sports | Katowice 2015")) {
-		return "Sticker | PENTA Sports  | Katowice 2015";
-	} else if (name.includes("Ground Rebel | Elite Crew")) {
-		return "Ground Rebel  | Elite Crew";
-	} else if (name.includes("Michael Syfers | FBI Sniper")) {
-		return "Michael Syfers  | FBI Sniper";
-	} else if (name.indexOf("niko") > -1) {
-		return name.substring(0, name.lastIndexOf("|")) + " " + name.substring(name.lastIndexOf("|"), name.length);
+	if (name.includes('Ninjas in Pyjamas | Katowice 2015')) {
+		return 'Sticker | Ninjas in Pyjamas  | Katowice 2015';
+	} else if (name.includes('Vox Eminor | Katowice 2015')) {
+		return 'Sticker | Vox Eminor  | Katowice 2015';
+	} else if (name.includes('PENTA Sports | Katowice 2015')) {
+		return 'Sticker | PENTA Sports  | Katowice 2015';
+	} else if (name.includes('Ground Rebel | Elite Crew')) {
+		return 'Ground Rebel  | Elite Crew';
+	} else if (name.includes('Michael Syfers | FBI Sniper')) {
+		return 'Michael Syfers  | FBI Sniper';
+	} else if (name.indexOf('niko') > -1) {
+		return name.substring(0, name.lastIndexOf('|')) + ' ' + name.substring(name.lastIndexOf('|'), name.length);
 	}
 	return name;
 }
@@ -225,10 +225,10 @@ export function getFloatColoring(
 	h = 1,
 	isVanilla = false,
 	colors = {
-		good: "turquoise",
-		bad: "indianred",
-		perfect: "springgreen",
-		worst: "orangered",
+		good: 'turquoise',
+		bad: 'indianred',
+		perfect: 'springgreen',
+		worst: 'orangered',
 	}
 ): string {
 	// use relative deviation to determine color. 0.2% / 1.3% are used as thresholds
@@ -264,31 +264,31 @@ export function getFloatColoring(
 	} else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
 		return w >= 0.999 ? colors.worst : colors.bad;
 	}
-	return "";
+	return '';
 }
 
-export const USDollar = new Intl.NumberFormat("en-US", {
-	style: "currency",
-	currency: "USD",
+export const USDollar = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'USD',
 	minimumFractionDigits: 0,
 	maximumFractionDigits: 2,
 });
 
-export const BigUSDollar = new Intl.NumberFormat("en-US", {
-	style: "currency",
-	currency: "USD",
+export const BigUSDollar = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'USD',
 	minimumFractionDigits: 0,
 	maximumFractionDigits: 0,
 });
 
-export const Euro = new Intl.NumberFormat("en-DE", {
-	style: "currency",
-	currency: "EUR",
+export const Euro = new Intl.NumberFormat('en-DE', {
+	style: 'currency',
+	currency: 'EUR',
 });
 
 export function convertCurrency(amount: number, currency: string) {
-	return new Intl.NumberFormat("en-US", {
-		style: "currency",
+	return new Intl.NumberFormat('en-US', {
+		style: 'currency',
 		currency: currency,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
