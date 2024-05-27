@@ -16,8 +16,12 @@ export const ExtensionStorage = {
 	}),
 };
 
-export function getSetting(key: keyof IStorage) {
-	return ExtensionStorage.sync.get(key);
+export async function getSetting(key: keyof IStorage) {
+	const setting = await ExtensionStorage.sync.get(key);
+	if (setting.startsWith('"') || setting.startsWith('{') || setting.startsWith('[')) {
+		return JSON.parse(setting);
+	}
+	return setting;
 }
 
 function isNumeric(value: string) {
@@ -42,6 +46,18 @@ export async function getAllSettings() {
 				result = true;
 			} else if (result === 'false') {
 				result = false;
+			} else if (result.includes(MarketSource.Buff)) {
+				result = MarketSource.Buff;
+				ExtensionStorage.sync.set(key, MarketSource.Buff);
+			} else if (result.includes(MarketSource.Steam)) {
+				result = MarketSource.Steam;
+				ExtensionStorage.sync.set(key, MarketSource.Steam);
+			} else if (result.includes(MarketSource.YouPin)) {
+				result = MarketSource.YouPin;
+				ExtensionStorage.sync.set(key, MarketSource.YouPin);
+			} else if (result.includes(MarketSource.C5Game)) {
+				result = MarketSource.C5Game;
+				ExtensionStorage.sync.set(key, MarketSource.C5Game);
 			}
 			settings[key] = result;
 		} else if (settings[key] === 'true') {

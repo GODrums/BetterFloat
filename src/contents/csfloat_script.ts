@@ -1536,7 +1536,7 @@ async function addBuffPrice(
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 	const itemExists =
 		(source === MarketSource.Buff && (buff_id > 0 || priceOrder?.gt(0))) ||
-		(source === MarketSource.Steam && (priceListing || priceOrder)) ||
+		(source === MarketSource.Steam) ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing);
 

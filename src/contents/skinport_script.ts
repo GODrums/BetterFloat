@@ -9,7 +9,7 @@ import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMa
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
@@ -103,7 +103,7 @@ async function firstLaunch() {
 		if (cartContainer) {
 			await adjustCart(cartContainer);
 		}
-	} else if (path.startsWith('/item/') || path.startsWith('/i/')) {
+	} else if (path.startsWith('/item/') || path.startsWith('/i/') || path.startsWith('/myitems/i/')) {
 		const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
 		for (const item of itemPage) {
 			await adjustItemPage(item);
@@ -271,11 +271,14 @@ async function adjustItemPage(container: Element) {
 		newGroup.appendChild(steamButton);
 	}
 
-	let popupItem = getSpPopupItem();
+	const getPopupItem = () => {
+		return (location.pathname.includes('myitems/i/')) ? getSpPopupInventoryItem() : getSpPopupItem();
+	}
+	let popupItem = getPopupItem();
 	let tries = 0;
 	while (!popupItem && tries++ < 5) {
 		await delay(500);
-		popupItem = getSpPopupItem();
+		popupItem = getPopupItem();
 	}
 	if (tries >= 5) {
 		console.error('[BetterFloat] Could not fetch popup item');
@@ -289,6 +292,9 @@ async function adjustItemPage(container: Element) {
 	await waitForElement('.ItemPage-image > img');
 	const item = getSkinportItem(container, itemSelectors.page);
 	if (!item) return;
+	if (item.currency === '') {
+		item.currency = getSymbolFromCurrency(await getSpUserCurrency());
+	}
 	const source = extensionSettings['sp-pricingsource'] as MarketSource;
 	const buffItem = await getBuffItem(item.full_name, item.style, source);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
@@ -348,14 +354,14 @@ async function adjustItemPage(container: Element) {
 			await caseHardenedDetection(container, popupItem.data.item);
 		}
 		const suggestedText = container.querySelector('.ItemPage-suggested');
-		if (suggestedText) {
+		if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
 			const currencySymbol = getSymbolFromCurrency(popupItem.data.item.currency);
 			let formattedPrice = '-';
-			if (popupItem.data.offers?.lowPrice) {
-				const lowPrice = new Decimal(popupItem.data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
+			if ((<Skinport.ItemData>popupItem).data.offers?.lowPrice) {
+				const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
 				formattedPrice = currencySymbol === '€' ? Euro.format(lowPrice) : currencySymbol === '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
 			}
-			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${popupItem.data.offers?.offerCount} offers)`;
+			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
 		}
 	}
 
@@ -1061,6 +1067,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const source = extensionSettings['sp-pricingsource'] as MarketSource;
 	await loadMapping(source);
 	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style, source);
+	// console.log('[BetterFloat] Buff price for ', item.full_name, ': ', priceListing, priceOrder);
 	const buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
 
 	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {

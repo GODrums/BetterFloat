@@ -4,7 +4,7 @@ import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { ICON_BUFF } from '~lib/util/globals';
 import { waitForElement } from '~lib/util/helperfunctions';
-import { getSetting } from '~lib/util/storage';
+import { MarketSource, getSetting } from '~lib/util/storage';
 
 export function addPattern(container: Element, item: Skinport.Item) {
 	if (!item.pattern) return;
@@ -40,10 +40,11 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 		}
 		return '';
 	};
-
+	const source = await getSetting('sp-pricingsource') as MarketSource | undefined;
+	
 	for (const item of data.items) {
-		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name));
-		total += reference === 1 ? buffData.priceListing : buffData.priceOrder;
+		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name), source ?? MarketSource.Buff);
+		total += ([MarketSource.Buff, MarketSource.Steam].includes(source) && reference === 0) ? buffData.priceOrder.toNumber() : buffData.priceListing.toNumber();
 	}
 
 	if (countContainer.querySelector('.betterfloat-totalbuffprice')) {

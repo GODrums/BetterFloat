@@ -64,6 +64,59 @@ export namespace Skinport {
 		total: number;
 	};
 
+	export type InventoryItem = {
+		data: {
+			engagements: {
+				follows: number;
+				views: number;
+			};
+			history: {
+				date: string;
+				price: {
+					currency: string;
+					value: number;
+				};
+				saleId: number;
+				wear: string;
+			}[];
+			item: Item;
+			otherSales: {
+				items: Item[];
+				total: number;
+			};
+			rating: {
+				value: number;
+				votes: number;
+			};
+			recentViewed: {
+				items: Item[];
+				total: number;
+			};
+			recommendedStickers: any[];
+			relatedItems: RelatedItem[];
+			sales: {
+				price: {
+					currency: string;
+					value: number;
+				};
+				count: number;
+			};
+			similarItems: {
+				items: Item[];
+			};
+			trends: {
+				data: {
+					date: number;
+					value: number;
+					volume: number;
+				}[];
+			};
+		};
+		message: string | null;
+		requestId: string;
+		success: boolean;
+	}
+
 	export type ItemData = {
 		data: {
 			history: {

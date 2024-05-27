@@ -40,6 +40,8 @@ let csfloatLocation: CSFloat.Location | null = null;
 let skinportItems: Skinport.Item[] = [];
 // skinport: cached popup item from api
 let skinportPopupItem: Skinport.ItemData | null = null;
+// skinport: cached popup item from api
+let skinportPopupInventoryItem: Skinport.InventoryItem | null = null;
 // skinport: cached currency rates by Skinport: USD -> X
 let skinportRatesFromUSD: { [currency: string]: number } = {};
 // skinport: csrf token
@@ -137,6 +139,10 @@ export function cacheSpPopupItem(data: Skinport.ItemData) {
 	skinportPopupItem = data;
 }
 
+export function cacheSpPopupInventoryItem(data: Skinport.InventoryItem) {
+	skinportPopupInventoryItem = data;
+}
+
 export function cacheSpItems(data: Skinport.Item[]) {
 	if (skinportItems.length > 0) {
 		console.debug('[BetterFloat] Items already cached, deleting items: ', skinportItems);
@@ -219,6 +225,10 @@ export function getCSFPopupItem() {
 
 export function getSpPopupItem() {
 	return skinportPopupItem;
+}
+
+export function getSpPopupInventoryItem() {
+	return skinportPopupInventoryItem;
 }
 
 export function getFirstSpItem() {

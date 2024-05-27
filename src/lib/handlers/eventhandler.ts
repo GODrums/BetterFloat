@@ -22,6 +22,7 @@ import {
 	cacheSkinportCurrencyRates,
 	cacheSpItems,
 	cacheSpMinOrderPrice,
+	cacheSpPopupInventoryItem,
 	cacheSpPopupItem,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
@@ -126,6 +127,8 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 	if (eventData.url.includes('api/browse/730')) {
 		// Skinport.MarketData
 		cacheSpItems((eventData.data as Skinport.MarketData).items);
+	} else if (eventData.url.includes('api/item/inventory')) {
+		cacheSpPopupInventoryItem(eventData.data as Skinport.InventoryItem);
 	} else if (eventData.url.includes('api/item')) {
 		// Skinport.ItemData
 		cacheSpPopupItem(eventData.data as Skinport.ItemData);
