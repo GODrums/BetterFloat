@@ -115,7 +115,7 @@ export namespace Skinport {
 		message: string | null;
 		requestId: string;
 		success: boolean;
-	}
+	};
 
 	export type ItemData = {
 		data: {

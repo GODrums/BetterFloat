@@ -18,7 +18,7 @@ export const ExtensionStorage = {
 
 export async function getSetting(key: keyof IStorage) {
 	const setting = await ExtensionStorage.sync.get(key);
-	if (setting.startsWith('"') || setting.startsWith('{') || setting.startsWith('[')) {
+	if (typeof setting === 'string' && (setting.startsWith('"') || setting.startsWith('{') || setting.startsWith('['))) {
 		return JSON.parse(setting);
 	}
 	return setting;

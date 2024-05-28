@@ -95,7 +95,7 @@ async function handleChange(state: Extension.URLState) {
 		if (state.path === '/search' && state.search.includes('sort_by=most_recent')) {
 			const csfAutorefresh = await getSetting('csf-autorefresh');
 			if (csfAutorefresh) {
-				waitForElement('.refresh > button', { interval: 100 }).then(async (success) => {
+				waitForElement('.refresh > button').then(async (success) => {
 					if (success && !document.querySelector('betterfloat-autorefresh')) {
 						const root = await mountShadowRoot(<CSFAutorefresh />, {
 							tagName: 'betterfloat-autorefresh',

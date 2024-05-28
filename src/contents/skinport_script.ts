@@ -9,7 +9,18 @@ import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMa
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpCSRF, getSpMinOrderPrice, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
+import {
+	getBuffMapping,
+	getFirstSpItem,
+	getItemPrice,
+	getSpCSRF,
+	getSpMinOrderPrice,
+	getSpPopupInventoryItem,
+	getSpPopupItem,
+	getSpUserCurrency,
+	getSpUserCurrencyRate,
+	loadMapping,
+} from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
@@ -272,8 +283,8 @@ async function adjustItemPage(container: Element) {
 	}
 
 	const getPopupItem = () => {
-		return (location.pathname.includes('myitems/i/')) ? getSpPopupInventoryItem() : getSpPopupItem();
-	}
+		return location.pathname.includes('myitems/i/') ? getSpPopupInventoryItem() : getSpPopupItem();
+	};
 	let popupItem = getPopupItem();
 	let tries = 0;
 	while (!popupItem && tries++ < 5) {

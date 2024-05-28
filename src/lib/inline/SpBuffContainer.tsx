@@ -68,14 +68,14 @@ const SPBuffContainer: React.FC = () => {
 					style: 'currency',
 					currency: 'EUR',
 					minimumFractionDigits: 0,
-					maximumFractionDigits: 2
+					maximumFractionDigits: 2,
 				}).format(value);
 			case '$':
 				return new Intl.NumberFormat('en-US', {
 					style: 'currency',
 					currency: 'USD',
 					minimumFractionDigits: 0,
-					maximumFractionDigits: 2
+					maximumFractionDigits: 2,
 				}).format(value);
 			default:
 				return `${data.currency} ${value.toFixed(2)}`;

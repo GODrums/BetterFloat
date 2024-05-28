@@ -1536,7 +1536,7 @@ async function addBuffPrice(
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
 	const itemExists =
 		(source === MarketSource.Buff && (buff_id > 0 || priceOrder?.gt(0))) ||
-		(source === MarketSource.Steam) ||
+		source === MarketSource.Steam ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing);
 
@@ -1562,18 +1562,18 @@ async function addBuffPrice(
 				priceContainer.insertAdjacentHTML('afterend', buffContainer);
 			}
 		}
+	}
 
-		// add link to steam market
-		if (extensionSettings['csf-steamlink']) {
-			const flexGrow = container.querySelector('div.seller-details > div');
-			if (flexGrow) {
-				const steamImg = html`
-					<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank">
-						<img src="${ICON_STEAM}" style="height: 18px; translate: 0px 2px;" />
-					</a>
-				`;
-				flexGrow?.insertAdjacentHTML('afterend', steamImg);
-			}
+	// add link to steam market
+	if (extensionSettings['csf-steamlink'] && buff_name) {
+		const flexGrow = container.querySelector('div.seller-details > div');
+		if (flexGrow) {
+			const steamImg = html`
+				<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank">
+					<img src="${ICON_STEAM}" style="height: 18px; translate: 0px 2px;" />
+				</a>
+			`;
+			flexGrow?.insertAdjacentHTML('afterend', steamImg);
 		}
 	}
 
