@@ -4,7 +4,7 @@ import type { ReactElement, SVGProps } from 'react';
 import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
 import { cn, toast } from '~lib/utils';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Checkbox, Label } from './Shadcn';
+import { Badge, Checkbox, Label } from './Shadcn';
 
 type CheckboxProps = {
 	id: string;
@@ -12,6 +12,7 @@ type CheckboxProps = {
 	icon?: ReactElement<IconProps>;
 	tooltipText?: string;
 	disabled?: boolean;
+	isNew?: boolean;
 };
 
 export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGElement>) {
@@ -25,16 +26,16 @@ export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGEl
 	);
 }
 
-export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled }: CheckboxProps) => {
+export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false }: CheckboxProps) => {
 	const [checked, setChecked] = useStorage(id);
 
-	const labelClass = (text.length > 25 ? 'max-w-32' : 'max-w-40') + ' text-balance leading-5';
+	const width = 190 - ((text.length > 25 || tooltipText || disabled) ? 35 : 0) - (isNew ? 35 : 0);
 
 	return (
 		<div className={cn('flex justify-between items-center align-middle', disabled && 'opacity-50 cursor-not-allowed')}>
 			<div className="flex items-center gap-2">
 				{icon}
-				<Label htmlFor={id} className={labelClass}>
+				<Label htmlFor={id} className="text-balance leading-5" style={{ width: `${width}px` }}>
 					{text}
 				</Label>
 				{disabled && (
@@ -47,6 +48,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled }: Chec
 						<MaterialSymbolsHelpOutline className="h-5 w-5" />
 					</SettingsTooltip>
 				)}
+				{isNew && <Badge className="text-xs font-semibold text-accent">NEW</Badge>}
 			</div>
 			<Checkbox
 				id={id}

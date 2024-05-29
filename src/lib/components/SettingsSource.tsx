@@ -9,7 +9,7 @@ import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from './Icons';
 import { SettingsSelect } from './SettingsSelect';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Button, Card, CardContent, Label } from './Shadcn';
+import { Badge, Button, Card, CardContent, Label } from './Shadcn';
 
 export function MaterialSymbolsLightStorefrontOutline(props: SVGProps<SVGSVGElement>) {
 	return (
@@ -36,7 +36,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 	const [source, setSource] = useStorage(`${prefix}-pricingsource`, (s) => (s === undefined ? MarketSource.Buff : s));
 
 	const sources = [
-		{ text: 'Buff', logo: buffLogo, source: MarketSource.Buff },
+		{ text: 'Buff163', logo: buffLogo, source: MarketSource.Buff },
 		{ text: 'Steam', logo: steamLogo, source: MarketSource.Steam },
 		{ text: 'YouPin / UU', logo: youpinLogo, source: MarketSource.YouPin },
 		{ text: 'C5Game', logo: c5gameLogo, source: MarketSource.C5Game },
@@ -49,6 +49,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 					<div className="flex items-center gap-2">
 						<MaterialSymbolsLightStorefrontOutline className="h-6 w-6" />
 						<Label className="text-balance leading-5">Source Market</Label>
+						<Badge className="text-xs font-semibold text-accent">NEW</Badge>
 					</div>
 					<SettingsTooltip text="Determines the source market for all prices. If you are unsure about this, stick to Buff." asChild>
 						<Button variant="ghost" size="icon" className="size-8 p-1">

@@ -19,8 +19,8 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 
 	// refresh buff tag when item changes
 	if (
-		!buff_data.itemName.includes(document.querySelector('div.prefix').firstChild.textContent.trim()) ||
-		!buff_data.itemName.includes(document.querySelector('div.suffix').firstChild.textContent.trim())
+		!buff_data.itemName?.includes(document.querySelector('div.prefix').firstChild.textContent.trim()) ||
+		!buff_data.itemName?.includes(document.querySelector('div.suffix').firstChild.textContent.trim())
 	) {
 		buffA.remove();
 		await adjustOfferContainer(document.querySelector('app-view-offers .container'));

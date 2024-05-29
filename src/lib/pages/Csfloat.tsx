@@ -90,6 +90,7 @@ export const CSFloatSettings = () => {
 								text="Show In-Game Pictures"
 								icon={<MaterialSymbolsImageOutlineRounded className="h-6 w-6" />}
 								tooltipText="Show in-game screenshots instead of the default preview image. Be careful: this uses a lot of additional bandwith and memory. If your site loads slowly, keep this option turned off."
+								isNew
 							/>
 						</SettingsCard>
 						<SettingsCard>
