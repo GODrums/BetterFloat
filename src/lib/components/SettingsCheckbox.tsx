@@ -29,7 +29,7 @@ export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGEl
 export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false }: CheckboxProps) => {
 	const [checked, setChecked] = useStorage(id);
 
-	const width = 190 - ((text.length > 25 || tooltipText || disabled) ? 35 : 0) - (isNew ? 35 : 0);
+	const width = 190 - (text.length > 25 || tooltipText || disabled ? 35 : 0) - (isNew ? 35 : 0);
 
 	return (
 		<div className={cn('flex justify-between items-center align-middle', disabled && 'opacity-50 cursor-not-allowed')}>

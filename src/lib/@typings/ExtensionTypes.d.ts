@@ -175,33 +175,35 @@ export namespace Extension {
 
 // reponse from https://csbluegem.com/api
 export namespace BlueGem {
-	export type PatternElement = {
-		backside: number;
-		double_sided: number;
-		playside: number;
-		screenshot: string;
-	};
-	export type PastSale = {
-		blue_percent: {
-			backside: number;
-			playside: number;
-			double_sided: number;
-		};
-		csbluegem_screenshot: number;
-		csfloat: string; // csfloat db link
-		date: string;
-		float: number;
-		inspect?: string; // only for Buff
-		inspect_backside?: string; // only for CSFloat
-		inspect_playside?: string; // only for CSFloat
-		isStattrak: boolean;
-		origin: 'CSFloat' | 'BroSkins' | 'Buff';
-		pattern: number;
-		price: string;
-		url: string;
+	export type PatternData = {
+		aq_oiled: string;
+		backside_blue: number;
+		backside_contour_blue: number;
+		backside_contour_purple: number;
+		backside_gold: number;
+		backside_purple: number;
+		playside_blue: number;
+		playside_contour_blue: number;
+		playside_contour_purple: number;
+		playside_gold: number;
+		playside_purple: number;
 	};
 
-	export type Response = [PatternElement, PastSale[]] | [PastSale[]];
+	export type PastSale = {
+		buff_id: number;
+		csfloat: string;
+		float: number;
+		isStattrak: boolean;
+		pattern: number;
+		sale_data: {
+			date: string;
+			inspect?: string; // only for Buff
+			inspect_backside?: string; // only for CSFloat
+			inspect_playside?: string; // only for CSFloat
+			origin: 'CSFloat' | 'BroSkins' | 'Buff';
+			price: string;
+		};
+	};
 }
 
 export interface FadePercentage {

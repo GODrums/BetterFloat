@@ -1,7 +1,7 @@
 import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
 import type { BlueGem } from '../@typings/ExtensionTypes';
 
-export function genGemContainer(patternElement: BlueGem.PatternElement | undefined, mode: 'left' | 'right' = 'left') {
+export function genGemContainer(patternElement: BlueGem.PatternData | undefined, mode: 'left' | 'right' = 'left') {
 	const gemContainer = document.createElement('div');
 	gemContainer.className = 'betterfloat-gem-container';
 	gemContainer.title = 'playside blue% / backside blue%';
@@ -25,7 +25,7 @@ export function genGemContainer(patternElement: BlueGem.PatternElement | undefin
 		if (mode === 'left' && !location.pathname.includes('/item/')) {
 			gemValue.style.fontSize = '13px';
 		}
-		gemValue.textContent = `${patternElement.playside.toFixed(0)}% / ${patternElement.backside.toFixed(0)}%`;
+		gemValue.textContent = `${patternElement.playside_blue.toFixed(0)}% / ${patternElement.backside_blue.toFixed(0)}%`;
 		gemContainer.appendChild(gemValue);
 	}
 	return gemContainer;

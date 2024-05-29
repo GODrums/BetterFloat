@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, isDevMode, ocoKeyRegex } from '~lib/util/globals';
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, isDevMode, ocoKeyRegex } from '~lib/util/globals';
 import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
@@ -21,7 +21,7 @@ import {
 	getSpUserCurrencyRate,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGem, saveOCOPurchase } from '../lib/handlers/networkhandler';
+import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData, saveOCOPurchase } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
@@ -362,7 +362,7 @@ async function adjustItemPage(container: Element) {
 
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
-			await caseHardenedDetection(container, popupItem.data.item);
+			await patternDetections(container, popupItem.data.item, true);
 		}
 		const suggestedText = container.querySelector('.ItemPage-suggested');
 		if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
@@ -460,9 +460,9 @@ function storeItem(container: Element, item: Skinport.Listing) {
 	container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-export async function patternDetections(container: Element, item: Skinport.Item) {
+export async function patternDetections(container: Element, item: Skinport.Item, isItemPage = false) {
 	if (item.name.includes('Case Hardened')) {
-		await caseHardenedDetection(container, item);
+		await caseHardenedDetection(container, item, isItemPage);
 	} else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
 		await webDetection(container, item);
 	}
@@ -477,7 +477,7 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-	const { patternElement } = await fetchCSBlueGem(item.subCategory, item.pattern);
+	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
 	const gemContainer = genGemContainer(patternElement, 'right');
 	gemContainer.style.fontSize = '11px';
 	gemContainer.style.fontWeight = '600';
@@ -485,7 +485,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	itemHeader.after(gemContainer);
 }
 
-async function caseHardenedDetection(container: Element, item: Skinport.Item) {
+async function caseHardenedDetection(container: Element, item: Skinport.Item, isItemPage = false) {
 	if (!item.name.includes('Case Hardened')) return;
 
 	// santized for CSBlueGem's supported currencies, otherwise use USD
@@ -494,7 +494,8 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const { patternElement, pastSales } = await fetchCSBlueGem(item.subCategory, item.pattern, usedCurrency);
+	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
+	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader) return;
@@ -513,26 +514,55 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
-	const tableHeader = `<div class="ItemHistoryList-header"><div>Source</div><div>Date</div><div>Float Value</div><div>Price</div><div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP_SMALL}</a></div></div>`;
+	const tableHeader = html`
+		<div class="ItemHistoryList-header">
+			<div>Source</div>
+			<div>Date</div>
+			<div>Float Value</div>
+			<div>Price</div>
+			<div>
+				<a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;">${ICON_ARROWUP_SMALL}</a>
+			</div>
+		</div>
+	`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
-		tableBody += `<div class="ItemHistoryList-row"${
-			Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''
-		}><div class="ItemHistoryList-col" style="width: 25%;"><img style="height: 24px;" src="${
-			sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF
-		}"></img></div><div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div><div class="ItemHistoryList-col" style="width: 27%;">${
-			sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''
-		}${sale.float}</div><div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div><div><a ${
-			sale.url === 'No Link Available'
-				? 'style="pointer-events: none;cursor: default;"><img src="' +
-					ICON_BAN +
-					'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%); margin-right: 5px;'
-				: 'href="' +
-					(sale.inspect ?? sale.inspect_playside) +
-					'" target="_blank"><img src="' +
-					ICON_CAMERA +
-					'" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
-		}height: 20px;"></img></a></div></div>`;
+		tableBody += html`
+			<div class="ItemHistoryList-row"${Math.abs(item.wear - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''}>
+				<div class="ItemHistoryList-col" style="width: 25%;">
+					<img style="height: 24px; margin-left: 5px;" src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+				</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${sale.sale_data.date}</div>
+				<div class="ItemHistoryList-col" style="width: 27%;">
+					${sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''}
+					${sale.float}
+				</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.sale_data.price}</div>
+				<div style="display: flex; align-items: center; gap: 8px;">
+					${
+						sale.sale_data.inspect
+							? html`
+						<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+							<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+						</a>
+					`
+							: ''
+					}
+					${
+						sale.sale_data.inspect_playside
+							? html`
+						<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+							<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
+						</a>
+						<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+							<img src="${ICON_CAMERA_FLIPPED}" style="filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%); margin-right: 5px; height: 20px;"></img>
+						</a>
+					`
+							: ''
+					}
+				</div>
+			</div>
+		`;
 	}
 	const tableHTML = `<div class="ItemHistoryList">${tableHeader}${tableBody}</div>`;
 	tableTab.innerHTML = tableHTML;

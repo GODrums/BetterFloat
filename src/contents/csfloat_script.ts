@@ -11,6 +11,7 @@ import {
 	ICON_BAN,
 	ICON_BUFF,
 	ICON_C5GAME,
+	ICON_CAMERA_FLIPPED,
 	ICON_CLOCK,
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
@@ -42,7 +43,7 @@ import {
 	getStallData,
 	loadMapping,
 } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGem } from '../lib/handlers/networkhandler';
+import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
 	getBuffPrice,
@@ -59,8 +60,6 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import { type IStorage, MarketSource } from '~lib/util/storage';
-
-import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -1099,9 +1098,9 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
-	if (!item.item_name.includes('Case Hardened')) return;
-	let pastSales: BlueGem.PastSale[] = [];
-	let patternElement: BlueGem.PatternElement | undefined = undefined;
+	if (!item.item_name.includes('Case Hardened') || item.item_name.includes('Gloves') || !item.paint_seed || (!isPopout && item.rarity !== 6)) return;
+
+	let patternElement: BlueGem.PatternData | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
 	let type = '';
@@ -1110,26 +1109,21 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	} else {
 		type = item.item_name.split(' | ')[0];
 	}
+
 	// retrieve the stored data instead of fetching newly
-	if (isPopout) {
+	if (!isPopout) {
+		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed);
+		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+	} else {
 		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
-		if (csbluegem) {
-			const csbluegemData = JSON.parse(csbluegem);
-			pastSales = csbluegemData.pastSales;
-			patternElement = csbluegemData.patternElement;
+		if (csbluegem && csbluegem.length > 0) {
+			patternElement = JSON.parse(csbluegem);
 		}
-	}
-	// if there is no cached data, fetch and store it
-	if (pastSales.length === 0 && !patternElement) {
-		const data = await fetchCSBlueGem(type, item.paint_seed!, userCurrency);
-		pastSales = data.pastSales ?? [];
-		patternElement = data.patternElement;
-		container.setAttribute('data-csbluegem', JSON.stringify({ pastSales, patternElement }));
 	}
 
 	// add gem icon and blue gem percent if item is a knife
-	if (item.rarity === 6 && !item.item_name.includes('Gloves')) {
+	if (item.rarity === 6) {
 		let tierContainer = container.querySelector('.badge-container');
 		if (!tierContainer) {
 			tierContainer = document.createElement('div');
@@ -1144,183 +1138,116 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		tierContainer.appendChild(gemContainer);
 	}
 
-	// add screenshot if csfloat does not offer one
-	const detailButtons = container.querySelector('.detail-buttons');
-	if (detailButtons && !detailButtons.querySelector('div.action')) {
-		// get closest item float-wise that has a screenshot
-		const sortedSales = pastSales.filter((x) => x.url !== 'No Link Available').sort((a, b) => Math.abs(a.float - item.float_value!) - Math.abs(b.float - item.float_value!));
-		if (sortedSales.length > 0 || patternElement?.screenshot) {
-			const closestSale = sortedSales[0];
-			detailButtons.setAttribute('style', 'display: flex;');
-			const ssContainer = html`
-				<div class="bf-tooltip" style="display: flex; align-items: center; justify-content: center;">
-					<a
-						href="${closestSale?.url ?? patternElement?.screenshot ?? ''}"
-						target="_blank"
-						style="vertical-align: middle; color: #9EA7B1; padding: 4px 8px; display: inline-flex; justify-content: center; align-items: center;gap: 4px; cursor: pointer; border-radius: 20px; background-color: #ffffff0a; transition: background-color .3s ease; -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);"
-					>
-						<mat-icon class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color" style="font-size: 20px; width: 20px; height: 20px; color: cyan;"
-							>photo_camera</mat-icon
-						>
-					</a>
-					<div class="bf-tooltip-inner" style="translate: 0px 50px;">
-						<span>Show Buff pattern screenshot</span>
-					</div>
-				</div>
-			`;
-			detailButtons.insertAdjacentHTML('afterbegin', ssContainer);
-		}
+	if (!isPopout) {
+		return;
 	}
 
-	// offer new table with past sales
-	if (isPopout) {
-		const gridHistory = document.querySelector('.grid-history');
-		if (!gridHistory) return;
-		const salesHeader = document.createElement('mat-button-toggle');
-		salesHeader.setAttribute('role', 'presentation');
-		salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
-		salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales.length})</span></button>`;
-		gridHistory.querySelector('mat-button-toggle-group.sort')?.appendChild(salesHeader);
-		salesHeader.addEventListener('click', () => {
-			Array.from(gridHistory.querySelectorAll('mat-button-toggle') ?? []).forEach((element) => {
-				element.className = element.className.replace('mat-button-toggle-checked', '');
-			});
-			salesHeader.className += ' mat-button-toggle-checked';
-
-			const tableBody = document.createElement('tbody');
-			pastSales.forEach((sale) => {
-				const newRow = document.createElement('tr');
-				newRow.setAttribute('role', 'row');
-				newRow.className = 'mat-mdc-row mdc-data-table__row cdk-row';
-				// no real equality as broskins data is cut off
-				if (Math.abs(item.float_value! - sale.float) < 0.00001) {
-					newRow.style.backgroundColor = 'darkslategray';
-				}
-				const sourceCell = document.createElement('td');
-				sourceCell.setAttribute('role', 'cell');
-				sourceCell.className = 'mat-mdc-cell mdc-data-table__cell cdk-cell';
-				const sourceImage = document.createElement('img');
-				sourceImage.setAttribute('src', sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF);
-				sourceImage.setAttribute('style', 'height: 28px; border: 1px solid dimgray; border-radius: 4px;');
-				sourceCell.appendChild(sourceImage);
-				newRow.appendChild(sourceCell);
-				const dateCell = document.createElement('td');
-				dateCell.setAttribute('role', 'cell');
-				dateCell.className = 'mat-mdc-cell mdc-data-table__cell cdk-cell';
-				dateCell.textContent = sale.date;
-				newRow.appendChild(dateCell);
-				const priceCell = document.createElement('td');
-				priceCell.setAttribute('role', 'cell');
-				priceCell.className = 'mat-mdc-cell mdc-data-table__cell cdk-cell';
-				priceCell.textContent = `${currencySymbol}${sale.price}`;
-				newRow.appendChild(priceCell);
-				const floatCell = document.createElement('td');
-				floatCell.setAttribute('role', 'cell');
-				floatCell.className = 'mat-mdc-cell mdc-data-table__cell cdk-cell';
-				if (sale.isStattrak) {
-					const stSpan = document.createElement('span');
-					stSpan.textContent = 'StatTrak™ ';
-					stSpan.setAttribute('style', 'color: rgb(255, 120, 44); margin-right: 5px;');
-					floatCell.appendChild(stSpan);
-				}
-				const floatSpan = document.createElement('span');
-				floatSpan.textContent = sale.float.toString();
-				floatCell.appendChild(floatSpan);
-				newRow.appendChild(floatCell);
-				const linkCell = document.createElement('td');
-				linkCell.setAttribute('role', 'cell');
-				linkCell.className = 'mat-mdc-tooltip-trigger action';
-				const link = document.createElement('a');
-				if (sale.url === 'No Link Available') {
-					link.setAttribute('style', 'pointer-events: none;cursor: default;');
-					const linkImage = document.createElement('img');
-					linkImage.setAttribute('src', ICON_BAN);
-					linkImage.setAttribute('style', 'height: 24px;');
-					link.appendChild(linkImage);
-				} else {
-					if (sale.inspect) {
-						link.href = sale.inspect;
-						link.title = 'Show Buff screenshot';
-					} else if (sale.inspect_playside) {
-						link.href = sale.inspect_playside;
-						link.title = 'Show CSFloat font screenshot';
-					}
-					link.target = '_blank';
-					const linkImage = '<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>';
-					link.innerHTML = linkImage;
-				}
-				linkCell.appendChild(link);
-
-				if (sale.inspect_backside) {
-					const backLink = document.createElement('a');
-					backLink.href = sale.inspect_backside;
-					backLink.target = '_blank';
-					backLink.title = 'Show CSFloat back screenshot';
-					const backImage = document.createElement('img');
-					backImage.setAttribute('src', iconCameraFlipped);
-					backImage.setAttribute(
-						'style',
-						'height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);'
-					);
-					backLink.appendChild(backImage);
-					linkCell.appendChild(backLink);
-				}
-
-				newRow.appendChild(linkCell);
-				tableBody.appendChild(newRow);
-			});
-			const outerContainer = document.createElement('div');
-			outerContainer.setAttribute('style', 'width: 100%; height: 100%; padding: 10px; background-color: rgba(193, 206, 255, .04);border-radius: 6px; box-sizing: border-box;');
-			const innerContainer = document.createElement('div');
-			innerContainer.className = 'table-container slimmed-table';
-			innerContainer.setAttribute('style', 'height: 100%;overflow-y: auto;overflow-x: hidden;overscroll-behavior: none;');
-			const table = document.createElement('table');
-			table.className = 'mat-mdc-table mdc-data-table__table cdk-table bf-table';
-			table.setAttribute('role', 'table');
-			table.setAttribute('style', 'width: 100%;');
-			const header = document.createElement('thead');
-			header.setAttribute('role', 'rowgroup');
-			const tableTr = document.createElement('tr');
-			tableTr.setAttribute('role', 'row');
-			tableTr.className = 'mat-mdc-header-row mdc-data-table__header-row cdk-header-row ng-star-inserted';
-			const headerValues = ['Source', 'Date', 'Price', 'Float Value'];
-			for (let i = 0; i < headerValues.length; i++) {
-				const headerCell = document.createElement('th');
-				headerCell.setAttribute('role', 'columnheader');
-				const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
-					i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
-				}`;
-				headerCell.setAttribute('style', headerCellStyle);
-				headerCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
-				headerCell.textContent = headerValues[i];
-				tableTr.appendChild(headerCell);
-			}
-			const linkHeaderCell = document.createElement('th');
-			linkHeaderCell.setAttribute('role', 'columnheader');
-			linkHeaderCell.setAttribute(
-				'style',
-				'text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
-			);
-			linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
-			const linkHeader = document.createElement('a');
-			linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
-			linkHeader.setAttribute('target', '_blank');
-			linkHeader.innerHTML = ICON_ARROWUP_SMALL;
-			linkHeaderCell.appendChild(linkHeader);
-			tableTr.appendChild(linkHeaderCell);
-			header.appendChild(tableTr);
-			table.appendChild(header);
-			table.appendChild(tableBody);
-			innerContainer.appendChild(table);
-			outerContainer.appendChild(innerContainer);
-
-			const historyChild = gridHistory.querySelector('.history-component')?.firstElementChild;
-			if (historyChild?.firstElementChild) {
-				historyChild.removeChild(historyChild.firstElementChild);
-				historyChild.appendChild(outerContainer);
-			}
+	// past sales table
+	const pastSales = await fetchCSBlueGemPastSales({ type, paint_seed: item.paint_seed, currency: userCurrency });
+	const gridHistory = document.querySelector('.grid-history');
+	if (!gridHistory) return;
+	const salesHeader = document.createElement('mat-button-toggle');
+	salesHeader.setAttribute('role', 'presentation');
+	salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
+	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales.length})</span></button>`;
+	gridHistory.querySelector('mat-button-toggle-group.sort')?.appendChild(salesHeader);
+	salesHeader.addEventListener('click', () => {
+		Array.from(gridHistory.querySelectorAll('mat-button-toggle') ?? []).forEach((element) => {
+			element.className = element.className.replace('mat-button-toggle-checked', '');
 		});
-	}
+		salesHeader.className += ' mat-button-toggle-checked';
+
+		const tableBody = document.createElement('tbody');
+		pastSales.forEach((sale) => {
+			const saleHtml = html`
+				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row">
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
+						<img src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
+					</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${sale.sale_data.date}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${currencySymbol}${sale.sale_data.price}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
+						${sale.isStattrak ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™</span>' : ''}
+						<span>${sale.float}</span>
+					</td>
+					<td role="cell" class="mat-mdc-tooltip-trigger action">
+						${
+							sale.sale_data.inspect
+								? html`
+							<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+								<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+							</a>
+						`
+								: ''
+						}
+						${
+							sale.sale_data.inspect_playside
+								? html`
+							<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+								<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+							</a>
+							<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+								<img src="${ICON_CAMERA_FLIPPED}" style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);" />
+							</a>
+						`
+								: ''
+						}
+					</td>
+				</tr>
+			`;
+			tableBody.insertAdjacentHTML('beforeend', saleHtml);
+		});
+		const outerContainer = document.createElement('div');
+		outerContainer.setAttribute('style', 'width: 100%; height: 100%; padding: 10px; background-color: rgba(193, 206, 255, .04);border-radius: 6px; box-sizing: border-box;');
+		const innerContainer = document.createElement('div');
+		innerContainer.className = 'table-container slimmed-table';
+		innerContainer.setAttribute('style', 'height: 100%;overflow-y: auto;overflow-x: hidden;overscroll-behavior: none;');
+		const table = document.createElement('table');
+		table.className = 'mat-mdc-table mdc-data-table__table cdk-table bf-table';
+		table.setAttribute('role', 'table');
+		table.setAttribute('style', 'width: 100%;');
+		const header = document.createElement('thead');
+		header.setAttribute('role', 'rowgroup');
+		const tableTr = document.createElement('tr');
+		tableTr.setAttribute('role', 'row');
+		tableTr.className = 'mat-mdc-header-row mdc-data-table__header-row cdk-header-row ng-star-inserted';
+		const headerValues = ['Source', 'Date', 'Price', 'Float Value'];
+		for (let i = 0; i < headerValues.length; i++) {
+			const headerCell = document.createElement('th');
+			headerCell.setAttribute('role', 'columnheader');
+			const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
+				i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
+			}`;
+			headerCell.setAttribute('style', headerCellStyle);
+			headerCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
+			headerCell.textContent = headerValues[i];
+			tableTr.appendChild(headerCell);
+		}
+		const linkHeaderCell = document.createElement('th');
+		linkHeaderCell.setAttribute('role', 'columnheader');
+		linkHeaderCell.setAttribute(
+			'style',
+			'text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
+		);
+		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
+		const linkHeader = document.createElement('a');
+		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
+		linkHeader.setAttribute('target', '_blank');
+		linkHeader.innerHTML = ICON_ARROWUP_SMALL;
+		linkHeaderCell.appendChild(linkHeader);
+		tableTr.appendChild(linkHeaderCell);
+		header.appendChild(tableTr);
+		table.appendChild(header);
+		table.appendChild(tableBody);
+		innerContainer.appendChild(table);
+		outerContainer.appendChild(innerContainer);
+
+		const historyChild = gridHistory.querySelector('.history-component')?.firstElementChild;
+		if (historyChild?.firstElementChild) {
+			historyChild.removeChild(historyChild.firstElementChild);
+			historyChild.appendChild(outerContainer);
+		}
+	});
 }
 
 function adjustExistingSP(container: Element) {

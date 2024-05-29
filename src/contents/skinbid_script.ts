@@ -13,8 +13,8 @@ import {
 	getSpecificSkbItem,
 	loadMapping,
 } from '~lib/handlers/mappinghandler';
-import { fetchCSBlueGem } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP_SMALL, ICON_BAN, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
+import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
@@ -277,7 +277,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 		currency = 'USD';
 	}
 	const currencySymbol = getSymbolFromCurrency(currency);
-	const { pastSales } = await fetchCSBlueGem(item.subCategory, item.paintSeed, currency);
+	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.paintSeed, currency });
 
 	const newTab = document.createElement('div');
 	newTab.className = 'tab betterfloat-tab-bluegem';
@@ -331,7 +331,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 							(sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+                                <img style="height: 24px;" src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
                                 <div>${getWear(sale.float)}</div>
@@ -340,22 +340,34 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
                                 ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
-                                <a ${
-									sale.url === 'No Link Available'
-										? 'style="pointer-events: none;cursor: default;"><img src="' +
-											ICON_BAN +
-											'" style="filter: brightness(0) saturate(100%) invert(44%) sepia(56%) saturate(7148%) hue-rotate(359deg) brightness(102%) contrast(96%);'
-										: 'href="' +
-											(sale.inspect ?? sale.inspect_playside) +
-											'" target="_blank"><img src="' +
-											ICON_CAMERA +
-											'" style="translate: 0px 1px; filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px;'
-								}height: 20px;"></img></a>
+								${
+									sale.sale_data.inspect
+										? html`
+									<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+									</a>
+								`
+										: ''
+								}
+								${
+									sale.sale_data.inspect_playside
+										? html`
+									<div style="display: flex; align-items: center; gap: 8px;">
+										<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+											<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+										</a>
+										<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+											<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+										</a>
+									</div>
+								`
+										: ''
+								}
                             </td>
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
-                                ${sale.date}
+                                ${sale.sale_data.date}
                             </td>
-                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.price}`}</td>
+                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.sale_data.price}`}</td>
                         </tr>
                     `
 						)
