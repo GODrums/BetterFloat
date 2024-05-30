@@ -8,7 +8,6 @@ import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
 	ICON_ARROWUP_SMALL,
-	ICON_BAN,
 	ICON_BUFF,
 	ICON_C5GAME,
 	ICON_CAMERA_FLIPPED,

@@ -362,7 +362,7 @@ async function adjustItemPage(container: Element) {
 
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
-			await patternDetections(container, popupItem.data.item, true);
+			await patternDetections(container, popupItem.data.item);
 		}
 		const suggestedText = container.querySelector('.ItemPage-suggested');
 		if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
@@ -460,9 +460,9 @@ function storeItem(container: Element, item: Skinport.Listing) {
 	container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-export async function patternDetections(container: Element, item: Skinport.Item, isItemPage = false) {
+export async function patternDetections(container: Element, item: Skinport.Item) {
 	if (item.name.includes('Case Hardened')) {
-		await caseHardenedDetection(container, item, isItemPage);
+		await caseHardenedDetection(container, item);
 	} else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
 		await webDetection(container, item);
 	}
@@ -485,7 +485,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	itemHeader.after(gemContainer);
 }
 
-async function caseHardenedDetection(container: Element, item: Skinport.Item, isItemPage = false) {
+async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	if (!item.name.includes('Case Hardened')) return;
 
 	// santized for CSBlueGem's supported currencies, otherwise use USD

@@ -59,7 +59,7 @@ async function handleChange(state: Extension.URLState) {
 
 	if (state.site === 'skinport.com') {
 		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
-			waitForElement('.CatalogHeader-tooltipLive', { interval: 100 }).then(async (success) => {
+			waitForElement('.CatalogHeader-tooltipLive').then(async (success) => {
 				if (success && !document.querySelector('betterfloat-live-filter')) {
 					const root = await mountShadowRoot(<LiveFilter />, {
 						tagName: 'betterfloat-live-filter',
