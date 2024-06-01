@@ -1,12 +1,12 @@
-import { ExtensionStorage } from '~lib/util/storage';
-import { cacheRealCurrencyRates } from './mappinghandler';
+import { ExtensionStorage } from "~lib/util/storage";
+import { cacheRealCurrencyRates } from "./mappinghandler";
 
-import { sendToBackground } from '@plasmohq/messaging';
-import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
-import type { Skinport } from '../@typings/SkinportTypes';
+import { sendToBackground } from "@plasmohq/messaging";
+import type { BlueGem, Extension } from "../@typings/ExtensionTypes";
+import type { Skinport } from "../@typings/SkinportTypes";
 
 export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
-	return fetch(`https://csbluegem.com/api/v1/patterndata?skin=${type.replace(' ', '_')}&pattern=${pattern}`).then((res) => res.json() as Promise<BlueGem.PatternData>);
+	return fetch(`https://csbluegem.com/api/v1/patterndata?skin=${type.replace(" ", "_")}&pattern=${pattern}`).then((res) => res.json() as Promise<BlueGem.PatternData>);
 }
 
 type CSBlueGemOptions = {
@@ -15,24 +15,25 @@ type CSBlueGemOptions = {
 	currency?: string;
 };
 
-export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = 'USD' }: CSBlueGemOptions) {
-	return fetch(`https://csbluegem.com/api/v1/search?skin=${type.replace(' ', '_')}&pattern=${paint_seed}&currency=${currency}`).then((res) => res.json() as Promise<BlueGem.PastSale[]>);
+export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = "USD" }: CSBlueGemOptions) {
+	return fetch(`https://csbluegem.com/api/v1/search?skin=${type.replace(" ", "_")}&pattern=${paint_seed}&currency=${currency}`).then((res) => res.json() as Promise<BlueGem.PastSale[]>);
 }
 
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
-	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
+	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>("currencyrates");
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
 	} else {
 		const response = await sendToBackground({
-			name: 'requestRates',
+			name: "requestRates",
 		});
-		console.debug('[BetterFloat] Received currency rates: ', response.rates);
-		if (!response.rates) {
+		console.debug("[BetterFloat] Received currency rates: ", response.rates);
+		if (response.rates) {
+			cacheRealCurrencyRates(response.rates);
+		} else if (currencyRates) {
 			cacheRealCurrencyRates(currencyRates.rates);
 		}
-		cacheRealCurrencyRates(response.rates);
 	}
 }
 
@@ -42,17 +43,22 @@ export async function fetchCurrencyRates() {
  * @returns {Promise<Extension.ApiStatusResponse>}
  */
 export async function isApiStatusOK(): Promise<Extension.ApiStatusResponse> {
-	return fetch('https://api.rums.dev/v1/betterfloat/status').then((res) => res.json());
+	return fetch("https://api.rums.dev/v1/betterfloat/status").then((res) => res.json());
 }
 
 /**
  * Saves items purchased through the OneClickBuy feature
  */
 export async function saveOCOPurchase(item: Skinport.Listing) {
-	return fetch(process.env.PLASMO_PUBLIC_OCO_DB_ENDPOINT, {
-		method: 'POST',
+	const url = process.env.PLASMO_PUBLIC_OCO_DB_ENDPOINT;
+	if (!url) {
+		console.warn("[BetterFloat] Your environment variables are not set correctly. Please check your .env file.");
+		return;
+	}
+	return fetch(url, {
+		method: "POST",
 		headers: {
-			'Content-Type': 'application/json',
+			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({ item }),
 	});

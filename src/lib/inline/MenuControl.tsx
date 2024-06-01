@@ -19,7 +19,7 @@ const CSFMenuControl: React.FC = () => {
 		setHidden(!hidden);
 
 		const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
-		if (!sideMenu) return;
+		if (!sideMenu?.parentElement) return;
 		if (hidden) {
 			sideMenu.parentElement.style.display = 'block';
 		} else {

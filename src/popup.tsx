@@ -27,20 +27,20 @@ export default function IndexPopup() {
 				if (!granted) {
 					console.log('Permission denied');
 				} else {
-					document.getElementById('permissions-warning').classList.add('hidden');
+					document.getElementById('permissions-warning')!.classList.add('hidden');
 				}
 			});
 	};
 
 	useEffect(() => {
-		document.getElementById('version').textContent = `v. ${chrome.runtime.getManifest().version}`;
+		document.getElementById('version')!.textContent = `v. ${chrome.runtime.getManifest().version}`;
 
 		chrome.permissions
 			.contains({
 				origins: hostpermissions,
 			})
 			.then((result) => {
-				const warning = document.getElementById('permissions-warning');
+				const warning = document.getElementById('permissions-warning')!;
 				if (result) {
 					warning.classList.add('hidden');
 				} else {

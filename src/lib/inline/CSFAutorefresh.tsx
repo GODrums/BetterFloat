@@ -52,7 +52,7 @@ const CSFAutorefresh: React.FC = () => {
 				refreshButton?.click();
 			}, getInterval());
 			setIntervalValue(newInterval);
-		} else {
+		} else if (interval) {
 			clearInterval(interval);
 		}
 	};

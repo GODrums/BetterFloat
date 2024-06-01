@@ -1,5 +1,5 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
-import type { Extension } from '~lib/@typings/ExtensionTypes';
+import type { PlasmoMessaging } from "@plasmohq/messaging";
+import type { Extension } from "~lib/@typings/ExtensionTypes";
 
 type PriceBody = {
 	source: string;
@@ -10,16 +10,16 @@ type PriceResponse = {
 };
 
 const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async (req, res) => {
-	const source = req.body.source;
-	console.log('[BetterFloat] Refreshing prices from source:', source);
-	const pricesURL = `prices${source !== 'buff' ? `_${source}` : ''}`;
+	const source = req.body?.source;
+	console.log("[BetterFloat] Refreshing prices from source:", source);
+	const pricesURL = `prices${source !== "buff" ? `_${source}` : ""}`;
 
 	// for self builds, make sure to use your own API
 	const response = await fetch(`${process.env.PLASMO_PUBLIC_PRICINGAPI}${pricesURL}.json`, {
-		method: 'GET',
+		method: "GET",
 		headers: {
-			'Content-Type': 'application/json',
-			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+			"Content-Type": "application/json",
+			"x-via": `BetterFloat/${chrome.runtime.getManifest().version}`,
 		},
 	});
 

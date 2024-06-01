@@ -80,7 +80,7 @@ async function handleChange(state: Extension.URLState) {
 		}
 	} else if (state.site === 'csfloat.com') {
 		const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
-		if (sideMenu?.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
+		if (sideMenu?.offsetWidth && sideMenu.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
 			const root = await mountShadowRoot(<CSFMenuControl />, {
 				tagName: 'betterfloat-menucontrol',
 				parent: document.querySelector('.search-bar .drill-down'),
@@ -104,7 +104,7 @@ async function handleChange(state: Extension.URLState) {
 						});
 						// unmount on url change
 						const interval = createUrlListener(() => {
-							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent.includes('Newest')) {
+							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent?.includes('Newest')) {
 								root.unmount();
 								document.querySelector('betterfloat-autorefresh')?.remove();
 								clearInterval(interval);
@@ -130,7 +130,7 @@ export async function mountSpItemPageBuffContainer() {
  * @param component React component to mount
  * @param options mounting options, defaults to appending to document.body
  */
-async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: HTMLElement; position?: 'before' | 'after' }) {
+async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {
 	const { parentElement, isolatedElement } = await createIsolatedElement({
 		name: options.tagName,
 		css: {

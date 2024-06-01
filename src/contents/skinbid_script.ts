@@ -1,7 +1,7 @@
-import getSymbolFromCurrency from 'currency-symbol-map';
-import Decimal from 'decimal.js';
+import getSymbolFromCurrency from "currency-symbol-map";
+import Decimal from "decimal.js";
 
-import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { activateHandler, initPriceMapping } from "~lib/handlers/eventhandler";
 import {
 	getBuffMapping,
 	getFirstSkbItem,
@@ -12,51 +12,51 @@ import {
 	getSpecificSkbInventoryItem,
 	getSpecificSkbItem,
 	loadMapping,
-} from '~lib/handlers/mappinghandler';
-import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
-import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
-import { getAllSettings } from '~lib/util/storage';
+} from "~lib/handlers/mappinghandler";
+import { fetchCSBlueGemPastSales } from "~lib/handlers/networkhandler";
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from "~lib/util/globals";
+import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from "~lib/util/helperfunctions";
+import { getAllSettings } from "~lib/util/storage";
 
-import { html } from 'common-tags';
-import type { PlasmoCSConfig } from 'plasmo';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import { type IStorage, MarketSource } from '~lib/util/storage';
+import { html } from "common-tags";
+import type { PlasmoCSConfig } from "plasmo";
+import type { DopplerPhase, ItemStyle } from "~lib/@typings/FloatTypes";
+import type { Skinbid } from "~lib/@typings/SkinbidTypes";
+import { type IStorage, MarketSource } from "~lib/util/storage";
 
 export const config: PlasmoCSConfig = {
-	matches: ['https://*.skinbid.com/*'],
-	css: ['../css/skinbid_styles.css'],
-	run_at: 'document_end',
+	matches: ["https://*.skinbid.com/*"],
+	css: ["../css/skinbid_styles.css"],
+	run_at: "document_end",
 };
 
 init();
 
 async function init() {
-	if (location.host !== 'skinbid.com') {
+	if (location.host !== "skinbid.com") {
 		return;
 	}
 
-	console.log('[BetterFloat] Starting BetterFloat');
-	console.time('[BetterFloat] Skinbid init timer');
+	console.log("[BetterFloat] Starting BetterFloat");
+	console.time("[BetterFloat] Skinbid init timer");
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
 
-	if (!extensionSettings['skb-enable']) {
-		console.log('[BetterFloat] Skinbid disabled');
+	if (!extensionSettings["skb-enable"]) {
+		console.log("[BetterFloat] Skinbid disabled");
 		return;
 	}
 
-	await initPriceMapping(extensionSettings['skb-pricingsource'] as MarketSource);
+	await initPriceMapping(extensionSettings["skb-pricingsource"] as MarketSource);
 
-	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping(extensionSettings['skb-pricingsource'] as MarketSource);
+	console.group("[BetterFloat] Loading mappings...");
+	await loadMapping(extensionSettings["skb-pricingsource"] as MarketSource);
 	console.groupEnd();
 
-	console.timeEnd('[BetterFloat] Skinbid init timer');
+	console.timeEnd("[BetterFloat] Skinbid init timer");
 
 	await firstLaunch();
 
@@ -64,36 +64,36 @@ async function init() {
 	if (!isObserverActive) {
 		isObserverActive = true;
 		applyMutation();
-		console.log('[BetterFloat] Observer started');
+		console.log("[BetterFloat] Observer started");
 	}
 }
 
 async function firstLaunch() {
-	console.log('[BetterFloat] First launch, url: ', location.pathname, location.search);
-	if (location.pathname === '/') {
-		const items = document.getElementsByTagName('NGU-TILE');
+	console.log("[BetterFloat] First launch, url: ", location.pathname, location.search);
+	if (location.pathname === "/") {
+		const items = document.getElementsByTagName("NGU-TILE");
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], itemSelectors.card);
 		}
-	} else if (location.pathname === '/listings') {
-		const items = document.getElementsByClassName('item-card');
+	} else if (location.pathname === "/listings") {
+		const items = document.getElementsByClassName("item-card");
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], itemSelectors.list);
 		}
-	} else if (location.pathname.startsWith('/market/') || location.pathname.startsWith('/auctions/')) {
-		const items = document.querySelectorAll('.item');
+	} else if (location.pathname.startsWith("/market/") || location.pathname.startsWith("/auctions/")) {
+		const items = document.querySelectorAll(".item");
 		// first one is big item
 		await adjustItem(items[0], itemSelectors.page);
 		for (let i = 1; i < items.length; i++) {
 			await adjustItem(items[i], itemSelectors.card);
 		}
-	} else if (location.pathname.includes('/shop/')) {
-		const items = document.querySelectorAll('.items-desktop .auction-item-card');
+	} else if (location.pathname.includes("/shop/")) {
+		const items = document.querySelectorAll(".items-desktop .auction-item-card");
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i].parentElement, itemSelectors.card);
+			await adjustItem(items[i].parentElement!, itemSelectors.card);
 		}
-	} else if (location.pathname.includes('/inventory')) {
-		const items = document.querySelectorAll('APP-INVENTORY-LIST-ITEM');
+	} else if (location.pathname.includes("/inventory")) {
+		const items = document.querySelectorAll("APP-INVENTORY-LIST-ITEM");
 		for (let i = 0; i < items.length; i++) {
 			await adjustInventoryItem(items[i]);
 		}
@@ -102,7 +102,7 @@ async function firstLaunch() {
 
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
-		if (extensionSettings['skb-enable']) {
+		if (extensionSettings["skb-enable"]) {
 			for (const mutation of mutations) {
 				for (let i = 0; i < mutation.addedNodes.length; i++) {
 					const addedNode = mutation.addedNodes[i];
@@ -112,15 +112,15 @@ function applyMutation() {
 
 					if (addedNode.children.length === 1) {
 						const firstChild = addedNode.children[0];
-						if (firstChild.tagName === 'AUCTION-LIST-ITEM') {
+						if (firstChild.tagName === "AUCTION-LIST-ITEM") {
 							await adjustItem(firstChild, itemSelectors.list);
 							continue;
-						} else if (firstChild.tagName === 'APP-AUCTION-CARD-ITEM') {
+						} else if (firstChild.tagName === "APP-AUCTION-CARD-ITEM") {
 							// Items in user shop
 							await adjustItem(firstChild, itemSelectors.card);
 							continue;
-						} else if (firstChild.tagName === 'APP-ITEM-CARD') {
-							if (location.pathname === '/listings') {
+						} else if (firstChild.tagName === "APP-ITEM-CARD") {
+							if (location.pathname === "/listings") {
 								await adjustItem(firstChild, itemSelectors.list);
 							} else {
 								await adjustItem(firstChild, itemSelectors.card);
@@ -128,18 +128,21 @@ function applyMutation() {
 							continue;
 						}
 					}
-					if (addedNode.tagName === 'APP-INVENTORY-LIST-ITEM') {
+					if (addedNode.tagName === "APP-INVENTORY-LIST-ITEM") {
 						await adjustInventoryItem(addedNode);
 					}
 					if (addedNode.className) {
 						const className = addedNode.className.toString();
-						if (className.includes('item') && addedNode.tagName === 'NGU-TILE' && !isMobileItem(addedNode)) {
+						if (className.includes("item") && addedNode.tagName === "NGU-TILE" && !isMobileItem(addedNode)) {
 							// console.log('Found item: ', addedNode);
 							await adjustItem(addedNode, itemSelectors.card);
-						} else if (className.includes('item-category')) {
+						} else if (className.includes("item-category")) {
 							// big item page
-							await adjustItem(document.querySelector('.item'), itemSelectors.page);
-						} else if (addedNode.tagName === 'APP-PRICE-CHART') {
+							const item = document.querySelector(".item");
+							if (item) {
+								await adjustItem(item, itemSelectors.page);
+							}
+						} else if (addedNode.tagName === "APP-PRICE-CHART") {
 							// console.log('Found price chart: ', addedNode);
 						}
 					}
@@ -153,40 +156,40 @@ function applyMutation() {
 // TODO: rework as card and list are very similar / the same in the new design
 const itemSelectors = {
 	card: {
-		self: 'card',
-		name: '.item-name',
-		type: '.item-type',
-		price: '.item-price .price',
-		priceDiv: '.item-price',
-		wear: '.quality-float-row',
-		discount: '.price-discount',
-		discountDiv: '.price-discount',
-		listingAge: '.left.flex > app-quality-float-row',
-		stickerDiv: '.card-top-section',
+		self: "card",
+		name: ".item-name",
+		type: ".item-type",
+		price: ".item-price .price",
+		priceDiv: ".item-price",
+		wear: ".quality-float-row",
+		discount: ".price-discount",
+		discountDiv: ".price-discount",
+		listingAge: ".left.flex > app-quality-float-row",
+		stickerDiv: ".card-top-section",
 	},
 	list: {
-		self: 'list',
-		name: '.item-name',
-		type: '.item-type',
-		price: '.item-price .price',
-		priceDiv: '.item-price',
-		wear: '.quality-float-row',
-		discount: '.price-discount',
-		discountDiv: '.price-discount',
-		listingAge: '.quality-float-row',
-		stickerDiv: '.card-top-section',
+		self: "list",
+		name: ".item-name",
+		type: ".item-type",
+		price: ".item-price .price",
+		priceDiv: ".item-price",
+		wear: ".quality-float-row",
+		discount: ".price-discount",
+		discountDiv: ".price-discount",
+		listingAge: ".quality-float-row",
+		stickerDiv: ".card-top-section",
 	},
 	page: {
-		self: 'page',
-		name: '.item-title',
-		type: '.item-category',
-		price: '.item-bids-time-info > div',
-		priceDiv: '.item-bids-time-info .value',
-		wear: '.item-detail:nth-child(2)',
-		discount: '.item-bids-time-info .value > div',
-		discountDiv: '.section-discount',
-		listingAge: '.item-detail:last-child',
-		stickerDiv: '.stickers-wrapper .title',
+		self: "page",
+		name: ".item-title",
+		type: ".item-category",
+		price: ".item-bids-time-info > div",
+		priceDiv: ".item-bids-time-info .value",
+		wear: ".item-detail:nth-child(2)",
+		discount: ".item-bids-time-info .value > div",
+		discountDiv: ".section-discount",
+		listingAge: ".item-detail:last-child",
+		stickerDiv: ".stickers-wrapper .title",
 	},
 } as const;
 
@@ -195,15 +198,15 @@ type PageTypes = keyof typeof itemSelectors;
 type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function isMobileItem(container: Element) {
-	return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
+	return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes("item");
 }
 
 async function adjustItem(container: Element, selector: ItemSelectors) {
 	let hashHTML: string | undefined;
-	if (selector.self === 'page') {
-		hashHTML = location.pathname.split('/')[2];
-	} else if (selector.self === 'card') {
-		hashHTML = container.querySelector('a')?.getAttribute('href')?.split('/')[2];
+	if (selector.self === "page") {
+		hashHTML = location.pathname.split("/")[2];
+	} else if (selector.self === "card") {
+		hashHTML = container.querySelector("a")?.getAttribute("href")?.split("/")[2];
 	}
 	let cachedItem: Skinbid.Listing | null | undefined;
 	if (hashHTML) {
@@ -211,17 +214,17 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	} else {
 		cachedItem = getFirstSkbItem();
 	}
-	console.log('[BetterFloat] Cached item: ', cachedItem);
+	console.log("[BetterFloat] Cached item: ", cachedItem);
 	if (!cachedItem) return;
 
 	const priceResult = await addBuffPrice(cachedItem, container, selector);
-	if (extensionSettings['skb-listingage'] || selector.self === 'page') {
+	if (extensionSettings["skb-listingage"] || selector.self === "page") {
 		addListingAge(container, cachedItem, selector.self);
 	}
-	if ((extensionSettings['skb-stickerprices'] || selector.self === 'page') && priceResult && priceResult?.price_difference) {
+	if ((extensionSettings["skb-stickerprices"] || selector.self === "page") && priceResult && priceResult?.price_difference) {
 		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
 	}
-	if (selector.self === 'page') {
+	if (selector.self === "page") {
 		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
 	}
@@ -229,13 +232,13 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 
 async function adjustInventoryItem(container: Element) {
 	// on the first item, wait for the api data
-	if (!document.querySelector('.betterfloat-buffprice')) {
+	if (!document.querySelector(".betterfloat-buffprice")) {
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 	}
-	const source = extensionSettings['skb-pricingsource'] as MarketSource;
-	const steamImage = container.querySelector('.item-image > img').getAttribute('src');
-	const listedItem = getSpecificSkbInventoryItem(steamImage);
-	console.log('[BetterFloat] Inventory item: ', listedItem);
+	const source = extensionSettings["skb-pricingsource"] as MarketSource;
+	const steamImage = container.querySelector(".item-image > img")?.getAttribute("src");
+	const listedItem = getSpecificSkbInventoryItem(steamImage ?? "");
+	console.log("[BetterFloat] Inventory item: ", listedItem);
 	if (!listedItem) return;
 
 	const item = listedItem.item;
@@ -244,21 +247,21 @@ async function adjustInventoryItem(container: Element) {
 	const buffHref = buff_id > 0 ? getBuffLink(buff_id, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	if (priceListing || priceOrder) {
-		const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
-		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
-		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
-			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref, source);
+		const currencySymbol = document.querySelector(".currency-and-payment-methods")?.firstElementChild?.textContent?.trim().split(" ")[0];
+		const cardFooter = container.querySelector<HTMLElement>(".card-footer > div");
+		if (cardFooter && !container.querySelector(".betterfloat-buffprice")) {
+			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? "$", buffHref, source);
 		}
 	}
 }
 
 function addBrowserInspect(container: Element, item: Skinbid.Listing) {
-	const bottomLeft = container.querySelector('.bottom-left');
+	const bottomLeft = container.querySelector(".bottom-left");
 	if (!bottomLeft) return;
 
-	const inspectButton = document.createElement('button');
-	inspectButton.setAttribute('style', 'font-weight: 400; padding: 12px;');
-	inspectButton.className = 'skb-button-ghost';
+	const inspectButton = document.createElement("button");
+	inspectButton.setAttribute("style", "font-weight: 400; padding: 12px;");
+	inspectButton.className = "skb-button-ghost";
 	inspectButton.innerHTML = `<img src="${ICON_CAMERA}" style="height: 1em; margin-right: 7px; filter: brightness(0) saturate(100%) invert(88%) sepia(7%) saturate(4339%) hue-rotate(189deg) brightness(85%) contrast(84%);"> Inspect in browser `;
 	inspectButton.onclick = (event) => {
 		event.stopPropagation();
@@ -268,49 +271,49 @@ function addBrowserInspect(container: Element, item: Skinbid.Listing) {
 }
 
 async function caseHardenedDetection(container: Element, listing: Skinbid.Listing) {
-	const chartContainer = container.querySelector('.price-chart-and-history');
+	const chartContainer = container.querySelector(".price-chart-and-history");
 	const item = listing.items?.at(0)?.item;
-	if (!chartContainer || !item || item.name !== 'Case Hardened') return;
+	if (!chartContainer || !item || item.name !== "Case Hardened") return;
 
 	let currency = getSkbCurrency();
 	if (currency.length === 0) {
-		currency = 'USD';
+		currency = "USD";
 	}
 	const currencySymbol = getSymbolFromCurrency(currency);
 	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.paintSeed, currency });
 
-	const newTab = document.createElement('div');
-	newTab.className = 'tab betterfloat-tab-bluegem';
-	newTab.setAttribute('style', 'display: flex; cursor: pointer; color: deepskyblue; padding-bottom: 9px; border-bottom: 2px solid transparent;');
+	const newTab = document.createElement("div");
+	newTab.className = "tab betterfloat-tab-bluegem";
+	newTab.setAttribute("style", "display: flex; cursor: pointer; color: deepskyblue; padding-bottom: 9px; border-bottom: 2px solid transparent;");
 	newTab.innerHTML = `<div>Buff Pattern Sales (${pastSales?.length ?? 0})</div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
 		item.paintSeed
 	}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-left: 10px;">${ICON_ARROWUP_SMALL}</a>`;
-	newTab.addEventListener('click', () => {
-		chartContainer.querySelector('.tab.active')?.classList.remove('active');
-		newTab.classList.add('active');
-		newTab.style.borderBottom = '2px solid #a3a3cb';
+	newTab.addEventListener("click", () => {
+		chartContainer.querySelector(".tab.active")?.classList.remove("active");
+		newTab.classList.add("active");
+		newTab.style.borderBottom = "2px solid #a3a3cb";
 
 		// chartContainer.querySelector('app-price-chart')?.replaceWith(document.createComment(''));
 		// chartContainer.querySelector('app-previous-sales')?.replaceWith(document.createComment(''));
 
-		chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: none;');
-		chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: none;');
+		chartContainer.querySelector("app-price-chart")?.setAttribute("style", "display: none;");
+		chartContainer.querySelector("app-previous-sales")?.setAttribute("style", "display: none;");
 
-		const salesTable = document.createElement('app-bluegem-sales');
-		const thStyle = 'text-align: start; padding-bottom: 6px; font-size: 12px; color: #a3a3cb;';
-		const tdStyle = 'padding: 8px 0;text-align: start;border-top: 1px solid #21212b;';
+		const salesTable = document.createElement("app-bluegem-sales");
+		const thStyle = "text-align: start; padding-bottom: 6px; font-size: 12px; color: #a3a3cb;";
+		const tdStyle = "padding: 8px 0;text-align: start;border-top: 1px solid #21212b;";
 		const getWear = (float: number) => {
-			let wear = '';
+			let wear = "";
 			if (float < 0.07) {
-				wear = 'Factory New';
+				wear = "Factory New";
 			} else if (float < 0.15) {
-				wear = 'Minimal Wear';
+				wear = "Minimal Wear";
 			} else if (float < 0.38) {
-				wear = 'Field-Tested';
+				wear = "Field-Tested";
 			} else if (float < 0.45) {
-				wear = 'Well-Worn';
+				wear = "Well-Worn";
 			} else {
-				wear = 'Battle-Scarred';
+				wear = "Battle-Scarred";
 			}
 			return wear;
 		};
@@ -331,7 +334,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 							(sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+                                <img style="height: 24px;" src="${sale.sale_data.origin === "CSFloat" ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
                                 <div>${getWear(sale.float)}</div>
@@ -339,29 +342,29 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                             </td>
                             <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
-                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
+                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ""}
 								${
 									sale.sale_data.inspect
 										? html`
-									<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
-										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
-									</a>
-								`
-										: ''
+												<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+													<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+												</a>
+										  `
+										: ""
 								}
 								${
 									sale.sale_data.inspect_playside
 										? html`
-									<div style="display: flex; align-items: center; gap: 8px;">
-										<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
-											<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
-										</a>
-										<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
-											<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
-										</a>
-									</div>
-								`
-										: ''
+												<div style="display: flex; align-items: center; gap: 8px;">
+													<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+													</a>
+													<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+													</a>
+												</div>
+										  `
+										: ""
 								}
                             </td>
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
@@ -371,59 +374,59 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
                         </tr>
                     `
 						)
-						.join('')}
+						.join("")}
                 </tbody>
                 </table>
             </div>
         `;
 		chartContainer.childNodes[5].replaceWith(salesTable);
 	});
-	Array.from(chartContainer.querySelectorAll('.tab')).forEach((tabContainer) => {
+	Array.from(chartContainer.querySelectorAll(".tab")).forEach((tabContainer) => {
 		console.log(tabContainer);
-		if (tabContainer.className.includes('betterfloat-tab-bluegem')) return;
-		tabContainer.addEventListener('click', () => {
-			newTab.classList.remove('active');
-			newTab.style.borderBottom = 'none';
-			chartContainer.querySelector('app-bluegem-sales')?.replaceWith(document.createComment(''));
-			chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: block;');
-			chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: block;');
+		if (tabContainer.className.includes("betterfloat-tab-bluegem")) return;
+		tabContainer.addEventListener("click", () => {
+			newTab.classList.remove("active");
+			newTab.style.borderBottom = "none";
+			chartContainer.querySelector("app-bluegem-sales")?.replaceWith(document.createComment(""));
+			chartContainer.querySelector("app-price-chart")?.setAttribute("style", "display: block;");
+			chartContainer.querySelector("app-previous-sales")?.setAttribute("style", "display: block;");
 		});
 	});
 
-	chartContainer.querySelector('.tabs')?.appendChild(newTab);
+	chartContainer.querySelector(".tabs")?.appendChild(newTab);
 }
 
 async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: Decimal) {
 	if (!item.items) return;
 	let stickers = item.items[0].item.stickers;
 	if (item.items[0].item.isSouvenir) {
-		stickers = stickers.filter((s) => !s.name.includes('(Gold)'));
+		stickers = stickers.filter((s) => !s.name.includes("(Gold)"));
 	}
-	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(`Sticker | ${s.name}`, extensionSettings['skb-pricingsource'] as MarketSource)));
+	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(`Sticker | ${s.name}`, extensionSettings["skb-pricingsource"] as MarketSource)));
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
 	const spPercentage = priceDifference.div(priceSum);
 
 	if (priceSum >= 2) {
 		const overlayContainer = container.querySelector(selector.stickerDiv);
 		if (selector === itemSelectors.page) {
-			(<HTMLElement>overlayContainer).style.display = 'flex';
+			(<HTMLElement>overlayContainer).style.display = "flex";
 		}
 
-		const stickerDiv = document.createElement('div');
-		stickerDiv.className = 'betterfloat-sticker-container';
+		const stickerDiv = document.createElement("div");
+		stickerDiv.className = "betterfloat-sticker-container";
 		const backgroundImageColor = getSPBackgroundColor(spPercentage.toNumber());
 		if (spPercentage.gt(2) || spPercentage.lt(0.005)) {
 			stickerDiv.textContent = `$${priceSum.toFixed(0)} SP`;
 		} else {
-			stickerDiv.textContent = (spPercentage.isPos() ? spPercentage.mul(100) : 0).toFixed(1) + '% SP';
+			stickerDiv.textContent = (spPercentage.isPos() ? spPercentage.mul(100) : 0).toFixed(1) + "% SP";
 		}
 		stickerDiv.style.backgroundColor = backgroundImageColor;
 		if (selector === itemSelectors.page) {
-			stickerDiv.style.marginLeft = '15px';
+			stickerDiv.style.marginLeft = "15px";
 		} else if (selector === itemSelectors.list || selector === itemSelectors.card) {
-			stickerDiv.style.position = 'absolute';
-			stickerDiv.style.bottom = '10px';
-			stickerDiv.style.right = '5px';
+			stickerDiv.style.position = "absolute";
+			stickerDiv.style.bottom = "10px";
+			stickerDiv.style.right = "5px";
 		}
 
 		overlayContainer?.appendChild(stickerDiv);
@@ -434,27 +437,27 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
 	const referenceDiv = container.querySelector(itemSelectors[page].listingAge);
 	if (!referenceDiv) return;
 
-	if (page === 'page') {
+	if (page === "page") {
 		const listingContainer = referenceDiv?.cloneNode(true);
 		if (listingContainer.firstChild) {
-			listingContainer.firstChild.textContent = ' Time of Listing ';
+			listingContainer.firstChild.textContent = " Time of Listing ";
 			listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created, 1);
 		}
 		referenceDiv.after(listingContainer);
 	} else {
-		const listingAge = document.createElement('div');
-		const listingAgeText = document.createElement('p');
-		const listingIcon = document.createElement('img');
-		listingAge.classList.add('betterfloat-listing-age');
-		listingAge.classList.add('betterfloat-age-' + page);
-		listingIcon.setAttribute('src', ICON_CLOCK);
+		const listingAge = document.createElement("div");
+		const listingAgeText = document.createElement("p");
+		const listingIcon = document.createElement("img");
+		listingAge.classList.add("betterfloat-listing-age");
+		listingAge.classList.add("betterfloat-age-" + page);
+		listingIcon.setAttribute("src", ICON_CLOCK);
 
 		listingAgeText.textContent = calculateTime(cachedItem.auction.created, 1);
 		listingAge.appendChild(listingIcon);
 		listingAge.appendChild(listingAgeText);
 
-		if (page === 'card') {
-			(<HTMLElement>referenceDiv.parentElement).style.flexDirection = 'column';
+		if (page === "card") {
+			(<HTMLElement>referenceDiv.parentElement).style.flexDirection = "column";
 		}
 		referenceDiv.before(listingAge);
 	}
@@ -471,21 +474,21 @@ async function addBuffPrice(
 	if (!listingItem) return;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
 	const buff_id = await getBuffMapping(buff_name);
-	const source = extensionSettings['skb-pricingsource'] as MarketSource;
+	const source = extensionSettings["skb-pricingsource"] as MarketSource;
 
 	if ((source === MarketSource.Buff && isBuffBannedItem(buff_name)) || (!priceListing && !priceOrder)) {
-		console.debug('[BetterFloat] No buff price found for ', buff_name);
+		console.debug("[BetterFloat] No buff price found for ", buff_name);
 		return;
 	}
 
 	// restyle layout to make it more compact
-	if ((selector === itemSelectors.card || selector === itemSelectors.list) && container.querySelector('.offers')) {
-		container.querySelector('.item-type').setAttribute('style', 'display: none;');
+	if ((selector === itemSelectors.card || selector === itemSelectors.list) && container.querySelector(".offers")) {
+		container.querySelector(".item-type")?.setAttribute("style", "display: none;");
 	}
 
 	const priceDiv = container.querySelector(selector.priceDiv);
-	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
-	let href = '';
+	const currencySymbol = document.querySelector(".currency-and-payment-methods")?.firstElementChild?.textContent?.trim().split(" ")[0];
+	let href = "";
 	if (source === MarketSource.Buff) {
 		href = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 	} else if (source === MarketSource.Steam) {
@@ -495,106 +498,106 @@ async function addBuffPrice(
 	} else if (source === MarketSource.YouPin) {
 		href = `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
 	}
-	if (!container.querySelector('.betterfloat-buffprice')) {
-		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');
+	if (!container.querySelector(".betterfloat-buffprice")) {
+		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? "$", href, source, selector.self === "page");
 	}
-	const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
+	const buffContainer = container.querySelector<HTMLElement>(".betterfloat-buff-container");
 	if (buffContainer && selector === itemSelectors.page) {
-		const parentDiv = container.querySelector<HTMLElement>('.item-bids-time-info');
+		const parentDiv = container.querySelector<HTMLElement>(".item-bids-time-info");
 		if (parentDiv) {
-			parentDiv.style.marginTop = '0';
+			parentDiv.style.marginTop = "0";
 			parentDiv.before(buffContainer);
 		}
-		buffContainer.style.margin = '20px 0 0 0';
+		buffContainer.style.margin = "20px 0 0 0";
 	}
 
-	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['skb-pricereference'] === 0 ? priceOrder : priceListing;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings["skb-pricereference"] === 0 ? priceOrder : priceListing;
 	const listingPrice = await getListingPrice(cachedItem);
 	const difference = new Decimal(listingPrice).minus(priceFromReference ?? 0);
 
-	if (extensionSettings['skb-buffdifference']) {
+	if (extensionSettings["skb-buffdifference"] && priceFromReference) {
 		let discountContainer = <HTMLElement>container.querySelector(selector.discount);
-		if (cachedItem.auction.sellType === 'FIXED_PRICE' || selector.self !== 'page') {
+		if (cachedItem.auction.sellType === "FIXED_PRICE" || selector.self !== "page") {
 			if (!discountContainer) {
-				discountContainer = document.createElement('div');
+				discountContainer = document.createElement("div");
 				discountContainer.className = selector.discount.substring(1);
-				const bidPrice = container.querySelector('.bid-price');
+				const bidPrice = container.querySelector(".bid-price");
 				if (bidPrice) {
-					bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+					bidPrice.setAttribute("style", "display: flex; gap: 5px;");
 					bidPrice.appendChild(discountContainer);
 				} else {
 					const discountDiv = container.querySelector(selector.discountDiv);
 					if (discountDiv) {
 						discountDiv.appendChild(discountContainer);
 					} else {
-						priceDiv.appendChild(discountContainer);
+						priceDiv?.appendChild(discountContainer);
 					}
 				}
-			} else if (selector.self !== 'page') {
-				const bidPrice = container.querySelector('.bid-price');
+			} else if (selector.self !== "page") {
+				const bidPrice = container.querySelector(".bid-price");
 				if (bidPrice) {
-					bidPrice.setAttribute('style', 'display: flex; gap: 5px;');
+					bidPrice.setAttribute("style", "display: flex; gap: 5px;");
 					bidPrice.appendChild(discountContainer);
 				}
 			}
 
-			if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
+			if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector(".betterfloat-sale-tag")) {
 				if (selector === itemSelectors.page) {
-					const discountSpan = document.createElement('span');
-					discountSpan.style.marginLeft = '5px';
+					const discountSpan = document.createElement("span");
+					discountSpan.style.marginLeft = "5px";
 					discountContainer.appendChild(discountSpan);
 					discountContainer = discountSpan;
 				}
-				discountContainer.className += ' betterfloat-sale-tag';
+				discountContainer.className += " betterfloat-sale-tag";
 				discountContainer.setAttribute(
-					'style',
+					"style",
 					`color: ${
-						difference.isZero() ? extensionSettings['skb-color-neutral'] : difference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+						difference.isZero() ? extensionSettings["skb-color-neutral"] : difference.isNeg() ? extensionSettings["skb-color-profit"] : extensionSettings["skb-color-loss"]
 					}; font-size: 14px; background: transparent; margin-left: 5px;`
 				);
 				discountContainer.innerHTML = `<span style="translate: 0 -1px;">${
-					difference.isZero() ? `-${currencySymbol}0` : (difference.isPos() ? '+' : '-') + currencySymbol + difference.abs().toFixed(2)
+					difference.isZero() ? `-${currencySymbol}0` : (difference.isPos() ? "+" : "-") + currencySymbol + difference.abs().toFixed(2)
 				}</span>`;
-				if (extensionSettings['skb-buffdifferencepercent']) {
-					discountContainer.style.display = 'flex';
-					discountContainer.style.flexDirection = 'column';
+				if (extensionSettings["skb-buffdifferencepercent"]) {
+					discountContainer.style.display = "flex";
+					discountContainer.style.flexDirection = "column";
 					const percentage = new Decimal(listingPrice).div(priceFromReference).times(100);
 					const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
 					discountContainer.innerHTML += `<span>(${percentage.toDP(decimalPlaces).toNumber()}%)</span>`;
 				}
 			}
-		} else if (selector.self === 'page') {
-			const startingPriceDiv = container.querySelector('.item-bids-time-info .item-detail');
+		} else if (selector.self === "page") {
+			const startingPriceDiv = container.querySelector(".item-bids-time-info .item-detail");
 			if (startingPriceDiv) {
 				const startingDifference = new Decimal(listingPrice).minus(priceFromReference);
-				const startingPrice = document.createElement('div');
-				startingPrice.className = 'betterfloat-sale-tag';
+				const startingPrice = document.createElement("div");
+				startingPrice.className = "betterfloat-sale-tag";
 				startingPrice.setAttribute(
-					'style',
+					"style",
 					`font-size: 14px; margin-left: 5px; color: ${
-						startingDifference.isZero() ? extensionSettings['skb-color-neutral'] : startingDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+						startingDifference.isZero() ? extensionSettings["skb-color-neutral"] : startingDifference.isNeg() ? extensionSettings["skb-color-profit"] : extensionSettings["skb-color-loss"]
 					}`
 				);
-				startingPrice.textContent = startingDifference.isZero() ? `-${currencySymbol}0` : (startingDifference.isPos() ? '+' : '-') + currencySymbol + startingDifference.abs().toDP(2);
-				startingPriceDiv.querySelector('.value')?.appendChild(startingPrice);
+				startingPrice.textContent = startingDifference.isZero() ? `-${currencySymbol}0` : (startingDifference.isPos() ? "+" : "-") + currencySymbol + startingDifference.abs().toDP(2);
+				startingPriceDiv.querySelector(".value")?.appendChild(startingPrice);
 			}
 
-			const bids = container.querySelectorAll('.bids .bid-price');
+			const bids = container.querySelectorAll(".bids .bid-price");
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
 				const bidData = cachedItem.bids[i];
 				const bidDifference = new Decimal(bidData.amount).minus(priceFromReference);
-				const bidDiscountContainer = document.createElement('div');
-				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
+				const bidDiscountContainer = document.createElement("div");
+				bidDiscountContainer.className = "betterfloat-bid-sale-tag";
 				bidDiscountContainer.setAttribute(
-					'style',
+					"style",
 					`padding: 1px 3px; border-radius: 5px; font-size: 14px; background-color: ${
-						bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
+						bidDifference.isZero() ? extensionSettings["skb-color-neutral"] : bidDifference.isNeg() ? extensionSettings["skb-color-profit"] : extensionSettings["skb-color-loss"]
 					}`
 				);
-				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? '+' : '-') + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
-				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
-				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
+				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? "+" : "-") + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
+				bidPrice.setAttribute("style", "display: flex; align-items: center; gap: 5px;");
+				bidPrice.insertAdjacentElement("afterbegin", bidDiscountContainer);
 			}
 		}
 	}
@@ -605,7 +608,7 @@ async function addBuffPrice(
 }
 
 async function getListingPrice(listing: Skinbid.Listing) {
-	if (listing.currentHighestBid > 0 && listing.auction?.sellType === 'AUCTION') {
+	if (listing.currentHighestBid > 0 && listing.auction?.sellType === "AUCTION") {
 		if (listing.currentHighestBidEur === 0) {
 			return listing.currentHighestBid * (await getSkbUserConversion());
 		} else {
@@ -620,61 +623,63 @@ async function getListingPrice(listing: Skinbid.Listing) {
 	}
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: Decimal, priceOrder: Decimal, currencySymbol: string, href: string, source: MarketSource, isItemPage = false) {
-	let icon = '';
-	let iconStyle = 'height: 20px; margin-right: 5px;';
-	let containerStyle = '';
+function generateBuffContainer(
+	container: HTMLElement,
+	priceListing: Decimal | undefined,
+	priceOrder: Decimal | undefined,
+	currencySymbol: string,
+	href: string,
+	source: MarketSource,
+	isItemPage = false
+) {
+	let icon = "";
+	let iconStyle = "height: 20px; margin-right: 5px;";
+	let containerStyle = "";
 	if (source === MarketSource.Buff) {
 		icon = ICON_BUFF;
-		iconStyle += 'border: 1px solid #323c47;';
+		iconStyle += "border: 1px solid #323c47;";
 	} else if (source === MarketSource.Steam) {
 		icon = ICON_STEAM;
 	} else if (source === MarketSource.C5Game) {
 		icon = ICON_C5GAME;
-		iconStyle += 'border: 1px solid #323c47;';
-		containerStyle = 'justify-content: flex-start;';
+		iconStyle += "border: 1px solid #323c47;";
+		containerStyle = "justify-content: flex-start;";
 	} else if (source === MarketSource.YouPin) {
 		icon = ICON_YOUPIN;
-		iconStyle += 'border: 1px solid #323c47;';
-		containerStyle = 'justify-content: flex-start;';
+		iconStyle += "border: 1px solid #323c47;";
+		containerStyle = "justify-content: flex-start;";
 	}
 	const buffContainer = html`
 		<a class="betterfloat-buff-container" target="_blank" href="${href}" style="display: flex; margin: 5px 0; cursor: pointer; align-items: center;">
-			${
-				isItemPage
+			${isItemPage
+				? html`
+						<div style="display: flex; align-items: center; gap: 4px; width: 50%">
+							<img src="${icon}" style="${iconStyle}" />
+							<span style="font-size: 14px; font-weight: 700; color: #a3a3cb;">${toTitleCase(source)}</span>
+						</div>
+				  `
+				: html`<img src="${icon}" style="${iconStyle}" />`}
+			<div class="suggested-price betterfloat-buffprice" style="margin: 2px 0 0 0; ${isItemPage ? "width: 50%;" : ""}${containerStyle}">
+				${[MarketSource.Buff, MarketSource.Steam].includes(source)
 					? html`
-				<div style="display: flex; align-items: center; gap: 4px; width: 50%">
-					<img src="${icon}" style="${iconStyle}">
-					<span style="font-size: 14px; font-weight: 700; color: #a3a3cb;">${toTitleCase(source)}</span>
-				</div>
-			`
-					: html`<img src="${icon}" style="${iconStyle}">`
-			}
-			<div class="suggested-price betterfloat-buffprice" style="margin: 2px 0 0 0; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
-				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
-						? html`
-					<span style="color: orange;">Bid ${currencySymbol}${priceOrder?.toFixed(2) ?? 0}</span>
-					<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>
-					<span style="color: greenyellow;">Ask ${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
-				`
-						: html`
-					<span style="color: white;">${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
-				`
-				}
+							<span style="color: orange;">Bid ${currencySymbol}${priceOrder?.toFixed(2) ?? 0}</span>
+							<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>
+							<span style="color: greenyellow;">Ask ${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
+					  `
+					: html` <span style="color: white;">${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span> `}
 			</div>
 		</a>
 	`;
 	const parentDiv = container.parentElement;
 	if (parentDiv) {
-		parentDiv.insertAdjacentHTML('beforebegin', buffContainer);
+		parentDiv.insertAdjacentHTML("beforebegin", buffContainer);
 	}
 }
 
 async function calculateBuffPrice(item: Skinbid.Item) {
 	const buff_name = handleSpecialStickerNames(item.fullName);
-	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex === 0 ? 'Vanilla' : '');
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style, extensionSettings['skb-pricingsource'] as MarketSource);
+	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex === 0 ? "Vanilla" : "");
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style, extensionSettings["skb-pricingsource"] as MarketSource);
 
 	// convert prices to user's currency
 	const currencyRate = await getSkbUserCurrencyRate();

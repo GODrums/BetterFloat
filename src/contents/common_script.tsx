@@ -95,7 +95,7 @@ export const createShadowRoot: PlasmoCreateShadowRoot = (shadowHost) => shadowHo
 
 export const render: PlasmoRender<PlasmoCSUIJSXContainer> = async ({ createRootContainer }) => {
 	const storageValue = await chrome.storage.sync.get('display-updatepopup');
-	if (!storageValue['display-updatepopup']) {
+	if (!storageValue['display-updatepopup'] || !createRootContainer) {
 		return;
 	}
 	const rootContainer = await createRootContainer();

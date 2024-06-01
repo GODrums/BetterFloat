@@ -1,21 +1,14 @@
 {
-  "extends": "plasmo/templates/tsconfig.base",
-  "exclude": [
-    "node_modules",
-    "build",
-  ],
-  "include": [
-    ".plasmo/messaging.d.ts",
-    ".plasmo/index.d.ts",
-    "./**/*.ts",
-    "./**/*.tsx"
-  ],
-  "compilerOptions": {
-    "paths": {
-      "~*": ["./src/*"],
-      "@/*": ["./*"]
-    },
-    "baseUrl": ".",
-    "resolveJsonModule": true
-  }
+	"extends": "plasmo/templates/tsconfig.base",
+	"exclude": ["node_modules", "build"],
+	"include": [".plasmo/messaging.d.ts", ".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
+	"compilerOptions": {
+		"paths": {
+			"~*": ["./src/*"],
+			"@/*": ["./*"]
+		},
+		"baseUrl": ".",
+		"resolveJsonModule": true,
+		"strictNullChecks": true
+	}
 }

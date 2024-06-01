@@ -18,11 +18,11 @@ type BuffItem = {
 };
 
 const Container: React.FC<{ child: HTMLDivElement }> = ({ child }) => {
-	return <div className="fixed z-[99]" ref={(ref) => ref.appendChild(child)}></div>;
+	return <div className="fixed z-[99]" ref={(ref) => ref?.appendChild(child)}></div>;
 };
 
 const SPBuffContainer: React.FC = () => {
-	const jsonData = JSON.parse(document.querySelector('.ItemPage').getAttribute('data-betterfloat'));
+	const jsonData = JSON.parse(document.querySelector('.ItemPage')?.getAttribute('data-betterfloat') ?? '{}');
 	const data: BuffItem = {
 		source: jsonData.source ?? MarketSource.Buff,
 		currency: jsonData.currency,
