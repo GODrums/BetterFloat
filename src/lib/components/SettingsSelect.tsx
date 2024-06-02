@@ -34,26 +34,28 @@ export const SettingsSelect = ({ id, text, options, icon, tooltipText }: SelectP
 			<div className="flex items-center gap-2">
 				{icon}
 				<Label htmlFor={id}>{text}</Label>
+			</div>
+			<div className="flex items-center gap-2">
 				{tooltipText && (
 					<SettingsTooltip text={tooltipText}>
-						<MaterialSymbolsHelpOutline className="h-5 w-5" />
+						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
+				<Select open={open} value={value} onValueChange={onValueChange}>
+					<SelectTrigger style={{ width: width }} onClick={() => setOpen(!open)}>
+						<SelectValue aria-label={value}>
+							<SelectValue>{options[value ?? 0]}</SelectValue>
+						</SelectValue>
+					</SelectTrigger>
+					<SelectContent className="w-[80px]" position="popper" sideOffset={2} align="center">
+						{options.map((option, index) => (
+							<SelectItem key={index} value={index.toString()}>
+								{option}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</div>
-			<Select open={open} value={value} onValueChange={onValueChange}>
-				<SelectTrigger style={{ width: width }} onClick={() => setOpen(!open)}>
-					<SelectValue aria-label={value}>
-						<SelectValue>{options[value ?? 0]}</SelectValue>
-					</SelectValue>
-				</SelectTrigger>
-				<SelectContent className="w-[80px]" position="popper" sideOffset={2} align="center">
-					{options.map((option, index) => (
-						<SelectItem key={index} value={index.toString()}>
-							{option}
-						</SelectItem>
-					))}
-				</SelectContent>
-			</Select>
 		</div>
 	);
 };

@@ -7,6 +7,7 @@ import type { SVGProps } from 'react';
 import { MarketSource } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from './Icons';
+import { SettingsCheckbox } from './SettingsCheckbox';
 import { SettingsSelect } from './SettingsSelect';
 import { SettingsTooltip } from './SettingsTooltip';
 import { Badge, Button, Card, CardContent, Label } from './Shadcn';
@@ -65,6 +66,15 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 				{(source === MarketSource.Buff || source === MarketSource.Steam) && (
 					<div className="pt-1 px-4">
 						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+					</div>
+				)}
+				{prefix === 'csf' && source !== MarketSource.Steam && (
+					<div className="pt-1 px-4">
+						<SettingsCheckbox
+							id={`${prefix}-steamsupplement`}
+							text="Supplement with Steam"
+							tooltipText="Adds the respective percentage to the Steam Market ask price to the Steam Market link."
+						/>
 					</div>
 				)}
 			</CardContent>

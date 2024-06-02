@@ -1,4 +1,4 @@
-import buffIds from '@/assets/buffids.json' with { type: "json" };
+import buffIds from '@/assets/buffids.json';
 import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';

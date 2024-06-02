@@ -29,38 +29,38 @@ export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGEl
 export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false }: CheckboxProps) => {
 	const [checked, setChecked] = useStorage(id);
 
-	const width = 190 - (text.length > 25 || tooltipText || disabled ? 35 : 0) - (isNew ? 35 : 0);
-
 	return (
-		<div className={cn('flex justify-between items-center align-middle', disabled && 'opacity-50 cursor-not-allowed')}>
+		<div className={cn('flex justify-between items-center align-middle gap-4', disabled && 'opacity-50 cursor-not-allowed')}>
 			<div className="flex items-center gap-2">
 				{icon}
-				<Label htmlFor={id} className="text-balance leading-5" style={{ width: `${width}px` }}>
+				<Label htmlFor={id} className="text-balance leading-5">
 					{text}
 				</Label>
+				{isNew && <Badge className="text-xs font-semibold text-accent">NEW</Badge>}
+			</div>
+			<div className="flex items-center gap-2">
 				{disabled && (
 					<SettingsTooltip text="Currently disabled as this functionality doesn't exist anymore.">
-						<MaterialSymbolsDisabledByDefaultOutline className="h-5 w-5" />
+						<MaterialSymbolsDisabledByDefaultOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
 				{tooltipText && (
 					<SettingsTooltip text={tooltipText}>
-						<MaterialSymbolsHelpOutline className="h-5 w-5" />
+						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				{isNew && <Badge className="text-xs font-semibold text-accent">NEW</Badge>}
+				<Checkbox
+					id={id}
+					checked={checked}
+					onCheckedChange={setChecked}
+					onClick={() => {
+						toast({
+							description: 'Please refresh the website for changes to come into effect!',
+						});
+					}}
+					disabled={disabled}
+				/>
 			</div>
-			<Checkbox
-				id={id}
-				checked={checked}
-				onCheckedChange={setChecked}
-				onClick={() => {
-					toast({
-						description: 'Please refresh the website for changes to come into effect!',
-					});
-				}}
-				disabled={disabled}
-			/>
 		</div>
 	);
 };

@@ -75,6 +75,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-stickerprices': true,
 	'csf-csbluegem': true,
 	'csf-pricingsource': 'buff',
+	'csf-steamsupplement': true,
 	'csf-pricereference': 0,
 	'csf-refreshinterval': 0,
 	'csf-floatappraiser': false,

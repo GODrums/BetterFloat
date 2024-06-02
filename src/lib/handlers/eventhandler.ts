@@ -3,6 +3,7 @@ import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 import { sendToBackground } from '@plasmohq/messaging';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
+import { toTitleCase } from '~lib/util/helperfunctions';
 import type { MarketSource } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
@@ -65,15 +66,21 @@ export async function activateHandler() {
 	urlHandler();
 }
 
-export async function initPriceMapping(source: MarketSource) {
+export async function initPriceMapping(sources: MarketSource[]) {
+	console.time('[BetterFloat] PriceRefresh');
+	for (const source of sources) {
+		await sourceRefresh(source);
+	}
+	console.timeEnd('[BetterFloat] PriceRefresh');
+}
+
+async function sourceRefresh(source: MarketSource) {
 	const updateSetting = `${source}-update`;
 	const storageData = await chrome.storage.local.get(updateSetting);
 	const lastUpdate = storageData[updateSetting] ?? 0;
-	console.debug('[BetterFloat] Last update: ', updateSetting, lastUpdate);
-	// if lastUpdate is older than 1 hour, refresh prices
+	// refresh only if prices are older than 1 hour
 	if (lastUpdate < Date.now() - 1000 * 60 * 60) {
-		console.time('[BetterFloat] PriceRefresh');
-		console.debug('[BetterFloat] Prices are older than 1 hour, last update:', new Date(lastUpdate), '. Refreshing prices...');
+		console.debug(`[BetterFloat] ${toTitleCase(source)} prices are older than 1 hour, last update: ${new Date(lastUpdate)}. Refreshing ${toTitleCase(source)} prices...`);
 
 		const response: { status: number } = await sendToBackground({
 			name: 'refreshPrices',
@@ -83,7 +90,6 @@ export async function initPriceMapping(source: MarketSource) {
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
-		console.timeEnd('[BetterFloat] PriceRefresh');
 	}
 }
 
