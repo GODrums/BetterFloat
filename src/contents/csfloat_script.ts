@@ -573,10 +573,11 @@ async function adjustSalesTableRow(container: Element) {
 	}
 
 	const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '{}');
+	if (!priceData.priceFromReference) return;
 	const priceDiff = new Decimal(cachedSale.price).div(100).minus(priceData.priceFromReference);
 	// add Buff price difference
 	const priceContainer = container.querySelector('.price-wrapper');
-	if (priceContainer && priceData.priceFromReference) {
+	if (priceContainer) {
 		priceContainer.querySelector('app-reference-widget')?.remove();
 		const priceDiffElement = html`
 			<div
@@ -1501,7 +1502,7 @@ async function addBuffPrice(
 	}
 
 	// add link to steam market
-	if (buff_name) {
+	if ((extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) && buff_name) {
 		const flexGrow = container.querySelector('div.seller-details > div');
 		if (flexGrow) {
 			let steamContainer = '';
@@ -1509,21 +1510,23 @@ async function addBuffPrice(
 				const { priceListing } = await getBuffPrice(buff_name, item.style, MarketSource.Steam);
 				if (priceListing?.gt(0)) {
 					const percentage = new Decimal(item.price).div(priceListing).times(100);
-					const formatDp = percentage.gt(130) || percentage.lt(80) ? 0 : 1;
-					steamContainer = html`
-						<a
-							href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
-							target="_blank"
-							style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
-						>
-							<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${
-								percentage.gt(300) ? '>300' : percentage.toFixed(formatDp)
-							}%</span>
-							<div>
-								<img src="${ICON_STEAM}" style="height: ${isPopout ? '18px' : '16px'}; translate: 0px 1px;"></img>
-							</div>
-						</a>
-					`;
+					if (percentage.gt(1)) {
+						const formatDp = percentage.gt(130) || percentage.lt(80) ? 0 : 1;
+						steamContainer = html`
+							<a
+								href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
+								target="_blank"
+								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
+							>
+								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${
+									percentage.gt(300) ? '>300' : percentage.toFixed(formatDp)
+								}%</span>
+								<div>
+									<img src="${ICON_STEAM}" style="height: ${isPopout ? '18px' : '16px'}; translate: 0px 1px;"></img>
+								</div>
+							</a>
+						`;
+					}
 				}
 			}
 			if (steamContainer === '') {
