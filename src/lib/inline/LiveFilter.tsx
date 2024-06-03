@@ -35,7 +35,7 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
 
 const LiveFilter: React.FC = () => {
 	const [open, setOpen] = useState(false);
-	const spFilter = (JSON.parse(localStorage.getItem('spFilter') ?? '{}') as SPFilter) || DEFAULT_FILTER;
+	const spFilter = JSON.parse(localStorage.getItem('spFilter') ?? JSON.stringify(DEFAULT_FILTER)) as SPFilter;
 	const [name, setName] = useState<string>(spFilter.name);
 	const [types, setTypes] = useState(spFilter.types);
 	const [priceLow, setPriceLow] = useState<number>(spFilter.priceLow);

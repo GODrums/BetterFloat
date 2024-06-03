@@ -1502,7 +1502,7 @@ async function addBuffPrice(
 	}
 
 	// add link to steam market
-	if ((extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) && buff_name) {
+	if ((extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) && buff_name && !container.querySelector('.betterfloat-steamlink')) {
 		const flexGrow = container.querySelector('div.seller-details > div');
 		if (flexGrow) {
 			let steamContainer = '';
@@ -1514,6 +1514,7 @@ async function addBuffPrice(
 						const formatDp = percentage.gt(130) || percentage.lt(80) ? 0 : 1;
 						steamContainer = html`
 							<a
+								class="betterfloat-steamlink"
 								href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
 								target="_blank"
 								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
@@ -1531,7 +1532,7 @@ async function addBuffPrice(
 			}
 			if (steamContainer === '') {
 				steamContainer = html`
-					<a href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank">
+					<a class="betterfloat-steamlink" href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}" target="_blank">
 						<img src="${ICON_STEAM}" style="height: ${isPopout ? '18px' : '16px'}; translate: 0px 2px;" />
 					</a>
 				`;
