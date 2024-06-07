@@ -480,8 +480,8 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	if (buff_data.priceFromReference > 0 && item.min_offer_price) {
 		const currency = getSymbolFromCurrency(buff_data.userCurrency);
 		const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
-		const minPercentage = minOffer.greaterThan(0) && stickerData.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
-		const showSP = stickerData.priceSum > 0;
+		const minPercentage = minOffer.greaterThan(0) && stickerData?.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
+		const showSP = stickerData?.priceSum > 0;
 
 		const spStyle = 'border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 14px;';
 		const diffStyle = `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${
@@ -1658,7 +1658,7 @@ function generatePriceLine(
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat="${JSON.stringify({ buff_name, priceFromReference, userCurrency })}">
+			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
