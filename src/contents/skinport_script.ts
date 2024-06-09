@@ -4,7 +4,20 @@ import Decimal from 'decimal.js';
 import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, isDevMode, ocoKeyRegex } from '~lib/util/globals';
+import {
+	ICON_ARROWUP_SMALL,
+	ICON_BUFF,
+	ICON_C5GAME,
+	ICON_CAMERA,
+	ICON_CAMERA_FLIPPED,
+	ICON_CSFLOAT,
+	ICON_EXCLAMATION,
+	ICON_STEAM,
+	ICON_YOUPIN,
+	MarketSource,
+	isDevMode,
+	ocoKeyRegex,
+} from '~lib/util/globals';
 import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
@@ -28,7 +41,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { z } from 'zod';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { type IStorage, MarketSource, type SPFilter } from '~lib/util/storage';
+import type { IStorage, SPFilter } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -58,11 +71,7 @@ async function init() {
 		return;
 	}
 
-	await initPriceMapping([extensionSettings['sp-pricingsource'] as MarketSource]);
-
-	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping(extensionSettings['sp-pricingsource'] as MarketSource);
-	console.groupEnd();
+	await initPriceMapping(extensionSettings, 'sp');
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
 
@@ -312,14 +321,13 @@ async function adjustItemPage(container: Element) {
 	if (item.currency === '') {
 		item.currency = getSymbolFromCurrency(await getSpUserCurrency()) ?? '€';
 	}
-	const source = extensionSettings['sp-pricingsource'] as MarketSource;
-	const buffItem = await getBuffItem(item.full_name, item.style, source);
+	const buffItem = await getBuffItem(item.full_name, item.style);
 	const buff_id = await getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+	const href = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
-	container.setAttribute('data-betterfloat', JSON.stringify({ source, itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
+	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
 	const buffButton = document.createElement('button');
 	buffButton.onclick = () => {
@@ -344,7 +352,7 @@ async function adjustItemPage(container: Element) {
 		};
 	}
 
-	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
+	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(buffItem.source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
 	if (priceContainer && priceFromReference) {
@@ -802,8 +810,27 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	};
 }
 
-export async function getBuffItem(buff_name: string, itemStyle: ItemStyle, source: MarketSource) {
+export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
+	let source = extensionSettings['sp-pricingsource'] as MarketSource;
 	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle, source);
+
+	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
+		priceListing = new Decimal(0);
+		priceOrder = new Decimal(0);
+	}
+
+	console.log('[BetterFloat] Buff item data:', priceListing, priceOrder, priceAvg30, liquidity);
+
+	if ((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) {
+		source = extensionSettings['sp-altmarket'] as MarketSource;
+		if (source !== MarketSource.None) {
+			const altPrices = await getBuffPrice(buff_name, itemStyle, source);
+			priceListing = altPrices.priceListing;
+			priceOrder = altPrices.priceOrder;
+			priceAvg30 = altPrices.priceAvg30;
+			liquidity = altPrices.liquidity;
+		}
+	}
 
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
@@ -818,7 +845,7 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle, sourc
 		priceAvg30 = convertCurrency(priceAvg30, currencyRate, settingRate);
 	}
 
-	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity };
+	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity, source };
 }
 
 function convertCurrency(price: Decimal, currencyRate: number, settingRate: string) {
@@ -1118,15 +1145,9 @@ function addInstantOrder(item: Skinport.Listing, container: Element) {
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
-	const source = extensionSettings['sp-pricingsource'] as MarketSource;
-	await loadMapping(source);
-	const { buff_name, priceListing, priceOrder } = await getBuffItem(item.full_name, item.style, source);
+	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
 	// console.log('[BetterFloat] Buff price for ', item.full_name, ': ', priceListing, priceOrder);
 	const buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		return { price_difference: new Decimal(0) };
-	}
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');

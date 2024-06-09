@@ -219,7 +219,7 @@ const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.T
 	>
 		{children}
 		<SelectPrimitive.Icon asChild>
-			<CaretSortIcon className="h-4 w-4 opacity-50" />
+			<CaretSortIcon className="h-4 w-4 opacity-50 ml-1" />
 		</SelectPrimitive.Icon>
 	</SelectPrimitive.Trigger>
 ));
@@ -244,7 +244,7 @@ const SelectScrollDownButton = React.forwardRef<React.ElementRef<typeof SelectPr
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
 
 const SelectContent = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Content>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>>(
-	({ className, children, position = 'popper', ...props }, ref) => (
+	({ className, children, position = 'popper', onEscapeKeyDown, ...props }, ref) => (
 		<SelectPrimitive.Portal>
 			<SelectPrimitive.Content
 				ref={ref}
@@ -254,6 +254,7 @@ const SelectContent = React.forwardRef<React.ElementRef<typeof SelectPrimitive.C
 					className
 				)}
 				position={position}
+				onEscapeKeyDown={onEscapeKeyDown}
 				{...props}
 			>
 				<SelectScrollUpButton />
@@ -438,7 +439,7 @@ const badgeVariants = cva('inline-flex items-center rounded-md border px-2.5 py-
 	},
 });
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {}
+export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> { }
 
 function Badge({ className, variant, ...props }: BadgeProps) {
 	return <div className={cn(badgeVariants({ variant }), className)} {...props} />;
@@ -541,7 +542,7 @@ type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> { }
 
 const FloatingInput = React.forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
 	return <Input placeholder=" " className={cn('peer', className)} ref={ref} {...props} />;

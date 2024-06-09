@@ -52,3 +52,18 @@ export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
 export const isDevMode = process.env.NODE_ENV === 'development';
 export const ocoKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+export enum MarketSource {
+	None = 'none',
+	Buff = 'buff',
+	Steam = 'steam',
+	YouPin = 'youpin',
+	C5Game = 'c5game',
+}
+
+export const AvailableMarketSources = [
+	{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff },
+	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam },
+	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
+	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
+];

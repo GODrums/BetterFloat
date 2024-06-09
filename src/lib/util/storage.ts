@@ -1,11 +1,5 @@
 import { Storage } from '@plasmohq/storage';
-
-export enum MarketSource {
-	Buff = 'buff',
-	Steam = 'steam',
-	YouPin = 'youpin',
-	C5Game = 'c5game',
-}
+import { MarketSource } from './globals';
 
 export const ExtensionStorage = {
 	local: new Storage({
@@ -46,18 +40,9 @@ export async function getAllSettings() {
 				result = true;
 			} else if (result === 'false') {
 				result = false;
-			} else if (result.includes(MarketSource.Buff)) {
-				result = MarketSource.Buff;
-				ExtensionStorage.sync.set(key, MarketSource.Buff);
-			} else if (result.includes(MarketSource.Steam)) {
-				result = MarketSource.Steam;
-				ExtensionStorage.sync.set(key, MarketSource.Steam);
-			} else if (result.includes(MarketSource.YouPin)) {
-				result = MarketSource.YouPin;
-				ExtensionStorage.sync.set(key, MarketSource.YouPin);
-			} else if (result.includes(MarketSource.C5Game)) {
-				result = MarketSource.C5Game;
-				ExtensionStorage.sync.set(key, MarketSource.C5Game);
+			} else if (result.startsWith('"') || result.startsWith("'")) {
+				result = result.substring(1, result.length - 1);
+				ExtensionStorage.sync.set(key, result);
 			}
 			settings[key] = result;
 		} else if (settings[key] === 'true') {
@@ -71,6 +56,7 @@ export async function getAllSettings() {
 
 export const DEFAULT_SETTINGS = {
 	'csf-enable': true,
+	'csf-altmarket': 'none',
 	'csf-autorefresh': true,
 	'csf-stickerprices': true,
 	'csf-csbluegem': true,
@@ -93,6 +79,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-csbluegem': true,
 	'sp-ocoapikey': '',
 	'sp-pricingsource': 'buff',
+	'sp-altmarket': 'none',
 	'sp-pricereference': 0,
 	'sp-currencyrates': 0,
 	'sp-steamprices': false,
@@ -103,6 +90,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-floatcoloring': true,
 	'skb-enable': true,
 	'skb-pricingsource': 'buff',
+	'skb-altmarket': 'none',
 	'skb-pricereference': 0,
 	'skb-buffdifference': true,
 	'skb-buffdifferencepercent': false,

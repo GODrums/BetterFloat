@@ -4,7 +4,6 @@ import { sendToBackground } from '@plasmohq/messaging';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { toTitleCase } from '~lib/util/helperfunctions';
-import type { MarketSource } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
@@ -25,8 +24,11 @@ import {
 	cacheSpMinOrderPrice,
 	cacheSpPopupInventoryItem,
 	cacheSpPopupItem,
+	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import { MarketSource } from '~lib/util/globals';
+import type { IStorage } from '~lib/util/storage';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -66,11 +68,19 @@ export async function activateHandler() {
 	urlHandler();
 }
 
-export async function initPriceMapping(sources: MarketSource[]) {
-	console.time('[BetterFloat] PriceRefresh');
-	for (const source of sources) {
-		await sourceRefresh(source);
+export async function initPriceMapping(extensionSettings: IStorage, prefix: string) {
+	const sources = new Set<MarketSource>();
+	sources.add(extensionSettings[`${prefix}-pricingsource`] as MarketSource);
+	if (extensionSettings[`${prefix}-altmarket`] && extensionSettings[`${prefix}-altmarket`] !== 'none') {
+		sources.add(extensionSettings[`${prefix}-altmarket`] as MarketSource);
 	}
+	if (extensionSettings[`${prefix}-steamsupplement`]) {
+		sources.add(MarketSource.Steam);
+	}
+	console.log('[BetterFloat] Sources:', sources);
+	console.time('[BetterFloat] PriceRefresh');
+	await Promise.all(Array.from(sources).map((source) => sourceRefresh(source)));
+	await Promise.all(Array.from(sources).map((source) => loadMapping(source)));
 	console.timeEnd('[BetterFloat] PriceRefresh');
 }
 

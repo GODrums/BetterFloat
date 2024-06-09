@@ -14,7 +14,7 @@ import {
 	loadMapping,
 } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
@@ -22,7 +22,7 @@ import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import { type IStorage, MarketSource } from '~lib/util/storage';
+import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
@@ -50,7 +50,7 @@ async function init() {
 		return;
 	}
 
-	await initPriceMapping([extensionSettings['skb-pricingsource'] as MarketSource]);
+	await initPriceMapping(extensionSettings, 'skb');
 
 	console.group('[BetterFloat] Loading mappings...');
 	await loadMapping(extensionSettings['skb-pricingsource'] as MarketSource);

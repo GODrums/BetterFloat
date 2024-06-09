@@ -2,9 +2,9 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import { getBuffItem } from '~contents/skinport_script';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
+import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { waitForElement } from '~lib/util/helperfunctions';
-import { MarketSource, getSetting } from '~lib/util/storage';
+import { getSetting } from '~lib/util/storage';
 
 export function addPattern(container: Element, item: Skinport.Item) {
 	if (!item.pattern) return;

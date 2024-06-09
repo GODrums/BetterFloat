@@ -1,8 +1,7 @@
 import type React from 'react';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~lib/components/Icons';
 import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
-import { ICON_ARROWUP, ICON_BUFF, ICON_C5GAME, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN } from '~lib/util/globals';
-import { MarketSource } from '~lib/util/storage';
+import { AvailableMarketSources, ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 
 type BuffItem = {
@@ -35,12 +34,7 @@ const SPBuffContainer: React.FC = () => {
 		liquidity: parseFloat(jsonData.liquidity || 0),
 	};
 
-	const marketIcon = {
-		[MarketSource.Buff]: ICON_BUFF,
-		[MarketSource.Steam]: ICON_STEAM,
-		[MarketSource.YouPin]: ICON_YOUPIN,
-		[MarketSource.C5Game]: ICON_C5GAME,
-	};
+	const marketIcon = AvailableMarketSources.find((s) => s.source === data.source)?.logo ?? ICON_BUFF;
 
 	// create a portal for the popover
 	const portal = document.createElement('div');
@@ -105,7 +99,7 @@ const SPBuffContainer: React.FC = () => {
 				<Popover>
 					<PopoverTrigger asChild>
 						<Button variant="ghost" className="px-1 flex items-center gap-2 hover:bg-neutral-500/70">
-							<img src={marketIcon[data.source]} className="h-6 w-6 rounded-md" />
+							<img src={marketIcon} className="h-6 w-6 rounded-md" />
 							<div className="flex gap-1.5 font-semibold text-lg">
 								{[MarketSource.Buff, MarketSource.Steam].includes(data.source) ? (
 									<>
@@ -155,7 +149,7 @@ const SPBuffContainer: React.FC = () => {
 								Average sell price (30d)
 							</Badge>
 							<BuffSaleTag buffPrice={data.priceAvg30} />
-							{[MarketSource.Buff, MarketSource.Steam].includes(data.source) && (
+							{[MarketSource.Buff].includes(data.source) && (
 								<>
 									<Badge variant="secondary" className="text-sm">
 										Liquidity

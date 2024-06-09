@@ -4,13 +4,14 @@ import c5gameLogo from 'data-base64:~/../assets/icons/icon-c5game.png';
 import youpinLogo from 'data-base64:~/../assets/icons/icon-youpin.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import type { SVGProps } from 'react';
-import { MarketSource } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from './Icons';
 import { SettingsCheckbox } from './SettingsCheckbox';
 import { SettingsSelect } from './SettingsSelect';
 import { SettingsTooltip } from './SettingsTooltip';
 import { Badge, Button, Card, CardContent, Label } from './Shadcn';
+import { MarketSource } from '~lib/util/globals';
+import { SettingsAltMarket } from './SettingsAltMarket';
 
 export function MaterialSymbolsLightStorefrontOutline(props: SVGProps<SVGSVGElement>) {
 	return (
@@ -33,10 +34,16 @@ const SingleMarket = ({ text, logo, onClick, active = false }: { text: string; l
 	);
 };
 
+export type SourceInfo = {
+	text: string;
+	logo: string;
+	source: MarketSource;
+}
+
 export const SettingsSource = ({ prefix }: { prefix: string }) => {
 	const [source, setSource] = useStorage(`${prefix}-pricingsource`, (s) => (s === undefined ? MarketSource.Buff : s));
 
-	const sources = [
+	const sources: SourceInfo[] = [
 		{ text: 'Buff163', logo: buffLogo, source: MarketSource.Buff },
 		{ text: 'Steam', logo: steamLogo, source: MarketSource.Steam },
 		{ text: 'YouPin / UU', logo: youpinLogo, source: MarketSource.YouPin },
@@ -63,9 +70,12 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 						<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(MarketSource)} active={source === MarketSource} />
 					))}
 				</div>
-				{(source === MarketSource.Buff || source === MarketSource.Steam) && (
+				{[MarketSource.Buff, MarketSource.Steam].includes(source) && (
 					<div className="pt-1 px-4">
 						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+						{prefix !== 'skb' && (
+							<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} />
+						)}
 					</div>
 				)}
 				{prefix === 'csf' && source !== MarketSource.Steam && (

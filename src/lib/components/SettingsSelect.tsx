@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, useEffect } from 'react';
 import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
 import { SettingsTooltip } from './SettingsTooltip';
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Shadcn';
@@ -15,15 +15,8 @@ type SelectProps = {
 
 export const SettingsSelect = ({ id, text, options, icon, tooltipText }: SelectProps) => {
 	const [value, setValue] = useStorage(id);
-	// the radix-ui select component is bugged and needs manual open/close handling
-	const [open, setOpen] = useState(false);
 
 	let width = options[value ?? 0].length * 8 + 50 + 'px';
-
-	const onValueChange = (value: string) => {
-		setValue(value);
-		setOpen(false);
-	};
 
 	useEffect(() => {
 		width = options[value ?? 0].length * 8 + 50 + 'px';
@@ -41,13 +34,13 @@ export const SettingsSelect = ({ id, text, options, icon, tooltipText }: SelectP
 						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				<Select open={open} value={value} onValueChange={onValueChange}>
-					<SelectTrigger style={{ width: width }} onClick={() => setOpen(!open)}>
+				<Select value={value} onValueChange={setValue}>
+					<SelectTrigger style={{ width: width }}>
 						<SelectValue aria-label={value}>
 							<SelectValue>{options[value ?? 0]}</SelectValue>
 						</SelectValue>
 					</SelectTrigger>
-					<SelectContent className="w-[80px]" position="popper" sideOffset={2} align="center">
+					<SelectContent className="w-[60px]" position="popper" sideOffset={2} align="end">
 						{options.map((option, index) => (
 							<SelectItem key={index} value={index.toString()}>
 								{option}

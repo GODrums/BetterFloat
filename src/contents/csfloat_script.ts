@@ -26,6 +26,7 @@ import {
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_YOUPIN,
+	MarketSource,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
@@ -58,7 +59,7 @@ import {
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
-import { type IStorage, MarketSource } from '~lib/util/storage';
+import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -80,18 +81,12 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
+	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csf-enable']) return;
 
-	const sources = [extensionSettings['csf-pricingsource'] as MarketSource];
-	if (sources[0] !== MarketSource.Steam && extensionSettings['csf-steamsupplement']) {
-		sources.push(MarketSource.Steam);
-	}
-	await initPriceMapping(sources);
+	await initPriceMapping(extensionSettings, 'csf');
 
-	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping(extensionSettings['csf-pricingsource'] as MarketSource);
-	console.groupEnd();
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 
 	if (extensionSettings['csf-topbutton']) {
@@ -127,248 +122,6 @@ async function firstLaunch() {
 	for (let i = 0; i < items.length; i++) {
 		await adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ? POPOUT_ITEM.PAGE : POPOUT_ITEM.NONE);
 	}
-
-	if (location.pathname.includes('/stall/')) {
-		// await customStall(location.pathname.split('/').pop() ?? '');
-	}
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function customStall(stall_id: string) {
-	if (stall_id === 'me') {
-		const popupOuter = document.createElement('div');
-		const settingsPopup = document.createElement('div');
-		settingsPopup.setAttribute('class', 'betterfloat-customstall-popup');
-		settingsPopup.setAttribute('style', 'display: none;');
-
-		const popupHeader = document.createElement('h3');
-		popupHeader.textContent = 'CUSTOM STALL';
-		popupHeader.setAttribute('style', 'font-weight: 600; font-size: 24px; line-height: 0; margin-top: 20px;');
-		const popupSubHeader = document.createElement('h4');
-		popupSubHeader.textContent = 'by BetterFloat';
-		popupSubHeader.setAttribute('style', 'font-size: 18px; color: rgb(130, 130, 130); line-height: 0;');
-		const popupCloseButton = document.createElement('button');
-		popupCloseButton.type = 'button';
-		popupCloseButton.className = 'betterfloat-customstall-close';
-		popupCloseButton.textContent = 'x';
-		popupCloseButton.onclick = () => {
-			settingsPopup.style.display = 'none';
-		};
-		settingsPopup.appendChild(popupHeader);
-		settingsPopup.appendChild(popupSubHeader);
-		settingsPopup.appendChild(popupCloseButton);
-
-		const popupBackground = document.createElement('div');
-		popupBackground.className = 'betterfloat-customstall-popup-content';
-		const backgroundText = document.createElement('p');
-		backgroundText.setAttribute('style', 'font-weight: 600; margin: 5px 0;');
-		backgroundText.textContent = 'BACKGROUND';
-		popupBackground.appendChild(backgroundText);
-
-		const inputField = {
-			img: {
-				placeholder: 'Image URL',
-				text: 'IMG:',
-			},
-			webm: {
-				placeholder: 'Webm URL',
-				text: 'WEBM:',
-			},
-			mp4: {
-				placeholder: 'Mp4 URL',
-				text: 'MP4:',
-			},
-		};
-		for (const key in inputField) {
-			const div = document.createElement('div');
-			div.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
-			const label = document.createElement('label');
-			label.textContent = inputField[key as keyof typeof inputField].text;
-			const input = document.createElement('input');
-			input.className = 'w-2/4';
-			input.type = 'url';
-			input.placeholder = inputField[key as keyof typeof inputField].placeholder;
-			input.id = 'betterfloat-customstall-' + key;
-			div.appendChild(label);
-			div.appendChild(input);
-			popupBackground.appendChild(div);
-		}
-		const colorDiv = document.createElement('div');
-		colorDiv.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
-		const colorLabel = document.createElement('label');
-		colorLabel.textContent = 'Color:';
-		const colorInput = document.createElement('input');
-		colorInput.type = 'color';
-		colorInput.id = 'betterfloat-customstall-color';
-		colorDiv.appendChild(colorLabel);
-		colorDiv.appendChild(colorInput);
-		const transparentDiv = document.createElement('div');
-		transparentDiv.setAttribute('style', 'display: flex; justify-content: space-between; width: 100%');
-		const transparentLabel = document.createElement('label');
-		transparentLabel.textContent = 'Transparent Elements:';
-		const transparentInput = document.createElement('input');
-		transparentInput.setAttribute('style', 'height: 24px; width: 24px; accent-color: #ff5722;');
-		transparentInput.type = 'checkbox';
-		transparentInput.id = 'betterfloat-customstall-transparent';
-		transparentDiv.appendChild(transparentLabel);
-		transparentDiv.appendChild(transparentInput);
-
-		const popupSaveButton = document.createElement('button');
-		popupSaveButton.className = 'mat-raised-button mat-warn betterfloat-customstall-buttondiv';
-		popupSaveButton.style.marginTop = '15px';
-		popupSaveButton.type = 'button';
-		const saveButtonTextNode = document.createElement('span');
-		saveButtonTextNode.textContent = 'Save';
-		popupSaveButton.onclick = async () => {
-			const stall_id = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
-			if (isNaN(Number(stall_id)) || location.pathname !== '/stall/me') {
-				console.debug('[BetterFloat] Invalid stall id');
-				return;
-			}
-			// send get to /api/v1/me to get obfuscated user id
-			const obfuscated_id: string = await fetch('https://csfloat.com/api/v1/me')
-				.then((res) => res.json())
-				.then((data) => data?.user?.obfuscated_id);
-			if (!obfuscated_id) {
-				console.debug('[BetterFloat] Could not get obfuscated user id');
-				return;
-			}
-			const stallData = {
-				stall_id: stall_id,
-				options: {
-					video: {
-						poster: (<HTMLInputElement>document.getElementById('betterfloat-customstall-img')).value,
-						webm: (<HTMLInputElement>document.getElementById('betterfloat-customstall-webm')).value,
-						mp4: (<HTMLInputElement>document.getElementById('betterfloat-customstall-mp4')).value,
-					},
-					'background-color': (<HTMLInputElement>document.getElementById('betterfloat-customstall-color')).value,
-					transparent_elements: (<HTMLInputElement>document.getElementById('betterfloat-customstall-transparent')).checked,
-				},
-			};
-			console.debug('[BetterFloat] New stall settings: ', stallData);
-
-			// send post to /api/v1/stall/{id} to update stall
-			await fetch('https://api.rums.dev/v1/csfloatstalls/store', {
-				method: 'POST',
-				headers: {
-					Accept: '*/*',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					stall_id: stallData.stall_id,
-					// token: obfuscated_id,
-					token: 'testtoken',
-					data: stallData.options,
-				}),
-			})
-				.then((res) => res.json())
-				.then((data) => console.debug('[BetterFloat] Stall update - success response from api.rums.dev: ', data))
-				.catch((err) => console.debug('[BetterFloat] Stall update - error: ', err));
-
-			settingsPopup.style.display = 'none';
-		};
-		popupSaveButton.appendChild(saveButtonTextNode);
-
-		popupBackground.appendChild(colorDiv);
-		popupBackground.appendChild(transparentDiv);
-		settingsPopup.appendChild(popupBackground);
-		settingsPopup.appendChild(popupSaveButton);
-
-		const settingsButton = document.createElement('button');
-		settingsButton.setAttribute('style', 'background: none; border: none; margin-left: 60px');
-		const settingsIcon = document.createElement('img');
-		// settingsIcon.setAttribute('src', extensionSettings["runtimePublicURL"] + '/gear-solid.svg');
-		settingsIcon.style.height = '64px';
-		settingsIcon.style.filter = 'brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%)';
-		settingsButton.onclick = () => {
-			settingsPopup.style.display = 'block';
-		};
-		settingsButton.appendChild(settingsIcon);
-		popupOuter.appendChild(settingsPopup);
-		popupOuter.appendChild(settingsButton);
-
-		const container = document.querySelector('.settings')?.parentElement;
-		if (container) {
-			container.after(popupOuter);
-			(<HTMLElement>container.parentElement).style.alignItems = 'center';
-		}
-
-		// get stall id from input field to still load custom stall
-		const newID = (<HTMLInputElement>document.getElementById('mat-input-1')).value.split('/').pop();
-		if (newID) {
-			stall_id = newID;
-		} else {
-			console.log('[BetterFloat] Could not load stall data');
-			return;
-		}
-	}
-	const stallData = await getStallData(stall_id);
-	if (!stallData || !stall_id.includes(stallData.stall_id)) {
-		console.log('[BetterFloat] Could not load stall data');
-		return;
-	}
-	// user has not set a customer stall yet
-	if (stallData.roles.length === 0) {
-		console.debug(`[BetterFloat] User ${stall_id} has not set a custom stall yet`);
-		return;
-	}
-
-	document.body.classList.add('betterfloat-custom-stall');
-
-	const backgroundVideo = document.createElement('video');
-	backgroundVideo.setAttribute('playsinline', '');
-	backgroundVideo.setAttribute('autoplay', '');
-	backgroundVideo.setAttribute('muted', '');
-	backgroundVideo.setAttribute('loop', '');
-	backgroundVideo.setAttribute('poster', stallData.options.video.poster);
-	backgroundVideo.setAttribute(
-		'style',
-		`position: absolute; width: 100%; height: 100%; z-index: -100; background-size: cover; background-position: center center; object-fit: cover; background-color: ${stallData.options['background-color']}`
-	);
-	const sourceWebm = document.createElement('source');
-	sourceWebm.setAttribute('src', stallData.options.video.webm);
-	sourceWebm.setAttribute('type', 'video/webm');
-	const sourceMp4 = document.createElement('source');
-	sourceMp4.setAttribute('src', stallData.options.video.mp4);
-	sourceMp4.setAttribute('type', 'video/mp4');
-
-	backgroundVideo.appendChild(sourceWebm);
-	backgroundVideo.appendChild(sourceMp4);
-	document.body.firstChild?.before(backgroundVideo);
-
-	// start video after it is loaded
-	backgroundVideo.addEventListener('canplay', async () => {
-		backgroundVideo.muted = true;
-		await backgroundVideo.play();
-	});
-
-	if (stallData.options.transparent_elements) {
-		const stallHeader = document.querySelector('.betterfloat-custom-stall .mat-card.header');
-		if (stallHeader) {
-			(<HTMLElement>stallHeader).style.backgroundColor = 'transparent';
-		}
-		const stallFooter = document.querySelector('.betterfloat-custom-stall > app-root > div > div.footer');
-		if (stallFooter) {
-			(<HTMLElement>stallFooter).style.backgroundColor = 'transparent';
-		}
-	}
-
-	const matChipWrapper = document.querySelector('.mat-chip-list-wrapper');
-	if (matChipWrapper?.firstElementChild) {
-		const bfChip = <HTMLElement>matChipWrapper.firstElementChild.cloneNode(true);
-		bfChip.style.backgroundColor = 'purple';
-		bfChip.textContent = 'BetterFloat ' + stallData.roles[0];
-		matChipWrapper.appendChild(bfChip);
-	}
-
-	const interval = setInterval(() => {
-		if (!location.href.includes('/stall/') && !location.href.includes('/item/')) {
-			document.querySelector('.betterfloat-custom-stall')?.classList.remove('betterfloat-custom-stall');
-			document.querySelector('video')?.remove();
-
-			clearInterval(interval);
-		}
-	}, 200);
 }
 
 function offerItemClickListener(listItem: Element) {
@@ -1426,16 +1179,23 @@ async function getCurrencyRate() {
 }
 
 async function getBuffItem(item: CSFloat.FloatItem) {
-	const source = extensionSettings['csf-pricingsource'] as MarketSource;
+	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
 	let buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
 
-	const pricingData = await getBuffPrice(buff_name, item.style, source);
+	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
 	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
 		pricingData.priceListing = new Decimal(0);
 		pricingData.priceOrder = new Decimal(0);
 		buff_id = undefined;
+	}
+
+	if (Object.keys(pricingData).length === 0 || (pricingData.priceListing?.isZero() && pricingData.priceOrder?.isZero())) {
+		source = extensionSettings['csf-altmarket'] as MarketSource;
+		if (source !== MarketSource.None) {
+			pricingData = await getBuffPrice(buff_name, item.style, source);
+		}
 	}
 
 	const { currencyRate } = await getCurrencyRate();
@@ -1451,6 +1211,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 		priceOrder: pricingData.priceOrder?.mul(currencyRate),
 		priceFromReference,
 		difference: new Decimal(item.price).minus(priceFromReference ?? 0),
+		source,
 	};
 }
 
@@ -1461,7 +1222,6 @@ async function addBuffPrice(
 ): Promise<{
 	price_difference: number;
 }> {
-	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const isSellTab = location.pathname === '/sell';
 	const isPopout = popout === POPOUT_ITEM.PAGE;
 
@@ -1470,7 +1230,7 @@ async function addBuffPrice(
 	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
 
-	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference } = await getBuffItem(item);
+	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
 	const itemExists =
 		(source === MarketSource.Buff && (buff_id! > 0 || priceOrder?.gt(0))) ||
 		source === MarketSource.Steam ||
@@ -1502,7 +1262,7 @@ async function addBuffPrice(
 	}
 
 	// add link to steam market
-	if ((extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) && buff_name && !container.querySelector('.betterfloat-steamlink')) {
+	if ((extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) && buff_name && (!container.querySelector('.betterfloat-steamlink') || isPopout)) {
 		const flexGrow = container.querySelector('div.seller-details > div');
 		if (flexGrow) {
 			let steamContainer = '';
