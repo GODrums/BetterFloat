@@ -560,9 +560,9 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 					${
 						sale.sale_data.inspect
 							? html`
-									<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
-										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
-									</a>
+								<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+									<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
+								</a>
 							  `
 							: ''
 					}

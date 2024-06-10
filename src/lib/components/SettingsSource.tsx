@@ -66,15 +66,15 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 					</SettingsTooltip>
 				</div>
 				<div className="w-full flex justify-evenly items-center align-middle">
-					{sources.map(({ text, logo, source: MarketSource }) => (
-						<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(MarketSource)} active={source === MarketSource} />
+					{sources.map(({ text, logo, source: singleSource }) => (
+						<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(singleSource)} active={source === singleSource} />
 					))}
 				</div>
 				{[MarketSource.Buff, MarketSource.Steam].includes(source) && (
 					<div className="pt-1 px-4">
 						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
 						{prefix !== 'skb' && (
-							<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} />
+							<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />
 						)}
 					</div>
 				)}

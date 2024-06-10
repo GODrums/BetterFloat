@@ -9,6 +9,7 @@ import { MarketSource } from '~lib/util/globals';
 type SelectProps = {
 	prefix: string;
 	sources: SourceInfo[];
+	primarySource: string;
 };
 
 const defaultSource: SourceInfo = {
@@ -17,17 +18,17 @@ const defaultSource: SourceInfo = {
 	source: 'none' as MarketSource
 };
 
-export const SettingsAltMarket = ({ prefix, sources }: SelectProps) => {
+export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProps) => {
 	const id = `${prefix}-altmarket`;
 	const [value, setValue] = useStorage<MarketSource>(id, (s) => (s === undefined ? MarketSource.None : s));
 	const [currentSource, setCurrentSource] = useState(sources[0]);
 
+	// create a 'none' source on demand
 	if (sources[0].text !== 'None') {
 		sources.unshift(defaultSource);
 	}
 
 	const onValueChange = (newValue: string) => {
-		console.log('[BetterFloat] New value: ', newValue, value);
 		setValue(newValue as MarketSource);
 		const newSource = sources.find((s) => s.source === newValue);
 		if (newSource) {
@@ -36,6 +37,11 @@ export const SettingsAltMarket = ({ prefix, sources }: SelectProps) => {
 			setCurrentSource(defaultSource);
 		}
 	};
+
+	// if the primary source is the same as the current source, set it to the default source
+	if (primarySource === currentSource.source) {
+		onValueChange(defaultSource.source);
+	}
 
 	useEffect(() => {
 		setCurrentSource(sources.find((s) => value.includes(s.source)) ?? sources[0]);
