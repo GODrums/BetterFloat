@@ -11,9 +11,9 @@
 		"ignore": ["**/dist", "**/node_modules"]
 	},
 	"organizeImports": { "enabled": true },
-	"linter": { 
-		"enabled": true, 
-		"rules": { 
+	"linter": {
+		"enabled": true,
+		"rules": {
 			"recommended": true,
 			"suspicious": {
 				"noExplicitAny": "off",
@@ -50,7 +50,7 @@
 		"formatter": {
 			"jsxQuoteStyle": "double",
 			"quoteProperties": "asNeeded",
-			"trailingComma": "es5",
+			"trailingCommas": "es5",
 			"semicolons": "always",
 			"arrowParentheses": "always",
 			"bracketSpacing": true,

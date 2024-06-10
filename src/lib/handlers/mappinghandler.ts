@@ -3,12 +3,12 @@ import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
+import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { CSFloat } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { fetchCurrencyRates } from './networkhandler';
-import { MarketSource } from '~lib/util/globals';
 
 // most arrays could be converted to a queue - https://dev.to/glebirovich/typescript-data-structures-stack-and-queue-hld#queue
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };

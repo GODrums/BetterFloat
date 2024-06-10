@@ -1,8 +1,8 @@
 import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
-import { phaseMapping } from './patterns';
 import { MarketSource } from './globals';
+import { phaseMapping } from './patterns';
 
 export function getBuffLink(buff_id: number, phase?: DopplerPhase | null) {
 	const baseUrl = `https://buff.163.com/goods/${buff_id}`;

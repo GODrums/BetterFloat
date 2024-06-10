@@ -3,7 +3,9 @@ import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 import { sendToBackground } from '@plasmohq/messaging';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
+import { MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
+import type { IStorage } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
@@ -27,8 +29,6 @@ import {
 	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import { MarketSource } from '~lib/util/globals';
-import type { IStorage } from '~lib/util/storage';
 
 type StallData = {
 	data: CSFloat.ListingData[];
