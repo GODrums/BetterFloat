@@ -327,7 +327,8 @@ async function adjustSalesTableRow(container: Element) {
 
 	const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '{}');
 	if (!priceData.priceFromReference) return;
-	const priceDiff = new Decimal(cachedSale.price).div(100).minus(priceData.priceFromReference);
+	const { currencyRate } = await getCurrencyRate();
+	const priceDiff = new Decimal(cachedSale.price).mul(currencyRate).div(100).minus(priceData.priceFromReference);
 	// add Buff price difference
 	const priceContainer = container.querySelector('.price-wrapper');
 	if (priceContainer) {
