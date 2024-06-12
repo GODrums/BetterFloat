@@ -819,8 +819,6 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 		priceOrder = new Decimal(0);
 	}
 
-	console.log('[BetterFloat] Buff item data:', priceListing, priceOrder, priceAvg30, liquidity);
-
 	if ((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) {
 		source = extensionSettings['sp-altmarket'] as MarketSource;
 		if (source !== MarketSource.None) {
