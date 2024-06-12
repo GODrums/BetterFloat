@@ -378,6 +378,8 @@ async function adjustItemPage(container: Element) {
 
 	await addFloatColoring(container, item);
 
+	addInstantOrder(item, container, true);
+
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
 			await patternDetections(container, popupItem.data.item);
@@ -1056,15 +1058,16 @@ async function orderItem(item: Skinport.Listing) {
 	return true;
 }
 
-function addInstantOrder(item: Skinport.Listing, container: Element) {
-	const presentationDiv = container.querySelector('.ItemPreview-mainAction');
+function addInstantOrder(item: Skinport.Listing, container: Element, isItemPage = false) {
+	const presentationDiv = isItemPage ? container.querySelector('.ItemPage-btns button') : container.querySelector('.ItemPreview-mainAction');
 	if (presentationDiv && item.price >= getSpMinOrderPrice() && extensionSettings['sp-ocoapikey'] && extensionSettings['sp-ocoapikey'].length > 0) {
-		const oneClickOrder = document.createElement('a');
-		oneClickOrder.className = 'ItemPreview-sideAction betterfloat-oneClickOrder';
-		oneClickOrder.style.borderRadius = '0';
-		oneClickOrder.style.width = '60px';
-		oneClickOrder.target = '_blank';
-		oneClickOrder.innerText = 'Order';
+		const oneClickOrder = document.createElement('button');
+		oneClickOrder.className = `${isItemPage ? 'SubmitButton' : 'ItemPreview-sideAction'} betterfloat-oneClickOrder`;
+		if (!isItemPage) {
+			oneClickOrder.style.borderRadius = '0';
+		}
+		oneClickOrder.style.width = isItemPage ? '80px' : '60px';
+		oneClickOrder.innerText = isItemPage ? 'Instant Order' : 'Order';
 		(<HTMLElement>oneClickOrder).onclick = async (e: Event) => {
 			e.stopPropagation();
 			e.preventDefault();
