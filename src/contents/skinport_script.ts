@@ -148,8 +148,8 @@ async function firstLaunch() {
 
 function createLanguagePopup() {
 	const newPopup = html`
-		<div class="betterfloat-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">
-			<div class="betterfloat-popup-language">
+		<div class="bf-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">
+			<div class="bf-popup-language">
 				<div style="display: flex; align-items: center; justify-content: space-between; margin: 0 10px;">
 					<img
 						src="${ICON_EXCLAMATION}"
@@ -163,20 +163,20 @@ function createLanguagePopup() {
 					page and change the language manually.
 				</p>
 				<div style="display: flex; justify-content: center;">
-					<button type="button" class="betterfloat-language-button">Change language</button>
+					<button type="button" class="bf-language-button">Change language</button>
 				</div>
 			</div>
 		</div>
 	`;
 	document.body.insertAdjacentHTML('beforeend', newPopup);
 
-	const closeButton = document.querySelector<HTMLButtonElement>('.betterfloat-popup-language .close');
+	const closeButton = document.querySelector<HTMLButtonElement>('.bf-popup-language .close');
 	if (closeButton) {
 		closeButton.onclick = () => {
-			document.querySelector('.betterfloat-popup-outer')?.remove();
+			document.querySelector('.bf-popup-outer')?.remove();
 		};
 	}
-	const changeLanguageButton = document.querySelector<HTMLButtonElement>('.betterfloat-language-button');
+	const changeLanguageButton = document.querySelector<HTMLButtonElement>('.bf-language-button');
 	if (changeLanguageButton) {
 		changeLanguageButton.onclick = () => {
 			(<HTMLButtonElement>document.querySelector('.Dropdown-button')).click();
@@ -239,7 +239,7 @@ function autoCloseTooltip(container: Element) {
 	counterText.textContent = 'Auto-close in ';
 	counter.appendChild(counterText);
 	const counterNumber = document.createElement('span');
-	counterNumber.className = 'betterfloat-tooltip-counter';
+	counterNumber.className = 'bf-tooltip-counter';
 	counterNumber.textContent = String(counterValue) + 's';
 	counter.appendChild(counterText);
 	counter.appendChild(counterNumber);
@@ -268,33 +268,6 @@ async function adjustItemPage(container: Element) {
 	const itemRating = container.querySelector('.ItemPage-rating');
 	if (itemRating) {
 		itemRating.remove();
-	}
-
-	const btnGroup = container.querySelector('.ItemPage-btnGroup');
-	if (!btnGroup) return;
-	const newGroup = document.createElement('div');
-	newGroup.className = btnGroup.className ?? newGroup.className;
-	// if an item is sold, the original links are unclickable, hence we reproduce them
-	const links = container.querySelectorAll('.ItemPage-link');
-	const linkSteam = (Array.from(links).find((el) => el.innerHTML.includes('Steam')) as HTMLAnchorElement | null)?.href;
-	const linkInspect = (Array.from(links).find((el) => el.innerHTML.includes('Inspect')) as HTMLAnchorElement | null)?.href;
-	if (linkInspect) {
-		const inspectButton = document.createElement('button');
-		inspectButton.onclick = () => {
-			window.open(`https://swap.gg/screenshot?inspectLink=${linkInspect}`);
-		};
-		inspectButton.type = 'button';
-		inspectButton.textContent = 'Swap.gg';
-		newGroup.appendChild(inspectButton);
-	}
-	if (linkSteam) {
-		const steamButton = document.createElement('button');
-		steamButton.onclick = () => {
-			window.open(linkSteam, '_blank');
-		};
-		steamButton.type = 'button';
-		steamButton.textContent = 'Steam';
-		newGroup.appendChild(steamButton);
 	}
 
 	const getPopupItem = () => {
@@ -329,21 +302,12 @@ async function adjustItemPage(container: Element) {
 
 	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
 
-	const buffButton = document.createElement('button');
-	buffButton.onclick = () => {
-		window.open(href, '_blank');
-	};
-	buffButton.type = 'button';
-	buffButton.textContent = 'Buff';
-	newGroup.appendChild(buffButton);
-	btnGroup.after(newGroup);
-
 	const suggestedContainer = container.querySelector('.ItemPage-suggested');
 	if (suggestedContainer) {
 		await mountSpItemPageBuffContainer();
 	}
 
-	const buffContainer = container.querySelector('.betterfloat-buff-container');
+	const buffContainer = container.querySelector('.bf-buff-container');
 	if (buffContainer) {
 		(<HTMLElement>buffContainer).onclick = (e: Event) => {
 			e.stopPropagation();
@@ -358,7 +322,7 @@ async function adjustItemPage(container: Element) {
 	if (priceContainer && priceFromReference) {
 		const newContainer = html`
 			<div
-				class="ItemPage-discount betterfloat-discount-container"
+				class="ItemPage-discount bf-discount-container"
 				style="background: linear-gradient(135deg, #0073d5, ${
 					difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 				}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;"
@@ -378,7 +342,7 @@ async function adjustItemPage(container: Element) {
 
 	await addFloatColoring(container, item);
 
-	addInstantOrder(item, container, true);
+	// addInstantOrder(item, container, true);
 
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
@@ -416,11 +380,17 @@ async function addSoldPrice(container: Element, item: Skinport.Item) {
 			<div class="ItemPage-value">
 				<div class="Tooltip-link">${CurrencyFormatter.format(new Decimal(item.salePrice).div(100).toNumber())}</div>
 			</div>
-			<div class="ItemPage-discount">
-				<div class="GradientLabel">
-					<span>− ${differencePercentage.toFixed(0)}%</span>
+			${
+				differencePercentage.isPos()
+					? html`
+				<div class="ItemPage-discount">
+					<div class="GradientLabel">
+						<span>− ${differencePercentage.toFixed(0)}%</span>
+					</div>
 				</div>
-			</div>
+			`
+					: ''
+			}
 		</div>
 		<div class="ItemPage-suggested">Suggested price ${CurrencyFormatter.format(new Decimal(item.suggestedPrice).div(100).toNumber())}</div>
 	`;
@@ -445,9 +415,9 @@ async function adjustItem(container: Element) {
 		return;
 	}
 	const priceResult = await addBuffPrice(item, container);
-	if (location.pathname.startsWith('/market')) {
-		addInstantOrder(item, container);
-	}
+	// if (location.pathname.startsWith('/market')) {
+	// 	addInstantOrder(item, container);
+	// }
 
 	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
 		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
@@ -494,7 +464,7 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
-	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
+	if (!itemHeader || container.querySelector('.bf-gem-container')) return;
 	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
 	const gemContainer = genGemContainer({ patternElement, mode: 'right' });
 	gemContainer.style.fontSize = '11px';
@@ -875,13 +845,13 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 	}
 
 	const buffContainer = html`
-		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
+		<div class="bf-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="suggested-price betterfloat-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
+			<div class="suggested-price bf-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
-							<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
+							<span class="bf-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
 							<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
 							<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 							<span style="color: greenyellow; font-weight: 600;">${priceOrder?.lt(100) && 'Ask '}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
@@ -919,10 +889,10 @@ function showMessageBox(title: string, message: string, success = false) {
 	let messageContainer = document.querySelector<HTMLElement>('.MessageContainer');
 	if (!messageContainer) {
 		messageContainer = document.createElement('div');
-		messageContainer.className = 'MessageContainer BetterFloat-OCO-Message';
+		messageContainer.className = 'MessageContainer bf-OCO-Message';
 		document.getElementById('root')?.appendChild(messageContainer);
 	} else {
-		messageContainer.className += ' BetterFloat-OCO-Message';
+		messageContainer.className += ' bf-OCO-Message';
 	}
 
 	if (message === 'MUST_LOGIN') {
@@ -1062,7 +1032,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element, isItemPage 
 	const presentationDiv = isItemPage ? container.querySelector('.ItemPage-btns button') : container.querySelector('.ItemPreview-mainAction');
 	if (presentationDiv && item.price >= getSpMinOrderPrice() && extensionSettings['sp-ocoapikey'] && extensionSettings['sp-ocoapikey'].length > 0) {
 		const oneClickOrder = document.createElement('button');
-		oneClickOrder.className = `${isItemPage ? 'SubmitButton' : 'ItemPreview-sideAction'} betterfloat-oneClickOrder`;
+		oneClickOrder.className = `${isItemPage ? 'SubmitButton' : 'ItemPreview-sideAction'} bf-oneClickOrder`;
 		if (!isItemPage) {
 			oneClickOrder.style.borderRadius = '0';
 		}
@@ -1125,6 +1095,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element, isItemPage 
 			}
 
 			oneClickOrder.innerHTML = '<span class="loader"></span>';
+
 			orderItem(item)
 				.then((result) => {
 					oneClickOrder.innerText = 'Order';
@@ -1139,7 +1110,7 @@ function addInstantOrder(item: Skinport.Listing, container: Element, isItemPage 
 				});
 		};
 
-		if (!container.querySelector('.betterfloat-oneClickOrder')) {
+		if (!container.querySelector('.bf-oneClickOrder')) {
 			presentationDiv.after(oneClickOrder);
 		}
 	}
@@ -1153,7 +1124,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
 	const currencyRate = await getSpUserCurrency();
-	if (!container.querySelector('.betterfloat-buffprice')) {
+	if (!container.querySelector('.bf-buffprice')) {
 		if (!priceDiv) {
 			const priceParent = container.querySelector('.ItemPreview-priceValue');
 			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, source, true);
@@ -1170,13 +1141,13 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {
-			const buffLink = html`<a class="ItemPreview-sideAction betterfloat-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
-			if (!container.querySelector('.betterfloat-bufflink')) {
+			const buffLink = html`<a class="ItemPreview-sideAction bf-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
+			if (!container.querySelector('.bf-bufflink')) {
 				presentationDiv.insertAdjacentHTML('afterend', buffLink);
 			}
 		}
 	} else {
-		const buffContainer = container.querySelector('.betterfloat-buff-container');
+		const buffContainer = container.querySelector('.bf-buff-container');
 		if (buffContainer) {
 			(<HTMLElement>buffContainer).onclick = (e: Event) => {
 				e.stopPropagation();
@@ -1203,8 +1174,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
 	}
 	const saleTag = discountContainer.firstChild as HTMLElement;
-	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
-		saleTag.className = 'sale-tag betterfloat-sale-tag';
+	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.bf-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
+		saleTag.className = 'sale-tag bf-sale-tag';
 		discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
 			difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 		})`;

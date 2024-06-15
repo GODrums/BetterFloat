@@ -18,7 +18,7 @@ export const SkinportSettings = () => {
 		<TabsContent value="skinport" className={cn('h-[530px] w-[330px]', checked ? '' : 'border-destructive/80')}>
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<SettingsEnable id="sp-enable" />
-				<div className="">
+				<div>
 					<div className="pt-4 pb-2">
 						<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
 					</div>
@@ -36,7 +36,7 @@ export const SkinportSettings = () => {
 						</SettingsCard>
 					</div>
 				</div>
-				<div className="">
+				<div>
 					<div className="pt-4 pb-2">
 						<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 					</div>
@@ -66,14 +66,11 @@ export const SkinportSettings = () => {
 						</SettingsCard>
 					</div>
 				</div>
-				<div className="mb-2">
+				<div>
 					<div className="pt-4 pb-2">
 						<p className="text-base font-bold leading-none tracking-tight uppercase">MISC</p>
 					</div>
 					<div className="flex flex-col gap-1">
-						<SettingsCard>
-							<SettingsOCO /> {/* TODO: Input validation */}
-						</SettingsCard>
 						<SettingsCard>
 							<SettingsSelect
 								id="sp-bufflink"

@@ -15,6 +15,12 @@ export const Changelogs = () => {
 		<TabsContent value="changelog" className="h-[530px] w-[330px]">
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+				<SingleChangelog version="v2.5.10">
+					<li>
+						The OCO feature has been removed from the extension by Skinport's request due to legal reasons with the shortened checkout process. We have never supported botting and are
+						happy to comply with any legal requirements.
+					</li>
+				</SingleChangelog>
 				<SingleChangelog version="v2.5.6">
 					<li>
 						Select an alternative market for all pricing operations of the extension. Whenever the primary market cannot provide a price, the alternative market will be used instead. For
