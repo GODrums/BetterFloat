@@ -31,18 +31,7 @@ import {
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import {
-	getBuffMapping,
-	getCSFCurrencyRate,
-	getCSFPopupItem,
-	getCrimsonWebMapping,
-	getFirstCSFItem,
-	getFirstHistorySale,
-	getItemPrice,
-	getSpecificCSFOffer,
-	getStallData,
-	loadMapping,
-} from '../lib/handlers/mappinghandler';
+import { getBuffMapping, getCSFCurrencyRate, getCSFPopupItem, getCrimsonWebMapping, getFirstCSFItem, getFirstHistorySale, getItemPrice, getSpecificCSFOffer } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
@@ -117,10 +106,12 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
+	await new Promise((r) => setTimeout(r, 500));
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {
-		await adjustItem(items[i], items[i].getAttribute('width')?.includes('100%') ? POPOUT_ITEM.PAGE : POPOUT_ITEM.NONE);
+		const popoutVersion = items[i].getAttribute('width')?.includes('100%') ? POPOUT_ITEM.PAGE : items[i].className.includes('flex-item') ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR;
+		await adjustItem(items[i], popoutVersion);
 	}
 }
 
@@ -169,7 +160,7 @@ function applyMutation() {
 						// offer list in offers page
 						offerItemClickListener(addedNode);
 					} else if (addedNode.tagName.toLowerCase() === 'app-markdown-dialog') {
-						adjustCurrencyChangeNotice(addedNode);
+						CSFloatHelpers.adjustCurrencyChangeNotice(addedNode);
 					}
 				}
 			}
@@ -297,28 +288,6 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 	}
 }
 
-function adjustCurrencyChangeNotice(container: Element) {
-	if (!container.querySelector('.title')?.textContent?.includes('Currencies on CSFloat')) {
-		return;
-	}
-	const warningDiv = html`
-		<div style="display: flex; align-items: center; background-color: #7f101080; border-radius: 18px;">
-			<img src="${ICON_EXCLAMATION}" style="height: 30px; margin: 0 10px; filter: brightness(0) saturate(100%) invert(19%) sepia(64%) saturate(3289%) hue-rotate(212deg) brightness(89%) contrast(98%);">
-			<p>Please note that BetterFloat requires a page refresh after changing the currency.</p>
-		</div>
-		<div style="display: flex; align-items: center; justify-content: center; margin-top: 15px;">
-			<button class="bf-reload mat-mdc-tooltip-trigger mdc-button mdc-button--raised mat-mdc-raised-button mat-primary mat-mdc-button-base" color="primary">
-				<span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span>
-				<span class="mdc-button__label"><span class="mdc-button__label"><span class="text">Refresh</span></span>
-			</button>
-		</div>
-	`;
-	container.children[0].insertAdjacentHTML('beforeend', warningDiv);
-	container.children[0].querySelector('button.bf-reload')?.addEventListener('click', () => {
-		location.reload();
-	});
-}
-
 async function adjustSalesTableRow(container: Element) {
 	const cachedSale = getFirstHistorySale();
 	if (!cachedSale) {
@@ -427,9 +396,6 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
-	if (popout === POPOUT_ITEM.PAGE || popout === POPOUT_ITEM.BARGAIN) {
-		await new Promise((r) => setTimeout(r, 500));
-	}
 	const item = getFloatItem(container);
 	// console.log('[BetterFloat] Adjusting item:', item);
 	if (Number.isNaN(item.price)) return;
@@ -457,7 +423,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			addFloatColoring(container, cachedItem);
 		}
 		if (extensionSettings['csf-removeclustering']) {
-			removeClustering(container);
+			CSFloatHelpers.removeClustering(container);
 		}
 
 		addBargainListener(container);
@@ -469,48 +435,54 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		patternDetections(container, cachedItem, false);
 
 		if (extensionSettings['csf-showingamess']) {
-			addItemScreenshot(container, cachedItem.item);
+			CSFloatHelpers.addItemScreenshot(container, cachedItem.item);
 		}
 	} else if (popout > 0) {
-		// need timeout as request is only sent after popout has been loaded
+		// timeout needed as request is only sent after popout has been loaded
 		await new Promise((r) => setTimeout(r, 1000));
-		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+		const isMainItem = popout === POPOUT_ITEM.PAGE;
 
-		let apiItem = CSFloatHelpers.getApiItem(itemPreview);
-		// if this is the first launch, the item has to be newly retrieved by the api
-		if (!apiItem) {
-			apiItem = popout === POPOUT_ITEM.PAGE ? getCSFPopupItem() : JSON.parse(container.getAttribute('data-betterfloat') ?? '{}');
+		const getApiItem: () => CSFloat.ListingData | null = () => {
+			if (isMainItem) {
+				// fallback to stored data if item is not found
+				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+				return getCSFPopupItem() ?? CSFloatHelpers.getApiItem(itemPreview);
+			} else if (popout === POPOUT_ITEM.BARGAIN) {
+				// bargains are called through a listener
+				return JSON.parse(container.getAttribute('data-betterfloat') ?? '{}');
+			} else if (popout === POPOUT_ITEM.SIMILAR) {
+				return getFirstCSFItem();
+			}
+		};
+
+		let apiItem: CSFloat.ListingData | null = getApiItem();
+		// due to the way the popout is loaded, the data may not be available yet
+		let tries = 0;
+		while (!apiItem && tries < 5) {
+			await new Promise((r) => setTimeout(r, 200));
+			apiItem = getApiItem();
+			tries++;
 		}
 
 		if (apiItem?.id) {
-			console.log('[BetterFloat] Popout item data:', apiItem);
+			console.debug('[BetterFloat] Popout item data:', apiItem);
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
-			addListingAge(container, apiItem, true);
-			await patternDetections(container, apiItem, true);
+			addListingAge(container, apiItem, isMainItem);
 			addFloatColoring(container, apiItem);
-			if (popout === POPOUT_ITEM.PAGE) {
+			await patternDetections(container, apiItem, isMainItem);
+			if (isMainItem) {
 				addQuickLinks(container, apiItem);
-				copyNameOnClick(container);
+				CSFloatHelpers.copyNameOnClick(container);
 			}
 			CSFloatHelpers.storeApiItem(container, apiItem);
 			await showBargainPrice(container, apiItem, popout);
-			if (extensionSettings['csf-showingamess'] || popout === POPOUT_ITEM.PAGE) {
-				addItemScreenshot(container, apiItem.item);
+			if (extensionSettings['csf-showingamess'] || isMainItem) {
+				CSFloatHelpers.addItemScreenshot(container, apiItem.item);
 			}
 			addScreenshotListener(container, apiItem.item);
 		}
 		addBargainListener(container);
 	}
-}
-
-function addItemScreenshot(container: Element, item: CSFloat.Item) {
-	if (!item.cs2_screenshot_id) return;
-
-	const imgContainer = container.querySelector<HTMLImageElement>('app-item-image-actions img.item-img');
-	if (!imgContainer) return;
-
-	imgContainer.src = `https://s.csfloat.com/m/${item.cs2_screenshot_id}/playside.png?v=2`;
-	imgContainer.style.objectFit = 'contain';
 }
 
 async function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
@@ -549,26 +521,6 @@ function addBargainListener(container: Element | null) {
 					await adjustBargainPopup(container, bargainPopup);
 				}
 			}, 500);
-		});
-	}
-}
-
-function copyNameOnClick(container: Element) {
-	const itemName = container.querySelector('app-item-name');
-	if (itemName) {
-		itemName.setAttribute('style', 'cursor: pointer;');
-		itemName.setAttribute('title', 'Click to copy item name');
-		itemName.addEventListener('click', () => {
-			const name = itemName.textContent;
-			if (name) {
-				navigator.clipboard.writeText(name);
-				itemName.setAttribute('title', 'Copied!');
-				itemName.setAttribute('style', 'cursor: default;');
-				setTimeout(() => {
-					itemName.setAttribute('title', 'Click to copy item name');
-					itemName.setAttribute('style', 'cursor: pointer;');
-				}, 2000);
-			}
 		});
 	}
 }
@@ -642,13 +594,6 @@ function createPricempireURL(container: Element, item: CSFloat.Item) {
 	return `https://pricempire.com/item/cs2/${pricempireType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${
 		item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''
 	}`;
-}
-
-function removeClustering(container: Element) {
-	const sellerDetails = container.querySelector('div.seller-details-wrapper');
-	if (sellerDetails) {
-		sellerDetails.setAttribute('style', 'display: none;');
-	}
 }
 
 function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
@@ -871,15 +816,21 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		type = item.item_name.split(' | ')[0];
 	}
 
+	const refetchPatternData = async () => {
+		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!);
+		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+	};
+
 	// retrieve the stored data instead of fetching newly
 	if (!isPopout) {
-		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed);
-		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+		await refetchPatternData();
 	} else {
 		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
 		if (csbluegem && csbluegem.length > 0) {
 			patternElement = JSON.parse(csbluegem);
+		} else {
+			await refetchPatternData();
 		}
 	}
 
@@ -894,7 +845,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
 			tierContainer.setAttribute('style', 'gap: 5px;');
 		}
-		const gemContainer = genGemContainer(patternElement);
+		const gemContainer = genGemContainer({ patternElement, large: isPopout });
 		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
 		tierContainer.appendChild(gemContainer);
 	}
@@ -995,7 +946,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
-		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
+		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type.replace(' ', '_')}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
 		linkHeader.setAttribute('target', '_blank');
 		linkHeader.innerHTML = ICON_ARROWUP_SMALL;
 		linkHeaderCell.appendChild(linkHeader);

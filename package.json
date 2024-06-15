@@ -41,7 +41,7 @@
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
 		"framer-motion": "^11.2.10",
-		"plasmo": "0.87.1",
+		"plasmo": "0.87.2",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",
@@ -52,7 +52,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.8.0",
+		"@biomejs/biome": "1.8.1",
 		"@types/chrome": "0.0.268",
 		"@types/node": "20.14.2",
 		"@types/react": "18.3.3",
