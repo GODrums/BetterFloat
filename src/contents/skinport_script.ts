@@ -1,44 +1,18 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
-import { sendToBackground } from '@plasmohq/messaging';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import {
-	ICON_ARROWUP_SMALL,
-	ICON_BUFF,
-	ICON_C5GAME,
-	ICON_CAMERA,
-	ICON_CAMERA_FLIPPED,
-	ICON_CSFLOAT,
-	ICON_EXCLAMATION,
-	ICON_STEAM,
-	ICON_YOUPIN,
-	MarketSource,
-	isDevMode,
-	ocoKeyRegex,
-} from '~lib/util/globals';
-import { Euro, USDollar, delay, formFetch, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import { Euro, USDollar, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import {
-	getBuffMapping,
-	getFirstSpItem,
-	getItemPrice,
-	getSpCSRF,
-	getSpMinOrderPrice,
-	getSpPopupInventoryItem,
-	getSpPopupItem,
-	getSpUserCurrency,
-	getSpUserCurrencyRate,
-	loadMapping,
-} from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData, saveOCOPurchase } from '../lib/handlers/networkhandler';
+import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
+import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
-import { z } from 'zod';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { IStorage, SPFilter } from '~lib/util/storage';
@@ -353,7 +327,7 @@ async function adjustItemPage(container: Element) {
 			const currencySymbol = getSymbolFromCurrency(popupItem.data.item.currency);
 			let formattedPrice = '-';
 			if ((<Skinport.ItemData>popupItem).data.offers?.lowPrice) {
-				const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers?.lowPrice ?? 0).div(100).toDP(2).toNumber();
+				const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers.lowPrice ?? 0).div(100).toDP(2).toNumber();
 				formattedPrice = currencySymbol === '€' ? Euro.format(lowPrice) : currencySymbol === '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
 			}
 			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
@@ -936,184 +910,6 @@ function showMessageBox(title: string, message: string, success = false) {
 
 	// Set a timeout to remove the message after 7 seconds
 	setTimeout(fadeOutEffect, 6500);
-}
-
-async function solveCaptcha(saleId: Skinport.Listing['saleId']) {
-	console.debug('[BetterFloat] Solving captcha.');
-	if (!extensionSettings['sp-ocoapikey'] || extensionSettings['sp-ocoapikey'] === '') {
-		showMessageBox(
-			'Please set an API key first!',
-			'Please set an API Key for OneClickBuy in the extension settings. You can get one on the BetterFloat Discord server. Aftwards reload the page and try again.'
-		);
-		console.debug('[BetterFloat] No API key provided');
-		return false;
-	}
-
-	try {
-		const response = await sendToBackground({
-			name: 'requestToken',
-			body: {
-				saleId: saleId,
-				oco_key: extensionSettings['sp-ocoapikey'],
-			},
-		});
-
-		if (response.status === 200) {
-			return response.data.token;
-		} else if (response.status === 401) {
-			console.error('[BetterFloat] Checkout: Please check your API key for validity.');
-			showMessageBox(
-				'A problem with your API key occured (HTTP 401)',
-				'Please check if you API key is set correctly in the extension settings. Otherwise please use the bot commands in the Discord server.'
-			);
-			return false;
-		} else if (response.status === 408) {
-			console.error('[BetterFloat] Checkout: Captcha solving timed out.');
-			showMessageBox('Server timed out (HTTP 408)', 'Please try to order again.');
-			return false;
-		} else if (response.status === 429) {
-			console.error('[BetterFloat] Checkout: Rate limit reached. No tokens available anymore.');
-			showMessageBox('Too many requests (HTTP 429)', 'The rate limit has been reached. Your API key has no tokens left.');
-			return false;
-		} else if (response.status === 500) {
-			console.error('[BetterFloat] Checkout: A internal server error occured.');
-			showMessageBox('Server error (HTTP 500)', 'Timeout or internal server error. Please try again or check the Discord server for more information.');
-			return false;
-		} else {
-			console.error('[BetterFloat] Checkout: Unkown error.');
-			showMessageBox('Unkown error.', 'An unknown error has occured. Please try again or check the Discord server for more information.');
-			return false;
-		}
-	} catch (error) {
-		console.error('[BetterFloat] ', error);
-		return false;
-	}
-}
-
-async function orderItem(item: Skinport.Listing) {
-	console.debug('[BetterFloat] Trying to order item ', item.saleId);
-	const csrfToken = await getSpCSRF();
-	const cartAddData = `sales[0][id]=${item.saleId}&sales[0][price]=${(item.price * 100).toFixed(0)}&_csrf=${csrfToken}`;
-
-	const addToCartResponse = await formFetch<Skinport.AddToCartResponse>('https://skinport.com/api/cart/add', cartAddData);
-	if (!addToCartResponse.success) {
-		console.debug(`[BetterFloat] OCO addToCart failed ${addToCartResponse.message}`);
-		// same message as Skinport would show on 'ADD TO CART'
-		showMessageBox('Item is sold or not listed', 'The item you try to add to the cart is not available anymore.');
-		return false;
-	}
-	const captchaToken = await solveCaptcha(item.saleId);
-	if (!captchaToken) {
-		return false;
-	}
-	console.debug('[BetterFloat] OCO addToCart was successful.');
-	const createOrderData = `sales[0]=${item.saleId}&cf-turnstile-response=${captchaToken}&_csrf=${csrfToken}`;
-	const createOrderResponse = await formFetch<Skinport.CreateOrderResponse>('https://skinport.com/api/checkout/create-order', createOrderData);
-	if (!createOrderResponse.success) {
-		console.debug(`[BetterFloat] OCO createOrder failed ${createOrderResponse.message ?? createOrderResponse.requestId}`);
-		showMessageBox('Failed to create the order: ', createOrderResponse.message ?? createOrderResponse.requestId);
-		// remove item from cart again
-		await formFetch('https://skinport.com/api/cart/remove', encodeURI(`item=${item.saleId}&_csrf=${csrfToken}`));
-		return false;
-	}
-
-	localStorage.setItem(
-		'ocoLastOrder',
-		JSON.stringify({
-			id: createOrderResponse.result.id,
-			time: Date.now(),
-			status: 'open',
-		})
-	);
-	return true;
-}
-
-function addInstantOrder(item: Skinport.Listing, container: Element, isItemPage = false) {
-	const presentationDiv = isItemPage ? container.querySelector('.ItemPage-btns button') : container.querySelector('.ItemPreview-mainAction');
-	if (presentationDiv && item.price >= getSpMinOrderPrice() && extensionSettings['sp-ocoapikey'] && extensionSettings['sp-ocoapikey'].length > 0) {
-		const oneClickOrder = document.createElement('button');
-		oneClickOrder.className = `${isItemPage ? 'SubmitButton' : 'ItemPreview-sideAction'} bf-oneClickOrder`;
-		if (!isItemPage) {
-			oneClickOrder.style.borderRadius = '0';
-		}
-		oneClickOrder.style.width = isItemPage ? '80px' : '60px';
-		oneClickOrder.innerText = isItemPage ? 'Instant Order' : 'Order';
-		(<HTMLElement>oneClickOrder).onclick = async (e: Event) => {
-			e.stopPropagation();
-			e.preventDefault();
-			if (!e.isTrusted) return;
-			const currentCart = document.querySelector('.CartButton-count')?.textContent;
-			const isLoggedOut = document.querySelector('.HeaderContainer-link--login') != null;
-			if (isLoggedOut) {
-				showMessageBox('You are not logged in', "Please log in to Skinport before using BetterFloat's OneClickOrder.");
-				return;
-			}
-			if (currentCart && Number(currentCart) > 0) {
-				showMessageBox('Your cart is not empty', 'Please empty your cart before using OneClickOrder.');
-				return;
-			}
-			if (container.closest('.ItemPreview-status') != null) {
-				showMessageBox('Item is sold or not listed', 'The item you try to add to purchase is not available anymore.');
-				return;
-			}
-
-			const keySchema = z.string().regex(ocoKeyRegex);
-			const parseResult = keySchema.safeParse(extensionSettings['sp-ocoapikey']);
-			if (parseResult.success === false) {
-				showMessageBox('Invalid API key format', 'Please check your API key in the extension settings.');
-				return;
-			}
-			// only allow one order every 24 hours
-			const ocoLastOrder: {
-				time: number;
-				id: number;
-				status: 'paid' | 'closed' | 'open' | 'unknown';
-			} = JSON.parse(localStorage.getItem('ocoLastOrder') ?? '{"time": 0, "id": 0, "status": "unknown"}');
-			console.log('[BetterFloat] OCO last order: ', ocoLastOrder);
-			if (!isDevMode && ocoLastOrder.time > Date.now() - 86400000) {
-				console.log('[BetterFloat] OCO last order is too recent, checking if it has been paid...');
-				let statusCheck = ocoLastOrder.status === 'paid';
-				if (ocoLastOrder.status === 'open' || ocoLastOrder.status === 'unknown') {
-					const response = (await fetch('https://skinport.com/api/checkout/order-history?page=1').then((response) => response.json())) as Skinport.OrderHistoryData;
-					if (response.success) {
-						const order = response.result.orders.find((order) => order.id === ocoLastOrder.id);
-						console.log('[BetterFloat] OCO found order: ', order);
-						if (order) {
-							ocoLastOrder.status = order.status;
-							localStorage.setItem('ocoLastOrder', JSON.stringify(ocoLastOrder));
-							statusCheck = order.status === 'paid';
-						}
-					}
-				}
-				if (!statusCheck) {
-					showMessageBox(
-						'You received a 24h OCO cooldown!',
-						'To avoid item hoarding and abuse of the OneClickOrder feature, the failure to pay your OneClickOrder purchases leads to a 24 hour timeout.'
-					);
-					return;
-				}
-			}
-
-			oneClickOrder.innerHTML = '<span class="loader"></span>';
-
-			orderItem(item)
-				.then((result) => {
-					oneClickOrder.innerText = 'Order';
-					console.log('[BetterFloat] oneClickOrder result: ', result);
-					if (result) {
-						showMessageBox('oneClickOrder', 'oneClickOrder was successful.', true);
-						saveOCOPurchase(item);
-					}
-				})
-				.catch((error) => {
-					console.warn('[BetterFloat] OCO - addToCart error:', error);
-				});
-		};
-
-		if (!container.querySelector('.bf-oneClickOrder')) {
-			presentationDiv.after(oneClickOrder);
-		}
-	}
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {

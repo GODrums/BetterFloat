@@ -40,21 +40,25 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 		}
 		return '';
 	};
+
 	const source = (await getSetting('sp-pricingsource')) as MarketSource | undefined;
 	if (!source) return;
-	let icon = '';
-	if (source === MarketSource.Buff) {
-		icon = ICON_BUFF;
-	} else if (source === MarketSource.Steam) {
-		icon = ICON_STEAM;
-	} else if (source === MarketSource.YouPin) {
-		icon = ICON_YOUPIN;
-	} else if (source === MarketSource.C5Game) {
-		icon = ICON_C5GAME;
-	}
+
+	const getSourceIcon = (source: MarketSource) => {
+		switch (source) {
+			case MarketSource.Buff:
+				return ICON_BUFF;
+			case MarketSource.Steam:
+				return ICON_STEAM;
+			case MarketSource.YouPin:
+				return ICON_YOUPIN;
+			case MarketSource.C5Game:
+				return ICON_C5GAME;
+		}
+	};
 
 	for (const item of data.items) {
-		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name), source ?? MarketSource.Buff);
+		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name));
 		total += ([MarketSource.Buff, MarketSource.Steam].includes(source) && reference === 0 ? buffData.priceOrder?.toNumber() : buffData.priceListing?.toNumber()) ?? 0;
 	}
 
@@ -65,6 +69,7 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 		}
 	} else {
 		const totalElement = document.createElement('div');
+		const icon = getSourceIcon(source);
 		totalElement.classList.add('betterfloat-totalbuffprice');
 		totalElement.setAttribute('style', 'display: flex; align-items: center; margin-left: 10px; gap: 5px');
 		totalElement.innerHTML = `<img src=${icon} style="height: 20px;border-radius: 5px; translate: 0 -1px;" /><span style="color: mediumpurple;">${currency}${total.toFixed(2)}</span>`;

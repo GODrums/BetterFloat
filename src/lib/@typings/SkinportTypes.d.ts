@@ -131,8 +131,8 @@ export namespace Skinport {
 			item: Item;
 			offers: {
 				currency: string;
-				highPrice: number;
-				lowPrice: number;
+				highPrice: number | null;
+				lowPrice: number | null;
 				offerCount: number;
 			};
 			otherSales: {

@@ -95,7 +95,7 @@ async function sourceRefresh(source: MarketSource) {
 		const response: { status: number } = await sendToBackground({
 			name: 'refreshPrices',
 			body: {
-				source: source ?? 'buff',
+				source: source,
 			},
 		});
 

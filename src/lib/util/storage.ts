@@ -1,5 +1,4 @@
 import { Storage } from '@plasmohq/storage';
-import { MarketSource } from './globals';
 
 export const ExtensionStorage = {
 	local: new Storage({
