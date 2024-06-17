@@ -268,7 +268,7 @@ export async function getPriceMapping(source: MarketSource) {
 	if (Object.keys(priceMapping[source]).length === 0) {
 		await loadMapping(source);
 	}
-	return priceMapping[source];
+	return priceMapping[source] as Extension.AbstractPriceMapping;
 }
 
 /**

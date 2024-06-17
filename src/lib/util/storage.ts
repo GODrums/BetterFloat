@@ -31,7 +31,7 @@ export async function getAllSettings() {
 				// exception for csf-listingage
 				if (key === 'csf-listingage') {
 					result = true;
-					ExtensionStorage.sync.set('csf-listingage', true);
+					ExtensionStorage.sync.setItem('csf-listingage', true);
 				} else {
 					result = parseInt(result);
 				}
@@ -41,7 +41,7 @@ export async function getAllSettings() {
 				result = false;
 			} else if (result.startsWith('"') || result.startsWith("'")) {
 				result = result.substring(1, result.length - 1);
-				ExtensionStorage.sync.set(key, result);
+				ExtensionStorage.sync.setItem(key, result);
 			}
 			settings[key] = result;
 		} else if (settings[key] === 'true') {

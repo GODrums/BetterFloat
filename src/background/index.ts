@@ -8,7 +8,12 @@ import type { IStorage } from '~lib/util/storage';
 chrome.runtime.onInstalled.addListener(async (details) => {
 	if (details.reason === 'install') {
 		console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
-		await chrome.storage.sync.set(DEFAULT_SETTINGS);
+
+		// set default settings
+		for (const key in DEFAULT_SETTINGS) {
+			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
+		}
+
 		// get extension url
 		// const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
 		// await chrome.tabs.create({ url: onboardingUrl });
@@ -20,8 +25,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		if (!data) {
 			console.log('[BetterFloat] No settings found, setting default settings.');
 			for (const key in DEFAULT_SETTINGS) {
-				const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
-				ExtensionStorage.sync.set(key, value);
+				ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
 			}
 			return;
 		}
@@ -33,8 +37,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 			if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
 				// add missing settings
 				console.log('[BetterFloat] Adding missing setting: ', key);
-				const value = typeof DEFAULT_SETTINGS[key] === 'string' ? JSON.stringify(DEFAULT_SETTINGS[key]) : DEFAULT_SETTINGS[key];
-				ExtensionStorage.sync.set(key, value);
+				ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
 			}
 		}
 	}
