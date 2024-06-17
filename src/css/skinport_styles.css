@@ -18,7 +18,7 @@
 	}
 }
 
-.bf-popup-outer {
+.betterfloat-popup-outer {
 	position: fixed;
 	z-index: 999;
 	top: 0;
@@ -30,7 +30,7 @@
 	align-items: center;
 }
 
-.bf-popup-language {
+.betterfloat-popup-language {
 	width: 600px;
 	background-color: var(--color-background, #303030);
 	border: 1px solid black;
@@ -40,7 +40,7 @@
 	display: flex;
 	flex-direction: column;
 }
-.bf-popup-language .close {
+.betterfloat-popup-language .close {
 	transition: all 200ms;
 	font-size: 30px;
 	font-weight: bold;
@@ -48,11 +48,11 @@
 	color: white;
 }
 
-.bf-popup-language .close:hover {
+.betterfloat-popup-language .close:hover {
 	color: #06d85f;
 }
 
-.bf-popup-language .bf-language-button {
+.betterfloat-popup-language .betterfloat-language-button {
 	align-items: center;
 	background: #4db5da;
 	border: 2px solid #4db5da;
@@ -78,7 +78,7 @@
 	margin: 20px 0 5px 0;
 }
 
-.bf-buff-tooltip {
+.betterfloat-buff-tooltip {
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 1;
@@ -97,23 +97,23 @@
 	transition: opacity 0.3s;
 }
 
-.bf-buffprice {
+.betterfloat-buffprice {
 	font-size: 13px;
 	cursor: pointer;
 }
 
-.bf-buffprice:hover .bf-buff-tooltip {
+.betterfloat-buffprice:hover .betterfloat-buff-tooltip {
 	visibility: visible;
 	opacity: 1;
 }
 
-.bf-sale-tag {
+.betterfloat-sale-tag {
 	font-size: 12px !important;
 	margin: 1px;
 	border-radius: 3px;
 }
 
-.bf-filterpopup {
+.betterfloat-filterpopup {
 	position: fixed;
 	z-index: 9999;
 	width: 450px;
@@ -129,7 +129,7 @@
 	transition: opacity 0.3s ease 0s;
 }
 
-.bf-filterpopup-close {
+.betterfloat-filterpopup-close {
 	position: absolute;
 	right: 30px;
 	top: 20px;
@@ -137,13 +137,13 @@
 	font-weight: 600;
 }
 
-.bf-filterpopup-buttondiv {
+.betterfloat-filterpopup-buttondiv {
 	position: absolute;
 	right: 30px;
 	bottom: 20px;
 }
 
-.bf-filterpopup-buttondiv button {
+.betterfloat-filterpopup-buttondiv button {
 	align-items: center;
 	background: #4db5da;
 	border-radius: 3px;
@@ -159,13 +159,13 @@
 	font-weight: 600;
 }
 
-.bf-filterpopup input {
+.betterfloat-filterpopup input {
 	appearance: auto;
 	-webkit-appearance: auto;
 	-moz-appearance: auto;
 }
 
-.bf-filterpopup input[type="checkbox"] {
+.betterfloat-filterpopup input[type="checkbox"] {
 	width: 19px;
 	height: 19px;
 	accent-color: var(--color-accent, #ff5722);
@@ -173,7 +173,7 @@
 	color: white;
 	clip-path: circle(50% at 50% 50%);
 }
-.bf-filterpopup input[type="text"] {
+.betterfloat-filterpopup input[type="text"] {
 	width: 100%;
 	height: 36px;
 	color: white;
@@ -182,7 +182,7 @@
 	padding: 0 0 3px 15px;
 }
 
-.bf-filterpopup input[type="number"] {
+.betterfloat-filterpopup input[type="number"] {
 	height: 36px;
 	color: white;
 	border-radius: 20px;
@@ -191,22 +191,22 @@
 	width: 100px;
 }
 
-.bf-filterpopup label {
+.betterfloat-filterpopup label {
 	font-size: 16px;
 }
 
-.bf-filterpopup-content {
+.betterfloat-filterpopup-content {
 	margin: 10px 20px;
 }
 
-.bf-OCO-Message {
+.betterfloat-OCO-Message {
 	bottom: 8px;
 	left: 8px;
 	position: fixed;
 	z-index: 100;
 }
 
-.bf-OCO-Message .Message {
+.betterfloat-OCO-Message .Message {
 	animation: shakeMessage 1s 0.2s;
 	background-color: #fff;
 	border-radius: 2.5px;
@@ -219,24 +219,24 @@
 	position: relative;
 }
 
-.bf-OCO-Message .Message--error .Message-title {
+.betterfloat-OCO-Message .Message--error .Message-title {
 	color: #fa490a;
 	font-size: 14px;
 	font-weight: 700;
 	margin-bottom: 7px;
 }
 
-.bf-OCO-Message .Message-text {
+.betterfloat-OCO-Message .Message-text {
 	font-size: 12px;
 	line-height: 18px;
 	margin-bottom: 14px;
 }
 
-.bf-OCO-Message .Message-buttons {
+.betterfloat-OCO-Message .Message-buttons {
 	display: flex;
 }
 
-.bf-OCO-Message .Message-closeBtn {
+.betterfloat-OCO-Message .Message-closeBtn {
 	color: #4db5da;
 	font-size: 12px;
 	font-weight: 700;

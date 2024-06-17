@@ -122,8 +122,8 @@ async function firstLaunch() {
 
 function createLanguagePopup() {
 	const newPopup = html`
-		<div class="bf-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">
-			<div class="bf-popup-language">
+		<div class="betterfloat-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">
+			<div class="betterfloat-popup-language">
 				<div style="display: flex; align-items: center; justify-content: space-between; margin: 0 10px;">
 					<img
 						src="${ICON_EXCLAMATION}"
@@ -137,20 +137,20 @@ function createLanguagePopup() {
 					page and change the language manually.
 				</p>
 				<div style="display: flex; justify-content: center;">
-					<button type="button" class="bf-language-button">Change language</button>
+					<button type="button" class="betterfloat-language-button">Change language</button>
 				</div>
 			</div>
 		</div>
 	`;
 	document.body.insertAdjacentHTML('beforeend', newPopup);
 
-	const closeButton = document.querySelector<HTMLButtonElement>('.bf-popup-language .close');
+	const closeButton = document.querySelector<HTMLButtonElement>('.betterfloat-popup-language .close');
 	if (closeButton) {
 		closeButton.onclick = () => {
-			document.querySelector('.bf-popup-outer')?.remove();
+			document.querySelector('.betterfloat-popup-outer')?.remove();
 		};
 	}
-	const changeLanguageButton = document.querySelector<HTMLButtonElement>('.bf-language-button');
+	const changeLanguageButton = document.querySelector<HTMLButtonElement>('.betterfloat-language-button');
 	if (changeLanguageButton) {
 		changeLanguageButton.onclick = () => {
 			(<HTMLButtonElement>document.querySelector('.Dropdown-button')).click();
@@ -213,7 +213,7 @@ function autoCloseTooltip(container: Element) {
 	counterText.textContent = 'Auto-close in ';
 	counter.appendChild(counterText);
 	const counterNumber = document.createElement('span');
-	counterNumber.className = 'bf-tooltip-counter';
+	counterNumber.className = 'betterfloat-tooltip-counter';
 	counterNumber.textContent = String(counterValue) + 's';
 	counter.appendChild(counterText);
 	counter.appendChild(counterNumber);
@@ -281,7 +281,7 @@ async function adjustItemPage(container: Element) {
 		await mountSpItemPageBuffContainer();
 	}
 
-	const buffContainer = container.querySelector('.bf-buff-container');
+	const buffContainer = container.querySelector('.betterfloat-buff-container');
 	if (buffContainer) {
 		(<HTMLElement>buffContainer).onclick = (e: Event) => {
 			e.stopPropagation();
@@ -296,7 +296,7 @@ async function adjustItemPage(container: Element) {
 	if (priceContainer && priceFromReference) {
 		const newContainer = html`
 			<div
-				class="ItemPage-discount bf-discount-container"
+				class="ItemPage-discount betterfloat-discount-container"
 				style="background: linear-gradient(135deg, #0073d5, ${
 					difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 				}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;"
@@ -438,7 +438,7 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
-	if (!itemHeader || container.querySelector('.bf-gem-container')) return;
+	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
 	const gemContainer = genGemContainer({ patternElement, mode: 'right' });
 	gemContainer.style.fontSize = '11px';
@@ -819,13 +819,13 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 	}
 
 	const buffContainer = html`
-		<div class="bf-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
+		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="suggested-price bf-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
+			<div class="suggested-price betterfloat-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
-							<span class="bf-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
+							<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
 							<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
 							<span style="color: gray;margin: 0 3px 0 3px;">|</span>
 							<span style="color: greenyellow; font-weight: 600;">${priceOrder?.lt(100) && 'Ask '}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
@@ -858,60 +858,6 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 	}
 }
 
-function showMessageBox(title: string, message: string, success = false) {
-	// Thank you chatGPT for this function (and css)
-	let messageContainer = document.querySelector<HTMLElement>('.MessageContainer');
-	if (!messageContainer) {
-		messageContainer = document.createElement('div');
-		messageContainer.className = 'MessageContainer bf-OCO-Message';
-		document.getElementById('root')?.appendChild(messageContainer);
-	} else {
-		messageContainer.className += ' bf-OCO-Message';
-	}
-
-	if (message === 'MUST_LOGIN') {
-		// custom messages for create order request
-		message = 'Your login session has expired. Please log in again!';
-	} else if (message === 'RATE_LIMIT_REACHED') {
-		message = 'You are ordering too fast! Please wait a few moments before trying again.';
-	} else if (message === 'CART_OUTDATED') {
-		message = 'Your cart is outdated. Someone was probably faster than you.';
-	} else if (message === 'CAPTCHA') {
-		message = 'The order was not successful. Please note that this may happen sporadically. If the issue persists, please report it to the BetterFloat Discord server.';
-	} else if (message === 'SALE_PRICE_CHANGED') {
-		message = 'The item price got changed. Please review the new price and try again.';
-	} else if (message === 'ITEM_NOT_LISTED') {
-		message = 'The item you are trying to order is not listed anymore.';
-	}
-
-	const messageInnerContainer = html`
-		<div class="Message Message--error Message-enter-done">
-			<div class="Message-title" style="${success && 'color: #66ff66'}">${title}</div>
-			<div class="Message-text">${message}</div>
-			<div class="Message-buttons">
-				<button type="button" class="Message-actionBtn Message-closeBtn">Close</button>
-			</div>
-		</div>
-	`;
-	messageContainer.insertAdjacentHTML('beforeend', messageInnerContainer);
-
-	const messageCloseButton = messageContainer.querySelector<HTMLButtonElement>('.Message-closeBtn');
-	const fadeOutEffect = () => {
-		if (!messageContainer) return;
-		messageContainer.style.opacity = '0';
-		setTimeout(() => {
-			if (messageContainer?.firstElementChild) {
-				messageContainer.removeChild(messageContainer.firstElementChild);
-				messageContainer.setAttribute('style', '');
-			}
-		}, 500);
-	};
-	messageCloseButton!.onclick = fadeOutEffect;
-
-	// Set a timeout to remove the message after 7 seconds
-	setTimeout(fadeOutEffect, 6500);
-}
-
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
 	// console.log('[BetterFloat] Buff price for ', item.full_name, ': ', priceListing, priceOrder);
@@ -920,7 +866,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
 	const currencyRate = await getSpUserCurrency();
-	if (!container.querySelector('.bf-buffprice')) {
+	if (!container.querySelector('.betterfloat-buffprice')) {
 		if (!priceDiv) {
 			const priceParent = container.querySelector('.ItemPreview-priceValue');
 			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, source, true);
@@ -937,13 +883,13 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	if (extensionSettings['sp-bufflink'] === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {
-			const buffLink = html`<a class="ItemPreview-sideAction bf-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
-			if (!container.querySelector('.bf-bufflink')) {
+			const buffLink = html`<a class="ItemPreview-sideAction betterfloat-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
+			if (!container.querySelector('.betterfloat-bufflink')) {
 				presentationDiv.insertAdjacentHTML('afterend', buffLink);
 			}
 		}
 	} else {
-		const buffContainer = container.querySelector('.bf-buff-container');
+		const buffContainer = container.querySelector('.betterfloat-buff-container');
 		if (buffContainer) {
 			(<HTMLElement>buffContainer).onclick = (e: Event) => {
 				e.stopPropagation();
@@ -970,8 +916,8 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
 	}
 	const saleTag = discountContainer.firstChild as HTMLElement;
-	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.bf-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
-		saleTag.className = 'sale-tag bf-sale-tag';
+	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
+		saleTag.className = 'sale-tag betterfloat-sale-tag';
 		discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
 			difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 		})`;
