@@ -131,6 +131,14 @@ export const CSFloatSettings = () => {
 						<SettingsCard>
 							<SettingsCheckbox id="csf-topbutton" text="Show 'Back to Top'-Button" icon={<TablerCircleChevronUp className="h-6 w-6" />} />
 						</SettingsCard>
+						<SettingsCard>
+							<SettingsCheckbox
+								id="csf-quickmenu"
+								isNew
+								text="Show Quick Menu"
+								tooltipText="Shows a menu for quick access in the top toolbar. Contains similar elements to the menu accessible through a click on the user avatar."
+							/>
+						</SettingsCard>
 						<SettingsColorPicker prefix="csf" />
 					</div>
 				</div>

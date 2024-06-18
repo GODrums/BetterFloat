@@ -7,6 +7,7 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
+import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import LiveFilter from '~lib/inline/LiveFilter';
 import CSFMenuControl from '~lib/inline/MenuControl';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
@@ -113,6 +114,16 @@ async function handleChange(state: Extension.URLState) {
 					}
 				});
 			}
+		}
+
+		const isLoggedIn = !!document.querySelector('app-header .avatar');
+		const csfShowQuickMenu = await getSetting<boolean>('csf-quickmenu');
+		if (isLoggedIn && csfShowQuickMenu && !document.querySelector('betterfloat-quick-menu')) {
+			await mountShadowRoot(<CSFQuickMenu />, {
+				tagName: 'betterfloat-quick-menu',
+				parent: document.querySelector('app-header .balance-container')?.parentElement,
+				position: 'before',
+			});
 		}
 	}
 }

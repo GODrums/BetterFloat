@@ -9,12 +9,12 @@ export const ExtensionStorage = {
 	}),
 };
 
-export async function getSetting(key: keyof IStorage) {
+export async function getSetting<T>(key: keyof IStorage) {
 	const setting = await ExtensionStorage.sync.get(key);
 	if (typeof setting === 'string' && (setting.startsWith('"') || setting.startsWith('{') || setting.startsWith('['))) {
-		return JSON.parse(setting);
+		return JSON.parse(setting) as T;
 	}
-	return setting;
+	return setting as T;
 }
 
 function isNumeric(value: string) {
@@ -70,6 +70,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-showingamess': false,
 	'csf-listingage': true,
 	'csf-topbutton': true,
+	'csf-quickmenu': false,
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
 	'csf-showbargainprice': true,
