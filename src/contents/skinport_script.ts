@@ -483,7 +483,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 			<div>Float Value</div>
 			<div>Price</div>
 			<div>
-				<a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;"
+				<a href="https://csbluegem.com/search?skin=${item.subCategory.replace(' ', '_')}&pattern=${item.pattern}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-right: 15px;"
 					>${ICON_ARROWUP_SMALL}</a
 				>
 			</div>
