@@ -9,6 +9,7 @@ import iconC5Game from 'data-base64:/assets/icons/icon-c5game.png';
 import iconCsgostash from 'data-base64:/assets/icons/icon-csgostash.png';
 import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
 import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
+import iconSteamAnalyst from 'data-base64:/assets/icons/icon-steamanalyst.png';
 import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
 import iconExclamation from 'data-base64:/assets/icons/triangle-exclamation-solid.svg';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
@@ -47,6 +48,7 @@ export const ICON_PHOENIX = iconPhoenix;
 export const ICON_SPIDER_WEB = iconSpiderWeb;
 export const ICON_CSGOSTASH = iconCsgostash;
 export const ICON_PRICEMPIRE = iconPricempire;
+export const ICON_STEAMANALYST = iconSteamAnalyst;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

@@ -25,6 +25,7 @@ import {
 	ICON_PRICEMPIRE,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
+	ICON_STEAMANALYST,
 	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
@@ -356,7 +357,7 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add row coloring if same item
 	const itemWear = document.querySelector('item-detail .wear')?.textContent;
-	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).minus(cachedSale.item.float_value).absoluteValue().lt(0.0001)) {
+	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).equals(cachedSale.item.float_value)) {
 		container.setAttribute('style', 'background-color: #0b255d;');
 	}
 }
@@ -536,6 +537,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	if (!actionsContainer) return;
 
 	actionsContainer.setAttribute('style', 'flex-wrap: wrap;');
+	const altURL = createAlternativeItemLink(container, listing.item);
 	const quickLinks: QuickLink[] = [
 		{
 			icon: ICON_CSGOSTASH,
@@ -543,9 +545,14 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 			link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
 		},
 		{
+			icon: ICON_STEAMANALYST,
+			tooltip: 'Show SteamAnalyst Page',
+			link: `https://csgo.steamanalyst.com/${altURL}`,
+		},
+		{
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
-			link: createPricempireURL(container, listing.item),
+			link: `https://pricempire.com/item/cs2/${altURL}`,
 		},
 	];
 	// inventory link if seller stall is public
@@ -581,8 +588,8 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	}
 }
 
-function createPricempireURL(container: Element, item: CSFloat.Item) {
-	const pricempireType = (item: CSFloat.Item) => {
+function createAlternativeItemLink(container: Element, item: CSFloat.Item) {
+	const itemType = (item: CSFloat.Item) => {
 		if (item.type === 'container' && !item.item_name.includes('Case')) {
 			return 'sticker-capsule';
 		}
@@ -591,9 +598,8 @@ function createPricempireURL(container: Element, item: CSFloat.Item) {
 	const sanitizeURL = (url: string) => {
 		return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
 	};
-	return `https://pricempire.com/item/cs2/${pricempireType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${
-		item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''
-	}`;
+
+	return `${itemType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''}`;
 }
 
 function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
