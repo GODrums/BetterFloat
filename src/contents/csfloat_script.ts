@@ -1,6 +1,6 @@
 import { html } from 'common-tags';
 import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
-import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
+import { AcidFadeCalculator, AmberFadeCalculator, FadeCalculator } from 'csgo-fade-percentage-calculator';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
@@ -783,11 +783,14 @@ async function addFadePercentages(container: Element, item: CSFloat.Item) {
 		fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
 	} else if (itemName.includes('Acid Fade')) {
 		fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
+	} else if (itemName.includes('Kukri Knife | Fade')) {
+		fadePercentage = { ...FadeCalculator.getFadePercentage('Kukri Knife', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
 	}
 	if (fadePercentage) {
+		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
 		const fadeContainer = html`
 			<div class="bf-tooltip" style="display: flex; align-items: center; justify-content: center;">
-				<div class="bf-badge-text" style="background-position-x: ${fadePercentage.percentage}%; background-image: ${fadePercentage.background};">
+				<div class="bf-badge-text" style="background-position-x: ${backgroundPositionX}%; background-image: ${fadePercentage.background};">
 					<span style="color: #00000080;">${toTruncatedString(fadePercentage.percentage, 1)}</span>
 				</div>
 				<div class="bf-tooltip-inner" style="translate: 0 50px">
@@ -1237,9 +1240,7 @@ async function addBuffPrice(
 								target="_blank"
 								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
 							>
-								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${
-									percentage.gt(300) ? '>300' : percentage.toFixed(formatDp)
-								}%</span>
+								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(formatDp)}%</span>
 								<div>
 									<img src="${ICON_STEAM}" style="height: ${isPopout ? '18px' : '16px'}; translate: 0px 1px;"></img>
 								</div>
@@ -1376,7 +1377,7 @@ function generatePriceLine(
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'>
+			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat="${JSON.stringify({ buff_name, priceFromReference, userCurrency })}">
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
