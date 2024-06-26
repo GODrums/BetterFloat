@@ -651,7 +651,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 			await caseHardenedDetection(container, item, isPopout);
 		}
 	} else if (item.item_name.includes('Fade')) {
-		await addFadePercentages(container, item);
+		addFadePercentages(container, item);
 	} else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
 		await webDetection(container, item);
 	} else if (item.item_name.includes('Specialist Gloves | Crimson Kimono')) {
@@ -773,7 +773,7 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 	);
 }
 
-async function addFadePercentages(container: Element, item: CSFloat.Item) {
+function addFadePercentages(container: Element, item: CSFloat.Item) {
 	const itemName = item.item_name;
 	const paintSeed = item.paint_seed;
 	if (!paintSeed) return;

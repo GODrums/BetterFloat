@@ -50,6 +50,26 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 -   Skinport: Multiple currency conversion options
 -   More coming soon!
 
+## How does BetterFloat work?
+
+```mermaid
+sequenceDiagram
+  participant sAPI as Site's API
+  box darkslateblue Browser Context
+    participant w as Website
+    participant bf as BetterFloat
+  end
+  participant rAPI as BetterFloat's API
+
+  rAPI-)bf: Fetch item prices
+  bf->>w: Inject XML interceptor and mutation listener
+  sAPI-)w: Populate with data
+  w-)bf: Injection forwards data
+  w->>w: Generates UI
+  w-)+bf: UI mutation events
+  bf--)-w: Inject BetterFloat UI
+```
+
 ## Services
 
 ### Chrome Web Store
@@ -64,7 +84,6 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 [![Mozilla Add-on](https://img.shields.io/amo/v/betterfloat.svg?label=Mozilla%20Add-on&logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/betterfloat/)
 ![Mozilla Add-on Users](https://img.shields.io/amo/users/betterfloat)
 ![Mozilla Add-on Downloads](https://img.shields.io/amo/dw/betterfloat)
-
 
 ### Troubleshooting on Mozilla Firefox
 
@@ -136,12 +155,14 @@ pnpm clean
 The built extension will be located in the `build` folder. For each created subversion (browser and manifest version), there will be a seperate subfolder. Load that folder as unpacked extension in your browser or pack it first and then load the packed version
 
 **Chrome:**
-- Go to `chrome://extensions` or `about:addons` and enable developer mode
-- Click on "Load unpacked" and select the `build/{version}` folder
+
+-   Go to `chrome://extensions` or `about:addons` and enable developer mode
+-   Click on "Load unpacked" and select the `build/{version}` folder
 
 **Firefox:**
-- Go to `about:debugging#/runtime/this-firefox`
-- Click on "Load Temporary Add-on" and select the `build/{version}/manifest.json` file
+
+-   Go to `about:debugging#/runtime/this-firefox`
+-   Click on "Load Temporary Add-on" and select the `build/{version}/manifest.json` file
 
 ### Contributing
 
