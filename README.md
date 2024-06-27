@@ -41,14 +41,13 @@ We maintain a very active Discord server, where you can share your snipes, ask q
 
 Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are coming soon!
 
--   Display Buff prices (buy order + listings) for every item
--   Price difference to Buff at first glance next to the price tag
--   Accurate sticker price calculation (%sp) with gradual coloring
--   CSFloat: Auto-refresh in the "Newest Items"
--   CSFloat: See the listing age of an item
--   Skinport: Automatically check the checkboxes in the cart for faster buying
--   Skinport: Multiple currency conversion options
--   More coming soon!
+-   Unified pricing from Buff163, Steam, YouPin/UU, and C5Game displayed right next to the item
+-   Determine market overpay through applied sticker data (% SP) with gradual coloring
+-   Get Case Hardened pattern data such as blue percentage or ranking directly
+-   See the listing age of an item in a convenient format
+-   Auto-refresh in the "Newest Items"-section on CSFloat
+-   Advanced currency conversion with support for many different currencies
+-   ... and more than 50 other Quality-of-Life features!
 
 ## How does BetterFloat work?
 
@@ -61,13 +60,17 @@ sequenceDiagram
   end
   participant rAPI as BetterFloat's API
 
+  Note right of w: Website load
   rAPI-)bf: Fetch item prices
-  bf->>w: Inject XML interceptor and mutation listener
-  sAPI-)w: Populate with data
-  w-)bf: Injection forwards data
-  w->>w: Generates UI
-  w-)+bf: UI mutation events
-  bf--)-w: Inject BetterFloat UI
+  bf->>w: Inject custom HTTP controller and mutation listener
+  loop On Website Event
+    w-)+sAPI: Call API endpoint
+    sAPI--)-w: Populate with data
+    w-)bf: Controller forwards data
+    w->>w: Generates UI
+    w-)+bf: UI mutation events
+    bf--)-w: Inject new BetterFloat UI
+  end
 ```
 
 ## Services
@@ -167,17 +170,17 @@ The built extension will be located in the `build` folder. For each created subv
 ### Contributing
 
 To contribute to this project, create your own fork of the repository and submit a pull request.
-Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Prettier](https://prettier.io/). This projects supports the following commands to control code quality:
+Please follow the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification (or an equivalent one) and make sure to format your code with [Biome](https://biomejs.dev/). This projects supports the following commands to control code quality:
 
 ```bash
-pnpm lint  # runs eslint
-pnpm prettier  # currently not available, format with CTRL+SHIFT+F
+pnpm format  # format with Biome, ALT+SHIFT+F in VSCode
+pnpm lint  # runs Biome lint
 ```
 
 Make sure to test your changes extensively on both browsers and include relevant results in your pull request.
 
 ## ⚠️ Disclaimer
 
-BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev.
+BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev or on Twitter @rumscsgo.
 
 Built with 🖤 in Munich.
