@@ -209,20 +209,30 @@ export async function adjustOfferContainer(container: Element) {
 	buffA?.setAttribute('data-betterfloat', JSON.stringify({ priceOrder, priceListing, userCurrency, itemName, priceFromReference }));
 }
 
-async function adjustBargainPopup(itemContainer: Element, container: Element) {
-	const itemCard = container.querySelector('item-card');
+function getJSONAttribute<T = any>(data: string | null | undefined): T | null {
+	if (!data) return null;
+	return JSON.parse(data) as T;
+}
+
+async function adjustBargainPopup(itemContainer: Element, popupContainer: Element) {
+	// we have to wait for the sticker data to be loaded
+	await new Promise((r) => setTimeout(r, 600));
+
+	const itemCard = popupContainer.querySelector('item-card');
 	if (!itemCard) return;
+
+	const item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
+	const buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
+	const stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+
+	if (!item) return;
+
+	CSFloatHelpers.storeApiItem(itemCard, item);
+
 	await adjustItem(itemCard, POPOUT_ITEM.BARGAIN);
 
-	// we have to wait for the sticker data to be loaded
-	await new Promise((r) => setTimeout(r, 1100));
-
-	const item = JSON.parse(itemContainer.getAttribute('data-betterfloat') ?? '{}') as CSFloat.ListingData;
-	const buff_data = JSON.parse(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat') ?? '{}');
-	const stickerData = JSON.parse(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat') ?? '{}');
-
 	// console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
-	if (buff_data.priceFromReference > 0 && item.min_offer_price) {
+	if (buff_data?.priceFromReference && buff_data.priceFromReference > 0 && item?.min_offer_price) {
 		const currency = getSymbolFromCurrency(buff_data.userCurrency);
 		const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
 		const minPercentage = minOffer.greaterThan(0) && stickerData?.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
@@ -236,12 +246,12 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 			minOffer.isNegative() ? '-' : '+'
 		}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="border: 1px solid grey; ${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
 
-		const minContainer = container.querySelector('.minimum-offer');
+		const minContainer = popupContainer.querySelector('.minimum-offer');
 		if (minContainer) {
 			minContainer.insertAdjacentHTML('beforeend', bargainTags);
 		}
 
-		const inputField = container.querySelector<HTMLInputElement>('input');
+		const inputField = popupContainer.querySelector<HTMLInputElement>('input');
 		if (!inputField) return;
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
@@ -252,8 +262,8 @@ async function adjustBargainPopup(itemContainer: Element, container: Element) {
 			</div>`
 		);
 
-		const diffElement = container.querySelector<HTMLElement>('.betterfloat-bargain-diff');
-		const spElement = container.querySelector<HTMLElement>('.betterfloat-bargain-sp');
+		const diffElement = popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff');
+		const spElement = popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-sp');
 		let absolute = false;
 
 		const calculateDiff = () => {
@@ -295,7 +305,7 @@ async function adjustSalesTableRow(container: Element) {
 		return;
 	}
 
-	const priceData = JSON.parse(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat') ?? '{}');
+	const priceData = getJSONAttribute(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat'));
 	if (!priceData.priceFromReference) return;
 	const { currencyRate } = await getCurrencyRate();
 	const priceDiff = new Decimal(cachedSale.price).mul(currencyRate).div(100).minus(priceData.priceFromReference);
@@ -443,20 +453,20 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		await new Promise((r) => setTimeout(r, 1000));
 		const isMainItem = popout === POPOUT_ITEM.PAGE;
 
-		const getApiItem: () => CSFloat.ListingData | null = () => {
+		const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
 			if (isMainItem) {
 				// fallback to stored data if item is not found
 				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 				return getCSFPopupItem() ?? CSFloatHelpers.getApiItem(itemPreview);
 			} else if (popout === POPOUT_ITEM.BARGAIN) {
 				// bargains are called through a listener
-				return JSON.parse(container.getAttribute('data-betterfloat') ?? '{}');
+				return getJSONAttribute<CSFloat.ListingData>(container.getAttribute('data-betterfloat'));
 			} else if (popout === POPOUT_ITEM.SIMILAR) {
 				return getFirstCSFItem();
 			}
 		};
 
-		let apiItem: CSFloat.ListingData | null = getApiItem();
+		let apiItem: CSFloat.ListingData | null | undefined = getApiItem();
 		// due to the way the popout is loaded, the data may not be available yet
 		let tries = 0;
 		while (!apiItem && tries < 5) {
@@ -1374,10 +1384,11 @@ function generatePriceLine(
 	}
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
+	const bfDataAttribute = `data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'`;
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat="${JSON.stringify({ buff_name, priceFromReference, userCurrency })}">
+			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" ${bfDataAttribute}>
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
