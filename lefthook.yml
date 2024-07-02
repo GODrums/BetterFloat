@@ -1,0 +1,17 @@
+# EXAMPLE USAGE:
+#
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+#
+
+pre-commit:
+    commands:
+        typecheck:
+            glob: "./src/**/*.{ts,tsx}"
+            run: npx tsc --noEmit {staged_files}
+        lint:
+            glob: "src/**/*.{ts,tsx,js,jsx}"
+            run: pnpm biome lint --write src/ && git update-index --again
+        format:
+            glob: "src/**/*.{ts,tsx,js,jsx,css}"
+            run: pnpm biome format --write src/ && git update-index --again

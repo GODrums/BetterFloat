@@ -276,7 +276,7 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 				}
 			} else {
 				const diff = inputPrice.div(buff_data.priceFromReference).mul(100);
-				const percentage = stickerData.priceSum ? inputPrice.minus(buff_data.priceFromReference).div(stickerData.priceSum).mul(100).toDP(2) : null;
+				const percentage = stickerData?.priceSum ? inputPrice.minus(buff_data.priceFromReference).div(stickerData.priceSum).mul(100).toDP(2) : null;
 				if (diffElement) {
 					diffElement.textContent = `${diff.absoluteValue().toDP(2).toNumber()}%`;
 					diffElement.style.backgroundColor = `${diff.lessThan(100) ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
