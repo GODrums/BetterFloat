@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "2.6.3",
+	"version": "2.6.4",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -13,6 +13,7 @@
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
 		"lint": "biome lint --write src/",
+		"preinstall": "lefthook install",
 		"format": "biome format --write src/ && biome check --write src/"
 	},
 	"dependencies": {
@@ -31,9 +32,9 @@
 		"@radix-ui/react-tabs": "^1.1.0",
 		"@radix-ui/react-toast": "^1.2.1",
 		"@radix-ui/react-tooltip": "^1.1.2",
-		"@tsparticles/engine": "^3.4.0",
+		"@tsparticles/engine": "^3.5.0",
 		"@tsparticles/react": "^3.0.0",
-		"@tsparticles/slim": "^3.4.0",
+		"@tsparticles/slim": "^3.5.0",
 		"@types/common-tags": "^1.8.4",
 		"@types/webextension-polyfill": "^0.10.7",
 		"@webext-core/isolated-element": "^1.1.2",
@@ -64,7 +65,7 @@
 		"lefthook": "^1.6.18",
 		"postcss": "8.4.39",
 		"tailwindcss": "3.4.4",
-		"typescript": "5.5.2"
+		"typescript": "5.5.3"
 	},
 	"manifest": {
 		"web_accessible_resources": [

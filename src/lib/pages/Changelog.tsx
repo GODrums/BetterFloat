@@ -15,6 +15,10 @@ export const Changelogs = () => {
 		<TabsContent value="changelog" className="h-[530px] w-[330px]">
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+				<SingleChangelog version="v2.6.4">
+					<li>Skinport - New quick links to SteamAnalyst, Pricempire and CSGOStash on item pages</li>
+					<li>Fixed a case where bargain popups were not detected correctly on CSFloat</li>
+				</SingleChangelog>
 				<SingleChangelog version="v2.6.0">
 					<li>CSFloat - New feature to display a quick menu bar in the top toolbar of the page (default: off).</li>
 					<li>Fixed a bug with the extension's default settings which caused new users to create new initial settings.</li>

@@ -3,7 +3,21 @@ import Decimal from 'decimal.js';
 
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import {
+	ICON_ARROWUP_SMALL,
+	ICON_BUFF,
+	ICON_C5GAME,
+	ICON_CAMERA,
+	ICON_CAMERA_FLIPPED,
+	ICON_CSFLOAT,
+	ICON_CSGOSTASH,
+	ICON_EXCLAMATION,
+	ICON_PRICEMPIRE,
+	ICON_STEAM,
+	ICON_STEAMANALYST,
+	ICON_YOUPIN,
+	MarketSource,
+} from '~lib/util/globals';
 import { Euro, USDollar, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
@@ -249,8 +263,8 @@ async function adjustItemPage(container: Element) {
 	};
 	let popupItem = getPopupItem();
 	let tries = 0;
-	while (!popupItem && tries++ < 5) {
-		await delay(500);
+	while (!popupItem && tries++ < 10) {
+		await delay(200);
 		popupItem = getPopupItem();
 	}
 	if (tries >= 5) {
@@ -316,8 +330,6 @@ async function adjustItemPage(container: Element) {
 
 	await addFloatColoring(container, item);
 
-	// addInstantOrder(item, container, true);
-
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
 			await patternDetections(container, popupItem.data.item);
@@ -331,6 +343,49 @@ async function adjustItemPage(container: Element) {
 				formattedPrice = currencySymbol === '€' ? Euro.format(lowPrice) : currencySymbol === '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
 			}
 			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
+		}
+
+		const buttonGroup = container.querySelector('.ItemPage-btnGroup');
+		if (buttonGroup) {
+			const item = popupItem.data.item;
+			const quickLinks = [
+				{
+					icon: ICON_CSGOSTASH,
+					text: 'CSGOStash',
+					link: `https://csgostash.com/markethash/${item.marketHashName}`,
+				},
+				{
+					icon: ICON_STEAMANALYST,
+					text: 'SteamAnalyst',
+					link: `https://csgo.steamanalyst.com/skin/${item.url}`,
+				},
+				{
+					icon: ICON_PRICEMPIRE,
+					text: 'Pricempire',
+					link: `https://pricempire.com/item/cs2/skin/${item.url}`,
+				},
+			];
+
+			const quickLinksContainer = html`
+			<div class="betterfloat-quicklinks" style="flex-basis: 100%; display: flex; justify-content: space-evenly;">
+				${quickLinks
+					.map(
+						(link) => html`
+							<a href="${link.link}" target="_blank" style="margin: 12px 0; padding: 4px 2px; border-radius: 8px; border: 1px solid #43484a;">
+								<div style="display: flex; align-items: center; gap: 6px; padding: 2px 8px;">
+									<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
+									<span>${link.text}</span>
+								</div>
+							</a>
+						`
+					)
+					.join('')}
+			</div>
+		`;
+
+			if (!buttonGroup.querySelector('.betterfloat-quicklinks')) {
+				buttonGroup.insertAdjacentHTML('afterend', quickLinksContainer);
+			}
 		}
 	}
 
