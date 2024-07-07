@@ -367,7 +367,7 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add row coloring if same item
 	const itemWear = document.querySelector('item-detail .wear')?.textContent;
-	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).equals(cachedSale.item.float_value)) {
+	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).toDP(10).equals(cachedSale.item.float_value.toFixed(10))) {
 		container.setAttribute('style', 'background-color: #0b255d;');
 	}
 }
@@ -457,7 +457,11 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (isMainItem) {
 				// fallback to stored data if item is not found
 				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-				return getCSFPopupItem() ?? CSFloatHelpers.getApiItem(itemPreview);
+				let newItem = getCSFPopupItem();
+				if (!newItem?.item.market_hash_name.includes(item.name)) {
+					newItem = CSFloatHelpers.getApiItem(itemPreview);
+				}
+				return newItem;
 			} else if (popout === POPOUT_ITEM.BARGAIN) {
 				// bargains are called through a listener
 				return getJSONAttribute<CSFloat.ListingData>(container.getAttribute('data-betterfloat'));
@@ -469,10 +473,15 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		let apiItem: CSFloat.ListingData | null | undefined = getApiItem();
 		// due to the way the popout is loaded, the data may not be available yet
 		let tries = 0;
-		while (!apiItem && tries < 5) {
+		while (!apiItem?.item.market_hash_name.includes(item.name) && tries < 5) {
 			await new Promise((r) => setTimeout(r, 200));
 			apiItem = getApiItem();
 			tries++;
+		}
+
+		if (!apiItem?.item.market_hash_name.includes(item.name)) {
+			console.warn('[BetterFloat] Could not find item in popout:', item.name);
+			return;
 		}
 
 		if (apiItem?.id) {
