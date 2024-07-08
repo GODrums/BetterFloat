@@ -1,12 +1,20 @@
 {
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "files.eol": "\n",
-    "json.schemas": [
-        {
-            "fileMatch": [
-                "/manifest.json"
-            ],
-            "url": "http://json.schemastore.org/chrome-manifest"
-        }
-    ]
+	"typescript.tsdk": "./node_modules/typescript/lib",
+	"files.eol": "\n",
+	"json.schemas": [
+		{
+			"fileMatch": ["/manifest.json"],
+			"url": "http://json.schemastore.org/chrome-manifest"
+		}
+	],
+	"editor.defaultFormatter": "biomejs.biome",
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }
