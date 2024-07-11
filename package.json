@@ -13,7 +13,6 @@
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
 		"lint": "biome lint --write src/",
-		"preinstall": "lefthook install",
 		"format": "biome format --write src/ && biome check --write src/"
 	},
 	"dependencies": {
@@ -41,12 +40,12 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
-		"framer-motion": "^11.2.13",
+		"framer-motion": "^11.3.0",
 		"plasmo": "0.88.0",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",
-		"simplex-noise": "^4.0.1",
+		"simplex-noise": "^4.0.2",
 		"socket.io-client": "^4.7.5",
 		"tailwind-merge": "^2.4.0",
 		"tailwindcss-animate": "^1.0.7",
@@ -62,7 +61,6 @@
 		"csgo-fade-percentage-calculator": "^1.1.4",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.4.3",
-		"lefthook": "^1.7.1",
 		"postcss": "8.4.39",
 		"tailwindcss": "3.4.4",
 		"typescript": "5.5.3"

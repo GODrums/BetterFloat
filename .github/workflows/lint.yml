@@ -1,4 +1,4 @@
-name: QA / Lint
+name: QA / Lint (Biome)
 
 on:
   push:
