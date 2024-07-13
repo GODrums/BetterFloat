@@ -683,7 +683,7 @@ function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 
 async function addFloatColoring(container: Element, item: Skinport.Listing | Skinport.Item) {
 	const floatContainer = container.querySelector('.WearBar-value');
-	if (!floatContainer || !item.wear) return;
+	if (!floatContainer || item.wear === null) return;
 
 	(<HTMLElement>floatContainer).style.color = getFloatColoring(item.wear);
 }
