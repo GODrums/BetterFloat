@@ -15,7 +15,7 @@ import {
 } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
-import { calculateTime, getBuffLink, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
+import { calculateTime, getBuffLink, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
 import { html } from 'common-tags';
@@ -488,16 +488,7 @@ async function addBuffPrice(
 
 	const priceDiv = container.querySelector(selector.priceDiv);
 	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
-	let href = '';
-	if (source === MarketSource.Buff) {
-		href = buff_id > 0 ? getBuffLink(buff_id, listingItem.dopplerPhase as DopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-	} else if (source === MarketSource.Steam) {
-		href = `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
-	} else if (source === MarketSource.C5Game) {
-		href = `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
-	} else if (source === MarketSource.YouPin) {
-		href = `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
-	}
+	const href = getMarketURL({ source, buff_name, buff_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');
 	}

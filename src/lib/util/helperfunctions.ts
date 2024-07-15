@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
-import { getPriceMapping } from '../handlers/mappinghandler';
+import { getC5GameMapping, getPriceMapping } from '../handlers/mappinghandler';
 import { MarketSource } from './globals';
 import { phaseMapping } from './patterns';
 
@@ -88,9 +88,16 @@ export function getMarketURL({ source, buff_name, buff_id = 0, phase }: { source
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
 		case MarketSource.YouPin:
 			return `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
-		case MarketSource.C5Game:
-			return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
+		case MarketSource.C5Game: {
+			const c5_id = getC5GameMapping(buff_name);
+			if (c5_id) {
+				return `https://www.c5game.com/en/csgo/${c5_id}/${encodeURIComponent(buff_name)}/sell`;
+			} else {
+				return `https://www.c5game.com/en/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
+			}
+		}
 	}
+	return '';
 }
 
 /**

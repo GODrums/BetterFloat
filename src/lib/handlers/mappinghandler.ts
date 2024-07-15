@@ -1,4 +1,5 @@
 import buffIds from '@/assets/buffids.json';
+import c5Ids from '@/assets/c5ids.json';
 import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -14,7 +15,9 @@ import { fetchCurrencyRates } from './networkhandler';
 // e.g. Queue<T extends GeneralItem> = { items: T[]; push: (item: T) => void; pop: () => T | undefined; };
 
 // maps buff_name to buff_id
-const buffMapping: { [name: string]: number } = buffIds;
+const buffMapping: Record<string, number> = buffIds;
+// maps buff_name to c5game id
+const c5Mapping: Record<string, string> = c5Ids;
 // maps buff_name to prices and more - custom mapping
 const priceMapping: {
 	buff: Extension.PriceMappingBuff;
@@ -405,7 +408,7 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 	return null;
 }
 
-export async function getBuffMapping(name: string) {
+export function getBuffMapping(name: string) {
 	if (Object.keys(buffMapping).length === 0) {
 		console.error('[BetterFloat] Buff mapping not loaded yet');
 	}
@@ -415,6 +418,18 @@ export async function getBuffMapping(name: string) {
 	} else {
 		console.log(`[BetterFloat] No buff mapping found for ${name}`);
 		return 0;
+	}
+}
+
+export function getC5GameMapping(name: string) {
+	if (Object.keys(c5Mapping).length === 0) {
+		console.error('[BetterFloat] C5Game mapping not loaded yet');
+	}
+	if (c5Mapping[name]) {
+		return c5Mapping[name];
+	} else {
+		console.log(`[BetterFloat] No C5Game mapping found for ${name}`);
+		return null;
 	}
 }
 
