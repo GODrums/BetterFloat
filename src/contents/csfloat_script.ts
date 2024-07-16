@@ -32,7 +32,17 @@ import {
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getCSFCurrencyRate, getCSFPopupItem, getCrimsonWebMapping, getFirstCSFItem, getFirstHistorySale, getItemPrice, getSpecificCSFOffer } from '../lib/handlers/mappinghandler';
+import {
+	getBuffMapping,
+	getCSFCurrencyRate,
+	getCSFPopupItem,
+	getCrimsonWebMapping,
+	getFirstCSFItem,
+	getFirstCSFSimilarItem,
+	getFirstHistorySale,
+	getItemPrice,
+	getSpecificCSFOffer,
+} from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
@@ -111,7 +121,11 @@ async function firstLaunch() {
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {
-		const popoutVersion = items[i].getAttribute('width')?.includes('100%') ? POPOUT_ITEM.PAGE : items[i].className.includes('flex-item') ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR;
+		const popoutVersion = items[i].getAttribute('width')?.includes('100%')
+			? POPOUT_ITEM.PAGE
+			: items[i].className.includes('flex-item') || location.pathname === '/'
+				? POPOUT_ITEM.NONE
+				: POPOUT_ITEM.SIMILAR;
 		await adjustItem(items[i], popoutVersion);
 	}
 }
@@ -150,7 +164,7 @@ function applyMutation() {
 						// adjust stall
 						// await customStall(location.pathname.split('/').pop() ?? '');
 					} else if (addedNode.tagName === 'ITEM-CARD') {
-						await adjustItem(addedNode, addedNode.className.includes('flex-item') ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR);
+						await adjustItem(addedNode, addedNode.className.includes('flex-item') || location.pathname === '/' ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR);
 					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
 						// row of the latest sales table of an item popup
 						await adjustSalesTableRow(addedNode);
@@ -408,53 +422,16 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	const item = getFloatItem(container);
-	// console.log('[BetterFloat] Adjusting item:', item);
+
 	if (Number.isNaN(item.price)) return;
 	const priceResult = await addBuffPrice(item, container, popout);
+
 	// Currency up until this moment is stricly the user's local currency, however the sticker %
 	// is done stricly in USD, we have to make sure the price difference reflects that
-	const cachedItem = getFirstCSFItem();
-	// POPOUT_ITEM.NONE
-	if (cachedItem) {
-		if (item.name !== cachedItem.item.item_name) {
-			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.item.item_name);
-			return;
-		}
-		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
-			await addStickerInfo(container, cachedItem, priceResult.price_difference);
-		} else {
-			adjustExistingSP(container);
-		}
-		if (extensionSettings['csf-listingage']) {
-			addListingAge(container, cachedItem, false);
-		}
-		CSFloatHelpers.storeApiItem(container, cachedItem);
 
-		if (extensionSettings['csf-floatcoloring']) {
-			addFloatColoring(container, cachedItem);
-		}
-		if (extensionSettings['csf-removeclustering']) {
-			CSFloatHelpers.removeClustering(container);
-		}
-
-		addBargainListener(container);
-		addScreenshotListener(container, cachedItem.item);
-		if (extensionSettings['csf-showbargainprice']) {
-			await showBargainPrice(container, cachedItem, popout);
-		}
-
-		patternDetections(container, cachedItem, false);
-
-		if (extensionSettings['csf-showingamess']) {
-			CSFloatHelpers.addItemScreenshot(container, cachedItem.item);
-		}
-	} else if (popout > 0) {
-		// timeout needed as request is only sent after popout has been loaded
-		await new Promise((r) => setTimeout(r, 1000));
-		const isMainItem = popout === POPOUT_ITEM.PAGE;
-
-		const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
-			if (isMainItem) {
+	const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
+		switch (popout) {
+			case POPOUT_ITEM.PAGE: {
 				// fallback to stored data if item is not found
 				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 				let newItem = getCSFPopupItem();
@@ -462,15 +439,65 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 					newItem = CSFloatHelpers.getApiItem(itemPreview);
 				}
 				return newItem;
-			} else if (popout === POPOUT_ITEM.BARGAIN) {
-				// bargains are called through a listener
-				return getJSONAttribute<CSFloat.ListingData>(container.getAttribute('data-betterfloat'));
-			} else if (popout === POPOUT_ITEM.SIMILAR) {
-				return getFirstCSFItem();
 			}
-		};
+			case POPOUT_ITEM.BARGAIN:
+				return getJSONAttribute<CSFloat.ListingData>(container.getAttribute('data-betterfloat'));
+			case POPOUT_ITEM.SIMILAR:
+				return getFirstCSFSimilarItem();
+			default:
+				return getFirstCSFItem();
+		}
+	};
+	let apiItem = getApiItem();
 
-		let apiItem: CSFloat.ListingData | null | undefined = getApiItem();
+	if (popout === POPOUT_ITEM.NONE) {
+		// check that we got the right item
+		while (apiItem && apiItem.type === 'buy_now' && !new Decimal(item.price).mul(100).equals(apiItem?.price ?? 0)) {
+			apiItem = getApiItem();
+		}
+
+		if (!apiItem) {
+			console.error('[BetterFloat] No cached item found');
+			return;
+		}
+
+		if (item.name !== apiItem.item.item_name) {
+			console.log('[BetterFloat] Item name mismatch:', item.name, apiItem.item.item_name);
+			return;
+		}
+		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
+			await addStickerInfo(container, apiItem, priceResult.price_difference);
+		} else {
+			adjustExistingSP(container);
+		}
+		if (extensionSettings['csf-listingage']) {
+			addListingAge(container, apiItem, false);
+		}
+		CSFloatHelpers.storeApiItem(container, apiItem);
+
+		if (extensionSettings['csf-floatcoloring']) {
+			addFloatColoring(container, apiItem);
+		}
+		if (extensionSettings['csf-removeclustering']) {
+			CSFloatHelpers.removeClustering(container);
+		}
+
+		addBargainListener(container);
+		addScreenshotListener(container, apiItem.item);
+		if (extensionSettings['csf-showbargainprice']) {
+			await showBargainPrice(container, apiItem, popout);
+		}
+
+		patternDetections(container, apiItem, false);
+
+		if (extensionSettings['csf-showingamess']) {
+			CSFloatHelpers.addItemScreenshot(container, apiItem.item);
+		}
+	} else if (popout > 0) {
+		// timeout needed as request is only sent after popout has been loaded
+		await new Promise((r) => setTimeout(r, 1000));
+
+		const isMainItem = popout === POPOUT_ITEM.PAGE;
 		// due to the way the popout is loaded, the data may not be available yet
 		let tries = 0;
 		while (!apiItem?.item.market_hash_name.includes(item.name) && tries < 5) {
@@ -627,7 +654,7 @@ function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | nu
 	}
 
 	if (!ITEM_SCHEMA) {
-		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA || '{}');
+		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA_V2 || '{}').schema ?? {};
 	}
 
 	if (Object.keys(ITEM_SCHEMA ?? {}).length === 0) {
@@ -1004,14 +1031,14 @@ function adjustExistingSP(container: Element) {
 	(<HTMLElement>spContainer).style.backgroundColor = backgroundImageColor;
 }
 
-function addListingAge(container: Element, cachedItem: CSFloat.ListingData, isPopout: boolean) {
+function addListingAge(container: Element, apiItem: CSFloat.ListingData, isPopout: boolean) {
 	if ((isPopout && container.querySelector('.item-card.large .betterfloat-listing-age')) || (!isPopout && container.querySelector('.betterfloat-listing-age'))) {
 		return;
 	}
 
 	const listingAge = html`
 		<div class="betterfloat-listing-age" style="display: flex; align-items: flex-end;">
-			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(cachedItem.created_at)}</p>
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(apiItem.created_at)}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
 	`;
@@ -1032,15 +1059,15 @@ function addListingAge(container: Element, cachedItem: CSFloat.ListingData, isPo
 	}
 }
 
-async function addStickerInfo(container: Element, cachedItem: CSFloat.ListingData, price_difference: number) {
+async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
 	// quality 12 is souvenir
-	if (!cachedItem.item?.stickers || cachedItem.item?.quality === 12) {
+	if (!apiItem.item?.stickers || apiItem.item?.quality === 12) {
 		return;
 	}
 
 	const csfSP = container.querySelector('.sticker-percentage');
 	if (csfSP) {
-		const didChange = await changeSpContainer(csfSP, cachedItem.item.stickers, price_difference);
+		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, price_difference);
 		if (!didChange) {
 			csfSP.remove();
 		}

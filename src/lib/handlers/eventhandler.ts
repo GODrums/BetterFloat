@@ -17,6 +17,7 @@ import {
 	cacheCSFLocation,
 	cacheCSFOffers,
 	cacheCSFPopupItem,
+	cacheCSFSimilarItems,
 	cacheSkbInventory,
 	cacheSkbItems,
 	cacheSkinbidCurrencyRates,
@@ -214,7 +215,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 			cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
 		} else if (eventData.url.includes('/similar')) {
 			// item page
-			cacheCSFItems(eventData.data as CSFloat.ListingData[]);
+			cacheCSFSimilarItems(eventData.data as CSFloat.ListingData[]);
 		}
 	}
 }
