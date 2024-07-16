@@ -5,12 +5,12 @@ import Decimal from 'decimal.js';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
 import { MarketSource } from '~lib/util/globals';
+import { Queue } from '~lib/util/queue';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { CSFloat } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { fetchCurrencyRates } from './networkhandler';
-import { Queue } from '~lib/util/queue';
 
 type CSFloatAPIStorage = {
 	items: Queue<CSFloat.ListingData>;

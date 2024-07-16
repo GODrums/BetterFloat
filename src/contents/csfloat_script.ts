@@ -512,7 +512,6 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 
 		if (apiItem?.id) {
-			console.debug('[BetterFloat] Popout item data:', apiItem);
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
 			addListingAge(container, apiItem, isMainItem);
 			addFloatColoring(container, apiItem);

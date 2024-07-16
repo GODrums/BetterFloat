@@ -29,7 +29,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 	}
 
 	if (bubbles.length > offers.length) {
-		console.log('[BetterFloat] Bubbles and offers length mismatch');
+		console.warn('[BetterFloat] Bubbles and offers length mismatch');
 		return;
 	}
 
@@ -39,12 +39,12 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 			continue;
 		}
 
-		const offer = offers[i];
+		const offer = offers[offers.length - 1 - i];
 		const difference = new Decimal(offer.price).div(100).minus(buff_data.priceFromReference);
 
 		const subText = bubble.querySelector<HTMLElement>('.sub-text');
 		if (subText) {
-			const isSeller = subText.textContent?.includes('Buyer') && bubble.className.includes('from-other-party');
+			const isSeller = bubble.className.includes('from-other-party');
 			subText.setAttribute('style', 'display: flex; align-items: center; width: 100%; justify-content: space-between;');
 			subText.innerHTML = `<div style="display: inline-flex; align-items: center;">${subText.textContent}</div>`;
 
