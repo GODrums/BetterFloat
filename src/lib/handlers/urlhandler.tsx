@@ -13,6 +13,7 @@ import CSFMenuControl from '~lib/inline/MenuControl';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
+import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -133,6 +134,14 @@ export async function mountSpItemPageBuffContainer() {
 		tagName: 'betterfloat-buff-container',
 		parent: document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns'),
 		position: 'before',
+	});
+}
+
+export async function mountCSFBargainButtons() {
+	await mountShadowRoot(<CSFBargainButtons />, {
+		tagName: 'betterfloat-bargain-buttons',
+		parent: document.querySelector('.details .inputs'),
+		position: 'after',
 	});
 }
 

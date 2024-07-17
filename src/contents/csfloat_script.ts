@@ -4,7 +4,7 @@ import { AcidFadeCalculator, AmberFadeCalculator, FadeCalculator } from 'csgo-fa
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
 	ICON_ARROWUP_SMALL,
@@ -229,21 +229,28 @@ function getJSONAttribute<T = any>(data: string | null | undefined): T | null {
 }
 
 async function adjustBargainPopup(itemContainer: Element, popupContainer: Element) {
-	// we have to wait for the sticker data to be loaded
-	await new Promise((r) => setTimeout(r, 600));
-
 	const itemCard = popupContainer.querySelector('item-card');
 	if (!itemCard) return;
 
-	const item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
-	const buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
-	const stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+	let item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
+	let buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
+	let stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+
+	let i = 0;
+	while (!item && i++ < 20) {
+		await new Promise((r) => setTimeout(r, 100));
+		item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
+		buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
+		stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+	}
 
 	if (!item) return;
 
 	CSFloatHelpers.storeApiItem(itemCard, item);
 
 	await adjustItem(itemCard, POPOUT_ITEM.BARGAIN);
+
+	await mountCSFBargainButtons();
 
 	// console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
 	if (buff_data?.priceFromReference && buff_data.priceFromReference > 0 && item?.min_offer_price) {
