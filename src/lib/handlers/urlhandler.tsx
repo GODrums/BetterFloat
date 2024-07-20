@@ -7,13 +7,13 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
+import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import LiveFilter from '~lib/inline/LiveFilter';
 import CSFMenuControl from '~lib/inline/MenuControl';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
-import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -120,11 +120,15 @@ async function handleChange(state: Extension.URLState) {
 		const isLoggedIn = !!document.querySelector('app-header .avatar');
 		const csfShowQuickMenu = await getSetting<boolean>('csf-quickmenu');
 		if (isLoggedIn && csfShowQuickMenu && !document.querySelector('betterfloat-quick-menu')) {
-			await mountShadowRoot(<CSFQuickMenu />, {
+			const root = await mountShadowRoot(<CSFQuickMenu />, {
 				tagName: 'betterfloat-quick-menu',
 				parent: document.querySelector('app-header .balance-container')?.parentElement,
 				position: 'before',
 			});
+			if (Array.from(document.querySelectorAll('betterfloat-quick-menu')).length > 1) {
+				root.unmount();
+				document.querySelector('betterfloat-quick-menu')?.remove();
+			}
 		}
 	}
 }

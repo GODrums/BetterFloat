@@ -27,7 +27,6 @@ const CSFBargainButtons: React.FC = () => {
 		const bfPricingDiv = document.querySelector<HTMLDivElement>('app-make-offer-dialog item-card .betterfloat-buffprice');
 		if (bfPricingDiv) {
 			pricingData = JSON.parse(bfPricingDiv.dataset.betterfloat || '{}');
-			console.log(pricingData);
 			return true;
 		}
 		return false;
@@ -61,7 +60,11 @@ const CSFBargainButtons: React.FC = () => {
 					value={percentage}
 					onChange={(e) => setPercentage(e.target.value)}
 				/>
-				<Button className="h-8 px-3 bg-[#c1ceff0a] hover:bg-[#fff3]" onClick={() => applyPercentage(Number(percentage))}>
+				<Button
+					className="h-8 px-3 text-[#237BFF] bg-[#237bff26] hover:bg-[#4f95ff4b] disabled:bg-[#ffffff1f] disabled:text-[#ffffff80]"
+					onClick={() => applyPercentage(Number(percentage))}
+					disabled={percentage.length === 0}
+				>
 					Apply
 				</Button>
 			</div>

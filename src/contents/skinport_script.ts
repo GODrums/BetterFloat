@@ -403,7 +403,7 @@ async function addSoldPrice(container: Element, item: Skinport.Item) {
 	const currency = await getSpUserCurrency();
 	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
 
-	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	const priceContainer = html`
 		<div class="ItemPage-price">
 			<div class="ItemPage-value">
@@ -852,7 +852,7 @@ function convertCurrency(price: Decimal, currencyRate: number, settingRate: stri
 }
 
 function generateBuffContainer(container: HTMLElement, priceListing: Decimal | undefined, priceOrder: Decimal | undefined, currencySymbol: string, source: MarketSource, containerIsParent = false) {
-	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: currencySymbol, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currencySymbol, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	let icon = '';
 	let iconStyle = 'height: 22px; margin-right: 5px; border-radius: 5px;';
 	switch (source) {

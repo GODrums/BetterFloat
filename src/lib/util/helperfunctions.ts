@@ -285,6 +285,7 @@ export function getFloatColoring(
 export const USDollar = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
+	currencyDisplay: 'narrowSymbol',
 	minimumFractionDigits: 0,
 	maximumFractionDigits: 2,
 });
@@ -292,6 +293,7 @@ export const USDollar = new Intl.NumberFormat('en-US', {
 export const BigUSDollar = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',
+	currencyDisplay: 'narrowSymbol',
 	minimumFractionDigits: 0,
 	maximumFractionDigits: 0,
 });
@@ -299,12 +301,14 @@ export const BigUSDollar = new Intl.NumberFormat('en-US', {
 export const Euro = new Intl.NumberFormat('en-DE', {
 	style: 'currency',
 	currency: 'EUR',
+	currencyDisplay: 'narrowSymbol',
 });
 
 export function convertCurrency(amount: number, currency: string) {
 	return new Intl.NumberFormat('en-US', {
 		style: 'currency',
 		currency: currency,
+		currencyDisplay: 'narrowSymbol',
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
 	}).format(amount);

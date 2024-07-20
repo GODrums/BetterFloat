@@ -95,6 +95,7 @@ export namespace CSFloat {
 		name: string;
 		quality: string;
 		style: ItemStyle;
+		float: number;
 		condition: ItemCondition;
 		price: number;
 	};

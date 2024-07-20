@@ -198,7 +198,7 @@ export async function adjustOfferContainer(container: Element) {
 	} else if (offer.contract.item.paint_index === 0) {
 		itemStyle = 'Vanilla';
 	}
-	const buff_id = await getBuffMapping(itemName);
+	const buff_id = getBuffMapping(itemName);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
 	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
 
@@ -213,7 +213,7 @@ export async function adjustOfferContainer(container: Element) {
 		priceFromReference,
 		userCurrency,
 		'' as DopplerPhase,
-		Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }),
+		Intl.NumberFormat(undefined, { style: 'currency', currency: CSFloatHelpers.userCurrency(), currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }),
 		false,
 		false
 	);
@@ -277,7 +277,7 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
 			'afterend',
-			html` <div style="position: relative; display: inline-flex; ${showSP ? 'flex-direction: column; align-items: flex-end;' : 'align-items: center;'} gap: 8px; font-size: 16px;">
+			html` <div style="position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 16px; white-space: nowrap;">
 				<span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
 				${showSP && `<span class="betterfloat-bargain-sp" style="${spStyle}"></span>`}
 			</div>`
@@ -303,8 +303,13 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 					diffElement.style.backgroundColor = `${diff.lessThan(100) ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
 				}
 				if (spElement && percentage) {
-					spElement.textContent = `${percentage.lessThan(0) ? '0' : percentage.toNumber()}% SP`;
-					spElement.style.border = '1px solid grey';
+					if (percentage.lessThan(0)) {
+						spElement.style.display = 'none';
+					} else {
+						spElement.style.display = 'block';
+						spElement.textContent = `${percentage.toNumber()}% SP`;
+						spElement.style.border = '1px solid grey';
+					}
 				}
 			}
 		};
@@ -428,6 +433,10 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
+	if (popout > 0) {
+		// wait for popup UI to load
+		await new Promise((r) => setTimeout(r, 100));
+	}
 	const item = getFloatItem(container);
 
 	if (Number.isNaN(item.price)) return;
@@ -438,11 +447,13 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 	const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
 		switch (popout) {
+			case POPOUT_ITEM.NONE:
+				return getFirstCSFItem();
 			case POPOUT_ITEM.PAGE: {
 				// fallback to stored data if item is not found
-				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 				let newItem = getCSFPopupItem();
-				if (!newItem?.item.market_hash_name.includes(item.name)) {
+				if (!newItem) {
+					const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 					newItem = CSFloatHelpers.getApiItem(itemPreview);
 				}
 				return newItem;
@@ -452,14 +463,16 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			case POPOUT_ITEM.SIMILAR:
 				return getFirstCSFSimilarItem();
 			default:
-				return getFirstCSFItem();
+				console.error('[BetterFloat] Unknown popout type:', popout);
+				return null;
 		}
 	};
 	let apiItem = getApiItem();
 
 	if (popout === POPOUT_ITEM.NONE) {
-		// check that we got the right item
-		while (apiItem && apiItem.type === 'buy_now' && !new Decimal(item.price).mul(100).equals(apiItem?.price ?? 0)) {
+		// check if we got the right item
+		while (apiItem && (item.name !== apiItem.item.item_name || (apiItem.item.float_value && !new Decimal(apiItem.item.float_value).toDP(12).equals(item.float)))) {
+			console.log('[BetterFloat] Item name mismatch:', item, apiItem);
 			apiItem = getApiItem();
 		}
 
@@ -507,13 +520,13 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		const isMainItem = popout === POPOUT_ITEM.PAGE;
 		// due to the way the popout is loaded, the data may not be available yet
 		let tries = 0;
-		while (!apiItem?.item.market_hash_name.includes(item.name) && tries < 5) {
+		while ((!apiItem || (isMainItem && location.pathname.split('/').pop() !== apiItem.item.asset_id)) && tries < 5) {
 			await new Promise((r) => setTimeout(r, 200));
 			apiItem = getApiItem();
 			tries++;
 		}
 
-		if (!apiItem?.item.market_hash_name.includes(item.name)) {
+		if (!apiItem) {
 			console.warn('[BetterFloat] Could not find item in popout:', item.name);
 			return;
 		}
@@ -544,9 +557,13 @@ async function showBargainPrice(container: Element, listing: CSFloat.ListingData
 		const { userCurrency, currencyRate } = await getCurrencyRate();
 		const minBargainLabel = html`
 			<span class="betterfloat-minbargain-label" style="color: slategrey;">
-				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(
-					new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber()
-				)})
+				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat(undefined, {
+					style: 'currency',
+					currency: userCurrency,
+					currencyDisplay: 'narrowSymbol',
+					minimumFractionDigits: 0,
+					maximumFractionDigits: 2,
+				}).format(new Decimal(listing.min_offer_price).mul(currencyRate).div(100).toDP(2).toNumber())})
 			</span>
 		`;
 
@@ -1083,7 +1100,7 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
-	const { userCurrency, currencyRate } = await getCurrencyRate();
+	const { currencyRate } = await getCurrencyRate();
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, source)));
 
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
@@ -1094,7 +1111,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	if (priceSum >= 2) {
 		const backgroundImageColor = getSPBackgroundColor(spPercentage);
 		if (spPercentage > 2 || spPercentage < 0.005) {
-			const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+			const CurrencyFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 			csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
 		} else {
 			csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
@@ -1142,6 +1159,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	// replace potential spaces between currency characters and price
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
+	const float = Number(container.querySelector('item-float-bar .wear')?.textContent);
 	let condition: ItemCondition = '';
 	let quality = '';
 	let style: ItemStyle = '';
@@ -1177,6 +1195,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		quality: quality,
 		style: style,
 		condition: condition,
+		float: float,
 		price: price,
 	};
 }
@@ -1240,7 +1259,7 @@ async function addBuffPrice(
 
 	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
 	const userCurrency = CSFloatHelpers.userCurrency();
-	const CurrencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: userCurrency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler');
 
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
