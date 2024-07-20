@@ -40,7 +40,7 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
-		"framer-motion": "^11.3.6",
+		"framer-motion": "^11.3.8",
 		"plasmo": "0.88.0",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",

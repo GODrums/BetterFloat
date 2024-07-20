@@ -452,7 +452,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			case POPOUT_ITEM.PAGE: {
 				// fallback to stored data if item is not found
 				let newItem = getCSFPopupItem();
-				if (!newItem) {
+				if (!newItem || location.pathname.split('/').pop() !== newItem.id) {
 					const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 					newItem = CSFloatHelpers.getApiItem(itemPreview);
 				}
@@ -514,16 +514,17 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			CSFloatHelpers.addItemScreenshot(container, apiItem.item);
 		}
 	} else if (popout > 0) {
-		// timeout needed as request is only sent after popout has been loaded
-		await new Promise((r) => setTimeout(r, 1000));
-
 		const isMainItem = popout === POPOUT_ITEM.PAGE;
 		// due to the way the popout is loaded, the data may not be available yet
-		let tries = 0;
-		while ((!apiItem || (isMainItem && location.pathname.split('/').pop() !== apiItem.item.asset_id)) && tries < 5) {
+		let tries = 10;
+		while (
+			(!apiItem ||
+				(isMainItem && location.pathname.split('/').pop() !== apiItem.id) ||
+				(popout === POPOUT_ITEM.BARGAIN && apiItem.item.float_value && !new Decimal(apiItem.item.float_value).toDP(12).equals(item.float))) &&
+			tries-- > 0
+		) {
 			await new Promise((r) => setTimeout(r, 200));
 			apiItem = getApiItem();
-			tries++;
 		}
 
 		if (!apiItem) {
