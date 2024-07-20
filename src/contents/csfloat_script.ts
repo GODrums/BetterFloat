@@ -1301,7 +1301,9 @@ async function addBuffPrice(
 			if (extensionSettings['csf-steamsupplement'] || isPopout) {
 				const { priceListing } = await getBuffPrice(buff_name, item.style, MarketSource.Steam);
 				if (priceListing?.gt(0)) {
-					const percentage = new Decimal(item.price).div(priceListing).times(100);
+					const { currencyRate } = await getCurrencyRate();
+					const percentage = new Decimal(item.price).div(priceListing).div(currencyRate).times(100);
+
 					if (percentage.gt(1)) {
 						const formatDp = percentage.gt(130) || percentage.lt(80) ? 0 : 1;
 						steamContainer = html`
