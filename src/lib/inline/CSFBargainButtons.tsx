@@ -45,7 +45,7 @@ const CSFBargainButtons: React.FC = () => {
 
 	return (
 		<div style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
-			<h3 className="text-lg text-[#9EA7B1]">Prefil Percentages</h3>
+			<h3 className="text-sm font-medium text-[#9EA7B1] mb-1">Bargain by Percentage</h3>
 			<div className="flex justify-between items-center gap-2">
 				<PercentageButton percentage={85} handleClick={() => applyPercentage(85)} />
 				<PercentageButton percentage={87.5} handleClick={() => applyPercentage(87.5)} />

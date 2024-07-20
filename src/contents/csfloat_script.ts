@@ -1100,7 +1100,7 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 // returns if the SP container was created, so priceSum > 1
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
-	const { currencyRate } = await getCurrencyRate();
+	const { userCurrency, currencyRate } = await getCurrencyRate();
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, source)));
 
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
@@ -1111,7 +1111,13 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	if (priceSum >= 2) {
 		const backgroundImageColor = getSPBackgroundColor(spPercentage);
 		if (spPercentage > 2 || spPercentage < 0.005) {
-			const CurrencyFormatter = new Intl.NumberFormat(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+			const CurrencyFormatter = new Intl.NumberFormat(undefined, {
+				style: 'currency',
+				currency: userCurrency,
+				currencyDisplay: 'narrowSymbol',
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 2,
+			});
 			csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
 		} else {
 			csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
@@ -1447,7 +1453,7 @@ function generatePriceLine(
 	}
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
-	const bfDataAttribute = `data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency })}'`;
+	const bfDataAttribute = `data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency, source })}'`;
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
