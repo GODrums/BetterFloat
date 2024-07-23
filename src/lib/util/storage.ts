@@ -25,29 +25,28 @@ export async function getAllSettings() {
 	const settings = (await ExtensionStorage.sync.getAll()) as unknown as IStorage;
 	// iterate through settings and parse JSON strings correctly
 	for (const key in DEFAULT_SETTINGS) {
-		if (typeof settings[key] === 'string' && (settings[key].startsWith('"') || settings[key].startsWith('{') || settings[key].startsWith('['))) {
-			let result = JSON.parse(settings[key]);
-			if (isNumeric(result)) {
-				// exception for csf-listingage
-				if (key === 'csf-listingage') {
-					result = true;
-					ExtensionStorage.sync.setItem('csf-listingage', true);
-				} else {
-					result = parseInt(result);
+		if (typeof settings[key] === 'string') {
+			let result: string | number | boolean | null = null;
+			try {
+				result = JSON.parse(settings[key]);
+			} catch (e) {
+				result = settings[key];
+			}
+			if (typeof result === 'string') {
+				if (isNumeric(result)) {
+					// exception for csf-listingage
+					if (key === 'csf-listingage') {
+						result = true;
+						ExtensionStorage.sync.setItem('csf-listingage', true);
+					} else {
+						result = Number(result);
+					}
+				} else if (result.startsWith('"') || result.startsWith("'")) {
+					result = result.substring(1, result.length - 1);
+					ExtensionStorage.sync.setItem(key, result);
 				}
-			} else if (result === 'true') {
-				result = true;
-			} else if (result === 'false') {
-				result = false;
-			} else if (result.startsWith('"') || result.startsWith("'")) {
-				result = result.substring(1, result.length - 1);
-				ExtensionStorage.sync.setItem(key, result);
 			}
 			settings[key] = result;
-		} else if (settings[key] === 'true') {
-			settings[key] = true;
-		} else if (settings[key] === 'false') {
-			settings[key] = false;
 		}
 	}
 	return settings;
@@ -77,7 +76,6 @@ export const DEFAULT_SETTINGS = {
 	'sp-enable': true,
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,
-	'sp-ocoapikey': '',
 	'sp-pricingsource': 'buff',
 	'sp-altmarket': 'none',
 	'sp-pricereference': 0,
