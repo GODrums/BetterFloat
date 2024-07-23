@@ -637,7 +637,7 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, extensionSettings['sp-pricingsource'] as MarketSource)));
 
-	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
+	const settingRate = Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport';
 	const currencyRate = await getSpUserCurrencyRate(settingRate);
 
 	const priceSum = convertCurrency(new Decimal(stickerPrices.reduce((a, b) => a + b.starting_at, 0)), currencyRate, settingRate);
@@ -916,7 +916,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
 	// console.log('[BetterFloat] Buff price for ', item.full_name, ': ', priceListing, priceOrder);
-	const buff_id: number | undefined = source === MarketSource.Buff ? await getBuffMapping(buff_name) : undefined;
+	const buff_id: number | undefined = source === MarketSource.Buff ? getBuffMapping(buff_name) : undefined;
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
@@ -935,7 +935,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
-	if (extensionSettings['sp-bufflink'] === 0) {
+	if (Number(extensionSettings['sp-bufflink']) === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
 		if (presentationDiv) {
 			const buffLink = html`<a class="ItemPreview-sideAction betterfloat-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;

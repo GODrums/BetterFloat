@@ -200,7 +200,7 @@ export async function adjustOfferContainer(container: Element) {
 	}
 	const buff_id = getBuffMapping(itemName);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
-	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
+	const priceFromReference = Number(extensionSettings['csf-pricereference']) === 1 ? priceListing : priceOrder;
 
 	const userCurrency = CSFloatHelpers.userCurrency();
 
