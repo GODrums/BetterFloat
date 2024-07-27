@@ -1089,7 +1089,22 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 		return;
 	}
 
-	const csfSP = container.querySelector('.sticker-percentage');
+	let csfSP = container.querySelector('.sticker-percentage');
+	if (!csfSP) {
+		const newContainer = html`
+			<div class="mat-mdc-tooltip-trigger sticker-percentage" style="padding: 5px;
+				background-color: #0003;
+				border-radius: 5px;
+				width: -moz-fit-content;
+				width: fit-content;
+				font-size: 12px;
+				margin-left: 8px;
+				margin-bottom: 4px;">
+			</div>
+		`;
+		container.querySelector('.sticker-container')?.insertAdjacentHTML('afterbegin', newContainer);
+		csfSP = container.querySelector('.sticker-percentage');
+	}
 	if (csfSP) {
 		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, price_difference);
 		if (!didChange) {
@@ -1098,7 +1113,7 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 	}
 }
 
-// returns if the SP container was created, so priceSum > 1
+// returns if the SP container was created, so priceSum >= 2
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const { userCurrency, currencyRate } = await getCurrencyRate();
@@ -1109,26 +1124,27 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	const spPercentage = price_difference / priceSum;
 	// don't display SP if total price is below $1
 	csfSP.setAttribute('data-betterfloat', JSON.stringify({ priceSum, spPercentage }));
-	if (priceSum >= 2) {
-		const backgroundImageColor = getSPBackgroundColor(spPercentage);
-		if (spPercentage > 2 || spPercentage < 0.005) {
-			const CurrencyFormatter = new Intl.NumberFormat(undefined, {
-				style: 'currency',
-				currency: userCurrency,
-				currencyDisplay: 'narrowSymbol',
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 2,
-			});
-			csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
-		} else {
-			csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
-		}
-		(<HTMLElement>csfSP).style.backgroundColor = backgroundImageColor;
-		(<HTMLElement>csfSP).style.marginBottom = '5px';
-		return true;
-	} else {
+
+	if (priceSum < 2) {
 		return false;
 	}
+
+	const backgroundImageColor = getSPBackgroundColor(spPercentage);
+	if (spPercentage > 2 || spPercentage < 0.005) {
+		const CurrencyFormatter = new Intl.NumberFormat(undefined, {
+			style: 'currency',
+			currency: userCurrency,
+			currencyDisplay: 'narrowSymbol',
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 2,
+		});
+		csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
+	} else {
+		csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
+	}
+	(<HTMLElement>csfSP).style.backgroundColor = backgroundImageColor;
+	(<HTMLElement>csfSP).style.marginBottom = '5px';
+	return true;
 }
 
 const parsePrice = (textContent: string) => {
