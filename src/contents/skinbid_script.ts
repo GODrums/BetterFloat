@@ -243,7 +243,7 @@ async function adjustInventoryItem(container: Element) {
 
 	const item = listedItem.item;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
-	const buff_id = await getBuffMapping(buff_name);
+	const buff_id = getBuffMapping(buff_name);
 	const buffHref = buff_id > 0 ? getBuffLink(buff_id, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	if (priceListing || priceOrder) {
@@ -473,7 +473,7 @@ async function addBuffPrice(
 	const listingItem = cachedItem?.items?.at(0)?.item;
 	if (!listingItem) return;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
-	const buff_id = await getBuffMapping(buff_name);
+	const buff_id = getBuffMapping(buff_name);
 	const source = extensionSettings['skb-pricingsource'] as MarketSource;
 
 	if ((source === MarketSource.Buff && isBuffBannedItem(buff_name)) || (!priceListing && !priceOrder)) {

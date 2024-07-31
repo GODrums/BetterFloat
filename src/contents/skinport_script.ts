@@ -283,7 +283,7 @@ async function adjustItemPage(container: Element) {
 		item.currency = getSymbolFromCurrency(await getSpUserCurrency()) ?? '€';
 	}
 	const buffItem = await getBuffItem(item.full_name, item.style);
-	const buff_id = await getBuffMapping(buffItem.buff_name);
+	const buff_id = getBuffMapping(buffItem.buff_name);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
 	const href = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
