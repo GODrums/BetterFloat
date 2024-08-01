@@ -96,8 +96,8 @@ importers:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       simplex-noise:
-        specifier: ^4.0.2
-        version: 4.0.2
+        specifier: ^4.0.3
+        version: 4.0.3
       socket.io-client:
         specifier: ^4.7.5
         version: 4.7.5
@@ -3614,8 +3614,8 @@ packages:
   simple-swizzle@0.2.2:
     resolution: {integrity: sha512-JA//kQgZtbuY83m+xT+tXJkmJncGMTFT+C+g2h2R9uxkYIrE2yy9sgmcLhCnw57/WSD+Eh3J97FPEDFnbXnDUg==}
 
-  simplex-noise@4.0.2:
-    resolution: {integrity: sha512-E3c6BbcFcwyxExp5lorMYP3tZqSfs4iHcNzv2mRJIP4xf3G4r77b9YE8ceIt1ntyTu2VFFISunxt2YX9CpAf+w==}
+  simplex-noise@4.0.3:
+    resolution: {integrity: sha512-qSE2I4AngLQG7BXqoZj51jokT4WUXe8mOBrvfOXpci8+6Yu44+/dD5zqDpOx3Ux792eamTd2lLcI8jqFntk/lg==}
 
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -7804,7 +7804,7 @@ snapshots:
     dependencies:
       is-arrayish: 0.3.2
 
-  simplex-noise@4.0.2: {}
+  simplex-noise@4.0.3: {}
 
   slash@3.0.0: {}
 
