@@ -13,12 +13,13 @@ function openIntercept() {
 				return;
 			}
 
+			const reponseHeaders = target.getAllResponseHeaders().split('\r\n');
+
 			function parseJSON(text: string): undefined | any {
 				try {
 					return JSON.parse(text);
 				} catch (_) {
-					console.debug('[BetterFloat] Failed URL: ' + target.responseURL);
-					console.debug('[BetterFloat] Failed to parse JSON: ' + text);
+					console.debug(`[BetterFloat] Failed to parse JSON for ${target.responseURL} : ${text}`);
 					return {
 						text: text,
 					};
@@ -32,6 +33,7 @@ function openIntercept() {
 						detail: {
 							status: target.status,
 							url: target.responseURL,
+							headers: reponseHeaders,
 							data: parseJSON(target.responseText),
 						},
 					})
@@ -44,6 +46,7 @@ function openIntercept() {
 								detail: {
 									status: target.status,
 									url: target.responseURL,
+									headers: reponseHeaders,
 									data: parseJSON(target.responseText),
 								},
 							})

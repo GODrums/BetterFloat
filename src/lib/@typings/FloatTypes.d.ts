@@ -14,6 +14,7 @@ export type ItemCondition = '' | 'Factory New' | 'Minimal Wear' | 'Field-Tested'
 export interface EventData<T> {
 	status: string;
 	url: string;
+	headers: string[];
 	data: T;
 }
 
