@@ -337,7 +337,7 @@ async function adjustSalesTableRow(container: Element) {
 	const priceDiff = new Decimal(cachedSale.price).mul(currencyRate).div(100).minus(priceData.priceFromReference);
 	// add Buff price difference
 	const priceContainer = container.querySelector('.price-wrapper');
-	if (priceContainer) {
+	if (priceContainer && extensionSettings['csf-buffdifference']) {
 		priceContainer.querySelector('app-reference-widget')?.remove();
 		const priceDiffElement = html`
 			<div
@@ -356,7 +356,7 @@ async function adjustSalesTableRow(container: Element) {
 	// add sticker percentage
 	const appStickerView = container.querySelector<HTMLElement>('app-sticker-view');
 	const stickerData = cachedSale.item.stickers;
-	if (appStickerView && stickerData) {
+	if (appStickerView && stickerData && extensionSettings['csf-stickerprices']) {
 		appStickerView.style.justifyContent = 'center';
 		if (stickerData.length > 0) {
 			const stickerContainer = document.createElement('div');
@@ -384,7 +384,7 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add float coloring
 	const itemSchema = getItemSchema(cachedSale.item);
-	if (itemSchema && cachedSale.item.float_value) {
+	if (itemSchema && cachedSale.item.float_value && extensionSettings['csf-floatcoloring']) {
 		const floatContainer = container.querySelector('td.mat-column-wear')?.firstElementChild;
 		if (floatContainer) {
 			floatContainer.setAttribute('style', 'color: ' + getFloatColoring(cachedSale.item.float_value, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0));
@@ -1358,7 +1358,7 @@ async function addBuffPrice(
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
 	if (
-		extensionSettings['csf-buffdifference'] &&
+		(extensionSettings['csf-buffdifference'] || extensionSettings['csf-buffdifferencepercent']) &&
 		!priceContainer?.querySelector('.betterfloat-sale-tag') &&
 		item.price !== 0 &&
 		(priceFromReference?.isPositive() || item.price < 0.06) &&
@@ -1394,13 +1394,13 @@ async function addBuffPrice(
 		saleTag.style.backgroundColor = backgroundColor;
 		saleTag.setAttribute('data-betterfloat', String(difference));
 		// tags may get too long, so we may need to break them into two lines
-		const saleDiff = html` <span> ${differenceSymbol}${CurrencyFormatter.format(difference.abs().toNumber())} </span> `;
-		let saleTagInner = saleDiff;
+		let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${CurrencyFormatter.format(difference.abs().toNumber())}</span>` : '';
 		if ((extensionSettings['csf-buffdifferencepercent'] || isPopout) && priceFromReference) {
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
-				const decimalPlaces = percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2;
-				saleTagInner += html`<span class="betterfloat-sale-tag-percentage" style="margin-left: 5px;"> (${percentage.toDP(decimalPlaces).toNumber()}%) </span>`;
+				const percentageDecimalPlaces = percentage.toDP(percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2).toNumber();
+				const percentageText = extensionSettings['csf-buffdifference'] || isPopout ? ` (${percentageDecimalPlaces}%)` : `${percentageDecimalPlaces}%`;
+				saleTagInner += html`<span class="betterfloat-sale-tag-percentage" ${extensionSettings['csf-buffdifference'] || isPopout ? 'style="margin-left: 5px;"' : ''}> ${percentageText} </span>`;
 			}
 		}
 		saleTag.innerHTML = saleTagInner;
