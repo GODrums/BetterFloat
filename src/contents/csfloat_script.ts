@@ -951,7 +951,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		const tableBody = document.createElement('tbody');
 		pastSales.forEach((sale) => {
 			const saleHtml = html`
-				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row">
+				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row" style="${item.float_value && new Decimal(sale.float).toDP(10).equals(item.float_value.toFixed(10)) ? 'background-color: #0b255d;' : ''}">
 					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
 						<img src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
 					</td>
