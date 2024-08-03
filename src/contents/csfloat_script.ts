@@ -1283,7 +1283,7 @@ async function addBuffPrice(
 	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-	const isDoppler = item.name.includes('Doppler');
+	const isDoppler = item.name.includes('Doppler') && item.name.includes('|');
 
 	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
 	const itemExists =
