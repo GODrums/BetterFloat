@@ -87,7 +87,7 @@ export function getMarketURL({ source, buff_name, buff_id = 0, phase }: { source
 		case MarketSource.Steam:
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
 		case MarketSource.YouPin:
-			return `https://youpin898.com/search?keyword=${encodeURIComponent(buff_name)}`;
+			return `https://youpin898.com/market/csgo?gameId=730&search=${encodeURIComponent(buff_name)}`;
 		case MarketSource.C5Game: {
 			const c5_id = getC5GameMapping(buff_name);
 			if (c5_id) {

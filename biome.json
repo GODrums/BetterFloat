@@ -7,7 +7,6 @@
 		"indentWidth": 4,
 		"lineEnding": "lf",
 		"lineWidth": 200,
-		"attributePosition": "auto",
 		"ignore": ["**/dist", "**/node_modules"]
 	},
 	"organizeImports": { "enabled": true },
@@ -49,14 +48,9 @@
 	"javascript": {
 		"formatter": {
 			"jsxQuoteStyle": "double",
-			"quoteProperties": "asNeeded",
 			"trailingCommas": "es5",
 			"semicolons": "always",
-			"arrowParentheses": "always",
-			"bracketSpacing": true,
-			"bracketSameLine": false,
-			"quoteStyle": "single",
-			"attributePosition": "auto"
+			"quoteStyle": "single"
 		}
 	}
 }
