@@ -119,8 +119,7 @@ async function handleChange(state: Extension.URLState) {
 		}
 
 		const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
-		if (!document.querySelector('betterfloat-theme-toggle')) {
-			// csfShowThemeToggle &&
+		if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
 			const root = await mountShadowRoot(<CSFThemeToggle />, {
 				tagName: 'betterfloat-theme-toggle',
 				parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),

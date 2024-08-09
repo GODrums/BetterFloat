@@ -139,6 +139,9 @@ export const CSFloatSettings = () => {
 								tooltipText="Shows a menu for quick access in the top toolbar. Contains similar elements to the menu accessible through a click on the user avatar."
 							/>
 						</SettingsCard>
+						<SettingsCard>
+							<SettingsCheckbox id="csf-themetoggle" isNew text="Show Theme Toggle" />
+						</SettingsCard>
 						<SettingsColorPicker prefix="csf" />
 					</div>
 				</div>
