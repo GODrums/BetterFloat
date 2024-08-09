@@ -1,18 +1,45 @@
+body.light-theme {
+	--primary-color: #237bff;
+	--primary-text-color: #000000;
+	--dark-primary-text-color: rgba(black, 0.87);
+	--subtext-color: #9ea7b1;
+	--highlight-background-minimal: rgba(193, 206, 255, 0.04);
+	--highlight-background: rgba(193, 206, 255, 0.07);
+	--highlight-background-heavy: rgba(193, 206, 255, 0.12);
+	--button-highlight-background: rgba(35, 123, 255, 0.15);
+	--dialog-background: rgba(255, 255, 255, 0.8);
+	--dialog-background-firefox: rgba(255, 255, 255, 1);
+	--highlight-blur: 10px;
+	--dropdown-color: rgba(255, 255, 255, 0.8);
+	--toolbar-background: rgba(39, 90, 148, 0.85);
+	--toolbar-background-firefox: rgb(39, 90, 148);
+	--warn-background-color: rgba(235, 87, 87, 0.05);
+	--warn-text-color: #eb4b4c;
+	--warn-text-lighter-color: #de6667;
+	--module-background-color: #efefef;
+	--module-highlight-background-color: #ffffff;
+	--backing-background-color: #ffffff;
+	--mdc-dialog-container-color: rgba(255, 255, 255, 0.8) !important;
+	--mdc-dialog-subhead-color: rgba(0, 0, 0, 0.87) !important;
+	--mdc-dialog-supporting-text-color: rgba(0, 0, 0, 0.6) !important;
+	color: hsl(229 63% 4%) !important;
+}
+
 .betterfloat-sale-tag {
 	position: relative;
-    display: inline-flex;
+	display: inline-flex;
 	font-size: 15px;
 	padding: 5px;
 	border-radius: 5px;
 }
 
 .betterfloat-table-sp {
-    background-color: #0003;
-    border-radius: 5px;
-    font-size: 13px;
-    margin-left: 8px;
-    margin-bottom: 5px;
-    padding: 5px;
+	background-color: #0003;
+	border-radius: 5px;
+	font-size: 13px;
+	margin-left: 8px;
+	margin-bottom: 5px;
+	padding: 5px;
 }
 
 .betterfloat-refreshStart,
@@ -36,19 +63,19 @@
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 9999;
-    transform: translate(-13%, 25px);
+	transform: translate(-13%, 25px);
 
 	visibility: hidden;
 	color: #fff;
 	text-align: center;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    background-color: #171920c4;
-    padding: 10px 5px;
-    border-radius: 4px;
-    border: 1px solid #3f3f3f;
-    font-size: 13px;
-    width: 180px;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	background-color: #171920c4;
+	padding: 10px 5px;
+	border-radius: 4px;
+	border: 1px solid #3f3f3f;
+	font-size: 13px;
+	width: 180px;
 
 	/* Fade in tooltip */
 	opacity: 0;
@@ -67,13 +94,13 @@
 }
 
 .betterfloat-refreshselect {
-    background-color: rgb(97, 97, 97);
-    border: none;
-    border-radius: 16px;
-    color: white;
-    margin: 4px;
-    padding: 7px;
-    font-size: 14px;
+	background-color: rgb(97, 97, 97);
+	border: none;
+	border-radius: 16px;
+	color: white;
+	margin: 4px;
+	padding: 7px;
+	font-size: 14px;
 }
 
 button.betterfloat-top-button:hover {
@@ -84,8 +111,8 @@ button.betterfloat-top-button:hover {
 	background-color: transparent !important;
 }
 .betterfloat-customstall-popup-content {
-	display: flex; 
-	flex-direction: column; 
+	display: flex;
+	flex-direction: column;
 	align-items: flex-start;
 	margin: 5px;
 }
@@ -96,28 +123,28 @@ button.betterfloat-top-button:hover {
 
 .betterfloat-customstall-popup {
 	position: fixed;
-    z-index: 999;
-    width: 350px;
-    backdrop-filter: blur(16px);
-    background: rgba(0,0,0,.3);
-    display: none;
-    translate: -100px 80px;
-    text-align: center;
-    font-size: 16px;
-    border-radius: 20px;
-    padding: 20px;
-    transition: opacity 0.3s ease 0s;
+	z-index: 999;
+	width: 350px;
+	backdrop-filter: blur(16px);
+	background: rgba(0, 0, 0, 0.3);
+	display: none;
+	translate: -100px 80px;
+	text-align: center;
+	font-size: 16px;
+	border-radius: 20px;
+	padding: 20px;
+	transition: opacity 0.3s ease 0s;
 }
 
 .betterfloat-customstall-close {
-    position: absolute;
-    right: 30px;
-    top: 20px;
-    font-size: 25px;
-    font-weight: 600;
+	position: absolute;
+	right: 30px;
+	top: 20px;
+	font-size: 25px;
+	font-weight: 600;
 	background: none;
 	border: none;
-    color: white;
+	color: white;
 }
 
 .betterfloat-customstall-close:hover {
@@ -125,9 +152,9 @@ button.betterfloat-top-button:hover {
 }
 
 .betterfloat-customstall-popup input {
-    padding: 4px 0 5px;
-    box-sizing: content-box;
-    background: rgba(0,0,0,0.3);
+	padding: 4px 0 5px;
+	box-sizing: content-box;
+	background: rgba(0, 0, 0, 0.3);
 	border-radius: 5px;
 	border: none;
 	color: white;
@@ -135,47 +162,48 @@ button.betterfloat-top-button:hover {
 	padding: 8px;
 }
 
-.bf-table td, .bf-table th {
-    text-align: center!important;
-    padding: 0px 10px;
+.bf-table td,
+.bf-table th {
+	text-align: center !important;
+	padding: 0px 10px;
 }
 
 .bf-table thead {
-    height: 56px;
+	height: 56px;
 }
 
 .bf-tooltip .bf-badge-text {
-    font-weight: 600;
-    font-size: 18px;
-    transition: all .2s ease-in-out;
-    padding: 2px;
-    border-radius: 7px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-size: 170%;
+	font-weight: 600;
+	font-size: 18px;
+	transition: all 0.2s ease-in-out;
+	padding: 2px;
+	border-radius: 7px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-size: 170%;
 }
 
 .bf-tooltip-inner {
 	/* Positioning the tooltip text */
 	position: absolute;
 	z-index: 9999;
-    translate: -60px 15px;
+	translate: -60px 15px;
 
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 	visibility: hidden;
 	color: #fff;
 	text-align: center;
-    background-color: #171920ee;
-    padding: 5px 3px;
-    border-radius: 5px;
-    border: 1px solid #3f3f3f;
-    font-size: 13px;
-    font-weight: 400;
-    width: 100px;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+	background-color: #171920ee;
+	padding: 5px 3px;
+	border-radius: 5px;
+	border: 1px solid #3f3f3f;
+	font-size: 13px;
+	font-weight: 400;
+	width: 100px;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
 
 	/* Fade in tooltip */
 	opacity: 0;
@@ -189,5 +217,5 @@ button.betterfloat-top-button:hover {
 }
 
 .bf-tooltip:hover .bf-badge-text {
-    transform: scale(1.8);
+	transform: scale(1.8);
 }
