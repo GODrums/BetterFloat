@@ -117,7 +117,7 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	await new Promise((r) => setTimeout(r, 500));
+	// await new Promise((r) => setTimeout(r, 500));
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {
@@ -1163,10 +1163,10 @@ const parsePrice = (textContent: string) => {
 		}
 		if (pricingText.split(/\s/).length > 1) {
 			const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
-			price = Number(parts.filter((x) => !isNaN(+x)).join('')) / 100;
-			currency = parts.filter((x) => isNaN(+x))[0];
+			price = Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100;
+			currency = parts.filter((x) => Number.isNaN(+x))[0];
 		} else {
-			const firstDigit = Array.from(pricingText).findIndex((x) => !isNaN(Number(x)));
+			const firstDigit = Array.from(pricingText).findIndex((x) => !Number.isNaN(Number(x)));
 			currency = pricingText.substring(0, firstDigit);
 			price = Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100;
 		}

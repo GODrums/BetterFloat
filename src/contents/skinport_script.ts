@@ -723,17 +723,17 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	if (priceText.split(/\s/).length > 1) {
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
 		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
-		priceText = String(Number(parts.filter((x) => !isNaN(+x)).join('')) / 100);
-		currency = parts.filter((x) => isNaN(+x))[0];
+		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
+		currency = parts.filter((x) => Number.isNaN(+x))[0];
 	} else {
 		// format: "€1,696.00"
-		const firstDigit = Array.from(priceText).findIndex((x) => !isNaN(Number(x)));
+		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
 		currency = priceText.substring(0, firstDigit);
 		priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
 	}
 	let price = Number(priceText);
 
-	if (isNaN(price) || !isNaN(Number(currency))) {
+	if (Number.isNaN(price) || !Number.isNaN(Number(currency))) {
 		price = 0;
 		currency = '';
 	}
@@ -797,7 +797,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
 	return {
 		name: name,
-		price: isNaN(price) ? 0 : price,
+		price: Number.isNaN(price) ? 0 : price,
 		type: type,
 		category: category,
 		text: text,
@@ -971,7 +971,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
 	}
 	const saleTag = discountContainer.firstChild as HTMLElement;
-	if (item.price !== 0 && !isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
+	if (item.price !== 0 && !Number.isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
 		saleTag.className = 'sale-tag betterfloat-sale-tag';
 		discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
 			difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']

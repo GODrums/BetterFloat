@@ -8,9 +8,10 @@ import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
 import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
+import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
+import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import LiveFilter from '~lib/inline/LiveFilter';
-import CSFMenuControl from '~lib/inline/MenuControl';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
@@ -114,6 +115,20 @@ async function handleChange(state: Extension.URLState) {
 						}, 1000);
 					}
 				});
+			}
+		}
+
+		const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
+		if (!document.querySelector('betterfloat-theme-toggle')) {
+			// csfShowThemeToggle &&
+			const root = await mountShadowRoot(<CSFThemeToggle />, {
+				tagName: 'betterfloat-theme-toggle',
+				parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
+				position: 'after',
+			});
+			if (Array.from(document.querySelectorAll('betterfloat-theme-toggle')).length > 1) {
+				root.unmount();
+				document.querySelector('betterfloat-theme-toggle')?.remove();
 			}
 		}
 
