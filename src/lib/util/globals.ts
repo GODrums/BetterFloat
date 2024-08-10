@@ -13,12 +13,18 @@ import iconSteamAnalyst from 'data-base64:/assets/icons/icon-steamanalyst.png';
 import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
 import iconExclamation from 'data-base64:/assets/icons/triangle-exclamation-solid.svg';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
+import iconDiamondGem1 from 'data-base64:/assets/patterns/diamond-gem-1.png';
+import iconDiamondGem2 from 'data-base64:/assets/patterns/diamond-gem-2.png';
+import iconDiamondGem3 from 'data-base64:/assets/patterns/diamond-gem-3.png';
 import iconGemCyan from 'data-base64:/assets/patterns/gem-cyan.svg';
 import iconOverprintArrow from 'data-base64:/assets/patterns/overprint-arrow.svg';
 import iconOverprintFlower from 'data-base64:/assets/patterns/overprint-flower.svg';
 import iconOverprintMixed from 'data-base64:/assets/patterns/overprint-mixed.svg';
 import iconOverprintPolygon from 'data-base64:/assets/patterns/overprint-polygon.svg';
 import iconPhoenix from 'data-base64:/assets/patterns/phoenix-icon.svg';
+import iconPinkGalaxy1 from 'data-base64:/assets/patterns/pink-galaxy-1.png';
+import iconPinkGalaxy2 from 'data-base64:/assets/patterns/pink-galaxy-2.png';
+import iconPinkGalaxy3 from 'data-base64:/assets/patterns/pink-galaxy-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
@@ -49,6 +55,12 @@ export const ICON_SPIDER_WEB = iconSpiderWeb;
 export const ICON_CSGOSTASH = iconCsgostash;
 export const ICON_PRICEMPIRE = iconPricempire;
 export const ICON_STEAMANALYST = iconSteamAnalyst;
+export const ICON_PINK_GALAXY_1 = iconPinkGalaxy1;
+export const ICON_PINK_GALAXY_2 = iconPinkGalaxy2;
+export const ICON_PINK_GALAXY_3 = iconPinkGalaxy3;
+export const ICON_DIAMOND_GEM_1 = iconDiamondGem1;
+export const ICON_DIAMOND_GEM_2 = iconDiamondGem2;
+export const ICON_DIAMOND_GEM_3 = iconDiamondGem3;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

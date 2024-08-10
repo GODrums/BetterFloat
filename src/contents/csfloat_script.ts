@@ -1,5 +1,5 @@
 import { html } from 'common-tags';
-import { CrimsonKimonoMapping, CyanbitKarambitMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
+import { CrimsonKimonoMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 import { AcidFadeCalculator, AmberFadeCalculator, FadeCalculator } from 'csgo-fade-percentage-calculator';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
@@ -15,6 +15,9 @@ import {
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
 	ICON_CSGOSTASH,
+	ICON_DIAMOND_GEM_1,
+	ICON_DIAMOND_GEM_2,
+	ICON_DIAMOND_GEM_3,
 	ICON_EXCLAMATION,
 	ICON_GEM_CYAN,
 	ICON_OVERPRINT_ARROW,
@@ -22,6 +25,9 @@ import {
 	ICON_OVERPRINT_MIXED,
 	ICON_OVERPRINT_POLYGON,
 	ICON_PHOENIX,
+	ICON_PINK_GALAXY_1,
+	ICON_PINK_GALAXY_2,
+	ICON_PINK_GALAXY_3,
 	ICON_PRICEMPIRE,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
@@ -59,6 +65,7 @@ import {
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -730,10 +737,48 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePhoenix(container, item);
 	} else if (item.item_name.includes('Overprint')) {
 		await badgeOverprint(container, item);
+	} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
+		await badgePinkGalaxy(container, item);
+	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
+		await badgeDiamondGem(container, item);
 	}
-	// else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase == 'Phase 3') {
-	// 	await badgeCyanbit(container, item);
-	// }
+}
+
+async function badgeDiamondGem(container: Element, item: CSFloat.Item) {
+	const diamondGem_data = DiamonGemMapping[item.paint_seed!];
+	if (!diamondGem_data) return;
+
+	const iconMapping = {
+		1: ICON_DIAMOND_GEM_1,
+		2: ICON_DIAMOND_GEM_2,
+		3: ICON_DIAMOND_GEM_3,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[diamondGem_data.tier],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Diamond Gem', `Rank ${diamondGem_data.rank} (T${diamondGem_data.tier})`, `Blue: ${diamondGem_data.blue}%`],
+		tooltipStyle: 'translate: -40px 15px; width: 110px;',
+	});
+}
+
+async function badgePinkGalaxy(container: Element, item: CSFloat.Item) {
+	const pinkGalaxy_data = PinkGalaxyMapping[item.paint_seed!];
+	if (!pinkGalaxy_data) return;
+
+	const iconMapping = {
+		1: ICON_PINK_GALAXY_1,
+		2: ICON_PINK_GALAXY_2,
+		3: ICON_PINK_GALAXY_3,
+	};
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[pinkGalaxy_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Pink Galaxy', `Tier ${pinkGalaxy_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 80px;',
+	});
 }
 
 async function badgeOverprint(container: Element, item: CSFloat.Item) {
@@ -763,15 +808,15 @@ async function badgeOverprint(container: Element, item: CSFloat.Item) {
 		Polygon: ICON_OVERPRINT_POLYGON,
 		Mixed: ICON_OVERPRINT_MIXED,
 	};
-	CSFloatHelpers.addPatternBadge(
+	CSFloatHelpers.addPatternBadge({
 		container,
-		iconMapping[overprint_data.type],
-		'height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);',
-		[`"${overprint_data.type}" Pattern`].concat(overprint_data.tier === 0 ? [] : [`Tier ${overprint_data.tier}`]),
-		getTooltipStyle(overprint_data.type),
-		overprint_data.tier === 0 ? '' : 'T' + overprint_data.tier,
-		badgeStyle
-	);
+		svgfile: iconMapping[overprint_data.type],
+		svgStyle: 'height: 30px; filter: brightness(0) saturate(100%) invert(79%) sepia(65%) saturate(2680%) hue-rotate(125deg) brightness(95%) contrast(95%);',
+		tooltipText: [`"${overprint_data.type}" Pattern`].concat(overprint_data.tier === 0 ? [] : [`Tier ${overprint_data.tier}`]),
+		tooltipStyle: getTooltipStyle(overprint_data.type),
+		badgeText: overprint_data.tier === 0 ? '' : 'T' + overprint_data.tier,
+		badgeStyle,
+	});
 }
 
 async function badgeCKimono(container: Element, item: CSFloat.Item) {
@@ -780,40 +825,41 @@ async function badgeCKimono(container: Element, item: CSFloat.Item) {
 
 	const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500; position: absolute; top: 6px;';
 	if (ck_data.tier === -1) {
-		CSFloatHelpers.addPatternBadge(container, ICON_CRIMSON, 'height: 30px; filter: grayscale(100%);', ['T1 GRAY PATTERN'], 'translate: -25px 15px; width: 80px;', '1', badgeStyle);
+		CSFloatHelpers.addPatternBadge({
+			container,
+			svgfile: ICON_CRIMSON,
+			svgStyle: 'height: 30px; filter: grayscale(100%);',
+			tooltipText: ['T1 GRAY PATTERN'],
+			tooltipStyle: 'translate: -25px 15px; width: 80px;',
+			badgeText: '1',
+			badgeStyle,
+		});
 	} else {
-		CSFloatHelpers.addPatternBadge(container, ICON_CRIMSON, 'height: 30px;', [`Tier ${ck_data.tier}`], 'translate: -18px 15px; width: 60px;', String(ck_data.tier), badgeStyle);
+		CSFloatHelpers.addPatternBadge({
+			container,
+			svgfile: ICON_CRIMSON,
+			svgStyle: 'height: 30px;',
+			tooltipText: [`Tier ${ck_data.tier}`],
+			tooltipStyle: 'translate: -18px 15px; width: 60px;',
+			badgeText: String(ck_data.tier),
+			badgeStyle,
+		});
 	}
-}
-
-async function badgeCyanbit(container: Element, item: CSFloat.Item) {
-	const cyanbit_data = await CyanbitKarambitMapping.getPattern(item.paint_seed!);
-	if (!cyanbit_data) return;
-
-	CSFloatHelpers.addPatternBadge(
-		container,
-		ICON_GEM_CYAN,
-		'height: 30px;',
-		[`${cyanbit_data.type === '' ? 'Unclassified' : cyanbit_data.type} Pattern`, cyanbit_data.tier === 0 ? 'No Tier' : `Tier ${cyanbit_data.tier}`],
-		'translate: -15px 15px; width: 90px;',
-		'T' + cyanbit_data.tier,
-		'color: #00ffff; font-size: 18px; font-weight: 600; margin-left: 2px;'
-	);
 }
 
 async function badgePhoenix(container: Element, item: CSFloat.Item) {
 	const phoenix_data = await PhoenixMapping.getPattern(item.paint_seed!);
 	if (!phoenix_data) return;
 
-	CSFloatHelpers.addPatternBadge(
+	CSFloatHelpers.addPatternBadge({
 		container,
-		ICON_PHOENIX,
-		'height: 30px;',
-		[`Position: ${phoenix_data.type}`, `Tier ${phoenix_data.tier}`].concat(phoenix_data.rank ? [`Rank #${phoenix_data.rank}`] : []),
-		'translate: -15px 15px; width: 90px;',
-		'T' + phoenix_data.tier,
-		'color: #d946ef; font-size: 18px; font-weight: 600;'
-	);
+		svgfile: ICON_PHOENIX,
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Position: ${phoenix_data.type}`, `Tier ${phoenix_data.tier}`].concat(phoenix_data.rank ? [`Rank #${phoenix_data.rank}`] : []),
+		tooltipStyle: 'translate: -15px 15px; width: 90px;',
+		badgeText: 'T' + phoenix_data.tier,
+		badgeStyle: 'color: #d946ef; font-size: 18px; font-weight: 600;',
+	});
 }
 
 async function webDetection(container: Element, item: CSFloat.Item) {
@@ -832,15 +878,15 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 		? 'brightness(0) saturate(100%) invert(13%) sepia(87%) saturate(576%) hue-rotate(317deg) brightness(93%) contrast(113%)'
 		: 'brightness(0) saturate(100%) invert(64%) sepia(64%) saturate(2232%) hue-rotate(43deg) brightness(84%) contrast(90%)';
 
-	CSFloatHelpers.addPatternBadge(
+	CSFloatHelpers.addPatternBadge({
 		container,
-		ICON_SPIDER_WEB,
-		`height: 30px; filter: ${filter};`,
-		[cw_data.type, `Tier ${cw_data.tier}`],
-		'translate: -25px 15px; width: 80px;',
-		cw_data.type === 'Triple Web' ? '3' : cw_data.type === 'Double Web' ? '2' : '1',
-		`color: ${item.item_name.includes('Crimson') ? 'lightgrey' : 'white'}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`
-	);
+		svgfile: ICON_SPIDER_WEB,
+		svgStyle: `height: 30px; filter: ${filter};`,
+		tooltipText: [cw_data.type, `Tier ${cw_data.tier}`],
+		tooltipStyle: 'translate: -25px 15px; width: 80px;',
+		badgeText: cw_data.type === 'Triple Web' ? '3' : cw_data.type === 'Double Web' ? '2' : '1',
+		badgeStyle: `color: ${item.item_name.includes('Crimson') ? 'lightgrey' : 'white'}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`,
+	});
 }
 
 function addFadePercentages(container: Element, item: CSFloat.Item) {

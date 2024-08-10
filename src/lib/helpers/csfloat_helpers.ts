@@ -171,7 +171,17 @@ export namespace CSFloatHelpers {
 		return null;
 	}
 
-	export function addPatternBadge(container: Element, svgfile: string, svgStyle: string, tooltipText: string[], tooltipStyle: string, badgeText: string, badgeStyle: string) {
+	export interface AddPatternBadgeOptions {
+		container: Element;
+		svgfile: string;
+		svgStyle?: string;
+		tooltipText: string[];
+		tooltipStyle: string;
+		badgeText?: string;
+		badgeStyle?: string;
+	}
+
+	export function addPatternBadge({ container, svgfile, svgStyle, tooltipText, tooltipStyle, badgeText, badgeStyle }: AddPatternBadgeOptions) {
 		const badgeTooltip = document.createElement('div');
 		badgeTooltip.className = 'bf-tooltip-inner';
 		badgeTooltip.setAttribute('style', tooltipStyle);
@@ -187,12 +197,18 @@ export namespace CSFloatHelpers {
 		const bgImage = document.createElement('img');
 		bgImage.className = 'betterfloat-cw-image';
 		bgImage.setAttribute('src', svgfile);
-		bgImage.setAttribute('style', svgStyle);
+		if (svgStyle) {
+			bgImage.setAttribute('style', svgStyle);
+		}
 		badgeDiv.appendChild(bgImage);
-		const badgeSpan = document.createElement('span');
-		badgeSpan.textContent = badgeText;
-		badgeSpan.setAttribute('style', badgeStyle);
-		badgeDiv.appendChild(badgeSpan);
+		if (badgeText) {
+			const badgeSpan = document.createElement('span');
+			badgeSpan.textContent = badgeText;
+			if (badgeStyle) {
+				badgeSpan.setAttribute('style', badgeStyle);
+			}
+			badgeDiv.appendChild(badgeSpan);
+		}
 		badge.appendChild(badgeDiv);
 		badge.appendChild(badgeTooltip);
 		let badgeContainer = container.querySelector('.badge-container');

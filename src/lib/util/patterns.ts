@@ -840,3 +840,697 @@ export const phaseMapping: PhaseMapping = {
 		'Phase 4': 13681459,
 	},
 };
+
+export const PinkGalaxyMapping: { [pattern: number]: 1 | 2 | 3 } = {
+	350: 1,
+	748: 1,
+	623: 1,
+	239: 1,
+	495: 1,
+	682: 1,
+	987: 1,
+	565: 1,
+	474: 2,
+	938: 2,
+	19: 2,
+	501: 2,
+	505: 2,
+	56: 2,
+	101: 2,
+	192: 2,
+	214: 2,
+	707: 2,
+	877: 2,
+	585: 2,
+	15: 3,
+	159: 3,
+	261: 3,
+	603: 3,
+	644: 3,
+	833: 3,
+	35: 3,
+	200: 3,
+	258: 3,
+	355: 3,
+	581: 3,
+	620: 3,
+	671: 3,
+	927: 3,
+	964: 3,
+	973: 3,
+	439: 3,
+	618: 3,
+	741: 3,
+	199: 3,
+	343: 3,
+	629: 3,
+	870: 3,
+	967: 3,
+	144: 3,
+};
+
+type DiamondGemMapping = {
+	[pattern: number]: {
+		rank: number;
+		blue: number;
+		tier: number;
+	};
+};
+
+export const DiamonGemMapping: DiamondGemMapping = {
+	20: {
+		rank: 76,
+		blue: 93.042,
+		tier: 3,
+	},
+	31: {
+		rank: 30,
+		blue: 97.051,
+		tier: 1,
+	},
+	49: {
+		rank: 14,
+		blue: 98.24,
+		tier: 1,
+	},
+	58: {
+		rank: 126,
+		blue: 90.049,
+		tier: 3,
+	},
+	60: {
+		rank: 55,
+		blue: 94.511,
+		tier: 2,
+	},
+	66: {
+		rank: 88,
+		blue: 92.324,
+		tier: 3,
+	},
+	77: {
+		rank: 89,
+		blue: 92.316,
+		tier: 3,
+	},
+	88: {
+		rank: 28,
+		blue: 97.175,
+		tier: 1,
+	},
+	98: {
+		rank: 18,
+		blue: 97.816,
+		tier: 1,
+	},
+	106: {
+		rank: 19,
+		blue: 97.76,
+		tier: 1,
+	},
+	110: {
+		rank: 41,
+		blue: 95.917,
+		tier: 2,
+	},
+	113: {
+		rank: 37,
+		blue: 96.522,
+		tier: 2,
+	},
+	119: {
+		rank: 90,
+		blue: 92.258,
+		tier: 3,
+	},
+	125: {
+		rank: 68,
+		blue: 93.222,
+		tier: 3,
+	},
+	160: {
+		rank: 52,
+		blue: 94.717,
+		tier: 2,
+	},
+	162: {
+		rank: 123,
+		blue: 90.12,
+		tier: 3,
+	},
+	184: {
+		rank: 80,
+		blue: 92.893,
+		tier: 3,
+	},
+	190: {
+		rank: 39,
+		blue: 96.425,
+		tier: 2,
+	},
+	193: {
+		rank: 125,
+		blue: 90.051,
+		tier: 3,
+	},
+	194: {
+		rank: 57,
+		blue: 94.393,
+		tier: 2,
+	},
+	196: {
+		rank: 12,
+		blue: 98.296,
+		tier: 1,
+	},
+	202: {
+		rank: 87,
+		blue: 92.368,
+		tier: 3,
+	},
+	203: {
+		rank: 119,
+		blue: 90.567,
+		tier: 3,
+	},
+	204: {
+		rank: 127,
+		blue: 90.026,
+		tier: 3,
+	},
+	217: {
+		rank: 35,
+		blue: 96.626,
+		tier: 2,
+	},
+	218: {
+		rank: 22,
+		blue: 97.356,
+		tier: 1,
+	},
+	220: {
+		rank: 25,
+		blue: 97.3,
+		tier: 1,
+	},
+	222: {
+		rank: 94,
+		blue: 91.915,
+		tier: 3,
+	},
+	226: {
+		rank: 23,
+		blue: 97.343,
+		tier: 1,
+	},
+	230: {
+		rank: 74,
+		blue: 93.092,
+		tier: 3,
+	},
+	243: {
+		rank: 61,
+		blue: 93.941,
+		tier: 3,
+	},
+	246: {
+		rank: 93,
+		blue: 91.938,
+		tier: 3,
+	},
+	253: {
+		rank: 6,
+		blue: 98.449,
+		tier: 1,
+	},
+	262: {
+		rank: 16,
+		blue: 98.08,
+		tier: 1,
+	},
+	286: {
+		rank: 102,
+		blue: 91.301,
+		tier: 3,
+	},
+	287: {
+		rank: 44,
+		blue: 95.576,
+		tier: 2,
+	},
+	296: {
+		rank: 21,
+		blue: 97.404,
+		tier: 1,
+	},
+	303: {
+		rank: 96,
+		blue: 91.804,
+		tier: 3,
+	},
+	311: {
+		rank: 3,
+		blue: 98.63,
+		tier: 1,
+	},
+	325: {
+		rank: 111,
+		blue: 90.888,
+		tier: 3,
+	},
+	328: {
+		rank: 100,
+		blue: 91.457,
+		tier: 3,
+	},
+	354: {
+		rank: 40,
+		blue: 96,
+		tier: 2,
+	},
+	369: {
+		rank: 67,
+		blue: 93.485,
+		tier: 3,
+	},
+	370: {
+		rank: 86,
+		blue: 92.592,
+		tier: 3,
+	},
+	373: {
+		rank: 120,
+		blue: 90.448,
+		tier: 3,
+	},
+	384: {
+		rank: 15,
+		blue: 98.136,
+		tier: 1,
+	},
+	387: {
+		rank: 8,
+		blue: 98.414,
+		tier: 1,
+	},
+	388: {
+		rank: 108,
+		blue: 91.089,
+		tier: 3,
+	},
+	404: {
+		rank: 54,
+		blue: 94.586,
+		tier: 2,
+	},
+	409: {
+		rank: 34,
+		blue: 96.647,
+		tier: 2,
+	},
+	419: {
+		rank: 47,
+		blue: 95.42,
+		tier: 2,
+	},
+	423: {
+		rank: 53,
+		blue: 94.707,
+		tier: 2,
+	},
+	425: {
+		rank: 97,
+		blue: 91.796,
+		tier: 3,
+	},
+	432: {
+		rank: 66,
+		blue: 93.723,
+		tier: 3,
+	},
+	436: {
+		rank: 117,
+		blue: 90.609,
+		tier: 3,
+	},
+	444: {
+		rank: 71,
+		blue: 93.177,
+		tier: 3,
+	},
+	445: {
+		rank: 5,
+		blue: 98.602,
+		tier: 1,
+	},
+	450: {
+		rank: 104,
+		blue: 91.2,
+		tier: 3,
+	},
+	469: {
+		rank: 63,
+		blue: 93.813,
+		tier: 3,
+	},
+	489: {
+		rank: 124,
+		blue: 90.117,
+		tier: 3,
+	},
+	507: {
+		rank: 99,
+		blue: 91.494,
+		tier: 3,
+	},
+	526: {
+		rank: 103,
+		blue: 91.207,
+		tier: 3,
+	},
+	530: {
+		rank: 9,
+		blue: 98.365,
+		tier: 1,
+	},
+	540: {
+		rank: 17,
+		blue: 97.989,
+		tier: 1,
+	},
+	547: {
+		rank: 1,
+		blue: 98.783,
+		tier: 1,
+	},
+	552: {
+		rank: 31,
+		blue: 96.89,
+		tier: 2,
+	},
+	555: {
+		rank: 110,
+		blue: 90.909,
+		tier: 3,
+	},
+	570: {
+		rank: 84,
+		blue: 92.77,
+		tier: 3,
+	},
+	574: {
+		rank: 13,
+		blue: 98.282,
+		tier: 1,
+	},
+	589: {
+		rank: 77,
+		blue: 93.003,
+		tier: 3,
+	},
+	594: {
+		rank: 27,
+		blue: 97.176,
+		tier: 1,
+	},
+	598: {
+		rank: 113,
+		blue: 90.748,
+		tier: 3,
+	},
+	600: {
+		rank: 59,
+		blue: 94.154,
+		tier: 2,
+	},
+	606: {
+		rank: 29,
+		blue: 97.063,
+		tier: 1,
+	},
+	607: {
+		rank: 92,
+		blue: 92.131,
+		tier: 3,
+	},
+	610: {
+		rank: 10,
+		blue: 98.324,
+		tier: 1,
+	},
+	621: {
+		rank: 101,
+		blue: 91.365,
+		tier: 3,
+	},
+	627: {
+		rank: 43,
+		blue: 95.68,
+		tier: 2,
+	},
+	630: {
+		rank: 2,
+		blue: 98.713,
+		tier: 1,
+	},
+	632: {
+		rank: 75,
+		blue: 93.055,
+		tier: 3,
+	},
+	667: {
+		rank: 72,
+		blue: 93.138,
+		tier: 3,
+	},
+	670: {
+		rank: 107,
+		blue: 91.123,
+		tier: 3,
+	},
+	678: {
+		rank: 60,
+		blue: 93.954,
+		tier: 3,
+	},
+	680: {
+		rank: 79,
+		blue: 92.921,
+		tier: 3,
+	},
+	683: {
+		rank: 116,
+		blue: 90.622,
+		tier: 3,
+	},
+	694: {
+		rank: 64,
+		blue: 93.783,
+		tier: 3,
+	},
+	696: {
+		rank: 106,
+		blue: 91.134,
+		tier: 3,
+	},
+	711: {
+		rank: 122,
+		blue: 90.263,
+		tier: 3,
+	},
+	716: {
+		rank: 118,
+		blue: 90.586,
+		tier: 3,
+	},
+	717: {
+		rank: 4,
+		blue: 98.609,
+		tier: 1,
+	},
+	723: {
+		rank: 78,
+		blue: 93,
+		tier: 3,
+	},
+	730: {
+		rank: 11,
+		blue: 98.303,
+		tier: 1,
+	},
+	746: {
+		rank: 7,
+		blue: 98.448,
+		tier: 1,
+	},
+	764: {
+		rank: 98,
+		blue: 91.719,
+		tier: 3,
+	},
+	766: {
+		rank: 114,
+		blue: 90.667,
+		tier: 3,
+	},
+	776: {
+		rank: 81,
+		blue: 92.845,
+		tier: 3,
+	},
+	783: {
+		rank: 32,
+		blue: 96.862,
+		tier: 2,
+	},
+	785: {
+		rank: 46,
+		blue: 95.501,
+		tier: 2,
+	},
+	787: {
+		rank: 91,
+		blue: 92.161,
+		tier: 3,
+	},
+	795: {
+		rank: 70,
+		blue: 93.19,
+		tier: 3,
+	},
+	803: {
+		rank: 56,
+		blue: 94.4,
+		tier: 2,
+	},
+	812: {
+		rank: 36,
+		blue: 96.549,
+		tier: 2,
+	},
+	817: {
+		rank: 49,
+		blue: 95.019,
+		tier: 2,
+	},
+	844: {
+		rank: 109,
+		blue: 91.031,
+		tier: 3,
+	},
+	853: {
+		rank: 83,
+		blue: 92.789,
+		tier: 3,
+	},
+	857: {
+		rank: 45,
+		blue: 95.555,
+		tier: 2,
+	},
+	858: {
+		rank: 24,
+		blue: 97.308,
+		tier: 1,
+	},
+	861: {
+		rank: 51,
+		blue: 94.753,
+		tier: 2,
+	},
+	865: {
+		rank: 42,
+		blue: 95.726,
+		tier: 2,
+	},
+	868: {
+		rank: 69,
+		blue: 93.218,
+		tier: 3,
+	},
+	871: {
+		rank: 115,
+		blue: 90.651,
+		tier: 3,
+	},
+	874: {
+		rank: 95,
+		blue: 91.874,
+		tier: 3,
+	},
+	894: {
+		rank: 105,
+		blue: 91.167,
+		tier: 3,
+	},
+	899: {
+		rank: 48,
+		blue: 95.339,
+		tier: 2,
+	},
+	907: {
+		rank: 65,
+		blue: 93.777,
+		tier: 3,
+	},
+	908: {
+		rank: 121,
+		blue: 90.278,
+		tier: 3,
+	},
+	913: {
+		rank: 58,
+		blue: 94.26,
+		tier: 2,
+	},
+	922: {
+		rank: 82,
+		blue: 92.84,
+		tier: 3,
+	},
+	928: {
+		rank: 62,
+		blue: 93.92,
+		tier: 3,
+	},
+	935: {
+		rank: 50,
+		blue: 94.818,
+		tier: 2,
+	},
+	939: {
+		rank: 20,
+		blue: 97.55,
+		tier: 1,
+	},
+	949: {
+		rank: 85,
+		blue: 92.633,
+		tier: 3,
+	},
+	962: {
+		rank: 112,
+		blue: 90.845,
+		tier: 3,
+	},
+	972: {
+		rank: 38,
+		blue: 96.459,
+		tier: 2,
+	},
+	982: {
+		rank: 73,
+		blue: 93.112,
+		tier: 3,
+	},
+	989: {
+		rank: 33,
+		blue: 96.786,
+		tier: 2,
+	},
+	998: {
+		rank: 26,
+		blue: 97.286,
+		tier: 1,
+	},
+};
