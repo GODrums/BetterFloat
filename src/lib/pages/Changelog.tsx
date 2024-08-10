@@ -15,6 +15,10 @@ export const Changelogs = () => {
 		<TabsContent value="changelog" className="h-[530px] w-[330px]">
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+				<SingleChangelog version="v2.7.3">
+					<li>CSFloat: Added a theme switcher to easily switch between the new and legacy themes (default: off).</li>
+					<li>CSFloat: Pattern detection for pink galaxies and diamond gems after Coco's guides.</li>
+				</SingleChangelog>
 				<SingleChangelog version="v2.6.4">
 					<li>Skinport - New quick links to SteamAnalyst, Pricempire and CSGOStash on item pages</li>
 					<li>Fixed a case where bargain popups were not detected correctly on CSFloat</li>
