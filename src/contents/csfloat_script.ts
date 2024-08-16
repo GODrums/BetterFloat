@@ -918,6 +918,7 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 		let badgeContainer = container.querySelector('.badge-container');
 		if (!badgeContainer) {
 			badgeContainer = document.createElement('div');
+			badgeContainer.className = 'badge-container';
 			badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
 			container.querySelector('.item-img')?.after(badgeContainer);
 		} else {
