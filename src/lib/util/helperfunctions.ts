@@ -69,7 +69,8 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
  * @returns
  */
 export function isBuffBannedItem(name: string) {
-	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack');
+	const bannedItems = ['2020 RMR Legends', '2020 RMR Contenders', '2020 RMR Challengers'];
+	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack') || bannedItems.includes(name);
 }
 
 export function getMarketURL({ source, buff_name, buff_id = 0, phase }: { source: MarketSource; buff_name: string; buff_id?: number; phase?: DopplerPhase }) {

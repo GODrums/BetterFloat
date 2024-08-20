@@ -19,7 +19,6 @@ import {
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
 	ICON_EXCLAMATION,
-	ICON_GEM_CYAN,
 	ICON_OVERPRINT_ARROW,
 	ICON_OVERPRINT_FLOWER,
 	ICON_OVERPRINT_MIXED,
@@ -50,17 +49,7 @@ import {
 	getSpecificCSFOffer,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
-import {
-	calculateTime,
-	getBuffPrice,
-	getFloatColoring,
-	getMarketURL,
-	getSPBackgroundColor,
-	handleSpecialStickerNames,
-	isBuffBannedItem,
-	toTruncatedString,
-	waitForElement,
-} from '../lib/util/helperfunctions';
+import { calculateTime, getBuffPrice, getFloatColoring, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, waitForElement } from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
@@ -1280,6 +1269,10 @@ async function getCurrencyRate() {
 	return { userCurrency, currencyRate };
 }
 
+function isBannedOnBuff(item: CSFloat.FloatItem) {
+	return item.quality.includes('Case') || item.quality.includes('Container');
+}
+
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
@@ -1287,7 +1280,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
+	if (source === MarketSource.Buff && isBannedOnBuff(item)) {
 		pricingData.priceListing = new Decimal(0);
 		pricingData.priceOrder = new Decimal(0);
 		buff_id = undefined;
