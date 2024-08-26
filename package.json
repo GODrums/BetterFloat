@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "2.7.3",
+	"version": "2.7.4",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -40,7 +40,7 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
-		"framer-motion": "^11.3.29",
+		"framer-motion": "^11.3.30",
 		"plasmo": "0.88.0",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",

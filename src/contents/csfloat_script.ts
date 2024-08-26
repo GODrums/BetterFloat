@@ -113,7 +113,8 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	// await new Promise((r) => setTimeout(r, 500));
+	// required timeout to wait for advanced elements like similar items
+	await new Promise((r) => setTimeout(r, 350));
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {
@@ -1228,7 +1229,10 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 			switch (node.nodeType) {
 				case Node.ELEMENT_NODE: {
 					const text = node.textContent?.trim();
-					if (text && (text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker') || text.includes('Agent'))) {
+					if (
+						text &&
+						(text.includes('StatTrak') || text.includes('Souvenir') || text.includes('Container') || text.includes('Sticker') || text.includes('Agent') || text.includes('Patch'))
+					) {
 						// TODO: integrate the ItemQuality type
 						// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 						quality = text;
@@ -1549,6 +1553,8 @@ function createBuffName(item: CSFloat.FloatItem): string {
 	let full_name = `${item.name}`;
 	if (item.quality.includes('Sticker')) {
 		full_name = 'Sticker | ' + full_name;
+	} else if (item.quality.includes('Patch')) {
+		full_name = 'Patch | ' + full_name;
 	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent')) {
 		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
 			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
