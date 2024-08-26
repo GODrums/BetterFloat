@@ -78,10 +78,3 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 	}
 	sendResponse({ success: true });
 });
-
-if (isDevMode) {
-	const apikey = process.env.PLASMO_PUBLIC_OCO_KEY;
-	if (apikey !== undefined) {
-		ExtensionStorage.sync.set('sp-ocoapikey', apikey);
-	}
-}

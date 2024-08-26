@@ -45,21 +45,3 @@ export async function fetchCurrencyRates() {
 export async function isApiStatusOK(): Promise<Extension.ApiStatusResponse> {
 	return fetch('https://api.rums.dev/v1/betterfloat/status').then((res) => res.json());
 }
-
-/**
- * Saves items purchased through the OneClickBuy feature
- */
-export async function saveOCOPurchase(item: Skinport.Listing) {
-	const url = process.env.PLASMO_PUBLIC_OCO_DB_ENDPOINT;
-	if (!url) {
-		console.warn('[BetterFloat] Your environment variables are not set correctly. Please check your .env file.');
-		return;
-	}
-	return fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ item }),
-	});
-}
