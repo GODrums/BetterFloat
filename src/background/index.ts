@@ -1,4 +1,4 @@
-import { EVENT_URL_CHANGED, WEBSITE_URL, isDevMode } from '~lib/util/globals';
+import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';

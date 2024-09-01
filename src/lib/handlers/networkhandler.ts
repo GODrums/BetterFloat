@@ -3,7 +3,6 @@ import { cacheRealCurrencyRates } from './mappinghandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
-import type { Skinport } from '../@typings/SkinportTypes';
 
 export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
 	return fetch(`https://csbluegem.com/api/v1/patterndata?skin=${type.replace(' ', '_')}&pattern=${pattern}`).then((res) => res.json() as Promise<BlueGem.PatternData>);
