@@ -619,7 +619,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 		{
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
-			link: `https://pricempire.com/item/cs2/${altURL}`,
+			link: `https://app.pricempire.com/item/cs2/${altURL}`,
 		},
 	];
 	// inventory link if seller stall is public

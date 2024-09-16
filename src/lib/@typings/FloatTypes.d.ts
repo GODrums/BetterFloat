@@ -23,6 +23,7 @@ export namespace CSFloat {
 		actionable_trades: number;
 		pending_offers: number;
 		user: {
+			api_key?: string;
 			avatar: string;
 			away: boolean;
 			background_url: string;

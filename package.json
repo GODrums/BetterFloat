@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "2.7.4",
+	"version": "2.7.6",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -54,28 +54,22 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
 		"@types/chrome": "0.0.270",
-		"@types/node": "22.5.1",
+		"@types/node": "22.5.2",
 		"@types/react": "18.3.5",
 		"@types/react-dom": "18.3.0",
 		"cs-tierlist": "^1.2.2",
 		"csgo-fade-percentage-calculator": "^1.1.4",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.4.3",
-		"postcss": "8.4.42",
+		"postcss": "8.4.44",
 		"tailwindcss": "3.4.10",
 		"typescript": "5.5.4"
 	},
 	"manifest": {
 		"web_accessible_resources": [
 			{
-				"matches": [
-					"https://*.csfloat.com/*",
-					"https://*.skinport.com/*",
-					"https://*.skinbid.com/*"
-				],
-				"resources": [
-					"inject.ts"
-				]
+				"matches": ["https://*.csfloat.com/*", "https://*.skinport.com/*", "https://*.skinbid.com/*"],
+				"resources": ["inject.ts"]
 			}
 		],
 		"key": "$CRX_PUBLIC_KEY",
@@ -85,15 +79,9 @@
 				"strict_min_version": "109.0"
 			}
 		},
-		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
+		"host_permissions": ["https://*.csfloat.com/*", "https://*.skinport.com/*", "https://*.skinbid.com/*"],
 		"externally_connectable": {
-			"matches": [
-				"https://*.rums.dev/*"
-			]
+			"matches": ["https://*.rums.dev/*"]
 		}
 	},
 	"pnpm": {
