@@ -943,19 +943,18 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	};
 
 	// retrieve the stored data instead of fetching newly
-	if (!isPopout) {
-		const success = await refetchPatternData();
-		if (!success) return;
-	} else {
+	if (isPopout) {
 		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
 		if (csbluegem && csbluegem.length > 0) {
 			patternElement = JSON.parse(csbluegem);
-		} else {
-			const success = await refetchPatternData();
-			if (!success) return;
 		}
 	}
+	if (!patternElement) {
+		const success = await refetchPatternData();
+		if (!success) return;
+	}
+	if (!patternElement) return;
 
 	// add gem icon and blue gem percent if item is a knife
 	if (item.rarity === 6) {
@@ -980,7 +979,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	// past sales table
 	const pastSales = await fetchCSBlueGemPastSales({ type, paint_seed: item.paint_seed, currency: userCurrency });
 	const gridHistory = document.querySelector('.grid-history');
-	if (!gridHistory) return;
+	if (!gridHistory || !pastSales) return;
 	const salesHeader = document.createElement('mat-button-toggle');
 	salesHeader.setAttribute('role', 'presentation');
 	salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
@@ -995,33 +994,33 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		const tableBody = document.createElement('tbody');
 		pastSales.forEach((sale) => {
 			const saleHtml = html`
-				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row" style="${item.float_value && new Decimal(sale.float).toDP(10).equals(item.float_value.toFixed(10)) ? 'background-color: #0b255d;' : ''}">
+				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row" style="${item.float_value && new Decimal(sale.wear).toDP(10).equals(item.float_value.toFixed(10)) ? 'background-color: #0b255d;' : ''}">
 					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
-						<img src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
+						<img src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
 					</td>
-					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${sale.sale_data.date}</td>
-					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${currencySymbol}${sale.sale_data.price}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${sale.date}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${currencySymbol}${sale.price}</td>
 					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
-						${sale.isStattrak ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™</span>' : ''}
-						<span>${sale.float}</span>
+						${sale.type === 'stattrak' ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™</span>' : ''}
+						<span>${sale.wear}</span>
 					</td>
-					<td role="cell" class="mat-mdc-tooltip-trigger action">
+					<td role="cell" class="mat-mdc-cell">
 						${
-							sale.sale_data.inspect
+							sale.screenshots.inspect
 								? html`
-									<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+									<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
 										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 									</a>
 							  `
 								: ''
 						}
 						${
-							sale.sale_data.inspect_playside
+							sale.screenshots.inspect_playside
 								? html`
-									<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+									<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
 										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 									</a>
-									<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+									<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
 										<img
 											src="${ICON_CAMERA_FLIPPED}"
 											style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);"

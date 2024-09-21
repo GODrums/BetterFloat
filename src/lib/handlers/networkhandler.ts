@@ -7,7 +7,13 @@ import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 const CSBLUEGEM_API_URL = 'https://api.csbluegem.com/';
 
 export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
-	return fetch(`${CSBLUEGEM_API_URL}/v1/patterndata?skin=${type.replace(' ', '_')}&pattern=${pattern}`).then((res) => res.json() as Promise<BlueGem.PatternData>);
+	const response = await fetch(`${CSBLUEGEM_API_URL}/v2/patterndata?skin=${type}&pattern=${pattern}`)
+		.then((res) => res.json() as Promise<BlueGem.PatternDataResponse>)
+		.catch(() => null);
+	if (response?.data) {
+		return response.data[0];
+	}
+	return null;
 }
 
 type CSBlueGemOptions = {
@@ -17,7 +23,13 @@ type CSBlueGemOptions = {
 };
 
 export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = 'USD' }: CSBlueGemOptions) {
-	return fetch(`${CSBLUEGEM_API_URL}/v1/search?skin=${type.replace(' ', '_')}&pattern=${paint_seed}&currency=${currency}`).then((res) => res.json() as Promise<BlueGem.PastSale[]>);
+	const response = await fetch(`${CSBLUEGEM_API_URL}/v2/search?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
+		.then((res) => res.json() as Promise<BlueGem.SearchResponse>)
+		.catch(() => null);
+	if (response?.sales) {
+		return response.sales;
+	}
+	return null;
 }
 
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits

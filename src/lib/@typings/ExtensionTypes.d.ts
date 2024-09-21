@@ -175,8 +175,21 @@ export namespace Extension {
 
 // reponse from https://csbluegem.com/api
 export namespace BlueGem {
+	export type PatternDataResponse = {
+		data: PatternData[];
+		meta: {
+			total: number;
+			size: number;
+		};
+	};
+	export type SearchResponse = {
+		sales: PastSale[];
+		meta: {
+			total: number;
+			size: number;
+		};
+	};
 	export type PatternData = {
-		aq_oiled: string;
 		backside_blue: number;
 		backside_contour_blue: number;
 		backside_contour_purple: number;
@@ -187,22 +200,35 @@ export namespace BlueGem {
 		playside_contour_purple: number;
 		playside_gold: number;
 		playside_purple: number;
+		extra: {
+			csfloat_link: string;
+			search: string;
+			similar_backside: string;
+			similar_playside: string;
+		};
+		screenshot: {
+			aq_oiled: string;
+			csbluegem_screenshot: string;
+		};
 	};
 
 	export type PastSale = {
 		buff_id: number;
-		csfloat: string;
-		float: number;
-		isStattrak: boolean;
+		csfloat: string; //floatdb link
+		date: string;
+		epoch: number;
+		origin: 'CSFloat' | 'BroSkins' | 'Buff' | 'c5game' | 'SkinBid' | 'Skinport';
 		pattern: number;
-		sale_data: {
-			date: string;
+		price: number;
+		sale_id: 'string';
+		screenshots: {
 			inspect?: string; // only for Buff
 			inspect_backside?: string; // only for CSFloat
 			inspect_playside?: string; // only for CSFloat
-			origin: 'CSFloat' | 'BroSkins' | 'Buff';
-			price: string;
 		};
+		steam_inspect_link: string;
+		type: 'normal' | 'stattrak';
+		wear: number;
 	};
 }
 

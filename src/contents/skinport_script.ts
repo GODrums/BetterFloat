@@ -519,7 +519,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
-	if (!itemHeader) return;
+	if (!itemHeader || !patternElement) return;
 	itemHeader.appendChild(genGemContainer({ patternElement }));
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
@@ -551,33 +551,33 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
 		tableBody += html`
-			<div class="ItemHistoryList-row"${Math.abs(item.wear! - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''}>
+			<div class="ItemHistoryList-row"${Math.abs(item.wear! - sale.wear) < 0.00001 ? ' style="background-color: darkslategray;"' : ''}>
 				<div class="ItemHistoryList-col" style="width: 25%;">
-					<img style="height: 24px; margin-left: 5px;" src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+					<img style="height: 24px; margin-left: 5px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
 				</div>
-				<div class="ItemHistoryList-col" style="width: 24%;">${sale.sale_data.date}</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div>
 				<div class="ItemHistoryList-col" style="width: 27%;">
-					${sale.isStattrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''}
-					${sale.float}
+					${sale.type === 'stattrak' ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''}
+					${sale.wear}
 				</div>
-				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.sale_data.price}</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div>
 				<div style="display: flex; align-items: center; gap: 8px;">
 					${
-						sale.sale_data.inspect
+						sale.screenshots.inspect
 							? html`
-								<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+								<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
 									<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 								</a>
 							  `
 							: ''
 					}
 					${
-						sale.sale_data.inspect_playside
+						sale.screenshots.inspect_playside
 							? html`
-						<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+						<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
 							<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 						</a>
-						<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+						<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
 							<img src="${ICON_CAMERA_FLIPPED}" style="filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%); margin-right: 5px; height: 20px;"></img>
 						</a>
 					`
