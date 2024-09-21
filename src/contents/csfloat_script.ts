@@ -933,20 +933,27 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	}
 
 	const refetchPatternData = async () => {
-		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!);
+		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!).catch(() => null);
+		if (!patternElement) {
+			console.warn('[BetterFloat] Could not fetch pattern data for ', item.item_name);
+			return false;
+		}
 		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+		return true;
 	};
 
 	// retrieve the stored data instead of fetching newly
 	if (!isPopout) {
-		await refetchPatternData();
+		const success = await refetchPatternData();
+		if (!success) return;
 	} else {
 		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
 		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
 		if (csbluegem && csbluegem.length > 0) {
 			patternElement = JSON.parse(csbluegem);
 		} else {
-			await refetchPatternData();
+			const success = await refetchPatternData();
+			if (!success) return;
 		}
 	}
 

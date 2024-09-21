@@ -494,7 +494,11 @@ export async function webDetection(container: Element, item: Skinport.Item) {
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
+	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern).catch(() => null);
+	if (!patternElement) {
+		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
+		return;
+	}
 	const gemContainer = genGemContainer({ patternElement, mode: 'right' });
 	gemContainer.style.fontSize = '11px';
 	gemContainer.style.fontWeight = '600';
