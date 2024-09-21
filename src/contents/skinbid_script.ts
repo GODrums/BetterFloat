@@ -287,7 +287,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 	newTab.setAttribute('style', 'display: flex; cursor: pointer; color: deepskyblue; padding-bottom: 9px; border-bottom: 2px solid transparent;');
 	newTab.innerHTML = `<div>Buff Pattern Sales (${pastSales?.length ?? 0})</div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
 		item.paintSeed
-	}&currency=CNY&filter=date&sort=descending" target="_blank" style="margin-left: 10px;">${ICON_ARROWUP_SMALL}</a>`;
+	}" target="_blank" style="margin-left: 10px;">${ICON_ARROWUP_SMALL}</a>`;
 	newTab.addEventListener('click', () => {
 		chartContainer.querySelector('.tab.active')?.classList.remove('active');
 		newTab.classList.add('active');

@@ -1062,7 +1062,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
-		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type.replace(' ', '_')}&pattern=${item.paint_seed}&currency=USD&filter=date&sort=descending`);
+		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}`);
 		linkHeader.setAttribute('target', '_blank');
 		linkHeader.innerHTML = ICON_ARROWUP_SMALL;
 		linkHeaderCell.appendChild(linkHeader);
