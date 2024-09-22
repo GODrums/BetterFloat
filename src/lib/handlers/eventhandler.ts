@@ -13,6 +13,7 @@ import {
 	cacheCSFExchangeRates,
 	cacheCSFHistoryGraph,
 	cacheCSFHistorySales,
+	cacheCSFInventory,
 	cacheCSFItems,
 	cacheCSFLocation,
 	cacheCSFOffers,
@@ -207,6 +208,9 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 		cacheCSFLocation(eventData.data as CSFloat.Location);
 	} else if (eventData.url.includes('v1/meta/exchange-rates')) {
 		cacheCSFExchangeRates(eventData.data as CSFloat.ExchangeRates);
+	} else if (eventData.url.includes('v1/me/inventory')) {
+		// user inventory
+		cacheCSFInventory(eventData.data as CSFloat.InventoryReponse);
 	} else if (eventData.url.includes('v1/me')) {
 		// user data, repeats often
 	} else if (eventData.url.includes('v1/listings/')) {

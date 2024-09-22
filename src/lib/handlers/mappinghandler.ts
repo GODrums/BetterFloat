@@ -16,6 +16,7 @@ type CSFloatAPIStorage = {
 	items: Queue<CSFloat.ListingData>;
 	popupItem: CSFloat.ListingData | null;
 	similarItems: Queue<CSFloat.ListingData>;
+	inventory: Queue<CSFloat.Item>;
 	historyGraph: CSFloat.HistoryGraphData[];
 	historySales: Queue<CSFloat.HistorySalesData>;
 	offers: CSFloat.Offer[];
@@ -45,6 +46,8 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 	popupItem: null,
 	// similar item section of item popup
 	similarItems: new Queue<CSFloat.ListingData>(),
+	// user inventory
+	inventory: new Queue<CSFloat.Item>(),
 	// sales graph of item popup
 	historyGraph: [],
 	// latest sales of item popup
@@ -107,6 +110,10 @@ export function cacheCSFItems(data: CSFloat.ListingData[]) {
 
 export function cacheCSFSimilarItems(data: CSFloat.ListingData[]) {
 	CSFLOAT_API_DATA.similarItems.reset(data);
+}
+
+export function cacheCSFInventory(data: CSFloat.Item[]) {
+	CSFLOAT_API_DATA.inventory.reset(data);
 }
 
 export function cacheSkbItems(data: Skinbid.Listing[]) {

@@ -439,9 +439,13 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	if (Number.isNaN(item.price)) return;
 	const priceResult = await addBuffPrice(item, container, popout);
 
+	// we currently ignore the inventory page due to incompatibility issues
+	if (location.pathname === '/sell') {
+		return;
+	}
+
 	// Currency up until this moment is stricly the user's local currency, however the sticker %
 	// is done stricly in USD, we have to make sure the price difference reflects that
-
 	const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
 		switch (popout) {
 			case POPOUT_ITEM.NONE:

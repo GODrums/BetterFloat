@@ -93,6 +93,8 @@ export namespace CSFloat {
 		};
 	}
 
+	export type InventoryReponse = Item[];
+
 	export type FloatItem = {
 		name: string;
 		quality: string;
