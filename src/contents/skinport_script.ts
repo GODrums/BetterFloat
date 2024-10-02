@@ -362,7 +362,7 @@ async function adjustItemPage(container: Element) {
 				{
 					icon: ICON_PRICEMPIRE,
 					text: 'Pricempire',
-					link: `https://pricempire.com/item/cs2/skin/${item.url}`,
+					link: `https://app.pricempire.com/item/cs2/${item.url}`,
 				},
 			];
 
