@@ -16,7 +16,7 @@ type CSFloatAPIStorage = {
 	items: Queue<CSFloat.ListingData>;
 	popupItem: CSFloat.ListingData | null;
 	similarItems: Queue<CSFloat.ListingData>;
-	inventory: Queue<CSFloat.Item>;
+	inventory: CSFloat.Item[];
 	historyGraph: CSFloat.HistoryGraphData[];
 	historySales: Queue<CSFloat.HistorySalesData>;
 	offers: CSFloat.Offer[];
@@ -48,7 +48,7 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 	// similar item section of item popup
 	similarItems: new Queue<CSFloat.ListingData>(),
 	// user inventory
-	inventory: new Queue<CSFloat.Item>(),
+	inventory: [],
 	// sales graph of item popup
 	historyGraph: [],
 	// latest sales of item popup
@@ -114,7 +114,7 @@ export function cacheCSFSimilarItems(data: CSFloat.ListingData[]) {
 }
 
 export function cacheCSFInventory(data: CSFloat.Item[]) {
-	CSFLOAT_API_DATA.inventory.reset(data);
+	CSFLOAT_API_DATA.inventory = data;
 }
 
 export function cacheSkbItems(data: Skinbid.Listing[]) {
@@ -229,6 +229,14 @@ export function getCSFPopupItem() {
 	return CSFLOAT_API_DATA.popupItem;
 }
 
+export function getSpecificCSFOffer(index: number) {
+	return CSFLOAT_API_DATA.offers[index];
+}
+
+export function getSpecificCSFInventoryItem(item_name: string, float?: number) {
+	return CSFLOAT_API_DATA.inventory.find((item) => item.item_name === item_name && (!float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float)));
+}
+
 export function getSpPopupItem() {
 	return skinportPopupItem;
 }
@@ -257,10 +265,6 @@ export function getFirstSkbItem() {
 
 export function getSpecificSkbInventoryItem(steamImage: string) {
 	return skinbidInventory.find((item) => item?.item.imageUrl === steamImage);
-}
-
-export function getSpecificCSFOffer(index: number) {
-	return CSFLOAT_API_DATA.offers[index];
 }
 
 export function getSpecificSkbItem(auction_hash: string) {

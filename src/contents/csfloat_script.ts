@@ -46,6 +46,7 @@ import {
 	getFirstCSFSimilarItem,
 	getFirstHistorySale,
 	getItemPrice,
+	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
@@ -439,16 +440,26 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 	if (Number.isNaN(item.price)) return;
 	const priceResult = await addBuffPrice(item, container, popout);
 
-	// we currently ignore the inventory page due to incompatibility issues
-	if (location.pathname === '/sell') {
-		return;
-	}
-
 	// Currency up until this moment is stricly the user's local currency, however the sticker %
 	// is done stricly in USD, we have to make sure the price difference reflects that
 	const getApiItem: () => CSFloat.ListingData | null | undefined = () => {
 		switch (popout) {
 			case POPOUT_ITEM.NONE:
+				if (location.pathname === '/sell') {
+					const inventoryItem = getSpecificCSFInventoryItem(item.name, Number.isNaN(item.float) ? undefined : item.float);
+					if (!inventoryItem) return undefined;
+					return {
+						created_at: '',
+						id: '',
+						is_seller: true,
+						is_watchlisted: false,
+						item: inventoryItem,
+						price: 0,
+						state: 'listed',
+						type: 'buy_now',
+						watchers: 0,
+					} satisfies CSFloat.ListingData;
+				}
 				return getFirstCSFItem();
 			case POPOUT_ITEM.PAGE: {
 				// fallback to stored data if item is not found
@@ -486,33 +497,37 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, apiItem.item.item_name);
 			return;
 		}
+
 		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
 		} else {
 			adjustExistingSP(container);
 		}
-		if (extensionSettings['csf-listingage']) {
-			addListingAge(container, apiItem, false);
-		}
-		CSFloatHelpers.storeApiItem(container, apiItem);
 
 		if (extensionSettings['csf-floatcoloring']) {
 			addFloatColoring(container, apiItem);
 		}
-		if (extensionSettings['csf-removeclustering']) {
-			CSFloatHelpers.removeClustering(container);
-		}
-
-		addBargainListener(container);
-		addScreenshotListener(container, apiItem.item);
-		if (extensionSettings['csf-showbargainprice']) {
-			await showBargainPrice(container, apiItem, popout);
-		}
-
 		patternDetections(container, apiItem, false);
 
-		if (extensionSettings['csf-showingamess']) {
-			CSFloatHelpers.addItemScreenshot(container, apiItem.item);
+		if (location.pathname !== '/sell') {
+			if (extensionSettings['csf-listingage']) {
+				addListingAge(container, apiItem, false);
+			}
+			CSFloatHelpers.storeApiItem(container, apiItem);
+
+			if (extensionSettings['csf-removeclustering']) {
+				CSFloatHelpers.removeClustering(container);
+			}
+
+			addBargainListener(container);
+			addScreenshotListener(container, apiItem.item);
+			if (extensionSettings['csf-showbargainprice']) {
+				await showBargainPrice(container, apiItem, popout);
+			}
+
+			if (extensionSettings['csf-showingamess']) {
+				CSFloatHelpers.addItemScreenshot(container, apiItem.item);
+			}
 		}
 	} else if (popout > 0) {
 		const isMainItem = popout === POPOUT_ITEM.PAGE;
@@ -627,7 +642,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 		},
 	];
 	// inventory link if seller stall is public
-	if (listing.seller.stall_public) {
+	if (listing.seller?.stall_public) {
 		quickLinks.push({
 			icon: ICON_STEAM,
 			tooltip: "Show in Seller's Inventory",
@@ -1176,8 +1191,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 		return false;
 	}
 
-	const backgroundImageColor = getSPBackgroundColor(spPercentage);
-	if (spPercentage > 2 || spPercentage < 0.005) {
+	if (spPercentage > 2 || spPercentage < 0.005 || location.pathname === '/sell') {
 		const CurrencyFormatter = new Intl.NumberFormat(undefined, {
 			style: 'currency',
 			currency: userCurrency,
@@ -1189,7 +1203,9 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	} else {
 		csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
 	}
-	(<HTMLElement>csfSP).style.backgroundColor = backgroundImageColor;
+	if (location.pathname !== '/sell') {
+		(<HTMLElement>csfSP).style.backgroundColor = getSPBackgroundColor(spPercentage);
+	}
 	(<HTMLElement>csfSP).style.marginBottom = '5px';
 	return true;
 }
@@ -1383,7 +1399,6 @@ async function addBuffPrice(
 					const percentage = new Decimal(item.price).div(priceListing).div(currencyRate).times(100);
 
 					if (percentage.gt(1)) {
-						const formatDp = percentage.gt(130) || percentage.lt(80) ? 0 : 1;
 						steamContainer = html`
 							<a
 								class="betterfloat-steamlink"
@@ -1391,7 +1406,7 @@ async function addBuffPrice(
 								target="_blank"
 								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
 							>
-								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(formatDp)}%</span>
+								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(percentage.gt(130) || percentage.lt(80) ? 0 : 1)}%</span>
 								<div>
 									<img src="${ICON_STEAM}" style="height: ${isPopout ? '18px' : '16px'}; translate: 0px 1px;"></img>
 								</div>

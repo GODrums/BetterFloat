@@ -113,8 +113,8 @@ export namespace CSFloat {
 		max_offer_discount?: number;
 		min_offer_price?: number;
 		price: number;
-		reference: ReferenceData;
-		seller: SellerData;
+		reference?: ReferenceData;
+		seller?: SellerData;
 		state: 'listed' | 'delisted';
 		type: 'buy_now' | 'auction';
 		watchers: number;
