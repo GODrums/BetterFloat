@@ -34,7 +34,8 @@ const priceMapping: {
 	youpin: Extension.PriceMappingMisc;
 	c5game: Extension.PriceMappingMisc;
 	steam: Extension.PriceMappingSteam;
-} = { buff: {}, youpin: {}, c5game: {}, steam: {} };
+	csfloat: Extension.PriceMappingMisc;
+} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 

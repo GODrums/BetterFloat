@@ -73,7 +73,11 @@ export async function activateHandler() {
 export async function initPriceMapping(extensionSettings: IStorage, prefix: string) {
 	const sources = new Set<MarketSource>();
 	sources.add(extensionSettings[`${prefix}-pricingsource`] as MarketSource);
-	if (extensionSettings[`${prefix}-altmarket`] && extensionSettings[`${prefix}-altmarket`] !== 'none') {
+	if (
+		extensionSettings[`${prefix}-altmarket`] &&
+		extensionSettings[`${prefix}-altmarket`] !== 'none' &&
+		[MarketSource.Buff, MarketSource.Steam].includes(extensionSettings[`${prefix}-pricingsource`])
+	) {
 		sources.add(extensionSettings[`${prefix}-altmarket`] as MarketSource);
 	}
 	if (extensionSettings[`${prefix}-steamsupplement`]) {

@@ -17,7 +17,7 @@ const storageFallback = async () => {
 };
 
 const handler: PlasmoMessaging.MessageHandler<null, RatesResponse> = async (_req, res) => {
-	const response = await fetch('https://cdn.rums.dev/currencyrates.json', {
+	const response = await fetch(`${process.env.PLASMO_PUBLIC_PRICINGAPI}currencyrates.json`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',

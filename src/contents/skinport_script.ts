@@ -875,6 +875,9 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 			icon = ICON_YOUPIN;
 			iconStyle += 'border: 1px solid #323c47;';
 			break;
+		case MarketSource.CSFloat:
+			icon = ICON_CSFLOAT;
+			break;
 	}
 
 	const buffContainer = html`

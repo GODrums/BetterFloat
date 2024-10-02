@@ -70,6 +70,7 @@ export enum MarketSource {
 	Steam = 'steam',
 	YouPin = 'youpin',
 	C5Game = 'c5game',
+	CSFloat = 'csfloat',
 }
 
 export const AvailableMarketSources = [
@@ -77,4 +78,5 @@ export const AvailableMarketSources = [
 	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam },
 	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
 	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
+	{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat },
 ];

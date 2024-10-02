@@ -1344,7 +1344,8 @@ async function addBuffPrice(
 		(source === MarketSource.Buff && (buff_id! > 0 || priceOrder?.gt(0))) ||
 		source === MarketSource.Steam ||
 		(source === MarketSource.C5Game && priceListing) ||
-		(source === MarketSource.YouPin && priceListing);
+		(source === MarketSource.YouPin && priceListing) ||
+		(source === MarketSource.CSFloat && priceListing);
 
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine(
@@ -1519,6 +1520,10 @@ function generatePriceLine(
 			break;
 		case MarketSource.YouPin:
 			icon = ICON_YOUPIN;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+		case MarketSource.CSFloat:
+			icon = ICON_CSFLOAT;
 			iconStyle += ' border: 1px solid black; border-radius: 4px;';
 			break;
 	}

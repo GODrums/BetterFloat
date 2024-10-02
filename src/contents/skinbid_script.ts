@@ -334,32 +334,32 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 							(sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${sale.sale_data.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+                                <img style="height: 24px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
-                                <div>${getWear(sale.float)}</div>
-                                <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.float.toFixed(6)}</div>
+                                <div>${getWear(sale.wear)}</div>
+                                <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.wear.toFixed(6)}</div>
                             </td>
                             <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
-                                ${sale.isStattrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
+                                ${sale.type === 'stattrak' ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
 								${
-									sale.sale_data.inspect
+									sale.screenshots.inspect
 										? html`
-												<a href="${sale.sale_data.inspect}" target="_blank" title="Show Buff screenshot">
+												<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
 													<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 												</a>
 										  `
 										: ''
 								}
 								${
-									sale.sale_data.inspect_playside
+									sale.screenshots.inspect_playside
 										? html`
 												<div style="display: flex; align-items: center; gap: 8px;">
-													<a href="${sale.sale_data.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+													<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
-													<a href="${sale.sale_data.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+													<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
 												</div>
@@ -368,9 +368,9 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 								}
                             </td>
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
-                                ${sale.sale_data.date}
+                                ${sale.date}
                             </td>
-                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.sale_data.price}`}</td>
+                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.price}`}</td>
                         </tr>
                     `
 						)
@@ -637,6 +637,10 @@ function generateBuffContainer(
 		containerStyle = 'justify-content: flex-start;';
 	} else if (source === MarketSource.YouPin) {
 		icon = ICON_YOUPIN;
+		iconStyle += 'border: 1px solid #323c47;';
+		containerStyle = 'justify-content: flex-start;';
+	} else if (source === MarketSource.CSFloat) {
+		icon = ICON_CSFLOAT;
 		iconStyle += 'border: 1px solid #323c47;';
 		containerStyle = 'justify-content: flex-start;';
 	}
