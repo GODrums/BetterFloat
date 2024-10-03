@@ -1,8 +1,8 @@
 import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
 import buffLogo from 'data-base64:~/../assets/buff_favicon.png';
+import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import c5gameLogo from 'data-base64:~/../assets/icons/icon-c5game.png';
 import youpinLogo from 'data-base64:~/../assets/icons/icon-youpin.png';
-import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import type { SVGProps } from 'react';
 import { MarketSource } from '~lib/util/globals';
