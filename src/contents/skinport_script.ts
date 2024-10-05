@@ -22,7 +22,7 @@ import { Euro, USDollar, delay, getBuffPrice, getFloatColoring, getMarketURL, is
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { getBuffMapping, getFirstSpItem, getItemPrice, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
+import { getFirstSpItem, getItemPrice, getMarketID, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
@@ -283,12 +283,12 @@ async function adjustItemPage(container: Element) {
 		item.currency = getSymbolFromCurrency(await getSpUserCurrency()) ?? '€';
 	}
 	const buffItem = await getBuffItem(item.full_name, item.style);
-	const buff_id = getBuffMapping(buffItem.buff_name);
+	const market_id = getMarketID(buffItem.buff_name, buffItem.source);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, buff_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+	const href = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, market_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
-	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id, ...buffItem }));
+	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id: market_id, ...buffItem }));
 
 	const suggestedContainer = container.querySelector('.ItemPage-suggested');
 	if (suggestedContainer) {
@@ -922,8 +922,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
-	// console.log('[BetterFloat] Buff price for ', item.full_name, ': ', priceListing, priceOrder);
-	const buff_id: number | undefined = source === MarketSource.Buff ? getBuffMapping(buff_name) : undefined;
+	const market_id: number | undefined = getMarketID(buff_name, source);
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
@@ -940,7 +939,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
 	if (Number(extensionSettings['sp-bufflink']) === 0) {
 		const presentationDiv = container.querySelector('.ItemPreview-mainAction');

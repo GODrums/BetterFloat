@@ -1,5 +1,4 @@
-import buffIds from '@/assets/buffids.json';
-import c5Ids from '@/assets/c5ids.json';
+import marketIds from '@/assets/marketids.json';
 import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -7,7 +6,7 @@ import { handleSpecialStickerNames } from '../util/helperfunctions';
 import { MarketSource } from '~lib/util/globals';
 import { Queue } from '~lib/util/queue';
 import type { Extension } from '../@typings/ExtensionTypes';
-import type { CSFloat } from '../@typings/FloatTypes';
+import type { CSFloat, DopplerPhase } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { fetchCurrencyRates } from './networkhandler';
@@ -24,10 +23,16 @@ type CSFloatAPIStorage = {
 	location: CSFloat.Location | null;
 };
 
+type MarketIDEntry = {
+	buff: number;
+	uu: number;
+	c5: number;
+	buff_sticker: number;
+	buff_phase: Partial<Record<DopplerPhase, number | null>>;
+};
+
 // maps buff_name to buff_id
-const buffMapping: Record<string, number> = buffIds;
-// maps buff_name to c5game id
-const c5Mapping: Record<string, string> = c5Ids;
+const marketIdMapping: Record<string, Partial<MarketIDEntry>> = marketIds;
 // maps buff_name to prices and more - custom mapping
 const priceMapping: {
 	buff: Extension.PriceMappingBuff;
@@ -407,28 +412,31 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 	return null;
 }
 
-export function getBuffMapping(name: string) {
-	if (Object.keys(buffMapping).length === 0) {
-		console.error('[BetterFloat] Buff mapping not loaded yet');
+export function getMarketID(name: string, source: MarketSource) {
+	if (Object.keys(marketIdMapping).length === 0) {
+		console.error('[BetterFloat] ID mapping not loaded yet');
+		return undefined;
 	}
+	const getSourceKey = (source: MarketSource) => {
+		switch (source) {
+			case MarketSource.Buff:
+				return 'buff';
+			case MarketSource.YouPin:
+				return 'uu';
+			case MarketSource.C5Game:
+				return 'c5';
+			default:
+				return null;
+		}
+	};
+	const sourceKey = getSourceKey(source);
+	if (!sourceKey) return undefined;
 	const queryName = name.replace(/\s+/g, ' ');
-	if (buffMapping[queryName]) {
-		return buffMapping[queryName];
+	if (marketIdMapping[queryName]?.[sourceKey]) {
+		return marketIdMapping[queryName][sourceKey];
 	} else {
-		console.log(`[BetterFloat] No buff mapping found for ${name}`);
-		return 0;
-	}
-}
-
-export function getC5GameMapping(name: string) {
-	if (Object.keys(c5Mapping).length === 0) {
-		console.error('[BetterFloat] C5Game mapping not loaded yet');
-	}
-	if (c5Mapping[name]) {
-		return c5Mapping[name];
-	} else {
-		console.log(`[BetterFloat] No C5Game mapping found for ${name}`);
-		return null;
+		console.log(`[BetterFloat] No market ID found for ${name}`);
+		return undefined;
 	}
 }
 

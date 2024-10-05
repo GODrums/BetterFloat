@@ -38,7 +38,6 @@ import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import {
-	getBuffMapping,
 	getCSFCurrencyRate,
 	getCSFPopupItem,
 	getCrimsonWebMapping,
@@ -46,6 +45,7 @@ import {
 	getFirstCSFSimilarItem,
 	getFirstHistorySale,
 	getItemPrice,
+	getMarketID,
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '../lib/handlers/mappinghandler';
@@ -196,7 +196,7 @@ export async function adjustOfferContainer(container: Element) {
 	} else if (offer.contract.item.paint_index === 0) {
 		itemStyle = 'Vanilla';
 	}
-	const buff_id = getBuffMapping(itemName);
+	const buff_id = getMarketID(itemName, MarketSource.Buff);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
 	const priceFromReference = Number(extensionSettings['csf-pricereference']) === 1 ? priceListing : priceOrder;
 
@@ -902,15 +902,22 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	const itemName = item.item_name;
 	const paintSeed = item.paint_seed;
 	if (!paintSeed) return;
-	const weapon = itemName.split(' | ')[0];
-	let fadePercentage: (FadePercentage & { background: string }) | null = null;
-	if (itemName.includes('Amber Fade')) {
-		fadePercentage = { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
-	} else if (itemName.includes('Acid Fade')) {
-		fadePercentage = { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
-	} else if (itemName.includes('Kukri Knife | Fade')) {
-		fadePercentage = { ...FadeCalculator.getFadePercentage('Kukri Knife', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
-	}
+	const getFadePercentage = (weapon: string) => {
+		if (itemName.includes('Amber Fade')) {
+			return { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
+		}
+		if (itemName.includes('Acid Fade')) {
+			return { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
+		}
+		if (itemName.includes('Kukri Knife | Fade')) {
+			return { ...FadeCalculator.getFadePercentage('Kukri Knife', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
+		}
+		if (itemName.includes('M4A1-S | Fade')) {
+			return { ...FadeCalculator.getFadePercentage('M4A1-S', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
+		}
+		return null;
+	};
+	const fadePercentage = getFadePercentage(itemName.split(' | ')[0]);
 	if (fadePercentage) {
 		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
 		const fadeContainer = html`
@@ -1306,14 +1313,14 @@ function isBannedOnBuff(item: CSFloat.FloatItem) {
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let buff_id: number | undefined = source === MarketSource.Buff ? getBuffMapping(buff_name) : undefined;
+	let market_id: number | undefined = getMarketID(buff_name, source);
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
 	if (source === MarketSource.Buff && isBannedOnBuff(item)) {
 		pricingData.priceListing = new Decimal(0);
 		pricingData.priceOrder = new Decimal(0);
-		buff_id = undefined;
+		market_id = undefined;
 	}
 
 	if (Object.keys(pricingData).length === 0 || (pricingData.priceListing?.isZero() && pricingData.priceOrder?.isZero())) {
@@ -1331,7 +1338,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	return {
 		buff_name: buff_name,
-		buff_id: buff_id,
+		market_id: market_id,
 		priceListing: pricingData.priceListing?.mul(currencyRate),
 		priceOrder: pricingData.priceOrder?.mul(currencyRate),
 		priceFromReference,
@@ -1355,9 +1362,9 @@ async function addBuffPrice(
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const isDoppler = item.name.includes('Doppler') && item.name.includes('|');
 
-	const { buff_name, buff_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
+	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
 	const itemExists =
-		(source === MarketSource.Buff && (buff_id! > 0 || priceOrder?.gt(0))) ||
+		(source === MarketSource.Buff && (market_id! > 0 || priceOrder?.gt(0))) ||
 		source === MarketSource.Steam ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing) ||
@@ -1366,7 +1373,7 @@ async function addBuffPrice(
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine(
 			source,
-			buff_id,
+			market_id,
 			buff_name,
 			priceOrder,
 			priceListing,
@@ -1507,7 +1514,7 @@ async function addBuffPrice(
 
 function generatePriceLine(
 	source: MarketSource,
-	buff_id: number | undefined,
+	market_id: number | undefined,
 	buff_name: string,
 	priceOrder: Decimal | undefined,
 	priceListing: Decimal | undefined,
@@ -1518,7 +1525,7 @@ function generatePriceLine(
 	isDoppler: boolean,
 	isPopout: boolean
 ) {
-	const href = getMarketURL({ source, buff_id, buff_name, phase: isDoppler ? itemStyle : undefined });
+	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	let icon = '';
 	let iconStyle = 'height: 20px; margin-right: 5px;';
 	switch (source) {

@@ -3,9 +3,9 @@ import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import {
-	getBuffMapping,
 	getFirstSkbItem,
 	getItemPrice,
+	getMarketID,
 	getSkbCurrency,
 	getSkbUserConversion,
 	getSkbUserCurrencyRate,
@@ -214,7 +214,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	} else {
 		cachedItem = getFirstSkbItem();
 	}
-	console.log('[BetterFloat] Cached item: ', cachedItem);
+
 	if (!cachedItem) return;
 
 	const priceResult = await addBuffPrice(cachedItem, container, selector);
@@ -243,8 +243,9 @@ async function adjustInventoryItem(container: Element) {
 
 	const item = listedItem.item;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
-	const buff_id = getBuffMapping(buff_name);
-	const buffHref = buff_id > 0 ? getBuffLink(buff_id, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	const market_id = getMarketID(buff_name, source);
+	const buffHref =
+		source === MarketSource.Buff && market_id! > 0 ? getBuffLink(market_id!, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	if (priceListing || priceOrder) {
 		const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
@@ -473,7 +474,7 @@ async function addBuffPrice(
 	const listingItem = cachedItem?.items?.at(0)?.item;
 	if (!listingItem) return;
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
-	const buff_id = getBuffMapping(buff_name);
+	const market_id = getMarketID(buff_name, MarketSource.Buff);
 	const source = extensionSettings['skb-pricingsource'] as MarketSource;
 
 	if ((source === MarketSource.Buff && isBuffBannedItem(buff_name)) || (!priceListing && !priceOrder)) {
@@ -488,7 +489,7 @@ async function addBuffPrice(
 
 	const priceDiv = container.querySelector(selector.priceDiv);
 	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
-	const href = getMarketURL({ source, buff_name, buff_id, phase: listingItem.dopplerPhase ?? undefined });
+	const href = getMarketURL({ source, buff_name, market_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');
 	}
