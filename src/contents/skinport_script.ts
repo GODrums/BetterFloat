@@ -689,7 +689,11 @@ async function addFloatColoring(container: Element, item: Skinport.Listing | Ski
 	const floatContainer = container.querySelector('.WearBar-value');
 	if (!floatContainer || item.wear === null) return;
 
-	(<HTMLElement>floatContainer).style.color = getFloatColoring(item.wear);
+	// Could be improved with l, h values
+	const floatColor = getFloatColoring(item.wear, 0, 1, item.name.includes('Vanilla'));
+	if (floatColor !== '') {
+		(<HTMLElement>floatContainer).style.color = floatColor;
+	}
 }
 
 const itemSelectors = {

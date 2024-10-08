@@ -230,55 +230,54 @@ export function handleSpecialStickerNames(name: string): string {
  * @param w wear value
  * @param l low: lower float bound
  * @param h high: upper float bound
- * @param colors color values for good, bad, perfect and worst
+ * @param isVanilla if the item is a vanilla
  * @returns
  */
-export function getFloatColoring(
-	w: number,
-	l = 0,
-	h = 1,
-	isVanilla = false,
-	colors = {
+export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): string {
+	const colors = {
 		good: 'turquoise',
 		bad: 'indianred',
 		perfect: 'springgreen',
 		worst: 'orangered',
-	}
-): string {
-	// use relative deviation to determine color. 0.2% / 1.3% are used as thresholds
+		normal: '',
+	};
 	if (isVanilla) {
 		if (w < 0.07) {
 			return colors.perfect;
-		} else if (w < 0.09) {
+		} else if (w < 0.1) {
 			return colors.good;
-		} else if (w >= 0.999) {
+		} else if (w >= 0.79) {
 			return colors.worst;
-		} else if (w >= 0.99) {
+		} else if (w >= 0.75) {
 			return colors.bad;
 		}
+		return colors.normal;
 	}
-	if (l > 0) {
-		const deviation = Math.abs((l - w) / l);
-		if (deviation < 0.002) {
-			return colors.perfect;
-		} else if (deviation < 0.013) {
-			return colors.good;
-		}
+	const wearRanges = [
+		{ low: 0, high: 0.07 },
+		{ low: 0.07, high: 0.15 },
+		{ low: 0.15, high: 0.38 },
+		{ low: 0.38, high: 0.45 },
+		{ low: 0.45, high: 1 },
+	];
+	const actualRanges = wearRanges.filter((range) => l < range.low && h > range.high);
+	actualRanges.push({ low: actualRanges[actualRanges.length - 1]?.high ?? 0.07, high: h });
+	actualRanges.push({ low: l, high: actualRanges[0]?.low ?? 0.07 });
+	const range = actualRanges.find((range) => w >= range.low && w <= range.high)!;
+	if (w - range.low < 0.001) {
+		return colors.perfect;
+	} else if (
+		(w - range.low < 0.01 && range.high > w + 0.03) ||
+		(range.low === 0.15 && w >= 0.15 && w < 0.18 && range.high > 0.3) ||
+		(range.low === 0.45 && w >= 0.45 && w < 0.5 && range.high > 0.55)
+	) {
+		return colors.good;
+	} else if (range.high - w < 0.01 || (range.high === 0.38 && w > 0.32 && w < 0.38 && range.low < 0.22) || w > 0.9) {
+		return colors.bad;
+	} else if (range.high - w < 0.001) {
+		return colors.worst;
 	}
-	if (h < 1) {
-		const deviation = (h - w) / h;
-		if (deviation < 0.002) {
-			return colors.worst;
-		} else if (deviation < 0.013) {
-			return colors.bad;
-		}
-	}
-	if (w < 0.01 || (w >= 0.07 && w < 0.08) || (w >= 0.15 && w < 0.18) || (w >= 0.38 && w < 0.39) || (w >= 0.45 && w < 0.5)) {
-		return w < 0.001 ? colors.perfect : colors.good;
-	} else if ((w < 0.07 && w > 0.06) || (w > 0.14 && w < 0.15) || (w > 0.32 && w < 0.38) || w > 0.9) {
-		return w >= 0.999 ? colors.worst : colors.bad;
-	}
-	return '';
+	return colors.normal;
 }
 
 export const USDollar = new Intl.NumberFormat('en-US', {

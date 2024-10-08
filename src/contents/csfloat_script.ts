@@ -385,7 +385,10 @@ async function adjustSalesTableRow(container: Element) {
 	if (itemSchema && cachedSale.item.float_value && extensionSettings['csf-floatcoloring']) {
 		const floatContainer = container.querySelector('td.mat-column-wear')?.firstElementChild;
 		if (floatContainer) {
-			floatContainer.setAttribute('style', 'color: ' + getFloatColoring(cachedSale.item.float_value, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0));
+			const floatColoring = getFloatColoring(cachedSale.item.float_value, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0);
+			if (floatColoring !== '') {
+				floatContainer.setAttribute('style', `color: ${floatColoring}`);
+			}
 		}
 	}
 
@@ -726,7 +729,10 @@ function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
 
 	const element = container.querySelector<HTMLElement>('div.wear');
 	if (element) {
-		element.style.color = getFloatColoring(listing.item.float_value, itemSchema?.min ?? 0, itemSchema?.max ?? 1);
+		const floatColoring = getFloatColoring(listing.item.float_value, itemSchema?.min ?? 0, itemSchema?.max ?? 1, listing.item.paint_index === 0);
+		if (floatColoring !== '') {
+			element.style.color = floatColoring;
+		}
 	}
 }
 
