@@ -907,7 +907,7 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 function addFadePercentages(container: Element, item: CSFloat.Item) {
 	const itemName = item.item_name;
 	const paintSeed = item.paint_seed;
-	if (!paintSeed) return;
+	if (!paintSeed || container.querySelector('.bf-fadecontainer')) return;
 	const getFadePercentage = (weapon: string) => {
 		if (itemName.includes('Amber Fade')) {
 			return { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
@@ -927,7 +927,7 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	if (fadePercentage) {
 		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
 		const fadeContainer = html`
-			<div class="bf-tooltip" style="display: flex; align-items: center; justify-content: center;">
+			<div class="bf-tooltip bf-fadecontainer" style="display: flex; align-items: center; justify-content: center;">
 				<div class="bf-badge-text" style="background-position-x: ${backgroundPositionX}%; background-image: ${fadePercentage.background};">
 					<span style="color: #00000080;">${toTruncatedString(fadePercentage.percentage, 1)}</span>
 				</div>
@@ -1348,7 +1348,10 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	const { currencyRate } = await getCurrencyRate();
 
-	let priceFromReference = pricingData.priceOrder && extensionSettings['csf-pricereference'] === 0 ? pricingData.priceOrder : pricingData.priceListing;
+	let priceFromReference =
+		pricingData.priceOrder && extensionSettings['csf-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source)
+			? pricingData.priceOrder
+			: (pricingData.priceListing ?? new Decimal(0));
 
 	priceFromReference = priceFromReference?.mul(currencyRate);
 
@@ -1455,6 +1458,7 @@ async function addBuffPrice(
 		!priceContainer?.querySelector('.betterfloat-sale-tag') &&
 		item.price !== 0 &&
 		(priceFromReference?.isPositive() || item.price < 0.06) &&
+		(priceListing?.isPositive() || priceOrder?.isPositive()) &&
 		location.pathname !== '/sell' &&
 		itemExists
 	) {
