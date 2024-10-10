@@ -328,7 +328,7 @@ async function adjustItemPage(container: Element) {
 		await addStickerInfo(container, item, itemSelectors.page, difference, true);
 	}
 
-	await addFloatColoring(container, item);
+	addFloatColoring(container, item);
 
 	if (popupItem) {
 		if (extensionSettings['sp-csbluegem']) {
@@ -452,7 +452,7 @@ async function adjustItem(container: Element) {
 		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
 	}
 	if (extensionSettings['sp-floatcoloring']) {
-		await addFloatColoring(container, item);
+		addFloatColoring(container, item);
 	}
 
 	const cachedItem = getFirstSpItem();
@@ -500,6 +500,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 		return;
 	}
 	const gemContainer = genGemContainer({ patternElement, mode: 'right' });
+	if (!gemContainer) return;
 	gemContainer.style.fontSize = '11px';
 	gemContainer.style.fontWeight = '600';
 	(<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
@@ -520,7 +521,10 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader || !patternElement) return;
-	itemHeader.appendChild(genGemContainer({ patternElement }));
+	const gemContainer = genGemContainer({ patternElement });
+	if (gemContainer) {
+		itemHeader.appendChild(gemContainer);
+	}
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
 	if (!linksContainer || !linksContainer.lastElementChild) return;
@@ -685,7 +689,7 @@ function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 	}
 }
 
-async function addFloatColoring(container: Element, item: Skinport.Listing | Skinport.Item) {
+function addFloatColoring(container: Element, item: Skinport.Listing | Skinport.Item) {
 	const floatContainer = container.querySelector('.WearBar-value');
 	if (!floatContainer || item.wear === null) return;
 

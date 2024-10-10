@@ -128,18 +128,18 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, sour
 			values.priceOrder = new Decimal(priceMapping[queryName]['bid'] ?? 0).div(100);
 		}
 		if (result['ask'] !== undefined) {
-			values.priceListing = new Decimal(priceMapping[queryName]['ask']).div(100);
+			values.priceListing = new Decimal(priceMapping[queryName]['ask'] ?? 0).div(100);
 		} else if (result['price'] !== undefined) {
-			values.priceListing = new Decimal(priceMapping[queryName]['price']).div(100);
+			values.priceListing = new Decimal(priceMapping[queryName]['price'] ?? 0).div(100);
 		}
 		if (result['avg30'] !== undefined) {
-			values.priceAvg30 = new Decimal(priceMapping[queryName]['avg30']).div(100);
+			values.priceAvg30 = new Decimal(priceMapping[queryName]['avg30'] ?? 0).div(100);
 		}
 		if (result['liquidity'] !== undefined) {
-			values.liquidity = new Decimal(priceMapping[queryName]['liquidity']);
+			values.liquidity = new Decimal(priceMapping[queryName]['liquidity'] ?? 0);
 		}
 		if (result['count'] !== undefined) {
-			values.count = new Decimal(priceMapping[queryName]['count']);
+			values.count = new Decimal(priceMapping[queryName]['count'] ?? 0);
 		}
 	} else {
 		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);

@@ -2,6 +2,9 @@ import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
 import type { BlueGem } from '../@typings/ExtensionTypes';
 
 export function genGemContainer({ patternElement, mode = 'left', large = false }: { patternElement: BlueGem.PatternData | null; mode?: 'left' | 'right'; large?: boolean }) {
+	if (!patternElement?.playside_blue && !patternElement?.backside_blue) {
+		return null;
+	}
 	const gemContainer = document.createElement('div');
 	gemContainer.className = 'betterfloat-gem-container';
 	gemContainer.title = 'playside blue% / backside blue%';
@@ -19,15 +22,13 @@ export function genGemContainer({ patternElement, mode = 'left', large = false }
 		}: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
 	);
 	gemContainer.appendChild(gemImage);
-	if (patternElement) {
-		const gemValue = document.createElement('span');
-		gemValue.style.color = 'deepskyblue';
-		if (mode === 'left' && !large) {
-			gemValue.style.fontSize = '13px';
-		}
-		gemValue.textContent = `${patternElement.playside_blue.toFixed(0)}% / ${patternElement.backside_blue.toFixed(0)}%`;
-		gemContainer.appendChild(gemValue);
+	const gemValue = document.createElement('span');
+	gemValue.style.color = 'deepskyblue';
+	if (mode === 'left' && !large) {
+		gemValue.style.fontSize = '13px';
 	}
+	gemValue.textContent = `${patternElement.playside_blue?.toFixed(0) ?? 0}% / ${patternElement.backside_blue?.toFixed(0) ?? 0}%`;
+	gemContainer.appendChild(gemValue);
 	return gemContainer;
 }
 

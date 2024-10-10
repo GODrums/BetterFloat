@@ -738,7 +738,7 @@ function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
 
 async function patternDetections(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
 	const item = listing.item;
-	if (item.item_name.includes('Case Hardened')) {
+	if (item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) {
 		if (extensionSettings['csf-csbluegem'] || isPopout) {
 			await caseHardenedDetection(container, item, isPopout);
 		}
@@ -952,7 +952,14 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
-	if (!item.item_name.includes('Case Hardened') || item.item_name.includes('Gloves') || !item.paint_seed || (!isPopout && item.rarity !== 6)) return;
+	if (
+		(!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) ||
+		item.item_name.includes('Gloves') ||
+		item.item_name.includes('Five-SeveN | Case Hardened') ||
+		!item.paint_seed ||
+		(!isPopout && item.item_name.includes('MAC-10 | Case Hardened'))
+	)
+		return;
 
 	let patternElement: BlueGem.PatternData | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
@@ -960,6 +967,8 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	let type = '';
 	if (item.item_name.startsWith('★')) {
 		type = item.item_name.split(' | ')[0].split('★ ')[1];
+	} else if (item.item_name === 'Five-SeveN | Heat Treated') {
+		type = 'Five-SeveN Heat Treated';
 	} else {
 		type = item.item_name.split(' | ')[0];
 	}
@@ -989,7 +998,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	if (!patternElement) return;
 
 	// add gem icon and blue gem percent if item is a knife
-	if (item.rarity === 6) {
+	if ([4, 5, 6].includes(item.rarity)) {
 		let tierContainer = container.querySelector('.badge-container');
 		if (!tierContainer) {
 			tierContainer = document.createElement('div');
@@ -1000,6 +1009,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 			tierContainer.setAttribute('style', 'gap: 5px;');
 		}
 		const gemContainer = genGemContainer({ patternElement, large: isPopout });
+		if (!gemContainer) return;
 		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
 		tierContainer.appendChild(gemContainer);
 	}

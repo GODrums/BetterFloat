@@ -68,14 +68,8 @@
 	"manifest": {
 		"web_accessible_resources": [
 			{
-				"matches": [
-					"https://*.csfloat.com/*",
-					"https://*.skinport.com/*",
-					"https://*.skinbid.com/*"
-				],
-				"resources": [
-					"inject.ts"
-				]
+				"matches": ["https://*.csfloat.com/*", "https://*.skinport.com/*", "https://*.skinbid.com/*"],
+				"resources": ["inject.ts"]
 			}
 		],
 		"key": "$CRX_PUBLIC_KEY",
@@ -85,20 +79,11 @@
 				"strict_min_version": "109.0"
 			}
 		},
-		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
+		"host_permissions": ["https://*.csfloat.com/*", "https://*.skinport.com/*", "https://*.skinbid.com/*"],
 		"externally_connectable": {
-			"matches": [
-				"https://*.rums.dev/*"
-			]
+			"matches": ["https://*.rums.dev/*"]
 		},
-		"permissions": [
-			"unlimitedStorage",
-			"storage"
-		]
+		"permissions": ["unlimitedStorage", "storage"]
 	},
 	"pnpm": {
 		"peerDependencyRules": {

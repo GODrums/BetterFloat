@@ -18,6 +18,7 @@ export const Changelogs = () => {
 				<SingleChangelog version="v2.7.9">
 					<li>New pricing source: CSFloat</li>
 					<li>CSFloat: Now supporting the '/sell'-page.</li>
+					<li>Support for most of the new items introduced in the Armory-update.</li>
 				</SingleChangelog>
 				<SingleChangelog version="v2.7.3">
 					<li>CSFloat: Added a theme switcher to easily switch between the new and legacy themes (default: off).</li>
