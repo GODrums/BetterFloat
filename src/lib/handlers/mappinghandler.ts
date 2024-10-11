@@ -26,7 +26,7 @@ type CSFloatAPIStorage = {
 type MarketIDEntry = {
 	buff: number;
 	uu: number;
-	c5: number;
+	c5: string | number;
 	buff_sticker: number;
 	buff_phase: Partial<Record<DopplerPhase, number | null>>;
 };

@@ -51,5 +51,8 @@
 			"semicolons": "always",
 			"quoteStyle": "single"
 		}
+	},
+	"files": {
+		"maxSize": 4194304
 	}
 }

@@ -1333,7 +1333,7 @@ function isBannedOnBuff(item: CSFloat.FloatItem) {
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let market_id: number | undefined = getMarketID(buff_name, source);
+	let market_id: number | string | undefined = getMarketID(buff_name, source);
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
@@ -1387,7 +1387,7 @@ async function addBuffPrice(
 
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
 	const itemExists =
-		(source === MarketSource.Buff && (market_id! > 0 || priceOrder?.gt(0))) ||
+		(source === MarketSource.Buff && (Number(market_id) > 0 || priceOrder?.gt(0))) ||
 		source === MarketSource.Steam ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing) ||
@@ -1538,7 +1538,7 @@ async function addBuffPrice(
 
 function generatePriceLine(
 	source: MarketSource,
-	market_id: number | undefined,
+	market_id: number | string | undefined,
 	buff_name: string,
 	priceOrder: Decimal | undefined,
 	priceListing: Decimal | undefined,

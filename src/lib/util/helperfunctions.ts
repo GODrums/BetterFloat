@@ -90,10 +90,10 @@ export function isBuffBannedItem(name: string) {
 	return (!name.includes('Case Hardened') && name.includes('Case')) || name.includes('Capsule') || name.includes('Package') || name.includes('Patch Pack') || bannedItems.includes(name);
 }
 
-export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number; phase?: DopplerPhase }) {
+export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {
 	switch (source) {
 		case MarketSource.Buff: {
-			if (market_id === 0) {
+			if (Number(market_id) === 0) {
 				return `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 			}
 			return `https://buff.163.com/goods/${market_id}${phase ? `#tag_ids=${phaseMapping[market_id][phase]}` : ''}`;
@@ -101,13 +101,13 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.Steam:
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
 		case MarketSource.YouPin:
-			if (market_id > 0) {
+			if (Number(market_id) > 0) {
 				return `https://youpin898.com/goodInfo?id=${market_id}`;
 			}
 			return `https://youpin898.com/market/csgo?gameId=730&search=${encodeURIComponent(buff_name)}`;
 		case MarketSource.C5Game: {
-			if (market_id) {
-				return `https://www.c5game.com/en/csgo/${market_id}/${encodeURIComponent(buff_name)}/sell`;
+			if (market_id && market_id !== -1) {
+				return `https://www.c5game.com/en/csgo/${market_id}/${encodeURIComponent(buff_name.split(' (')[0])}/sell`;
 			} else {
 				return `https://www.c5game.com/en/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
 			}
