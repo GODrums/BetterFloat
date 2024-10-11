@@ -105,6 +105,19 @@ export namespace CSFloat {
 	};
 
 	export type ListingData = {
+		auction_details?: {
+			expires_at: string;
+			min_next_bid: number;
+			reserver_price: number;
+			top_bid: {
+				contract_id: string;
+				created_at: string;
+				id: string;
+				obfuscated_buyer_id: string;
+				price: number;
+				state: string;
+			};
+		};
 		created_at: string;
 		id: string;
 		is_seller: boolean;
@@ -141,6 +154,7 @@ export namespace CSFloat {
 		is_souvenir?: boolean;
 		is_stattrak?: boolean;
 		item_name: string;
+		keychain_index?: number;
 		market_hash_name: string;
 		paint_index?: number;
 		paint_seed?: number;
@@ -149,10 +163,12 @@ export namespace CSFloat {
 		rarity: number;
 		rarity_name: string;
 		scm: SCMType;
-		stickers: StickerData[];
-		tradable: boolean;
-		type: 'skin' | 'sticker' | 'container';
-		type_name: 'Skin' | 'Sticker' | 'Container';
+		serialized_inspect?: string;
+		sticker_index?: number;
+		stickers?: StickerData[];
+		tradable: 0 | 1;
+		type: 'skin' | 'sticker' | 'container' | 'agent' | 'patch' | 'charm';
+		type_name: 'Skin' | 'Sticker' | 'Container' | 'Agent' | 'Patch' | 'Charm';
 		wear_name: 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
 	};
 

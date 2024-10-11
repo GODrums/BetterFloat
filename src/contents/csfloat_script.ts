@@ -1,6 +1,5 @@
 import { html } from 'common-tags';
 import { CrimsonKimonoMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
-import { AcidFadeCalculator, AmberFadeCalculator, FadeCalculator } from 'csgo-fade-percentage-calculator';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
@@ -50,7 +49,17 @@ import {
 	getSpecificCSFOffer,
 } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
-import { calculateTime, getBuffPrice, getFloatColoring, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTruncatedString, waitForElement } from '../lib/util/helperfunctions';
+import {
+	calculateTime,
+	getBuffPrice,
+	getFadePercentage,
+	getFloatColoring,
+	getMarketURL,
+	getSPBackgroundColor,
+	handleSpecialStickerNames,
+	toTruncatedString,
+	waitForElement,
+} from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
@@ -372,10 +381,20 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add fade percentage
 	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
-	if (cachedSale.item.fade && seedContainer) {
-		const fadeData = cachedSale.item.fade;
+	if (seedContainer && cachedSale.item.item_name.includes('Fade')) {
+		let fadeData: Partial<FadePercentage & { rank: number }> = {};
+		if (cachedSale.item.fade) {
+			fadeData = cachedSale.item.fade;
+			fadeData.ranking = cachedSale.item.fade.rank;
+		} else {
+			const fadePercentage = getFadePercentage(cachedSale.item.item_name.split(' | ')[0], cachedSale.item.market_hash_name, cachedSale.item.paint_seed!);
+			if (fadePercentage) {
+				fadeData = fadePercentage;
+			}
+		}
+		if (!fadeData.percentage || !fadeData.ranking) return;
 		const fadeSpan = document.createElement('span');
-		fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.rank < 10 ? ` - #${fadeData.rank}` : '') + ')';
+		fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.ranking < 10 ? ` - #${fadeData.ranking}` : '') + ')';
 		fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
 		seedContainer.appendChild(fadeSpan);
 	}
@@ -908,22 +927,7 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	const itemName = item.item_name;
 	const paintSeed = item.paint_seed;
 	if (!paintSeed || container.querySelector('.bf-fadecontainer')) return;
-	const getFadePercentage = (weapon: string) => {
-		if (itemName.includes('Amber Fade')) {
-			return { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
-		}
-		if (itemName.includes('Acid Fade')) {
-			return { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
-		}
-		if (itemName.includes('Kukri Knife | Fade')) {
-			return { ...FadeCalculator.getFadePercentage('Kukri Knife', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
-		}
-		if (itemName.includes('M4A1-S | Fade')) {
-			return { ...FadeCalculator.getFadePercentage('M4A1-S', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
-		}
-		return null;
-	};
-	const fadePercentage = getFadePercentage(itemName.split(' | ')[0]);
+	const fadePercentage = getFadePercentage(itemName.split(' | ')[0], itemName, paintSeed);
 	if (fadePercentage) {
 		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
 		const fadeContainer = html`
