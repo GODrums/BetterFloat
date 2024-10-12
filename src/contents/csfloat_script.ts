@@ -1175,6 +1175,7 @@ function addListingAge(container: Element, apiItem: CSFloat.ListingData, isPopou
 async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
 	// quality 12 is souvenir
 	if (!apiItem.item?.stickers || apiItem.item?.quality === 12) {
+		adjustExistingSP(container);
 		return;
 	}
 
@@ -1206,19 +1207,27 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const { userCurrency, currencyRate } = await getCurrencyRate();
-	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, source)));
+	const stickerPrices = await Promise.all(
+		stickers.map(async (s) => {
+			const buffPrice = await getItemPrice(s.name, source);
+			return {
+				csf: s.reference.price / 100,
+				buff: buffPrice.starting_at * currencyRate,
+			};
+		})
+	);
 
-	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at * currencyRate, 0);
+	const priceSum = stickerPrices.reduce((a, b) => a + Math.min(b.buff, b.csf), 0);
 
-	const spPercentage = price_difference / priceSum;
+	const spPercentage = new Decimal(price_difference).div(priceSum).toDP(4);
 	// don't display SP if total price is below $1
-	csfSP.setAttribute('data-betterfloat', JSON.stringify({ priceSum, spPercentage }));
+	csfSP.setAttribute('data-betterfloat', JSON.stringify({ priceSum, spPercentage: spPercentage.toNumber() }));
 
 	if (priceSum < 2) {
 		return false;
 	}
 
-	if (spPercentage > 2 || spPercentage < 0.005 || location.pathname === '/sell') {
+	if (spPercentage.gt(2) || spPercentage.lt(0.005) || location.pathname === '/sell') {
 		const CurrencyFormatter = new Intl.NumberFormat(undefined, {
 			style: 'currency',
 			currency: userCurrency,
@@ -1228,10 +1237,10 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 		});
 		csfSP.textContent = `${CurrencyFormatter.format(Number(priceSum.toFixed(0)))} SP`;
 	} else {
-		csfSP.textContent = (spPercentage > 0 ? spPercentage * 100 : 0).toFixed(1) + '% SP';
+		csfSP.textContent = (spPercentage.isPos() ? spPercentage.mul(100) : 0).toFixed(1) + '% SP';
 	}
 	if (location.pathname !== '/sell') {
-		(<HTMLElement>csfSP).style.backgroundColor = getSPBackgroundColor(spPercentage);
+		(<HTMLElement>csfSP).style.backgroundColor = getSPBackgroundColor(spPercentage.toNumber());
 	}
 	(<HTMLElement>csfSP).style.marginBottom = '5px';
 	return true;

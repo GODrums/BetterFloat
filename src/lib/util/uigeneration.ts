@@ -17,16 +17,13 @@ export function genGemContainer({ patternElement, mode = 'left', large = false }
 	gemImage.setAttribute('src', iconGemshop);
 	gemImage.setAttribute(
 		'style',
-		`height: ${mode === 'left' ? '16' : '18'}px; margin-${
+		`height: ${mode === 'left' ? '14' : '18'}px; margin-${
 			mode === 'right' ? 'left' : 'right'
 		}: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
 	);
 	gemContainer.appendChild(gemImage);
 	const gemValue = document.createElement('span');
-	gemValue.style.color = 'deepskyblue';
-	if (mode === 'left' && !large) {
-		gemValue.style.fontSize = '13px';
-	}
+	gemValue.setAttribute('style', `font-size: ${mode === 'left' && !large ? '12' : '14'}px; font-weight: 500; color: deepskyblue; letter-spacing: -0.025em;`);
 	gemValue.textContent = `${patternElement.playside_blue?.toFixed(0) ?? 0}% / ${patternElement.backside_blue?.toFixed(0) ?? 0}%`;
 	gemContainer.appendChild(gemValue);
 	return gemContainer;

@@ -195,7 +195,11 @@ export namespace CSFloat {
 	export type StickerData = {
 		icon_url: string;
 		name: string;
-		scm: SCMType;
+		reference: {
+			price: number;
+			quantity: number;
+			updated_at: string;
+		};
 		slot: number;
 		stickerId: number;
 		wear: number;
