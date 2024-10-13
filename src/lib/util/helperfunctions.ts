@@ -281,7 +281,7 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 	actualRanges.push({ low: actualRanges[actualRanges.length - 1]?.high ?? 0.07, high: h });
 	actualRanges.push({ low: l, high: actualRanges[0]?.low ?? 0.07 });
 	const range = actualRanges.find((range) => w >= range.low && w <= range.high)!;
-	if (w - range.low < 0.001) {
+	if (w - range.low < 0.001 && l === range.low) {
 		return colors.perfect;
 	} else if (
 		(w - range.low < 0.01 && range.high > w + 0.03) ||
@@ -289,10 +289,10 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 		(range.low === 0.45 && w >= 0.45 && w < 0.5 && range.high > 0.55)
 	) {
 		return colors.good;
+	} else if (range.high - w < 0.001 && h === range.high) {
+		return colors.worst;
 	} else if (range.high - w < 0.01 || (range.high === 0.38 && w > 0.32 && w < 0.38 && range.low < 0.22) || w > 0.9) {
 		return colors.bad;
-	} else if (range.high - w < 0.001) {
-		return colors.worst;
 	}
 	return colors.normal;
 }
