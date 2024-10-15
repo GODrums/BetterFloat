@@ -258,6 +258,8 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 		worst: 'orangered',
 		normal: '',
 	};
+
+	// special ranges for vanilla knives
 	if (isVanilla) {
 		if (w < 0.07) {
 			return colors.perfect;
@@ -270,6 +272,14 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 		}
 		return colors.normal;
 	}
+
+	//handle shortened float values on Skinport
+	if (w === 0) {
+		return colors.perfect;
+	} else if (w === 0.07 || w === 0.15 || w === 0.38 || w === 0.45) {
+		return colors.good;
+	}
+
 	const wearRanges = [
 		{ low: 0, high: 0.07 },
 		{ low: 0.07, high: 0.15 },
