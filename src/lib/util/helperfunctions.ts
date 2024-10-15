@@ -273,13 +273,6 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 		return colors.normal;
 	}
 
-	//handle shortened float values on Skinport
-	if (w === 0) {
-		return colors.perfect;
-	} else if (w === 0.07 || w === 0.15 || w === 0.38 || w === 0.45) {
-		return colors.good;
-	}
-
 	const wearRanges = [
 		{ low: 0, high: 0.07 },
 		{ low: 0.07, high: 0.15 },
@@ -290,7 +283,8 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 	const actualRanges = wearRanges.filter((range) => l < range.low && h > range.high);
 	actualRanges.push({ low: actualRanges[actualRanges.length - 1]?.high ?? 0.07, high: h });
 	actualRanges.push({ low: l, high: actualRanges[0]?.low ?? 0.07 });
-	const range = actualRanges.find((range) => w >= range.low && w <= range.high)!;
+	// we need >= as Skinport cuts off digits
+	const range = actualRanges.find((range) => w >= range.low && w < range.high)!;
 	if (w - range.low < 0.001 && l === range.low) {
 		return colors.perfect;
 	} else if (
