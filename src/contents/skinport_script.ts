@@ -930,7 +930,7 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 
 async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
-	const market_id: number | undefined = getMarketID(buff_name, source);
+	const market_id = getMarketID(buff_name, source);
 
 	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
 	const priceDiv = container.querySelector('.ItemPreview-oldPrice');

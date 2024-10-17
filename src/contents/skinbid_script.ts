@@ -245,10 +245,12 @@ async function adjustInventoryItem(container: Element) {
 	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
 	const market_id = getMarketID(buff_name, source);
 	const buffHref =
-		source === MarketSource.Buff && market_id! > 0 ? getBuffLink(market_id!, item.dopplerPhase) : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+		source === MarketSource.Buff && Number(market_id) > 0
+			? getBuffLink(Number(market_id), item.dopplerPhase)
+			: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	if (priceListing || priceOrder) {
-		const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
+		const currencySymbol = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200')?.textContent?.trim();
 		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
 		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
 			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref, source);
@@ -398,7 +400,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 }
 
 async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: Decimal) {
-	if (!item.items) return;
+	if (!item.items || item.items[0].item.category === 'Sticker') return;
 	let stickers = item.items[0].item.stickers;
 	if (item.items[0].item.isSouvenir) {
 		stickers = stickers.filter((s) => !s.name.includes('(Gold)'));
@@ -488,7 +490,7 @@ async function addBuffPrice(
 	}
 
 	const priceDiv = container.querySelector(selector.priceDiv);
-	const currencySymbol = document.querySelector('.currency-and-payment-methods')?.firstElementChild?.textContent?.trim().split(' ')[0];
+	const currencySymbol = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200')?.textContent?.trim();
 	const href = getMarketURL({ source, buff_name, market_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');

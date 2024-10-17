@@ -155,6 +155,7 @@ export namespace CSFloat {
 		is_stattrak?: boolean;
 		item_name: string;
 		keychain_index?: number;
+		keychain_pattern?: number;
 		market_hash_name: string;
 		paint_index?: number;
 		paint_seed?: number;
