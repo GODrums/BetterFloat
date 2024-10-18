@@ -121,6 +121,7 @@ export const DEFAULT_FILTER = {
 		sticker: true,
 		equipment: true,
 		pass: true,
+		charm: true,
 	},
 	new: false,
 };

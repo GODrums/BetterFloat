@@ -481,12 +481,12 @@ export async function patternDetections(container: Element, item: Skinport.Item)
 	if (item.name.includes('Case Hardened')) {
 		await caseHardenedDetection(container, item);
 	} else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
-		await webDetection(container, item);
+		webDetection(container, item);
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function webDetection(container: Element, item: Skinport.Item) {
+export function webDetection(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader) return;
 }
@@ -625,6 +625,12 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 // true: remove item, false: display item
 function applyFilter(item: Skinport.Listing, container: Element) {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
+	// since it's a new setting, we need to check if it exists
+	if (spFilter.types.charm === undefined) {
+		spFilter.types.charm = true;
+		// and store it back
+		localStorage.setItem('spFilter', JSON.stringify(spFilter));
+	}
 	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
 	const nameCheck = targetName !== '' && !item.full_name.toLowerCase().includes(targetName);

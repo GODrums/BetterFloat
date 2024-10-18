@@ -3,7 +3,7 @@ import { getBuffItem } from '~contents/skinport_script';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
-import { waitForElement } from '~lib/util/helperfunctions';
+import { getCharmColoring, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function addPattern(container: Element, item: Skinport.Item) {
@@ -17,9 +17,17 @@ export function addPattern(container: Element, item: Skinport.Item) {
 		if (parts.length > 2) {
 			parts = parts.slice(0, parts[0].indexOf('-') > -1 ? 1 : 2);
 		}
-		return `${parts.join(' ')} <br> Pattern: <span style="color: mediumpurple; font-weight: 600; font-size: 13px;">${item.pattern}</span>`;
+		return parts.join(' ');
 	};
-	itemText.innerHTML = santizeText(itemText.textContent);
+
+	const getPatternStyle = () => {
+		if (item.category === 'Charm') {
+			const badgeProps = getCharmColoring(item.pattern, item.name);
+			return `color: ${badgeProps[0]}; font-weight: 600; font-size: 13px;border-radius: 7px; padding: 2px 5px; margin-top: 4px`;
+		}
+		return 'color: mediumpurple; font-weight: 600; font-size: 13px;';
+	};
+	itemText.innerHTML = `${santizeText(itemText.textContent)} <br> Pattern: <span style="${getPatternStyle()}">${item.pattern}</span>`;
 }
 
 export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Skinport.InventoryAccount) {

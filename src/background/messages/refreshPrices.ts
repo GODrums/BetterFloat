@@ -44,7 +44,7 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 		if (responseJson?.data) {
 			chrome.storage.local.set({
 				[`${pricesURL}`]: JSON.stringify(responseJson.data),
-				[`${source}-update`]: responseJson.time,
+				[`${source}-update`]: Date.now(), // responseJson.time,
 			});
 		}
 	}

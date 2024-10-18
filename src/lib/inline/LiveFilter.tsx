@@ -66,7 +66,7 @@ const LiveFilter: React.FC = () => {
 		localStorage.setItem('spFilter', JSON.stringify(DEFAULT_FILTER));
 	};
 
-	const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker', 'Equipment', 'Pass'];
+	const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker', 'Charm', 'Equipment', 'Pass'];
 
 	useEffect(() => {
 		let count = 0;
