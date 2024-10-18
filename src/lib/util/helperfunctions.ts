@@ -1,4 +1,4 @@
-import { AcidFadeCalculator, AmberFadeCalculator, FadeCalculator } from 'csgo-fade-percentage-calculator';
+import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
 import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
@@ -11,12 +11,6 @@ export function getFadePercentage(weapon: string, skin: string, paintSeed: numbe
 	}
 	if (skin.includes('Acid Fade')) {
 		return { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
-	}
-	if (skin.includes('Kukri Knife | Fade')) {
-		return { ...FadeCalculator.getFadePercentage('Kukri Knife', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
-	}
-	if (skin.includes('M4A1-S | Fade')) {
-		return { ...FadeCalculator.getFadePercentage('M4A1-S', paintSeed), background: 'linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1)' };
 	}
 	return null;
 }
