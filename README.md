@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="https://chrome.google.com/webstore/detail/bphfhlfhnohppnleaehnlfigkkccpglk">
+  <a href="https://betterfloat.com/">
     <img width="128" src="https://raw.githubusercontent.com/GODrums/BetterFloat/main/assets/icon.png"/>
   </a>
   <h1 align="center">BetterFloat</h1>
 </p>
 
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/version/GODrums/BetterFloat)
-[![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/build.yml)
+[![Install and Build](https://github.com/GODrums/BetterFloat/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/github-code-scanning/codeql.yml)
 [![QA / Lint](https://github.com/GODrums/BetterFloat/actions/workflows/lint.yml/badge.svg)](https://github.com/GODrums/BetterFloat/actions/workflows/lint.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/GODrums/betterfloat)
 ![GitHub commit activity (branch)](https://img.shields.io/github/commit-activity/w/GODrums/BetterFloat)
@@ -41,13 +41,17 @@ We maintain a very active Discord server, where you can share your snipes, ask q
 
 Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are coming soon!
 
--   Unified pricing from Buff163, Steam, YouPin/UU, and C5Game displayed right next to the item
+-   Unified pricing from Buff163, Steam, YouPin/UU, C5Game, and CSFloat displayed right next to the item
 -   Determine market overpay through applied sticker data (% SP) with gradual coloring
 -   Get Case Hardened pattern data such as blue percentage or ranking directly
 -   See the listing age of an item in a convenient format
 -   Auto-refresh in the "Newest Items"-section on CSFloat
 -   Advanced currency conversion with support for many different currencies
 -   ... and more than 50 other Quality-of-Life features!
+
+⚠️ Please note that we explicitly forbid the use of the extension for illegal activities. This includes but is not limited to using the extension to gain an unfair advantage over other users. We reserve the right to ban users from our services and report them to the respective platforms if they are found to be engaged in illegal activities.
+
+⚠️ The extension is provided under the [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) license. In particular, this means that you are not allowed to use the extension for commercial purposes. If you are interested in a commercial license, please contact us directly.
 
 ## How does BetterFloat work?
 
@@ -105,15 +109,15 @@ In some cases, Firefox does not grant extensions the necessary permissions autom
 <div style="display: flex; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 1rem;">
 <img align="center" src="./assets/plasmo.png" title="Plasmo" height="50">
 <img align="center" src="https://api.iconify.design/logos:react.svg?color=%23888888" title="React" height="50">
-<img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" title="Aceternity UI" height="50">
-<img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" title="shadcn/ui" height="50">
+<img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" title="shadcn/ui" height="50">
+<img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" title="Aceternity UI" height="50">
 <img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" title="Typescript" height="50">
 <img align="center" src="https://avatars.githubusercontent.com/u/140182603?s=48&v=4" title="Biome" height="50">
 </div>
 
 ### Limitations of self-building
 
-Due to the nature of the extension, some features are not available when building the extension yourself. This includes the pricing service and the OCO-feature. If you still want to use these features, please set up your own servers for it or use the official extension from the Chrome Web Store or Mozilla Add-on Store.
+Due to cases of abuse and illegal activities, we explicitly forbid the use of our hosted services when building the extension from source. If you want to use all extension features, please set up your own servers or use the official extension from the Chrome Web Store or Mozilla Add-on Store.
 
 ### Installation
 
