@@ -301,6 +301,309 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 	return colors.normal;
 }
 
+/**
+ * Get a coloring for a specific charm.
+ * Colors from: https://www.figma.com/colors/dark-yellow/
+ * @param pattern 0-100000
+ * @param itemName e.g. Lil' Ava
+ * @returns [backgroundColor, foregroundColor]
+ */
+export function getCharmColoring(pattern: number, itemName: string) {
+	const colorWhite = '#ffffffb3';
+	const colorBlack = '#000000cc';
+	const COLORS = {
+		Gold: ['#efbf04', colorWhite],
+		GoldenYellow: ['#ffdf00', colorWhite],
+		MetallicGold: ['#d4af37', colorWhite],
+		Yellow: ['#ffde21', colorWhite],
+		DarkYellow: ['#ba8e23', colorWhite],
+		YellowGreen: ['#ccff00', colorWhite],
+		Orange: ['#ffa500', colorWhite],
+		Copper: ['#c68346', colorWhite],
+		Green: ['#008000', colorWhite],
+		MintGreen: ['#98fbcb', colorWhite],
+		Cyan: ['#00ffff', colorWhite],
+		BabyBlue: ['#305cde', colorWhite],
+		RoyalBlue: ['#305cde', colorWhite],
+		PurpleBlue: ['#0047ab', colorWhite],
+		Magenta: ['#fd3db5', colorWhite],
+		RoyalPurple: ['#6c3baa', colorWhite],
+		Violet: ['#7f00ff', colorWhite],
+		Fuchisa: ['#ff00ff', colorWhite],
+		ChiliRed: ['#cd1c18', colorWhite],
+		RedBrown: ['#942222', colorWhite],
+		Mocha: ['#6d3b07', colorWhite],
+		Grey: ['#c1ceff', colorWhite],
+	} as const;
+	switch (itemName) {
+		case 'Die-cast AK': {
+			if (pattern < 1000) {
+				return COLORS.GoldenYellow;
+			} else if (pattern < 15000) {
+				return COLORS.MetallicGold;
+			} else if (pattern < 20000) {
+				return COLORS.Orange;
+			} else if (pattern < 22500) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 50000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 60000) {
+				return COLORS.Magenta;
+			} else if (pattern < 83000) {
+				return COLORS.Violet;
+			} else if (pattern < 93000) {
+				return COLORS.RoyalBlue;
+			} else {
+				return COLORS.BabyBlue;
+			}
+		}
+		case 'Baby Karat T':
+		case 'Baby Karat CT': {
+			if (pattern < 61000) {
+				return COLORS.Copper;
+			} else {
+				return COLORS.Gold;
+			}
+		}
+		case 'Semi-Precious': {
+			if (pattern < 38000) {
+				return COLORS.MintGreen;
+			} else if (pattern < 75000) {
+				return COLORS.BabyBlue;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		case "Lil' Squirt": {
+			if (pattern < 28000) {
+				return COLORS.Green;
+			} else if (pattern < 57000) {
+				return COLORS.PurpleBlue;
+			} else if (pattern < 75000) {
+				return COLORS.RoyalPurple;
+			} else {
+				return COLORS.Fuchisa;
+			}
+		}
+		case 'Titeenium AWP': {
+			if (pattern < 18000) {
+				return COLORS.YellowGreen;
+			} else if (pattern < 70000) {
+				return COLORS.Green;
+			} else if (pattern < 80000) {
+				return COLORS.RoyalBlue;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		case 'Hot Hands': {
+			if (pattern < 55000) {
+				return COLORS.Magenta;
+			} else if (pattern < 77000) {
+				return COLORS.ChiliRed;
+			} else {
+				return COLORS.Orange;
+			}
+		}
+		case 'Disco MAC': {
+			if (pattern < 27000) {
+				return COLORS.RoyalPurple;
+			} else if (pattern < 40000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 55000) {
+				return COLORS.Yellow;
+			} else if (pattern < 85000) {
+				return COLORS.MintGreen;
+			} else {
+				return COLORS.RoyalBlue;
+			}
+		}
+		case 'Glamour Shot': {
+			if (pattern < 5000) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 35000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 55000) {
+				return COLORS.Yellow;
+			} else if (pattern < 75000) {
+				return COLORS.PurpleBlue;
+			} else {
+				return COLORS.RoyalBlue;
+			}
+		}
+		case 'Hot Howl': {
+			if (pattern < 31500) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 67000) {
+				return COLORS.Orange;
+			} else {
+				return COLORS.MetallicGold;
+			}
+		}
+		case "Lil' Monster": {
+			if (pattern < 400) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 42000) {
+				return COLORS.Yellow;
+			} else if (pattern < 90000) {
+				return COLORS.MintGreen;
+			} else {
+				return COLORS.Cyan;
+			}
+		}
+		case "Lil' Squatch": {
+			if (pattern < 5000) {
+				return COLORS.Orange;
+			} else if (pattern < 25000) {
+				return COLORS.Yellow;
+			} else if (pattern < 45000) {
+				return COLORS.Green;
+			} else if (pattern < 72000) {
+				return COLORS.RoyalBlue;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		case "Lil' Sandy": {
+			if (pattern < 2000) {
+				return COLORS.RedBrown;
+			} else if (pattern < 20000) {
+				return COLORS.Mocha;
+			} else if (pattern < 45000) {
+				return COLORS.Green;
+			} else if (pattern < 80000) {
+				return COLORS.RoyalBlue;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		case "Lil' Whiskers": {
+			if (pattern < 5000) {
+				return COLORS.PurpleBlue;
+			} else if (pattern < 27000) {
+				return COLORS.RoyalPurple;
+			} else if (pattern < 47000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 55000) {
+				return COLORS.DarkYellow;
+			} else if (pattern < 63000) {
+				return COLORS.Yellow;
+			} else if (pattern < 85000) {
+				return COLORS.MintGreen;
+			} else {
+				return COLORS.Cyan;
+			}
+		}
+		case "That's Bananas": {
+			if (pattern < 8000) {
+				return COLORS.Mocha;
+			} else if (pattern < 92000) {
+				return COLORS.Yellow;
+			} else {
+				return COLORS.Green;
+			}
+		}
+		case "Chicken Lil'": {
+			if (pattern < 5000) {
+				return COLORS.RoyalBlue;
+			} else if (pattern < 40000) {
+				return COLORS.RoyalPurple;
+			} else if (pattern < 50000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 75000) {
+				return COLORS.Yellow;
+			} else {
+				return COLORS.Green;
+			}
+		}
+		case 'Big Kev': {
+			if (pattern < 45000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 40000) {
+				return COLORS.RoyalPurple;
+			} else {
+				return COLORS.RoyalBlue;
+			}
+		}
+		case "Lil' Crass": {
+			if (pattern < 30000) {
+				return COLORS.RedBrown;
+			} else if (pattern < 55000) {
+				return COLORS.Orange;
+			} else if (pattern < 75000) {
+				return COLORS.Yellow;
+			} else if (pattern < 94000) {
+				return COLORS.Green;
+			} else {
+				return COLORS.RoyalBlue;
+			}
+		}
+		case "Lil' SAS": {
+			if (pattern < 2000) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 12000) {
+				return COLORS.Orange;
+			} else if (pattern < 22000) {
+				return COLORS.Yellow;
+			} else if (pattern < 60000) {
+				return COLORS.Green;
+			} else if (pattern < 80000) {
+				return COLORS.RoyalBlue;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		case 'Hot Sauce': {
+			if (pattern < 10000) {
+				return COLORS.ChiliRed;
+			} else if (pattern < 15000) {
+				return COLORS.Copper;
+			} else if (pattern < 38000) {
+				return COLORS.RedBrown;
+			} else if (pattern < 62000) {
+				return COLORS.Orange;
+			} else if (pattern < 85000) {
+				return COLORS.Mocha;
+			} else {
+				return COLORS.Yellow;
+			}
+		}
+		case "Pinch O' Salt": {
+			if (pattern < 3000) {
+				return COLORS.RoyalBlue;
+			} else if (pattern < 30000) {
+				return COLORS.RoyalPurple;
+			} else if (pattern < 39000) {
+				return COLORS.Fuchisa;
+			} else if (pattern < 42000) {
+				return COLORS.RedBrown;
+			} else if (pattern < 48000) {
+				return COLORS.Mocha;
+			} else if (pattern < 61000) {
+				return COLORS.Yellow;
+			} else if (pattern < 92000) {
+				return COLORS.Green;
+			} else {
+				return COLORS.Cyan;
+			}
+		}
+		case "Lil' Ava": {
+			if (pattern < 30000) {
+				return COLORS.Green;
+			} else if (pattern < 55000) {
+				return COLORS.Mocha;
+			} else if (pattern < 73000) {
+				return COLORS.RedBrown;
+			} else {
+				return COLORS.RoyalPurple;
+			}
+		}
+		default: {
+			return COLORS.Grey;
+		}
+	}
+}
+
 export const USDollar = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'USD',

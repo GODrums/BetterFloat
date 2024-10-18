@@ -52,6 +52,7 @@ import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handl
 import {
 	calculateTime,
 	getBuffPrice,
+	getCharmColoring,
 	getFadePercentage,
 	getFloatColoring,
 	getMarketURL,
@@ -511,7 +512,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 
 		if (!apiItem) {
-			console.error('[BetterFloat] No cached item found');
+			console.error('[BetterFloat] No cached item found: ', item.name, container);
 			return;
 		}
 
@@ -775,7 +776,22 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePinkGalaxy(container, item);
 	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
 		await badgeDiamondGem(container, item);
+	} else if (item.type === 'charm') {
+		badgeCharm(container, item);
 	}
+}
+
+function badgeCharm(container: Element, item: CSFloat.Item) {
+	const pattern = item.keychain_pattern;
+	if (!pattern) return;
+
+	const badgeProps = getCharmColoring(pattern, item.item_name);
+
+	const badgeContainer = container.querySelector<HTMLDivElement>('.keychain-pattern');
+	if (!badgeContainer) return;
+
+	badgeContainer.style.backgroundColor = badgeProps[0] + '80';
+	(<HTMLSpanElement>badgeContainer.firstElementChild).style.color = badgeProps[1];
 }
 
 async function badgeDiamondGem(container: Element, item: CSFloat.Item) {
@@ -1309,7 +1325,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		});
 	}
 
-	if (!name?.includes('|')) {
+	if (name?.includes('★') && !name?.includes('|')) {
 		style = 'Vanilla';
 	}
 	return {
