@@ -15,6 +15,10 @@ export const Changelogs = () => {
 		<TabsContent value="changelog" className="h-[530px] w-[330px]">
 			<ScrollArea className="h-full w-full py-2 px-2">
 				<h3 className="text-lg font-bold leading-none tracking-tight uppercase text-center py-4">Changelog</h3>
+				<SingleChangelog version="v2.8.0">
+					<li>Added Charm patterns / coloring to CSFloat.</li>
+					<li>Reduced network traffic for prices.</li>
+				</SingleChangelog>
 				<SingleChangelog version="v2.7.9">
 					<li>New pricing source: CSFloat</li>
 					<li>CSFloat: Now supporting the '/sell'-page.</li>
