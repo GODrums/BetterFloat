@@ -132,6 +132,15 @@ async function firstLaunch() {
 			await adjustItem(item);
 		}
 	}
+
+	// refresh prices every hour
+	setInterval(
+		async () => {
+			console.log('[BetterFloat] Refreshing prices (hourly) ...');
+			await initPriceMapping(extensionSettings, 'sp');
+		},
+		1000 * 60 * 61
+	);
 }
 
 function createLanguagePopup() {

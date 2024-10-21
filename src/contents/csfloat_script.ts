@@ -136,6 +136,15 @@ async function firstLaunch() {
 				: POPOUT_ITEM.SIMILAR;
 		await adjustItem(items[i], popoutVersion);
 	}
+
+	// refresh prices every hour
+	setInterval(
+		async () => {
+			console.log('[BetterFloat] Refreshing prices (hourly) ...');
+			await initPriceMapping(extensionSettings, 'csf');
+		},
+		1000 * 60 * 61
+	);
 }
 
 function offerItemClickListener(listItem: Element) {
