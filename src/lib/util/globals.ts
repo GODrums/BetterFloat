@@ -1,6 +1,9 @@
 import iconBuff from 'data-base64:/assets/buff_favicon.png';
 import iconCsfloat from 'data-base64:/assets/csfloat.png';
 import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
+import iconArrowup2 from 'data-base64:/assets/icons/arrow-up.svg';
+import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
+import iconArrowdown from 'data-base64:/assets/icons/arrow-down.svg';
 import iconBan from 'data-base64:/assets/icons/ban-solid.svg';
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 import iconCamera from 'data-base64:/assets/icons/camera-solid.svg';
@@ -25,7 +28,6 @@ import iconPinkGalaxy1 from 'data-base64:/assets/patterns/pink-galaxy-1.png';
 import iconPinkGalaxy2 from 'data-base64:/assets/patterns/pink-galaxy-2.png';
 import iconPinkGalaxy3 from 'data-base64:/assets/patterns/pink-galaxy-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
-import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
@@ -42,7 +44,9 @@ export const ICON_CAMERA_FLIPPED = iconCameraFlipped;
 export const ICON_BAN = iconBan;
 export const ICON_CLOCK = iconClock;
 export const ICON_ARROWUP = iconArrowup;
+export const ICON_ARROWUP2 = iconArrowup2;
 export const ICON_ARROWUP_SMALL = iconArrowupSmall;
+export const ICON_ARROWDOWN = iconArrowdown;
 export const ICON_CRIMSON = iconCrimson;
 export const ICON_OVERPRINT_ARROW = iconOverprintArrow;
 export const ICON_OVERPRINT_FLOWER = iconOverprintFlower;

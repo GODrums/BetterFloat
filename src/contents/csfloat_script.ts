@@ -6,6 +6,8 @@ import Decimal from 'decimal.js';
 import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
+	ICON_ARROWDOWN,
+	ICON_ARROWUP2,
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
 	ICON_C5GAME,
@@ -38,6 +40,7 @@ import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import {
 	getCSFCurrencyRate,
+	getCSFHistoryGraph,
 	getCSFPopupItem,
 	getCrimsonWebMapping,
 	getFirstCSFItem,
@@ -187,7 +190,10 @@ function applyMutation() {
 						await adjustSalesTableRow(addedNode);
 					} else if (addedNode.className.toString().includes('mat-mdc-header-row')) {
 						// header of the latest sales table of an item popup
-						await adjustSalesTableHeaderRow(addedNode);
+						adjustSalesTableHeaderRow(addedNode);
+					} else if (addedNode.className.toString().includes('chart-container')) {
+						// header of the latest sales table of an item popup
+						await adjustChartContainer(addedNode);
 					} else if (location.pathname === '/profile/offers' && addedNode.className.startsWith('container')) {
 						// item in the offers page when switching from another page
 						await adjustOfferContainer(addedNode);
@@ -345,7 +351,7 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	}
 }
 
-async function adjustSalesTableHeaderRow(container: Element) {
+function adjustSalesTableHeaderRow(container: Element) {
 	const keychainBadge = document.querySelector('mat-dialog-container div.keychain-pattern');
 	if (!keychainBadge || container.querySelector('.mat-column-pattern')) return;
 
@@ -455,6 +461,45 @@ async function adjustSalesTableRow(container: Element) {
 	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).toDP(10).equals(cachedSale.item.float_value.toFixed(10))) {
 		container.setAttribute('style', 'background-color: #0b255d;');
 	}
+}
+
+async function adjustChartContainer(container: Element) {
+	let chartData = getCSFHistoryGraph();
+
+	let tries = 10;
+	while (!chartData && tries-- > 0) {
+		await new Promise((r) => setTimeout(r, 200));
+		chartData = getCSFHistoryGraph();
+	}
+	console.log('[BetterFloat] Chart data:', chartData);
+
+	if (!chartData) return;
+
+	const rangeSelectorDiv = container.querySelector<HTMLElement>('.range-selector');
+	if (!rangeSelectorDiv) return;
+
+	const userCurrency = CSFloatHelpers.userCurrency();
+	// chartData of max avg_price
+	const chartPrices = chartData.map((x) => x.avg_price);
+	const chartMax = Math.max(...chartPrices);
+	const chartMin = Math.min(...chartPrices);
+
+	const maxMinContainer = html`
+		<div style="width: 100%; display: flex; gap: 4px; justify-content: space-between;">
+			<div style="display: flex; gap: 12px; align-items: center; padding: 0 12px; background: var(--highlight-background-minimal); border-radius: 7px;">
+				<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
+					<img src="${ICON_ARROWDOWN}" style="width: 16px; height: 16px; filter: invert(1);" alt="Min" />
+					${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMin)}
+				</span>
+				<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
+					<img src="${ICON_ARROWUP2}" style="width: 16px; height: 16px; filter: invert(1);" alt="Max" />
+					${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMax)}
+				</span>
+			</div>
+			${rangeSelectorDiv?.outerHTML}
+		</div>
+	`;
+	rangeSelectorDiv.outerHTML = maxMinContainer;
 }
 
 enum POPOUT_ITEM {

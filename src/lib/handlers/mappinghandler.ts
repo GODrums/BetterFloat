@@ -212,7 +212,7 @@ export function getCSFUserCurrency() {
 	return CSFLOAT_API_DATA.location?.inferred_location.currency ?? 'USD';
 }
 
-export function getWholeHistory() {
+export function getCSFHistoryGraph() {
 	const history = CSFLOAT_API_DATA.historyGraph;
 	CSFLOAT_API_DATA.historyGraph = [];
 	return history;
