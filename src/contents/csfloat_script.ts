@@ -185,6 +185,9 @@ function applyMutation() {
 					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
 						// row of the latest sales table of an item popup
 						await adjustSalesTableRow(addedNode);
+					} else if (addedNode.className.toString().includes('mat-mdc-header-row')) {
+						// header of the latest sales table of an item popup
+						await adjustSalesTableHeaderRow(addedNode);
 					} else if (location.pathname === '/profile/offers' && addedNode.className.startsWith('container')) {
 						// item in the offers page when switching from another page
 						await adjustOfferContainer(addedNode);
@@ -342,6 +345,18 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	}
 }
 
+async function adjustSalesTableHeaderRow(container: Element) {
+	const keychainBadge = document.querySelector('mat-dialog-container div.keychain-pattern');
+	if (!keychainBadge || container.querySelector('.mat-column-pattern')) return;
+
+	const patternHeader = html`
+		<th role="columnheader" class="mat-mdc-header-cell mdc-data-table__header-cell cdk-header-cell cdk-column-pattern mat-column-pattern" style="text-align: center;">
+			Pattern
+		</th>
+	`;
+	container.insertAdjacentHTML('beforeend', patternHeader);
+}
+
 async function adjustSalesTableRow(container: Element) {
 	const cachedSale = getFirstHistorySale();
 	if (!cachedSale) {
@@ -407,6 +422,20 @@ async function adjustSalesTableRow(container: Element) {
 		fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.ranking < 10 ? ` - #${fadeData.ranking}` : '') + ')';
 		fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
 		seedContainer.appendChild(fadeSpan);
+	} else if (cachedSale.item.keychain_pattern) {
+		const pattern = cachedSale.item.keychain_pattern;
+		const badgeProps = getCharmColoring(pattern, cachedSale.item.item_name);
+
+		const patternCell = html`
+			<td mat-cell="" class="mat-mdc-cell mdc-data-table__cell cdk-cell cdk-column-pattern mat-column-pattern" role="cell" data-column-name="Pattern">
+				<div style="display: flex; align-items: center; justify-content: center;">
+					<div style="background-color: ${badgeProps[0]}80; padding: 5px; border-radius: 7px;">
+						<span style="color: ${badgeProps[1]}">#${pattern}</span>
+					</div>
+				</div>
+			</td>
+		`;
+		container.insertAdjacentHTML('beforeend', patternCell);
 	}
 
 	// add float coloring
