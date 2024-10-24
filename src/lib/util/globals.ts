@@ -1,9 +1,8 @@
 import iconBuff from 'data-base64:/assets/buff_favicon.png';
 import iconCsfloat from 'data-base64:/assets/csfloat.png';
+import iconArrowdown from 'data-base64:/assets/icons/arrow-down.svg';
 import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
 import iconArrowup2 from 'data-base64:/assets/icons/arrow-up.svg';
-import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
-import iconArrowdown from 'data-base64:/assets/icons/arrow-down.svg';
 import iconBan from 'data-base64:/assets/icons/ban-solid.svg';
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 import iconCamera from 'data-base64:/assets/icons/camera-solid.svg';
@@ -28,6 +27,7 @@ import iconPinkGalaxy1 from 'data-base64:/assets/patterns/pink-galaxy-1.png';
 import iconPinkGalaxy2 from 'data-base64:/assets/patterns/pink-galaxy-2.png';
 import iconPinkGalaxy3 from 'data-base64:/assets/patterns/pink-galaxy-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
+import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';

@@ -479,27 +479,26 @@ async function adjustChartContainer(container: Element) {
 	if (!rangeSelectorDiv) return;
 
 	const userCurrency = CSFloatHelpers.userCurrency();
-	// chartData of max avg_price
+
 	const chartPrices = chartData.map((x) => x.avg_price);
 	const chartMax = Math.max(...chartPrices);
 	const chartMin = Math.min(...chartPrices);
 
 	const maxMinContainer = html`
-		<div style="width: 100%; display: flex; gap: 4px; justify-content: space-between;">
-			<div style="display: flex; gap: 12px; align-items: center; padding: 0 12px; background: var(--highlight-background-minimal); border-radius: 7px;">
-				<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
-					<img src="${ICON_ARROWDOWN}" style="width: 16px; height: 16px; filter: invert(1);" alt="Min" />
-					${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMin)}
-				</span>
-				<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
-					<img src="${ICON_ARROWUP2}" style="width: 16px; height: 16px; filter: invert(1);" alt="Max" />
-					${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMax)}
-				</span>
-			</div>
-			${rangeSelectorDiv?.outerHTML}
+		<div style="height: 100%; display: flex; gap: 12px; align-items: center; padding: 0 12px; background: var(--highlight-background-minimal); border-radius: 7px;">
+			<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
+				<img src="${ICON_ARROWDOWN}" style="width: 16px; height: 16px; filter: invert(1);" alt="Min" />
+				${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMin)}
+			</span>
+			<span style="color: var(--subtext-color); font-weight: 500; letter-spacing: .03em; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 24px;">
+				<img src="${ICON_ARROWUP2}" style="width: 16px; height: 16px; filter: invert(1);" alt="Max" />
+				${Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(chartMax)}
+			</span>
 		</div>
 	`;
-	rangeSelectorDiv.outerHTML = maxMinContainer;
+	rangeSelectorDiv.insertAdjacentHTML('afterbegin', maxMinContainer);
+
+	rangeSelectorDiv.setAttribute('style', 'width: 100%; display: flex; justify-content: space-between; align-items: center;');
 }
 
 enum POPOUT_ITEM {
