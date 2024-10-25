@@ -154,6 +154,7 @@ export namespace CSFloat {
 		is_souvenir?: boolean;
 		is_stattrak?: boolean;
 		item_name: string;
+		keychains: StickerData[];
 		keychain_index?: number;
 		keychain_pattern?: number;
 		market_hash_name: string;
@@ -196,6 +197,10 @@ export namespace CSFloat {
 	export type StickerData = {
 		icon_url: string;
 		name: string;
+		offset_x?: number;
+		offset_y?: number;
+		offset_z?: number;
+		pattern?: number; // only for charms
 		reference: {
 			price: number;
 			quantity: number;
@@ -203,7 +208,7 @@ export namespace CSFloat {
 		};
 		slot: number;
 		stickerId: number;
-		wear: number;
+		wear?: number;
 	};
 
 	// https://csfloat.com/api/v1/meta/location
