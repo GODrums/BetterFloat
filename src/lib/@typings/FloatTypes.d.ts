@@ -201,7 +201,7 @@ export namespace CSFloat {
 		offset_y?: number;
 		offset_z?: number;
 		pattern?: number; // only for charms
-		reference: {
+		reference?: {
 			price: number;
 			quantity: number;
 			updated_at: string;

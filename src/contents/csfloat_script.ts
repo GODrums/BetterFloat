@@ -394,7 +394,7 @@ async function adjustSalesTableRow(container: Element) {
 	// add sticker percentage
 	const appStickerView = container.querySelector<HTMLElement>('app-sticker-view');
 	const stickerData = cachedSale.item.stickers;
-	if (appStickerView && stickerData && extensionSettings['csf-stickerprices']) {
+	if (appStickerView && stickerData && cachedSale.item?.quality !== 12 && extensionSettings['csf-stickerprices']) {
 		appStickerView.style.justifyContent = 'center';
 		if (stickerData.length > 0) {
 			const stickerContainer = document.createElement('div');
@@ -1309,7 +1309,7 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 		stickers.map(async (s) => {
 			const buffPrice = await getItemPrice(s.name, source);
 			return {
-				csf: s.reference.price / 100,
+				csf: (s.reference?.price ?? 0) / 100,
 				buff: buffPrice.starting_at * currencyRate,
 			};
 		})
