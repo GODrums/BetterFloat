@@ -23,6 +23,8 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 	const [value, setValue] = useStorage<MarketSource>(id, (s) => (s === undefined ? MarketSource.None : s));
 	const [currentSource, setCurrentSource] = useState(sources[0]);
 
+	const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+
 	// create a 'none' source on demand
 	if (sources[0].text !== 'None') {
 		sources.unshift(defaultSource);
@@ -47,6 +49,58 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 		setCurrentSource(sources.find((s) => value.includes(s.source)) ?? sources[0]);
 	}, [value]);
 
+	const AltMarketSelectChrome = () => {
+		return (
+			<Select value={value} onValueChange={onValueChange}>
+				<SelectTrigger>
+					<SelectValue aria-label={value.toString()}>
+						<span className="text-xs">{currentSource.text}</span>
+					</SelectValue>
+				</SelectTrigger>
+				<SelectContent className="w-[90px]" position="popper" sideOffset={2} align="end">
+					{sources.map((source, index) => (
+						<SelectItem key={index} value={source.source}>
+							<div className="flex items-center justify-center gap-2">
+								<img src={source.logo} alt={source.text} className="size-6 rounded-lg" />
+								<span className="text-xs">{source.text}</span>
+							</div>
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+		);
+	};
+
+	const AltMarketSelectFirefox = () => {
+		// Firefox is a bit special and needs a state to handle the dropdown
+		const [open, setOpen] = useState(false);
+
+		const onValueChange = (value: MarketSource) => {
+			setValue(value);
+			setOpen(false);
+		};
+
+		return (
+			<Select open={open} value={value} onValueChange={onValueChange}>
+				<SelectTrigger onClick={() => setOpen(!open)}>
+					<SelectValue aria-label={value.toString()}>
+						<span className="text-xs">{currentSource.text}</span>
+					</SelectValue>
+				</SelectTrigger>
+				<SelectContent className="w-[90px]" position="popper" sideOffset={2} align="end">
+					{sources.map((source, index) => (
+						<SelectItem key={index} value={source.source}>
+							<div className="flex items-center justify-center gap-2">
+								<img src={source.logo} alt={source.text} className="size-6 rounded-lg" />
+								<span className="text-xs">{source.text}</span>
+							</div>
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+		);
+	};
+
 	return (
 		<div className="flex justify-between items-center align-middle gap-4 mt-2">
 			<div className="flex items-center gap-2">
@@ -56,23 +110,7 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 				<SettingsTooltip text="The market to use whenever the primary market cannot provide a price. For example, Buff does not support cases/capsules/packages, and the Steam Market has a item price limit of $2000.">
 					<MaterialSymbolsHelpOutline className="h-6 w-6" />
 				</SettingsTooltip>
-				<Select value={value} onValueChange={onValueChange}>
-					<SelectTrigger>
-						<SelectValue aria-label={value.toString()}>
-							<span className="text-xs">{currentSource.text}</span>
-						</SelectValue>
-					</SelectTrigger>
-					<SelectContent className="w-[90px]" position="popper" sideOffset={2} align="end">
-						{sources.map((source, index) => (
-							<SelectItem key={index} value={source.source}>
-								<div className="flex items-center justify-center gap-2">
-									<img src={source.logo} alt={source.text} className="size-6 rounded-lg" />
-									<span className="text-xs">{source.text}</span>
-								</div>
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
+				{isFirefox ? <AltMarketSelectFirefox /> : <AltMarketSelectChrome />}
 			</div>
 		</div>
 	);
