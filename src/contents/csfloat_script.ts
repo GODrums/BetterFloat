@@ -39,6 +39,7 @@ import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import {
+	cacheCSFInventory,
 	getCSFCurrencyRate,
 	getCSFHistoryGraph,
 	getCSFPopupItem,
@@ -590,6 +591,12 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		// check if we got the right item
 		while (apiItem && (item.name !== apiItem.item.item_name || (apiItem.item.float_value && !new Decimal(apiItem.item.float_value).toDP(12).equals(item.float)))) {
 			console.log('[BetterFloat] Item name mismatch:', item, apiItem);
+			apiItem = getApiItem();
+		}
+
+		if (!apiItem && location.pathname === '/sell') {
+			const csfInventory = (await fetch('https://csfloat.com/api/v1/me/inventory', { method: 'GET' }).then((r) => r.json())) as CSFloat.InventoryReponse;
+			cacheCSFInventory(csfInventory);
 			apiItem = getApiItem();
 		}
 

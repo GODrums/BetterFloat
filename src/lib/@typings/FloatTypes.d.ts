@@ -19,6 +19,10 @@ export interface EventData<T> {
 }
 
 export namespace CSFloat {
+	export type ListingsResponse = {
+		cursor: string;
+		data: ListingData[];
+	};
 	export type Me = {
 		actionable_trades: number;
 		pending_offers: number;

@@ -179,7 +179,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 
 	if (eventData.url.includes('v1/listings?')) {
-		cacheCSFItems(eventData.data as CSFloat.ListingData[]);
+		cacheCSFItems((eventData.data as CSFloat.ListingsResponse).data);
 	} else if (eventData.url.includes('v1/listings/recommended')) {
 		// recommended for you tab
 		cacheCSFItems(eventData.data as CSFloat.ListingData[]);
