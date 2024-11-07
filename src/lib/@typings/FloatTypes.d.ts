@@ -26,6 +26,7 @@ export namespace CSFloat {
 	export type Me = {
 		actionable_trades: number;
 		pending_offers: number;
+		has_unread_notifications: boolean;
 		user: {
 			api_key?: string;
 			avatar: string;
@@ -35,13 +36,16 @@ export namespace CSFloat {
 			email: string;
 			extension_setup_at: string;
 			fee: number;
+			firebase_messaging: {
+				last_updated: string;
+				platform: number;
+			}
 			flags: number;
 			has_2fa: boolean;
 			has_valid_steam_api_key: boolean;
 			know_your_customer: string;
 			obfuscated_id: string;
 			online: boolean;
-			payment_accounts: any;
 			pending_balance: number;
 			preferences: {
 				max_offer_discount: number;
@@ -52,6 +56,7 @@ export namespace CSFloat {
 				median_trade_time: number;
 				total_avoided_trades: number;
 				total_failed_trades: number;
+				total_purchases: number;
 				total_sales: number;
 				total_trades: number;
 				total_verified_trades: number;
@@ -151,7 +156,10 @@ export namespace CSFloat {
 			seed: number;
 		};
 		float_value?: number;
+		gs_sig: string;
 		has_screenshot: boolean;
+		low_rank?: number;
+		high_rank?: number;
 		icon_url: string;
 		inspect_link?: string;
 		is_commodity: boolean;
