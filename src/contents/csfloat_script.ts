@@ -450,7 +450,8 @@ async function adjustSalesTableRow(container: Element) {
 	if (itemSchema && cachedSale.item.float_value && extensionSettings['csf-floatcoloring']) {
 		const floatContainer = container.querySelector('td.mat-column-wear')?.firstElementChild;
 		if (floatContainer) {
-			const floatColoring = getFloatColoring(cachedSale.item.float_value, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0);
+			const lowestRank = Math.min(cachedSale.item.low_rank || 99, cachedSale.item.high_rank || 99);
+			const floatColoring = getRankedFloatColoring(cachedSale.item.float_value!, itemSchema.min, itemSchema.max, cachedSale.item.paint_index === 0, lowestRank);
 			if (floatColoring !== '') {
 				floatContainer.setAttribute('style', `color: ${floatColoring}`);
 			}
@@ -824,12 +825,10 @@ function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | nu
 		names[1] += ` (${item.phase})`;
 	}
 
-	// @ts-ignore
-	const schemaItem = Object.values(Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0])['paints']).find(
-		(el) => el.name === names[1]
-	) as CSFloat.ItemSchema.SingleSchema;
+	const weapon = Object.values((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find((el) => el.name === names[0]);
+	if (!weapon) return null;
 
-	return schemaItem;
+	return Object.values(weapon['paints']).find((el) => el.name === names[1]) as CSFloat.ItemSchema.SingleSchema;
 }
 
 function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
@@ -838,10 +837,26 @@ function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
 
 	const element = container.querySelector<HTMLElement>('div.wear');
 	if (element) {
-		const floatColoring = getFloatColoring(listing.item.float_value, itemSchema?.min ?? 0, itemSchema?.max ?? 1, listing.item.paint_index === 0);
+		const lowestRank = Math.min(listing.item.low_rank || 99, listing.item.high_rank || 99);
+		const floatColoring = getRankedFloatColoring(listing.item.float_value, itemSchema?.min ?? 0, itemSchema?.max ?? 1, listing.item.paint_index === 0, lowestRank);
 		if (floatColoring !== '') {
 			element.style.color = floatColoring;
 		}
+	}
+}
+
+function getRankedFloatColoring(float: number, min: number, max: number, vanilla: boolean, rank: number) {
+	switch (rank) {
+		case 1:
+			return '#efbf04';
+		case 2:
+		case 3:
+			return '#d9d9d9';
+		case 4:
+		case 5:
+			return '#f5a356';
+		default:
+			return getFloatColoring(float, min, max, vanilla);
 	}
 }
 

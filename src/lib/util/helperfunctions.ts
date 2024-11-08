@@ -297,14 +297,13 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 
 /**
  * Get a coloring for a specific charm.
- * Colors from: https://www.figma.com/colors/dark-yellow/
+ * Colors from: https://www.figma.com/colors/
  * @param pattern 0-100000
  * @param itemName e.g. Lil' Ava
  * @returns [backgroundColor, foregroundColor]
  */
 export function getCharmColoring(pattern: number, itemName: string) {
 	const colorWhite = '#ffffffb3';
-	const colorBlack = '#000000cc';
 	const COLORS = {
 		Gold: ['#efbf04', colorWhite],
 		GoldenYellow: ['#ffdf00', colorWhite],

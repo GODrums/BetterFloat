@@ -39,7 +39,7 @@ export namespace CSFloat {
 			firebase_messaging: {
 				last_updated: string;
 				platform: number;
-			}
+			};
 			flags: number;
 			has_2fa: boolean;
 			has_valid_steam_api_key: boolean;
