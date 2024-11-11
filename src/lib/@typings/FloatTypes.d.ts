@@ -137,7 +137,8 @@ export namespace CSFloat {
 		price: number;
 		reference?: ReferenceData;
 		seller?: SellerData;
-		state: 'listed' | 'delisted';
+		sold_at?: string;
+		state: 'listed' | 'delisted' | 'sold';
 		type: 'buy_now' | 'auction';
 		watchers: number;
 	};
