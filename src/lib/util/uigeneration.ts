@@ -1,29 +1,32 @@
 import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
 import type { BlueGem } from '../@typings/ExtensionTypes';
 
-export function genGemContainer({ patternElement, mode = 'left', large = false }: { patternElement: BlueGem.PatternData | null; mode?: 'left' | 'right'; large?: boolean }) {
+export function genGemContainer({ patternElement, site, large = false }: { patternElement: BlueGem.PatternData | null; site: 'CSF' | 'SP'; large?: boolean }) {
 	if (!patternElement?.playside_blue && !patternElement?.backside_blue) {
 		return null;
 	}
 	const gemContainer = document.createElement('div');
 	gemContainer.className = 'betterfloat-gem-container';
 	gemContainer.title = 'playside blue% / backside blue%';
+	if (!large) {
+		gemContainer.style.height = '18px';
+	}
 	gemContainer.style.display = 'flex';
 	gemContainer.style.alignItems = 'center';
-	if (mode === 'right') {
+	if (site === 'SP' && !large) {
 		gemContainer.style.flexDirection = 'row-reverse';
 	}
 	const gemImage = document.createElement('img');
 	gemImage.setAttribute('src', iconGemshop);
 	gemImage.setAttribute(
 		'style',
-		`height: ${mode === 'left' ? '14' : '18'}px; margin-${
-			mode === 'right' ? 'left' : 'right'
-		}: 5px; margin-top: 1px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
+		`height: ${site === 'SP' ? (large ? '25' : '18') : (large ? '20' : '16')}px; margin-${
+			site === 'SP' && !large ? 'left' : 'right'
+		}: 5px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
 	);
 	gemContainer.appendChild(gemImage);
 	const gemValue = document.createElement('span');
-	gemValue.setAttribute('style', `font-size: ${mode === 'left' && !large ? '12' : '14'}px; font-weight: 500; color: deepskyblue; letter-spacing: -0.025em;`);
+	gemValue.setAttribute('style', 'color: deepskyblue;' + (site === 'CSF' ? (large ? 'font-size: 14px; font-weight: 500;' : 'font-size: 13px;') : 'font-weight: 600;'));
 	gemValue.textContent = `${patternElement.playside_blue?.toFixed(0) ?? 0}% / ${patternElement.backside_blue?.toFixed(0) ?? 0}%`;
 	gemContainer.appendChild(gemValue);
 	return gemContainer;

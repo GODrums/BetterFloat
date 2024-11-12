@@ -475,7 +475,7 @@ async function adjustItem(container: Element) {
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && cachedItem.marketHashName.includes('Case Hardened') && cachedItem.category === 'Knife') {
+		if (extensionSettings['sp-csbluegem'] && (cachedItem.name.includes('Case Hardened') || cachedItem.name.includes('Heat Treated'))) {
 			await addBlueBadge(container, cachedItem);
 		}
 	}
@@ -487,7 +487,7 @@ function storeItem(container: Element, item: Skinport.Listing) {
 }
 
 export async function patternDetections(container: Element, item: Skinport.Item) {
-	if (item.name.includes('Case Hardened')) {
+	if (item.name.includes('Case Hardened') || item.name.includes('Heat Treated')) {
 		await caseHardenedDetection(container, item);
 	} else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
 		webDetection(container, item);
@@ -508,16 +508,15 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
 	}
-	const gemContainer = genGemContainer({ patternElement, mode: 'right' });
+	const gemContainer = genGemContainer({ patternElement, site: 'SP' });
 	if (!gemContainer) return;
 	gemContainer.style.fontSize = '11px';
-	gemContainer.style.fontWeight = '600';
 	(<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
 	itemHeader.after(gemContainer);
 }
 
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
-	if (!item.name.includes('Case Hardened')) return;
+	if (!item.name.includes('Case Hardened') && !item.name.includes('Heat Treated')) return;
 
 	// santized for CSBlueGem's supported currencies, otherwise use USD
 	const sanitizedCurrency = (currency: string) => {
@@ -530,7 +529,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader || !patternElement) return;
-	const gemContainer = genGemContainer({ patternElement });
+	const gemContainer = genGemContainer({ patternElement, site: 'SP', large: true });
 	if (gemContainer) {
 		itemHeader.appendChild(gemContainer);
 	}
@@ -574,7 +573,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 					${sale.wear}
 				</div>
 				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div>
-				<div style="display: flex; align-items: center; gap: 8px;">
+				<div style="width: 60px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
 					${
 						sale.screenshots.inspect
 							? html`
