@@ -475,7 +475,7 @@ async function adjustItem(container: Element) {
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && (cachedItem.name.includes('Case Hardened') || cachedItem.name.includes('Heat Treated'))) {
+		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].includes(cachedItem.name) && cachedItem.category === 'Knife') {
 			await addBlueBadge(container, cachedItem);
 		}
 	}
@@ -516,7 +516,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
-	if (!item.name.includes('Case Hardened') && !item.name.includes('Heat Treated')) return;
+	if (!['Case Hardened', 'Heat Treated'].includes(item.name) || item.category === "Gloves") return;
 
 	// santized for CSBlueGem's supported currencies, otherwise use USD
 	const sanitizedCurrency = (currency: string) => {
