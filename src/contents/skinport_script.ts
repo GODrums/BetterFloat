@@ -516,7 +516,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
-	if (!['Case Hardened', 'Heat Treated'].includes(item.name) || item.category === "Gloves") return;
+	if (!['Case Hardened', 'Heat Treated'].includes(item.name) || item.category === 'Gloves') return;
 
 	// santized for CSBlueGem's supported currencies, otherwise use USD
 	const sanitizedCurrency = (currency: string) => {

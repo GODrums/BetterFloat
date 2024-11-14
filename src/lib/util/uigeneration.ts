@@ -20,7 +20,7 @@ export function genGemContainer({ patternElement, site, large = false }: { patte
 	gemImage.setAttribute('src', iconGemshop);
 	gemImage.setAttribute(
 		'style',
-		`height: ${site === 'SP' ? (large ? '25' : '18') : (large ? '20' : '16')}px; margin-${
+		`height: ${site === 'SP' ? (large ? '25' : '18') : large ? '20' : '16'}px; margin-${
 			site === 'SP' && !large ? 'left' : 'right'
 		}: 5px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
 	);
