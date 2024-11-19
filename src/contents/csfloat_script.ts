@@ -1305,9 +1305,12 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 }
 
 async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
+	if(!apiItem.item?.stickers) return;
+
 	// quality 12 is souvenir
-	if (!apiItem.item?.stickers || apiItem.item?.quality === 12) {
+	if (apiItem.item?.quality === 12) {
 		adjustExistingSP(container);
+		addStickerLinks(container, apiItem.item.stickers);
 		return;
 	}
 
@@ -1332,6 +1335,23 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 		if (!didChange) {
 			csfSP.remove();
 		}
+	}
+
+	// add links to stickers
+	addStickerLinks(container, apiItem.item.stickers);
+}
+
+function addStickerLinks(container: Element, stickers: CSFloat.StickerData[]) {
+	const stickerContainers = container.querySelectorAll('.sticker');
+	for (let i = 0; i < stickerContainers.length; i++) {
+		const stickerContainer = stickerContainers[i];
+		const stickerData = stickers[i];
+		if (!stickerData) continue;
+
+		stickerContainer.addEventListener('click', async () => {
+			const stickerLink = `https://csfloat.com/search?sticker_index=${stickerData.stickerId}`;
+			window.open(stickerLink, '_blank');
+		});
 	}
 }
 
