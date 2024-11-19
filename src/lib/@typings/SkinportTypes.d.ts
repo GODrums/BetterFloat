@@ -335,6 +335,8 @@ export namespace Skinport {
 		canHaveScreenshots: boolean;
 		category: string;
 		category_localized: string;
+		charms: CharmData[];
+		classid: string;
 		collection: string | null;
 		collection_localized: string | null;
 		color: string;
@@ -348,7 +350,7 @@ export namespace Skinport {
 		image: string;
 		itemId: number;
 		link: string;
-		lock: any | null;
+		lock: string | null; // unlock date
 		marketHashName: string;
 		marketName: string; // localized hash name
 		name: string;
@@ -388,13 +390,25 @@ export namespace Skinport {
 		wear: number | null;
 	};
 
+	export type CharmData = {
+		img: string;
+		name: string;
+		name_localized: string;
+		slug: string;
+		value: number | null;
+	}
+
 	export type StickerData = {
 		color: string | null;
 		img: string;
 		name: string;
 		name_localized: string;
+		offset_x: number | null;
+		offset_y: number | null;
+		rotation: number | null;
+		scale: number | null;
 		slot: number;
-		slug: any | null;
+		slug: string | null;
 		sticker_id: number | null;
 		type: string | null;
 		type_localized: string | null;

@@ -475,7 +475,7 @@ async function adjustItem(container: Element) {
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].includes(cachedItem.name) && cachedItem.category === 'Knife') {
+		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].includes(cachedItem.name) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
 	}

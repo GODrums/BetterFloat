@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client/build/esm';
+import socketParser from 'socket.io-msgpack-parser';
 
 import type { PlasmoCSConfig } from 'plasmo';
 
@@ -45,13 +46,13 @@ const userCurrency = async () => {
 function startSocket() {
 	console.log('[BetterFloat] Connecting to Skinport Socket...');
 
-	// Connect to Skinport Websocket with Socket.io, url: wss://skinport.com/socket.io/?transport=websocket
 	const socket = io('https://skinport.com', {
 		transports: ['websocket'],
 		autoConnect: true,
 		reconnection: true,
-		reconnectionAttempts: 10,
+		reconnectionAttempts: 5,
 		reconnectionDelay: 1000,
+		parser: socketParser
 	});
 
 	//Types of events that can be received from the websocket:
@@ -73,7 +74,7 @@ function startSocket() {
 	});
 
 	socket.on('connect', async () => {
-		console.log('[BetterFloat] Successfully connected to websocket: wss://skinport.com/socket.io/?transport=websocket.');
+		console.debug('[BetterFloat] Successfully connected to Skinport websocket.');
 		// Join Sale Feed with parameters.
 		const currency = await userCurrency();
 		if (currency) {

@@ -14,7 +14,7 @@ export async function handleListed(data: Skinport.Item[]) {
 					addPattern(element, item);
 				}
 
-				if (item.marketHashName.includes('Case Hardened') && item.category === 'Knife' && (await getSetting('sp-csbluegem'))) {
+				if (['Case Hardened', 'Heat Treated'].includes(item.name) && item.category !== 'Gloves' && (await getSetting('sp-csbluegem'))) {
 					await addBlueBadge(element, item);
 				} else if ((item.marketHashName.includes('Crimson Web') || item.marketHashName.includes('Emerald Web')) && item.category === 'Gloves') {
 					webDetection(element, item);
