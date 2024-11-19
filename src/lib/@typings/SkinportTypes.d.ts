@@ -396,7 +396,7 @@ export namespace Skinport {
 		name_localized: string;
 		slug: string;
 		value: number | null;
-	}
+	};
 
 	export type StickerData = {
 		color: string | null;

@@ -52,7 +52,7 @@ function startSocket() {
 		reconnection: true,
 		reconnectionAttempts: 5,
 		reconnectionDelay: 1000,
-		parser: socketParser
+		parser: socketParser,
 	});
 
 	//Types of events that can be received from the websocket:
