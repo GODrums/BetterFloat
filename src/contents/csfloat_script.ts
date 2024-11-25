@@ -191,7 +191,6 @@ function applyMutation() {
 						await adjustSalesTableRow(addedNode);
 					} else if (addedNode.className.toString().includes('mat-mdc-header-row')) {
 						// header of the latest sales table of an item popup
-						adjustSalesTableHeaderRow(addedNode);
 					} else if (addedNode.className.toString().includes('chart-container')) {
 						// header of the latest sales table of an item popup
 						await adjustChartContainer(addedNode);
@@ -352,18 +351,6 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	}
 }
 
-function adjustSalesTableHeaderRow(container: Element) {
-	const keychainBadge = document.querySelector('mat-dialog-container div.keychain-pattern');
-	if (!keychainBadge || container.querySelector('.mat-column-pattern')) return;
-
-	const patternHeader = html`
-		<th role="columnheader" class="mat-mdc-header-cell mdc-data-table__header-cell cdk-header-cell cdk-column-pattern mat-column-pattern" style="text-align: center;">
-			Pattern
-		</th>
-	`;
-	container.insertAdjacentHTML('beforeend', patternHeader);
-}
-
 async function adjustSalesTableRow(container: Element) {
 	const cachedSale = getFirstHistorySale();
 	if (!cachedSale) {
@@ -411,38 +398,20 @@ async function adjustSalesTableRow(container: Element) {
 		}
 	}
 
-	// add fade percentage
-	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
-	if (seedContainer && cachedSale.item.item_name.includes('Fade')) {
-		let fadeData: Partial<FadePercentage & { rank: number }> = {};
-		if (cachedSale.item.fade) {
-			fadeData = cachedSale.item.fade;
-			fadeData.ranking = cachedSale.item.fade.rank;
-		} else {
-			const fadePercentage = getFadePercentage(cachedSale.item.item_name.split(' | ')[0], cachedSale.item.market_hash_name, cachedSale.item.paint_seed!);
-			if (fadePercentage) {
-				fadeData = fadePercentage;
-			}
-		}
-		if (!fadeData.percentage || !fadeData.ranking) return;
-		const fadeSpan = document.createElement('span');
-		fadeSpan.textContent += ' (' + toTruncatedString(fadeData.percentage, 1) + '%' + (fadeData.ranking < 10 ? ` - #${fadeData.ranking}` : '') + ')';
-		fadeSpan.setAttribute('style', 'background: linear-gradient(to right,#d9bba5,#e5903b,#db5977,#6775e1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;');
-		seedContainer.appendChild(fadeSpan);
-	} else if (cachedSale.item.keychain_pattern) {
+	// add keychain coloring
+	const patternContainer = container.querySelector('.cdk-column-pattern')?.firstElementChild;
+	if (patternContainer && cachedSale.item.keychain_pattern) {
 		const pattern = cachedSale.item.keychain_pattern;
 		const badgeProps = getCharmColoring(pattern, cachedSale.item.item_name);
 
 		const patternCell = html`
-			<td mat-cell="" class="mat-mdc-cell mdc-data-table__cell cdk-cell cdk-column-pattern mat-column-pattern" role="cell" data-column-name="Pattern">
-				<div style="display: flex; align-items: center; justify-content: center;">
-					<div style="background-color: ${badgeProps[0]}80; padding: 5px; border-radius: 7px;">
-						<span style="color: ${badgeProps[1]}">#${pattern}</span>
-					</div>
+			<div style="display: flex; align-items: center; justify-content: center;">
+				<div style="background-color: ${badgeProps[0]}80; padding: 5px; border-radius: 7px;">
+					<span style="color: ${badgeProps[1]}">#${pattern}</span>
 				</div>
-			</td>
+			</div>
 		`;
-		container.insertAdjacentHTML('beforeend', patternCell);
+		patternContainer.outerHTML = patternCell;
 	}
 
 	// add float coloring
@@ -1733,11 +1702,11 @@ function generatePriceLine(
 	}
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
-	const bfDataAttribute = `data-betterfloat='${JSON.stringify({ buff_name, priceFromReference, userCurrency, source })}'`;
+	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, "&#39;");
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" ${bfDataAttribute}>
+			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${bfDataAttribute}'>
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
