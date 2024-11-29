@@ -1279,7 +1279,7 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 	// quality 12 is souvenir
 	if (apiItem.item?.quality === 12) {
 		adjustExistingSP(container);
-		addStickerLinks(container, apiItem.item.stickers);
+		addStickerLinks(container, apiItem.item);
 		return;
 	}
 
@@ -1307,19 +1307,30 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 	}
 
 	// add links to stickers
-	addStickerLinks(container, apiItem.item.stickers);
+	addStickerLinks(container, apiItem.item);
 }
 
-function addStickerLinks(container: Element, stickers: CSFloat.StickerData[]) {
+// for stickers + charms
+function addStickerLinks(container: Element, item: CSFloat.Item) {
+	let data: CSFloat.StickerData[] = [];
+	if (item.keychains) {
+		data = data.concat(item.keychains);
+	}
+	if (item.stickers) {
+		data = data.concat(item.stickers);
+	}
+
 	const stickerContainers = container.querySelectorAll('.sticker');
 	for (let i = 0; i < stickerContainers.length; i++) {
 		const stickerContainer = stickerContainers[i];
-		const stickerData = stickers[i];
+		const stickerData = data[i];
 		if (!stickerData) continue;
 
 		stickerContainer.addEventListener('click', async () => {
-			const stickerLink = `https://csfloat.com/search?sticker_index=${stickerData.stickerId}`;
-			window.open(stickerLink, '_blank');
+			const stickerURL = new URL('https://csfloat.com/search');
+			stickerURL.searchParams.set(stickerData.pattern ? 'keychain_index' : 'sticker_index', String(stickerData.stickerId));
+			
+			window.open(stickerURL.href, '_blank');
 		});
 	}
 }
