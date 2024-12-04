@@ -1329,7 +1329,7 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 		stickerContainer.addEventListener('click', async () => {
 			const stickerURL = new URL('https://csfloat.com/search');
 			stickerURL.searchParams.set(stickerData.pattern ? 'keychain_index' : 'sticker_index', String(stickerData.stickerId));
-			
+
 			window.open(stickerURL.href, '_blank');
 		});
 	}
@@ -1713,7 +1713,7 @@ function generatePriceLine(
 	}
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
-	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, "&#39;");
+	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
 	const buffContainer = html`
 		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
 			<img src="${icon}" style="${iconStyle}" />
