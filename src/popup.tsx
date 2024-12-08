@@ -1,4 +1,5 @@
 import '~style.css';
+import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
@@ -8,6 +9,7 @@ import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shad
 import { SparklesCore } from '~lib/components/Sparkles';
 import { Toaster } from '~lib/components/Toaster';
 import { About } from '~lib/pages/About';
+import { BuffMarketSettings } from '~lib/pages/Buffmarket';
 import { Changelogs } from '~lib/pages/Changelog';
 import { CSFloatSettings } from '~lib/pages/Csfloat';
 import { SkinbidSettings } from '~lib/pages/Skinbid';
@@ -97,6 +99,9 @@ export default function IndexPopup() {
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
+							<TabsTrigger value="buffmarket">
+								<img className="h-10 w-10 rounded-lg" src={buffmarketLogo} />
+							</TabsTrigger>
 						</div>
 						<div className="flex flex-col items-center">
 							<TabsTrigger value="changelog">
@@ -110,6 +115,7 @@ export default function IndexPopup() {
 					<CSFloatSettings />
 					<SkinportSettings />
 					<SkinbidSettings />
+					<BuffMarketSettings />
 					<Changelogs />
 					<About />
 				</Tabs>

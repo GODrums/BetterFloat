@@ -22,13 +22,14 @@ import { Euro, USDollar, delay, getBuffPrice, getFloatColoring, getMarketURL, is
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { getFirstSpItem, getItemPrice, getMarketID, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate, loadMapping } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
+import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {

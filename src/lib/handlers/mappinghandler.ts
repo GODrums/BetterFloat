@@ -3,25 +3,16 @@ import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
+import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
+import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
+import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { MarketSource } from '~lib/util/globals';
 import { Queue } from '~lib/util/queue';
 import type { Extension } from '../@typings/ExtensionTypes';
-import type { CSFloat, DopplerPhase } from '../@typings/FloatTypes';
+import type { DopplerPhase } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { fetchCurrencyRates } from './networkhandler';
-
-type CSFloatAPIStorage = {
-	items: Queue<CSFloat.ListingData>;
-	popupItem: CSFloat.ListingData | null;
-	similarItems: Queue<CSFloat.ListingData>;
-	inventory: CSFloat.Item[];
-	historyGraph: CSFloat.HistoryGraphData[];
-	historySales: Queue<CSFloat.HistorySalesData>;
-	offers: CSFloat.Offer[];
-	rates: { [key: string]: number };
-	location: CSFloat.Location | null;
-};
 
 type MarketIDEntry = {
 	buff: number;
@@ -31,6 +22,8 @@ type MarketIDEntry = {
 	buff_phase: Partial<Record<DopplerPhase, number | null>>;
 };
 
+// cached currency rates by exchangerate.host: USD -> X
+let realRatesFromUSD: { [currency: string]: number } = {};
 // maps buff_name to buff_id
 const marketIdMapping: Record<string, Partial<MarketIDEntry>> = marketIds;
 // maps buff_name to prices and more - custom mapping
@@ -44,82 +37,36 @@ const priceMapping: {
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 
-// intercepted csfloat api data
-const CSFLOAT_API_DATA: CSFloatAPIStorage = {
-	// item previews
-	items: new Queue<CSFloat.ListingData>(),
-	// opened popup item
-	popupItem: null,
-	// similar item section of item popup
-	similarItems: new Queue<CSFloat.ListingData>(),
-	// user inventory
-	inventory: [],
-	// sales graph of item popup
-	historyGraph: [],
-	// latest sales of item popup
-	historySales: new Queue<CSFloat.HistorySalesData>(),
-	// p2p offers timeline
-	offers: [],
-	// currency exchange rates
-	rates: {},
-	location: null,
-};
-// skinport: cached items from api
-let skinportItems: Skinport.Item[] = [];
-// skinport: cached popup item from api
-let skinportPopupItem: Skinport.ItemData | null = null;
-// skinport: cached popup item from api
-let skinportPopupInventoryItem: Skinport.InventoryItem | null = null;
-// skinport: cached currency rates by Skinport: USD -> X
-let skinportRatesFromUSD: { [currency: string]: number } = {};
-// skinport: minimum order price (e.g. 0.01)
-let skinportMinOrderPrice = 0;
 // skinbid: cached currency rates by Skinbid: EUR -> X
 let skinbidRates: Skinbid.ExchangeRates = [];
-// skinport: cached currency rates by exchangerate.host: USD -> X
-let realRatesFromUSD: { [currency: string]: number } = {};
-// skinport: user currency (e.g. EUR)
-let skinportUserCurrency = '';
 // skinbid: user currency (e.g. EUR)
 let skinbidUserCurrency = '';
 // skinbid: cached items from api
 let skinbidItems: Skinbid.Listing[] = [];
 // skinbid: inventory items
 let skinbidInventory: Skinbid.ListedItem[] = [];
+// buffmarket: cached items from api
+let buffItems: { [id: number]: BuffMarket.Item[] } = {};
+let buffPageItems: BuffMarket.Item[] = [];
+const buffGoodsInfo: { [goods_id: number]: BuffMarket.GoodsInfo } = {};
+let buffCurrencyRate: BuffMarket.CurrencyItem | null = null;
+// buffmarket: cached own user id
+let buffUserId: string | null = null;
+// csmoney: cached items from api
+let csmoneyItems: CSMoney.Item[] = [];
+const csmoneyItemMapping: { [itemId: number]: CSMoney.Item } = {};
+let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
+let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
+// tradeit: cached items from bots
+let tradeitBotItems: Tradeit.Item[] = [];
+// tradeit: cached items from own inventory
+const tradeitOwnItems: { [steamImg: string]: Tradeit.Item[] } = {};
 
-export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
-	if (CSFLOAT_API_DATA.historyGraph.length > 0) {
-		console.debug('[BetterFloat] History graph already cached, deleting history: ', CSFLOAT_API_DATA.historyGraph);
-		CSFLOAT_API_DATA.historyGraph = [];
+export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
+	if (Object.keys(realRatesFromUSD).length > 0) {
+		console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
 	}
-	// original price is in cents, convert to dollars
-	CSFLOAT_API_DATA.historyGraph = data.map((history) => {
-		return {
-			avg_price: history.avg_price / 100,
-			count: history.count,
-			day: history.day,
-		};
-	});
-}
-
-export function cacheCSFOffers(data: CSFloat.Offer[]) {
-	CSFLOAT_API_DATA.offers = data;
-}
-
-export function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {
-	CSFLOAT_API_DATA.historySales.reset(data);
-}
-
-export function cacheCSFItems(data: CSFloat.ListingData[]) {
-	CSFLOAT_API_DATA.items.reset(data);
-}
-
-export function cacheCSFSimilarItems(data: CSFloat.ListingData[]) {
-	CSFLOAT_API_DATA.similarItems.reset(data);
-}
-
-export function cacheCSFInventory(data: CSFloat.Item[]) {
-	CSFLOAT_API_DATA.inventory = data;
+	realRatesFromUSD = data;
 }
 
 export function cacheSkbItems(data: Skinbid.Listing[]) {
@@ -140,123 +87,12 @@ export function cacheSkbInventory(data: Skinbid.ListedItem[]) {
 	}
 }
 
-export function cacheCSFExchangeRates(data: CSFloat.ExchangeRates) {
-	CSFLOAT_API_DATA.rates = data.data;
-}
-
-export function cacheCSFLocation(data: CSFloat.Location) {
-	CSFLOAT_API_DATA.location = data;
-}
-
-export function cacheSpMinOrderPrice(price: number) {
-	skinportMinOrderPrice = price / 100;
-}
-
-export function cacheCSFPopupItem(data: CSFloat.ListingData) {
-	CSFLOAT_API_DATA.popupItem = data;
-}
-
-export function cacheSpPopupItem(data: Skinport.ItemData) {
-	skinportPopupItem = data;
-}
-
-export function cacheSpPopupInventoryItem(data: Skinport.InventoryItem) {
-	skinportPopupInventoryItem = data;
-}
-
-export function cacheSpItems(data: Skinport.Item[]) {
-	if (skinportItems.length > 0) {
-		console.debug('[BetterFloat] Items already cached, deleting items: ', skinportItems);
-		skinportItems = [];
-	}
-	skinportItems = data;
-}
-
-export function cacheSkinportCurrencyRates(data: { [currency: string]: number }, user: string) {
-	// maybe cache csrf token here as well
-	if (Object.keys(skinportRatesFromUSD).length > 0) {
-		console.debug('[BetterFloat] Currency rates already cached, overwriting old ones: ', skinportRatesFromUSD);
-	}
-	skinportRatesFromUSD = data;
-	skinportUserCurrency = user;
-}
-
 export function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
 	skinbidRates = rates;
 }
 
 export function cacheSkinbidUserCurrency(currency: string) {
 	skinbidUserCurrency = currency;
-}
-
-export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
-	if (Object.keys(realRatesFromUSD).length > 0) {
-		console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
-	}
-	realRatesFromUSD = data;
-}
-
-export function getSpMinOrderPrice() {
-	return skinportMinOrderPrice;
-}
-
-// USD / rate = target currency
-export async function getCSFCurrencyRate(currency: string) {
-	if (Object.keys(CSFLOAT_API_DATA.rates).length === 0) {
-		await fetchCSFCurrencyRates();
-	}
-	return CSFLOAT_API_DATA.rates[currency.toLowerCase()];
-}
-
-export function getCSFUserCurrency() {
-	return CSFLOAT_API_DATA.location?.inferred_location.currency ?? 'USD';
-}
-
-export function getCSFHistoryGraph() {
-	const history = CSFLOAT_API_DATA.historyGraph;
-	CSFLOAT_API_DATA.historyGraph = [];
-	return history;
-}
-
-export function getFirstHistorySale() {
-	return CSFLOAT_API_DATA.historySales.dequeue();
-}
-
-export function getFirstCSFItem() {
-	return CSFLOAT_API_DATA.items.dequeue();
-}
-
-export function getFirstCSFSimilarItem() {
-	return CSFLOAT_API_DATA.similarItems.dequeue();
-}
-
-export function getCSFPopupItem() {
-	return CSFLOAT_API_DATA.popupItem;
-}
-
-export function getSpecificCSFOffer(index: number) {
-	return CSFLOAT_API_DATA.offers[index];
-}
-
-export function getSpecificCSFInventoryItem(item_name: string, float?: number) {
-	return CSFLOAT_API_DATA.inventory.find((item) => item.item_name === item_name && (!float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float)));
-}
-
-export function getSpPopupItem() {
-	return skinportPopupItem;
-}
-
-export function getSpPopupInventoryItem() {
-	return skinportPopupInventoryItem;
-}
-
-export function getFirstSpItem() {
-	if (skinportItems.length > 0) {
-		const item = skinportItems.shift();
-		return item;
-	} else {
-		return null;
-	}
 }
 
 export function getFirstSkbItem() {
@@ -277,6 +113,10 @@ export function getSpecificSkbItem(auction_hash: string) {
 	const item = skinbidItems[index];
 	skinbidItems.splice(index, 1);
 	return item;
+}
+
+export function getRealCurrencyRates() {
+	return realRatesFromUSD;
 }
 
 export async function getPriceMapping(source: MarketSource) {
@@ -310,33 +150,6 @@ export async function getItemPrice(buff_name: string, source: MarketSource): Pro
 	};
 }
 
-async function fetchCSFCurrencyRates() {
-	await fetch('https://csfloat.com/api/v1/meta/exchange-rates')
-		.then((response) => response.json())
-		.then((data) => {
-			console.debug('[BetterFloat] Received currency rates from CSFloat: ', data);
-			cacheCSFExchangeRates(data);
-		});
-}
-
-export async function getSpUserCurrency() {
-	if (skinportUserCurrency === '') {
-		await fetchSpUserData();
-	}
-	return skinportUserCurrency;
-}
-
-export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real') {
-	if (Object.keys(skinportRatesFromUSD).length === 0) {
-		await fetchSpUserData();
-	}
-	if (skinportUserCurrency === 'USD') return 1;
-	if (rates === 'real' && Object.keys(realRatesFromUSD).length === 0) {
-		await fetchCurrencyRates();
-	}
-	return rates === 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD['USD'];
-}
-
 export function getSkbCurrency() {
 	return skinbidUserCurrency;
 }
@@ -367,6 +180,168 @@ export async function getSkbUserConversion() {
 	else return skinbidRates.find((rate) => rate.currencyCode === skinbidUserCurrency)?.rate ?? 1;
 }
 
+export function cacheTradeitBotItems(data: Tradeit.Item[]) {
+	if (tradeitBotItems.length > 0) {
+		console.debug('[BetterFloat] Items already cached, deleting items: ', tradeitBotItems);
+		tradeitBotItems = [];
+	}
+	tradeitBotItems = data;
+}
+
+export function cacheTradeitOwnItems(data: { [assetId: number]: Tradeit.Item[] }) {
+	// tradeitOwnItems = Object.assign(tradeitOwnItems, data);
+	for (const [_key, value] of Object.entries(data)) {
+		for (const item of value) {
+			tradeitOwnItems[item.imgURL] = [item];
+		}
+	}
+}
+
+export function getFirstTradeitOwnItem(steamImg: string) {
+	return tradeitOwnItems[steamImg];
+}
+
+export function getFirstTradeitBotItem() {
+	if (tradeitBotItems.length > 0) {
+		const item = tradeitBotItems.shift();
+		return item;
+	} else {
+		return null;
+	}
+}
+
+export function cacheBuffUserId(id: string) {
+	if (id && id.length > 0) {
+		buffUserId = id;
+	}
+}
+
+export function cacheBuffCurrencyRate(currencyItem: BuffMarket.CurrencyItem) {
+	buffCurrencyRate = currencyItem;
+}
+
+export function cacheBuffGoodsInfos(data: { [goods_id: number]: BuffMarket.GoodsInfo }) {
+	for (const key in data) {
+		buffGoodsInfo[key] = data[key];
+	}
+}
+
+export function cacheBuffMarketItems(data: BuffMarket.Item[]) {
+	if (!buffItems) {
+		buffItems = {};
+	}
+	for (const item of data) {
+		if ((<BuffMarket.MarketListing>item).id) {
+			let key = 0;
+			if (typeof (<BuffMarket.MarketListing>item).id === 'string') {
+				key = (<any>item).asset_info.goods_id;
+			} else {
+				key = (<BuffMarket.MarketListing>item).id;
+			}
+			if (buffItems[key]) {
+				buffItems[key].push(item);
+			} else {
+				buffItems[key] = [item];
+			}
+		} else if ((<BuffMarket.InventoryItem>item).goods_id) {
+			if (buffItems[(<BuffMarket.InventoryItem>item).goods_id]) {
+				buffItems[(<BuffMarket.InventoryItem>item).goods_id].push(item);
+			} else {
+				buffItems[(<BuffMarket.InventoryItem>item).goods_id] = [item];
+			}
+			// buffItems[(<BuffMarket.InventoryItem>item).goods_id] = item;
+		}
+	}
+}
+
+export function cacheBuffPageItems(data: BuffMarket.Item[]) {
+	buffPageItems = data;
+}
+
+export function cacheCSMoneyItems(data: CSMoney.Item[]) {
+	if (!csmoneyItems) {
+		csmoneyItems = [];
+	}
+	if (csmoneyItems.length > 0) {
+		console.debug('[Plasmo] Items already cached, deleting items: ', csmoneyItems);
+		csmoneyItems = [];
+	}
+	data.forEach((item) => {
+		csmoneyItemMapping[item.id] = item;
+	});
+	csmoneyItems = data;
+}
+
+export function cacheCSMoneyUserInventory(data: CSMoney.InventoryItem[]) {
+	csmoneyUserInventory = data;
+}
+
+export function cacheCSMoneyBotInventory(data: CSMoney.InventoryItem[]) {
+	csmoneyBotInventory = data;
+}
+
+export function getFirstCSMoneyUserInventoryItem() {
+	return csmoneyUserInventory?.shift();
+}
+
+export function getFirstCSMoneyBotInventoryItem() {
+	return csmoneyBotInventory?.shift();
+}
+
+export function getBuffUserId() {
+	return buffUserId;
+}
+
+export function getBuffCurrencyRate() {
+	return buffCurrencyRate;
+}
+
+export function getBuffGoodsInfo(goods_id: number) {
+	return buffGoodsInfo[goods_id];
+}
+
+export function deleteBuffMarketItems() {
+	console.debug('[Plasmo] Deleting buff items');
+	buffItems = [];
+}
+
+export function getBuffMarketItem(id: number) {
+	if (buffItems[id]) {
+		if (buffItems[id].length > 1) {
+			return buffItems[id].shift();
+		} else {
+			return buffItems[id][0];
+		}
+	}
+	return null;
+}
+
+export function getFirstBuffPageItem() {
+	if (buffPageItems.length > 0) {
+		const item = buffPageItems.shift();
+		return item;
+	} else {
+		return null;
+	}
+}
+
+export function getFirstCSMoneyItem() {
+	if (!csmoneyItems) {
+		csmoneyItems = [];
+		return null;
+	}
+	if (csmoneyItems.length > 0) {
+		const item = csmoneyItems.shift();
+		return item;
+	} else {
+		return null;
+	}
+}
+
+export function getSpecificCSMoneyItem(itemId: number) {
+	return csmoneyItemMapping[itemId];
+}
+
 export async function getStallData(stall_id: string) {
 	const request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
 	if (request.status !== 200) {
@@ -388,17 +363,6 @@ async function fetchSkbExchangeRates() {
 		.then((data) => {
 			console.debug('[BetterFloat] Received exchange rates from Rums.dev: ', data);
 			cacheSkinbidCurrencyRates(data);
-		});
-}
-
-// this endpoint sometimes gets called by Skinport itself and provides the user data
-async function fetchSpUserData() {
-	await fetch('https://skinport.com/api/data/')
-		.then((response) => response.json())
-		.then((data: Skinport.UserData) => {
-			console.debug('[BetterFloat] Received user data from Skinport manually: ', data);
-			cacheSkinportCurrencyRates(data.rates, data.currency);
-			cacheSpMinOrderPrice(data.limits.minOrderValue);
 		});
 }
 
@@ -487,3 +451,19 @@ export async function loadCrimsonWebMapping() {
 	}
 	return true;
 }
+
+export const BigCurrency = (currency: string) =>
+	new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: currency,
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 0,
+	});
+
+export const SmallCurrency = (currency: string) =>
+	new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: currency,
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
+	});

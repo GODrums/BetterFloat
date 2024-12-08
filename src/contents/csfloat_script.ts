@@ -38,20 +38,7 @@ import {
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import {
-	cacheCSFInventory,
-	getCSFCurrencyRate,
-	getCSFHistoryGraph,
-	getCSFPopupItem,
-	getCrimsonWebMapping,
-	getFirstCSFItem,
-	getFirstCSFSimilarItem,
-	getFirstHistorySale,
-	getItemPrice,
-	getMarketID,
-	getSpecificCSFInventoryItem,
-	getSpecificCSFOffer,
-} from '../lib/handlers/mappinghandler';
+import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	calculateTime,
@@ -67,8 +54,19 @@ import {
 } from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
+import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import {
+	cacheCSFInventory,
+	getCSFCurrencyRate,
+	getCSFHistoryGraph,
+	getCSFPopupItem,
+	getFirstCSFItem,
+	getFirstCSFSimilarItem,
+	getFirstHistorySale,
+	getSpecificCSFInventoryItem,
+	getSpecificCSFOffer,
+} from '~lib/handlers/cache/csfloat_cache';
 import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 

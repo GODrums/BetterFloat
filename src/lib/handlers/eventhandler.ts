@@ -1,6 +1,7 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
+import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -19,15 +20,18 @@ import {
 	cacheCSFOffers,
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
+} from './cache/csfloat_cache';
+import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import {
+	cacheBuffCurrencyRate,
+	cacheBuffGoodsInfos,
+	cacheBuffMarketItems,
+	cacheBuffPageItems,
+	cacheBuffUserId,
 	cacheSkbInventory,
 	cacheSkbItems,
 	cacheSkinbidCurrencyRates,
 	cacheSkinbidUserCurrency,
-	cacheSkinportCurrencyRates,
-	cacheSpItems,
-	cacheSpMinOrderPrice,
-	cacheSpPopupInventoryItem,
-	cacheSpPopupItem,
 	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
@@ -52,6 +56,8 @@ export async function activateHandler() {
 			processSkinportEvent(eventData);
 		} else if (location.host === 'skinbid.com' || location.host === 'api.skinbid.com') {
 			processSkinbidEvent(eventData);
+		} else if (location.host === 'buff.market') {
+			processBuffMarketEvent(eventData);
 		}
 	});
 
@@ -225,5 +231,46 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 			// item page
 			cacheCSFSimilarItems(eventData.data as CSFloat.ListingData[]);
 		}
+	}
+}
+
+// process intercepted data
+function processBuffMarketEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/goods/info')) {
+		// item lists: https://buff.market/market/goods/91?game=csgo
+		// caching item just for the name
+		cacheBuffMarketItems([(eventData.data as BuffMarket.GoodsInfoResponse).data]);
+	} else if (eventData.url.includes('api/market/goods/sell_order')) {
+		const responseData = (eventData.data as BuffMarket.SellOrderResponse).data;
+		cacheBuffGoodsInfos(responseData.goods_infos);
+		if (eventData.url.includes('goods_id=')) {
+			cacheBuffPageItems(responseData.items);
+		} else {
+			cacheBuffMarketItems(responseData.items);
+		}
+	} else if (eventData.url.includes('api/market/goods') && !eventData.url.includes('related_recommendation')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.GoodsResponse).data.items);
+	} else if (eventData.url.includes('api/market/steam_inventory')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.InventoryResponse).data.items);
+	} else if (eventData.url.includes('api/market/sell_order/preview/manual_plus')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingPreviewResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingPreviewResponse).data.goods_infos);
+	} else if (eventData.url.includes('api/market/sell_order/change_preview/v2')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingPreviewResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingPreviewResponse).data.goods_infos);
+	} else if (eventData.url.includes('api/market/sell_order/')) {
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingOnSaleResponse).data.items);
+	} else if (eventData.url.includes('api/user/info')) {
+		cacheBuffUserId((eventData.data as any).data?.user_info?.id);
+	} else if (eventData.url.includes('account/api/supported_currency')) {
+		const selectedCurrency = (eventData.data as BuffMarket.SupportedCurrencyResponse).data.items.find((item) => item.buff_selected);
+		if (selectedCurrency) {
+			cacheBuffCurrencyRate(selectedCurrency);
+		}
+	} else if (eventData.url.includes('api/market/shop/') && eventData.url.includes('/sell_order')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingOnSaleResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
 	}
 }

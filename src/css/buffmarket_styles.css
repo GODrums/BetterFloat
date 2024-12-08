@@ -1,0 +1,62 @@
+.betterfloat-buff-a {
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	flex-direction: row;
+}
+
+.betterfloat-buffprice {
+	margin-left: 2px;
+	padding-top: 1px;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: .02em;
+}
+
+.betterfloat-sale-tag {
+	font-size: 11px;
+	font-style: normal;
+	font-weight: 525;
+	line-height: 17px;
+	letter-spacing: -.005em;
+	text-wrap: nowrap;
+}
+
+.betterfloat-buff-tooltip {
+	/* Positioning the tooltip text */
+	position: absolute;
+	z-index: 9999;
+	transform: translate(-13%, 25px);
+
+	visibility: hidden;
+	color: #fff;
+	text-align: center;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	background-color: #171920c4;
+	padding: 10px 5px;
+	border-radius: 4px;
+	border: 1px solid #3f3f3f;
+	font-size: 13px;
+	width: 180px;
+
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.1s;
+}
+
+.betterfloat-buffprice:hover .betterfloat-buff-tooltip {
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.2s linear;
+}
+
+.inventory .goods-item-info .price-wrap {
+	overflow: visible !important;
+}
+
+.selling .goods-item-info a {
+	align-items: center !important;
+}

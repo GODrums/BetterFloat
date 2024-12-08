@@ -6,11 +6,11 @@ import type { PlasmoCSConfig } from 'plasmo';
 import inject from 'url:~lib/util/inject.ts';
 
 export const config: PlasmoCSConfig = {
-	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*'],
+	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*', '*://buff.market/*'],
 	run_at: 'document_start',
 };
 
-//we do not want to inject the script into the blog page
+// we do not want to inject the script into blog pages
 if (!location.hostname.includes('blog.')) {
 	injectScript();
 }

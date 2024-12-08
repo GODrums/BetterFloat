@@ -1,8 +1,8 @@
 import { ExtensionStorage } from '~lib/util/storage';
-import { cacheRealCurrencyRates } from './mappinghandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
+import { cacheRealCurrencyRates } from './mappinghandler';
 
 const CSBLUEGEM_API_URL = 'https://api.csbluegem.com/';
 

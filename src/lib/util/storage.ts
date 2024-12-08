@@ -104,6 +104,17 @@ export const DEFAULT_SETTINGS = {
 	'skb-color-profit': '#0cb083',
 	'skb-color-loss': '#ce0000',
 	'skb-color-neutral': '#FFFFFF',
+	'bm-enable': true,
+	'bm-pricingsource': 'buff',
+	'bm-altmarket': 'none',
+	'bm-pricereference': 0,
+	'bm-buffdifference': true,
+	'bm-buffdifferencepercent': false,
+	'bm-listingage': true,
+	'bm-stickerprices': true,
+	'bm-color-profit': '#008000',
+	'bm-color-loss': '#ce0000',
+	'bm-color-neutral': '#708090',
 	'display-updatepopup': true,
 };
 
