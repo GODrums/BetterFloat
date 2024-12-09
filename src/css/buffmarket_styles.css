@@ -3,16 +3,15 @@
 	display: inline-flex;
 	align-items: center;
 	flex-direction: row;
+	margin-top: 4px;
 }
 
 .betterfloat-buffprice {
 	margin-left: 2px;
-	padding-top: 1px;
 	font-size: 13px;
 	font-style: normal;
 	font-weight: 500;
-	line-height: 20px;
-	letter-spacing: .02em;
+	line-height: 17px;
 }
 
 .betterfloat-sale-tag {
@@ -59,4 +58,8 @@
 
 .selling .goods-item-info a {
 	align-items: center !important;
+}
+
+.inventory-main .goods-card {
+	overflow: visible !important;
 }

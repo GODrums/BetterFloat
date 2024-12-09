@@ -34,7 +34,7 @@ async function init() {
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
-	if (!extensionSettings['csf-enable']) return;
+	if (!extensionSettings['bm-enable']) return;
 
 	await initPriceMapping(extensionSettings, 'bm');
 
@@ -121,13 +121,11 @@ async function getBuffItem(item: ExtendedBuffItem) {
 		priceOrder = new Decimal(0);
 	}
 
-	if ((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) {
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bm-altmarket'] && extensionSettings['bm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['bm-altmarket'] as MarketSource;
-		if (source !== MarketSource.None) {
-			const altPrices = await getBuffPrice(buff_name, item.style, source);
-			priceListing = altPrices.priceListing;
-			priceOrder = altPrices.priceOrder;
-		}
+		const altPrices = await getBuffPrice(buff_name, item.style, source);
+		priceListing = altPrices.priceListing;
+		priceOrder = altPrices.priceOrder;
 	}
 	const market_id = getMarketID(buff_name, source);
 
@@ -142,10 +140,9 @@ async function getBuffItem(item: ExtendedBuffItem) {
 		priceOrder = priceOrder.mul(currencyItem.rate);
 	}
 
-	const storageReference = extensionSettings['bm-referenceprice'];
-	const referencePrice = parseInt(storageReference) === 0 ? priceOrder : priceListing;
+	const referencePrice = parseInt(extensionSettings['bm-referenceprice']) === 0 ? priceOrder : priceListing;
 
-	const priceDifference = item.price.minus(referencePrice ?? 0);
+	const priceDifference = referencePrice ? item.price.minus(referencePrice) : new Decimal(0);
 	return {
 		buff_name,
 		market_id,
@@ -244,54 +241,6 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	}
 
 	const footerContainer = getFooterContainer(state, container);
-
-	// if (footerContainer) {
-	// 	const buffContainer = document.createElement('a');
-	// 	buffContainer.setAttribute('class', 'betterfloat-buff-a');
-	// 	const buff_url = market_id ? `https://buff.163.com/goods/${market_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
-	// 	buffContainer.setAttribute('href', buff_url);
-	// 	buffContainer.setAttribute('target', '_blank');
-	// 	if (state === PageState.ItemPage) {
-	// 		buffContainer.setAttribute('style', 'margin-top: 10px;');
-	// 	}
-
-	// 	const buffImage = document.createElement('img');
-	// 	buffImage.setAttribute('src', ICON_BUFF);
-	// 	buffImage.setAttribute('style', 'height: 15px; margin-right: 5px');
-	// 	buffContainer.appendChild(buffImage);
-	// 	const buffPrice = document.createElement('div');
-	// 	buffPrice.setAttribute('class', 'suggested-price betterfloat-buffprice');
-	// 	buffPrice.setAttribute(
-	// 		'data-betterfloat',
-	// 		JSON.stringify({
-	// 			buff_name: buff_name,
-	// 			priceFromReference: priceFromReference,
-	// 		})
-	// 	);
-	// 	const buffPriceBid = document.createElement('span');
-	// 	buffPriceBid.setAttribute('style', 'color: orange;');
-	// 	buffPriceBid.textContent = `${priceListing?.gt(1000) && state !== PageState.ItemPage ? BigCurrency(currencyRate.value).format(priceOrder?.toNumber() ?? 0) : SmallCurrency(currencyRate.value).format(priceOrder?.toNumber() ?? 0)}`;
-	// 	buffPrice.appendChild(buffPriceBid);
-	// 	const buffPriceDivider = document.createElement('span');
-	// 	buffPriceDivider.setAttribute('style', 'color: gray;margin: 0 3px 0 3px;');
-	// 	buffPriceDivider.textContent = '|';
-	// 	buffPrice.appendChild(buffPriceDivider);
-	// 	const buffPriceAsk = document.createElement('span');
-	// 	buffPriceAsk.setAttribute('style', 'color: greenyellow;');
-	// 	buffPriceAsk.textContent = `${priceListing?.gt(1000) && state !== PageState.ItemPage ? BigCurrency(currencyRate.value).format(priceListing?.toNumber() ?? 0) : SmallCurrency(currencyRate.value).format(priceListing?.toNumber() ?? 0)}`;
-	// 	buffPrice.appendChild(buffPriceAsk);
-	// 	buffContainer.appendChild(buffPrice);
-
-	// 	if (state === PageState.ItemPage) {
-	// 		if (!document.querySelector('.betterfloat-buffprice')) {
-	// 			footerContainer.innerHTML = `<div style="display: flex; flex-direction: column;">${footerContainer.innerHTML}</div>`;
-	// 			footerContainer.firstChild?.appendChild(buffContainer);
-	// 		}
-	// 	} else if (!container.querySelector('.betterfloat-buffprice')) {
-	// 		footerContainer.appendChild(buffContainer);
-	// 	}
-	// }
-
 	const currencyItem = getBuffCurrencyRate();
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -348,13 +297,17 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		const percentage = new Decimal(location.pathname.includes('market/all') ? itemPrice : getItemPrice(item)).div(priceFromReference ?? 0).mul(100);
 		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px; ${
-			state === PageState.ItemPage ? 'font-size: 14px;' : 'margin-left: 10px;'
-		}" data-betterfloat="${difference}"><span>${difference.isPositive() ? '+' : '-'}${
+		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px; ${state === PageState.ItemPage ? 'font-size: 14px;' : 'margin-left: 10px;'}`;
+		const formattedPrice =
 			absDifference.gt(1000) && state !== PageState.ItemPage
 				? BigCurrency(currencyRate.value).format(absDifference.toNumber())
-				: SmallCurrency(currencyRate.value).format(absDifference.toNumber())
-		} </span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;
+				: SmallCurrency(currencyRate.value).format(absDifference.toNumber());
+
+		const buffPriceHTML = html`
+			<div class="sale-tag betterfloat-sale-tag" style="${saleTagStyle}" data-betterfloat="${difference}">
+				<span>${difference.isPositive() ? '+' : '-'}${formattedPrice}</span>
+			${!percentage.isNaN() ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>` : ''}
+		`;
 
 		priceContainer.insertAdjacentHTML(newline ? 'afterend' : 'beforeend', buffPriceHTML);
 
@@ -422,7 +375,7 @@ function generatePriceLine(
 								Ask: Lowest listing price
 							</span>
 							<span style="color: orange;">${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
-							<span style="color: gray;margin: 0 3px 0 3px;">|</span>
+							<span style="color: gray;">|</span>
 							<span style="color: greenyellow;">${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
 					  `
 						: html` <span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
