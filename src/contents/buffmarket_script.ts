@@ -8,7 +8,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getFirstBuffPageItem, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
-import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {

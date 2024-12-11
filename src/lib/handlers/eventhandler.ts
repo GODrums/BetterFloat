@@ -2,6 +2,7 @@ import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
+import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -21,12 +22,11 @@ import {
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
+import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffUserId, loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
-import { cacheCSMoneyItems, cacheCSMoneyUserInventory, cacheCSMoneyBotInventory } from './cache/csmoney_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];

@@ -3,12 +3,19 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getFirstCSMoneyUserInventoryItem, getFirstCSMoneyBotInventoryItem, getFirstCSMoneyItem, getSpecificCSMoneyItem } from '~lib/handlers/cache/csmoney_cache';
+import {
+	getFirstCSMoneyBotInventoryItem,
+	getFirstCSMoneyItem,
+	getFirstCSMoneyUserInventoryItem,
+	getSpecificCSMoneyItem,
+	isCSMoneyBotInventoryEmpty,
+	isCSMoneyUserInventoryEmpty,
+} from '~lib/handlers/cache/csmoney_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { handleSpecialStickerNames, getBuffPrice, BigUSDollar, USDollar, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
-import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { BigUSDollar, USDollar, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -114,12 +121,20 @@ async function adjustItem(container: Element, isPopout = false) {
 			return newItem;
 		}
 	};
+	const isInventoryEmpty = () => {
+		if (location.pathname === '/csgo/trade/') {
+			const isUserItem = !container.closest('#botInventory');
+			return isUserItem ? isCSMoneyUserInventoryEmpty() : isCSMoneyBotInventoryEmpty();
+		} else {
+			return !getFirstCSMoneyItem();
+		}
+	};
 	let apiItem = getApiItem();
-	
+
 	let attempts = 0;
-	while (!apiItem && attempts++ < 5) {
+	while (!apiItem && attempts++ < 5 && isInventoryEmpty()) {
 		// wait for 1s and try again
-		console.log('[BetterFloat] No item found, waiting 1s and trying again...');
+		console.log('[BetterFloat] No item found, waiting 1s and trying again...', container);
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		apiItem = getApiItem();
 	}
@@ -184,7 +199,7 @@ async function getBuffItem(container: Element, item: CSMoney.Item) {
 			symbol: currencyItem?.symbol,
 			text: currencyItem?.text,
 			rate: currencyRate,
-		}
+		},
 	};
 }
 
@@ -195,12 +210,7 @@ function getItemPrice(item: CSMoney.Item): number {
 	const invItem = item as CSMoney.InventoryItem;
 	const marketItem = item as CSMoney.MarketItem;
 
-	return invItem.sellPrice ??
-		   invItem.recommendedPrice?.decreased ??
-		   marketItem.pricing?.computed ??
-		   invItem.botPrice ??
-		   invItem.price ??
-		   0;
+	return invItem.sellPrice ?? invItem.recommendedPrice?.decreased ?? marketItem.pricing?.computed ?? invItem.botPrice ?? invItem.price ?? 0;
 }
 
 function getHTMLPrice(container: Element) {
@@ -289,7 +299,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		priceClass: 'suggested-price',
 		addSpaceBetweenPrices: false,
 		showPrefix: false,
-		iconHeight: '15px'
+		iconHeight: '15px',
 	});
 
 	if (footerContainer) {
@@ -341,8 +351,9 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;${
 			isPopout ? ' margin-left: 10px;' : ''
-		}" data-betterfloat="${difference}"><span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(absDifference.toNumber())
-		}</span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;
+		}" data-betterfloat="${difference}"><span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(
+			absDifference.toNumber()
+		)}</span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;
 		priceContainer?.setAttribute('style', 'display: flex; gap: 5px; align-items: center;');
 
 		priceContainer?.insertAdjacentHTML('beforeend', buffPriceHTML);

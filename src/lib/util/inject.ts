@@ -9,7 +9,7 @@ function openIntercept() {
 		(<XMLHttpRequest>this).addEventListener('load', (e) => {
 			const target = <XMLHttpRequest>e.currentTarget;
 			if (!target.responseURL.includes(location.hostname)) {
-				console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
+				// console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
 				return;
 			}
 
