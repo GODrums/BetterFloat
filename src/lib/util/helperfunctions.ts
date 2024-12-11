@@ -5,6 +5,29 @@ import { getPriceMapping } from '../handlers/mappinghandler';
 import { MarketSource } from './globals';
 import { phaseMapping } from './patterns';
 
+export function parsePrice(priceText: string) {
+	let currency = '';
+	// regex also detects &nbsp as whitespace!
+	if (priceText.split(/\s/).length > 1) {
+		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
+		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
+		currency = parts.filter((x) => Number.isNaN(+x))[0];
+	} else {
+		// format: "€1,696.00"
+		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
+		currency = priceText.substring(0, firstDigit);
+		priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+	}
+	let price = Number(priceText);
+
+	if (Number.isNaN(price) || !Number.isNaN(Number(currency))) {
+		price = 0;
+		currency = '';
+	}
+	return { price, currency };
+}
+
 export function getFadePercentage(weapon: string, skin: string, paintSeed: number) {
 	if (skin.includes('Amber Fade')) {
 		return { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };

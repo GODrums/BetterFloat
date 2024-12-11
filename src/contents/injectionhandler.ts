@@ -6,7 +6,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import inject from 'url:~lib/util/inject.ts';
 
 export const config: PlasmoCSConfig = {
-	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*', '*://buff.market/*'],
+	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*', '*://buff.market/*', '*://*.cs.money/*'],
 	run_at: 'document_start',
 };
 
@@ -31,7 +31,7 @@ function injectScript() {
 	script.type = 'module';
 	script.src = inject;
 	script.onload = function () {
-		(<HTMLScriptElement>this).remove();
+		(<typeof script>this).remove();
 	};
 	(document.head || document.documentElement).appendChild(script);
 }

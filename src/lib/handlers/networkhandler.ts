@@ -32,8 +32,19 @@ export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = 'US
 	return null;
 }
 
+let isCurrencyFetched = false;
+let isCurrencyFetchDone = false;
+
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
+	if (isCurrencyFetched) {
+		// wait until the rates are fetched from parallel requests
+		while (!isCurrencyFetchDone) {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
+		return;
+	}
+	isCurrencyFetched = true;
 	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
@@ -48,6 +59,7 @@ export async function fetchCurrencyRates() {
 			cacheRealCurrencyRates(currencyRates.rates);
 		}
 	}
+	isCurrencyFetchDone = true;
 }
 
 /**

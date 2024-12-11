@@ -126,6 +126,17 @@ export const DEFAULT_SETTINGS = {
 	'lis-color-profit': '#008000',
 	'lis-color-loss': '#ce0000',
 	'lis-color-neutral': '#708090',
+	'csm-enable': true,
+	'csm-stickerprices': true,
+	'csm-pricingsource': 'buff',
+	'csm-altmarket': 'none',
+	'csm-pricereference': 0,
+	'csm-buffdifference': true,
+	'csm-buffdifferencepercent': false,
+	'csm-listingage': true,
+	'csm-color-profit': '#008000',
+	'csm-color-loss': '#ce0000',
+	'csm-color-neutral': '#708090',
 	'display-updatepopup': true,
 };
 

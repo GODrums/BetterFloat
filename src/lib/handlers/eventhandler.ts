@@ -25,6 +25,8 @@ import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinb
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffUserId, loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
+import { cacheCSMoneyItems, cacheCSMoneyUserInventory, cacheCSMoneyBotInventory } from './cache/csmoney_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -48,6 +50,8 @@ export async function activateHandler() {
 			processSkinbidEvent(eventData);
 		} else if (location.host === 'buff.market') {
 			processBuffMarketEvent(eventData);
+		} else if (location.host === 'cs.money') {
+			processCSMoneyEvent(eventData);
 		}
 	});
 
@@ -262,5 +266,22 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('api/market/shop/') && eventData.url.includes('/sell_order')) {
 		cacheBuffMarketItems((eventData.data as BuffMarket.SellingOnSaleResponse).data.items);
 		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
+	}
+}
+
+// process intercepted data
+function processCSMoneyEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('1.0/market/sell-orders/')) {
+		// item popup
+		cacheCSMoneyItems([(eventData.data as CSMoney.SingleSellOrderResponse).item]);
+	} else if (eventData.url.includes('1.0/market/sell-orders')) {
+		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
+	} else if (eventData.url.includes('1.0/market/user-inventory')) {
+		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
+	} else if (eventData.url.includes('3.0/load_user_inventory/730')) {
+		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
+	} else if (eventData.url.includes('5.0/load_bots_inventory/730')) {
+		cacheCSMoneyBotInventory((eventData.data as CSMoney.UserInventoryResponse).items);
 	}
 }

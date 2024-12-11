@@ -4,14 +4,10 @@ import Decimal from 'decimal.js';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
-import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { MarketSource } from '~lib/util/globals';
-import { Queue } from '~lib/util/queue';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { DopplerPhase } from '../@typings/FloatTypes';
-import type { Skinbid } from '../@typings/SkinbidTypes';
-import type { Skinport } from '../@typings/SkinportTypes';
 import { fetchCurrencyRates } from './networkhandler';
 
 type MarketIDEntry = {
@@ -44,11 +40,6 @@ const buffGoodsInfo: { [goods_id: number]: BuffMarket.GoodsInfo } = {};
 let buffCurrencyRate: BuffMarket.CurrencyItem | null = null;
 // buffmarket: cached own user id
 let buffUserId: string | null = null;
-// csmoney: cached items from api
-let csmoneyItems: CSMoney.Item[] = [];
-const csmoneyItemMapping: { [itemId: number]: CSMoney.Item } = {};
-let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
-let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
 // tradeit: cached items from bots
 let tradeitBotItems: Tradeit.Item[] = [];
 // tradeit: cached items from own inventory
@@ -181,36 +172,6 @@ export function cacheBuffPageItems(data: BuffMarket.Item[]) {
 	buffPageItems = data;
 }
 
-export function cacheCSMoneyItems(data: CSMoney.Item[]) {
-	if (!csmoneyItems) {
-		csmoneyItems = [];
-	}
-	if (csmoneyItems.length > 0) {
-		console.debug('[Plasmo] Items already cached, deleting items: ', csmoneyItems);
-		csmoneyItems = [];
-	}
-	data.forEach((item) => {
-		csmoneyItemMapping[item.id] = item;
-	});
-	csmoneyItems = data;
-}
-
-export function cacheCSMoneyUserInventory(data: CSMoney.InventoryItem[]) {
-	csmoneyUserInventory = data;
-}
-
-export function cacheCSMoneyBotInventory(data: CSMoney.InventoryItem[]) {
-	csmoneyBotInventory = data;
-}
-
-export function getFirstCSMoneyUserInventoryItem() {
-	return csmoneyUserInventory?.shift();
-}
-
-export function getFirstCSMoneyBotInventoryItem() {
-	return csmoneyBotInventory?.shift();
-}
-
 export function getBuffUserId() {
 	return buffUserId;
 }
@@ -246,23 +207,6 @@ export function getFirstBuffPageItem() {
 	} else {
 		return null;
 	}
-}
-
-export function getFirstCSMoneyItem() {
-	if (!csmoneyItems) {
-		csmoneyItems = [];
-		return null;
-	}
-	if (csmoneyItems.length > 0) {
-		const item = csmoneyItems.shift();
-		return item;
-	} else {
-		return null;
-	}
-}
-
-export function getSpecificCSMoneyItem(itemId: number) {
-	return csmoneyItemMapping[itemId];
 }
 
 export async function getStallData(stall_id: string) {

@@ -186,8 +186,8 @@ async function getBuffItem(item: HTMLItem) {
 		priceOrder = new Decimal(0);
 	}
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bm-altmarket'] && extensionSettings['bm-altmarket'] !== MarketSource.None) {
-		source = extensionSettings['bm-altmarket'] as MarketSource;
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['lis-altmarket'] && extensionSettings['lis-altmarket'] !== MarketSource.None) {
+		source = extensionSettings['lis-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
