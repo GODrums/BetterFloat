@@ -28,13 +28,10 @@ import {
 	cacheBuffMarketItems,
 	cacheBuffPageItems,
 	cacheBuffUserId,
-	cacheSkbInventory,
-	cacheSkbItems,
-	cacheSkinbidCurrencyRates,
-	cacheSkinbidUserCurrency,
 	loadMapping,
 } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import { cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency, cacheSkbInventory } from './cache/skinbid_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];

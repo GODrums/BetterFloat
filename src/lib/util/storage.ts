@@ -115,6 +115,17 @@ export const DEFAULT_SETTINGS = {
 	'bm-color-profit': '#008000',
 	'bm-color-loss': '#ce0000',
 	'bm-color-neutral': '#708090',
+	'lis-enable': true,
+	'lis-pricingsource': 'buff',
+	'lis-altmarket': 'none',
+	'lis-pricereference': 0,
+	'lis-buffdifference': true,
+	'lis-buffdifferencepercent': false,
+	'lis-listingage': true,
+	'lis-stickerprices': true,
+	'lis-color-profit': '#008000',
+	'lis-color-loss': '#ce0000',
+	'lis-color-neutral': '#708090',
 	'display-updatepopup': true,
 };
 

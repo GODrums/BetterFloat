@@ -6,10 +6,11 @@ import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getFirstBuffPageItem, getMarketID } from '~lib/handlers/mappinghandler';
-import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
-import { getBuffPrice, getMarketURL, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { MarketSource } from '~lib/util/globals';
+import { getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 import type { IStorage } from '~lib/util/storage';
+import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.buff.market/*'],
@@ -244,19 +245,22 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	const currencyItem = getBuffCurrencyRate();
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-	const buffContainer = generatePriceLine(
+	const buffContainer = generatePriceLine({
 		source,
 		market_id,
 		buff_name,
 		priceOrder,
 		priceListing,
 		priceFromReference,
-		currencyItem?.symbol ?? '$',
-		buff_item.style as DopplerPhase,
+		userCurrency: currencyItem?.symbol ?? '$',
+		itemStyle: buff_item.style as DopplerPhase,
 		CurrencyFormatter,
 		isDoppler,
-		false
-	);
+		isPopout: false,
+		priceClass: 'suggested-price',
+		addSpaceBetweenPrices: false,
+		showPrefix: false,
+	});
 	if (footerContainer) {
 		if (state === PageState.ItemPage) {
 			if (!document.querySelector('.betterfloat-buffprice')) {
@@ -321,79 +325,6 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	return {
 		price_difference: difference.toNumber(),
 	};
-}
-
-function generatePriceLine(
-	source: MarketSource,
-	market_id: number | string | undefined,
-	buff_name: string,
-	priceOrder: Decimal | undefined,
-	priceListing: Decimal | undefined,
-	priceFromReference: Decimal | undefined,
-	userCurrency: string,
-	itemStyle: DopplerPhase,
-	CurrencyFormatter: Intl.NumberFormat,
-	isDoppler: boolean,
-	isPopout: boolean
-) {
-	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
-	let icon = '';
-	let iconStyle = 'height: 15px; margin-right: 5px;';
-	switch (source) {
-		case MarketSource.Buff:
-			icon = ICON_BUFF;
-			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
-			break;
-		case MarketSource.Steam:
-			icon = ICON_STEAM;
-			break;
-		case MarketSource.C5Game:
-			icon = ICON_C5GAME;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.YouPin:
-			icon = ICON_YOUPIN;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.CSFloat:
-			icon = ICON_CSFLOAT;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-	}
-	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
-	const buffContainer = html`
-		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="">
-			<img src="${icon}" style="${iconStyle}" />
-			<div class="suggested-price betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${bfDataAttribute}'>
-				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
-						? html`
-							<span class="betterfloat-buff-tooltip">
-								Bid: Highest buy order price;
-								<br />
-								Ask: Lowest listing price
-							</span>
-							<span style="color: orange;">${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
-							<span style="color: gray;">|</span>
-							<span style="color: greenyellow;">${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
-					  `
-						: html` <span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
-				}
-			</div>
-			${
-				(source === MarketSource.Buff || source === MarketSource.Steam) && isWarning
-					? html`
-						<img
-							src="${ICON_EXCLAMATION}"
-							style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);"
-						/>
-				  `
-					: ''
-			}
-		</a>
-	`;
-	return buffContainer;
 }
 
 // mutation observer active?
