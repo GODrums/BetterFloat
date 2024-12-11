@@ -1,26 +1,26 @@
 .betterfloat-buff-a {
-    display: inline-flex!important;
-    align-items: center;
-    flex-direction: row; 
-    text-decoration: none; 
-    left: 8px;
-    margin-top: 2px;
-    position: absolute; 
-    z-index: 100;
+	display: inline-flex !important;
+	align-items: center;
+	flex-direction: row;
+	text-decoration: none;
+	left: 8px;
+	margin-top: 2px;
+	position: absolute;
+	z-index: 100;
 }
 
 .betterfloat-big-a {
-    position: static;
+	position: static;
 }
 
 .betterfloat-buffprice {
-    margin-left: 2px; 
-    padding-top: 1px; 
-    font-size: 13px; 
-    font-style: normal; 
-    font-weight: 500; 
-    line-height: 20px; 
-    letter-spacing: 0.02em;
+	margin-left: 2px;
+	padding-top: 1px;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.02em;
 }
 
 .betterfloat-buff-tooltip {

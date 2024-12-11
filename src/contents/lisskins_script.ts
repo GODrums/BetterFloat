@@ -2,11 +2,11 @@ import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
-import type { ItemStyle, DopplerPhase } from '~lib/@typings/FloatTypes';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
-import { ICON_BUFF, MarketSource } from '~lib/util/globals';
-import { handleSpecialStickerNames, getBuffPrice, BigUSDollar, USDollar, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { MarketSource } from '~lib/util/globals';
+import { BigUSDollar, USDollar, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -239,7 +239,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 			showPrefix: false,
 			iconHeight: '15px',
 		});
-		
+
 		elementContainer.insertAdjacentHTML(isItemPage ? 'beforeend' : 'afterend', buffContainer);
 		// open window according to href attribute of current element
 		elementContainer.parentElement?.querySelector('.betterfloat-buffprice')?.addEventListener('click', (e) => {
@@ -265,11 +265,12 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 		const percentage = item.price.div(priceFromReference).times(100);
 		const colorPercentage = 100;
 		const { color, background } = percentage.gt(colorPercentage) ? styling.loss : styling.profit;
+		const formattedPrice = absDifference.gt(1000) ? BigCurrency(currency).format(absDifference.toNumber()) : SmallCurrency(currency).format(absDifference.toNumber());
 
 		const buffPriceHTML = html`
 			<div class="sale-tag betterfloat-sale-tag" style="display: inline-flex;flex-direction: column;position: absolute; right: 5px; z-index: 20; translate: 0 15px;font-size: 11px; font-style: normal; font-weight: 525; line-height: 17px; letter-spacing: -0.005em; text-wrap: nowrap; background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;">
 				<span>
-					${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(absDifference.toNumber())}
+					${difference.isPos() ? '+' : '-'}${formattedPrice}
 				</span>
 				<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
 			</div>

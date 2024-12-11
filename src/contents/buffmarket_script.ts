@@ -244,7 +244,13 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	const footerContainer = getFooterContainer(state, container);
 	const currencyItem = getBuffCurrencyRate();
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const CurrencyFormatter = new Intl.NumberFormat(undefined, {
+		style: 'currency',
+		currency: currencyRate.value,
+		currencyDisplay: 'narrowSymbol',
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
+	});
 	const buffContainer = generatePriceLine({
 		source,
 		market_id,

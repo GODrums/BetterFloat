@@ -2,8 +2,8 @@ import '~style.css';
 import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import skinportLogo from 'data-base64:~/../assets/skinport.ico';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
+import skinportLogo from 'data-base64:~/../assets/skinport.ico';
 import { useEffect } from 'react';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from '~lib/components/Icons';
 import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shadcn';
@@ -13,11 +13,11 @@ import { About } from '~lib/pages/About';
 import { BuffMarketSettings } from '~lib/pages/Buffmarket';
 import { Changelogs } from '~lib/pages/Changelog';
 import { CSFloatSettings } from '~lib/pages/Csfloat';
+import { LisSkinsSettings } from '~lib/pages/Lisskins';
 import { SkinbidSettings } from '~lib/pages/Skinbid';
 import { SkinportSettings } from '~lib/pages/Skinport';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS } from '~lib/util/storage';
-import { LisSkinsSettings } from '~lib/pages/Lisskins';
 
 export default function IndexPopup() {
 	const hostpermissions = chrome.runtime.getManifest().host_permissions as string[];

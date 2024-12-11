@@ -1,10 +1,10 @@
 import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
-import type { BlueGem } from '../@typings/ExtensionTypes';
-import { getMarketURL } from './helperfunctions';
-import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from './globals';
+import { html } from 'common-tags';
 import type Decimal from 'decimal.js';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
-import { html } from 'common-tags';
+import type { BlueGem } from '../@typings/ExtensionTypes';
+import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from './globals';
+import { getMarketURL } from './helperfunctions';
 
 export function generatePriceLine({
 	source,

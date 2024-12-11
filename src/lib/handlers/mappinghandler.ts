@@ -103,7 +103,6 @@ export async function getItemPrice(buff_name: string, source: MarketSource): Pro
 	};
 }
 
-
 export function cacheTradeitBotItems(data: Tradeit.Item[]) {
 	if (tradeitBotItems.length > 0) {
 		console.debug('[BetterFloat] Items already cached, deleting items: ', tradeitBotItems);

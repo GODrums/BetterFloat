@@ -21,17 +21,10 @@ import {
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
+import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
-import {
-	cacheBuffCurrencyRate,
-	cacheBuffGoodsInfos,
-	cacheBuffMarketItems,
-	cacheBuffPageItems,
-	cacheBuffUserId,
-	loadMapping,
-} from './mappinghandler';
+import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffUserId, loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import { cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency, cacheSkbInventory } from './cache/skinbid_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];

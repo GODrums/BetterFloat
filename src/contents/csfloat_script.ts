@@ -33,7 +33,7 @@ import {
 	MarketSource,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
+import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
@@ -234,10 +234,16 @@ export async function adjustOfferContainer(container: Element) {
 		priceFromReference,
 		userCurrency,
 		itemStyle: '' as DopplerPhase,
-		CurrencyFormatter: Intl.NumberFormat(undefined, { style: 'currency', currency: CSFloatHelpers.userCurrency(), currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }),
+		CurrencyFormatter: Intl.NumberFormat(undefined, {
+			style: 'currency',
+			currency: CSFloatHelpers.userCurrency(),
+			currencyDisplay: 'narrowSymbol',
+			minimumFractionDigits: 0,
+			maximumFractionDigits: 2,
+		}),
 		isDoppler: false,
 		isPopout: false,
-		iconHeight: '20px'
+		iconHeight: '20px',
 	});
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 

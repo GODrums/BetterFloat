@@ -2,11 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import {
-	getItemPrice,
-	getMarketID,
-	loadMapping,
-} from '~lib/handlers/mappinghandler';
+import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { calculateTime, getBuffLink, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
@@ -16,8 +12,8 @@ import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
+import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
 import type { IStorage } from '~lib/util/storage';
-import { getSpecificSkbItem, getFirstSkbItem, getSpecificSkbInventoryItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate } from '~lib/handlers/cache/skinbid_cache';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
