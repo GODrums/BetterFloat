@@ -3,8 +3,6 @@ import Decimal from 'decimal.js';
 
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 
-import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
-import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
 import type { DopplerPhase } from '../@typings/FloatTypes';
@@ -32,18 +30,6 @@ const priceMapping: {
 } = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
-
-// buffmarket: cached items from api
-let buffItems: { [id: number]: BuffMarket.Item[] } = {};
-let buffPageItems: BuffMarket.Item[] = [];
-const buffGoodsInfo: { [goods_id: number]: BuffMarket.GoodsInfo } = {};
-let buffCurrencyRate: BuffMarket.CurrencyItem | null = null;
-// buffmarket: cached own user id
-let buffUserId: string | null = null;
-// tradeit: cached items from bots
-let tradeitBotItems: Tradeit.Item[] = [];
-// tradeit: cached items from own inventory
-const tradeitOwnItems: { [steamImg: string]: Tradeit.Item[] } = {};
 
 export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
 	if (Object.keys(realRatesFromUSD).length > 0) {
@@ -92,121 +78,6 @@ export async function getItemPrice(buff_name: string, source: MarketSource): Pro
 		starting_at: new Decimal(priceMapping[source][buff_name]['ask'] ?? 0).div(100).toNumber(),
 		highest_order: new Decimal(priceMapping[source][buff_name]['bid'] ?? 0).div(100).toNumber(),
 	};
-}
-
-export function cacheTradeitBotItems(data: Tradeit.Item[]) {
-	if (tradeitBotItems.length > 0) {
-		console.debug('[BetterFloat] Items already cached, deleting items: ', tradeitBotItems);
-		tradeitBotItems = [];
-	}
-	tradeitBotItems = data;
-}
-
-export function cacheTradeitOwnItems(data: { [assetId: number]: Tradeit.Item[] }) {
-	// tradeitOwnItems = Object.assign(tradeitOwnItems, data);
-	for (const [_key, value] of Object.entries(data)) {
-		for (const item of value) {
-			tradeitOwnItems[item.imgURL] = [item];
-		}
-	}
-}
-
-export function getFirstTradeitOwnItem(steamImg: string) {
-	return tradeitOwnItems[steamImg];
-}
-
-export function getFirstTradeitBotItem() {
-	if (tradeitBotItems.length > 0) {
-		const item = tradeitBotItems.shift();
-		return item;
-	} else {
-		return null;
-	}
-}
-
-export function cacheBuffUserId(id: string) {
-	if (id && id.length > 0) {
-		buffUserId = id;
-	}
-}
-
-export function cacheBuffCurrencyRate(currencyItem: BuffMarket.CurrencyItem) {
-	buffCurrencyRate = currencyItem;
-}
-
-export function cacheBuffGoodsInfos(data: { [goods_id: number]: BuffMarket.GoodsInfo }) {
-	for (const key in data) {
-		buffGoodsInfo[key] = data[key];
-	}
-}
-
-export function cacheBuffMarketItems(data: BuffMarket.Item[]) {
-	if (!buffItems) {
-		buffItems = {};
-	}
-	for (const item of data) {
-		if ((<BuffMarket.MarketListing>item).id) {
-			let key = 0;
-			if (typeof (<BuffMarket.MarketListing>item).id === 'string') {
-				key = (<any>item).asset_info.goods_id;
-			} else {
-				key = (<BuffMarket.MarketListing>item).id;
-			}
-			if (buffItems[key]) {
-				buffItems[key].push(item);
-			} else {
-				buffItems[key] = [item];
-			}
-		} else if ((<BuffMarket.InventoryItem>item).goods_id) {
-			if (buffItems[(<BuffMarket.InventoryItem>item).goods_id]) {
-				buffItems[(<BuffMarket.InventoryItem>item).goods_id].push(item);
-			} else {
-				buffItems[(<BuffMarket.InventoryItem>item).goods_id] = [item];
-			}
-			// buffItems[(<BuffMarket.InventoryItem>item).goods_id] = item;
-		}
-	}
-}
-
-export function cacheBuffPageItems(data: BuffMarket.Item[]) {
-	buffPageItems = data;
-}
-
-export function getBuffUserId() {
-	return buffUserId;
-}
-
-export function getBuffCurrencyRate() {
-	return buffCurrencyRate;
-}
-
-export function getBuffGoodsInfo(goods_id: number) {
-	return buffGoodsInfo[goods_id];
-}
-
-export function deleteBuffMarketItems() {
-	console.debug('[Plasmo] Deleting buff items');
-	buffItems = [];
-}
-
-export function getBuffMarketItem(id: number) {
-	if (buffItems[id]) {
-		if (buffItems[id].length > 1) {
-			return buffItems[id].shift();
-		} else {
-			return buffItems[id][0];
-		}
-	}
-	return null;
-}
-
-export function getFirstBuffPageItem() {
-	if (buffPageItems.length > 0) {
-		const item = buffPageItems.shift();
-		return item;
-	} else {
-		return null;
-	}
 }
 
 export async function getStallData(stall_id: string) {

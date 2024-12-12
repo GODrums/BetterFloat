@@ -8,8 +8,13 @@ function openIntercept() {
 	window.XMLHttpRequest.prototype.open = function () {
 		(<XMLHttpRequest>this).addEventListener('load', (e) => {
 			const target = <XMLHttpRequest>e.currentTarget;
-			if (!target.responseURL.includes(location.hostname)) {
+			const targetUrl = new URL(target.responseURL);
+
+			if (!targetUrl.hostname.includes(location.hostname)) {
 				// console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
+				return;
+			}
+			if (['.js', '.css', '.svg', '.proto'].some((ext) => targetUrl.pathname.endsWith(ext))) {
 				return;
 			}
 

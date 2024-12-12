@@ -7,11 +7,7 @@ let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
 let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
 
 export function cacheCSMoneyItems(data: CSMoney.Item[]) {
-	if (!csmoneyItems) {
-		csmoneyItems = [];
-	}
-	if (csmoneyItems.length > 0) {
-		console.debug('[Plasmo] Items already cached, deleting items: ', csmoneyItems);
+	if (!csmoneyItems || csmoneyItems.length > 0) {
 		csmoneyItems = [];
 	}
 	data.forEach((item) => {

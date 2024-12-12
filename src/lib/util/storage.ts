@@ -137,6 +137,16 @@ export const DEFAULT_SETTINGS = {
 	'csm-color-profit': '#008000',
 	'csm-color-loss': '#ce0000',
 	'csm-color-neutral': '#708090',
+	'dm-enable': true,
+	'dm-pricingsource': 'buff',
+	'dm-altmarket': 'none',
+	'dm-pricereference': 0,
+	'dm-buffdifference': true,
+	'dm-buffdifferencepercent': false,
+	'dm-listingage': true,
+	'dm-color-profit': '#008000',
+	'dm-color-loss': '#ce0000',
+	'dm-color-neutral': '#708090',
 	'display-updatepopup': true,
 };
 
