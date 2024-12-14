@@ -30,6 +30,8 @@ import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinb
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -57,6 +59,8 @@ export async function activateHandler() {
 			processCSMoneyEvent(eventData);
 		} else if (location.host === 'dmarket.com') {
 			processDmarketEvent(eventData);
+		} else if (location.host === 'skinbaron.de') {
+			processSkinbaronEvent(eventData);
 		}
 	});
 
@@ -302,5 +306,23 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('currency-rate/v1/rates')) {
 		cacheDMarketExchangeRates((eventData.data as DMarket.ExchangeRates).Rates);
+	}
+}
+
+
+function processSkinbaronEvent(eventData: EventData<unknown>) {
+	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);
+	if (eventData.url.includes('appId=') && !eventData.url.includes('appId=730')) {
+		console.debug('[BetterFloat] Skinbaron: Ignoring non-csgo request');
+		return;
+	}
+	if (eventData.url.includes('api/v2/Browsing/FilterOffers')) {
+		// Skinbaron.FilterOffers
+		cacheSkinbaronItems((eventData.data as Skinbaron.FilterOffers).aggregatedMetaOffers);
+	} else if (eventData.url.includes('api/v2/PromoOffers')) {
+		// Skinbaron.PromoOffers
+		cacheSkinbaronItems((eventData.data as Skinbaron.PromoOffers).bestDeals.aggregatedMetaOffers);
+	} else if (eventData.url.includes('api/v2/Application/ExchangeRates')) {
+		cacheSkinbaronRates((eventData.data as { [key: string]: number }));
 	}
 }

@@ -248,7 +248,7 @@ function createBuffItem(item: CSMoney.Item): { name: string; style: ItemStyle } 
 	};
 }
 
-function getUserCurrency() {
+export function getUserCurrency() {
 	const selectedCurrency = (document.querySelector('span[class^="CurrencySelect_selected__"]') ?? document.querySelector('div[class^="CurrencyDropdown_label__"]'))?.textContent?.split(' ');
 	if (selectedCurrency) {
 		return {
@@ -366,6 +366,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 // mutation observer active?
 let isObserverActive = false;
-let extensionSettings: IStorage;
+export let extensionSettings: IStorage;
 
 init();

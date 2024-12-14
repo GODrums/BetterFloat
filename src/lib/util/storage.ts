@@ -147,6 +147,16 @@ export const DEFAULT_SETTINGS = {
 	'dm-color-profit': '#008000',
 	'dm-color-loss': '#ce0000',
 	'dm-color-neutral': '#708090',
+	'baron-enable': true,
+	'baron-pricingsource': 'buff',
+	'baron-altmarket': 'none',
+	'baron-pricereference': 0,
+	'baron-buffdifference': true,
+	'baron-buffdifferencepercent': false,
+	'baron-listingage': true,
+	'baron-color-profit': '#008000',
+	'baron-color-loss': '#ce0000',
+	'baron-color-neutral': '#708090',
 	'display-updatepopup': true,
 };
 
