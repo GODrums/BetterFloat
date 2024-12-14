@@ -1,3 +1,4 @@
+import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
@@ -14,7 +15,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -277,13 +278,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	}
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: currency.text ?? 'USD',
-		currencyDisplay: 'narrowSymbol',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: maximumFractionDigits,
-	});
+	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 	const buffContainer = generatePriceLine({
 		source,
 		market_id,
@@ -293,7 +288,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		priceFromReference,
 		userCurrency: currency.symbol ?? '$',
 		itemStyle: itemStyle as DopplerPhase,
-		CurrencyFormatter,
+		CurrencyFormatter: Formatter,
 		isDoppler,
 		isPopout,
 		priceClass: 'suggested-price',
@@ -349,11 +344,16 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		const percentage = itemPrice.div(priceFromReference ?? 0).mul(100);
 		const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;${
-			isPopout ? ' margin-left: 10px;' : ''
-		}" data-betterfloat="${difference}"><span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(
-			absDifference.toNumber()
-		)}</span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;
+		const buffPriceHTML = html`
+			<div
+				class="sale-tag betterfloat-sale-tag" 
+				style="background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;${isPopout ? 'margin-left: 10px;' : ''}" 
+				data-betterfloat="${difference}"
+			>
+				<span>${difference.isPos() ? '+' : '-'}${Formatter.format(absDifference.toNumber())}</span>
+				<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+			</div>
+		`;
 		priceContainer?.setAttribute('style', 'display: flex; gap: 5px; align-items: center;');
 
 		priceContainer?.insertAdjacentHTML('beforeend', buffPriceHTML);

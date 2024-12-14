@@ -5,7 +5,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
-import { calculateTime, getBuffLink, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, calculateTime, getBuffLink, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
 import { html } from 'common-tags';
@@ -241,10 +241,10 @@ async function adjustInventoryItem(container: Element) {
 			: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 
 	if (priceListing || priceOrder) {
-		const currencySymbol = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200')?.textContent?.trim();
+		const currencyText = getUserCurrency().text;
 		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
 		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
-			generateBuffContainer(cardFooter, priceListing, priceOrder, currencySymbol ?? '$', buffHref, source);
+			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', buffHref, source);
 		}
 	}
 }
@@ -481,10 +481,10 @@ async function addBuffPrice(
 	}
 
 	const priceDiv = container.querySelector(selector.priceDiv);
-	const currencySymbol = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200')?.textContent?.trim();
+	const currency = getUserCurrency();
 	const href = getMarketURL({ source, buff_name, market_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
-		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencySymbol ?? '$', href, source, selector.self === 'page');
+		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currency.text ?? 'USD', href, source, selector.self === 'page');
 	}
 	const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
 	if (buffContainer && selector === itemSelectors.page) {
@@ -541,7 +541,7 @@ async function addBuffPrice(
 					}; font-size: 14px; background: transparent; margin-left: 5px;`
 				);
 				discountContainer.innerHTML = `<span style="translate: 0 -1px;">${
-					difference.isZero() ? `-${currencySymbol}0` : (difference.isPos() ? '+' : '-') + currencySymbol + difference.abs().toFixed(2)
+					difference.isZero() ? `-${currency.symbol}0` : (difference.isPos() ? '+' : '-') + currency.symbol + difference.abs().toFixed(2)
 				}</span>`;
 				if (extensionSettings['skb-buffdifferencepercent']) {
 					discountContainer.style.display = 'flex';
@@ -563,7 +563,7 @@ async function addBuffPrice(
 						startingDifference.isZero() ? extensionSettings['skb-color-neutral'] : startingDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
 					}`
 				);
-				startingPrice.textContent = startingDifference.isZero() ? `-${currencySymbol}0` : (startingDifference.isPos() ? '+' : '-') + currencySymbol + startingDifference.abs().toDP(2);
+				startingPrice.textContent = startingDifference.isZero() ? `-${currency.symbol}0` : (startingDifference.isPos() ? '+' : '-') + currency.symbol + startingDifference.abs().toDP(2);
 				startingPriceDiv.querySelector('.value')?.appendChild(startingPrice);
 			}
 
@@ -580,7 +580,7 @@ async function addBuffPrice(
 						bidDifference.isZero() ? extensionSettings['skb-color-neutral'] : bidDifference.isNeg() ? extensionSettings['skb-color-profit'] : extensionSettings['skb-color-loss']
 					}`
 				);
-				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currencySymbol}0` : (bidDifference.isPos() ? '+' : '-') + currencySymbol + bidDifference.abs().toDecimalPlaces(2);
+				bidDiscountContainer.textContent = bidDifference.isZero() ? `-${currency.symbol}0` : (bidDifference.isPos() ? '+' : '-') + currency.symbol + bidDifference.abs().toDecimalPlaces(2);
 				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
 				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
 			}
@@ -589,6 +589,14 @@ async function addBuffPrice(
 
 	return {
 		price_difference: difference,
+	};
+}
+
+function getUserCurrency() {
+	const currencyContainer = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200');
+	return {
+		text: currencyContainer?.nextElementSibling?.textContent?.trim(),
+		symbol: currencyContainer?.textContent?.trim(),
 	};
 }
 
@@ -612,7 +620,7 @@ function generateBuffContainer(
 	container: HTMLElement,
 	priceListing: Decimal | undefined,
 	priceOrder: Decimal | undefined,
-	currencySymbol: string,
+	currencyText: string,
 	href: string,
 	source: MarketSource,
 	isItemPage = false
@@ -638,6 +646,7 @@ function generateBuffContainer(
 		iconStyle += 'border: 1px solid #323c47;';
 		containerStyle = 'justify-content: flex-start;';
 	}
+	const formatter = CurrencyFormatter(currencyText);
 	const buffContainer = html`
 		<a class="betterfloat-buff-container" target="_blank" href="${href}" style="display: flex; margin: 5px 0; cursor: pointer; align-items: center;">
 			${
@@ -654,11 +663,11 @@ function generateBuffContainer(
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
-							<span style="color: orange;">Bid ${currencySymbol}${priceOrder?.toFixed(2) ?? 0}</span>
+							<span style="color: orange;">Bid ${formatter.format(priceOrder?.toDP(2).toNumber() ?? 0)}</span>
 							<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>
-							<span style="color: greenyellow;">Ask ${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span>
+							<span style="color: greenyellow;">Ask ${formatter.format(priceListing?.toDP(2).toNumber() ?? 0)}</span>
 					  `
-						: html` <span style="color: white;">${currencySymbol}${priceListing?.toFixed(2) ?? 0}</span> `
+						: html` <span style="color: white;">${formatter.format(priceListing?.toDP(2).toNumber() ?? 0)}</span> `
 				}
 			</div>
 		</a>

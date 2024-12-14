@@ -18,7 +18,7 @@ import {
 	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
-import { Euro, USDollar, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
@@ -346,11 +346,10 @@ async function adjustItemPage(container: Element) {
 		}
 		const suggestedText = container.querySelector('.ItemPage-suggested');
 		if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
-			const currencySymbol = getSymbolFromCurrency(popupItem.data.item.currency);
 			let formattedPrice = '-';
 			if ((<Skinport.ItemData>popupItem).data.offers?.lowPrice) {
 				const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers.lowPrice ?? 0).div(100).toDP(2).toNumber();
-				formattedPrice = currencySymbol === '€' ? Euro.format(lowPrice) : currencySymbol === '$' ? USDollar.format(lowPrice) : currencySymbol + ' ' + lowPrice;
+				formattedPrice = CurrencyFormatter(popupItem.data.item.currency).format(lowPrice);
 			}
 			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
 		}

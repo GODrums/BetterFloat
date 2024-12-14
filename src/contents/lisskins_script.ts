@@ -6,7 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { BigUSDollar, USDollar, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -126,11 +126,8 @@ async function adjustItem(container: Element, isItemPage = false) {
 			price,
 		};
 	};
+
 	const item = getItem();
-	if (!item) {
-		console.log('[BetterFloat] No item found, cancelling...', container);
-		return;
-	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(item, container, isItemPage);
@@ -168,8 +165,7 @@ function addSaleTag(container: Element, priceResult: PriceResult) {
 		},
 	};
 	const { color, background } = difference.gt(0) ? styling.loss : styling.profit;
-	const CurrencyFormatter = Intl.NumberFormat(undefined, { style: 'currency', currency: priceResult.currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-	const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="display: inline-flex;flex-direction: column; font-size: 11px; font-style: normal; font-weight: 525; line-height: 17px; letter-spacing: -0.005em; text-wrap: nowrap; background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;"><span>${difference.gt(0) ? '+' : '-'}${CurrencyFormatter.format(difference.toNumber())}</span><span>(${itemPrice.div(priceResult.priceFromReference).mul(100).toFixed(2)}%)</span></div>`;
+	const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="display: inline-flex;flex-direction: column; font-size: 11px; font-style: normal; font-weight: 525; line-height: 17px; letter-spacing: -0.005em; text-wrap: nowrap; background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;"><span>${difference.gt(0) ? '+' : '-'}${CurrencyFormatter(priceResult.currency).format(difference.toNumber())}</span><span>(${itemPrice.div(priceResult.priceFromReference).mul(100).toFixed(2)}%)</span></div>`;
 
 	priceContainer.insertAdjacentHTML('beforebegin', buffPriceHTML);
 	priceContainer.parentElement?.setAttribute('style', 'display: flex; align-items: center; gap: 4px; height: 64px;');
@@ -217,9 +213,7 @@ async function getBuffItem(item: HTMLItem) {
 async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = false): Promise<PriceResult> {
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	const CurrencyFormatter = Intl.NumberFormat(undefined, { style: 'currency', currency: currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
 	const elementContainer = isItemPage ? container.querySelector('div.min-price-block') : container.querySelector('div.skin-info');
-
 	if (elementContainer) {
 		const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 		const buffContainer = generatePriceLine({
@@ -231,7 +225,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 			priceFromReference,
 			userCurrency: currency,
 			itemStyle: item.style as DopplerPhase,
-			CurrencyFormatter,
+			CurrencyFormatter: CurrencyFormatter(currency),
 			isDoppler: isDoppler,
 			isPopout: isItemPage,
 			priceClass: 'suggested-price',

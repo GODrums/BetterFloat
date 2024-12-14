@@ -38,12 +38,12 @@ import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler'
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
+	CurrencyFormatter,
 	calculateTime,
 	getBuffPrice,
 	getCharmColoring,
 	getFadePercentage,
 	getFloatColoring,
-	getMarketURL,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	toTruncatedString,
@@ -234,13 +234,7 @@ export async function adjustOfferContainer(container: Element) {
 		priceFromReference,
 		userCurrency,
 		itemStyle: '' as DopplerPhase,
-		CurrencyFormatter: Intl.NumberFormat(undefined, {
-			style: 'currency',
-			currency: CSFloatHelpers.userCurrency(),
-			currencyDisplay: 'narrowSymbol',
-			minimumFractionDigits: 0,
-			maximumFractionDigits: 2,
-		}),
+		CurrencyFormatter: CurrencyFormatter(CSFloatHelpers.userCurrency()),
 		isDoppler: false,
 		isPopout: false,
 		iconHeight: '20px',

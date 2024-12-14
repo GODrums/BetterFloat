@@ -8,7 +8,7 @@ import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getFirstBuffP
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -244,13 +244,6 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	const footerContainer = getFooterContainer(state, container);
 	const currencyItem = getBuffCurrencyRate();
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: currencyRate.value,
-		currencyDisplay: 'narrowSymbol',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	});
 	const buffContainer = generatePriceLine({
 		source,
 		market_id,
@@ -260,7 +253,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		priceFromReference,
 		userCurrency: currencyItem?.symbol ?? '$',
 		itemStyle: buff_item.style as DopplerPhase,
-		CurrencyFormatter,
+		CurrencyFormatter: CurrencyFormatter(currencyRate.value),
 		isDoppler,
 		isPopout: false,
 		priceClass: 'suggested-price',

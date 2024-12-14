@@ -22,7 +22,10 @@ export function getSpecificDMarketItem(id: string) {
 
 export function getDMarketExchangeRate(currency: string) {
 	if (Object.keys(dmarketExchangeRates).length === 0) {
-		dmarketExchangeRates = JSON.parse(localStorage.getItem('dmarket/AkitaStores') || '{}').currency?.currencyRates;
+		const apiRates = JSON.parse(localStorage.getItem('dmarket/AkitaStores') || '{}').currency?.currencyRates;
+		if (apiRates) {
+			cacheDMarketExchangeRates(apiRates);
+		}
 	}
 	return dmarketExchangeRates[currency];
 }

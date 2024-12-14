@@ -8,7 +8,7 @@ import { getFirstSkinbaronItem, rotateSkinbaronItems } from '~lib/handlers/cache
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { Euro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -197,6 +197,12 @@ function getHTMLItemName(container: Element, name_class: string): string {
 	return container.querySelector(name_class)?.textContent?.trim() ?? '';
 }
 
+/**
+ * HTML parsing for Skinbaron items
+ * @deprecated get item from API instead
+ * @param container
+ * @returns
+ */
 function getSkinbaronItem(container: Element): Skinbaron.HTMLItem {
 	const isStatTrak = container.querySelector('.badge-danger')?.textContent?.includes('StatTrak') ?? false;
 	const type = container.querySelector('.badge-purple')?.textContent?.trim() ?? '';
@@ -240,13 +246,6 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency, itemStyle } = await getBuffItem(item);
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, {
-		style: 'currency',
-		currency: currency.text ?? 'USD',
-		currencyDisplay: 'narrowSymbol',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	});
 
 	const priceDiv = container.querySelector<HTMLElement>(selector.priceDiv);
 	if (priceDiv && !container.querySelector('.betterfloat-buffprice')) {
@@ -259,7 +258,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			priceFromReference,
 			userCurrency: currency.symbol ?? '$',
 			itemStyle: itemStyle as DopplerPhase,
-			CurrencyFormatter,
+			CurrencyFormatter: CurrencyFormatter(currency.text ?? 'USD'),
 			isDoppler,
 			isPopout: false,
 			priceClass: 'suggested-price',
@@ -325,7 +324,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 		.mul(100);
 	const buffPriceHTML = html`
 		<div style="display: flex; flex-direction: column; align-items: center; font-size: 13px; font-style: normal; font-weight: 400; line-height: 17px; letter-spacing: -.005em; text-wrap: nowrap; padding: 1px 3px; color: ${difference.isNeg() ? styling.profit.color : styling.loss.color}">
-			<span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(difference.abs().toNumber())} </span>
+			<span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter(currency.text ?? 'USD').format(difference.abs().toNumber())} </span>
 			<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
 		</div>
 	`;

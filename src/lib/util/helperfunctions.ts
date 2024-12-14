@@ -620,27 +620,15 @@ export function getCharmColoring(pattern: number, itemName: string) {
 	}
 }
 
-export const USDollar = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-	currencyDisplay: 'narrowSymbol',
-	minimumFractionDigits: 0,
-	maximumFractionDigits: 2,
-});
-
-export const BigUSDollar = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-	currencyDisplay: 'narrowSymbol',
-	minimumFractionDigits: 0,
-	maximumFractionDigits: 0,
-});
-
-export const Euro = new Intl.NumberFormat('en-DE', {
-	style: 'currency',
-	currency: 'EUR',
-	currencyDisplay: 'narrowSymbol',
-});
+export function CurrencyFormatter(currency: string, min = 0, max = 2) {
+	return new Intl.NumberFormat(undefined, {
+		style: 'currency',
+		currency: currency,
+		currencyDisplay: 'narrowSymbol',
+		minimumFractionDigits: min,
+		maximumFractionDigits: max,
+	});
+}
 
 export function convertCurrency(amount: number, currency: string) {
 	return new Intl.NumberFormat('en-US', {
