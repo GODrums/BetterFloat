@@ -5,6 +5,7 @@ import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
+import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import { useEffect } from 'react';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from '~lib/components/Icons';
 import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shadcn';
@@ -20,6 +21,7 @@ import { SkinbidSettings } from '~lib/pages/Skinbid';
 import { SkinportSettings } from '~lib/pages/Skinport';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS } from '~lib/util/storage';
+import { SkinbaronSettings } from '~lib/pages/Skinbaron';
 
 export default function IndexPopup() {
 	const hostpermissions = chrome.runtime.getManifest().host_permissions as string[];
@@ -103,14 +105,17 @@ export default function IndexPopup() {
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
+							<TabsTrigger value="csmoney">
+								<img className="h-10 w-10 rounded-lg" src={csmoneyLogo} />
+							</TabsTrigger>
 							<TabsTrigger value="buffmarket">
 								<img className="h-10 w-10 rounded-lg" src={buffmarketLogo} />
 							</TabsTrigger>
 							<TabsTrigger value="lisskins">
 								<img className="h-10 w-10 rounded-lg" src={lisskinsLogo} />
 							</TabsTrigger>
-							<TabsTrigger value="csmoney">
-								<img className="h-10 w-10 rounded-lg" src={csmoneyLogo} />
+							<TabsTrigger value="skinbaron">
+								<img className="h-10 w-10 rounded-lg" src={skinbaronLogo} />
 							</TabsTrigger>
 						</div>
 						<div className="flex flex-col items-center">
@@ -128,6 +133,7 @@ export default function IndexPopup() {
 					<CSMoneySettings />
 					<BuffMarketSettings />
 					<LisSkinsSettings />
+					<SkinbaronSettings />
 					<Changelogs />
 					<About />
 				</Tabs>

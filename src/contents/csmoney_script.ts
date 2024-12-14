@@ -366,6 +366,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 // mutation observer active?
 let isObserverActive = false;
-export let extensionSettings: IStorage;
+let extensionSettings: IStorage;
 
 init();

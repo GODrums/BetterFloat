@@ -39,7 +39,8 @@ let isCurrencyFetchDone = false;
 export async function fetchCurrencyRates() {
 	if (isCurrencyFetched) {
 		// wait until the rates are fetched from parallel requests
-		while (!isCurrencyFetchDone) {
+		let tries = 20;
+		while (!isCurrencyFetchDone && tries-- > 0) {
 			await new Promise((resolve) => setTimeout(resolve, 100));
 		}
 		return;
