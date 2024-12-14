@@ -1,16 +1,16 @@
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
-import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
-import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { Euro, handleSpecialStickerNames, getBuffPrice, isBuffBannedItem } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { getFirstSkinbaronItem, rotateSkinbaronItems } from '~lib/handlers/cache/skinbaron_cache';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { generatePriceLine } from '~lib/util/uigeneration';
-import { MarketSource } from '~lib/util/globals';
-import { getMarketID, getAndFetchCurrencyRate } from '~lib/handlers/mappinghandler';
 import { html } from 'common-tags';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import { getFirstSkinbaronItem, rotateSkinbaronItems } from '~lib/handlers/cache/skinbaron_cache';
+import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { MarketSource } from '~lib/util/globals';
+import { Euro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinbaron.de/*'],
@@ -149,7 +149,7 @@ function createBuffItem(item: Skinbaron.Item) {
 	const buffItem = {
 		name: '',
 		style: '' as ItemStyle,
-	}
+	};
 	const singleItem = item as Skinbaron.SingleItem;
 	buffItem.name = singleItem.singleOffer
 		? singleItem.singleOffer.localizedName +
@@ -320,7 +320,9 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 	discountContainer.style.backgroundColor = difference.isNeg() ? styling.profit.background : styling.loss.background;
 	discountContainer.style.borderRadius = '5px';
 
-	const percentage = getItemPrice(item).div(priceFromReference ?? 0).mul(100);
+	const percentage = getItemPrice(item)
+		.div(priceFromReference ?? 0)
+		.mul(100);
 	const buffPriceHTML = html`
 		<div style="display: flex; flex-direction: column; align-items: center; font-size: 13px; font-style: normal; font-weight: 400; line-height: 17px; letter-spacing: -.005em; text-wrap: nowrap; padding: 1px 3px; color: ${difference.isNeg() ? styling.profit.color : styling.loss.color}">
 			<span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(difference.abs().toNumber())} </span>
@@ -404,7 +406,7 @@ function getUserCurrency() {
 	return {
 		text: currencySelect?.[0] ?? 'EUR',
 		symbol: currencySelect?.[1] ?? '€',
-	}
+	};
 }
 
 // mutation observer active?

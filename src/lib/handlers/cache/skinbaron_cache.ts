@@ -1,4 +1,4 @@
-import type { Skinbaron } from "~lib/@typings/SkinbaronTypes";
+import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 
 // skinbaron: cached items from api
 let skinbaronItems: Skinbaron.Item[] = [];

@@ -4,6 +4,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -26,12 +27,11 @@ import {
 } from './cache/csfloat_cache';
 import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
 import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
+import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
-import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -309,7 +309,6 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 	}
 }
 
-
 function processSkinbaronEvent(eventData: EventData<unknown>) {
 	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);
 	if (eventData.url.includes('appId=') && !eventData.url.includes('appId=730')) {
@@ -323,6 +322,6 @@ function processSkinbaronEvent(eventData: EventData<unknown>) {
 		// Skinbaron.PromoOffers
 		cacheSkinbaronItems((eventData.data as Skinbaron.PromoOffers).bestDeals.aggregatedMetaOffers);
 	} else if (eventData.url.includes('api/v2/Application/ExchangeRates')) {
-		cacheSkinbaronRates((eventData.data as { [key: string]: number }));
+		cacheSkinbaronRates(eventData.data as { [key: string]: number });
 	}
 }

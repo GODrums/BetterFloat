@@ -1,11 +1,11 @@
 .betterfloat-buffprice {
-	font-size: 14px; 
-    margin-left: 2px; 
-    padding-top: 1px; 
-    font-style: normal; 
-    font-weight: 500; 
-    line-height: 20px; 
-    letter-spacing: .02em;
+	font-size: 14px;
+	margin-left: 2px;
+	padding-top: 1px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: .02em;
 }
 
 .betterfloat-sale-tag {
@@ -23,12 +23,12 @@
 }
 
 .betterfloat-buff-a {
-	width: 100%; 
-    display: inline-flex; 
-    align-items: center; 
-    flex-direction: row; 
-    justify-content: center; 
-    text-decoration: none;
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: center;
+	text-decoration: none;
 }
 
 .betterfloat-buff-tooltip {
