@@ -10,7 +10,6 @@ import {
 	ICON_ARROWUP2,
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
-	ICON_C5GAME,
 	ICON_CAMERA_FLIPPED,
 	ICON_CLOCK,
 	ICON_CRIMSON,
@@ -19,7 +18,6 @@ import {
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
-	ICON_EXCLAMATION,
 	ICON_OVERPRINT_ARROW,
 	ICON_OVERPRINT_FLOWER,
 	ICON_OVERPRINT_MIXED,
@@ -32,34 +30,20 @@ import {
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
-	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { genGemContainer } from '~lib/util/uigeneration';
+import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import {
-	cacheCSFInventory,
-	getCSFCurrencyRate,
-	getCSFHistoryGraph,
-	getCSFPopupItem,
-	getCrimsonWebMapping,
-	getFirstCSFItem,
-	getFirstCSFSimilarItem,
-	getFirstHistorySale,
-	getItemPrice,
-	getMarketID,
-	getSpecificCSFInventoryItem,
-	getSpecificCSFOffer,
-} from '../lib/handlers/mappinghandler';
+import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
+	CurrencyFormatter,
 	calculateTime,
 	getBuffPrice,
 	getCharmColoring,
 	getFadePercentage,
 	getFloatColoring,
-	getMarketURL,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	toTruncatedString,
@@ -67,8 +51,19 @@ import {
 } from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import type { BlueGem, Extension, FadePercentage } from '~lib/@typings/ExtensionTypes';
+import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import {
+	cacheCSFInventory,
+	getCSFCurrencyRate,
+	getCSFHistoryGraph,
+	getCSFPopupItem,
+	getFirstCSFItem,
+	getFirstCSFSimilarItem,
+	getFirstHistorySale,
+	getSpecificCSFInventoryItem,
+	getSpecificCSFOffer,
+} from '~lib/handlers/cache/csfloat_cache';
 import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
@@ -230,19 +225,20 @@ export async function adjustOfferContainer(container: Element) {
 
 	const userCurrency = CSFloatHelpers.userCurrency();
 
-	const buffContainer = generatePriceLine(
-		extensionSettings['csf-pricingsource'] as MarketSource,
-		buff_id,
-		itemName,
+	const buffContainer = generatePriceLine({
+		source: extensionSettings['csf-pricingsource'] as MarketSource,
+		market_id: buff_id,
+		buff_name: itemName,
 		priceOrder,
 		priceListing,
 		priceFromReference,
 		userCurrency,
-		'' as DopplerPhase,
-		Intl.NumberFormat(undefined, { style: 'currency', currency: CSFloatHelpers.userCurrency(), currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 }),
-		false,
-		false
-	);
+		itemStyle: '' as DopplerPhase,
+		CurrencyFormatter: CurrencyFormatter(CSFloatHelpers.userCurrency()),
+		isDoppler: false,
+		isPopout: false,
+		iconHeight: '20px',
+	});
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
 	const buffA = container.querySelector('.betterfloat-buff-a');
@@ -1532,7 +1528,7 @@ async function addBuffPrice(
 		(source === MarketSource.CSFloat && priceListing);
 
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
-		const buffContainer = generatePriceLine(
+		const buffContainer = generatePriceLine({
 			source,
 			market_id,
 			buff_name,
@@ -1540,11 +1536,12 @@ async function addBuffPrice(
 			priceListing,
 			priceFromReference,
 			userCurrency,
-			item.style as DopplerPhase,
+			itemStyle: item.style as DopplerPhase,
 			CurrencyFormatter,
 			isDoppler,
-			isPopout
-		);
+			isPopout,
+			iconHeight: '20px',
+		});
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
@@ -1672,80 +1669,6 @@ async function addBuffPrice(
 	return {
 		price_difference: difference.toNumber(),
 	};
-}
-
-function generatePriceLine(
-	source: MarketSource,
-	market_id: number | string | undefined,
-	buff_name: string,
-	priceOrder: Decimal | undefined,
-	priceListing: Decimal | undefined,
-	priceFromReference: Decimal | undefined,
-	userCurrency: string,
-	itemStyle: DopplerPhase,
-	CurrencyFormatter: Intl.NumberFormat,
-	isDoppler: boolean,
-	isPopout: boolean
-) {
-	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
-	let icon = '';
-	let iconStyle = 'height: 20px; margin-right: 5px;';
-	switch (source) {
-		case MarketSource.Buff:
-			icon = ICON_BUFF;
-			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
-			break;
-		case MarketSource.Steam:
-			icon = ICON_STEAM;
-			break;
-		case MarketSource.C5Game:
-			icon = ICON_C5GAME;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.YouPin:
-			icon = ICON_YOUPIN;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.CSFloat:
-			icon = ICON_CSFLOAT;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-	}
-	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const extendedDisplay = priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
-	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
-	const buffContainer = html`
-		<a class="betterfloat-buff-a" href="${href}" target="_blank" style="display: inline-flex; align-items: center; font-size: 15px;">
-			<img src="${icon}" style="${iconStyle}" />
-			<div class="betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${bfDataAttribute}'>
-				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
-						? html`
-							<span class="betterfloat-buff-tooltip">
-								Bid: Highest buy order price;
-								<br />
-								Ask: Lowest listing price
-							</span>
-							<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
-							<span style="color: gray;margin: 0 3px 0 3px;">|</span>
-							<span style="color: greenyellow;"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
-					  `
-						: html` <span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
-				}
-			</div>
-			${
-				(source === MarketSource.Buff || source === MarketSource.Steam) && isWarning
-					? html`
-						<img
-							src="${ICON_EXCLAMATION}"
-							style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);"
-						/>
-				  `
-					: ''
-			}
-		</a>
-	`;
-	return buffContainer;
 }
 
 function createBuffName(item: CSFloat.FloatItem): string {

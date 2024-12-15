@@ -1,8 +1,8 @@
 import { ExtensionStorage } from '~lib/util/storage';
-import { cacheRealCurrencyRates } from './mappinghandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
+import { cacheRealCurrencyRates } from './mappinghandler';
 
 const CSBLUEGEM_API_URL = 'https://api.csbluegem.com/';
 
@@ -32,8 +32,20 @@ export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = 'US
 	return null;
 }
 
+let isCurrencyFetched = false;
+let isCurrencyFetchDone = false;
+
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
+	if (isCurrencyFetched) {
+		// wait until the rates are fetched from parallel requests
+		let tries = 20;
+		while (!isCurrencyFetchDone && tries-- > 0) {
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
+		return;
+	}
+	isCurrencyFetched = true;
 	const currencyRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (currencyRates && currencyRates.lastUpdate > Date.now() - 1000 * 60 * 60 * 24) {
 		cacheRealCurrencyRates(currencyRates.rates);
@@ -48,6 +60,7 @@ export async function fetchCurrencyRates() {
 			cacheRealCurrencyRates(currencyRates.rates);
 		}
 	}
+	isCurrencyFetchDone = true;
 }
 
 /**

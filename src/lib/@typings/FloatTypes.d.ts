@@ -12,7 +12,7 @@ export type DopplerPhase = 'Sapphire' | 'Ruby' | 'Black Pearl' | 'Emerald' | 'Ph
 
 export type ItemCondition = '' | 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
 export interface EventData<T> {
-	status: string;
+	status: number;
 	url: string;
 	headers: string[];
 	data: T;

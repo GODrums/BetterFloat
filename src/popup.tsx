@@ -1,6 +1,10 @@
 import '~style.css';
+import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
+import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
+import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
 import { useEffect } from 'react';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord, SkinBidIcon, SolarDocumentTextLinear, SolarInfoSquareLinear } from '~lib/components/Icons';
@@ -8,8 +12,12 @@ import { Badge, Button, Tabs, TabsList, TabsTrigger } from '~lib/components/Shad
 import { SparklesCore } from '~lib/components/Sparkles';
 import { Toaster } from '~lib/components/Toaster';
 import { About } from '~lib/pages/About';
+import { BuffMarketSettings } from '~lib/pages/Buffmarket';
 import { Changelogs } from '~lib/pages/Changelog';
 import { CSFloatSettings } from '~lib/pages/Csfloat';
+import { CSMoneySettings } from '~lib/pages/Csmoney';
+import { LisSkinsSettings } from '~lib/pages/Lisskins';
+import { SkinbaronSettings } from '~lib/pages/Skinbaron';
 import { SkinbidSettings } from '~lib/pages/Skinbid';
 import { SkinportSettings } from '~lib/pages/Skinport';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
@@ -97,6 +105,18 @@ export default function IndexPopup() {
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
+							<TabsTrigger value="csmoney">
+								<img className="h-10 w-10 rounded-lg" src={csmoneyLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="buffmarket">
+								<img className="h-10 w-10 rounded-lg" src={buffmarketLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="lisskins">
+								<img className="h-10 w-10 rounded-lg" src={lisskinsLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="skinbaron">
+								<img className="h-10 w-10 rounded-lg" src={skinbaronLogo} />
+							</TabsTrigger>
 						</div>
 						<div className="flex flex-col items-center">
 							<TabsTrigger value="changelog">
@@ -110,6 +130,10 @@ export default function IndexPopup() {
 					<CSFloatSettings />
 					<SkinportSettings />
 					<SkinbidSettings />
+					<CSMoneySettings />
+					<BuffMarketSettings />
+					<LisSkinsSettings />
+					<SkinbaronSettings />
 					<Changelogs />
 					<About />
 				</Tabs>

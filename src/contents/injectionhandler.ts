@@ -6,17 +6,16 @@ import type { PlasmoCSConfig } from 'plasmo';
 import inject from 'url:~lib/util/inject.ts';
 
 export const config: PlasmoCSConfig = {
-	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*'],
+	matches: ['https://*.csfloat.com/*', '*://*.skinport.com/*', '*://*.skinbid.com/*', '*://buff.market/*', '*://*.cs.money/*', '*://*.dmarket.com/*', '*://*.skinbaron.de/*'],
 	run_at: 'document_start',
 };
 
-//we do not want to inject the script into the blog page
+// we do not want to inject the script into blog pages
 if (!location.hostname.includes('blog.')) {
 	injectScript();
 }
 // some markets like skinport use websockets to update the page
 if (location.hostname === 'skinport.com') {
-	// startSocket();
 	const interval = setInterval(() => {
 		if (document.querySelector('.LiveBtn--isActive')) {
 			startSocket();
@@ -31,7 +30,7 @@ function injectScript() {
 	script.type = 'module';
 	script.src = inject;
 	script.onload = function () {
-		(<HTMLScriptElement>this).remove();
+		(<typeof script>this).remove();
 	};
 	(document.head || document.documentElement).appendChild(script);
 }
@@ -60,6 +59,7 @@ function startSocket() {
 	// 2. steamStatusUpdated - Steam Status
 	// 3. maintenanceUpdated - Maintenance status
 	// 4. sid - session ID
+	// 5. unreadNotificationCountUpdated - Unread Notification Count: [{count: 1}]
 
 	// Listen to the Sale Feed
 	socket.on('saleFeed', (data) => {

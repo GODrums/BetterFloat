@@ -1,0 +1,53 @@
+.betterfloat-buff-a {
+	display: inline-flex !important;
+	align-items: center;
+	flex-direction: row;
+	text-decoration: none;
+	left: 8px;
+	margin-top: 2px;
+	position: absolute;
+	z-index: 100;
+}
+
+.betterfloat-big-a {
+	position: static;
+}
+
+.betterfloat-buffprice {
+	margin-left: 2px;
+	padding-top: 1px;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: 0.02em;
+}
+
+.betterfloat-buff-tooltip {
+	/* Positioning the tooltip text */
+	position: absolute;
+	z-index: 9999;
+	transform: translate(-13%, 25px);
+
+	visibility: hidden;
+	color: #fff;
+	text-align: center;
+	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
+	background-color: #171920c4;
+	padding: 10px 5px;
+	border-radius: 4px;
+	border: 1px solid #3f3f3f;
+	font-size: 13px;
+	width: 180px;
+
+	/* Fade in tooltip */
+	opacity: 0;
+	transition: opacity 0.1s;
+}
+
+.betterfloat-buffprice:hover .betterfloat-buff-tooltip {
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.2s linear;
+}

@@ -25,6 +25,12 @@ body.light-theme {
 	color: hsl(229 63% 4%) !important;
 }
 
+.betterfloat-buff-a {
+	display: inline-flex;
+	align-items: center;
+	font-size: 15px;
+}
+
 .betterfloat-sale-tag {
 	position: relative;
 	display: inline-flex;

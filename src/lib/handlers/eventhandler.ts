@@ -1,6 +1,10 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
+import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
+import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
+import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -9,6 +13,7 @@ import type { IStorage } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
+import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffUserId } from './cache/buffmarket_cache';
 import {
 	cacheCSFExchangeRates,
 	cacheCSFHistoryGraph,
@@ -19,17 +24,13 @@ import {
 	cacheCSFOffers,
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
-	cacheSkbInventory,
-	cacheSkbItems,
-	cacheSkinbidCurrencyRates,
-	cacheSkinbidUserCurrency,
-	cacheSkinportCurrencyRates,
-	cacheSpItems,
-	cacheSpMinOrderPrice,
-	cacheSpPopupInventoryItem,
-	cacheSpPopupItem,
-	loadMapping,
-} from './mappinghandler';
+} from './cache/csfloat_cache';
+import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
+import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
+import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
+import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
+import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 
 type StallData = {
@@ -44,7 +45,7 @@ type SkinportWebsocketData = {
 export async function activateHandler() {
 	// important: https://stackoverflow.com/questions/9515704/access-variables-and-functions-defined-in-page-context-using-a-content-script/9517879#9517879
 	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', (e) => {
-		const eventData = (<CustomEvent>e).detail;
+		const eventData = (<CustomEvent>e).detail as EventData<unknown>;
 		//switch depending on current site
 		if (location.host === 'csfloat.com') {
 			processCSFloatEvent(eventData);
@@ -52,6 +53,14 @@ export async function activateHandler() {
 			processSkinportEvent(eventData);
 		} else if (location.host === 'skinbid.com' || location.host === 'api.skinbid.com') {
 			processSkinbidEvent(eventData);
+		} else if (location.host === 'buff.market') {
+			processBuffMarketEvent(eventData);
+		} else if (location.host === 'cs.money') {
+			processCSMoneyEvent(eventData);
+		} else if (location.host === 'dmarket.com') {
+			processDmarketEvent(eventData);
+		} else if (location.host === 'skinbaron.de') {
+			processSkinbaronEvent(eventData);
 		}
 	});
 
@@ -225,5 +234,94 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 			// item page
 			cacheCSFSimilarItems(eventData.data as CSFloat.ListingData[]);
 		}
+	}
+}
+
+// process intercepted data
+function processBuffMarketEvent(eventData: EventData<unknown>) {
+	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/goods/info')) {
+		// item lists: https://buff.market/market/goods/91?game=csgo
+		// caching item just for the name
+		cacheBuffMarketItems([(eventData.data as BuffMarket.GoodsInfoResponse).data]);
+	} else if (eventData.url.includes('api/market/goods/sell_order')) {
+		const responseData = (eventData.data as BuffMarket.SellOrderResponse).data;
+		cacheBuffGoodsInfos(responseData.goods_infos);
+		if (eventData.url.includes('goods_id=')) {
+			cacheBuffPageItems(responseData.items);
+		} else {
+			cacheBuffMarketItems(responseData.items);
+		}
+	} else if (eventData.url.includes('api/market/goods') && !eventData.url.includes('related_recommendation')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.GoodsResponse).data.items);
+	} else if (eventData.url.includes('api/market/steam_inventory')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.InventoryResponse).data.items);
+	} else if (eventData.url.includes('api/market/sell_order/preview/manual_plus')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingPreviewResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingPreviewResponse).data.goods_infos);
+	} else if (eventData.url.includes('api/market/sell_order/change_preview/v2')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingPreviewResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingPreviewResponse).data.goods_infos);
+	} else if (eventData.url.includes('api/market/sell_order/')) {
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingOnSaleResponse).data.items);
+	} else if (eventData.url.includes('api/user/info')) {
+		cacheBuffUserId((eventData.data as any).data?.user_info?.id);
+	} else if (eventData.url.includes('account/api/supported_currency')) {
+		const selectedCurrency = (eventData.data as BuffMarket.SupportedCurrencyResponse).data.items.find((item) => item.buff_selected);
+		if (selectedCurrency) {
+			cacheBuffCurrencyRate(selectedCurrency);
+		}
+	} else if (eventData.url.includes('api/market/shop/') && eventData.url.includes('/sell_order')) {
+		cacheBuffMarketItems((eventData.data as BuffMarket.SellingOnSaleResponse).data.items);
+		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
+	}
+}
+
+function processCSMoneyEvent(eventData: EventData<unknown>) {
+	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('1.0/market/sell-orders/')) {
+		// item popup
+		cacheCSMoneyItems([(eventData.data as CSMoney.SingleSellOrderResponse).item]);
+	} else if (eventData.url.includes('1.0/market/sell-orders')) {
+		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
+	} else if (eventData.url.includes('1.0/market/user-inventory')) {
+		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
+	} else if (eventData.url.includes('3.0/load_user_inventory/730')) {
+		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
+	} else if (eventData.url.includes('5.0/load_bots_inventory/730')) {
+		cacheCSMoneyBotInventory((eventData.data as CSMoney.UserInventoryResponse).items);
+	}
+}
+
+function processDmarketEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('exchange/v1/market/items')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
+	} else if (eventData.url.includes('exchange/v1/user/items')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
+	} else if (eventData.url.includes('exchange/v1/selection/item?')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
+	} else if (eventData.url.includes('exchange/v1/user/offers?')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
+	} else if (eventData.url.includes('currency-rate/v1/rates')) {
+		cacheDMarketExchangeRates((eventData.data as DMarket.ExchangeRates).Rates);
+	}
+}
+
+function processSkinbaronEvent(eventData: EventData<unknown>) {
+	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);
+	if (eventData.url.includes('appId=') && !eventData.url.includes('appId=730')) {
+		console.debug('[BetterFloat] Skinbaron: Ignoring non-csgo request');
+		return;
+	}
+	if (eventData.url.includes('api/v2/Browsing/FilterOffers')) {
+		// Skinbaron.FilterOffers
+		cacheSkinbaronItems((eventData.data as Skinbaron.FilterOffers).aggregatedMetaOffers);
+	} else if (eventData.url.includes('api/v2/PromoOffers')) {
+		// Skinbaron.PromoOffers
+		cacheSkinbaronItems((eventData.data as Skinbaron.PromoOffers).bestDeals.aggregatedMetaOffers);
+	} else if (eventData.url.includes('api/v2/Application/ExchangeRates')) {
+		cacheSkinbaronRates(eventData.data as { [key: string]: number });
 	}
 }

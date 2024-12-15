@@ -1,5 +1,104 @@
 import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
+import { html } from 'common-tags';
+import type Decimal from 'decimal.js';
+import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import type { BlueGem } from '../@typings/ExtensionTypes';
+import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from './globals';
+import { getMarketURL } from './helperfunctions';
+
+export function generatePriceLine({
+	source,
+	market_id,
+	buff_name,
+	priceOrder,
+	priceListing,
+	priceFromReference,
+	userCurrency,
+	itemStyle,
+	CurrencyFormatter,
+	isDoppler,
+	isPopout,
+	iconHeight,
+	priceClass: containerClass,
+	addSpaceBetweenPrices = true,
+	showPrefix = true,
+}: {
+	source: MarketSource;
+	market_id: number | string | undefined;
+	buff_name: string;
+	priceOrder: Decimal | undefined;
+	priceListing: Decimal | undefined;
+	priceFromReference: Decimal | undefined;
+	userCurrency: string;
+	itemStyle: DopplerPhase;
+	CurrencyFormatter: Intl.NumberFormat;
+	isDoppler: boolean;
+	isPopout: boolean;
+	iconHeight?: string;
+	priceClass?: string;
+	addSpaceBetweenPrices?: boolean;
+	showPrefix?: boolean;
+}) {
+	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
+	let icon = '';
+	let iconStyle = `height: ${iconHeight ?? '15px'}; margin-right: 5px;`;
+	switch (source) {
+		case MarketSource.Buff:
+			icon = ICON_BUFF;
+			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
+			break;
+		case MarketSource.Steam:
+			icon = ICON_STEAM;
+			break;
+		case MarketSource.C5Game:
+			icon = ICON_C5GAME;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+		case MarketSource.YouPin:
+			icon = ICON_YOUPIN;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+		case MarketSource.CSFloat:
+			icon = ICON_CSFLOAT;
+			iconStyle += ' border: 1px solid black; border-radius: 4px;';
+			break;
+	}
+	const isWarning = priceOrder?.gt(priceListing ?? 0);
+	const extendedDisplay = showPrefix && priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
+	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
+	const buffContainer = html`
+		<a class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''}" href="${href}" target="_blank">
+			<img src="${icon}" style="${iconStyle}" />
+			<div class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${bfDataAttribute}'>
+				${
+					[MarketSource.Buff, MarketSource.Steam].includes(source)
+						? html`
+							<span class="betterfloat-buff-tooltip">
+								Bid: Highest buy order price;
+								<br />
+								Ask: Lowest listing price
+							</span>
+							<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
+							<span style="color: gray;${addSpaceBetweenPrices ? 'margin: 0 3px 0 3px;' : ''}">|</span>
+							<span style="color: greenyellow;"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
+					  `
+						: html` <span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
+				}
+			</div>
+			${
+				(source === MarketSource.Buff || source === MarketSource.Steam) && isWarning
+					? html`
+						<img
+							src="${ICON_EXCLAMATION}"
+							style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);"
+						/>
+				  `
+					: ''
+			}
+		</a>
+	`;
+	return buffContainer;
+}
 
 export function genGemContainer({ patternElement, site, large = false }: { patternElement: BlueGem.PatternData | null; site: 'CSF' | 'SP'; large?: boolean }) {
 	if (!patternElement?.playside_blue && !patternElement?.backside_blue) {
