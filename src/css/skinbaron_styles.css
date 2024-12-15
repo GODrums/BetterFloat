@@ -30,6 +30,14 @@
 	justify-content: center;
 	text-decoration: none;
 }
+.betterfloat-buff-a :hover {
+	text-decoration: none !important;
+}
+
+.betterfloat-big-a {
+	justify-content: start;
+	margin-bottom: 10px;
+}
 
 .betterfloat-buff-tooltip {
 	/* Positioning the tooltip text */

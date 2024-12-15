@@ -73,14 +73,16 @@ async function firstLaunch() {
 
 const itemSelectors = {
 	promo: {
-		name: '.lName',
 		priceDiv: '.price-wrapper',
 		saleWrapper: '.price-wrapper',
 	},
 	card: {
-		name: '.product-name',
 		priceDiv: '.price-wrapper',
 		saleWrapper: '.price-wrapper',
+	},
+	modal: {
+		priceDiv: '.product-price-heading',
+		saleWrapper: '.product-price-heading',
 	},
 } as const;
 
@@ -120,26 +122,30 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 	const nameDivClass = location.pathname === '/en' ? '.lName' : '.product-name';
 	const item_name = getHTMLItemName(container, nameDivClass);
 
-	let cachedItem = await getFirstSkinbaronItem();
-	while (cachedItem) {
-		const item = Object.keys(cachedItem).includes('variant') ? (cachedItem as Skinbaron.MassItem) : (cachedItem as Skinbaron.SingleItem);
-		// console.log('Cached item: ', cachedItem);
-		// includes instead of equality as localizedName does not contain StatTrak
-		if (!item_name.includes(item.extendedProductInformation.localizedName) && !item.extendedProductInformation.localizedName.includes(item_name)) {
-			console.log('Item name does not match. ', item_name, item.extendedProductInformation.localizedName);
-			if (location.pathname === '/en') {
-				// rotate 4 times to get the right item
-				for (let i = 0; i < 4; i++) {
-					rotateSkinbaronItems(cachedItem!);
-					cachedItem = await getFirstSkinbaronItem();
-				}
-				continue;
-			}
-			break;
-		}
-		await addBuffPrice(item, container, selector);
-		break;
+	const cachedItem = await getFirstSkinbaronItem();
+	if (!cachedItem) return;
+
+	const item = isMassItem(cachedItem) ? (cachedItem as Skinbaron.MassItem) : (cachedItem as Skinbaron.SingleItem);
+	// includes instead of equality as localizedName does not contain StatTrak
+	if (!item_name.includes(item.extendedProductInformation.localizedName) && !item.extendedProductInformation.localizedName.includes(item_name)) {
+		console.warn('Item name does not match. ', item_name, item.extendedProductInformation.localizedName);
+		return;
 	}
+	await addBuffPrice(item, container, selector);
+
+	// store for popouts
+	container.setAttribute('data-betterfloat', JSON.stringify(item));
+
+	// add eventlistener for modal popout
+	container.querySelector('.click-wrapper')?.addEventListener('click', () => {
+		setTimeout(async () => {
+			const popout = document.querySelector('sb-extended-offer-info');
+			console.log('Popout: ', popout);
+			if (popout) {
+				await addBuffPrice(item, popout, itemSelectors.modal);
+			}
+		}, 1000);
+	});
 }
 function isMassItem(item: Skinbaron.Item) {
 	return Object.keys(item).includes('variant');
@@ -260,19 +266,25 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: CurrencyFormatter(currency.text ?? 'USD'),
 			isDoppler,
-			isPopout: false,
+			isPopout: selector === itemSelectors.modal,
 			priceClass: 'suggested-price',
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
 			iconHeight: '15px',
 		});
-		container.querySelector('.offer-card')?.setAttribute('style', 'height: 290px');
-		priceDiv.parentElement?.setAttribute('style', 'display: flex; flex-direction: column; align-items: center; justify-content: center;');
+		if (selector === itemSelectors.card) {
+			container.querySelector('.offer-card')?.setAttribute('style', 'height: 290px');
+			priceDiv.parentElement?.setAttribute('style', 'display: flex; flex-direction: column; align-items: center; justify-content: center;');
+		}
 		priceDiv.insertAdjacentHTML('afterend', buffContainer);
-		priceDiv.parentElement?.querySelector('.betterfloat-buffprice')?.addEventListener('click', (e) => {
-			e.stopPropagation();
-			window.open((e.currentTarget as HTMLElement).parentElement?.getAttribute('href') ?? '', '_blank');
-		});
+
+		priceDiv.parentElement
+			?.querySelector('.betterfloat-buffprice')
+			?.querySelector('.betterfloat-buffprice')
+			?.addEventListener('click', (e) => {
+				e.stopPropagation();
+				window.open((e.currentTarget as HTMLElement).parentElement?.getAttribute('href') ?? '', '_blank');
+			});
 	}
 
 	const saleWrapper = container.querySelector<HTMLElement>(selector.saleWrapper);
@@ -288,15 +300,17 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 		discountContainer.style.padding = '1px 3px';
 		discountContainer.style.fontSize = '13px';
 		discountContainer.style.borderRadius = '5px';
-	} else {
-		(<HTMLElement>saleWrapper).style.justifyContent = 'center';
-		(<HTMLElement>saleWrapper).style.paddingBottom = '0px';
-		const buffContainer = container.querySelector('.betterfloat-buff-container');
+	} else if (selector === itemSelectors.card) {
+		saleWrapper.style.justifyContent = 'center';
+		saleWrapper.style.paddingBottom = '0px';
+		const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
 		if (buffContainer) {
-			(<HTMLElement>buffContainer).style.marginBottom = '20px';
+			buffContainer.style.marginBottom = '20px';
 		}
 		discountContainer.style.marginLeft = '10px';
 		discountContainer.style.marginRight = '-10px';
+	} else if (selector === itemSelectors.modal) {
+		saleWrapper.style.gap = '10px';
 	}
 
 	const styling = {
