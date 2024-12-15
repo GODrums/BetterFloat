@@ -16,7 +16,6 @@ if (!location.hostname.includes('blog.')) {
 }
 // some markets like skinport use websockets to update the page
 if (location.hostname === 'skinport.com') {
-	// startSocket();
 	const interval = setInterval(() => {
 		if (document.querySelector('.LiveBtn--isActive')) {
 			startSocket();
@@ -60,6 +59,7 @@ function startSocket() {
 	// 2. steamStatusUpdated - Steam Status
 	// 3. maintenanceUpdated - Maintenance status
 	// 4. sid - session ID
+	// 5. unreadNotificationCountUpdated - Unread Notification Count: [{count: 1}]
 
 	// Listen to the Sale Feed
 	socket.on('saleFeed', (data) => {
