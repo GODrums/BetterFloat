@@ -3,7 +3,6 @@ export namespace CSMoney {
 		cost: number;
 		items: InventoryItem[];
 		total: number;
-		totalAssets: number;
 	};
 
 	export type SingleSellOrderResponse = {

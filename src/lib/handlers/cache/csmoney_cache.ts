@@ -61,6 +61,10 @@ export function getFirstCSMoneyItem() {
 	}
 }
 
+export function isCSMoneyItemsEmpty() {
+	return csmoneyItems.length === 0;
+}
+
 export function getSpecificCSMoneyItem(itemId: number) {
 	return csmoneyItemMapping[itemId];
 }

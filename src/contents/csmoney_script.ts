@@ -10,6 +10,7 @@ import {
 	getFirstCSMoneyUserInventoryItem,
 	getSpecificCSMoneyItem,
 	isCSMoneyBotInventoryEmpty,
+	isCSMoneyItemsEmpty,
 	isCSMoneyUserInventoryEmpty,
 } from '~lib/handlers/cache/csmoney_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
@@ -65,8 +66,23 @@ async function firstLaunch() {
 		await adjustItem(items[i]);
 	}
 
-	if (location.pathname.startsWith('/market/buy')) {
+	// these reloads are required to get the API data,
+	// as the injected script is too slow for the initial load
+	if (location.pathname === '/market/buy/') {
+		// reload market page
 		const reloadButton = document.querySelector<HTMLElement>('div[class^="InventoryReloadButton_container__"]');
+		if (reloadButton) {
+			reloadButton.click();
+		}
+	} else if (location.pathname === '/market/instant-sell/') {
+		// reload instant sell page
+		const reloadButton = document.querySelector<HTMLElement>('div[class^="InventoryReloadButton_wrapper__"]');
+		if (reloadButton) {
+			reloadButton.click();
+		}
+	} else if (location.pathname === '/csgo/trade/') {
+		// reload bot inventory
+		const reloadButton = document.querySelector<HTMLElement>('div[class^="ReloadButton_reload_button__"]');
 		if (reloadButton) {
 			reloadButton.click();
 		}
@@ -89,17 +105,22 @@ function applyMutation() {
 					setTimeout(async () => {
 						await adjustItem(addedNode);
 					}, 1000);
-				} else if (addedNode.tagName === 'DIV') {
-					// item in sell-tab
-					const item = addedNode.querySelector('div[class^="actioncard_wrapper"]');
-					if (item) {
-						await adjustItem(item);
-					}
 				} else if (addedNode.className === 'portal') {
 					// item popup
 					const bigCard = addedNode.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
 					if (bigCard) {
 						await adjustItem(bigCard, true);
+					}
+				} else if (addedNode.tagName === 'DIV' && addedNode.className.startsWith('UserSkin_user_skin__')) {
+					// item in insta sell page
+					await adjustItem(addedNode);
+				} else if (addedNode.tagName === 'DIV') {
+					// item in sell-tab
+					if (addedNode.parentElement === document.body) {
+						const item = addedNode.querySelector('div[class^="actioncard_wrapper"]');
+						if (item) {
+							await adjustItem(item);
+						}
 					}
 				}
 			}
@@ -127,7 +148,7 @@ async function adjustItem(container: Element, isPopout = false) {
 			const isUserItem = !container.closest('#botInventory');
 			return isUserItem ? isCSMoneyUserInventoryEmpty() : isCSMoneyBotInventoryEmpty();
 		} else {
-			return !getFirstCSMoneyItem();
+			return isCSMoneyItemsEmpty();
 		}
 	};
 	let apiItem = getApiItem();
@@ -135,7 +156,7 @@ async function adjustItem(container: Element, isPopout = false) {
 	let attempts = 0;
 	while (!apiItem && attempts++ < 5 && isInventoryEmpty()) {
 		// wait for 1s and try again
-		console.log('[BetterFloat] No item found, waiting 1s and trying again...', container);
+		console.debug('[BetterFloat] No item found, waiting 1s and trying again...', container);
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		apiItem = getApiItem();
 	}
@@ -145,13 +166,9 @@ async function adjustItem(container: Element, isPopout = false) {
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(apiItem!, container, isPopout);
-	// console.log('[BetterFloat] Item: ', apiItem);
-
-	// store api item
-	container.setAttribute('data-betterfloat', JSON.stringify(apiItem));
 }
 
-async function getBuffItem(container: Element, item: CSMoney.Item) {
+async function getBuffItem(container: Element, item: CSMoney.Item, selector: ItemSelectors) {
 	let source = (extensionSettings['csm-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -183,7 +200,7 @@ async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const itemPrice = new Decimal(getHTMLPrice(container)!.price);
+	const itemPrice = new Decimal(getHTMLPrice(container, selector)!.price);
 	const referencePrice = parseInt(extensionSettings['csm-referenceprice']) === 0 ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 	return {
@@ -204,18 +221,12 @@ async function getBuffItem(container: Element, item: CSMoney.Item) {
 	};
 }
 
-// 		container.querySelector('div[class^="styles_price__"]')?.textContent?.trim() ??
-// 		container.querySelector('div[class^="PriceZone_price__"]')?.textContent?.trim()?.replace(/\s/g, '') ??
-// 		container.querySelector('div[class^="Price_container___"]')?.textContent?.trim()?.replace(/\s/g, '');
-function getItemPrice(item: CSMoney.Item): number {
-	const invItem = item as CSMoney.InventoryItem;
-	const marketItem = item as CSMoney.MarketItem;
-
-	return invItem.sellPrice ?? invItem.recommendedPrice?.decreased ?? marketItem.pricing?.computed ?? invItem.botPrice ?? invItem.price ?? 0;
-}
-
-function getHTMLPrice(container: Element) {
-	const priceText = (container.querySelector('div[class^="Price_price__"]') ?? container.querySelector('div[class^="price_price__"]'))?.textContent;
+function getHTMLPrice(container: Element, selector: ItemSelectors) {
+	const priceText = (
+		container.querySelector(selector.price)?.querySelector('div[class^="Price_price__"]') 
+		?? container.querySelector(selector.price)?.querySelector('div[class^="price_price__"]')
+		?? container.querySelector('div[class^="Price_price__"]') 
+		?? container.querySelector('div[class^="price_price__"]'))?.textContent;
 	if (!priceText) {
 		return null;
 	}
@@ -261,69 +272,76 @@ export function getUserCurrency() {
 	}
 }
 
-async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<PriceResult> {
-	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
+const itemSelectors = {
+	market: {
+		footer: 'div[class^="InventorySmallCard_price-zone__"]',
+		price: 'div[class*="PriceZone_price__"]'
+	},
+	market_popout: {
+		footer: 'span[class^="ActionPriceDetailsButtonZone_current-price-container__"]',
+		price: 'span[class^="ActionPriceDetailsButtonZone_current-price-container__"]',
+	},
+	trade: {
+		footer: 'footer div[class^="BaseCard_price"]',
+		price: 'span[class^="styles_price__"]',
+	},
+	instant_sell: {
+		footer: 'footer div[class^="BaseCard_price"]',
+		price: 'span[class^="styles_price__"]',
+	},
+} as const;
 
-	let footerContainer: HTMLElement | null;
-	if (isPopout) {
-		footerContainer = container.querySelector('div[class^="PriceInformation_price_market_wrap"]');
-		if (!footerContainer) {
-			footerContainer = container.querySelector('span[class^="ActionButtonZone_current-price-container__"]');
+type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
+
+function getSelectors(isPopout: boolean): ItemSelectors {
+	if (location.pathname === '/market/buy/') {
+		if (isPopout) {
+			return itemSelectors.market_popout;
 		}
-	} else {
-		footerContainer = container.querySelector('footer');
+		return itemSelectors.market;
+	} else if (location.pathname === '/market/instant-sell/') {
+		return itemSelectors.instant_sell;
+	} else if (location.pathname === '/csgo/trade/') {
+		return itemSelectors.trade;
 	}
-	if (!footerContainer) {
-		footerContainer = container.querySelector('div[class^="InventorySmallCard_bottom__"]');
-	}
-	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
+	return itemSelectors.market;
+}
+
+async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<PriceResult> {
+	const selector = getSelectors(isPopout);
+	
+	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item, selector);
+
+
+	const footerContainer = container.querySelector<HTMLElement>(selector.footer);
+	
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
-	const buffContainer = generatePriceLine({
-		source,
-		market_id,
-		buff_name,
-		priceOrder,
-		priceListing,
-		priceFromReference,
-		userCurrency: currency.symbol ?? '$',
-		itemStyle: itemStyle as DopplerPhase,
-		CurrencyFormatter: Formatter,
-		isDoppler,
-		isPopout,
-		priceClass: 'suggested-price',
-		addSpaceBetweenPrices: false,
-		showPrefix: false,
-		iconHeight: '15px',
-	});
 
-	if (footerContainer) {
-		const oldContainer = footerContainer.querySelector('.betterfloat-buffprice');
-		if (oldContainer) {
-			console.debug('[BetterFloat] Buff price already added, removing old container...');
-			oldContainer.remove();
-		}
-		if (!container.querySelector('.betterfloat-buffprice')) {
-			if (isPopout) {
-				footerContainer.parentElement?.parentElement?.insertAdjacentHTML('afterbegin', buffContainer);
-			} else {
-				footerContainer.querySelector('div[class^="BaseCard_price"]')?.insertAdjacentHTML('afterend', buffContainer);
-				footerContainer.querySelector('div[class^="InventorySmallCard_price-zone__"]')?.insertAdjacentHTML('afterend', buffContainer);
-			}
-		}
+	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
+		const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
+		const buffContainer = generatePriceLine({
+			source,
+			market_id,
+			buff_name,
+			priceOrder,
+			priceListing,
+			priceFromReference,
+			userCurrency: currency.symbol ?? '$',
+			itemStyle: itemStyle as DopplerPhase,
+			CurrencyFormatter: Formatter,
+			isDoppler,
+			isPopout,
+			addSpaceBetweenPrices: isPopout,
+			showPrefix: false,
+			iconHeight: isPopout ? '20px' : '15px',
+		});
+
+		footerContainer.insertAdjacentHTML('afterend', buffContainer);
 	}
 
 	if (priceListing?.gt(0.06) && location.pathname !== '/market/sell/') {
-		let priceContainer: Element | null;
-		if (isPopout) {
-			const containers = container.querySelectorAll('span[class^="styles_price__"]');
-			priceContainer = containers[containers.length - 1];
-		} else {
-			priceContainer = container.querySelector<HTMLElement>('span[class^="styles_price__"]');
-		}
-		if (!priceContainer) {
-			priceContainer = container.querySelector<HTMLElement>('div[class*="PriceZone_price__"]');
-		}
+		const priceContainer = container.querySelector<HTMLElement>(selector.price);
 
 		if (isPopout) {
 			container.querySelector('span[class^="Tag-module_container__"]')?.remove();
@@ -346,14 +364,14 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		const buffPriceHTML = html`
 			<div
-				class="sale-tag betterfloat-sale-tag" 
-				style="background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;${isPopout ? 'margin-left: 10px;' : ''}" 
-				data-betterfloat="${difference}"
+				class="sale-tag betterfloat-sale-tag ${isPopout ? 'betterfloat-big-tag' : ''}"
+				style="background-color: ${background}; color: ${color};"
 			>
 				<span>${difference.isPos() ? '+' : '-'}${Formatter.format(absDifference.toNumber())}</span>
 				<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
 			</div>
 		`;
+
 		priceContainer?.setAttribute('style', 'display: flex; gap: 5px; align-items: center;');
 
 		priceContainer?.insertAdjacentHTML('beforeend', buffPriceHTML);
