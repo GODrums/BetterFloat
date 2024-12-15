@@ -223,10 +223,11 @@ async function getBuffItem(container: Element, item: CSMoney.Item, selector: Ite
 
 function getHTMLPrice(container: Element, selector: ItemSelectors) {
 	const priceText = (
-		container.querySelector(selector.price)?.querySelector('div[class^="Price_price__"]') 
-		?? container.querySelector(selector.price)?.querySelector('div[class^="price_price__"]')
-		?? container.querySelector('div[class^="Price_price__"]') 
-		?? container.querySelector('div[class^="price_price__"]'))?.textContent;
+		container.querySelector(selector.price)?.querySelector('div[class^="Price_price__"]') ??
+		container.querySelector(selector.price)?.querySelector('div[class^="price_price__"]') ??
+		container.querySelector('div[class^="Price_price__"]') ??
+		container.querySelector('div[class^="price_price__"]')
+	)?.textContent;
 	if (!priceText) {
 		return null;
 	}
@@ -275,7 +276,7 @@ export function getUserCurrency() {
 const itemSelectors = {
 	market: {
 		footer: 'div[class^="InventorySmallCard_price-zone__"]',
-		price: 'div[class*="PriceZone_price__"]'
+		price: 'div[class*="PriceZone_price__"]',
 	},
 	market_popout: {
 		footer: 'span[class^="ActionPriceDetailsButtonZone_current-price-container__"]',
@@ -309,12 +310,11 @@ function getSelectors(isPopout: boolean): ItemSelectors {
 
 async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<PriceResult> {
 	const selector = getSelectors(isPopout);
-	
+
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item, selector);
 
-
 	const footerContainer = container.querySelector<HTMLElement>(selector.footer);
-	
+
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 

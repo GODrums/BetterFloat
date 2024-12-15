@@ -20,16 +20,16 @@
 	letter-spacing: -.005em;
 	display: flex;
 	flex-direction: column;
-	padding: 1px 3px; 
+	padding: 1px 3px;
 	border-radius: 4px;
 }
 
 .betterfloat-big-tag {
-	margin-left: 10px; 
-	flex-direction: row; 
+	margin-left: 10px;
+	flex-direction: row;
 	font-size: 15px;
-    padding: 5px 8px;
-    gap: 4px;
+	padding: 5px 8px;
+	gap: 4px;
 }
 
 .betterfloat-sale-tag span {
@@ -45,7 +45,7 @@
 }
 
 .betterfloat-big-a {
-    margin-top: 5px;
+	margin-top: 5px;
 	gap: 4px;
 }
 
