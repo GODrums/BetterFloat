@@ -15,7 +15,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.dmarket.com/*'],
 	run_at: 'document_end',
-	css: ['../css/dmarket_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/dmarket_styles.css'],
 };
 
 type PriceResult = {

@@ -1,6 +1,6 @@
 import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
 import { getSetting } from '~lib/util/storage';
-import { addBlueBadge, webDetection } from '../../contents/skinport_script';
+import { addBlueBadge } from '../../contents/skinport_script';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { addPattern } from './skinport_helpers';
 
@@ -16,8 +16,6 @@ export async function handleListed(data: Skinport.Item[]) {
 
 				if (['Case Hardened', 'Heat Treated'].includes(item.name) && item.category !== 'Gloves' && (await getSetting('sp-csbluegem'))) {
 					await addBlueBadge(element, item);
-				} else if ((item.marketHashName.includes('Crimson Web') || item.marketHashName.includes('Emerald Web')) && item.category === 'Gloves') {
-					webDetection(element, item);
 				}
 			}
 		}

@@ -23,7 +23,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.cs.money/*'],
 	run_at: 'document_end',
-	css: ['../css/csmoney_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/csmoney_styles.css'],
 };
 
 type PriceResult = {
@@ -338,6 +338,10 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		});
 
 		footerContainer.insertAdjacentHTML('afterend', buffContainer);
+
+		if (!isPopout) {
+			footerContainer.parentElement?.parentElement?.style.setProperty('overflow', 'visible');
+		}
 	}
 
 	if (priceListing?.gt(0.06) && location.pathname !== '/market/sell/') {

@@ -69,15 +69,14 @@ export function generatePriceLine({
 	const buffContainer = html`
 		<a class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''}" href="${href}" target="_blank">
 			<img src="${icon}" style="${iconStyle}" />
-			<div class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" data-betterfloat='${bfDataAttribute}'>
+			<div 
+				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''} hint--bottom hint--rounded hint--no-arrow" 
+				data-betterfloat='${bfDataAttribute}'
+				aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"
+			>
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
-							<span class="betterfloat-buff-tooltip">
-								Bid: Highest buy order price;
-								<br />
-								Ask: Lowest listing price
-							</span>
 							<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
 							<span style="color: gray;${addSpaceBetweenPrices ? 'margin: 0 3px 0 3px;' : ''}">|</span>
 							<span style="color: greenyellow;"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>

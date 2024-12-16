@@ -70,7 +70,7 @@ import type { IStorage } from '~lib/util/storage';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
 	run_at: 'document_end',
-	css: ['../css/csfloat_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/csfloat_styles.css'],
 };
 
 init();

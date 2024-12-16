@@ -35,7 +35,7 @@ import type { IStorage, SPFilter } from '~lib/util/storage';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
 	run_at: 'document_idle',
-	css: ['../css/skinport_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/skinport_styles.css'],
 };
 
 init();
@@ -489,15 +489,7 @@ function storeItem(container: Element, item: Skinport.Listing) {
 export async function patternDetections(container: Element, item: Skinport.Item) {
 	if (item.name.includes('Case Hardened') || item.name.includes('Heat Treated')) {
 		await caseHardenedDetection(container, item);
-	} else if ((item.name.includes('Crimson Web') || item.name.includes('Emerald Web')) && item.name.startsWith('★')) {
-		webDetection(container, item);
 	}
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function webDetection(container: Element, item: Skinport.Item) {
-	const itemHeader = container.querySelector('.TradeLock-lock');
-	if (!itemHeader) return;
 }
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {

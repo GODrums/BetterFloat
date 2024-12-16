@@ -17,7 +17,7 @@ import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
-	css: ['../css/skinbid_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/skinbid_styles.css'],
 	run_at: 'document_end',
 };
 

@@ -15,7 +15,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinbaron.de/*'],
 	run_at: 'document_end',
-	css: ['../css/skinbaron_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/skinbaron_styles.css'],
 };
 
 type PriceResult = {

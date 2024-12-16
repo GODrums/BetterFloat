@@ -1,0 +1,11 @@
+[class*='hint--'][aria-label]:after {
+    text-shadow: none;
+    font-weight: normal;
+    line-height: normal;
+    text-align: center;
+    background: hsl(240 5.9% 10%);
+    color: hsl(0 0% 98%);
+    font-size: 13px;
+    border-radius: 4px;
+	padding: 10px;
+}
