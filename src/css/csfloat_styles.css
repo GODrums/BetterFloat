@@ -25,7 +25,7 @@ body.light-theme {
 	color: hsl(229 63% 4%) !important;
 }
 
-[class*='hint--'][aria-label]:after {
+[class*="hint--"][aria-label]:after {
 	color: #fff;
 	-webkit-backdrop-filter: blur(10px);
 	backdrop-filter: blur(10px);

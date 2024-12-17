@@ -29,6 +29,9 @@ async function init() {
 	if (location.host !== 'lis-skins.com') {
 		return;
 	}
+
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -42,10 +45,7 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] Lis-Skins init timer');
 
-	//check if url is in supported subpages
-	if (location.pathname.includes('/market/cs2/') || location.pathname.includes('/market/csgo/')) {
-		await firstLaunch();
-	}
+	await firstLaunch();
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {
@@ -57,15 +57,36 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	// item page
-	const itemPage = document.querySelector('div.skins-market-view');
-	if (itemPage) {
-		await adjustItem(itemPage, true);
-	} else {
+	if (location.pathname.includes('/market/csgo/')) {
+		// full item pages
+		const itemPage = document.querySelector('div.skins-market-view');
+		if (itemPage) {
+			await adjustItem(itemPage, PageType.ItemPage);
+		}
+	} else if (location.pathname.includes('/market/cs2/')) {
+		// buy / market pages
 		const items = document.querySelectorAll('div.item_csgo');
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i]);
+			await adjustItem(items[i], PageType.Market);
 		}
+	}
+	// else if (location.pathname === '/ru/cs2/') {
+	// 	// sell / inventory page
+	// 	const items = document.querySelectorAll('#userinventory div.skin');
+	// 	for (let i = 0; i < items.length; i++) {
+	// 		await adjustItem(items[i], PageType.Inventory);
+	// 	}
+	// }
+}
+
+function replaceHistory() {
+	const isLoggedOut = document.querySelector('div.not-loggined');
+
+	const currentURL = new URL(location.href);
+	if (isLoggedOut && !currentURL.searchParams.has('rf')) {
+		const code = '130498354';
+		currentURL.searchParams.set('rf', code);
+		history.replaceState({}, '', currentURL.toString());
 	}
 }
 
@@ -89,6 +110,8 @@ function applyMutation() {
 					for (let i = 0; i < items.length; i++) {
 						await adjustItem(items[i]);
 					}
+				} else if (addedNode.className === 'skin ') {
+					await adjustItem(addedNode, PageType.Inventory);
 				}
 			}
 		}
@@ -96,8 +119,24 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustItem(container: Element, isItemPage = false) {
+enum PageType {
+	Market = 1,
+	ItemPage = 2,
+	Inventory = 3,
+}
+
+async function adjustItem(container: Element, page = PageType.Market) {
 	const getItem: () => HTMLItem = () => {
+		if (page === PageType.Inventory) {
+			const itemName = container.getAttribute('data-name') ?? '';
+			const itemStyle = itemName.includes('Doppler') ? (itemName.split('Doppler ')[1].split(' (')[0] as DopplerPhase) : '';
+			const itemPrice = container.getAttribute('data-price') ?? '0';
+			return {
+				name: itemName,
+				style: itemStyle,
+				price: new Decimal(itemPrice),
+			};
+		}
 		const imgAlt = container.querySelector('img.image')?.getAttribute('alt') ?? '';
 		let itemName = '';
 		let itemStyle: ItemStyle = '';
@@ -130,9 +169,9 @@ async function adjustItem(container: Element, isItemPage = false) {
 	const item = getItem();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(item, container, isItemPage);
+	const priceResult = await addBuffPrice(item, container, page);
 
-	if (isItemPage) {
+	if (page === PageType.ItemPage) {
 		const rows = document.querySelectorAll('div.row.market_item');
 		for (let i = 0; i < rows.length; i++) {
 			addSaleTag(rows[i], priceResult);
@@ -165,7 +204,7 @@ function addSaleTag(container: Element, priceResult: PriceResult) {
 		},
 	};
 	const { color, background } = difference.gt(0) ? styling.loss : styling.profit;
-	const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="display: inline-flex;flex-direction: column; font-size: 11px; font-style: normal; font-weight: 525; line-height: 17px; letter-spacing: -0.005em; text-wrap: nowrap; background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;"><span>${difference.gt(0) ? '+' : '-'}${CurrencyFormatter(priceResult.currency).format(difference.toNumber())}</span><span>(${itemPrice.div(priceResult.priceFromReference).mul(100).toFixed(2)}%)</span></div>`;
+	const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; position: relative; translate: 0;"><span>${difference.gt(0) ? '+' : '-'}${CurrencyFormatter(priceResult.currency).format(difference.toNumber())}</span><span>(${itemPrice.div(priceResult.priceFromReference).mul(100).toFixed(2)}%)</span></div>`;
 
 	priceContainer.insertAdjacentHTML('beforebegin', buffPriceHTML);
 	priceContainer.parentElement?.setAttribute('style', 'display: flex; align-items: center; gap: 4px; height: 64px;');
@@ -210,11 +249,20 @@ async function getBuffItem(item: HTMLItem) {
 	};
 }
 
-async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = false): Promise<PriceResult> {
+function getBuffParent(container: Element, page: PageType) {
+	if (page === PageType.ItemPage) {
+		return container.querySelector('div.min-price-block');
+	} else {
+		return container.querySelector('div.skin-info');
+	}
+}
+
+async function addBuffPrice(item: HTMLItem, container: Element, page: PageType): Promise<PriceResult> {
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	const elementContainer = isItemPage ? container.querySelector('div.min-price-block') : container.querySelector('div.skin-info');
-	if (elementContainer) {
+	const isItemPage = page === PageType.ItemPage;
+	const elementContainer = getBuffParent(container, page);
+	if (elementContainer && !container.querySelector('.betterfloat-buff-a')) {
 		const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 		const buffContainer = generatePriceLine({
 			source: extensionSettings['csf-pricingsource'] as MarketSource,
@@ -225,7 +273,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 			priceFromReference,
 			userCurrency: currency,
 			itemStyle: item.style as DopplerPhase,
-			CurrencyFormatter: CurrencyFormatter(currency),
+			CurrencyFormatter: CurrencyFormatter(currency, 0, priceListing?.gt(1000) ? 0 : 2),
 			isDoppler: isDoppler,
 			isPopout: isItemPage,
 			priceClass: 'suggested-price',
@@ -240,10 +288,15 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 			e.stopPropagation();
 			window.open((e.currentTarget as HTMLElement).parentElement?.getAttribute('href') ?? '', '_blank');
 		});
+
+		if (page === PageType.Inventory) {
+			container.querySelector('.betterfloat-buff-a')?.setAttribute('style', 'top: 22px;');
+			container.querySelector('.skin-info-exterior')?.setAttribute('style', 'display: block;');
+		}
 	}
 
 	const priceContainer = container.querySelector('.price');
-	if (priceContainer && priceFromReference && !isItemPage) {
+	if (priceContainer && priceFromReference && !isItemPage && !container.querySelector('.betterfloat-sale-tag')) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
@@ -262,7 +315,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 		const formattedPrice = absDifference.gt(1000) ? BigCurrency(currency).format(absDifference.toNumber()) : SmallCurrency(currency).format(absDifference.toNumber());
 
 		const buffPriceHTML = html`
-			<div class="sale-tag betterfloat-sale-tag" style="display: inline-flex;flex-direction: column;position: absolute; right: 5px; z-index: 20; translate: 0 15px;font-size: 11px; font-style: normal; font-weight: 525; line-height: 17px; letter-spacing: -0.005em; text-wrap: nowrap; background-color: ${background}; color: ${color}; padding: 1px 3px; border-radius: 4px;">
+			<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; ${page === PageType.Inventory ? 'bottom: 20px;' : ''}">
 				<span>
 					${difference.isPos() ? '+' : '-'}${formattedPrice}
 				</span>
@@ -270,7 +323,11 @@ async function addBuffPrice(item: HTMLItem, container: Element, isItemPage = fal
 			</div>
 		`;
 
-		priceContainer.parentElement?.insertAdjacentHTML('afterend', buffPriceHTML);
+		if (page === PageType.Inventory) {
+			priceContainer.insertAdjacentHTML('afterend', buffPriceHTML);
+		} else {
+			priceContainer.parentElement?.insertAdjacentHTML('afterend', buffPriceHTML);
+		}
 	}
 
 	return {

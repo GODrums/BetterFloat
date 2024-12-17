@@ -63,11 +63,20 @@ function applyMutation() {
 					// if (!addedNode?.children[0].children[0].className.includes('goods-card')) continue;
 					const state = location.pathname.includes('inventory') ? PageState.Inventory : PageState.Market;
 					await adjustItem(addedNode, state);
+				} else if (addedNode.classList.contains('market-goods-sell-content')) {
+					await adjustItem(addedNode.children[i], PageState.ItemPage);
 				} else if (addedNode.className.startsWith('market-goods-sell')) {
 					for (let i = 1; i < addedNode.children.length; i++) {
 						// items in item page but without title or recommendations
 						if (addedNode.children[i].className.includes('content')) {
 							await adjustItem(addedNode.children[i], PageState.ItemPage);
+						}
+					}
+				} else if (addedNode.className === 'market-goods-recommend') {
+					for (let i = 1; i < addedNode.children.length; i++) {
+						// recommended items in item page
+						if (addedNode.children[i].className === 'goods-item') {
+							await adjustItem(addedNode.children[i], PageState.Market);
 						}
 					}
 				}
@@ -241,6 +250,8 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		};
 	}
 
+	container.querySelector<HTMLElement>('.goods-card')?.setAttribute('style', 'overflow: visible;');
+
 	const footerContainer = getFooterContainer(state, container);
 	const currencyItem = getBuffCurrencyRate();
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
@@ -263,7 +274,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	if (footerContainer) {
 		if (state === PageState.ItemPage) {
 			if (!document.querySelector('.betterfloat-buffprice')) {
-				footerContainer.innerHTML = `<div style="display: flex; flex-direction: column;">${footerContainer.innerHTML}</div>`;
+				footerContainer.innerHTML = `<div style="display: flex; flex-direction: column; align-items: flex-start;">${footerContainer.innerHTML}</div>`;
 				footerContainer.firstElementChild?.insertAdjacentHTML('beforeend', buffContainer);
 			}
 		} else if (!container.querySelector('.betterfloat-buffprice')) {
@@ -300,7 +311,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		const percentage = new Decimal(location.pathname.includes('market/all') ? itemPrice : getItemPrice(item)).div(priceFromReference ?? 0).mul(100);
 		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px; ${state === PageState.ItemPage ? 'font-size: 14px;' : 'margin-left: 10px;'}`;
+		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; ${state === PageState.ItemPage ? 'display: inline;font-size: 14px;' : 'margin-left: 10px;'}`;
 		const formattedPrice =
 			absDifference.gt(1000) && state !== PageState.ItemPage
 				? BigCurrency(currencyRate.value).format(absDifference.toNumber())

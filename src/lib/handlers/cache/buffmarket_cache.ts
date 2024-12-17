@@ -3,6 +3,7 @@ import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 // buffmarket: cached items from api
 let buffItems: { [id: number]: BuffMarket.Item[] } = {};
 let buffPageItems: BuffMarket.Item[] = [];
+let buffRecommendations: BuffMarket.Item[] = [];
 const buffGoodsInfo: { [goods_id: number]: BuffMarket.GoodsInfo } = {};
 let buffCurrencyRate: BuffMarket.CurrencyItem | null = null;
 // buffmarket: cached own user id
@@ -52,7 +53,13 @@ export function cacheBuffMarketItems(data: BuffMarket.Item[]) {
 	}
 }
 
+export function cacheBuffRecommendations(data: BuffMarket.Item[]) {
+	console.log('Caching buff recommendations: ', data);
+	buffRecommendations = data;
+}
+
 export function cacheBuffPageItems(data: BuffMarket.Item[]) {
+	console.log('Caching buff page items: ', data);
 	buffPageItems = data;
 }
 
@@ -83,11 +90,10 @@ export function getBuffMarketItem(id: number) {
 	return null;
 }
 
+export function getFirstBuffRecommendation() {
+	return buffRecommendations?.shift();
+}
+
 export function getFirstBuffPageItem() {
-	if (buffPageItems.length > 0) {
-		const item = buffPageItems.shift();
-		return item;
-	} else {
-		return null;
-	}
+	return buffPageItems.shift();
 }

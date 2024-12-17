@@ -21,6 +21,8 @@
 	line-height: 17px;
 	letter-spacing: -.005em;
 	text-wrap: nowrap;
+	padding: 1px 5px;
+	border-radius: 4px;
 }
 
 .betterfloat-buff-tooltip {

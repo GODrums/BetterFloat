@@ -67,12 +67,16 @@ export function generatePriceLine({
 	const extendedDisplay = showPrefix && priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
 	const buffContainer = html`
-		<a class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''}" href="${href}" target="_blank">
+		<a 
+			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom hint--rounded hint--no-arrow" 
+			href="${href}" 
+			target="_blank"
+			aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"
+			data-betterfloat='${bfDataAttribute}'
+		>
 			<img src="${icon}" style="${iconStyle}" />
 			<div 
-				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''} hint--bottom hint--rounded hint--no-arrow" 
-				data-betterfloat='${bfDataAttribute}'
-				aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"
+				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" 
 			>
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)

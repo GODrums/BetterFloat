@@ -23,6 +23,23 @@
 	letter-spacing: 0.02em;
 }
 
+.betterfloat-sale-tag {
+	display: inline-flex;
+	flex-direction: column;
+	position: absolute;
+	right: 5px;
+	z-index: 20;
+	translate: 0 15px;
+	font-size: 11px;
+	font-style: normal;
+	font-weight: 525;
+	line-height: 17px;
+	letter-spacing: -0.005em;
+	text-wrap: nowrap;
+	padding: 1px 3px;
+	border-radius: 4px;
+}
+
 .betterfloat-buff-tooltip {
 	/* Positioning the tooltip text */
 	position: absolute;
