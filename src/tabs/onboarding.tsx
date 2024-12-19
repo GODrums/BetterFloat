@@ -4,8 +4,8 @@ import { motion } from 'framer-motion';
 import { Highlight } from '~popup/components/Highlight';
 import { Vortex } from '~popup/components/Vortex';
 import '~style.css';
-import { Button } from '~popup/components/Shadcn';
 import { WEBSITE_URL } from '~lib/util/globals';
+import { Button } from '~popup/components/Shadcn';
 
 export default function OnboardingPage() {
 	return (

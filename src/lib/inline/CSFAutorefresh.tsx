@@ -2,9 +2,9 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { type SVGProps, useEffect, useRef, useState } from 'react';
+import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
 import { Badge, Button, Switch } from '~popup/components/Shadcn';
-import { cn } from '~lib/utils';
 
 export function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (

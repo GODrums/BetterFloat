@@ -81,6 +81,9 @@ export const Vortex = (props: VortexProps) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
+		// biome-ignore lint/style/useConst: <explanation>
+		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
 		let x, y, vx, vy, life, ttl, speed, radius, hue;
 
 		x = rand(canvas.width);
@@ -121,6 +124,7 @@ export const Vortex = (props: VortexProps) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
+		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
 		const i2 = 1 + i,
 			i3 = 2 + i,
 			i4 = 3 + i,
@@ -129,6 +133,8 @@ export const Vortex = (props: VortexProps) => {
 			i7 = 6 + i,
 			i8 = 7 + i,
 			i9 = 8 + i;
+		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
+		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
 		let n, x, y, vx, vy, life, ttl, speed, x2, y2, radius, hue;
 
 		x = particleProps[i];

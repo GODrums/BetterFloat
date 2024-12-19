@@ -1,9 +1,9 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useState } from 'react';
 import { z } from 'zod';
-import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { DISCORD_URL, ocoKeyRegex } from '~lib/util/globals';
 import { cn } from '~lib/utils';
+import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Input, Label, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './Shadcn';
 
 export const SettingsOCO = () => {

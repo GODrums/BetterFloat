@@ -158,6 +158,7 @@ export const DEFAULT_SETTINGS = {
 	'baron-color-loss': '#ce0000',
 	'baron-color-neutral': '#708090',
 	'display-updatepopup': true,
+	'user': { steam: { isLoggedIn: false } } as BFUser,
 };
 
 export const DEFAULT_FILTER = {
@@ -177,6 +178,15 @@ export const DEFAULT_FILTER = {
 		charm: true,
 	},
 	new: false,
+};
+
+export type BFUser = {
+	steam: {
+		isLoggedIn: boolean;
+		id64?: string;
+		username?: string;
+		picture?: string;
+	};
 };
 
 export type IStorage = typeof DEFAULT_SETTINGS;

@@ -32,9 +32,8 @@ async function getSteamLogin() {
 	const steamPage = await fetch('https://steamcommunity.com/');
 	const steamPageText = await steamPage.text();
 	const steamLogin = steamPageText.match(/g_steamID = "(.*?)"/);
-	console.log("steamLogin", steamLogin);
-	console.log("steamPageText", steamPageText);
-
+	console.log('steamLogin', steamLogin);
+	console.log('steamPageText', steamPageText);
 }
 
 async function initializeSettings() {

@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect, useState } from 'react';
-import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { MarketSource } from '~lib/util/globals';
+import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import type { SourceInfo } from './SettingsSource';
 import { SettingsTooltip } from './SettingsTooltip';
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Shadcn';

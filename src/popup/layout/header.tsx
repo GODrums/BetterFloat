@@ -1,9 +1,9 @@
 import '~style.css';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { useEffect } from 'react';
+import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord } from '~popup/components/Icons';
 import { Badge, Button } from '~popup/components/Shadcn';
-import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
 
 export default function Header() {
 	const hostpermissions = chrome.runtime.getManifest().host_permissions as string[];

@@ -1,9 +1,9 @@
 import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { SettingsCard } from '~popup/components/SettingsCard';
-import { Spotlight } from '~popup/components/Spotlight';
 import { WEBSITE_URL } from '~lib/util/globals';
-import { Button, ScrollArea, TabsContent } from '~popup/components/Shadcn';
+import { SettingsCard } from '~popup/components/SettingsCard';
+import { Button } from '~popup/components/Shadcn';
+import { Spotlight } from '~popup/components/Spotlight';
 import { TabTemplate } from './TabTemplate';
 
 export const About = () => {
