@@ -1,6 +1,6 @@
 import type React from 'react';
-import { MaterialSymbolsCloseSmallOutlineRounded } from '~lib/components/Icons';
-import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~lib/components/Shadcn';
+import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
+import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~popup/components/Shadcn';
 import { AvailableMarketSources, ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 

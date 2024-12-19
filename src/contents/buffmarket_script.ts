@@ -72,14 +72,15 @@ function applyMutation() {
 							await adjustItem(addedNode.children[i], PageState.ItemPage);
 						}
 					}
-				} else if (addedNode.className === 'market-goods-recommend') {
-					for (let i = 1; i < addedNode.children.length; i++) {
-						// recommended items in item page
-						if (addedNode.children[i].className === 'goods-item') {
-							await adjustItem(addedNode.children[i], PageState.Market);
-						}
-					}
-				}
+				} 
+				// else if (addedNode.className === 'market-goods-recommend') {
+				// 	for (let i = 1; i < addedNode.children.length; i++) {
+				// 		// recommended items in item page
+				// 		if (addedNode.children[i].className === 'goods-item') {
+				// 			await adjustItem(addedNode.children[i], PageState.Market);
+				// 		}
+				// 	}
+				// }
 			}
 		}
 	});

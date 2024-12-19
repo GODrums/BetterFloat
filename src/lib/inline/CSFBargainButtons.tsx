@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState } from 'react';
-import { Button, MultiplierInput } from '~lib/components/Shadcn';
+import { Button, MultiplierInput } from '~popup/components/Shadcn';
 
 type PricingData = {
 	buff_name: string;

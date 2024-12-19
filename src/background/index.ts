@@ -21,27 +21,43 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 
-		const data = await ExtensionStorage.sync.getAll();
-		if (!data) {
-			console.log('[BetterFloat] No settings found, setting default settings.');
-			for (const key in DEFAULT_SETTINGS) {
-				ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
-			}
-			return;
-		}
+		// set default settings
+		await initializeSettings();
 
-		const storedSettings = data as unknown as IStorage;
-		console.debug('[BetterFloat] Loaded settings: ', storedSettings);
-
-		for (const key in DEFAULT_SETTINGS) {
-			if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
-				// add missing settings
-				console.log('[BetterFloat] Adding missing setting: ', key);
-				ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
-			}
-		}
+		await getSteamLogin();
 	}
 });
+
+async function getSteamLogin() {
+	const steamPage = await fetch('https://steamcommunity.com/');
+	const steamPageText = await steamPage.text();
+	const steamLogin = steamPageText.match(/g_steamID = "(.*?)"/);
+	console.log("steamLogin", steamLogin);
+	console.log("steamPageText", steamPageText);
+
+}
+
+async function initializeSettings() {
+	const data = await ExtensionStorage.sync.getAll();
+	if (!data) {
+		console.log('[BetterFloat] No settings found, setting default settings.');
+		for (const key in DEFAULT_SETTINGS) {
+			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
+		}
+		return;
+	}
+
+	const storedSettings = data as unknown as IStorage;
+	console.debug('[BetterFloat] Loaded settings: ', storedSettings);
+
+	for (const key in DEFAULT_SETTINGS) {
+		if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
+			// add missing settings
+			console.log('[BetterFloat] Adding missing setting: ', key);
+			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
+		}
+	}
+}
 
 const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https://skinbid.com'];
 

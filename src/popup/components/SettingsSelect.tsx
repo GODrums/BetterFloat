@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import { type ReactElement, useEffect, useState } from 'react';
-import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
+import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { SettingsTooltip } from './SettingsTooltip';
 import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Shadcn';
 

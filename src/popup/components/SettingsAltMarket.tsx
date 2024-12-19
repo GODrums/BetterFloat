@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect, useState } from 'react';
-import { MaterialSymbolsHelpOutline } from '~lib/components/Icons';
+import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { MarketSource } from '~lib/util/globals';
 import type { SourceInfo } from './SettingsSource';
 import { SettingsTooltip } from './SettingsTooltip';

@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~lib/components/Icons';
-import { Button, Label } from '~lib/components/Shadcn';
+import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~popup/components/Icons';
+import { Button, Label } from '~popup/components/Shadcn';
 import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 
