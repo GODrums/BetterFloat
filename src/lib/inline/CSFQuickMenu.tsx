@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react';
 import type React from 'react';
-import { Button } from '~popup/components/Shadcn';
+import { Button } from '~popup/ui/button';
 
 type QuickMenuButtonProps = {
 	label: string;

@@ -9,7 +9,6 @@ import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
 import { DEFAULT_SETTINGS } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
-import { Tabs, TabsList, TabsTrigger } from '~popup/components/Shadcn';
 import { SparklesCore } from '~popup/components/Sparkles';
 import { Toaster } from '~popup/components/Toaster';
 import { About } from '~popup/tabs/About';
@@ -22,6 +21,7 @@ import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import Header from './layout/header';
 import { UserProfile } from './tabs/UserProfile';
+import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export default function IndexPopup() {
 	useEffect(() => {

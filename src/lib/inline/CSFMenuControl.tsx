@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { type SVGProps, useState } from 'react';
 import { cn } from '~lib/utils';
-import { Button } from '~popup/components/Shadcn';
+import { Button } from '~popup/ui/button';
 
 export function BxBxsChevronLeft(props: SVGProps<SVGSVGElement>) {
 	return (

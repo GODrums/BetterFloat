@@ -1,8 +1,11 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
+import { Button } from '~popup/ui/button';
+import { Card, CardContent } from '~popup/ui/card';
+import { Label } from '~popup/ui/label';
+import { Popover, PopoverColorPicker, PopoverTrigger } from '~popup/ui/popover';
 import { IcOutlineColorLens, MaterialSymbolsRefresh } from './Icons';
-import { Button, Card, CardContent, Label, Popover, PopoverColorPicker, PopoverTrigger } from './Shadcn';
 
 const SingleColorPicker = ({ text, initColor, setStoreValue }: { text: string; initColor: string; setStoreValue: (newColor: string) => void }) => {
 	const [color, setColor] = useState(initColor);

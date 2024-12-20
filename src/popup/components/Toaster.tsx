@@ -1,7 +1,7 @@
 'use client';
 
 import { useToast } from '~lib/utils';
-import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from './Shadcn';
+import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '~popup/ui/toast';
 
 export function Toaster() {
 	const { toasts } = useToast();

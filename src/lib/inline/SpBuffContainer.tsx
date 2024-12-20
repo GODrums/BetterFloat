@@ -1,8 +1,9 @@
-import type React from 'react';
 import { AvailableMarketSources, ICON_ARROWUP, ICON_BUFF, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
-import { Badge, Button, Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~popup/components/Shadcn';
+import { Badge } from '~popup/ui/badge';
+import { Button } from '~popup/ui/button';
+import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '~popup/ui/popover';
 
 type BuffItem = {
 	source: MarketSource;

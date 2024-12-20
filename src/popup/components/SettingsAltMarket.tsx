@@ -2,9 +2,10 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect, useState } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
+import { Label } from '~popup/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~popup/ui/select';
 import type { SourceInfo } from './SettingsSource';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Shadcn';
 
 type SelectProps = {
 	prefix: string;

@@ -1,5 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { EnableSwitch, Label } from './Shadcn';
+import { Label } from '~popup/ui/label';
+import { EnableSwitch } from '~popup/ui/switch';
 
 export const SettingsEnable = ({ id }: { id: string }) => {
 	const [checked, setChecked] = useStorage(id);

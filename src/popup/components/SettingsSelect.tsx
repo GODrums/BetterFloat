@@ -2,8 +2,9 @@ import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import { type ReactElement, useEffect, useState } from 'react';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
+import { Label } from '~popup/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~popup/ui/select';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Shadcn';
 
 type SelectProps = {
 	id: string;

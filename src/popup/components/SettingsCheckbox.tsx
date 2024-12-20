@@ -3,8 +3,10 @@ import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import type { ReactElement, SVGProps } from 'react';
 import { cn, toast } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
+import { Badge } from '~popup/ui/badge';
+import { Checkbox } from '~popup/ui/checkbox';
+import { Label } from '~popup/ui/label';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Badge, Checkbox, Label } from './Shadcn';
 
 type CheckboxProps = {
 	id: string;

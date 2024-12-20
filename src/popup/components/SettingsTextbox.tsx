@@ -2,8 +2,9 @@ import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import type { ReactElement } from 'react';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
+import { Input } from '~popup/ui/input';
+import { Label } from '~popup/ui/label';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Input, Label } from './Shadcn';
 
 type TextboxProps = {
 	id: string;

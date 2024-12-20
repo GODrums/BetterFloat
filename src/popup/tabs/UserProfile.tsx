@@ -1,11 +1,13 @@
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import { Bell, Globe, Sparkles, Star, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { getSteamLogin } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 import { MdiSteamColored } from '~popup/components/Icons';
-import { Avatar, AvatarFallback, AvatarImage, Badge, Button, Card, CardContent } from '~popup/components/Shadcn';
+import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
+import { Badge } from '~popup/ui/badge';
+import { Button } from '~popup/ui/button';
+import { Card, CardContent } from '~popup/ui/card';
 import { TabTemplate } from './TabTemplate';
 
 export const UserProfile = () => {

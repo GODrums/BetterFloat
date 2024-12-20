@@ -5,7 +5,7 @@ import { Highlight } from '~popup/components/Highlight';
 import { Vortex } from '~popup/components/Vortex';
 import '~style.css';
 import { WEBSITE_URL } from '~lib/util/globals';
-import { Button } from '~popup/components/Shadcn';
+import { Button } from '~popup/ui/button';
 
 export default function OnboardingPage() {
 	return (

@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~popup/components/Icons';
-import { Button, Label } from '~popup/components/Shadcn';
+import { Button } from '~popup/ui/button';
+import { Label } from '~popup/ui/label';
 
 interface TypeCheckboxProps {
 	label: string;

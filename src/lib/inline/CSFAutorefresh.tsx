@@ -4,7 +4,9 @@ import type React from 'react';
 import { type SVGProps, useEffect, useRef, useState } from 'react';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
-import { Badge, Button, Switch } from '~popup/components/Shadcn';
+import { Badge } from '~popup/ui/badge';
+import { Button } from '~popup/ui/button';
+import { Switch } from '~popup/ui/switch';
 
 export function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (

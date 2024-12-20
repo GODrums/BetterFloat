@@ -1,4 +1,4 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './Shadcn';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~popup/ui/tooltip';
 
 export const SettingsTooltip = ({
 	text,

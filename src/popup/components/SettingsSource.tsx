@@ -7,12 +7,15 @@ import { useStorage } from '@plasmohq/storage/hook';
 import type { SVGProps } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
+import { Badge } from '~popup/ui/badge';
+import { Button } from '~popup/ui/button';
+import { Card, CardContent } from '~popup/ui/card';
+import { Label } from '~popup/ui/label';
 import { MaterialSymbolsHelpOutline } from './Icons';
 import { SettingsAltMarket } from './SettingsAltMarket';
 import { SettingsCheckbox } from './SettingsCheckbox';
 import { SettingsSelect } from './SettingsSelect';
 import { SettingsTooltip } from './SettingsTooltip';
-import { Badge, Button, Card, CardContent, Label } from './Shadcn';
 
 export function MaterialSymbolsLightStorefrontOutline(props: SVGProps<SVGSVGElement>) {
 	return (

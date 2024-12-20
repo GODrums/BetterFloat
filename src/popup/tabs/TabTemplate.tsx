@@ -1,5 +1,6 @@
 import { cn } from '~lib/utils';
-import { ScrollArea, TabsContent } from '~popup/components/Shadcn';
+import { ScrollArea } from '~popup/ui/scroll-area';
+import { TabsContent } from '~popup/ui/tabs';
 
 interface TabTemplateProps {
 	value: string;
