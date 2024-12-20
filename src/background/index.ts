@@ -2,6 +2,7 @@ import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { getSteamLogin } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 
 // Check whether new version is installed
@@ -24,17 +25,9 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		// set default settings
 		await initializeSettings();
 
-		await getSteamLogin();
+		// await getSteamLogin();
 	}
 });
-
-async function getSteamLogin() {
-	const steamPage = await fetch('https://steamcommunity.com/');
-	const steamPageText = await steamPage.text();
-	const steamLogin = steamPageText.match(/g_steamID = "(.*?)"/);
-	console.log('steamLogin', steamLogin);
-	console.log('steamPageText', steamPageText);
-}
 
 async function initializeSettings() {
 	const data = await ExtensionStorage.sync.getAll();

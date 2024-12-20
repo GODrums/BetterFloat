@@ -92,6 +92,9 @@
 			"https://*.skinport.com/*",
 			"https://*.skinbid.com/*"
 		],
+		"optional_host_permissions": [
+			"*://*.steamcommunity.com/*"
+		],
 		"externally_connectable": {
 			"matches": [
 				"https://*.rums.dev/*"

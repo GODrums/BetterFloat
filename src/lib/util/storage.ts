@@ -1,4 +1,5 @@
 import { Storage } from '@plasmohq/storage';
+import type { Steam } from '~lib/@typings/SteamTypes';
 
 export const ExtensionStorage = {
 	local: new Storage({
@@ -158,7 +159,7 @@ export const DEFAULT_SETTINGS = {
 	'baron-color-loss': '#ce0000',
 	'baron-color-neutral': '#708090',
 	'display-updatepopup': true,
-	'user': { steam: { isLoggedIn: false } } as BFUser,
+	user: { steam: { isLoggedIn: false } } as SettingsUser,
 };
 
 export const DEFAULT_FILTER = {
@@ -180,12 +181,10 @@ export const DEFAULT_FILTER = {
 	new: false,
 };
 
-export type BFUser = {
-	steam: {
-		isLoggedIn: boolean;
-		id64?: string;
-		username?: string;
-		picture?: string;
+export type SettingsUser = {
+	steam: Partial<Steam.UserInfo> & {
+		avatar_url?: string;
+		display_name?: string;
 	};
 };
 

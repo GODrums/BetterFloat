@@ -5,6 +5,7 @@ import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
 import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
+import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
 import { DEFAULT_SETTINGS } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
@@ -20,7 +21,6 @@ import { SkinbaronSettings } from '~popup/tabs/Skinbaron';
 import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import Header from './layout/header';
-import { CircleUserRound, Info } from 'lucide-react';
 import { UserProfile } from './tabs/UserProfile';
 
 export default function IndexPopup() {

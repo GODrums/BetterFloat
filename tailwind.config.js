@@ -89,6 +89,7 @@ module.exports = {
 				"accordion-up": "accordion-up 0.2s ease-out",
 				spotlight: "spotlight 2s ease .75s 1 forwards",
 				"meteor-effect": "meteor 5s linear infinite",
+				'spin-slow': 'spin 3s linear infinite',
 			},
 		},
 	},
