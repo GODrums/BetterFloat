@@ -159,7 +159,7 @@ export const DEFAULT_SETTINGS = {
 	'baron-color-loss': '#ce0000',
 	'baron-color-neutral': '#708090',
 	'display-updatepopup': true,
-	user: { steam: { isLoggedIn: false } } as SettingsUser,
+	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 
 export const DEFAULT_FILTER = {
@@ -186,6 +186,11 @@ export type SettingsUser = {
 		avatar_url?: string;
 		display_name?: string;
 	};
+	plan: {
+		type: 'free' | 'pro';
+		expiry?: number;
+		jwt?: string;
+	}
 };
 
 export type IStorage = typeof DEFAULT_SETTINGS;

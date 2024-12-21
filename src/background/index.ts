@@ -22,6 +22,9 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 
+		// delete user setting
+		// ExtensionStorage.sync.removeItem('user');
+
 		// set default settings
 		await initializeSettings();
 

@@ -1,10 +1,6 @@
 'use client';
 
-import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import { Cross2Icon } from '@radix-ui/react-icons';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
-import * as PopoverPrimitive from '@radix-ui/react-popover';
-import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { type VariantProps, cva } from 'class-variance-authority';
 import * as React from 'react';
@@ -76,9 +72,5 @@ const ToastDescription = React.forwardRef<React.ElementRef<typeof ToastPrimitive
 	<ToastPrimitives.Description ref={ref} className={cn('text-sm opacity-90', className)} {...props} />
 ));
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
-
-type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
-
-type ToastActionElement = React.ReactElement<typeof ToastAction>;
 
 export { ToastProvider, ToastViewport, Toast, ToastAction, ToastClose, ToastTitle, ToastDescription };

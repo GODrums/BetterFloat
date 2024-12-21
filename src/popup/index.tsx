@@ -20,7 +20,7 @@ import { SkinbaronSettings } from '~popup/tabs/Skinbaron';
 import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import Header from './layout/header';
-import { UserProfile } from './tabs/UserProfile';
+import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export default function IndexPopup() {

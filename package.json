@@ -93,7 +93,8 @@
 			"https://*.skinbid.com/*"
 		],
 		"optional_host_permissions": [
-			"*://*.steamcommunity.com/*"
+			"*://*.steamcommunity.com/*",
+			"*://*.steampowered.com/*"
 		],
 		"externally_connectable": {
 			"matches": [

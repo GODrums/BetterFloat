@@ -4,7 +4,12 @@ import type { SettingsUser } from './storage';
 export async function getSteamLogin(): Promise<SettingsUser['steam'] | null> {
 	const settingsUser = {} as SettingsUser;
 
-	const steamPage = await fetch('https://steamcommunity.com/');
+	const steamPage = await fetch('https://steamcommunity.com/', {
+		credentials: 'include',
+        headers: {
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        },
+	});
 	const steamPageText = await steamPage.text();
 
 	// get steam user info
