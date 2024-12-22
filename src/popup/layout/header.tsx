@@ -1,12 +1,12 @@
 import '~style.css';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect } from 'react';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
+import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
-import { useStorage } from '@plasmohq/storage/hook';
-import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 
 export default function Header() {
 	const [user] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
@@ -47,9 +47,7 @@ export default function Header() {
 		<header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
 			<div className="flex gap-2 align-middle items-center">
 				<img className="h-[38px] cursor-pointer" src={betterfloatLogo} onClick={() => window.open(WEBSITE_URL)} />
-				<Badge variant={user.plan.type === 'free' ? 'secondary' : 'default'}>
-					{user.plan.type === 'free' ? 'Free' : 'Pro'}
-				</Badge>
+				<Badge variant={user.plan.type === 'free' ? 'secondary' : 'default'}>{user.plan.type === 'free' ? 'Free' : 'Pro'}</Badge>
 				<Badge id="version" variant="outline" className="border-muted text-muted-foreground">
 					v. 2.0.0
 				</Badge>

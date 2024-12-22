@@ -1,3 +1,4 @@
+import { Check, Sparkles, X } from 'lucide-react';
 import type { IStorage } from '~lib/util/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
@@ -12,6 +13,13 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const steamLogout = () => {
 		setUser({ ...user, steam: { logged_in: false } });
 	};
+
+	const changePlan = () => {
+		const newPlanType = user.plan.type === 'free' ? 'pro' : 'free';
+		setUser({ ...user, plan: { type: newPlanType } });
+	};
+
+	const PlanFeatureIcon = user.plan.type === 'free' ? <X className="w-5 h-5 text-red-500" /> : <Check className="w-5 h-5 text-green-500" />;
 
 	return (
 		<>
@@ -31,7 +39,6 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 			<Card className="shadow-md border-muted mx-1 w-full">
 				<CardContent className="space-y-3 flex flex-col justify-center">
-					{/* Display details about current plan / payment details */}
 					<p className="text-base font-semibold leading-none tracking-tight uppercase">Current plan</p>
 
 					<div className="flex justify-between items-center gap-2">
@@ -40,14 +47,41 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 						) : (
 							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
 						)}
-						<Button variant="secondary" asChild>
-							<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-								{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
-							</a>
+						<Button variant="secondary" onClick={changePlan}>
+							{user.plan.type === 'free' ? (
+								<span>Upgrade</span>
+							) : (
+								<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+									Manage
+								</a>
+							)}
 						</Button>
+					</div>
+
+					<div className="flex items-center gap-2">
+						{PlanFeatureIcon}
+						<span>Access to More Markets</span>
+					</div>
+					<div className="flex items-center gap-2">
+						{PlanFeatureIcon}
+						<span>Enhanced Price Refresh Rate (1 hour)</span>
+					</div>
+					<div className="flex items-center gap-2">
+						{PlanFeatureIcon}
+						<span>Exclusive Instant Notifications for New Listings</span>
+					</div>
+					<div className="flex items-center gap-2">
+						{PlanFeatureIcon}
+						<span>Early Access to New Features</span>
 					</div>
 				</CardContent>
 			</Card>
+
+			<div className="flex items-center justify-center gap-2 px-3 py-2 my-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+				<span className="text-lg font-semibold text-center">Upgrade to Pro for free during the Beta!</span>
+				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+			</div>
 
 			<div className="flex justify-center mt-4">
 				<Button variant="destructive" onClick={steamLogout}>

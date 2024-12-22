@@ -5,14 +5,20 @@ import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
+import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-export const LisSkinsSettings = () => {
+interface LisSkinsSettingsProps {
+	hasProPlan: boolean;
+}
+
+export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 	const [checked] = useStorage('lis-enable');
 
 	return (
 		<TabTemplate value="lisskins" checked={checked}>
-			<SettingsEnable id="lis-enable" />
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Lisskins features" />}
+			<SettingsEnable id="lis-enable" hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

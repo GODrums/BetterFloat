@@ -5,14 +5,20 @@ import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
+import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-export const SkinbaronSettings = () => {
+interface SkinbaronSettingsProps {
+	hasProPlan: boolean;
+}
+
+export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 	const [checked] = useStorage('baron-enable');
 
 	return (
 		<TabTemplate value="skinbaron" checked={checked}>
-			<SettingsEnable id="baron-enable" />
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinbaron features" />}
+			<SettingsEnable id="baron-enable" hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

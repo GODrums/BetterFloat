@@ -190,7 +190,7 @@ export type SettingsUser = {
 		type: 'free' | 'pro';
 		expiry?: number;
 		jwt?: string;
-	}
+	};
 };
 
 export type IStorage = typeof DEFAULT_SETTINGS;

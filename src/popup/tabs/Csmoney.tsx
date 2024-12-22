@@ -5,14 +5,20 @@ import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
+import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-export const CSMoneySettings = () => {
+interface CSMoneySettingsProps {
+	hasProPlan: boolean;
+}
+
+export const CSMoneySettings = ({ hasProPlan }: CSMoneySettingsProps) => {
 	const [checked] = useStorage('csm-enable');
 
 	return (
 		<TabTemplate value="csmoney" checked={checked}>
-			<SettingsEnable id="csm-enable" />
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access CSMoney features" />}
+			<SettingsEnable id="csm-enable" hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
