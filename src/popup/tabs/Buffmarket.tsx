@@ -25,7 +25,7 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="bm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
+						<SettingsCheckbox id="bm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>
@@ -59,16 +59,8 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="bm-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />
+						<SettingsCheckbox id="bm-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
 					</SettingsCard>
-				</div>
-			</div>
-			<div className="mb-2">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">MISC</p>
-				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsColorPicker prefix="bm" />
 				</div>
 			</div>
 		</TabTemplate>

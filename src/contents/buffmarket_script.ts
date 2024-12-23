@@ -296,7 +296,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		itemPrice = parseFloat(container.querySelector('.user-price')?.textContent?.trim().substring(1) ?? '0');
 		difference = new Decimal(itemPrice).minus(priceFromReference ?? 0);
 	}
-	if (priceContainer) {
+	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['bm-buffdifference'] || extensionSettings['bm-buffdifferencepercent'])) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
@@ -320,8 +320,15 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 
 		const buffPriceHTML = html`
 			<div class="sale-tag betterfloat-sale-tag" style="${saleTagStyle}" data-betterfloat="${difference}">
-				<span>${difference.isPositive() ? '+' : '-'}${formattedPrice}</span>
-			${!percentage.isNaN() ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>` : ''}
+				${extensionSettings['bm-buffdifference'] 
+					? html`<span>${difference.isPositive() ? '+' : '-'}${formattedPrice}</span>` 
+					: ''
+				}
+				${!percentage.isNaN() && extensionSettings['bm-buffdifferencepercent']
+					? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` 
+					: ''
+				}
+			</div>
 		`;
 
 		priceContainer.insertAdjacentHTML(newline ? 'afterend' : 'beforeend', buffPriceHTML);

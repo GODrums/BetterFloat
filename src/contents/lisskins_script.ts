@@ -296,7 +296,13 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 	}
 
 	const priceContainer = container.querySelector('.price');
-	if (priceContainer && priceFromReference && !isItemPage && !container.querySelector('.betterfloat-sale-tag')) {
+	if (
+		priceContainer 
+		&& priceFromReference 
+		&& !isItemPage 
+		&& !container.querySelector('.betterfloat-sale-tag')
+		&& (extensionSettings['lis-buffdifference'] || extensionSettings['lis-buffdifferencepercent'])
+	) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
@@ -316,10 +322,8 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 
 		const buffPriceHTML = html`
 			<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; ${page === PageType.Inventory ? 'bottom: 20px;' : ''}">
-				<span>
-					${difference.isPos() ? '+' : '-'}${formattedPrice}
-				</span>
-				<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+				${extensionSettings['lis-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${formattedPrice} </span>` : ''}
+				${extensionSettings['lis-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 			</div>
 		`;
 

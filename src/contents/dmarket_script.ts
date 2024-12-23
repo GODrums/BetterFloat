@@ -129,7 +129,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 		priceContainer = container.querySelector('.c-asset__price');
 	}
 
-	if (priceContainer && !priceContainer.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
+	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
