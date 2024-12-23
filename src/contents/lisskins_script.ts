@@ -12,7 +12,6 @@ import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 type PriceResult = {
-	price_difference: number;
 	currency: string;
 	priceFromReference: number;
 };
@@ -84,8 +83,7 @@ function replaceHistory() {
 
 	const currentURL = new URL(location.href);
 	if (isLoggedOut && !currentURL.searchParams.has('rf')) {
-		const code = '130498354';
-		currentURL.searchParams.set('rf', code);
+		currentURL.searchParams.set('rf', '130498354');
 		history.replaceState({}, '', currentURL.toString());
 	}
 }
@@ -106,9 +104,10 @@ function applyMutation() {
 				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				if (addedNode.id === 'skins-obj') {
-					const items = Array.from(addedNode.querySelectorAll('div.item_csgo'));
+					const items = Array.from(addedNode.querySelectorAll('div.market_item'));
+					const metaData = generateSaleTagMeta();
 					for (let i = 0; i < items.length; i++) {
-						await adjustItem(items[i]);
+						addSaleTag(items[i], metaData);
 					}
 				} else if (addedNode.className === 'skin ') {
 					await adjustItem(addedNode, PageType.Inventory);
@@ -176,6 +175,17 @@ async function adjustItem(container: Element, page = PageType.Market) {
 		for (let i = 0; i < rows.length; i++) {
 			addSaleTag(rows[i], priceResult);
 		}
+	}
+}
+
+function generateSaleTagMeta(): PriceResult {
+	const el = document.querySelector<HTMLElement>('a.betterfloat-big-a');
+	if (!el) return { priceFromReference: 0, currency: 'USD' };
+
+	const data = JSON.parse(el.dataset.betterfloat || '{}');
+	return {
+		priceFromReference: data.priceFromReference || 0,
+		currency: data.userCurrency || 'USD',
 	}
 }
 
@@ -336,7 +346,6 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 
 	return {
 		priceFromReference: priceFromReference?.toNumber() ?? 0,
-		price_difference: difference.toNumber(),
 		currency,
 	};
 }
