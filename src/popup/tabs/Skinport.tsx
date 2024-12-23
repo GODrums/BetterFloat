@@ -10,7 +10,7 @@ import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
 
 export const SkinportSettings = () => {
-	const [checked] = useStorage('sp-enable');
+	const [checked] = useStorage<boolean>('sp-enable');
 
 	return (
 		<TabTemplate value="skinport" checked={checked}>

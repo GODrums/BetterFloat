@@ -47,7 +47,7 @@ export default function Header() {
 		<header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
 			<div className="flex gap-2 align-middle items-center">
 				<img className="h-[38px] cursor-pointer" src={betterfloatLogo} onClick={() => window.open(WEBSITE_URL)} />
-				<Badge variant={user.plan.type === 'free' ? 'secondary' : 'default'}>{user.plan.type === 'free' ? 'Free' : 'Pro'}</Badge>
+				<Badge variant={user.plan.type === 'free' ? 'secondary' : 'purple'}>{user.plan.type === 'free' ? 'Free' : 'Pro'}</Badge>
 				<Badge id="version" variant="outline" className="border-muted text-muted-foreground">
 					v. 2.0.0
 				</Badge>

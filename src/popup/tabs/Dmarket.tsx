@@ -8,24 +8,24 @@ import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-interface SkinbaronSettingsProps {
+interface DmarketSettingsProps {
 	hasProPlan: boolean;
 }
 
-export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
-	const [checked] = useStorage<boolean>('baron-enable');
+export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
+	const [checked] = useStorage<boolean>('dm-enable');
 
 	return (
-		<TabTemplate value="skinbaron" checked={checked}>
-			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinbaron features" />}
-			<SettingsEnable id="baron-enable" hasProPlan={hasProPlan} />
+		<TabTemplate value="dmarket" checked={checked}>
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access DMarket features" />}
+			<SettingsEnable id="dm-enable" hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="baron-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
+						<SettingsCheckbox id="dm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>
@@ -37,7 +37,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 					<SettingsSource prefix="bm" />
 					<SettingsCard>
 						<SettingsCheckbox
-							id="baron-buffdifference"
+							id="dm-buffdifference"
 							text="Show Buff Price Difference"
 							tooltipText="Recalculates and replaces the original discount tag according to the item's Buff price in absolute units."
 							icon={<IcOutlineDiscount className="h-6 w-6" />}
@@ -45,7 +45,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox
-							id="baron-buffdifferencepercent"
+							id="dm-buffdifferencepercent"
 							text="Show Buff Price Percentage Difference"
 							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
@@ -59,16 +59,8 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="baron-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />
+						<SettingsCheckbox id="dm-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
 					</SettingsCard>
-				</div>
-			</div>
-			<div className="mb-2">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">MISC</p>
-				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsColorPicker prefix="bm" />
 				</div>
 			</div>
 		</TabTemplate>

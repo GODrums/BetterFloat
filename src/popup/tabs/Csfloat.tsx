@@ -21,7 +21,7 @@ import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
 
 export const CSFloatSettings = () => {
-	const [checked] = useStorage('csf-enable');
+	const [checked] = useStorage<boolean>('csf-enable');
 
 	return (
 		<TabTemplate value="csfloat" checked={checked}>

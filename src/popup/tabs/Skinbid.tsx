@@ -8,7 +8,7 @@ import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
 
 export const SkinbidSettings = () => {
-	const [checked] = useStorage('skb-enable');
+	const [checked] = useStorage<boolean>('skb-enable');
 
 	return (
 		<TabTemplate value="skinbid" checked={checked}>

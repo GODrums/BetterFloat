@@ -94,7 +94,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 	}
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const maximumFractionDigits = priceListing?.gt(1000) && state === PageState.ItemPage ? 0 : 2;
+	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage ? 0 : 2;
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, {
 		style: 'currency',
 		currency: currency.text ?? 'USD',
@@ -126,10 +126,10 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 
 	let priceContainer: Element | null = null;
 	if (state === PageState.Market) {
-		priceContainer = container.querySelector('.c-asset__priceNumber');
+		priceContainer = container.querySelector('.c-asset__price');
 	}
 
-	if (priceContainer && !priceContainer.querySelector('.betterfloat-sale-tag')) {
+	if (priceContainer && !priceContainer.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
@@ -147,12 +147,12 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 
 		const buffPriceHTML = html`
             <div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
-                <span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(absDifference.toNumber())} </span>
-                <span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+				${extensionSettings['dm-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${CurrencyFormatter.format(absDifference.toNumber())} </span>` : ''}
+				${extensionSettings['dm-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
             </div>
         `;
 
-		priceContainer.insertAdjacentHTML('beforeend', buffPriceHTML);
+		priceContainer.insertAdjacentHTML('afterend', buffPriceHTML);
 
 		container.querySelector('asset-advanced-badge')?.remove();
 

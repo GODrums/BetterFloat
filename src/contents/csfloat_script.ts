@@ -1516,7 +1516,7 @@ async function addBuffPrice(
 
 	const priceContainer = container.querySelector<HTMLElement>(isSellTab ? '.price' : '.price-row');
 	const userCurrency = CSFloatHelpers.userCurrency();
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: userCurrency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+	const currencyFormatter = CurrencyFormatter(userCurrency);
 	const isDoppler = item.name.includes('Doppler') && item.name.includes('|');
 
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
@@ -1537,7 +1537,7 @@ async function addBuffPrice(
 			priceFromReference,
 			userCurrency,
 			itemStyle: item.style as DopplerPhase,
-			CurrencyFormatter,
+			CurrencyFormatter: currencyFormatter,
 			isDoppler,
 			isPopout,
 			iconHeight: '20px',
@@ -1630,13 +1630,16 @@ async function addBuffPrice(
 		saleTag.style.backgroundColor = backgroundColor;
 		saleTag.setAttribute('data-betterfloat', String(difference));
 		// tags may get too long, so we may need to break them into two lines
-		let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${CurrencyFormatter.format(difference.abs().toNumber())}</span>` : '';
+		let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${currencyFormatter.format(difference.abs().toNumber())}</span>` : '';
 		if ((extensionSettings['csf-buffdifferencepercent'] || isPopout) && priceFromReference) {
 			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const percentageDecimalPlaces = percentage.toDP(percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2).toNumber();
-				const percentageText = extensionSettings['csf-buffdifference'] || isPopout ? ` (${percentageDecimalPlaces}%)` : `${percentageDecimalPlaces}%`;
-				saleTagInner += html`<span class="betterfloat-sale-tag-percentage" ${extensionSettings['csf-buffdifference'] || isPopout ? 'style="margin-left: 5px;"' : ''}> ${percentageText} </span>`;
+				saleTagInner += html`
+					<span class="betterfloat-sale-tag-percentage" ${extensionSettings['csf-buffdifference'] || isPopout ? 'style="margin-left: 5px;"' : ''}> 
+						${extensionSettings['csf-buffdifference'] || isPopout ? ` (${percentageDecimalPlaces}%)` : `${percentageDecimalPlaces}%`} 
+					</span>
+				`;
 			}
 		}
 		saleTag.innerHTML = saleTagInner;

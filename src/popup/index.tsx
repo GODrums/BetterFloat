@@ -2,6 +2,7 @@ import '~style.css';
 import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
+import dmarketLogo from 'data-base64:~/../assets/dmarket.ico';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
 import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
@@ -22,6 +23,7 @@ import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
+import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
@@ -65,6 +67,9 @@ export default function IndexPopup() {
 						<TabsTrigger value="buffmarket">
 							<img className="h-9 w-9 rounded-lg" src={buffmarketLogo} />
 						</TabsTrigger>
+						<TabsTrigger value="dmarket">
+							<img className="h-9 w-9 rounded-lg" src={dmarketLogo} />
+						</TabsTrigger>
 						<TabsTrigger value="lisskins">
 							<img className="h-9 w-9 rounded-lg" src={lisskinsLogo} />
 						</TabsTrigger>
@@ -91,6 +96,7 @@ export default function IndexPopup() {
 					<SkinbidSettings />
 					<CSMoneySettings hasProPlan={hasProPlan} />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
+					<DmarketSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<About />

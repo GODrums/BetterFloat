@@ -13,7 +13,7 @@ interface LisSkinsSettingsProps {
 }
 
 export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
-	const [checked] = useStorage('lis-enable');
+	const [checked] = useStorage<boolean>('lis-enable');
 
 	return (
 		<TabTemplate value="lisskins" checked={checked}>

@@ -13,7 +13,7 @@ interface CSMoneySettingsProps {
 }
 
 export const CSMoneySettings = ({ hasProPlan }: CSMoneySettingsProps) => {
-	const [checked] = useStorage('csm-enable');
+	const [checked] = useStorage<boolean>('csm-enable');
 
 	return (
 		<TabTemplate value="csmoney" checked={checked}>

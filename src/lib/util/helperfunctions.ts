@@ -620,6 +620,13 @@ export function getCharmColoring(pattern: number, itemName: string) {
 	}
 }
 
+/**
+ * Returns a number formatter for the user's currency
+ * @param currency user currency
+ * @param min minimum fraction digits - default: 0
+ * @param max maximum fraction digits - default: 2
+ * @returns
+ */
 export function CurrencyFormatter(currency: string, min = 0, max = 2) {
 	return new Intl.NumberFormat(undefined, {
 		style: 'currency',

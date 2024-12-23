@@ -42,7 +42,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 			</div>
 			<div className="flex items-center gap-2">
 				{disabled && (
-					<SettingsTooltip text="Currently disabled as this functionality doesn't exist anymore.">
+					<SettingsTooltip text="This functionality doesn't exist in the current version.">
 						<MaterialSymbolsDisabledByDefaultOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}

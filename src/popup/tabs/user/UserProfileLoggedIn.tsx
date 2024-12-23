@@ -1,5 +1,5 @@
 import { Check, Sparkles, X } from 'lucide-react';
-import type { IStorage } from '~lib/util/storage';
+import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent } from '~popup/ui/card';
@@ -16,6 +16,23 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 	const changePlan = () => {
 		const newPlanType = user.plan.type === 'free' ? 'pro' : 'free';
+
+		if (newPlanType === 'free') {
+			const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
+			console.log('isDevMode', isDevMode, chrome.runtime.getManifest().name);
+			if (!isDevMode) {
+				return;
+			}
+		}
+		if (newPlanType === 'pro') {
+			// chrome.tabs.create({ url: 'https://betterfloat.com/pricing' });
+			ExtensionStorage.sync.setItem('bm-enable', true);
+			ExtensionStorage.sync.setItem('lis-enable', true);
+			ExtensionStorage.sync.setItem('csm-enable', true);
+			ExtensionStorage.sync.setItem('dm-enable', true);
+			ExtensionStorage.sync.setItem('baron-enable', true);
+		}
+
 		setUser({ ...user, plan: { type: newPlanType } });
 	};
 
@@ -48,13 +65,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
 						)}
 						<Button variant="secondary" onClick={changePlan}>
-							{user.plan.type === 'free' ? (
-								<span>Upgrade</span>
-							) : (
-								<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-									Manage
-								</a>
-							)}
+							{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
 						</Button>
 					</div>
 

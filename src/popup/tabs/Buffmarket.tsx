@@ -13,7 +13,7 @@ interface BuffMarketSettingsProps {
 }
 
 export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
-	const [checked] = useStorage('bm-enable');
+	const [checked] = useStorage<boolean>('bm-enable');
 
 	return (
 		<TabTemplate value="buffmarket" checked={checked}>
