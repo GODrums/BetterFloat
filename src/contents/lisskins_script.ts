@@ -6,7 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -61,15 +61,21 @@ async function firstLaunch() {
 		const itemPage = document.querySelector('div.skins-market-view');
 		if (itemPage) {
 			await adjustItem(itemPage, PageType.ItemPage);
+		} else {
+			// market searches
+			const items = document.querySelectorAll('div.market_item');
+			for (let i = 0; i < items.length; i++) {
+				await adjustItem(items[i], PageType.Market);
+			}
 		}
 	} else if (location.pathname.includes('/market/cs2/')) {
-		// buy / market pages
+		// sell pages
 		const items = document.querySelectorAll('div.item_csgo');
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], PageType.Market);
 		}
 	}
-	// else if (location.pathname === '/ru/cs2/') {
+	// else if (location.pathname === '/ru/cs/') {
 	// 	// sell / inventory page
 	// 	const items = document.querySelectorAll('#userinventory div.skin');
 	// 	for (let i = 0; i < items.length; i++) {
@@ -80,11 +86,8 @@ async function firstLaunch() {
 
 function replaceHistory() {
 	const isLoggedOut = document.querySelector('div.not-loggined');
-
-	const currentURL = new URL(location.href);
-	if (isLoggedOut && !currentURL.searchParams.has('rf')) {
-		currentURL.searchParams.set('rf', '130498354');
-		history.replaceState({}, '', currentURL.toString());
+	if (isLoggedOut) {
+		createHistoryRewrite({ rf: '130498354' });
 	}
 }
 
@@ -103,14 +106,21 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
-				if (addedNode.id === 'skins-obj') {
-					const items = Array.from(addedNode.querySelectorAll('div.market_item'));
-					const metaData = generateSaleTagMeta();
-					for (let i = 0; i < items.length; i++) {
-						addSaleTag(items[i], metaData);
-					}
-				} else if (addedNode.className === 'skin ') {
+				if (addedNode.className === 'skin ') {
 					await adjustItem(addedNode, PageType.Inventory);
+				} else if (addedNode.id === 'skins-obj') {
+					const isMarketPage = addedNode.firstElementChild?.className.includes('skins-market-skins-list');
+					const items = Array.from(addedNode.querySelectorAll('div.market_item'));
+					if (isMarketPage) {
+						for (let i = 0; i < items.length; i++) {
+							await adjustItem(items[i], PageType.Market);
+						}
+					} else {
+						const metaData = generateSaleTagMeta();
+						for (let i = 0; i < items.length; i++) {
+							addSaleTag(items[i], metaData);
+						}
+					}
 				}
 			}
 		}
@@ -167,7 +177,6 @@ async function adjustItem(container: Element, page = PageType.Market) {
 
 	const item = getItem();
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(item, container, page);
 
 	if (page === PageType.ItemPage) {
@@ -186,7 +195,7 @@ function generateSaleTagMeta(): PriceResult {
 	return {
 		priceFromReference: data.priceFromReference || 0,
 		currency: data.userCurrency || 'USD',
-	}
+	};
 }
 
 function addSaleTag(container: Element, priceResult: PriceResult) {
@@ -307,11 +316,11 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 
 	const priceContainer = container.querySelector('.price');
 	if (
-		priceContainer 
-		&& priceFromReference 
-		&& !isItemPage 
-		&& !container.querySelector('.betterfloat-sale-tag')
-		&& (extensionSettings['lis-buffdifference'] || extensionSettings['lis-buffdifferencepercent'])
+		priceContainer &&
+		priceFromReference &&
+		!isItemPage &&
+		!container.querySelector('.betterfloat-sale-tag') &&
+		(extensionSettings['lis-buffdifference'] || extensionSettings['lis-buffdifferencepercent'])
 	) {
 		const styling = {
 			profit: {

@@ -1550,6 +1550,9 @@ async function addBuffPrice(
 				priceContainer.insertAdjacentHTML('afterend', buffContainer);
 			}
 		}
+		if (isPopout) {
+			container.querySelector('.betterfloat-big-price')?.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference: priceFromReference.toFixed(2), userCurrency }));
+		}
 	}
 
 	// add link to steam market

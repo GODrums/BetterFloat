@@ -320,14 +320,8 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 
 		const buffPriceHTML = html`
 			<div class="sale-tag betterfloat-sale-tag" style="${saleTagStyle}" data-betterfloat="${difference}">
-				${extensionSettings['bm-buffdifference'] 
-					? html`<span>${difference.isPositive() ? '+' : '-'}${formattedPrice}</span>` 
-					: ''
-				}
-				${!percentage.isNaN() && extensionSettings['bm-buffdifferencepercent']
-					? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` 
-					: ''
-				}
+				${extensionSettings['bm-buffdifference'] ? html`<span>${difference.isPositive() ? '+' : '-'}${formattedPrice}</span>` : ''}
+				${!percentage.isNaN() && extensionSettings['bm-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 			</div>
 		`;
 

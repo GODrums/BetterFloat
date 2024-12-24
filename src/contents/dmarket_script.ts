@@ -8,7 +8,7 @@ import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/ca
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -28,6 +28,9 @@ async function init() {
 	if (location.host !== 'dmarket.com') {
 		return;
 	}
+
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -46,6 +49,23 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
+	}
+}
+
+async function replaceHistory() {
+	// wait for the page to load
+	await new Promise((resolve) => {
+		if (document.readyState === 'complete') {
+			resolve(true);
+		} else {
+			window.addEventListener('load', resolve);
+		}
+	});
+		
+
+	const isLoggedOut = document.querySelector('header-user-auth-btn');
+	if (isLoggedOut && !location.search.includes('ref=')) {
+		createHistoryRewrite({ ref: 'rqKYzZ36Bw' }, true);
 	}
 }
 

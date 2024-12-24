@@ -1,3 +1,4 @@
+import { sendToBackground } from '@plasmohq/messaging';
 import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
 import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
@@ -95,6 +96,33 @@ export function createUrlListener(urlChangeCallback: (newUrl: string) => void, d
 			urlChangeCallback(newUrl);
 		}
 	}, delay);
+}
+
+/**
+ * Rewrites the current history state with new parameters
+ * @param paramsMap key-value pairs of parameters
+ */
+export function createHistoryRewrite(paramsMap: Record<string, string>, force = false) {
+	const url = new URL(location.href);
+	for (const [key, value] of Object.entries(paramsMap)) {
+		if (!url.searchParams.has(key)) {
+			url.searchParams.set(key, value);
+		}
+	}
+	if (!force) {
+		history.replaceState({}, '', url.href);
+	} else {
+		url.pathname = '/';
+		console.log('[BetterFloat] Forced history rewrite:', url.href);
+		sendToBackground({
+			name: 'openTab',
+			body: {
+				url: url.href,
+			},
+		}).then((response) => {
+			console.log('[BetterFloat] Opened tab successfully:', response);
+		});
+	}
 }
 
 /**
