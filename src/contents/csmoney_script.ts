@@ -16,7 +16,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { createHistoryRewrite, CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -44,6 +44,8 @@ async function init() {
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bm-enable']) return;
+
+	replaceHistory();
 
 	await initPriceMapping(extensionSettings, 'csm');
 
@@ -89,6 +91,18 @@ async function firstLaunch() {
 	} else if (location.pathname === '/profile/offers') {
 		//
 	}
+}
+
+function replaceHistory() {
+	const sessionMedium = sessionStorage.getItem('bf.utm_medium');
+	if (sessionMedium) return;
+
+	let utmMedium = new URLSearchParams(location.search).get('utm_medium');
+	if (!utmMedium) {
+		utmMedium = 'betterfloat';
+		createHistoryRewrite({ 'utm_campaign': 'market', 'utm_source': 'mediabuy', 'utm_medium': utmMedium, 'utm_content': 'link' });
+	}
+	sessionStorage.setItem('bf.utm_medium', utmMedium);
 }
 
 function applyMutation() {

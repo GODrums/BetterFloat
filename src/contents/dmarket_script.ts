@@ -61,7 +61,6 @@ async function replaceHistory() {
 			window.addEventListener('load', resolve);
 		}
 	});
-		
 
 	const isLoggedOut = document.querySelector('header-user-auth-btn');
 	if (isLoggedOut && !location.search.includes('ref=')) {

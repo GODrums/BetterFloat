@@ -87,6 +87,9 @@
 				"strict_min_version": "109.0"
 			}
 		},
+		"optional_permissions": [
+			"notifications"
+		],
 		"host_permissions": [
 			"https://*.csfloat.com/*",
 			"https://*.skinport.com/*",

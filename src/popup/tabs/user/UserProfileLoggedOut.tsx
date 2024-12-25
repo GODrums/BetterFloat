@@ -23,7 +23,7 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 		setIsLoading(true);
 
 		try {
-			const granted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'] });
+			const granted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'], permissions: ['notifications'] });
 			if (!granted) {
 				setPermissionDenied(true);
 				console.warn('Permission denied');
