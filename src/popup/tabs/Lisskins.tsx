@@ -18,7 +18,7 @@ export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 	return (
 		<TabTemplate value="lisskins" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Lisskins features" />}
-			<SettingsEnable id="lis-enable" hasProPlan={hasProPlan} />
+			<SettingsEnable id="lis-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

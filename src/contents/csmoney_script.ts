@@ -16,7 +16,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { createHistoryRewrite, CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -100,7 +100,7 @@ function replaceHistory() {
 	let utmMedium = new URLSearchParams(location.search).get('utm_medium');
 	if (!utmMedium) {
 		utmMedium = 'betterfloat';
-		createHistoryRewrite({ 'utm_campaign': 'market', 'utm_source': 'mediabuy', 'utm_medium': utmMedium, 'utm_content': 'link' });
+		createHistoryRewrite({ utm_campaign: 'market', utm_source: 'mediabuy', utm_medium: utmMedium, utm_content: 'link' });
 	}
 	sessionStorage.setItem('bf.utm_medium', utmMedium);
 }

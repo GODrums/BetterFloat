@@ -94,7 +94,7 @@ export default function IndexPopup() {
 					<CSFloatSettings />
 					<SkinportSettings />
 					<SkinbidSettings />
-					<CSMoneySettings hasProPlan={hasProPlan} />
+					<CSMoneySettings />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />

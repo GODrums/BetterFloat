@@ -1,6 +1,6 @@
 import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import csmoneyLogo from 'data-base64:~/../assets/csmoney_full.svg';
+import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { WEBSITE_URL } from '~lib/util/globals';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { Spotlight } from '~popup/components/Spotlight';
