@@ -32,6 +32,8 @@ import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinb
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import { cacheBitskinsCurrencyList, cacheBitskinsItems } from './cache/bitskins_cache';
+import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -61,6 +63,8 @@ export async function activateHandler() {
 			processDmarketEvent(eventData);
 		} else if (location.host === 'skinbaron.de') {
 			processSkinbaronEvent(eventData);
+		} else if (location.host === 'bitskins.com') {
+			processBitskinsEvent(eventData);
 		}
 	});
 
@@ -115,6 +119,16 @@ async function sourceRefresh(source: MarketSource) {
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processBitskinsEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('market/search/') && eventData.url.includes('/730')) {
+		// Bitskins.MarketData
+		cacheBitskinsItems((eventData.data as Bitskins.MarketSearch).list);
+	} else if (eventData.url.includes('config/currency/list')) {
+		cacheBitskinsCurrencyList(eventData.data as Bitskins.CurrencyList);
 	}
 }
 

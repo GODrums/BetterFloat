@@ -31,6 +31,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			ExtensionStorage.sync.setItem('csm-enable', true);
 			ExtensionStorage.sync.setItem('dm-enable', true);
 			ExtensionStorage.sync.setItem('baron-enable', true);
+			ExtensionStorage.sync.setItem('bs-enable', true);
 		}
 
 		setUser({ ...user, plan: { type: newPlanType } });

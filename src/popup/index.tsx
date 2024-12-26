@@ -6,6 +6,7 @@ import dmarketLogo from 'data-base64:~/../assets/dmarket.ico';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
 import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
+import bitskinsLogo from 'data-base64:~/../assets/bitskins.svg';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
@@ -26,6 +27,7 @@ import Header from './layout/header';
 import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { BitskinsSettings } from './tabs/Bitskins';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
@@ -70,6 +72,9 @@ export default function IndexPopup() {
 						<TabsTrigger value="dmarket">
 							<img className="h-9 w-9 rounded-lg" src={dmarketLogo} />
 						</TabsTrigger>
+						<TabsTrigger value="bitskins">
+							<img className="h-9 w-9 rounded-lg" src={bitskinsLogo} />
+						</TabsTrigger>
 						<TabsTrigger value="lisskins">
 							<img className="h-9 w-9 rounded-lg" src={lisskinsLogo} />
 						</TabsTrigger>
@@ -97,6 +102,7 @@ export default function IndexPopup() {
 					<CSMoneySettings />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
+					<BitskinsSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<About />
