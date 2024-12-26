@@ -8,7 +8,7 @@ import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/ca
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { createHistoryRewrite, CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -114,7 +114,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage ? 0 : 2;
-    const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
+	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({

@@ -1,4 +1,5 @@
 import '~style.css';
+import bitskinsLogo from 'data-base64:~/../assets/bitskins.svg';
 import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
 import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
 import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
@@ -6,7 +7,6 @@ import dmarketLogo from 'data-base64:~/../assets/dmarket.ico';
 import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
 import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
 import skinportLogo from 'data-base64:~/../assets/skinport.ico';
-import bitskinsLogo from 'data-base64:~/../assets/bitskins.svg';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
@@ -24,10 +24,10 @@ import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
+import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { BitskinsSettings } from './tabs/Bitskins';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);

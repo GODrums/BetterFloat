@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getBitskinsCurrencyRate, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
+import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
@@ -53,8 +53,8 @@ async function init() {
 }
 
 async function useAffiliate() {
-    const logInDiv = document.querySelector('div.login');
-    if (!logInDiv) return;
+	const logInDiv = document.querySelector('div.login');
+	if (!logInDiv) return;
 
 	const localAff = localStorage.getItem('affiliate');
 	if (!localAff) {
@@ -73,47 +73,109 @@ function applyMutation() {
 
 				if (addedNode.className === 'market-items') {
 					const items = addedNode.querySelectorAll('.item');
-                    for (const item of items) {
-                        adjustItem(item, PageState.Market);
-                    }
+					for (const item of items) {
+						adjustItem(item, PageState.Market);
+					}
 				} else if (addedNode.classList.contains('item')) {
-                    // adjustItem(addedNode, PageState.Market);
-                }
+					// adjustItem(addedNode, PageState.Market);
+				} else if (addedNode.id === 'item-page') {
+					adjustItem(addedNode, PageState.ItemPage);
+				} else if (addedNode.className === 'similar-items') {
+					addSimilarItemsSaleTags(addedNode);
+				}
 			}
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustItem(container: Element, state: PageState) {
-    const itemID = container.querySelector('a.item-content')?.getAttribute('href')?.split('/')[3];
-    if (!itemID) return;
-	let item = getSpecificBitskinsItem(itemID);
+function addSimilarItemsSaleTags(container: Element) {
+	const priceData = JSON.parse(document.querySelector('.betterfloat-big-a')?.getAttribute('data-betterfloat') ?? '{}') as {
+		buff_name: string;
+		priceFromReference: number;
+		userCurrency: string; // $
+		source: MarketSource;
+	};
+	if (Object.keys(priceData).length === 0) return;
 
-    let tries = 10;
-	while (!item && tries-- > 0) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        item = getSpecificBitskinsItem(itemID);
+	const items = container.querySelectorAll('.similar-item');
+	for (const el of items) {
+		const itemID = getItemID(el, PageState.Similar);
+		if (!itemID) continue;
+		const item = getSpecificBitskinsItem(itemID);
+		if (!item) continue;
+
+		const discountContainer = document.createElement('div');
+		discountContainer.classList.add('discount');
+		el.querySelector('div.price')?.before(discountContainer);
+
+		if (discountContainer && !el.querySelector('.betterfloat-sale-tag') && (extensionSettings['bs-buffdifference'] || extensionSettings['bs-buffdifferencepercent'])) {
+			const currencyFormatter = CurrencyFormatter(getUserCurrency(), 0, 2);
+			let saleTag = createSaleTag(
+				getItemPrice(item).minus(priceData.priceFromReference ?? 0),
+				getItemPrice(item)
+					.div(priceData.priceFromReference ?? 1)
+					.mul(100),
+				currencyFormatter
+			);
+			saleTag = saleTag.replace('betterfloat-sale-tag', 'betterfloat-similar-tag');
+			discountContainer.outerHTML = saleTag;
+		}
+		el.querySelector('.item-price')?.setAttribute('style', 'align-items: center;');
 	}
-    if (!item) return;
+}
+
+function getItemID(container: Element, state: PageState) {
+	if (state === PageState.Market) {
+		return container.querySelector('.item-content')?.getAttribute('href')?.split('/')[3];
+	} else if (state === PageState.ItemPage) {
+		return location.pathname.split('/')[3];
+	} else if (state === PageState.Similar) {
+		return container.querySelector('a')?.getAttribute('href')?.split('/')[3];
+	}
+}
+
+function getAPIItem(state: PageState, itemID: string) {
+	if (state === PageState.Market) {
+		return getSpecificBitskinsItem(itemID);
+	} else if (state === PageState.ItemPage) {
+		return getBitskinsPopoutItem();
+	}
+}
+
+async function adjustItem(container: Element, state: PageState) {
+	const itemID = getItemID(container, state);
+	if (!itemID) return;
+	let item = getAPIItem(state, itemID);
+
+	let tries = 10;
+	while (!item && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		item = getAPIItem(state, itemID);
+	}
+	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(item, container, state);
+
+	// store item in html
+	container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
 async function addBuffPrice(item: Bitskins.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer: Element | null = null;
-	if (state === PageState.Market) {
-		footerContainer = container.querySelector('.ref-price');
-	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector('.goods-item-info');
+	let footerContainer = container.querySelector('.ref-price');
+	if (state === PageState.ItemPage) {
+		const newContainer = document.createElement('div');
+		footerContainer?.before(newContainer);
+		footerContainer = newContainer;
 	}
 
+	const isItemPage = state === PageState.ItemPage;
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage ? 0 : 2;
-    const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
+	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({
@@ -127,54 +189,52 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
-			isPopout: false,
+			isPopout: isItemPage,
 			addSpaceBetweenPrices: true,
-			showPrefix: false,
-			iconHeight: '20px',
+			showPrefix: isItemPage,
+			iconHeight: isItemPage ? '24px' : '20px',
 		});
 		footerContainer.outerHTML = buffContainer;
 	}
 
-	let discountContainer: Element | null = null;
-	if (state === PageState.Market) {
-		discountContainer = container.querySelector('div.price > div.discount');
-        if (!discountContainer) {
-            const newContainer = document.createElement('div');
-            newContainer.classList.add('discount');
-            container.querySelector('div.price > div.amount')?.before(newContainer);
-            discountContainer = newContainer;
-        }
+	let discountContainer = container.querySelector('div.price > div.discount');
+	if (!discountContainer) {
+		const newContainer = document.createElement('div');
+		newContainer.classList.add('discount');
+		container.querySelector('div.price > div.amount')?.before(newContainer);
+		discountContainer = newContainer;
 	}
 
 	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['bs-buffdifference'] || extensionSettings['bs-buffdifferencepercent'])) {
-		const styling = {
-			profit: {
-				color: '#5bc27a',
-				background: '#142a0e',
-			},
-			loss: {
-				color: '#ff8095',
-				background: '#3a0e0e',
-			},
-		};
-
-		const absDifference = difference.abs();
-		const percentage = itemPrice.div(priceFromReference ?? 1).mul(100);
-		const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
-
-		const buffPriceHTML = html`
-            <div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
-				${extensionSettings['bs-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(absDifference.toNumber())} </span>` : ''}
-				${extensionSettings['bs-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
-            </div>
-        `;
-
-		discountContainer.outerHTML = buffPriceHTML;
+		discountContainer.outerHTML = createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter);
 	}
 
 	return {
 		price_difference: difference,
 	};
+}
+
+function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat) {
+	const styling = {
+		profit: {
+			color: '#5bc27a',
+			background: '#142a0e',
+		},
+		loss: {
+			color: '#ff8095',
+			background: '#3a0e0e',
+		},
+	};
+
+	const absDifference = difference.abs();
+	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
+
+	return html`
+		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+			${extensionSettings['bs-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
+			${extensionSettings['bs-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
+		</div>
+	`;
 }
 
 async function getBuffItem(item: Bitskins.Item) {
@@ -246,10 +306,10 @@ function createBuffItem(item: Bitskins.Item): { name: string; style: ItemStyle }
 		style: '' as ItemStyle,
 	};
 	if (item.phase_id && item.name.includes('Doppler')) {
-        // Get and remove the phase from name
-        const phase = item.name.split('Doppler')[1].split('(')[0].trim() as DopplerPhase;
-        buff_item.name = item.name.replace(` ${phase}`, '').trim();
-        buff_item.style = phase;
+		// Get and remove the phase from name
+		const phase = item.name.split('Doppler')[1].split('(')[0].trim() as DopplerPhase;
+		buff_item.name = item.name.replace(` ${phase}`, '').trim();
+		buff_item.style = phase;
 	}
 	return {
 		name: buff_item.name,
@@ -260,7 +320,7 @@ function createBuffItem(item: Bitskins.Item): { name: string; style: ItemStyle }
 enum PageState {
 	Market = 0,
 	ItemPage = 1,
-	Inventory = 2,
+	Similar = 2,
 }
 
 // mutation observer active?

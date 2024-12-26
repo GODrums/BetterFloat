@@ -1,6 +1,7 @@
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
+import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
@@ -13,6 +14,7 @@ import type { IStorage } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
+import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from './cache/bitskins_cache';
 import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffUserId } from './cache/buffmarket_cache';
 import {
 	cacheCSFExchangeRates,
@@ -32,8 +34,6 @@ import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinb
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import { cacheBitskinsCurrencyList, cacheBitskinsItems } from './cache/bitskins_cache';
-import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -124,10 +124,13 @@ async function sourceRefresh(source: MarketSource) {
 
 function processBitskinsEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	if (eventData.url.includes('market/search/') && eventData.url.includes('/730')) {
-		// Bitskins.MarketData
-		cacheBitskinsItems((eventData.data as Bitskins.MarketSearch).list);
-	} else if (eventData.url.includes('config/currency/list')) {
+	if (eventData.url.includes('market/search/')) {
+		if (eventData.url.includes('/730')) {
+			cacheBitskinsItems((eventData.data as Bitskins.MarketSearch).list);
+		} else if (eventData.url.includes('/get')) {
+			cacheBitskinsPopoutItem(eventData.data as Bitskins.PopoutItem);
+		}
+	} else if (eventData.url.includes('config/currency/get')) {
 		cacheBitskinsCurrencyList(eventData.data as Bitskins.CurrencyList);
 	}
 }

@@ -76,39 +76,39 @@ function xmlHttpRequestIntercept() {
  * so we need to intercept fetch requests as well.
  */
 function fetchIntercept() {
-    const originalFetch = window.fetch;
-    console.log('[BetterFloat] Activating Fetch Intercept...');
+	const originalFetch = window.fetch;
+	console.log('[BetterFloat] Activating Fetch Intercept...');
 
-    window.fetch = async function(...args) {
-        const response = await originalFetch.apply(this, args);
-        const url = response.url;
-        const targetUrl = new URL(url);
+	window.fetch = async function (...args) {
+		const response = await originalFetch.apply(this, args);
+		const url = response.url;
+		const targetUrl = new URL(url);
 
-        if (!targetUrl.hostname.includes(location.hostname)) {
-            return response;
-        }
-        if (['.js', '.css', '.svg', '.proto'].some((ext) => targetUrl.pathname.endsWith(ext))) {
-            return response;
-        }
+		if (!targetUrl.hostname.includes(location.hostname)) {
+			return response;
+		}
+		if (['.js', '.css', '.svg', '.proto'].some((ext) => targetUrl.pathname.endsWith(ext))) {
+			return response;
+		}
 
-        // Clone the response to be able to read its body multiple times
-        const clone = response.clone();
-        try {
-            const data = await clone.json();
-            document.dispatchEvent(
-                new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
-                    detail: {
-                        status: response.status,
-                        url: url,
-                        headers: Array.from(response.headers.entries()),
-                        data: data
-                    }
-                })
-            );
-        } catch (e) {
-            console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
-        }
+		// Clone the response to be able to read its body multiple times
+		const clone = response.clone();
+		try {
+			const data = await clone.json();
+			document.dispatchEvent(
+				new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
+					detail: {
+						status: response.status,
+						url: url,
+						headers: Array.from(response.headers.entries()),
+						data: data,
+					},
+				})
+			);
+		} catch (e) {
+			console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
+		}
 
-        return response;
-    };
+		return response;
+	};
 }
