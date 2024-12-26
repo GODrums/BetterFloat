@@ -27,6 +27,7 @@ import iconPinkGalaxy1 from 'data-base64:/assets/patterns/pink-galaxy-1.png';
 import iconPinkGalaxy2 from 'data-base64:/assets/patterns/pink-galaxy-2.png';
 import iconPinkGalaxy3 from 'data-base64:/assets/patterns/pink-galaxy-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
+import iconSkinport from 'data-base64:/assets/skinport.ico';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
@@ -38,6 +39,7 @@ export const ICON_STEAM = iconSteam;
 export const ICON_YOUPIN = iconYouPin;
 export const ICON_C5GAME = iconC5Game;
 export const ICON_CSFLOAT = iconCsfloat;
+export const ICON_SKINPORT = iconSkinport;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;
 export const ICON_CAMERA_FLIPPED = iconCameraFlipped;

@@ -666,11 +666,5 @@ export function CurrencyFormatter(currency: string, min = 0, max = 2) {
 }
 
 export function convertCurrency(amount: number, currency: string) {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: currency,
-		currencyDisplay: 'narrowSymbol',
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 2,
-	}).format(amount);
+	return CurrencyFormatter(currency).format(amount);
 }

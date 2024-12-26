@@ -168,7 +168,7 @@ export async function mountCSFBargainButtons() {
  * @param component React component to mount
  * @param options mounting options, defaults to appending to document.body
  */
-async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {
+async function mountShadowRoot(component: React.ReactNode, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {
 	const { parentElement, isolatedElement } = await createIsolatedElement({
 		name: options.tagName,
 		css: {

@@ -96,8 +96,8 @@ const CSFAutorefresh: React.FC = () => {
 							exit={{ opacity: 0 }}
 							transition={{ duration: 0.3, ease: 'easeOut' }}
 						>
-							<Switch checked={isActive} onCheckedChange={setActive} />
 							<div className="flex items-center gap-2 mt-2">
+								<Switch checked={isActive} onCheckedChange={setActive} />
 								<MaterialSymbolsAvgTimeOutlineRounded className="h-6 w-6 text-white" />
 								<select
 									className="appearance-none bg-transparent text-[#9EA7B1] border border-[#c1ceff12] rounded-lg py-1 px-2 cursor-pointer"
