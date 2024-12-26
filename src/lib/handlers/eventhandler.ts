@@ -105,11 +105,12 @@ export async function initPriceMapping(extensionSettings: IStorage, prefix: stri
 
 async function sourceRefresh(source: MarketSource) {
 	const updateSetting = `${source}-update`;
-	const storageData = await chrome.storage.local.get(updateSetting);
+	const storageData = await chrome.storage.local.get([updateSetting, 'user']);
 	const lastUpdate = storageData[updateSetting] ?? 0;
+	const refreshIntervalPlan = storageData.user?.pro_plan ? 1 : 2;
 	// refresh only if prices are older than 1 hour
-	if (lastUpdate < Date.now() - 1000 * 60 * 60) {
-		console.debug(`[BetterFloat] ${toTitleCase(source)} prices are older than 1 hour, last update: ${new Date(lastUpdate)}. Refreshing ${toTitleCase(source)} prices...`);
+	if (lastUpdate < Date.now() - 1000 * 60 * 60 * refreshIntervalPlan) {
+		console.debug(`[BetterFloat] ${toTitleCase(source)} prices are older than ${refreshIntervalPlan} hour(s), last update: ${new Date(lastUpdate)}. Refreshing ${toTitleCase(source)} prices...`);
 
 		const response: { status: number } = await sendToBackground({
 			name: 'refreshPrices',
