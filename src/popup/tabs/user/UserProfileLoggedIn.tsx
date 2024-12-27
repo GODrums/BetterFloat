@@ -1,8 +1,10 @@
 import { Check, Sparkles, X } from 'lucide-react';
+import { useState } from 'react';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent } from '~popup/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~popup/ui/dialog';
 
 interface LoggedInViewProps {
 	user: IStorage['user'];
@@ -10,6 +12,8 @@ interface LoggedInViewProps {
 }
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
+	const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+
 	const steamLogout = () => {
 		setUser({ ...user, steam: { logged_in: false } });
 	};
@@ -19,13 +23,11 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 		if (newPlanType === 'free') {
 			const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
-			console.log('isDevMode', isDevMode, chrome.runtime.getManifest().name);
 			if (!isDevMode) {
 				return;
 			}
 		}
 		if (newPlanType === 'pro') {
-			// chrome.tabs.create({ url: 'https://betterfloat.com/pricing' });
 			ExtensionStorage.sync.setItem('bm-enable', true);
 			ExtensionStorage.sync.setItem('lis-enable', true);
 			ExtensionStorage.sync.setItem('csm-enable', true);
@@ -35,6 +37,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		}
 
 		setUser({ ...user, plan: { type: newPlanType } });
+		setShowUpgradeDialog(false);
 	};
 
 	const PlanFeatureIcon = user.plan.type === 'free' ? <X className="w-5 h-5 text-red-500" /> : <Check className="w-5 h-5 text-green-500" />;
@@ -65,7 +68,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 						) : (
 							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
 						)}
-						<Button variant="secondary" onClick={changePlan}>
+						<Button variant="secondary" onClick={() => (user.plan.type === 'free' ? setShowUpgradeDialog(true) : changePlan())}>
 							{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
 						</Button>
 					</div>
@@ -100,6 +103,29 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					Logout
 				</Button>
 			</div>
+
+			<Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Upgrade to Pro Plan</DialogTitle>
+						<DialogDescription>
+							<span className="text-red-500">Please note that this is a beta version, which does not represent the final product and is subject to change.</span>
+							<br />
+							You are encouraged to report all encountered bugs in our Discord server!
+							<br />
+							The Pro Plan is <span className="text-emerald-400">completely free</span> during the beta period and you will automatically be downgraded once the beta ends.
+							<br />
+							<span className="text-sky-400">Accepting the new permissions is mandatory.</span>
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter className="flex-row justify-center gap-2">
+						<Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
+							Cancel
+						</Button>
+						<Button onClick={changePlan}>Start Testing</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 }
