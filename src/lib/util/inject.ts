@@ -14,7 +14,6 @@ function xmlHttpRequestIntercept() {
 		(<XMLHttpRequest>this).addEventListener('load', (e) => {
 			const target = <XMLHttpRequest>e.currentTarget;
 			const targetUrl = new URL(target.responseURL);
-			console.log('[BetterFloat] Intercepted HTTP request to: ' + target.responseURL);
 
 			if (!targetUrl.hostname.includes(location.hostname)) {
 				// console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);

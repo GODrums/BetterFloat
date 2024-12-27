@@ -34,7 +34,7 @@ const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => 
 	);
 };
 
-const LiveFilter: React.FC = () => {
+const SpLiveFilter: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const spFilter = JSON.parse(localStorage.getItem('spFilter') ?? JSON.stringify(DEFAULT_FILTER)) as SPFilter;
 	const [name, setName] = useState<string>(spFilter.name);
@@ -190,4 +190,4 @@ const LiveFilter: React.FC = () => {
 	);
 };
 
-export default LiveFilter;
+export default SpLiveFilter;

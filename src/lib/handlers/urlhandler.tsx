@@ -11,8 +11,9 @@ import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
-import LiveFilter from '~lib/inline/LiveFilter';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
+import SpLiveFilter from '~lib/inline/SpLiveFilter';
+import SpNotifications from '~lib/inline/SpNotifications';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
@@ -63,21 +64,39 @@ async function handleChange(state: Extension.URLState) {
 	if (state.site === 'skinport.com') {
 		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
 			waitForElement('.CatalogHeader-tooltipLive').then(async (success) => {
-				if (success && !document.querySelector('betterfloat-live-filter')) {
-					const root = await mountShadowRoot(<LiveFilter />, {
-						tagName: 'betterfloat-live-filter',
-						parent: document.querySelector('.CatalogHeader-tooltipLive'),
-						position: 'before',
-					});
-					// unmount on url change
-					const interval = createUrlListener((newUrl) => {
-						const url = new URL(newUrl);
-						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
-							root.unmount();
-							document.querySelector('betterfloat-live-filter')?.remove();
-							clearInterval(interval);
-						}
-					}, 1000);
+				if (success) {
+					if (!document.querySelector('betterfloat-skinport-notifications')) {
+						const notifyRoot = await mountShadowRoot(<SpNotifications />, {
+							tagName: 'betterfloat-skinport-notifications',
+							parent: document.querySelector('.CatalogHeader-tooltipLive'),
+							position: 'before',
+						});
+						const notifyInterval = createUrlListener((newUrl) => {
+							const url = new URL(newUrl);
+							if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
+								notifyRoot.unmount();
+								document.querySelector('betterfloat-skinport-notifications')?.remove();
+								clearInterval(notifyInterval);
+							}
+						}, 1000);
+					}
+
+					if (!document.querySelector('betterfloat-live-filter')) {
+						const root = await mountShadowRoot(<SpLiveFilter />, {
+							tagName: 'betterfloat-live-filter',
+							parent: document.querySelector('.CatalogHeader-tooltipLive'),
+							position: 'before',
+						});
+						// unmount on url change
+						const interval = createUrlListener((newUrl) => {
+							const url = new URL(newUrl);
+							if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
+								root.unmount();
+								document.querySelector('betterfloat-live-filter')?.remove();
+								clearInterval(interval);
+							}
+						}, 1000);
+					}
 				}
 			});
 		}
@@ -168,7 +187,7 @@ export async function mountCSFBargainButtons() {
  * @param component React component to mount
  * @param options mounting options, defaults to appending to document.body
  */
-async function mountShadowRoot(component: React.ReactNode, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {
+async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {
 	const { parentElement, isolatedElement } = await createIsolatedElement({
 		name: options.tagName,
 		css: {
