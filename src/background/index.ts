@@ -2,8 +2,7 @@ import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { getSteamLogin } from '~lib/util/steam';
-import type { IStorage } from '~lib/util/storage';
+import type { IStorage, SettingsUser } from '~lib/util/storage';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -27,10 +26,29 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 		// set default settings
 		await initializeSettings();
-
-		// await getSteamLogin();
 	}
 });
+
+// check user plan
+async function checkUserPlan() {
+	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
+	// reset the beta version after the beta period
+	if (new Date().getTime() > new Date('2025-01-15').getTime() && user?.plan.type === 'pro') {
+		user.plan.type = 'free';
+		await ExtensionStorage.sync.setItem('user', user);
+	}
+
+	// if (user?.plan.type === 'pro') {
+	// 	// check for expiry
+	// 	if (!user.plan.expiry || user.plan.expiry < new Date().getTime()) {
+	// 		user.plan.type = 'free';
+	// 		await ExtensionStorage.sync.setItem('user', user);
+	// 	}
+	// 	// TODO: verify JWT
+	// }
+}
+
+checkUserPlan();
 
 async function initializeSettings() {
 	const data = await ExtensionStorage.sync.getAll();

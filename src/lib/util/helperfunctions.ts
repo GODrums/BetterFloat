@@ -5,6 +5,7 @@ import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 import { MarketSource } from './globals';
 import { phaseMapping } from './patterns';
+import type { SettingsUser } from './storage';
 
 export function parsePrice(priceText: string) {
 	let currency = '';
@@ -123,6 +124,19 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 			console.log('[BetterFloat] Opened tab successfully:', response);
 		});
 	}
+}
+
+/**
+ * Checks if the user has a pro plan and validate the plan
+ * @param user 
+ * @returns 
+ */
+export function checkUserPlanPro(user: SettingsUser) {
+	if (new Date().getTime() > new Date('2025-01-15').getTime() && user.plan.type === 'pro') {
+		user.plan.type = 'free';
+	}
+	// TODO: validate JWT
+	return user.plan.type === 'pro';
 }
 
 /**

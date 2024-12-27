@@ -8,7 +8,7 @@ import { getFirstSkinbaronItem, rotateSkinbaronItems } from '~lib/handlers/cache
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { checkUserPlanPro, CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -36,6 +36,12 @@ async function init() {
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['baron-enable']) return;
+
+	// check if user has the required plan
+	if (!checkUserPlanPro(extensionSettings['user'])) {
+		console.log('[BetterFloat] Pro plan required for Skinbaron features');
+		return;
+	}
 
 	await initPriceMapping(extensionSettings, 'baron');
 

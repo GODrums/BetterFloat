@@ -8,7 +8,7 @@ import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/ca
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -39,6 +39,12 @@ async function init() {
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bm-enable']) return;
+
+	// check if user has the required plan
+	if (!checkUserPlanPro(extensionSettings['user'])) {
+		console.log('[BetterFloat] Pro plan required for DMarket features');
+		return;
+	}
 
 	await initPriceMapping(extensionSettings, 'dm');
 

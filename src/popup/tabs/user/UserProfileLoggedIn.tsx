@@ -13,6 +13,8 @@ interface LoggedInViewProps {
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+	
+	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 
 	const steamLogout = () => {
 		setUser({ ...user, steam: { logged_in: false } });
@@ -22,12 +24,14 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		const newPlanType = user.plan.type === 'free' ? 'pro' : 'free';
 
 		if (newPlanType === 'free') {
-			const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 			if (!isDevMode) {
 				return;
 			}
 		}
 		if (newPlanType === 'pro') {
+			if (new Date().getTime() > new Date('2025-01-15').getTime()) {
+				return;
+			}
 			ExtensionStorage.sync.setItem('bm-enable', true);
 			ExtensionStorage.sync.setItem('lis-enable', true);
 			ExtensionStorage.sync.setItem('csm-enable', true);
@@ -36,7 +40,12 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			ExtensionStorage.sync.setItem('bs-enable', true);
 		}
 
-		setUser({ ...user, plan: { type: newPlanType } });
+		const newPlan = { type: newPlanType } as IStorage['user']['plan'];
+		if (newPlanType === 'pro') {
+			newPlan.expiry = new Date('2025-01-15').getTime();
+		}
+
+		setUser({ ...user, plan: newPlan });
 		setShowUpgradeDialog(false);
 	};
 
@@ -46,7 +55,11 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		<>
 			<div className="flex flex-col items-center justify-center">
 				<div className="relative mb-2">
-					<div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow blur-sm" />
+					{user.plan.type === 'pro' ? (
+						<div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow blur-sm" />
+					) : (
+						<div className="absolute inset-0 bg-gradient-to-r from-gray-500 via-gray-400 to-gray-300 rounded-full animate-spin-slow blur-sm" />
+					)}
 					<div className="relative bg-background rounded-full p-0.5">
 						<Avatar className="size-20">
 							<AvatarImage src={user.steam.avatar_url} />
@@ -54,7 +67,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 						</Avatar>
 					</div>
 				</div>
-				<span className="text-lg font-semibold">{user.steam.display_name}</span>
+				<span className="max-w-[250px] text-lg font-semibold truncate">{user.steam.display_name}</span>
 				<span className="text-sm text-muted-foreground">{user.steam.steamid}</span>
 			</div>
 
@@ -83,7 +96,8 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					</div>
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
-						<span>Exclusive Instant Notifications for New Listings</span>
+						{/* Exclusive Instant Notifications for New Listings */}
+						<span>Live Notifications for New Listings (unavailable in beta)</span>
 					</div>
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
@@ -92,7 +106,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 				</CardContent>
 			</Card>
 
-			<div className="flex items-center justify-center gap-2 px-3 py-2 my-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+			<div className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
 				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
 				<span className="text-lg font-semibold text-center">Upgrade to Pro for free during the Beta!</span>
 				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
@@ -114,8 +128,6 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 							You are encouraged to report all encountered bugs in our Discord server!
 							<br />
 							The Pro Plan is <span className="text-emerald-400">completely free</span> during the beta period and you will automatically be downgraded once the beta ends.
-							<br />
-							<span className="text-sky-400">Accepting the new permissions is mandatory.</span>
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter className="flex-row justify-center gap-2">

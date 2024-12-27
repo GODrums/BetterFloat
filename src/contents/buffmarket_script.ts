@@ -8,7 +8,7 @@ import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getFirstBuffP
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { checkUserPlanPro, CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -36,6 +36,12 @@ async function init() {
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bm-enable']) return;
+
+	// check if user has the required plan
+	if (!checkUserPlanPro(extensionSettings['user'])) {
+		console.log('[BetterFloat] Pro plan required for BuffMarket features');
+		return;
+	}
 
 	await initPriceMapping(extensionSettings, 'bm');
 
@@ -342,6 +348,6 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 // mutation observer active?
 let isObserverActive = false;
 // let cached_item_name = '';
-let extensionSettings: IStorage;
+export let extensionSettings: IStorage;
 
 init();
