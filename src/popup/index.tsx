@@ -45,56 +45,60 @@ export default function IndexPopup() {
 	const hasProPlan = user.plan.type === 'pro';
 
 	return (
-		<div className="dark flex flex-col bg-card justify-between h-[600px] w-[430px]">
+		<div className="dark flex flex-col bg-card justify-between h-[600px] w-[480px]">
 			<Header />
 			<div className="h-[40rem] relative w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
 				<div className="w-full absolute inset-0 h-screen">
 					<SparklesCore id="tsparticlesfullpage" background="transparent" minSize={0.6} maxSize={1.4} particleDensity={50} className="w-full h-full" particleColor="#FFFFFF" />
 				</div>
 				<Tabs defaultValue="csfloat" className="flex gap-2 my-2 h-full" orientation="vertical">
-					<TabsList className="flex justify-between bg-background/80 text-card-foreground z-50">
+					<TabsList className="w-[140px] flex justify-between bg-background/80 text-card-foreground z-50">
 						<p className="text-md font-bold py-2 uppercase">Sites</p>
-						<TabsTrigger value="csfloat">
-							<img className="h-9 w-9 rounded-lg" src={csfloatLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="skinport">
-							<img className="h-9 w-9 rounded-lg" src={skinportLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="skinbid">
-							<SkinBidIcon height={40} width={40} />
-						</TabsTrigger>
-						<TabsTrigger value="csmoney">
-							<img className="h-9 w-9 rounded-lg" src={csmoneyLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="buffmarket">
-							<img className="h-9 w-9 rounded-lg" src={buffmarketLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="dmarket">
-							<img className="h-9 w-9 rounded-lg" src={dmarketLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="bitskins">
-							<img className="h-9 w-9 rounded-lg" src={bitskinsLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="lisskins">
-							<img className="h-9 w-9 rounded-lg" src={lisskinsLogo} />
-						</TabsTrigger>
-						<TabsTrigger value="skinbaron">
-							<img className="h-9 w-9 rounded-lg" src={skinbaronLogo} />
-						</TabsTrigger>
+						<div className="grid grid-cols-2 gap-2">
+							<TabsTrigger value="csfloat">
+								<img className="h-9 w-9 rounded-lg" src={csfloatLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="csmoney">
+								<img className="h-9 w-9 rounded-lg" src={csmoneyLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="skinport">
+								<img className="h-9 w-9 rounded-lg" src={skinportLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="buffmarket">
+								<img className="h-9 w-9 rounded-lg" src={buffmarketLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="skinbid">
+								<SkinBidIcon height={40} width={40} />
+							</TabsTrigger>
+							<TabsTrigger value="dmarket">
+								<img className="h-9 w-9 rounded-lg" src={dmarketLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="bitskins">
+								<img className="h-9 w-9 rounded-lg" src={bitskinsLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="lisskins">
+								<img className="h-9 w-9 rounded-lg" src={lisskinsLogo} />
+							</TabsTrigger>
+							<TabsTrigger value="skinbaron">
+								<img className="h-9 w-9 rounded-lg" src={skinbaronLogo} />
+							</TabsTrigger>
+						</div>
 						<div className="flex flex-1"></div>
-						<TabsTrigger value="about">
-							<Info className="h-9 w-9 text-gray-400/60" />
-						</TabsTrigger>
-						<TabsTrigger value="user">
-							{user.steam.logged_in && user.steam.avatar_url ? (
-								<Avatar className="size-10">
-									<AvatarImage src={user.steam.avatar_url} />
-									<AvatarFallback>{user.steam.display_name?.slice(0, 2)}</AvatarFallback>
-								</Avatar>
-							) : (
-								<CircleUserRound className="h-10 w-10 text-gray-400/60" />
-							)}
-						</TabsTrigger>
+						<div className="w-full flex flex-col items-stretch justify-center">
+							<TabsTrigger value="about">
+								<Info className="h-9 w-9 text-gray-400/60" />
+							</TabsTrigger>
+							<TabsTrigger value="user">
+								{user.steam.logged_in && user.steam.avatar_url ? (
+									<Avatar className="size-10">
+										<AvatarImage src={user.steam.avatar_url} />
+										<AvatarFallback>{user.steam.display_name?.slice(0, 2)}</AvatarFallback>
+									</Avatar>
+								) : (
+									<CircleUserRound className="h-10 w-10 text-gray-400/60" />
+								)}
+							</TabsTrigger>
+						</div>
 					</TabsList>
 					<CSFloatSettings />
 					<SkinportSettings />
