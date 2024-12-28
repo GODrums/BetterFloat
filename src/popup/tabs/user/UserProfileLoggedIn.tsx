@@ -13,7 +13,7 @@ interface LoggedInViewProps {
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-	
+
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 
 	const steamLogout = () => {
@@ -106,11 +106,13 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 				</CardContent>
 			</Card>
 
-			<div className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
-				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
-				<span className="text-lg font-semibold text-center">Upgrade to Pro for free during the Beta!</span>
-				<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
-			</div>
+			{user.plan.type === 'free' && (
+				<div className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+					<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+					<span className="text-lg font-semibold text-center">Upgrade to Pro for free during the Beta!</span>
+					<Sparkles className="w-8 h-8 text-purple-500 animate-pulse" />
+				</div>
+			)}
 
 			<div className="flex justify-center mt-4">
 				<Button variant="destructive" onClick={steamLogout}>

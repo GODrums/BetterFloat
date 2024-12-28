@@ -128,8 +128,8 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 
 /**
  * Checks if the user has a pro plan and validate the plan
- * @param user 
- * @returns 
+ * @param user
+ * @returns
  */
 export function checkUserPlanPro(user: SettingsUser) {
 	if (new Date().getTime() > new Date('2025-01-15').getTime() && user.plan.type === 'pro') {

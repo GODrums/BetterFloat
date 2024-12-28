@@ -69,6 +69,7 @@
 		"typescript": "5.7.2"
 	},
 	"manifest": {
+		"version_name": "3.0.0 beta 1",
 		"web_accessible_resources": [
 			{
 				"matches": [

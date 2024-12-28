@@ -27,7 +27,7 @@ export default function Header() {
 	};
 
 	useEffect(() => {
-		document.getElementById('version')!.textContent = `v. ${chrome.runtime.getManifest().version}`;
+		document.getElementById('version')!.textContent = `v. ${chrome.runtime.getManifest().version_name ?? chrome.runtime.getManifest().version}`;
 
 		chrome.permissions
 			.contains({
