@@ -2,13 +2,16 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
+import { CSFCheckbox } from '~popup/ui/checkbox';
+import { Separator } from '~popup/ui/separator';
 import { Switch } from '~popup/ui/switch';
 
-export function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
+function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
 			<path
@@ -19,11 +22,27 @@ export function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	);
 }
 
+const ActivityBadge = ({ active }: { active: boolean }) => {
+	return (
+		<Badge variant="default" className={cn('text-white font-normal', active ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>
+			{active ? 'ON' : 'OFF'}
+		</Badge>
+	);
+};
+
 const CSFAutorefresh: React.FC = () => {
 	const [open, setOpen] = useState(false);
+	// auto-refresh
 	const [isActive, setIsActive] = useState(false);
+	// notifications
+	const [nActive, setNActive] = useState(false);
 	const [rInterval, setRInterval] = useStorage('csf-refreshinterval');
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
+	const [name, setName] = useState('');
+	const [percentage, setPercentage] = useState('');
+
+	const [user, setUser] = useStorage<SettingsUser>('user');
+
 	const refreshButton = document.querySelector<HTMLButtonElement>('.refresh > button');
 
 	const ref = useRef(null);
@@ -59,6 +78,11 @@ const CSFAutorefresh: React.FC = () => {
 		}
 	};
 
+	const handleSave = () => {
+		// Handle save logic here
+		console.log('Saving:', { name, percentage });
+	};
+
 	const intervalOptions = ['30s', '60s', '2min', '5min'];
 
 	const onClickOutside = () => {
@@ -81,21 +105,23 @@ const CSFAutorefresh: React.FC = () => {
 		<div className="bg-transparent" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
 			<Button variant="light" className="h-9 flex items-center gap-2 hover:bg-neutral-500/70" onClick={toggleOpen}>
 				<MaterialSymbolsUpdate className="h-6 w-6 text-white" />
-				<Badge variant="default" className={cn('text-white font-normal', isActive ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>
-					{isActive ? 'ON' : 'OFF'}
-				</Badge>
+				<ActivityBadge active={isActive} />
 			</Button>
 			<AnimatePresence>
 				{open && (
 					<div ref={ref}>
 						<motion.div
 							className="fixed z-[99] bg-[#15171ccc] border-2 border-[#c1ceff12] flex flex-col items-center gap-2 p-6 text-center"
-							style={{ translate: '-15px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+							style={{ translate: '-75px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
 							transition={{ duration: 0.3, ease: 'easeOut' }}
 						>
+							<div className="flex items-center gap-2">
+								<span className="text-white font-semibold">Auto-Refresh</span>
+								<ActivityBadge active={isActive} />
+							</div>
 							<div className="flex items-center gap-2 mt-2">
 								<Switch checked={isActive} onCheckedChange={setActive} />
 								<MaterialSymbolsAvgTimeOutlineRounded className="h-6 w-6 text-white" />
@@ -110,6 +136,60 @@ const CSFAutorefresh: React.FC = () => {
 										</option>
 									))}
 								</select>
+							</div>
+							<Separator className="my-4 bg-[#c1ceff0a]" />
+							<div className="flex items-center gap-2">
+								<span className="text-white font-semibold">Notifications</span>
+								<Badge variant="purple" className="text-white font-medium">
+									Pro
+								</Badge>
+							</div>
+							<div className="flex flex-col gap-4 mt-2">
+								<div className="flex items-center gap-2">
+									<CSFCheckbox
+										id="notification-enable"
+										checked={nActive}
+										onCheckedChange={(state) => setNActive(state === 'indeterminate' ? false : state)}
+										disabled={!isActive || user?.plan.type !== 'pro'}
+									/>
+									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-enable">
+										Enable
+									</label>
+								</div>
+								<div className="flex flex-col items-start">
+									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-name">
+										Name
+									</label>
+									<input
+										type="text"
+										id="notification-name"
+										value={name}
+										onChange={(e) => setName(e.target.value)}
+										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
+									/>
+								</div>
+								<div className="flex flex-col items-start">
+									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-percentage">
+										Below Buff %
+									</label>
+									<input
+										type="number"
+										id="notification-percentage"
+										value={percentage}
+										onChange={(e) => setPercentage(e.target.value)}
+										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
+									/>
+								</div>
+								<Button variant="default" className="w-full mt-2 bg-blue-600 hover:bg-blue-700" onClick={handleSave} disabled={user?.plan.type === 'pro'}>
+									Save
+								</Button>
+								{user?.plan.type === 'pro' && (
+									<p className="text-[#9EA7B1] text-sm text-center">
+										Upgrade to BetterFloat Pro
+										<br />
+										to activate Notifications!
+									</p>
+								)}
 							</div>
 						</motion.div>
 					</div>
