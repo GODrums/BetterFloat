@@ -476,7 +476,7 @@ enum POPOUT_ITEM {
 }
 
 function addScreenshotListener(container: Element, item: CSFloat.Item) {
-	const screenshotButton = container.querySelector('.detail-buttons mat-icon');
+	const screenshotButton = container.querySelector('.detail-buttons mat-icon.mat-ligature-font');
 	if (!screenshotButton?.textContent?.includes('photo_camera') || !item.cs2_screenshot_at) {
 		return;
 	}
