@@ -11,6 +11,12 @@ import { CSFCheckbox } from '~popup/ui/checkbox';
 import { Separator } from '~popup/ui/separator';
 import { Switch } from '~popup/ui/switch';
 
+type NotificationSettings = {
+	name: string;
+	percentage: number;
+	active: boolean;
+};
+
 function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
@@ -39,9 +45,9 @@ const CSFAutorefresh: React.FC = () => {
 	const [rInterval, setRInterval] = useStorage('csf-refreshinterval');
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 	const [name, setName] = useState('');
-	const [percentage, setPercentage] = useState('');
+	const [percentage, setPercentage] = useState(0);
 
-	const [user, setUser] = useStorage<SettingsUser>('user');
+	const [user] = useStorage<SettingsUser>('user');
 
 	const refreshButton = document.querySelector<HTMLButtonElement>('.refresh > button');
 
@@ -79,8 +85,8 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const handleSave = () => {
-		// Handle save logic here
-		console.log('Saving:', { name, percentage });
+		const notificationSettings: NotificationSettings = { name, percentage, active: nActive };
+		localStorage.setItem('betterfloat-notification', JSON.stringify(notificationSettings));
 	};
 
 	const intervalOptions = ['30s', '60s', '2min', '5min'];
@@ -90,8 +96,8 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	useEffect(() => {
-		const handleClickOutside = (event) => {
-			if (event?.target?.tagName !== 'BETTERFLOAT-AUTOREFRESH') {
+		const handleClickOutside = (event: MouseEvent) => {
+			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-AUTOREFRESH') {
 				onClickOutside();
 			}
 		};
@@ -100,6 +106,16 @@ const CSFAutorefresh: React.FC = () => {
 			document.removeEventListener('click', handleClickOutside, true);
 		};
 	});
+
+	useEffect(() => {
+		const notificationSettings = localStorage.getItem('betterfloat-notification');
+		if (notificationSettings) {
+			const { name: savedName, percentage: savedPercentage, active: savedActive } = JSON.parse(notificationSettings) as NotificationSettings;
+			setName(savedName || '');
+			setPercentage(savedPercentage || 0);
+			setNActive(savedActive || false);
+		}
+	}, []);
 
 	return (
 		<div className="bg-transparent" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
@@ -176,7 +192,7 @@ const CSFAutorefresh: React.FC = () => {
 										type="number"
 										id="notification-percentage"
 										value={percentage}
-										onChange={(e) => setPercentage(e.target.value)}
+										onChange={(e) => setPercentage(parseInt(e.target.value))}
 										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
 									/>
 								</div>
