@@ -129,12 +129,10 @@ function applyMutation() {
 					// item in insta sell page
 					await adjustItem(addedNode);
 				} else if (addedNode.tagName === 'DIV') {
-					// item in sell-tab
-					if (addedNode.parentElement === document.body) {
-						const item = addedNode.querySelector('div[class^="actioncard_wrapper"]');
-						if (item) {
-							await adjustItem(item);
-						}
+					// item in trade-tab
+					const item = addedNode.querySelector('div[class^="actioncard_wrapper"]');
+					if (item) {
+						await adjustItem(item);
 					}
 				}
 			}

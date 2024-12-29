@@ -297,7 +297,9 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 }
 
 function processCSMoneyEvent(eventData: EventData<unknown>) {
-	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	// if (!eventData.url.includes('notifications')) {
+	// 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	// }
 	if (eventData.url.includes('1.0/market/sell-orders/')) {
 		// item popup
 		cacheCSMoneyItems([(eventData.data as CSMoney.SingleSellOrderResponse).item]);
@@ -305,9 +307,9 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('1.0/market/user-inventory')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
-	} else if (eventData.url.includes('3.0/load_user_inventory/730')) {
+	} else if (eventData.url.includes('/load_user_inventory/730')) {
 		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
-	} else if (eventData.url.includes('5.0/load_bots_inventory/730')) {
+	} else if (eventData.url.includes('/load_bots_inventory/730')) {
 		cacheCSMoneyBotInventory((eventData.data as CSMoney.UserInventoryResponse).items);
 	}
 }
