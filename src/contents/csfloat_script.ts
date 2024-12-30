@@ -1382,20 +1382,25 @@ const parsePrice = (textContent: string) => {
 	if (priceText.includes('Bids')) {
 		price = 0;
 	} else {
-		let pricingText: string;
-		if (location.pathname === '/sell') {
-			pricingText = priceText[1].split('Price')[1];
-		} else {
-			pricingText = priceText[0];
-		}
-		if (pricingText.split(/\s/).length > 1) {
-			const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
-			price = Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100;
-			currency = parts.filter((x) => Number.isNaN(+x))[0];
-		} else {
-			const firstDigit = Array.from(pricingText).findIndex((x) => !Number.isNaN(Number(x)));
-			currency = pricingText.substring(0, firstDigit);
-			price = Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100;
+		try {
+			let pricingText: string;
+			if (location.pathname === '/sell') {
+				pricingText = priceText[1].split('Price')[1] ?? '$ 0';
+			} else {
+				pricingText = priceText[0];
+			}
+			if (pricingText.split(/\s/).length > 1) {
+				const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
+				price = Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100;
+				currency = parts.filter((x) => Number.isNaN(+x))[0];
+			} else {
+				const firstDigit = Array.from(pricingText).findIndex((x) => !Number.isNaN(Number(x)));
+				currency = pricingText.substring(0, firstDigit);
+				price = Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100;
+			}
+		} catch (e) {
+			// happens when UI is not loaded yet so we can ignore it
+			price = 0;
 		}
 	}
 	return { price, currency };
