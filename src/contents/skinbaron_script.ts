@@ -4,11 +4,11 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { html } from 'common-tags';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
-import { getFirstSkinbaronItem, rotateSkinbaronItems } from '~lib/handlers/cache/skinbaron_cache';
+import { getFirstSkinbaronItem } from '~lib/handlers/cache/skinbaron_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
-import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -42,6 +42,14 @@ async function init() {
 		console.log('[BetterFloat] Pro plan required for Skinbaron features');
 		return;
 	}
+
+	await waitForElement('.language').then(() => {
+		if (document.querySelector('.language')?.textContent?.trim() !== 'EN') {
+			console.warn('[BetterFloat] Skinbaron has to be set to the English language for this extension to work. Aborting ...');
+			createLanguagePopup();
+			return;
+		}
+	});
 
 	await initPriceMapping(extensionSettings, 'baron');
 
@@ -426,6 +434,44 @@ function getUserCurrency() {
 		text: currencySelect?.[0] ?? 'EUR',
 		symbol: currencySelect?.[1] ?? '€',
 	};
+}
+
+function createLanguagePopup() {
+    const popup = document.createElement('div');
+    popup.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #ff4444;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    `;
+
+    popup.innerHTML = `
+        <img src="${ICON_EXCLAMATION}" alt="Warning" style="width: 20px; height: 20px;">
+        <div>
+            <div style="font-weight: bold; margin-bottom: 5px;">Language Settings Required</div>
+            <div>Please set the website language to English for BetterFloat to work properly.</div>
+			<button style="margin-top: 10px; padding: 5px 10px; background-color: #ff6666; color: white; border: none; border-radius: 5px; cursor: pointer;">Set to English</button>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+	popup.querySelector('button')?.addEventListener('click', () => {
+		document.querySelector<HTMLButtonElement>('button.language-currency-button')?.click()
+	});
+
+    // Remove popup after 10 seconds
+    setTimeout(() => {
+        popup.remove();
+    }, 15000);
 }
 
 // mutation observer active?
