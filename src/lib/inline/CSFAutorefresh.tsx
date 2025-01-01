@@ -59,13 +59,20 @@ const CSFAutorefresh: React.FC = () => {
 
 	const getInterval = () => {
 		switch (rInterval) {
-			case '0':
-				return 30000;
+			case '0': {
+				if (user?.plan.type !== 'pro') {
+					setRInterval('1');
+					return 30000;
+				}
+				return 20000;
+			}
 			case '1':
-				return 60000;
+				return 30000;
 			case '2':
-				return 120000;
+				return 60000;
 			case '3':
+				return 120000;
+			case '4':
 				return 300000;
 			default:
 				return 30000;
@@ -89,7 +96,7 @@ const CSFAutorefresh: React.FC = () => {
 		localStorage.setItem('betterfloat-notification', JSON.stringify(notificationSettings));
 	};
 
-	const intervalOptions = ['30s', '60s', '2min', '5min'];
+	const intervalOptions = ['20s', '30s', '60s', '2min', '5min'];
 
 	const onClickOutside = () => {
 		setOpen(false);
@@ -147,7 +154,7 @@ const CSFAutorefresh: React.FC = () => {
 									onChange={(e) => setRInterval(e.target.value)}
 								>
 									{intervalOptions.map((option, index) => (
-										<option key={index} value={index.toString()} className="bg-slate-800">
+										<option key={index} value={index.toString()} className="bg-slate-800" disabled={index === 0 && user?.plan.type !== 'pro'}>
 											{option}
 										</option>
 									))}
@@ -196,14 +203,21 @@ const CSFAutorefresh: React.FC = () => {
 										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
 									/>
 								</div>
-								<Button variant="default" className="w-full mt-2 bg-blue-600 hover:bg-blue-700" onClick={handleSave} disabled={user?.plan.type === 'pro'}>
+								<Button variant="default" className="w-full mt-2 bg-blue-600 hover:bg-blue-700" onClick={handleSave} disabled={user?.plan.type !== 'pro'}>
 									Save
 								</Button>
-								{user?.plan.type === 'pro' && (
+								{user?.plan.type !== 'pro' ? (
 									<p className="text-[#9EA7B1] text-sm text-center">
 										Upgrade to BetterFloat Pro
 										<br />
-										to activate Notifications!
+										to activate Notifications
+										<br />& use 20s intervals!
+									</p>
+								) : (
+									<p className="text-[#9EA7B1] text-sm text-center">
+										Notifications are unavailable
+										<br />
+										in the beta version.
 									</p>
 								)}
 							</div>

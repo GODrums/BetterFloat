@@ -426,7 +426,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 }
 
 function getItemPrice(item: Skinbaron.Item) {
-	const itemPrice = new Decimal((<Skinbaron.SingleItem>item).singleOffer?.itemPrice ?? (<Skinbaron.MassItem>item).lowestPrice ?? (<Skinbaron.MassItem>item).lowestPriceTradeLocked)
+	const itemPrice = new Decimal((<Skinbaron.SingleItem>item).singleOffer?.itemPrice ?? (<Skinbaron.MassItem>item).lowestPrice ?? (<Skinbaron.MassItem>item).lowestPriceTradeLocked);
 
 	const userCurrency = getUserCurrency();
 	if (userCurrency.text === 'EUR') {
@@ -450,8 +450,8 @@ function getUserCurrency() {
 }
 
 function createLanguagePopup() {
-    const popup = document.createElement('div');
-    popup.style.cssText = `
+	const popup = document.createElement('div');
+	popup.style.cssText = `
         position: fixed;
         top: 20px;
         right: 20px;
@@ -466,7 +466,7 @@ function createLanguagePopup() {
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     `;
 
-    popup.innerHTML = `
+	popup.innerHTML = `
         <img src="${ICON_EXCLAMATION}" alt="Warning" style="width: 20px; height: 20px;">
         <div>
             <div style="font-weight: bold; margin-bottom: 5px;">Language Settings Required</div>
@@ -475,16 +475,16 @@ function createLanguagePopup() {
         </div>
     `;
 
-    document.body.appendChild(popup);
+	document.body.appendChild(popup);
 
 	popup.querySelector('button')?.addEventListener('click', () => {
-		document.querySelector<HTMLButtonElement>('button.language-currency-button')?.click()
+		document.querySelector<HTMLButtonElement>('button.language-currency-button')?.click();
 	});
 
-    // Remove popup after 10 seconds
-    setTimeout(() => {
-        popup.remove();
-    }, 15000);
+	// Remove popup after 10 seconds
+	setTimeout(() => {
+		popup.remove();
+	}, 15000);
 }
 
 // mutation observer active?
