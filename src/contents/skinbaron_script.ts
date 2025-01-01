@@ -4,7 +4,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { html } from 'common-tags';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
-import { getFirstSkinbaronItem } from '~lib/handlers/cache/skinbaron_cache';
+import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/cache/skinbaron_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
@@ -410,6 +410,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 	}
 
 	const priceFromReference = parseInt(extensionSettings['skinbaron-referenceprice']) === 0 ? priceOrder : priceListing;
+	console.log('Buff Item: ', buff_name, item, priceFromReference?.toNumber(), getItemPrice(item)?.toNumber());
 	const priceDifference = getItemPrice(item).minus(priceFromReference ?? 0);
 	return {
 		source,
@@ -425,7 +426,19 @@ async function getBuffItem(item: Skinbaron.Item) {
 }
 
 function getItemPrice(item: Skinbaron.Item) {
-	return new Decimal((<Skinbaron.SingleItem>item).singleOffer?.itemPrice ?? (<Skinbaron.MassItem>item).lowestPrice ?? (<Skinbaron.MassItem>item).lowestPriceTradeLocked);
+	const itemPrice = new Decimal((<Skinbaron.SingleItem>item).singleOffer?.itemPrice ?? (<Skinbaron.MassItem>item).lowestPrice ?? (<Skinbaron.MassItem>item).lowestPriceTradeLocked)
+
+	const userCurrency = getUserCurrency();
+	if (userCurrency.text === 'EUR') {
+		return itemPrice;
+	}
+
+	const currencyRate = getSkinbaronCurrencyRate(userCurrency.text);
+	if (!currencyRate) {
+		console.error('[BetterFloat] No currency rate found. Please report this issue.');
+		return itemPrice;
+	}
+	return itemPrice.mul(currencyRate);
 }
 
 function getUserCurrency() {

@@ -28,7 +28,7 @@ export function getSkinbaronCurrencyRate(currency: string) {
 	if (currency === 'EUR') {
 		return 1;
 	}
-	return skinbaronRates[currency];
+	return skinbaronRates[currency] || 1;
 }
 
 export function rotateSkinbaronItems(newItem: Skinbaron.Item) {
