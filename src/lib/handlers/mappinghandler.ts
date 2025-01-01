@@ -119,6 +119,7 @@ export function getMarketID(name: string, source: MarketSource) {
 			case MarketSource.C5Game:
 				return 'c5';
 			default:
+				// csfloat can be queried via buff name
 				return null;
 		}
 	};

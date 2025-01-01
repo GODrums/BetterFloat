@@ -296,22 +296,13 @@ async function adjustItemPage(container: Element) {
 	const market_id = getMarketID(buffItem.buff_name, buffItem.source);
 	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
-	const href = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, market_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
+	const link = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, market_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
-	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id: market_id, ...buffItem }));
+	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id: market_id, link, ...buffItem }));
 
 	const suggestedContainer = container.querySelector('.ItemPage-suggested');
 	if (suggestedContainer) {
 		await mountSpItemPageBuffContainer();
-	}
-
-	const buffContainer = container.querySelector('.betterfloat-buff-container');
-	if (buffContainer) {
-		(<HTMLElement>buffContainer).onclick = (e: Event) => {
-			e.stopPropagation();
-			e.preventDefault();
-			window.open(href, '_blank');
-		};
 	}
 
 	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(buffItem.source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
@@ -966,11 +957,11 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 	} else {
 		const buffContainer = container.querySelector('.betterfloat-buff-container');
 		if (buffContainer) {
-			(<HTMLElement>buffContainer).onclick = (e: Event) => {
+			buffContainer.addEventListener('click', (e) => {
 				e.stopPropagation();
 				e.preventDefault();
 				window.open(href, '_blank');
-			};
+			});
 		}
 	}
 

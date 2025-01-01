@@ -171,6 +171,8 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 				return `https://www.c5game.com/en/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
 			}
 		}
+		case MarketSource.CSFloat:
+			return `https://csfloat.com/search?sort_by=lowest_price&type=buy_now&market_hash_name=${encodeURIComponent(buff_name)}`;
 	}
 	return '';
 }

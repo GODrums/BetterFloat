@@ -15,6 +15,7 @@ type BuffItem = {
 	priceOrder: number;
 	priceAvg30: number;
 	liquidity: number;
+	link: string;
 };
 
 const Container: React.FC<{ child: HTMLDivElement }> = ({ child }) => {
@@ -33,6 +34,7 @@ const SPBuffContainer: React.FC = () => {
 		priceOrder: parseFloat(jsonData.priceOrder || 0),
 		priceAvg30: parseFloat(jsonData.priceAvg30 || 0),
 		liquidity: parseFloat(jsonData.liquidity || 0),
+		link: String(jsonData.link),
 	};
 
 	const marketIcon = AvailableMarketSources.find((s) => s.source === data.source)?.logo ?? ICON_BUFF;
@@ -78,19 +80,7 @@ const SPBuffContainer: React.FC = () => {
 	};
 
 	const openBuffPage = () => {
-		const getMarketURL = () => {
-			switch (data.source) {
-				case MarketSource.Buff:
-					return data.buff_id > 0 ? `https://buff.163.com/goods/${data.buff_id}` : `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(data.buff_name)}`;
-				case MarketSource.Steam:
-					return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(data.buff_name)}`;
-				case MarketSource.YouPin:
-					return `https://youpin898.com/search?keyword=${encodeURIComponent(data.buff_name)}`;
-				case MarketSource.C5Game:
-					return `https://www.c5game.com/csgo?marketKeyword=${encodeURIComponent(data.buff_name)}`;
-			}
-		};
-		window.open(getMarketURL(), '_blank');
+		window.open(data.link, '_blank');
 	};
 
 	return (
@@ -166,8 +156,10 @@ const SPBuffContainer: React.FC = () => {
 						</PopoverClose>
 					</PopoverContent>
 				</Popover>
-				<Button variant="ghost" size="icon" className="hover:bg-neutral-500/70" onClick={openBuffPage}>
-					<img src={ICON_ARROWUP} className="h-6 w-6" />
+				<Button variant="ghost" size="icon" className="hover:bg-neutral-500/70" asChild>
+					<a href={data.link} target="_blank" rel="noreferrer">
+						<img src={ICON_ARROWUP} className="h-6 w-6" />
+					</a>
 				</Button>
 			</div>
 		</div>
