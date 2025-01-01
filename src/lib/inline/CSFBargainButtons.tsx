@@ -25,7 +25,7 @@ const CSFBargainButtons: React.FC = () => {
 	let pricingData: PricingData | null = null;
 
 	const getPricingData = () => {
-		const bfPricingDiv = document.querySelector<HTMLDivElement>('app-make-offer-dialog item-card .betterfloat-buffprice');
+		const bfPricingDiv = document.querySelector<HTMLDivElement>('app-make-offer-dialog item-card .betterfloat-buff-a');
 		if (bfPricingDiv) {
 			pricingData = JSON.parse(bfPricingDiv.dataset.betterfloat || '{}');
 			return true;
