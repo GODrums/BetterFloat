@@ -4,11 +4,11 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { html } from 'common-tags';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
+import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
-import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { ICON_CLOCK, MarketSource } from '~lib/util/globals';
+import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -78,6 +78,11 @@ function applyMutation() {
 							await adjustItem(addedNode.children[i], PageState.ItemPage);
 						}
 					}
+				} else if (addedNode.className.startsWith('modal-wrapper')) {
+					const popup = addedNode.querySelector('.popup');
+					if (popup) {
+						await adjustItem(popup, PageState.Popup);
+					}
 				}
 				// else if (addedNode.className === 'market-goods-recommend') {
 				// 	for (let i = 1; i < addedNode.children.length; i++) {
@@ -94,7 +99,7 @@ function applyMutation() {
 }
 
 async function adjustItem(container: Element, state: PageState) {
-	let hrefTag = state === PageState.ItemPage ? location.pathname.split('/').at(-1) : container.firstElementChild?.getAttribute('href')?.split('/').at(-1);
+	let hrefTag = [PageState.ItemPage, PageState.Popup].includes(state) ? location.pathname.split('/')?.[3] : container.firstElementChild?.getAttribute('href')?.split('/').at(-1);
 	if (!hrefTag) {
 		hrefTag = container.querySelector('a.font16')?.getAttribute('href')?.split('/').at(-1) ?? '0';
 	}
@@ -106,6 +111,8 @@ async function adjustItem(container: Element, state: PageState) {
 	const getApiItem = () => {
 		if (state === PageState.ItemPage) {
 			return getFirstBuffPageItem();
+		} else if (state === PageState.Popup) {
+			return getBuffPopoutItem();
 		}
 		return getBuffMarketItem(itemId);
 	};
@@ -124,7 +131,31 @@ async function adjustItem(container: Element, state: PageState) {
 
 	// console.log('[BetterFloat] Adjusting item: ', apiItem, container);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem!, container, state);
+	const priceResult = await addBuffPrice(apiItem, container, state);
+
+	if (state === PageState.ItemPage && extensionSettings['bm-listingage']) {
+		addListingAge(container, apiItem);
+	}
+}
+
+function addListingAge(container: Element, item: BuffMarket.Item) {
+	const sellerContainer = container.querySelector('.market-goods-sell-col-seller');
+	const sellOrderItem = item as BuffMarket.SellOrderListing;
+
+	if (!sellerContainer || !sellOrderItem.created_at) return;
+
+	const listingAge = html`
+		<div 
+			class="betterfloat-listing-age hint--bottom hint--rounded hint--no-arrow" 
+			aria-label="${new Date(sellOrderItem.created_at * 1000).toUTCString()}"
+			style="display: flex; align-items: center;"
+		>
+			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%); translate: 0 1px;" />
+			<p style="margin-left: 4px; font-size: 13px; color: #9EA7B1;">${calculateTime(Number(sellOrderItem.created_at))}</p>
+		</div>
+	`;
+
+	sellerContainer.insertAdjacentHTML('beforeend', listingAge);
 }
 
 async function getBuffItem(item: ExtendedBuffItem) {
@@ -229,6 +260,7 @@ enum PageState {
 	Market = 0,
 	ItemPage = 1,
 	Inventory = 2,
+	Popup = 3,
 }
 
 function getFooterContainer(state: PageState, container: Element): HTMLElement | null {
@@ -239,6 +271,8 @@ function getFooterContainer(state: PageState, container: Element): HTMLElement |
 		footerContainer = container.querySelector('.goods-info-sell');
 	} else if (state === PageState.Inventory) {
 		footerContainer = container.querySelector('.goods-item-info');
+	} else if (state === PageState.Popup) {
+		footerContainer = container.querySelector('.footer .price');
 	}
 	if (!footerContainer) {
 		footerContainer = container.querySelector('.goods-item-info');
@@ -273,8 +307,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		itemStyle: buff_item.style as DopplerPhase,
 		CurrencyFormatter: CurrencyFormatter(currencyRate.value),
 		isDoppler,
-		isPopout: false,
-		priceClass: 'suggested-price',
+		isPopout: state === PageState.Popup,
 		addSpaceBetweenPrices: false,
 		showPrefix: false,
 	});
@@ -297,6 +330,8 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	} else if (location.pathname.includes('best_deals')) {
 		priceContainer = container.querySelector('.user-price');
 		newline = true;
+	} else if (state === PageState.Popup) {
+		priceContainer = container.querySelector('.footer .price');
 	} else {
 		priceContainer = container.querySelector('.user-price')?.parentElement as HTMLElement;
 		itemPrice = parseFloat(container.querySelector('.user-price')?.textContent?.trim().substring(1) ?? '0');
@@ -318,7 +353,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		const percentage = new Decimal(location.pathname.includes('market/all') ? itemPrice : getItemPrice(item)).div(priceFromReference ?? 0).mul(100);
 		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; ${state === PageState.ItemPage ? 'display: inline;font-size: 14px;' : 'margin-left: 10px;'}`;
+		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; ${state === PageState.ItemPage ? 'display: inline; font-size: 14px;' : 'margin-left: 10px;'} ${state === PageState.Popup ? 'line-height: 22px; translate: 0 -5px;' : ''}`;
 		const formattedPrice =
 			absDifference.gt(1000) && state !== PageState.ItemPage
 				? BigCurrency(currencyRate.value).format(absDifference.toNumber())
@@ -331,9 +366,20 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 			</div>
 		`;
 
-		priceContainer.insertAdjacentHTML(newline ? 'afterend' : 'beforeend', buffPriceHTML);
-
 		container.querySelector('.goods-item-info-discount')?.remove();
+
+		if (state === PageState.Popup) {
+			const priceElements = Array.from(priceContainer.children).slice(0, 2);
+			const newPriceContainer = document.createElement('div');
+			newPriceContainer.setAttribute('style', 'display: flex; align-items: baseline;');
+			for (const element of priceElements) {
+				newPriceContainer.appendChild(element);
+			}
+			newPriceContainer.insertAdjacentHTML('beforeend', buffPriceHTML);
+			priceContainer.firstChild?.before(newPriceContainer);
+		} else {
+			priceContainer.insertAdjacentHTML(newline ? 'afterend' : 'beforeend', buffPriceHTML);
+		}
 	}
 	const infoIcon = container.querySelector('.goods-item-info-icon');
 	if (infoIcon) {

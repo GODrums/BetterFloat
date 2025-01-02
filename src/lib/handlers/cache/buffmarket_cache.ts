@@ -4,10 +4,15 @@ import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 let buffItems: { [id: number]: BuffMarket.Item[] } = {};
 let buffPageItems: BuffMarket.Item[] = [];
 let buffRecommendations: BuffMarket.Item[] = [];
+let buffPopoutData: BuffMarket.ItemDetailData | null = null;
 const buffGoodsInfo: { [goods_id: number]: BuffMarket.GoodsInfo } = {};
 let buffCurrencyRate: BuffMarket.CurrencyItem | null = null;
 // buffmarket: cached own user id
 let buffUserId: string | null = null;
+
+export function cacheBuffPopoutData(data: BuffMarket.ItemDetailData) {
+	buffPopoutData = data;
+}
 
 export function cacheBuffUserId(id: string) {
 	if (id && id.length > 0) {
@@ -61,6 +66,10 @@ export function cacheBuffRecommendations(data: BuffMarket.Item[]) {
 export function cacheBuffPageItems(data: BuffMarket.Item[]) {
 	console.log('Caching buff page items: ', data);
 	buffPageItems = data;
+}
+
+export function getBuffPopoutItem() {
+	return buffPopoutData?.sell_order;
 }
 
 export function getBuffUserId() {

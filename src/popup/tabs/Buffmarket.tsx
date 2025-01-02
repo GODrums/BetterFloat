@@ -58,7 +58,7 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="bm-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
+						<SettingsCheckbox id="bm-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} isNew />
 					</SettingsCard>
 				</div>
 			</div>

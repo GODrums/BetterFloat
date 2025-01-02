@@ -245,17 +245,21 @@ export function toTitleCase(str: string) {
 	return splitStr.join(' ');
 }
 
+export function calculateEpochFromDate(date: string) {
+	return Date.parse(date) / 1000;
+}
+
 /**
  * get the time difference between now and the creation of the listing
  * @param created_at example format: "2023-10-12T11:06:15"
  */
-export function calculateTime(created_at: string, timeOffset = 0) {
-	const timeDiff = (strDate: string) => {
+export function calculateTime(created_at: number) {
+	const timeDiff = () => {
 		const now = new Date();
-		const diff = now.getTime() - Date.parse(strDate) - timeOffset * 60 * 60_000;
+		const diff = now.getTime() - created_at * 1000;
 		return Math.floor(diff / 60_000);
 	};
-	const timeMin = timeDiff(created_at);
+	const timeMin = timeDiff();
 	const timeHours = Math.floor(timeMin / 60);
 	let textTime = '';
 	if (timeHours < 49) {

@@ -7,6 +7,96 @@ export namespace BuffMarket {
 		msg: string | null;
 	};
 
+	export type ItemDetailResponse = {
+		code: string;
+		data: ItemDetailData;
+		msg: string | null;
+	};
+
+	export type ItemDetailData = {
+		asset: unknown;
+		asset_info: {
+			fraudwarnings: any | null;
+			icon_url: string;
+			keychains: any[];
+			paintindex: number;
+			paintseed: number;
+			stickers: any[];
+			tournament_tags: any[];
+		};
+		assetid: string;
+		cs2_inspect_info: any;
+		csgo_3d_inspect_allowed: boolean;
+		csgo_inspect_allowed: boolean;
+		csgo_paintwear_allowed: boolean;
+		csgo_paintwear_load_success: boolean;
+		fade_name: string | null;
+		has_market_store: boolean;
+		ice_fire_name: string | null;
+		is_app_client: boolean;
+		is_stattrak: boolean;
+		is_stattrak_knife: boolean;
+		page_config: any;
+		phase_color: string | null;
+		phase_name: string | null;
+		rank: number | null;
+		rank_order_type: any | null;
+		redness_name: string | null;
+		sell_order: SellOrderListing;
+		seller: Seller;
+		seller_stats: {
+			7: SellerStats;
+			30: SellerStats;
+		};
+		show_game_cms_icon: boolean;
+		show_icon: boolean;
+		show_steam_asset_remark: boolean;
+		steam_asset: SteamAsset;
+		steamid: bigint;
+		support_display_image: boolean;
+		tier_name: string | null;
+		web_page_info: any;
+	};
+
+	export type Seller = {
+		avatar: string;
+		avatar_safe: string;
+		is_auto_accept: boolean;
+		is_premium_vip: boolean;
+		nickname: string;
+		seller_level: number;
+		shop_id: string;
+		user_id: string;
+		v_types: unknown;
+	};
+
+	export type SellerStats = {
+		amount_success: number;
+		average_duration: number;
+		count_fail: number;
+		count_success: number;
+		deliver_rate: number;
+		formatted_average_duration: string;
+		formatted_count_success: string;
+		formatted_deliver_rate: string;
+		past_days: number;
+	};
+
+	// Data from Steam's API
+	export type SteamAsset = {
+		action_link: string;
+		appid: number;
+		assetid: string;
+		classid: string;
+		contextid: number;
+		goods_id: number;
+		has_action_link: boolean;
+		id: string;
+		info: any;
+		instanceid: string;
+		paintwear: string;
+	};
+
 	// https://api.buff.market/api/market/goods?game=csgo&page_num=1&page_size=50
 	export type GoodsResponse = {
 		code: string;
@@ -307,7 +397,8 @@ export namespace BuffMarket {
 		can_bargain_chat: boolean;
 		can_use_inspect_trn_url: boolean;
 		cannot_bargain_reason: string;
-		created_at: string;
+		created_at: number;
+		description: string;
 		featured: number;
 		fee: string;
 		goods_id: number;
@@ -316,10 +407,12 @@ export namespace BuffMarket {
 		income: string;
 		lowest_bargain_price: string;
 		mode: number;
+		order_type: number;
 		price: string;
 		recent_average_duration: number;
 		recent_deliver_rate: number;
 		state: number;
+		sticker_premium: number;
 		supported_pay_methods: number[];
 		tradeable_cooldown: any | null;
 		updated_at: number;

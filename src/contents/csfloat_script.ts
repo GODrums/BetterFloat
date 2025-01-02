@@ -39,6 +39,7 @@ import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	CurrencyFormatter,
+	calculateEpochFromDate,
 	calculateTime,
 	getBuffPrice,
 	getCharmColoring,
@@ -1236,7 +1237,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 
 	const listingAge = html`
 		<div class="betterfloat-listing-age" style="display: flex; align-items: flex-end;">
-			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(listing.created_at)}</p>
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
 	`;
@@ -1258,7 +1259,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 
 	// add selling date
 	if (listing.state === 'sold' && listing.sold_at) {
-		const sellingAge = calculateTime(listing.sold_at);
+		const sellingAge = calculateTime(calculateEpochFromDate(listing.sold_at));
 		const statusButton = container.querySelector<HTMLElement>('.status-button');
 		if (statusButton?.hasAttribute('disabled')) {
 			const buttonLabel = statusButton.querySelector('span.mdc-button__label');
