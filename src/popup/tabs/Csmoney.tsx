@@ -28,7 +28,7 @@ export const CSMoneySettings = () => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 				</div>
 				<div className="flex flex-col gap-1">
-					<SettingsSource prefix="bm" />
+					<SettingsSource prefix="csm" />
 					<SettingsCard>
 						<SettingsCheckbox
 							id="csm-buffdifference"

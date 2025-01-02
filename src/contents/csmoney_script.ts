@@ -100,9 +100,11 @@ function replaceHistory() {
 	let utmMedium = new URLSearchParams(location.search).get('utm_medium');
 	if (!utmMedium) {
 		utmMedium = 'betterfloat';
+		sessionStorage.setItem('bf.utm_medium', utmMedium);
+	}
+	if (utmMedium === 'betterfloat' && Math.random() < 0.5) {
 		createHistoryRewrite({ utm_campaign: 'market', utm_source: 'mediabuy', utm_medium: utmMedium, utm_content: 'link' });
 	}
-	sessionStorage.setItem('bf.utm_medium', utmMedium);
 }
 
 function applyMutation() {
@@ -142,7 +144,7 @@ function applyMutation() {
 }
 
 async function adjustItem(container: Element, isPopout = false) {
-	const itemId = container?.firstElementChild?.getAttribute('data-card-id');
+	const itemId = container?.getAttribute('data-card-item-id');
 	const getApiItem = () => {
 		if (location.pathname === '/csgo/trade/') {
 			const isUserItem = !container.closest('#botInventory');
@@ -171,6 +173,14 @@ async function adjustItem(container: Element, isPopout = false) {
 		console.debug('[BetterFloat] No item found, waiting 1s and trying again...', container);
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		apiItem = getApiItem();
+	}
+	// bring queue up to date
+	if (itemId && apiItem?.id !== Number(itemId)) {
+		console.debug('[BetterFloat] Item ID mismatch, bringing queue up to date...');
+		let altItem = getFirstCSMoneyItem();
+		while (altItem && altItem?.id !== Number(itemId)) {
+			altItem = getFirstCSMoneyItem();
+		}
 	}
 	if (!apiItem) {
 		console.error('[BetterFloat] No item found, skipping...');

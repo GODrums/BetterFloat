@@ -7,13 +7,14 @@ let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
 let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
 
 export function cacheCSMoneyItems(data: CSMoney.Item[]) {
-	if (!csmoneyItems || csmoneyItems.length > 0) {
+	if (!csmoneyItems) {
 		csmoneyItems = [];
 	}
 	data.forEach((item) => {
 		csmoneyItemMapping[item.id] = item;
 	});
-	csmoneyItems = Object.assign([], data);
+	console.log('csmoneyItems', csmoneyItems.length);
+	csmoneyItems.push(...data);
 }
 
 export function cacheCSMoneyUserInventory(data: CSMoney.InventoryItem[]) {

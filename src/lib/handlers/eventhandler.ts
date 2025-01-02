@@ -257,7 +257,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 
 // process intercepted data
 function processBuffMarketEvent(eventData: EventData<unknown>) {
-	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	if (eventData.url.includes('api/market/goods/info')) {
 		// item lists: https://buff.market/market/goods/91?game=csgo
 		// caching item just for the name
