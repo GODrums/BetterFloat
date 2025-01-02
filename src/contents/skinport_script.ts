@@ -433,7 +433,8 @@ async function adjustItem(container: Element) {
 
 	storeItem(container, item);
 
-	const filterItem = document.querySelector('.LiveBtn')?.className.includes('--isActive') ? applyFilter(item, container) : false;
+	const isLiveActive = document.querySelector('.LiveBtn')?.className.includes('--isActive');
+	const filterItem = isLiveActive ? applyFilter(item, container) : false;
 	if (filterItem) {
 		// console.log('[BetterFloat] Filtered item: ', item.name);
 		(<HTMLElement>container).style.display = 'none';
@@ -447,6 +448,13 @@ async function adjustItem(container: Element) {
 	// if (location.pathname.startsWith('/market')) {
 	// 	addInstantOrder(item, container);
 	// }
+
+	if (isLiveActive && extensionSettings['user'].plan.type === 'pro') {
+		if (liveBuffFilter(priceResult)) {
+			(<HTMLElement>container).style.display = 'none';
+			return;
+		}
+	}
 
 	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
 		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
@@ -470,6 +478,16 @@ async function adjustItem(container: Element) {
 			await addBlueBadge(container, cachedItem);
 		}
 	}
+}
+
+function liveBuffFilter({ percentage }: { price_difference: Decimal; percentage?: Decimal; }): boolean {
+	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
+	
+	const filterPercentage = new Decimal(spFilter.percentage ?? 0);
+	if (filterPercentage.gt(10) && percentage) {
+		return percentage.gt(filterPercentage);
+	}
+	return false;
 }
 
 function storeItem(container: Element, item: Skinport.Listing) {
@@ -1004,6 +1022,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	return {
 		price_difference: difference,
+		percentage
 	};
 }
 

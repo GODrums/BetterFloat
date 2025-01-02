@@ -158,6 +158,7 @@ export const DEFAULT_SETTINGS = {
 export const DEFAULT_FILTER = {
 	priceLow: 0,
 	priceHigh: 999999,
+	percentage: 0,
 	name: '',
 	types: {
 		knife: true,

@@ -1,9 +1,11 @@
+import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { DEFAULT_FILTER, type SPFilter } from '~lib/util/storage';
+import { DEFAULT_FILTER, type SettingsUser, type SPFilter } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~popup/components/Icons';
+import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { Label } from '~popup/ui/label';
 
@@ -41,8 +43,11 @@ const SpLiveFilter: React.FC = () => {
 	const [types, setTypes] = useState(spFilter.types);
 	const [priceLow, setPriceLow] = useState<number>(spFilter.priceLow);
 	const [priceHigh, setPriceHigh] = useState<number>(spFilter.priceHigh);
+	const [percentage, setPercentage] = useState<number>(spFilter.percentage);
 	const [newOnly, setNewOnly] = useState<boolean>(spFilter.new);
 	const [filterCount, setFilterCount] = useState<number>(0);
+
+	const [user] = useStorage<SettingsUser>('user');
 
 	const toggleOpen = () => {
 		setOpen(!open);
@@ -54,6 +59,11 @@ const SpLiveFilter: React.FC = () => {
 		spFilter.priceHigh = priceHigh;
 		spFilter.types = types;
 		spFilter.new = newOnly;
+		if (user?.plan.type === 'pro') {
+			spFilter.percentage = percentage;
+		} else {
+			spFilter.percentage = 0;
+		}
 		localStorage.setItem('spFilter', JSON.stringify(spFilter));
 		setOpen(false);
 	};
@@ -62,6 +72,7 @@ const SpLiveFilter: React.FC = () => {
 		setName(DEFAULT_FILTER.name);
 		setPriceLow(DEFAULT_FILTER.priceLow);
 		setPriceHigh(DEFAULT_FILTER.priceHigh);
+		setPercentage(DEFAULT_FILTER.percentage);
 		setTypes(DEFAULT_FILTER.types);
 		setNewOnly(DEFAULT_FILTER.new);
 		localStorage.setItem('spFilter', JSON.stringify(DEFAULT_FILTER));
@@ -84,6 +95,9 @@ const SpLiveFilter: React.FC = () => {
 			count++;
 		}
 		if (spFilter.new) {
+			count++;
+		}
+		if (spFilter.percentage > 0) {
 			count++;
 		}
 		setFilterCount(count);
@@ -116,17 +130,11 @@ const SpLiveFilter: React.FC = () => {
 						<Button variant="invisible" size="icon" className="absolute top-4 right-7" onClick={() => setOpen(false)}>
 							<MaterialSymbolsCloseSmallOutlineRounded className="h-8 w-8" />
 						</Button>
-						<div className="flex flex-col items-start w-4/5 mx-5 my-2.5">
+						<div className="flex flex-col items-start w-4/5 mx-5 mt-2.5">
 							<label className="font-semibold my-1 mx-0" htmlFor="filter-name">
 								NAME
 							</label>
-							<input
-								type="text"
-								id="filter-name"
-								className="w-full h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base"
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-							/>
+							<input type="text" id="filter-name" className="w-full h-9 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base" value={name} onChange={(e) => setName(e.target.value)} />
 						</div>
 						<div className="flex justify-between w-4/5 mt-1.5">
 							<div className="flex flex-col gap-0.5 items-start">
@@ -135,15 +143,35 @@ const SpLiveFilter: React.FC = () => {
 									return <TypeCheckbox key={index} label={type} types={types} setTypes={setTypes} />;
 								})}
 							</div>
-							<div className="flex flex-col gap-1 items-center">
-								<Label htmlFor="" className="font-semibold my-1.5">
+							<div className="flex flex-col items-center">
+								<div className="flex items-center gap-2">
+									<Label htmlFor="filter-percentage" className="font-semibold my-1.5">
+										Below Buff %
+									</Label>
+									<Badge variant="purple" className="text-white font-medium">
+										Pro
+									</Badge>
+								</div>
+								<input
+									type="number"
+									id="filter-percentage"
+									min="0"
+									className="w-[100px] h-9 pl-3.5 mb-2 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border border-purple-800 disabled:text-gray-500"
+									value={percentage}
+									onChange={(e) => {
+										setPercentage(parseFloat(e.target.value));
+									}}
+									disabled={user?.plan.type !== 'pro'}
+								/>
+								<Label htmlFor="filter-price-low" className="font-semibold my-1.5">
 									PRICE
 								</Label>
 								<input
 									type="number"
+									id="filter-price-low"
 									min="0"
 									max="999999"
-									className="w-[100px] h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+									className="w-[100px] h-9 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 									value={priceLow}
 									onChange={(e) => {
 										setPriceLow(parseFloat(e.target.value));
@@ -154,7 +182,7 @@ const SpLiveFilter: React.FC = () => {
 									type="number"
 									min="0"
 									max="999999"
-									className="w-[100px] h-9 pb-1 pl-3.5 mb-2 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+									className="w-[100px] h-9 pl-3.5 mb-2 text-white bg-[#2a2d2f] rounded-[20px] text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 									value={priceHigh}
 									onChange={(e) => {
 										setPriceHigh(parseFloat(e.target.value));
