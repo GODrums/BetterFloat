@@ -34,7 +34,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>
 				</div>
 				<div className="flex flex-col gap-1">
-					<SettingsSource prefix="bm" />
+					<SettingsSource prefix="baron" />
 					<SettingsCard>
 						<SettingsCheckbox
 							id="baron-buffdifference"

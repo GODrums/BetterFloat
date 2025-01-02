@@ -343,7 +343,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 	const footerContainer = container.querySelector<HTMLElement>(selector.footer);
 
-	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
+	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {

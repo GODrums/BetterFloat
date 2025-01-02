@@ -13,7 +13,6 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	data.forEach((item) => {
 		csmoneyItemMapping[item.id] = item;
 	});
-	console.log('csmoneyItems', csmoneyItems.length);
 	csmoneyItems.push(...data);
 }
 

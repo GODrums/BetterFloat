@@ -119,7 +119,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 	}
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage ? 0 : 2;
+	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage && priceOrder?.gt(10) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
