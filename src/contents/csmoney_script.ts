@@ -76,7 +76,7 @@ async function firstLaunch() {
 		if (reloadButton) {
 			reloadButton.click();
 		}
-	} else if (location.pathname === '/market/instant-sell/') {
+	} else if (location.pathname === '/market/instant-sell/' || location.pathname === '/market/sell/') {
 		// reload instant sell page
 		const reloadButton = document.querySelector<HTMLElement>('div[class^="InventoryReloadButton_wrapper__"]');
 		if (reloadButton) {
@@ -302,6 +302,10 @@ const itemSelectors = {
 		footer: 'footer div[class^="BaseCard_price"]',
 		price: 'span[class^="styles_price__"]',
 	},
+	sell: {
+		footer: 'footer div[class^="BaseCard_price"]',
+		price: 'span[class^="styles_price__"]',
+	},
 } as const;
 
 type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
@@ -314,6 +318,8 @@ function getSelectors(isPopout: boolean): ItemSelectors {
 		return itemSelectors.market;
 	} else if (location.pathname === '/market/instant-sell/') {
 		return itemSelectors.instant_sell;
+	} else if (location.pathname === '/market/sell/') {
+		return itemSelectors.sell;
 	} else if (location.pathname === '/csgo/trade/') {
 		return itemSelectors.trade;
 	}
@@ -353,6 +359,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		if (!isPopout) {
 			footerContainer.parentElement?.parentElement?.style.setProperty('overflow', 'visible');
+			footerContainer.closest('div[class^="actioncard_card__"]')?.setAttribute('style', 'overflow: visible;');
 		}
 	}
 
