@@ -6,6 +6,8 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { ICON_BUFFMARKET_FULL } from '~lib/util/globals';
 
 interface BuffMarketSettingsProps {
 	hasProPlan: boolean;
@@ -17,6 +19,7 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 	return (
 		<TabTemplate value="buffmarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access BuffMarket features" />}
+			<MarketLogoFull icon={ICON_BUFFMARKET_FULL} />
 			<SettingsEnable id="bm-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">

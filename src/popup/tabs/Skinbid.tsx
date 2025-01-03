@@ -6,12 +6,15 @@ import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { ICON_SKINBID_FULL } from '~lib/util/globals';
 
 export const SkinbidSettings = () => {
 	const [checked] = useStorage<boolean>('skb-enable');
 
 	return (
 		<TabTemplate value="skinbid" checked={checked}>
+			<MarketLogoFull icon={ICON_SKINBID_FULL} />
 			<SettingsEnable id="skb-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">

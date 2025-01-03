@@ -1,4 +1,3 @@
-import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
 import { useStorage } from '@plasmohq/storage/hook';
 import {
 	IcOutlineDiscount,
@@ -19,12 +18,15 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSelect } from '~popup/components/SettingsSelect';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
+import { ICON_CSBLUEGEM, ICON_CSFLOAT_FULL } from '~lib/util/globals';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 
 export const CSFloatSettings = () => {
 	const [checked] = useStorage<boolean>('csf-enable');
 
 	return (
 		<TabTemplate value="csfloat" checked={checked}>
+			<MarketLogoFull icon={ICON_CSFLOAT_FULL} />
 			<SettingsEnable id="csf-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">
@@ -41,7 +43,7 @@ export const CSFloatSettings = () => {
 						<SettingsCheckbox
 							id="csf-csbluegem"
 							text="CSBlueGem Integration"
-							icon={<img className="h-6 w-6" src={csbluegemLogo} />}
+							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} />}
 							tooltipText="Adds pattern details and past sales to case hardened skins. Data powered by CSBlueGem.com."
 						/>
 					</SettingsCard>

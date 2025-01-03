@@ -1,11 +1,7 @@
 import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
-import buffLogo from 'data-base64:~/../assets/buff_favicon.png';
-import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
-import c5gameLogo from 'data-base64:~/../assets/icons/icon-c5game.png';
-import youpinLogo from 'data-base64:~/../assets/icons/icon-youpin.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import type { SVGProps } from 'react';
-import { MarketSource } from '~lib/util/globals';
+import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
@@ -48,11 +44,11 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 	const [source, setSource] = useStorage(`${prefix}-pricingsource`, (s) => (s === undefined ? MarketSource.Buff : s));
 
 	const sources: SourceInfo[] = [
-		{ text: 'Buff163', logo: buffLogo, source: MarketSource.Buff },
+		{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff },
 		{ text: 'Steam', logo: steamLogo, source: MarketSource.Steam },
-		{ text: 'YouPin / UU', logo: youpinLogo, source: MarketSource.YouPin },
-		{ text: 'C5Game', logo: c5gameLogo, source: MarketSource.C5Game },
-		{ text: 'CSFloat', logo: csfloatLogo, source: MarketSource.CSFloat },
+		{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
+		{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
+		{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat },
 	];
 
 	return (

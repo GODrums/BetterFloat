@@ -1,12 +1,4 @@
 import '~style.css';
-import bitskinsLogo from 'data-base64:~/../assets/bitskins.svg';
-import buffmarketLogo from 'data-base64:~/../assets/buffmarket.ico';
-import csfloatLogo from 'data-base64:~/../assets/csfloat.png';
-import csmoneyLogo from 'data-base64:~/../assets/csmoney.ico';
-import dmarketLogo from 'data-base64:~/../assets/dmarket.ico';
-import lisskinsLogo from 'data-base64:~/../assets/lisskins.svg';
-import skinbaronLogo from 'data-base64:~/../assets/skinbaron.svg';
-import skinportLogo from 'data-base64:~/../assets/skinport.ico';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
@@ -28,6 +20,7 @@ import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SKINBARON, ICON_SKINPORT } from '~lib/util/globals';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
@@ -56,31 +49,31 @@ export default function IndexPopup() {
 						<p className="text-md font-bold py-2 uppercase">Sites</p>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="csfloat">
-								<img className="h-9 w-9 rounded-lg" src={csfloatLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_CSFLOAT} />
 							</TabsTrigger>
 							<TabsTrigger value="csmoney">
-								<img className="h-9 w-9 rounded-lg" src={csmoneyLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_CSMONEY} />
 							</TabsTrigger>
 							<TabsTrigger value="skinport">
-								<img className="h-9 w-9 rounded-lg" src={skinportLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_SKINPORT} />
 							</TabsTrigger>
 							<TabsTrigger value="buffmarket">
-								<img className="h-9 w-9 rounded-lg" src={buffmarketLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_BUFFMARKET} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
 							<TabsTrigger value="dmarket">
-								<img className="h-9 w-9 rounded-lg" src={dmarketLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_DMARKET} />
 							</TabsTrigger>
 							<TabsTrigger value="bitskins">
-								<img className="h-9 w-9 rounded-lg" src={bitskinsLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_BITSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="lisskins">
-								<img className="h-9 w-9 rounded-lg" src={lisskinsLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_LISSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbaron">
-								<img className="h-9 w-9 rounded-lg" src={skinbaronLogo} />
+								<img className="h-9 w-9 rounded-lg" src={ICON_SKINBARON} />
 							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
@@ -103,7 +96,7 @@ export default function IndexPopup() {
 					<CSFloatSettings />
 					<SkinportSettings />
 					<SkinbidSettings />
-					<CSMoneySettings />
+					<CSMoneySettings hasProPlan={hasProPlan} />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<BitskinsSettings hasProPlan={hasProPlan} />

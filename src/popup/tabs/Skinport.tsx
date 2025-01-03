@@ -1,4 +1,3 @@
-import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
 import { useStorage } from '@plasmohq/storage/hook';
 import { IcOutlineDiscount, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -8,12 +7,15 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSelect } from '~popup/components/SettingsSelect';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
+import { ICON_CSBLUEGEM, ICON_SKINPORT_FULL } from '~lib/util/globals';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 
 export const SkinportSettings = () => {
 	const [checked] = useStorage<boolean>('sp-enable');
 
 	return (
 		<TabTemplate value="skinport" checked={checked}>
+			<MarketLogoFull icon={ICON_SKINPORT_FULL} />
 			<SettingsEnable id="sp-enable" />
 			<div>
 				<div className="pt-4 pb-2">
@@ -27,7 +29,7 @@ export const SkinportSettings = () => {
 						<SettingsCheckbox
 							id="sp-csbluegem"
 							text="CSBlueGem Integration"
-							icon={<img className="h-6 w-6" src={csbluegemLogo} alt="CSBlueGem Logo" />}
+							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
 							tooltipText="Adds pattern details and past sales to case hardened skins. Data powered by CSBlueGem.com."
 						/>
 					</SettingsCard>

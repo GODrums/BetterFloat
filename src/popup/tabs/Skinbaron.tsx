@@ -7,6 +7,8 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { ICON_SKINBARON_FULL } from '~lib/util/globals';
 
 interface SkinbaronSettingsProps {
 	hasProPlan: boolean;
@@ -18,6 +20,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 	return (
 		<TabTemplate value="skinbaron" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinbaron features" />}
+			<MarketLogoFull icon={ICON_SKINBARON_FULL} />
 			<SettingsEnable id="baron-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">

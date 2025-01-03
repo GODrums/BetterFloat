@@ -2,11 +2,12 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
-import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { ICON_LISSKINS_FULL } from '~lib/util/globals';
 
 interface LisSkinsSettingsProps {
 	hasProPlan: boolean;
@@ -18,6 +19,7 @@ export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 	return (
 		<TabTemplate value="lisskins" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Lisskins features" />}
+			<MarketLogoFull icon={ICON_LISSKINS_FULL} />
 			<SettingsEnable id="lis-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">

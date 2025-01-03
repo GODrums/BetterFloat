@@ -1,7 +1,5 @@
-import csbluegemLogo from 'data-base64:~/../assets/csbluegem.svg';
-import csmoneyLogo from 'data-base64:~/../assets/csmoney_full.svg';
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { WEBSITE_URL } from '~lib/util/globals';
+import { ICON_CSBLUEGEM, ICON_CSMONEY_FULL, WEBSITE_URL } from '~lib/util/globals';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { Spotlight } from '~popup/components/Spotlight';
 import { Button } from '~popup/ui/button';
@@ -27,7 +25,7 @@ export const About = () => {
 							<h4 className="dark:text-white text-black font-medium text-base pb-2">Our Partners</h4>
 							<div className="flex gap-2 items-center flex-wrap justify-center">
 								<Button variant="outline" className="flex flex-col h-16" onClick={() => window.open('https://csbluegem.com/')}>
-									<img className="h-6 w-6 rounded-lg" src={csbluegemLogo} />
+									<img className="h-6 w-6 rounded-lg" src={ICON_CSBLUEGEM} />
 									<p className="text-base font-normal">CSBlueGem</p>
 								</Button>
 								<Button
@@ -35,7 +33,7 @@ export const About = () => {
 									className="w-32 h-16"
 									onClick={() => window.open('https://cs.money/market/buy/?utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=market&utm_content=link')}
 								>
-									<img src={csmoneyLogo} />
+									<img src={ICON_CSMONEY_FULL} />
 								</Button>
 								<Button variant="outline" className="h-fit">
 									<p className="text-base font-normal">... more soon!</p>

@@ -6,6 +6,8 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { ICON_DMARKET_FULL } from '~lib/util/globals';
 
 interface DmarketSettingsProps {
 	hasProPlan: boolean;
@@ -17,6 +19,7 @@ export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
 	return (
 		<TabTemplate value="dmarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access DMarket features" />}
+			<MarketLogoFull icon={ICON_DMARKET_FULL} />
 			<SettingsEnable id="dm-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">

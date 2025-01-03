@@ -6,6 +6,8 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
+import { ICON_BITSKINS_FULL } from '~lib/util/globals';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 
 interface BitskinsSettingsProps {
 	hasProPlan: boolean;
@@ -17,6 +19,7 @@ export const BitskinsSettings = ({ hasProPlan }: BitskinsSettingsProps) => {
 	return (
 		<TabTemplate value="bitskins" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Bitskins features" />}
+			<MarketLogoFull icon={ICON_BITSKINS_FULL} />
 			<SettingsEnable id="bs-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
