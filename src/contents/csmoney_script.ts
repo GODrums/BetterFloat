@@ -166,7 +166,7 @@ async function adjustItem(container: Element, isPopout = false) {
 		}
 	};
 	let apiItem = getApiItem();
-
+	
 	let attempts = 0;
 	while (!apiItem && attempts++ < 5 && isInventoryEmpty()) {
 		// wait for 1s and try again
@@ -174,12 +174,18 @@ async function adjustItem(container: Element, isPopout = false) {
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		apiItem = getApiItem();
 	}
-	// bring queue up to date
-	if (itemId && apiItem?.id !== Number(itemId)) {
+	// make sure item id matches with queue, otherwise bring it up to date
+	if (itemId && apiItem && apiItem.id !== Number(itemId)) {
 		console.debug('[BetterFloat] Item ID mismatch, bringing queue up to date...');
 		let altItem = getFirstCSMoneyItem();
 		while (altItem && altItem?.id !== Number(itemId)) {
 			altItem = getFirstCSMoneyItem();
+		}
+		if (altItem) {
+			console.debug('[BetterFloat] Item found in queue:', altItem);
+			apiItem = altItem;
+		} else {
+			console.error('[BetterFloat] Item not found in queue:', itemId);
 		}
 	}
 	if (!apiItem) {
