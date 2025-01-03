@@ -1,4 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { ICON_CSBLUEGEM, ICON_CSFLOAT_FULL } from '~lib/util/globals';
 import {
 	IcOutlineDiscount,
 	IcRoundAccessTime,
@@ -11,6 +12,7 @@ import {
 	StreamlineDiscountPercentCoupon,
 	TablerCircleChevronUp,
 } from '~popup/components/Icons';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
@@ -18,8 +20,6 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSelect } from '~popup/components/SettingsSelect';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
-import { ICON_CSBLUEGEM, ICON_CSFLOAT_FULL } from '~lib/util/globals';
-import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 
 export const CSFloatSettings = () => {
 	const [checked] = useStorage<boolean>('csf-enable');

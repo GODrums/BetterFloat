@@ -1,13 +1,13 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { ICON_BITSKINS_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
-import { ICON_BITSKINS_FULL } from '~lib/util/globals';
-import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 
 interface BitskinsSettingsProps {
 	hasProPlan: boolean;

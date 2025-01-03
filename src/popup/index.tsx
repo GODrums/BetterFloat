@@ -2,6 +2,7 @@ import '~style.css';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
+import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SKINBARON, ICON_SKINPORT } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
 import { SparklesCore } from '~popup/components/Sparkles';
@@ -20,7 +21,6 @@ import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SKINBARON, ICON_SKINPORT } from '~lib/util/globals';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);

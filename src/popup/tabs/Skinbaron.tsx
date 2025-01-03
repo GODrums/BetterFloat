@@ -1,5 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { ICON_SKINBARON_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
@@ -7,8 +9,6 @@ import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
-import { MarketLogoFull } from '~popup/components/MarketLogoFull';
-import { ICON_SKINBARON_FULL } from '~lib/util/globals';
 
 interface SkinbaronSettingsProps {
 	hasProPlan: boolean;

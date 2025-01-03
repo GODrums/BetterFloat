@@ -480,9 +480,9 @@ async function adjustItem(container: Element) {
 	}
 }
 
-function liveBuffFilter({ percentage }: { price_difference: Decimal; percentage?: Decimal; }): boolean {
+function liveBuffFilter({ percentage }: { price_difference: Decimal; percentage?: Decimal }): boolean {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
-	
+
 	const filterPercentage = new Decimal(spFilter.percentage ?? 0);
 	if (filterPercentage.gt(10) && percentage) {
 		return percentage.gt(filterPercentage);
@@ -1022,7 +1022,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 
 	return {
 		price_difference: difference,
-		percentage
+		percentage,
 	};
 }
 
