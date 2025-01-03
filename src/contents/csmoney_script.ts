@@ -16,7 +16,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -43,7 +43,13 @@ async function init() {
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
-	if (!extensionSettings['bm-enable']) return;
+	if (!extensionSettings['csm-enable']) return;
+
+	// check if user has the required plan
+	if (!checkUserPlanPro(extensionSettings['user'])) {
+		console.log('[BetterFloat] Pro plan required for CSMoney features');
+		return;
+	}
 
 	replaceHistory();
 
@@ -166,7 +172,7 @@ async function adjustItem(container: Element, isPopout = false) {
 		}
 	};
 	let apiItem = getApiItem();
-	
+
 	let attempts = 0;
 	while (!apiItem && attempts++ < 5 && isInventoryEmpty()) {
 		// wait for 1s and try again

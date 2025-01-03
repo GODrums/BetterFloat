@@ -8,7 +8,7 @@ import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -29,7 +29,7 @@ async function init() {
 		return;
 	}
 
-	useAffiliate();
+	replaceHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -58,10 +58,19 @@ async function init() {
 	}
 }
 
-async function useAffiliate() {
-	const localAff = localStorage.getItem('affiliate');
-	if (!localAff) {
-		localStorage.setItem('affiliate', JSON.stringify('betterfloat'));
+async function replaceHistory() {
+	// wait for the page to load
+	const loggedOut = await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			if (document.querySelector('.login') || document.querySelector('.user-avatar')) {
+				clearInterval(interval);
+				resolve(!!document.querySelector('.login'));
+			}
+		}, 100);
+	});
+
+	if (loggedOut && !location.search.includes('ref_alias')) {
+		location.search += `${location.search ? '&' : ''}ref_alias=betterfloat`;
 	}
 }
 
