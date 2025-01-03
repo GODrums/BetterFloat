@@ -92,8 +92,10 @@ async function firstLaunch() {
 
 function replaceHistory() {
 	const isLoggedOut = document.querySelector('div.not-loggined');
-	if (isLoggedOut) {
-		createHistoryRewrite({ rf: '130498354' });
+	console.log('[BetterFloat] Is logged out:', isLoggedOut);
+	if (isLoggedOut && !location.href.includes('rf=')) {
+		// createHistoryRewrite({ rf: '130498354' });
+		location.search += `${location.search ? '&' : ''}rf=130498354`;
 	}
 }
 
