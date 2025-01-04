@@ -283,7 +283,7 @@ async function getBuffItem(item: Bitskins.Item) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 
-	const referencePrice = parseInt(extensionSettings['bs-referenceprice']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['bs-pricereference']) === 0 ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 
 	return {

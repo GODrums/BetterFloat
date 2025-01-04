@@ -222,7 +222,7 @@ async function getBuffItem(item: DMarket.Item) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 
-	const referencePrice = parseInt(extensionSettings['dm-referenceprice']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['dm-pricereference']) === 0 ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 
 	return {

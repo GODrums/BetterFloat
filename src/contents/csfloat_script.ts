@@ -222,7 +222,7 @@ export async function adjustOfferContainer(container: Element) {
 	}
 	const buff_id = getMarketID(itemName, MarketSource.Buff);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
-	const priceFromReference = Number(extensionSettings['csf-pricereference']) === 1 ? priceListing : priceOrder;
+	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
 
 	const userCurrency = CSFloatHelpers.userCurrency();
 

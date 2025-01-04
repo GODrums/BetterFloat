@@ -188,7 +188,7 @@ async function getBuffItem(item: ExtendedBuffItem) {
 		priceOrder = priceOrder.mul(currencyItem.rate);
 	}
 
-	const referencePrice = parseInt(extensionSettings['bm-referenceprice']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['bm-pricereference']) === 0 ? priceOrder : priceListing;
 
 	const priceDifference = referencePrice ? item.price.minus(referencePrice) : new Decimal(0);
 	return {

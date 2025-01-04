@@ -204,7 +204,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(apiItem, container, isPopout);
-	
+
 	if (!isPopout) {
 		await addPopupListener(container, apiItem);
 	}
@@ -256,7 +256,7 @@ async function getBuffItem(container: Element, item: CSMoney.Item, selector: Ite
 	}
 
 	const itemPrice = new Decimal(getHTMLPrice(container, selector)!.price);
-	const referencePrice = parseInt(extensionSettings['csm-referenceprice']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['csm-pricereference']) === 0 ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 	return {
 		buff_name,

@@ -409,7 +409,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const priceFromReference = parseInt(extensionSettings['skinbaron-referenceprice']) === 0 ? priceOrder : priceListing;
+	const priceFromReference = Number(extensionSettings['skinbaron-pricereference']) === 0 ? priceOrder : priceListing;
 	console.log('Buff Item: ', buff_name, item, priceFromReference?.toNumber(), getItemPrice(item)?.toNumber());
 	const priceDifference = getItemPrice(item).minus(priceFromReference ?? 0);
 	return {
