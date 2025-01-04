@@ -56,6 +56,22 @@ body.light-theme {
 	padding: 5px;
 }
 
+.betterfloat-sticker-percentage {
+	border-radius: 5px;
+	padding: 5px;
+	white-space: nowrap;
+	font-size: 12px;
+	font-weight: 400;
+	color: white;
+}
+
+.betterfloat-bargain-text {
+	font-size: 14px;
+	padding: 2px 5px;
+	border-radius: 7px;
+	color: white;
+}
+
 .betterfloat-refreshStart,
 .betterfloat-refreshStop {
 	display: flex;

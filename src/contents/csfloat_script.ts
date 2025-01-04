@@ -256,14 +256,14 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	if (!itemCard) return;
 
 	let item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
-	let buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
+	let buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
 	let stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
 
 	let i = 0;
 	while (!item && i++ < 20) {
 		await new Promise((r) => setTimeout(r, 100));
 		item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
-		buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buffprice')?.getAttribute('data-betterfloat'));
+		buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
 		stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
 	}
 
@@ -282,13 +282,16 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 		const minPercentage = minOffer.greaterThan(0) && stickerData?.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
 		const showSP = stickerData?.priceSum > 0;
 
-		const spStyle = 'border-radius: 7px; padding: 2px 5px; white-space: nowrap; font-size: 14px;';
-		const diffStyle = `font-size: 14px; padding: 2px 5px; border-radius: 7px; color: white; background-color: ${
-			minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']
-		}`;
-		const bargainTags = `<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;"><span style="${diffStyle}">${
-			minOffer.isNegative() ? '-' : '+'
-		}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}</span><span style="border: 1px solid grey; ${spStyle} display: ${showSP ? 'block' : 'none'}">${minPercentage}% SP</span></div>`;
+		const spStyle = `display: ${showSP ? 'block' : 'none'}; background-color: ${getSPBackgroundColor(stickerData?.spPercentage ?? 0)}`;
+		const diffStyle = `background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
+		const bargainTags = html`
+			<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;">
+				<span class="betterfloat-bargain-text" style="${diffStyle}">
+					${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}
+				</span>
+				<span class="betterfloat-sticker-percentage" style="${spStyle}">${minPercentage}% SP</span>
+			</div>
+		`;
 
 		const minContainer = popupContainer.querySelector('.minimum-offer');
 		if (minContainer) {
@@ -300,10 +303,12 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
 		inputField.insertAdjacentHTML(
 			'afterend',
-			html` <div style="position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 16px; white-space: nowrap;">
-				<span class="betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
-				${showSP && `<span class="betterfloat-bargain-sp" style="${spStyle}"></span>`}
-			</div>`
+			html`
+				<div style="position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 16px; white-space: nowrap;">
+					<span class="betterfloat-bargain-text betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
+					${showSP && `<span class="betterfloat-sticker-percentage betterfloat-bargain-sp" style="${spStyle}"></span>`}
+				</div>
+			`
 		);
 
 		const diffElement = popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff');
