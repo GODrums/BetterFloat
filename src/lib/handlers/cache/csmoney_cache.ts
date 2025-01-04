@@ -5,6 +5,11 @@ let csmoneyItems: CSMoney.Item[] = [];
 const csmoneyItemMapping: { [itemId: number]: CSMoney.Item } = {};
 let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
 let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
+let csmoneyPopupItem: CSMoney.MarketItem | null = null;
+
+export function cacheCSMoneyPopupItem(data: CSMoney.MarketItem) {
+	csmoneyPopupItem = data;
+}
 
 export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	if (!csmoneyItems) {
@@ -30,6 +35,10 @@ export function cacheCSMoneyBotInventory(data: CSMoney.InventoryItem[]) {
 	} else {
 		csmoneyBotInventory = Object.assign(csmoneyBotInventory, data);
 	}
+}
+
+export function getCSMoneyPopupItem() {
+	return csmoneyPopupItem;
 }
 
 export function getFirstCSMoneyUserInventoryItem() {

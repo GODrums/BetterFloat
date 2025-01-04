@@ -5,6 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
+	getCSMoneyPopupItem,
 	getFirstCSMoneyBotInventoryItem,
 	getFirstCSMoneyItem,
 	getFirstCSMoneyUserInventoryItem,
@@ -16,7 +17,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -128,11 +129,11 @@ function applyMutation() {
 						await adjustItem(addedNode);
 					}, 1000);
 				} else if (addedNode.className === 'portal') {
-					// item popup
-					const bigCard = addedNode.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
-					if (bigCard) {
-						await adjustItem(bigCard, true);
-					}
+					// item popups are detected by event listeners
+					// const bigCard = addedNode.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
+					// if (bigCard) {
+					// 	await adjustItem(bigCard, true);
+					// }
 				} else if (addedNode.tagName === 'DIV' && addedNode.className.startsWith('UserSkin_user_skin__')) {
 					// item in insta sell page
 					await adjustItem(addedNode);
@@ -149,9 +150,12 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustItem(container: Element, isPopout = false) {
+async function adjustItem(container: Element, isPopout = false, eventDataItem: CSMoney.Item | null = null) {
 	const itemId = container?.getAttribute('data-card-item-id');
 	const getApiItem = () => {
+		if (isPopout) {
+			return getCSMoneyPopupItem() ?? eventDataItem;
+		}
 		if (location.pathname === '/csgo/trade/') {
 			const isUserItem = !container.closest('#botInventory');
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
@@ -199,7 +203,24 @@ async function adjustItem(container: Element, isPopout = false) {
 		return;
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem!, container, isPopout);
+	const priceResult = await addBuffPrice(apiItem, container, isPopout);
+	
+	if (!isPopout) {
+		await addPopupListener(container, apiItem);
+	}
+}
+
+async function addPopupListener(container: Element, item: CSMoney.Item) {
+	container.addEventListener('click', async () => {
+		waitForElement('div[class^="DesktopBigCardLayout_content-wrapper__"]').then(async (success) => {
+			if (success) {
+				const bigCard = document.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
+				if (bigCard) {
+					await adjustItem(bigCard, true, item);
+				}
+			}
+		});
+	});
 }
 
 async function getBuffItem(container: Element, item: CSMoney.Item, selector: ItemSelectors) {
@@ -386,6 +407,9 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	}
 
 	if (priceListing?.gt(0.06) && location.pathname !== '/market/sell/') {
+		// remove csmoney's sale tag
+		// container.querySelector('span[class*="Tag-module_green__"]')?.remove();
+
 		const priceContainer = container.querySelector<HTMLElement>(selector.price);
 
 		if (isPopout) {

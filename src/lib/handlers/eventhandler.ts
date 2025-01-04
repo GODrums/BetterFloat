@@ -27,7 +27,7 @@ import {
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
-import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
+import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
 import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
@@ -299,12 +299,12 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 }
 
 function processCSMoneyEvent(eventData: EventData<unknown>) {
-	// if (!eventData.url.includes('notifications')) {
-	// 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	// }
+	if (!eventData.url.includes('notifications')) {
+		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	}
 	if (eventData.url.includes('1.0/market/sell-orders/')) {
 		// item popup
-		cacheCSMoneyItems([(eventData.data as CSMoney.SingleSellOrderResponse).item]);
+		cacheCSMoneyPopupItem((eventData.data as CSMoney.SingleSellOrderResponse).item);
 	} else if (eventData.url.includes('1.0/market/sell-orders')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('1.0/market/user-inventory')) {
