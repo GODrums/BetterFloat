@@ -664,6 +664,6 @@ async function calculateBuffPrice(item: Skinbid.Item) {
 	return { buff_name, priceListing, priceOrder };
 }
 
-export let extensionSettings: IStorage;
+let extensionSettings: IStorage;
 // mutation observer active?
 let isObserverActive = false;

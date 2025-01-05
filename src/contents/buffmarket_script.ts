@@ -381,6 +381,6 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 // mutation observer active?
 let isObserverActive = false;
 // let cached_item_name = '';
-export let extensionSettings: IStorage;
+let extensionSettings: IStorage;
 
 init();
