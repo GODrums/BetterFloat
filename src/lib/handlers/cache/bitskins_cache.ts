@@ -1,11 +1,13 @@
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 
-let bitskinsItems: Bitskins.Item[] = [];
+const bitskinsItems: { [id: string]: Bitskins.Item } = {};
 let bitskinsPopoutItem: Bitskins.Item | null = null;
 let currencyList: Bitskins.CurrencyList | null = null;
 
 export function cacheBitskinsItems(data: Bitskins.Item[]) {
-	bitskinsItems = data;
+	data.forEach((item) => {
+		bitskinsItems[item.id] = item;
+	});
 }
 
 export function cacheBitskinsPopoutItem(data: Bitskins.Item) {
@@ -20,12 +22,8 @@ export function getBitskinsPopoutItem() {
 	return bitskinsPopoutItem;
 }
 
-export function getFirstBitskinsItem() {
-	return bitskinsItems.pop();
-}
-
 export function getSpecificBitskinsItem(id: string) {
-	return bitskinsItems.find((item) => item.id === id);
+	return bitskinsItems[id];
 }
 
 export function getBitskinsCurrencyRate(currency: string) {

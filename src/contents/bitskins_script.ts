@@ -86,7 +86,12 @@ function applyMutation() {
 				if (addedNode.className === 'market-items') {
 					const items = addedNode.querySelectorAll('.item');
 					for (const item of items) {
-						adjustItem(item, PageState.Market);
+						await adjustItem(item, PageState.Market);
+					}
+				} else if (addedNode.className === 'items') {
+					const items = addedNode.querySelectorAll('.item');
+					for (let i = 0; i < items.length; i++) {
+						await adjustItem(items[i], PageState.Market);
 					}
 				} else if (addedNode.classList.contains('item')) {
 					// adjustItem(addedNode, PageState.Market);
