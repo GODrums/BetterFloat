@@ -16,6 +16,7 @@ import {
 } from '~lib/handlers/cache/csmoney_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -27,7 +28,7 @@ export const config: PlasmoCSConfig = {
 	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/csmoney_styles.css'],
 };
 
-type PriceResult = {
+export type PriceResult = {
 	price_difference: Decimal;
 };
 
@@ -223,7 +224,7 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
 	});
 }
 
-async function getBuffItem(container: Element, item: CSMoney.Item, selector: ItemSelectors) {
+export async function getBuffItem(container: Element, item: CSMoney.Item, selector: CSMONEY_SELECTOR) {
 	let source = (extensionSettings['csm-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -276,7 +277,7 @@ async function getBuffItem(container: Element, item: CSMoney.Item, selector: Ite
 	};
 }
 
-function getHTMLPrice(container: Element, selector: ItemSelectors) {
+function getHTMLPrice(container: Element, selector: CSMONEY_SELECTOR) {
 	const priceText = (
 		container.querySelector(selector.price)?.querySelector('div[class^="Price_price__"]') ??
 		container.querySelector(selector.price)?.querySelector('div[class^="price_price__"]') ??
@@ -328,45 +329,20 @@ export function getUserCurrency() {
 	}
 }
 
-const itemSelectors = {
-	market: {
-		footer: 'div[class^="InventorySmallCard_price-zone__"]',
-		price: 'div[class*="PriceZone_price__"]',
-	},
-	market_popout: {
-		footer: 'span[class^="ActionPriceDetailsButtonZone_current-price-container__"]',
-		price: 'span[class^="ActionPriceDetailsButtonZone_current-price-container__"]',
-	},
-	trade: {
-		footer: 'footer div[class^="BaseCard_price"]',
-		price: 'span[class^="styles_price__"]',
-	},
-	instant_sell: {
-		footer: 'footer div[class^="BaseCard_price"]',
-		price: 'span[class^="styles_price__"]',
-	},
-	sell: {
-		footer: 'footer div[class^="BaseCard_price"]',
-		price: 'span[class^="styles_price__"]',
-	},
-} as const;
-
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
-
-function getSelectors(isPopout: boolean): ItemSelectors {
+function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
 	if (location.pathname === '/market/buy/') {
 		if (isPopout) {
-			return itemSelectors.market_popout;
+			return CSMONEY_SELECTORS.market_popout;
 		}
-		return itemSelectors.market;
+		return CSMONEY_SELECTORS.market;
 	} else if (location.pathname === '/market/instant-sell/') {
-		return itemSelectors.instant_sell;
+		return CSMONEY_SELECTORS.instant_sell;
 	} else if (location.pathname === '/market/sell/') {
-		return itemSelectors.sell;
+		return CSMONEY_SELECTORS.sell;
 	} else if (location.pathname === '/csgo/trade/') {
-		return itemSelectors.trade;
+		return CSMONEY_SELECTORS.trade;
 	}
-	return itemSelectors.market;
+	return CSMONEY_SELECTORS.market;
 }
 
 async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<PriceResult> {

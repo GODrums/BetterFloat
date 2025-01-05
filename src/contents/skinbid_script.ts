@@ -5,7 +5,18 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
 import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, calculateTime, getBuffLink, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, toTitleCase } from '~lib/util/helperfunctions';
+import {
+	CurrencyFormatter,
+	calculateEpochFromDate,
+	calculateTime,
+	getBuffLink,
+	getBuffPrice,
+	getMarketURL,
+	getSPBackgroundColor,
+	handleSpecialStickerNames,
+	isBuffBannedItem,
+	toTitleCase,
+} from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
 import { html } from 'common-tags';
@@ -13,6 +24,8 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
+import type { SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
+import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -64,24 +77,24 @@ async function firstLaunch() {
 	if (location.pathname === '/') {
 		const items = document.getElementsByTagName('NGU-TILE');
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i], itemSelectors.card);
+			await adjustItem(items[i], SKINBID_SELECTORS.card);
 		}
 	} else if (location.pathname === '/listings') {
 		const items = document.getElementsByClassName('item-card');
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i], itemSelectors.list);
+			await adjustItem(items[i], SKINBID_SELECTORS.list);
 		}
 	} else if (location.pathname.startsWith('/market/') || location.pathname.startsWith('/auctions/')) {
 		const items = document.querySelectorAll('.item');
 		// first one is big item
-		await adjustItem(items[0], itemSelectors.page);
+		await adjustItem(items[0], SKINBID_SELECTORS.page);
 		for (let i = 1; i < items.length; i++) {
-			await adjustItem(items[i], itemSelectors.card);
+			await adjustItem(items[i], SKINBID_SELECTORS.card);
 		}
 	} else if (location.pathname.includes('/shop/')) {
 		const items = document.querySelectorAll('.items-desktop .auction-item-card');
 		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i].parentElement!, itemSelectors.card);
+			await adjustItem(items[i].parentElement!, SKINBID_SELECTORS.card);
 		}
 	} else if (location.pathname.includes('/inventory')) {
 		const items = document.querySelectorAll('APP-INVENTORY-LIST-ITEM');
@@ -104,17 +117,17 @@ function applyMutation() {
 					if (addedNode.children.length === 1) {
 						const firstChild = addedNode.children[0];
 						if (firstChild.tagName === 'AUCTION-LIST-ITEM') {
-							await adjustItem(firstChild, itemSelectors.list);
+							await adjustItem(firstChild, SKINBID_SELECTORS.list);
 							continue;
 						} else if (firstChild.tagName === 'APP-AUCTION-CARD-ITEM') {
 							// Items in user shop
-							await adjustItem(firstChild, itemSelectors.card);
+							await adjustItem(firstChild, SKINBID_SELECTORS.card);
 							continue;
 						} else if (firstChild.tagName === 'APP-ITEM-CARD') {
 							if (location.pathname === '/listings') {
-								await adjustItem(firstChild, itemSelectors.list);
+								await adjustItem(firstChild, SKINBID_SELECTORS.list);
 							} else {
-								await adjustItem(firstChild, itemSelectors.card);
+								await adjustItem(firstChild, SKINBID_SELECTORS.card);
 							}
 							continue;
 						}
@@ -126,12 +139,12 @@ function applyMutation() {
 						const className = addedNode.className.toString();
 						if (className.includes('item') && addedNode.tagName === 'NGU-TILE' && !isMobileItem(addedNode)) {
 							// console.log('Found item: ', addedNode);
-							await adjustItem(addedNode, itemSelectors.card);
+							await adjustItem(addedNode, SKINBID_SELECTORS.card);
 						} else if (className.includes('item-category')) {
 							// big item page
 							const item = document.querySelector('.item');
 							if (item) {
-								await adjustItem(item, itemSelectors.page);
+								await adjustItem(item, SKINBID_SELECTORS.page);
 							}
 						} else if (addedNode.tagName === 'APP-PRICE-CHART') {
 							// console.log('Found price chart: ', addedNode);
@@ -144,55 +157,11 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-// TODO: rework as card and list are very similar / the same in the new design
-const itemSelectors = {
-	card: {
-		self: 'card',
-		name: '.item-name',
-		type: '.item-type',
-		price: '.item-price .price',
-		priceDiv: '.item-price',
-		wear: '.quality-float-row',
-		discount: '.price-discount',
-		discountDiv: '.price-discount',
-		listingAge: '.left.flex > app-quality-float-row',
-		stickerDiv: '.card-top-section',
-	},
-	list: {
-		self: 'list',
-		name: '.item-name',
-		type: '.item-type',
-		price: '.item-price .price',
-		priceDiv: '.item-price',
-		wear: '.quality-float-row',
-		discount: '.price-discount',
-		discountDiv: '.price-discount',
-		listingAge: '.quality-float-row',
-		stickerDiv: '.card-top-section',
-	},
-	page: {
-		self: 'page',
-		name: '.item-title',
-		type: '.item-category',
-		price: '.item-bids-time-info > div',
-		priceDiv: '.item-bids-time-info .value',
-		wear: '.item-detail:nth-child(2)',
-		discount: '.item-bids-time-info .value > div',
-		discountDiv: '.section-discount',
-		listingAge: '.item-detail:last-child',
-		stickerDiv: '.stickers-wrapper .title',
-	},
-} as const;
-
-type PageTypes = keyof typeof itemSelectors;
-
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
-
 function isMobileItem(container: Element) {
 	return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
 }
 
-async function adjustItem(container: Element, selector: ItemSelectors) {
+async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 	let hashHTML: string | undefined;
 	if (selector.self === 'page') {
 		hashHTML = location.pathname.split('/')[2];
@@ -249,7 +218,7 @@ async function adjustInventoryItem(container: Element) {
 	}
 }
 
-function addBrowserInspect(container: Element, item: Skinbid.Listing) {
+export function addBrowserInspect(container: Element, item: Skinbid.Listing) {
 	const bottomLeft = container.querySelector('.bottom-left');
 	if (!bottomLeft) return;
 
@@ -264,7 +233,7 @@ function addBrowserInspect(container: Element, item: Skinbid.Listing) {
 	bottomLeft.appendChild(inspectButton);
 }
 
-async function caseHardenedDetection(container: Element, listing: Skinbid.Listing) {
+export async function caseHardenedDetection(container: Element, listing: Skinbid.Listing) {
 	const chartContainer = container.querySelector('.price-chart-and-history');
 	const item = listing.items?.at(0)?.item;
 	if (!chartContainer || !item || item.name !== 'Case Hardened') return;
@@ -390,7 +359,7 @@ async function caseHardenedDetection(container: Element, listing: Skinbid.Listin
 	chartContainer.querySelector('.tabs')?.appendChild(newTab);
 }
 
-async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: ItemSelectors, priceDifference: Decimal) {
+export async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: SKINBID_SELECTOR, priceDifference: Decimal) {
 	if (!item.items || item.items[0].item.category === 'Sticker') return;
 	let stickers = item.items[0].item.stickers;
 	if (item.items[0].item.isSouvenir) {
@@ -402,7 +371,7 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 
 	if (priceSum >= 2) {
 		const overlayContainer = container.querySelector(selector.stickerDiv);
-		if (selector === itemSelectors.page) {
+		if (selector === SKINBID_SELECTORS.page) {
 			(<HTMLElement>overlayContainer).style.display = 'flex';
 		}
 
@@ -415,9 +384,9 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 			stickerDiv.textContent = (spPercentage.isPos() ? spPercentage.mul(100) : 0).toFixed(1) + '% SP';
 		}
 		stickerDiv.style.backgroundColor = backgroundImageColor;
-		if (selector === itemSelectors.page) {
+		if (selector === SKINBID_SELECTORS.page) {
 			stickerDiv.style.marginLeft = '15px';
-		} else if (selector === itemSelectors.list || selector === itemSelectors.card) {
+		} else if (selector === SKINBID_SELECTORS.list || selector === SKINBID_SELECTORS.card) {
 			stickerDiv.style.position = 'absolute';
 			stickerDiv.style.bottom = '10px';
 			stickerDiv.style.right = '5px';
@@ -427,15 +396,17 @@ async function addStickerInfo(container: Element, item: Skinbid.Listing, selecto
 	}
 }
 
-function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: PageTypes) {
-	const referenceDiv = container.querySelector(itemSelectors[page].listingAge);
+type PageTypes = keyof typeof SKINBID_SELECTORS;
+
+export function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: PageTypes) {
+	const referenceDiv = container.querySelector(SKINBID_SELECTORS[page].listingAge);
 	if (!referenceDiv) return;
 
 	if (page === 'page') {
 		const listingContainer = referenceDiv?.cloneNode(true);
 		if (listingContainer.firstChild) {
 			listingContainer.firstChild.textContent = ' Time of Listing ';
-			listingContainer.childNodes[1].textContent = calculateTime(cachedItem.auction.created, 1);
+			listingContainer.childNodes[1].textContent = calculateTime(calculateEpochFromDate(cachedItem.auction.created));
 		}
 		referenceDiv.after(listingContainer);
 	} else {
@@ -446,7 +417,7 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
 		listingAge.classList.add('betterfloat-age-' + page);
 		listingIcon.setAttribute('src', ICON_CLOCK);
 
-		listingAgeText.textContent = calculateTime(cachedItem.auction.created, 1);
+		listingAgeText.textContent = calculateTime(calculateEpochFromDate(cachedItem.auction.created));
 		listingAge.appendChild(listingIcon);
 		listingAge.appendChild(listingAgeText);
 
@@ -457,10 +428,10 @@ function addListingAge(container: Element, cachedItem: Skinbid.Listing, page: Pa
 	}
 }
 
-async function addBuffPrice(
+export async function addBuffPrice(
 	cachedItem: Skinbid.Listing,
 	container: Element,
-	selector: ItemSelectors
+	selector: SKINBID_SELECTOR
 ): Promise<{
 	price_difference: Decimal;
 } | void> {
@@ -476,7 +447,7 @@ async function addBuffPrice(
 	}
 
 	// restyle layout to make it more compact
-	if ((selector === itemSelectors.card || selector === itemSelectors.list) && container.querySelector('.offers')) {
+	if ((selector === SKINBID_SELECTORS.card || selector === SKINBID_SELECTORS.list) && container.querySelector('.offers')) {
 		container.querySelector('.item-type')?.setAttribute('style', 'display: none;');
 	}
 
@@ -487,7 +458,7 @@ async function addBuffPrice(
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currency.text ?? 'USD', href, source, selector.self === 'page');
 	}
 	const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
-	if (buffContainer && selector === itemSelectors.page) {
+	if (buffContainer && selector === SKINBID_SELECTORS.page) {
 		const parentDiv = container.querySelector<HTMLElement>('.item-bids-time-info');
 		if (parentDiv) {
 			parentDiv.style.marginTop = '0';
@@ -527,7 +498,7 @@ async function addBuffPrice(
 			}
 
 			if (cachedItem.nextMinimumBid !== 0 && !discountContainer.querySelector('.betterfloat-sale-tag')) {
-				if (selector === itemSelectors.page) {
+				if (selector === SKINBID_SELECTORS.page) {
 					const discountSpan = document.createElement('span');
 					discountSpan.style.marginLeft = '5px';
 					discountContainer.appendChild(discountSpan);
@@ -693,6 +664,6 @@ async function calculateBuffPrice(item: Skinbid.Item) {
 	return { buff_name, priceListing, priceOrder };
 }
 
-let extensionSettings: IStorage;
+export let extensionSettings: IStorage;
 // mutation observer active?
 let isObserverActive = false;

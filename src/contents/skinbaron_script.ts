@@ -7,6 +7,7 @@ import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/cache/skinbaron_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -69,38 +70,21 @@ async function firstLaunch() {
 	if (location.pathname === '/en') {
 		const suggestedItems = document.querySelectorAll('.recentlyviewed-container .promo-item');
 		for (let i = 0; i < suggestedItems.length; i++) {
-			adjustItem(suggestedItems[i], itemSelectors.promo);
+			adjustItem(suggestedItems[i], SKINBARON_SELECTORS.promo);
 		}
 
 		const offerItems = document.querySelectorAll('.topoffers-container .promo-item');
 		for (let i = 0; i < offerItems.length; i++) {
-			adjustItem(offerItems[i], itemSelectors.promo);
+			adjustItem(offerItems[i], SKINBARON_SELECTORS.promo);
 		}
 	} else if (location.pathname.startsWith('/en/csgo/')) {
 		const items = document.querySelectorAll('.product-box');
 
 		for (let i = 0; i < items.length; i++) {
-			adjustItem(items[i], itemSelectors.card);
+			adjustItem(items[i], SKINBARON_SELECTORS.card);
 		}
 	}
 }
-
-const itemSelectors = {
-	promo: {
-		priceDiv: '.price-wrapper',
-		saleWrapper: '.price-wrapper',
-	},
-	card: {
-		priceDiv: '.price-wrapper',
-		saleWrapper: '.price-wrapper',
-	},
-	modal: {
-		priceDiv: '.product-price-heading',
-		saleWrapper: '.product-price-heading',
-	},
-} as const;
-
-type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
@@ -115,12 +99,12 @@ function applyMutation() {
 					const className = addedNode.className.toString();
 					if (className.includes('product-box')) {
 						// console.log('Found product: ', addedNode);
-						await adjustItem(addedNode, itemSelectors.card);
+						await adjustItem(addedNode, SKINBARON_SELECTORS.card);
 					} else if (className.includes('product-card')) {
 						// offer in list on item page
 					} else if (className.includes('promo-item')) {
 						// item card
-						await adjustItem(addedNode, itemSelectors.promo);
+						await adjustItem(addedNode, SKINBARON_SELECTORS.promo);
 					} else if (className.includes('item-category')) {
 						// ?
 					}
@@ -131,7 +115,7 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function adjustItem(container: Element, selector: ItemSelectors) {
+async function adjustItem(container: Element, selector: SKINBARON_SELECTOR) {
 	// const item = getSkinbaronItem(container);
 	const nameDivClass = location.pathname === '/en' ? '.lName' : '.product-name';
 	const item_name = getHTMLItemName(container, nameDivClass);
@@ -156,7 +140,7 @@ async function adjustItem(container: Element, selector: ItemSelectors) {
 			const popout = document.querySelector('sb-extended-offer-info');
 			console.log('Popout: ', popout);
 			if (popout) {
-				await addBuffPrice(item, popout, itemSelectors.modal);
+				await addBuffPrice(item, popout, SKINBARON_SELECTORS.modal);
 			}
 		}, 1000);
 	});
@@ -262,7 +246,7 @@ function getSkinbaronItem(container: Element): Skinbaron.HTMLItem {
 	};
 }
 
-async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: ItemSelectors): Promise<PriceResult> {
+async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: SKINBARON_SELECTOR): Promise<PriceResult> {
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency, itemStyle } = await getBuffItem(item);
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
@@ -280,13 +264,13 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: CurrencyFormatter(currency.text ?? 'USD'),
 			isDoppler,
-			isPopout: selector === itemSelectors.modal,
+			isPopout: selector === SKINBARON_SELECTORS.modal,
 			priceClass: 'suggested-price',
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
 			iconHeight: '15px',
 		});
-		if (selector === itemSelectors.card) {
+		if (selector === SKINBARON_SELECTORS.card) {
 			container.querySelector('.offer-card')?.setAttribute('style', 'height: 290px');
 			priceDiv.parentElement?.setAttribute('style', 'display: flex; flex-direction: column; align-items: center; justify-content: center;');
 		}
@@ -307,14 +291,14 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 	saleWrapper.style.display = 'flex';
 	let discountContainer = document.createElement('span');
 	discountContainer.className += ' betterfloat-sale-tag';
-	if (selector === itemSelectors.promo) {
+	if (selector === SKINBARON_SELECTORS.promo) {
 		saleWrapper.style.justifyContent = 'flex-end';
 		saleWrapper.style.alignItems = 'flex-end';
 		discountContainer.style.marginRight = '5px';
 		discountContainer.style.padding = '1px 3px';
 		discountContainer.style.fontSize = '13px';
 		discountContainer.style.borderRadius = '5px';
-	} else if (selector === itemSelectors.card) {
+	} else if (selector === SKINBARON_SELECTORS.card) {
 		saleWrapper.style.justifyContent = 'center';
 		saleWrapper.style.paddingBottom = '0px';
 		const buffContainer = container.querySelector<HTMLElement>('.betterfloat-buff-container');
@@ -323,7 +307,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 		}
 		discountContainer.style.marginLeft = '10px';
 		discountContainer.style.marginRight = '-10px';
-	} else if (selector === itemSelectors.modal) {
+	} else if (selector === SKINBARON_SELECTORS.modal) {
 		saleWrapper.style.gap = '10px';
 	}
 
@@ -360,7 +344,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 	discountContainer.style.backgroundColor = `background-color: ${difference.isNeg() ? styling.profit.background : styling.loss.background}`;
 	discountContainer.innerHTML = buffPriceHTML;
 
-	if (selector === itemSelectors.promo) {
+	if (selector === SKINBARON_SELECTORS.promo) {
 		saleWrapper?.insertBefore(discountContainer, saleWrapper.firstChild);
 	} else {
 		saleWrapper.querySelector('.pricereduction')?.remove();
