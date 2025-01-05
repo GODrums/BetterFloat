@@ -37,3 +37,6 @@ keys.json
 
 # typescript
 .tsbuildinfo
+
+# page selectors
+src/lib/handlers/selectors/*.ts
