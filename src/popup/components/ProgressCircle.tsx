@@ -8,16 +8,17 @@ interface Props {
 	gaugePrimaryColor: string;
 	gaugeSecondaryColor: string;
 	className?: string;
+	disabled?: boolean;
 }
 
-export function AnimatedCircularProgressBar({ max = 100, min = 0, value = 0, text, gaugePrimaryColor, gaugeSecondaryColor, className }: Props) {
+export function AnimatedCircularProgressBar({ max = 100, min = 0, value = 0, text, gaugePrimaryColor, gaugeSecondaryColor, className, disabled = false }: Props) {
 	const circumference = 2 * Math.PI * 45;
 	const percentPx = circumference / 100;
 	const currentPercent = Math.round(((value - min) / (max - min)) * 100);
 
 	return (
 		<div
-			className={cn('relative size-28 text-2xl font-semibold', className)}
+			className={cn('relative size-28 text-2xl font-semibold', disabled && 'opacity-60', className)}
 			style={
 				{
 					'--circle-size': '100px',
@@ -33,6 +34,11 @@ export function AnimatedCircularProgressBar({ max = 100, min = 0, value = 0, tex
 				} as React.CSSProperties
 			}
 		>
+			{disabled && (
+				<svg className="absolute inset-0 z-10 size-full p-4 text-red-400 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+					<path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+				</svg>
+			)}
 			<svg fill="none" className="size-full" strokeWidth="2" viewBox="0 0 100 100">
 				{currentPercent <= 90 && currentPercent >= 0 && (
 					<circle
