@@ -1,0 +1,16 @@
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+#   To manually execute this group use: `pnpm lefthook run pre-commit`
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      glob: "./src/**/*.{ts,tsx}"
+      run: npx tsc --noEmit {staged_files}
+    lint:
+      glob: "src/**/*.{ts,tsx,js,jsx}"
+      run: pnpm biome lint --write {staged_files} && git update-index --again
+    format:
+      glob: "src/**/*.{ts,tsx,js,jsx,css}"
+      run: pnpm biome format --write {staged_files} && git update-index --again

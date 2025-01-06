@@ -1,12 +1,13 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "2.9.6",
+	"version": "2.9.7",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
 	"homepage": "https://betterfloat.com",
 	"scripts": {
+		"preinstall": "lefthook install",
 		"dev": "plasmo dev",
 		"dev:firefox": "plasmo dev --target=firefox-mv3",
 		"build": "plasmo build",
@@ -65,12 +66,13 @@
 		"csgo-fade-percentage-calculator": "^1.1.6",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.4.3",
+		"lefthook": "^1.10.1",
 		"postcss": "8.4.49",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
 	},
 	"manifest": {
-		"version_name": "3.0.0 beta 6",
+		"version_name": "3.0.0 beta 7",
 		"web_accessible_resources": [
 			{
 				"matches": [
