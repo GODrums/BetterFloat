@@ -62,107 +62,115 @@ async function handleChange(state: Extension.URLState) {
 	console.debug('[BetterFloat] DynamicUIHandler - changed to: ', state);
 
 	if (state.site === 'skinport.com') {
-		if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
-			waitForElement('.CatalogHeader-tooltipLive').then(async (success) => {
-				if (success) {
-					if (!document.querySelector('betterfloat-skinport-notifications')) {
-						const notifyRoot = await mountShadowRoot(<SpNotifications />, {
-							tagName: 'betterfloat-skinport-notifications',
-							parent: document.querySelector('.CatalogHeader-tooltipLive'),
-							position: 'before',
-						});
-						const notifyInterval = createUrlListener((newUrl) => {
-							const url = new URL(newUrl);
-							if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
-								notifyRoot.unmount();
-								document.querySelector('betterfloat-skinport-notifications')?.remove();
-								clearInterval(notifyInterval);
-							}
-						}, 1000);
-					}
-
-					if (!document.querySelector('betterfloat-live-filter')) {
-						const root = await mountShadowRoot(<SpLiveFilter />, {
-							tagName: 'betterfloat-live-filter',
-							parent: document.querySelector('.CatalogHeader-tooltipLive'),
-							position: 'before',
-						});
-						// unmount on url change
-						const interval = createUrlListener((newUrl) => {
-							const url = new URL(newUrl);
-							if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
-								root.unmount();
-								document.querySelector('betterfloat-live-filter')?.remove();
-								clearInterval(interval);
-							}
-						}, 1000);
-					}
-				}
-			});
-		}
+		await handleSkinportChange(state);
 	} else if (state.site === 'csfloat.com') {
-		const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
-		if (sideMenu?.offsetWidth && sideMenu.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
-			const root = await mountShadowRoot(<CSFMenuControl />, {
-				tagName: 'betterfloat-menucontrol',
-				parent: document.querySelector('.search-bar .drill-down'),
-				position: 'before',
-			});
-			if (Array.from(document.querySelectorAll('betterfloat-menucontrol')).length > 1) {
-				root.unmount();
-				document.querySelector('betterfloat-menucontrol')?.remove();
-			}
-		}
+		await handleCSFloatChange(state);
+	}
+}
 
-		if (state.path === '/search' && state.search.includes('sort_by=most_recent')) {
-			const csfAutorefresh = await getSetting('csf-autorefresh');
-			if (csfAutorefresh) {
-				waitForElement('.refresh > button').then(async (success) => {
-					if (success && !document.querySelector('betterfloat-autorefresh')) {
-						const root = await mountShadowRoot(<CSFAutorefresh />, {
-							tagName: 'betterfloat-autorefresh',
-							parent: document.querySelector('.refresh'),
-							position: 'before',
-						});
-						// unmount on url change
-						const interval = createUrlListener(() => {
-							if (!document.querySelector('.sort span.mat-mdc-select-min-line')?.textContent?.includes('Newest')) {
-								root.unmount();
-								document.querySelector('betterfloat-autorefresh')?.remove();
-								clearInterval(interval);
-							}
-						}, 1000);
-					}
+async function handleCSFloatChange(state: Extension.URLState) {
+	const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
+	if (sideMenu?.offsetWidth && sideMenu.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
+		const root = await mountShadowRoot(<CSFMenuControl />, {
+			tagName: 'betterfloat-menucontrol',
+			parent: document.querySelector('.search-bar .drill-down'),
+			position: 'before',
+		});
+		if (Array.from(document.querySelectorAll('betterfloat-menucontrol')).length > 1) {
+			root.unmount();
+			document.querySelector('betterfloat-menucontrol')?.remove();
+		}
+	}
+
+	if (state.path === '/search') {
+		const csfAutorefresh = await getSetting('csf-autorefresh');
+		if (csfAutorefresh) {
+			const success = await waitForElement('.refresh > button');
+			if (success && !document.querySelector('betterfloat-autorefresh')) {
+				console.log('Mounting autorefresh: ', !document.querySelector('betterfloat-autorefresh'));
+				const root = await mountShadowRoot(<CSFAutorefresh />, {
+					tagName: 'betterfloat-autorefresh',
+					parent: document.querySelector('.refresh'),
+					position: 'before',
 				});
+				// unmount on url change
+				const interval = createUrlListener(() => {
+					if (state.path !== '/search') {
+						root.unmount();
+						document.querySelector('betterfloat-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
 			}
 		}
+	}
 
-		const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
-		if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
-			const root = await mountShadowRoot(<CSFThemeToggle />, {
-				tagName: 'betterfloat-theme-toggle',
-				parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
-				position: 'after',
-			});
-			if (Array.from(document.querySelectorAll('betterfloat-theme-toggle')).length > 1) {
-				root.unmount();
-				document.querySelector('betterfloat-theme-toggle')?.remove();
-			}
+	const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
+	if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
+		const root = await mountShadowRoot(<CSFThemeToggle />, {
+			tagName: 'betterfloat-theme-toggle',
+			parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
+			position: 'after',
+		});
+		if (Array.from(document.querySelectorAll('betterfloat-theme-toggle')).length > 1) {
+			root.unmount();
+			document.querySelector('betterfloat-theme-toggle')?.remove();
 		}
+	}
 
-		const isLoggedIn = !!document.querySelector('app-header .avatar');
-		const csfShowQuickMenu = await getSetting<boolean>('csf-quickmenu');
-		if (isLoggedIn && csfShowQuickMenu && !document.querySelector('betterfloat-quick-menu')) {
-			const root = await mountShadowRoot(<CSFQuickMenu />, {
-				tagName: 'betterfloat-quick-menu',
-				parent: document.querySelector('app-header .balance-container')?.parentElement,
-				position: 'before',
-			});
-			if (Array.from(document.querySelectorAll('betterfloat-quick-menu')).length > 1) {
-				root.unmount();
-				document.querySelector('betterfloat-quick-menu')?.remove();
-			}
+	const isLoggedIn = !!document.querySelector('app-header .avatar');
+	const csfShowQuickMenu = await getSetting<boolean>('csf-quickmenu');
+	if (isLoggedIn && csfShowQuickMenu && !document.querySelector('betterfloat-quick-menu')) {
+		const root = await mountShadowRoot(<CSFQuickMenu />, {
+			tagName: 'betterfloat-quick-menu',
+			parent: document.querySelector('app-header .balance-container')?.parentElement,
+			position: 'before',
+		});
+		if (Array.from(document.querySelectorAll('betterfloat-quick-menu')).length > 1) {
+			root.unmount();
+			document.querySelector('betterfloat-quick-menu')?.remove();
 		}
+	}
+}
+
+async function handleSkinportChange(state: Extension.URLState) {
+	if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
+		waitForElement('.CatalogHeader-tooltipLive').then(async (success) => {
+			if (success) {
+				if (!document.querySelector('betterfloat-skinport-notifications')) {
+					const notifyRoot = await mountShadowRoot(<SpNotifications />, {
+						tagName: 'betterfloat-skinport-notifications',
+						parent: document.querySelector('.CatalogHeader-tooltipLive'),
+						position: 'before',
+					});
+					const notifyInterval = createUrlListener((newUrl) => {
+						const url = new URL(newUrl);
+						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
+							notifyRoot.unmount();
+							document.querySelector('betterfloat-skinport-notifications')?.remove();
+							clearInterval(notifyInterval);
+						}
+					}, 1000);
+				}
+
+				if (!document.querySelector('betterfloat-live-filter')) {
+					const root = await mountShadowRoot(<SpLiveFilter />, {
+						tagName: 'betterfloat-live-filter',
+						parent: document.querySelector('.CatalogHeader-tooltipLive'),
+						position: 'before',
+					});
+					// unmount on url change
+					const interval = createUrlListener((newUrl) => {
+						const url = new URL(newUrl);
+						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
+							root.unmount();
+							document.querySelector('betterfloat-live-filter')?.remove();
+							clearInterval(interval);
+						}
+					}, 1000);
+				}
+			}
+		});
 	}
 }
 

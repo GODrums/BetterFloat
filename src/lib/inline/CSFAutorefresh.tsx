@@ -111,6 +111,9 @@ const CSFAutorefresh: React.FC = () => {
 		document.addEventListener('click', handleClickOutside, true);
 		return () => {
 			document.removeEventListener('click', handleClickOutside, true);
+			if (interval) {
+				clearInterval(interval);
+			}
 		};
 	});
 

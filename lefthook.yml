@@ -3,7 +3,7 @@
 
 #   To manually execute this group use: `pnpm lefthook run pre-commit`
 pre-commit:
-  parallel: true
+  # parallel: true
   commands:
     typecheck:
       glob: "./src/**/*.{ts,tsx}"
