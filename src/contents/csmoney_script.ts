@@ -218,10 +218,32 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
 				const bigCard = document.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
 				if (bigCard) {
 					await adjustItem(bigCard, true, item);
+					addSimilarButton(bigCard, item);
 				}
 			}
 		});
 	});
+}
+
+function addSimilarButton(container: Element, item: CSMoney.Item) {
+	const parentElement = container.querySelector('div[class*="CsgoCharacteristicsZone_big-card__"]');
+	if (!parentElement) return;
+
+	const url = new URL('https://cs.money/market/buy/');
+	url.searchParams.append('utm_campaign', 'market');
+	url.searchParams.append('utm_source', 'mediabuy');
+	url.searchParams.append('utm_medium', 'betterfloat');
+	url.searchParams.append('utm_content', 'link');
+	url.searchParams.append('sort', 'price');
+	url.searchParams.append('order', 'asc');
+	url.searchParams.append('search', (<CSMoney.MarketItem>item).asset.names.full);
+
+	const button = document.createElement('a');
+	button.className = 'betterfloat-similar-a';
+	button.textContent = 'View Similar';
+	button.href = url.toString();
+	button.target = '_blank';
+	parentElement.appendChild(button);
 }
 
 export async function getBuffItem(container: Element, item: CSMoney.Item, selector: CSMONEY_SELECTOR) {

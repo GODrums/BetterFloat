@@ -33,7 +33,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 async function checkUserPlan() {
 	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
 	// reset the beta version after the beta period
-	if (new Date().getTime() > new Date('2025-01-15').getTime() && user?.plan.type === 'pro') {
+	if (new Date().getTime() > new Date('2025-01-20').getTime() && user?.plan.type === 'pro') {
 		user.plan.type = 'free';
 		await ExtensionStorage.sync.setItem('user', user);
 	}

@@ -51,3 +51,21 @@
 	margin-top: 5px;
 	gap: 4px;
 }
+
+.betterfloat-similar-a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 4px;
+	background-color: #47435c;
+	border-radius: 4px;
+	font-size: var(--frontly-label-sm-font-size);
+	font-weight: var(--frontly-label-sm-font-weight);
+	line-height: var(--frontly-label-sm-line-height);
+	letter-spacing: var(--frontly-label-sm-letter-spacing);
+	height: 38px;
+}
+
+.betterfloat-similar-a:hover {
+	background-color: #77709b;
+}
