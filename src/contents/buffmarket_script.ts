@@ -4,7 +4,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import { html } from 'common-tags';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
+import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
@@ -67,11 +67,14 @@ function applyMutation() {
 
 				if (addedNode.className.endsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_TAB)) {
 					// item in buy-tab
+					// skip ads
+					if (addedNode.querySelector('.is-topics')) continue;
 					const state = location.pathname.includes('inventory') ? PageState.Inventory : PageState.Market;
 					await adjustItem(addedNode, state);
 				} else if (addedNode.classList.contains(BUFFMARKET_SELECTORS.MUTATION.ITEM_PAGE)) {
 					await adjustItem(addedNode.children[i], PageState.ItemPage);
 				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MINIMAL_ITEM)) {
+					// addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER)
 					for (let i = 1; i < addedNode.children.length; i++) {
 						// items in item page but without title or recommendations
 						if (addedNode.children[i].className.includes('content')) {
@@ -102,7 +105,8 @@ async function adjustItem(container: Element, state: PageState) {
 	}
 	const getApiItem = () => {
 		if (state === PageState.ItemPage) {
-			return getFirstBuffPageItem();
+			const isBuyOrderPage = container.parentElement?.className.includes(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER);
+			return isBuyOrderPage ? getFirstBuffBuyOrder() : getFirstBuffPageItem();
 		} else if (state === PageState.Popup) {
 			return getBuffPopoutItem();
 		}

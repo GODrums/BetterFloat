@@ -15,7 +15,7 @@ import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from './cache/bitskins_cache';
-import { cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffPopoutData, cacheBuffUserId } from './cache/buffmarket_cache';
+import { cacheBuffBuyOrders, cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffPopoutData, cacheBuffUserId } from './cache/buffmarket_cache';
 import {
 	cacheCSFExchangeRates,
 	cacheCSFHistoryGraph,
@@ -257,7 +257,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 
 // process intercepted data
 function processBuffMarketEvent(eventData: EventData<unknown>) {
-	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	if (eventData.url.includes('api/market/goods/info')) {
 		// item lists: https://buff.market/market/goods/91?game=csgo
 		// caching item just for the name
@@ -270,6 +270,8 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 		} else {
 			cacheBuffMarketItems(responseData.items);
 		}
+	} else if (eventData.url.includes('api/market/goods/buy_order')) {
+		cacheBuffBuyOrders((eventData.data as BuffMarket.BuyOrderResponse).data.items);
 	} else if (eventData.url.includes('api/market/goods') && !eventData.url.includes('related_recommendation')) {
 		cacheBuffMarketItems((eventData.data as BuffMarket.GoodsResponse).data.items);
 	} else if (eventData.url.includes('api/market/steam_inventory')) {

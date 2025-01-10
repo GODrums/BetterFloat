@@ -7,6 +7,19 @@ export namespace BuffMarket {
 		msg: string | null;
 	};
 
+	export type BuyOrderResponse = {
+		code: string;
+		data: {
+			items: BuyOrderItem[];
+			page_num: number;
+			page_size: number;
+			show_pay_method_icon: boolean;
+			total_count: number;
+			total_page: number;
+		};
+		msg: string | null;
+	};
+
 	export type ItemDetailResponse = {
 		code: string;
 		data: ItemDetailData;
@@ -277,6 +290,32 @@ export namespace BuffMarket {
 		game: 'csgo';
 		description: string;
 		bookmarked: boolean;
+	}
+
+	export interface BuyOrderItem extends Item {
+		allow_tradable_cooldown: number;
+		appid: number;
+		created_at: number;
+		expire_time: number | null;
+		fee: string;
+		frozen_amount: string;
+		frozen_num: number;
+		game: 'csgo';
+		goods_id: number;
+		icon_url: string;
+		id: string;
+		num: number;
+		pay_expire_timeout: number;
+		pay_method: number;
+		pay_method_text: string | null;
+		price: string;
+		real_num: number;
+		specific: any[];
+		state: string;
+		state_text: string;
+		tradeable_cooldown: any;
+		updated_at: number;
+		user_id: string;
 	}
 
 	export interface GoodsItem extends Item {
