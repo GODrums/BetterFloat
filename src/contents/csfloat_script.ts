@@ -41,6 +41,7 @@ import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
 	calculateTime,
+	checkUserPlanPro,
 	getBuffPrice,
 	getCharmColoring,
 	getFadePercentage,
@@ -137,14 +138,29 @@ async function firstLaunch() {
 		await adjustItem(items[i], popoutVersion);
 	}
 
-	// refresh prices every hour
-	setInterval(
-		async () => {
-			console.log('[BetterFloat] Refreshing prices (hourly) ...');
-			await initPriceMapping(extensionSettings, 'csf');
-		},
-		1000 * 60 * 61
-	);
+	// refresh prices every hour if user has pro plan
+	if (checkUserPlanPro(extensionSettings['user'])) {
+		refreshInterval = setInterval(
+			async () => {
+				console.log('[BetterFloat] Refreshing prices (hourly) ...');
+				// check if extension is still enabled
+				if (refreshInterval) {
+					let manifest: chrome.runtime.Manifest | undefined;
+					try {
+						manifest = chrome.runtime.getManifest();
+					} catch (e) {
+						console.error('[BetterFloat] Error getting manifest:', e);
+					}
+					if (!manifest) {
+						clearInterval(refreshInterval);
+						return;
+					}
+				}
+				await initPriceMapping(extensionSettings, 'csf');
+			},
+			1000 * 60 * 61
+		);
+	}
 }
 
 function offerItemClickListener(listItem: Element) {
@@ -1717,3 +1733,4 @@ let extensionSettings: IStorage;
 let ITEM_SCHEMA: CSFloat.ItemSchema.TypeSchema | null = null;
 // mutation observer active?
 let isObserverActive = false;
+let refreshInterval: NodeJS.Timeout | null = null;
