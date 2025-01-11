@@ -83,6 +83,11 @@ const CSFAutorefresh: React.FC = () => {
 		setIsActive(value);
 		if (value) {
 			const newInterval = setInterval(() => {
+				if (!refreshButton && interval) {
+					clearInterval(interval);
+					setIntervalValue(null);
+					return;
+				}
 				refreshButton?.click();
 			}, getInterval());
 			setIntervalValue(newInterval);
@@ -111,9 +116,6 @@ const CSFAutorefresh: React.FC = () => {
 		document.addEventListener('click', handleClickOutside, true);
 		return () => {
 			document.removeEventListener('click', handleClickOutside, true);
-			if (interval) {
-				clearInterval(interval);
-			}
 		};
 	});
 
