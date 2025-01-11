@@ -5,6 +5,10 @@ export namespace CSMoney {
 		total: number;
 	};
 
+	export type UserInventoryPopupResponse = {
+		item: MarketItem;
+	};
+
 	export type SingleSellOrderResponse = {
 		item: MarketItem;
 	};

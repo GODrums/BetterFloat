@@ -158,7 +158,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 			return getCSMoneyPopupItem() ?? eventDataItem;
 		}
 		if (location.pathname === '/csgo/trade/') {
-			const isUserItem = !container.closest('#botInventory');
+			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
 		} else {
 			let newItem = getFirstCSMoneyItem();
@@ -170,7 +170,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 	};
 	const isInventoryEmpty = () => {
 		if (location.pathname === '/csgo/trade/') {
-			const isUserItem = !container.closest('#botInventory');
+			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? isCSMoneyUserInventoryEmpty() : isCSMoneyBotInventoryEmpty();
 		} else {
 			return isCSMoneyItemsEmpty();
@@ -185,7 +185,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		apiItem = getApiItem();
 	}
-	// make sure item id matches with queue, otherwise bring it up to date
+	// make sure item id matches with queue, otherwise bring the queue up to date
 	if (itemId && apiItem && apiItem.id !== Number(itemId)) {
 		console.debug('[BetterFloat] Item ID mismatch, bringing queue up to date...');
 		let altItem = getFirstCSMoneyItem();
@@ -213,11 +213,14 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 
 async function addPopupListener(container: Element, item: CSMoney.Item) {
 	container.addEventListener('click', async () => {
-		waitForElement('div[class^="DesktopBigCardLayout_content-wrapper__"]').then(async (success) => {
+		const selector = location.pathname === '/market/sell/' ? CSMONEY_SELECTORS.sell.popup : CSMONEY_SELECTORS.market.popup;
+		waitForElement(selector).then(async (success) => {
 			if (success) {
-				const bigCard = document.querySelector('div[class^="DesktopBigCardLayout_content-wrapper__"]');
+				const bigCard = document.querySelector(selector);
 				if (bigCard) {
-					await adjustItem(bigCard, true, item);
+					if (location.pathname === '/market/buy/') {
+						await adjustItem(bigCard, true, item);
+					}
 					addSimilarButton(bigCard, item);
 				}
 			}
@@ -225,8 +228,14 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
 	});
 }
 
+/**
+ * Adds a button to the item popup to view similar items on the market
+ * @param container popup base element
+ * @param item item object from the API
+ */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
-	const parentElement = container.querySelector('div[class*="CsgoCharacteristicsZone_big-card__"]');
+	const selector = location.pathname === '/market/sell/' ? CSMONEY_SELECTORS.sell.popup_details : CSMONEY_SELECTORS.market.popup_details;
+	const parentElement = container.querySelector(selector);
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
@@ -236,7 +245,7 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 	url.searchParams.append('utm_content', 'link');
 	url.searchParams.append('sort', 'price');
 	url.searchParams.append('order', 'asc');
-	url.searchParams.append('search', (<CSMoney.MarketItem>item).asset.names.full);
+	url.searchParams.append('search', getItemName(item) ?? '');
 
 	const button = document.createElement('a');
 	button.className = 'betterfloat-similar-a';
@@ -313,14 +322,13 @@ function getHTMLPrice(container: Element, selector: CSMONEY_SELECTOR) {
 	return parsePrice(priceText);
 }
 
+function getItemName(item: CSMoney.Item) {
+	return (<CSMoney.InventoryItem>item).fullName ?? (<CSMoney.MarketItem>item).asset.names.full;
+}
+
 function createBuffItem(item: CSMoney.Item): { name: string; style: ItemStyle } {
-	let name = '';
-	// check if item is InventoryItem or MarketItem
-	if ((<CSMoney.InventoryItem>item).fullName) {
-		name = (<CSMoney.InventoryItem>item).fullName;
-	} else if ((<CSMoney.MarketItem>item).asset?.names?.full) {
-		name = (<CSMoney.MarketItem>item).asset.names.full;
-	} else {
+	let name = getItemName(item);
+	if (!name) {
 		console.error('[BetterFloat] Unknown item type: ', item);
 	}
 	let style: ItemStyle = '';

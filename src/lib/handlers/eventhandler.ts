@@ -310,7 +310,11 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('1.0/market/sell-orders')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('1.0/market/user-inventory')) {
-		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
+		if (eventData.url.includes('user-inventory/')) {
+			cacheCSMoneyPopupItem((eventData.data as CSMoney.UserInventoryPopupResponse).item);
+		} else {
+			cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
+		}
 	} else if (eventData.url.includes('/load_user_inventory/730')) {
 		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
 	} else if (eventData.url.includes('/load_bots_inventory/730')) {
