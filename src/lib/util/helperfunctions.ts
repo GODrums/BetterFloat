@@ -87,14 +87,14 @@ export async function waitForElement(selector: string, { interval = 200, maxTrie
  * @returns interval id for use with clearInterval
  * @async setInterval executed every 200ms
  */
-export function createUrlListener(urlChangeCallback: (newUrl: string) => void, delay = 2000) {
+export function createUrlListener(urlChangeCallback: (newUrl: URL) => void, delay = 2000) {
 	// current url, automically updated per interval
 	let currentUrl: string = location.href;
 	return setInterval(() => {
 		const newUrl = location.href;
 		if (currentUrl !== newUrl) {
 			currentUrl = newUrl;
-			urlChangeCallback(newUrl);
+			urlChangeCallback(new URL(newUrl));
 		}
 	}, delay);
 }

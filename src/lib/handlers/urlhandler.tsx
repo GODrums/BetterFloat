@@ -49,6 +49,18 @@ export function dynamicUIHandler() {
 		}
 	});
 
+	// dmarket is a bit special and needs an additional listener
+	if (location.hostname === 'dmarket.com') {
+		createUrlListener((newUrl) => {
+			handleChange({
+				site: newUrl.hostname,
+				path: newUrl.pathname,
+				search: newUrl.search,
+				hash: newUrl.hash,
+			});
+		}, 1500);
+	}
+
 	setTimeout(async () => {
 		const state: Extension.URLState = {
 			site: location.hostname,
@@ -74,7 +86,15 @@ async function handleChange(state: Extension.URLState) {
 	}
 }
 
+let lastCSFState: Extension.URLState | null = null;
+
 async function handleCSFloatChange(state: Extension.URLState) {
+	// csfloat rearranges market parameters on /search when using the back button
+	// this causes us to receive the same state multiple times
+	if (lastCSFState && state.path === lastCSFState.path && state.search === lastCSFState.search && state.hash === lastCSFState.hash) {
+		return;
+	}
+	lastCSFState = state;
 	const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
 	if (sideMenu?.offsetWidth && sideMenu.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
 		const root = await mountShadowRoot(<CSFMenuControl />, {
@@ -99,8 +119,8 @@ async function handleCSFloatChange(state: Extension.URLState) {
 					position: 'before',
 				});
 				// unmount on url change
-				const interval = createUrlListener(() => {
-					if (state.path !== '/search') {
+				const interval = createUrlListener((newUrl) => {
+					if (newUrl.pathname !== '/search') {
 						root.unmount();
 						document.querySelector('betterfloat-autorefresh')?.remove();
 						clearInterval(interval);
@@ -148,8 +168,7 @@ async function handleSkinportChange(state: Extension.URLState) {
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
 						position: 'before',
 					});
-					const notifyInterval = createUrlListener((newUrl) => {
-						const url = new URL(newUrl);
+					const notifyInterval = createUrlListener((url) => {
 						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
 							notifyRoot.unmount();
 							document.querySelector('betterfloat-skinport-notifications')?.remove();
@@ -165,8 +184,7 @@ async function handleSkinportChange(state: Extension.URLState) {
 						position: 'before',
 					});
 					// unmount on url change
-					const interval = createUrlListener((newUrl) => {
-						const url = new URL(newUrl);
+					const interval = createUrlListener((url) => {
 						if (url.pathname !== '/market' || !url.search.includes('sort=date&order=desc')) {
 							root.unmount();
 							document.querySelector('betterfloat-live-filter')?.remove();
@@ -180,10 +198,10 @@ async function handleSkinportChange(state: Extension.URLState) {
 }
 
 async function handleDMarketChange(state: Extension.URLState) {
-	if (location.pathname === '/ingame-items/item-list/csgo-skins') {
+	if (state.path === '/ingame-items/item-list/csgo-skins' && !state.search.includes('exchangeTab=myTargets') && !state.search.includes('exchangeTab=exchange')) {
 		const dmAutorefresh = await getSetting('dm-autorefresh');
 		if (dmAutorefresh) {
-			const success = await waitForElement('button.o-filter--refresh');
+			const success = await waitForElement('button.o-filter--refresh', { maxTries: 30 });
 			if (success && !document.querySelector('betterfloat-dm-autorefresh')) {
 				const root = await mountShadowRoot(<DmAutorefresh />, {
 					tagName: 'betterfloat-dm-autorefresh',
@@ -191,8 +209,8 @@ async function handleDMarketChange(state: Extension.URLState) {
 					position: 'before',
 				});
 				// unmount on url change
-				const interval = createUrlListener(() => {
-					if (state.path !== '/ingame-items/item-list/csgo-skins') {
+				const interval = createUrlListener((url) => {
+					if (url.pathname !== '/ingame-items/item-list/csgo-skins') {
 						root.unmount();
 						document.querySelector('betterfloat-dm-autorefresh')?.remove();
 						clearInterval(interval);
@@ -204,7 +222,7 @@ async function handleDMarketChange(state: Extension.URLState) {
 }
 
 async function handleLisSkinsChange(state: Extension.URLState) {
-	if (location.pathname === '/ru/market/cs2/' || location.pathname === '/ru/market/csgo/') {
+	if (state.path === '/ru/market/cs2/' || state.path === '/ru/market/csgo/') {
 		const lisAutorefresh = await getSetting('lis-autorefresh');
 		if (lisAutorefresh) {
 			const success = await waitForElement('div.reload');
@@ -215,8 +233,8 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 					position: 'after',
 				});
 				// unmount on url change
-				const interval = createUrlListener(() => {
-					if (!state.path.includes('/ru/market/')) {
+				const interval = createUrlListener((url) => {
+					if (!url.pathname.includes('/ru/market/')) {
 						root.unmount();
 						document.querySelector('betterfloat-lis-autorefresh')?.remove();
 						clearInterval(interval);
