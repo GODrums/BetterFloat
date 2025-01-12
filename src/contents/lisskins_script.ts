@@ -5,6 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
@@ -58,6 +59,8 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	dynamicUIHandler();
 }
 
 // required as mutation does not detect initial DOM
@@ -81,20 +84,11 @@ async function firstLaunch() {
 			await adjustItem(items[i], PageType.Market);
 		}
 	}
-	// else if (location.pathname === '/ru/cs/') {
-	// 	// sell / inventory page
-	// 	const items = document.querySelectorAll('#userinventory div.skin');
-	// 	for (let i = 0; i < items.length; i++) {
-	// 		await adjustItem(items[i], PageType.Inventory);
-	// 	}
-	// }
 }
 
 function replaceHistory() {
 	const isLoggedOut = document.querySelector('div.not-loggined');
-	console.log('[BetterFloat] Is logged out:', isLoggedOut);
 	if (isLoggedOut && !location.href.includes('rf=')) {
-		// createHistoryRewrite({ rf: '130498354' });
 		location.search += `${location.search ? '&' : ''}rf=130498354`;
 	}
 }

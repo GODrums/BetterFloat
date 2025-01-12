@@ -28,16 +28,16 @@ const ActivityBadge = ({ active }: { active: boolean }) => {
 	);
 };
 
-const DmAutorefresh: React.FC = () => {
+const LisAutorefresh: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	// auto-refresh
 	const [isActive, setIsActive] = useState(false);
-	const [rInterval, setRInterval] = useStorage('dm-refreshinterval');
+	const [rInterval, setRInterval] = useStorage('lis-refreshinterval');
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 
 	const [user] = useStorage<SettingsUser>('user');
 
-	const refreshButton = document.querySelector<HTMLButtonElement>('button.o-filter--refresh');
+	const refreshButton = document.querySelector<HTMLButtonElement>('div.reload');
 
 	const ref = useRef(null);
 
@@ -85,8 +85,9 @@ const DmAutorefresh: React.FC = () => {
 	};
 
 	useEffect(() => {
+		document.querySelector('div.controls')?.setAttribute('style', 'grid-template-columns: 44px 120px 138px minmax(150px,383px) auto;');
 		const handleClickOutside = (event: MouseEvent) => {
-			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-DM-AUTOREFRESH') {
+			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-LIS-AUTOREFRESH') {
 				onClickOutside();
 			}
 		};
@@ -98,7 +99,7 @@ const DmAutorefresh: React.FC = () => {
 
 	return (
 		<div className="bg-transparent" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>
-			<Button variant="light" className="h-12 flex items-center gap-2 bg-[#2a2c2e] hover:bg-[#222324] rounded-[2px]" onClick={toggleOpen}>
+			<Button variant="outline" className="h-11 flex items-center gap-2 rounded-[4px] bg-transparent hover:bg-[#3f424a] border border-[#3f424a]" onClick={toggleOpen}>
 				<MaterialSymbolsUpdate className="h-6 w-6 text-white" />
 				<ActivityBadge active={isActive} />
 			</Button>
@@ -106,8 +107,8 @@ const DmAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-[99] bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
-							style={{ translate: '-55px 10px', borderRadius: '12px' }}
+							className="fixed z-[999] bg-[#3f424a] border border-[#555860] flex flex-col items-center gap-2 p-6"
+							style={{ translate: '-55px 10px', borderRadius: '8px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
@@ -145,4 +146,4 @@ const DmAutorefresh: React.FC = () => {
 	);
 };
 
-export default DmAutorefresh;
+export default LisAutorefresh;

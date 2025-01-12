@@ -12,6 +12,7 @@ import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
+import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
@@ -68,6 +69,8 @@ async function handleChange(state: Extension.URLState) {
 		await handleCSFloatChange(state);
 	} else if (state.site === 'dmarket.com') {
 		await handleDMarketChange(state);
+	} else if (state.site === 'lis-skins.com') {
+		await handleLisSkinsChange(state);
 	}
 }
 
@@ -192,6 +195,30 @@ async function handleDMarketChange(state: Extension.URLState) {
 					if (state.path !== '/ingame-items/item-list/csgo-skins') {
 						root.unmount();
 						document.querySelector('betterfloat-dm-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		}
+	}
+}
+
+async function handleLisSkinsChange(state: Extension.URLState) {
+	if (location.pathname === '/ru/market/cs2/' || location.pathname === '/ru/market/csgo/') {
+		const lisAutorefresh = await getSetting('lis-autorefresh');
+		if (lisAutorefresh) {
+			const success = await waitForElement('div.reload');
+			if (success && !document.querySelector('betterfloat-lis-autorefresh')) {
+				const root = await mountShadowRoot(<LisAutorefresh />, {
+					tagName: 'betterfloat-lis-autorefresh',
+					parent: document.querySelector('div.reload'),
+					position: 'after',
+				});
+				// unmount on url change
+				const interval = createUrlListener(() => {
+					if (!state.path.includes('/ru/market/')) {
+						root.unmount();
+						document.querySelector('betterfloat-lis-autorefresh')?.remove();
 						clearInterval(interval);
 					}
 				}, 1000);
