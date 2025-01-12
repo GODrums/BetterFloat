@@ -262,7 +262,7 @@ async function getBuffItem(item: HTMLItem) {
 		priceListing = priceListing?.mul(currencyRate);
 		priceOrder = priceOrder?.mul(currencyRate);
 	}
-	const priceFromReference = Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 ? priceOrder : priceListing;
+	const priceFromReference = Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 
 	const priceDifference = priceFromReference ? item.price.minus(priceFromReference) : new Decimal(0);
 	return {

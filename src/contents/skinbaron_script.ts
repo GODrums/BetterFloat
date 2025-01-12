@@ -393,9 +393,9 @@ async function getBuffItem(item: Skinbaron.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const priceFromReference = Number(extensionSettings['skinbaron-pricereference']) === 0 ? priceOrder : priceListing;
-	console.log('Buff Item: ', buff_name, item, priceFromReference?.toNumber(), getItemPrice(item)?.toNumber());
+	const priceFromReference = Number(extensionSettings['skinbaron-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 	const priceDifference = getItemPrice(item).minus(priceFromReference ?? 0);
+
 	return {
 		source,
 		buff_name,

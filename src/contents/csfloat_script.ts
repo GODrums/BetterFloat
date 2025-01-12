@@ -236,9 +236,10 @@ export async function adjustOfferContainer(container: Element) {
 	} else if (offer.contract.item.paint_index === 0) {
 		itemStyle = 'Vanilla';
 	}
-	const buff_id = getMarketID(itemName, MarketSource.Buff);
-	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle);
-	const priceFromReference = extensionSettings['csf-pricereference'] === 1 ? priceListing : priceOrder;
+	const source = extensionSettings['csf-pricingsource'] as MarketSource;
+	const buff_id = getMarketID(itemName, source);
+	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
+	const priceFromReference = extensionSettings['csf-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 
 	const userCurrency = CSFloatHelpers.userCurrency();
 

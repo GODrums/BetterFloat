@@ -222,8 +222,9 @@ async function getBuffItem(item: DMarket.Item) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 
-	const referencePrice = Number(extensionSettings['dm-pricereference']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['dm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
+	console.log(item.title, item);
 
 	return {
 		source,

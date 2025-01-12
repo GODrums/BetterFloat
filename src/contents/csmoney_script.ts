@@ -288,7 +288,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item, select
 	}
 
 	const itemPrice = new Decimal(getHTMLPrice(container, selector)!.price);
-	const referencePrice = Number(extensionSettings['csm-pricereference']) === 0 ? priceOrder : priceListing;
+	const referencePrice = Number(extensionSettings['csm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 	return {
 		buff_name,
