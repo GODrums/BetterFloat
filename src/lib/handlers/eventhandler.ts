@@ -301,9 +301,9 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 }
 
 function processCSMoneyEvent(eventData: EventData<unknown>) {
-	if (!eventData.url.includes('notifications')) {
-		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	}
+	// if (!eventData.url.includes('notifications')) {
+	// 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	// }
 	if (eventData.url.includes('1.0/market/sell-orders/')) {
 		// item popup
 		cacheCSMoneyPopupItem((eventData.data as CSMoney.SingleSellOrderResponse).item);

@@ -7,6 +7,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -56,6 +57,8 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	dynamicUIHandler();
 }
 
 async function replaceHistory() {
@@ -224,7 +227,6 @@ async function getBuffItem(item: DMarket.Item) {
 
 	const referencePrice = Number(extensionSettings['dm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
-	console.log(item.title, item);
 
 	return {
 		source,

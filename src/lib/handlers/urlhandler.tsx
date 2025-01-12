@@ -11,6 +11,7 @@ import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
+import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
@@ -65,6 +66,8 @@ async function handleChange(state: Extension.URLState) {
 		await handleSkinportChange(state);
 	} else if (state.site === 'csfloat.com') {
 		await handleCSFloatChange(state);
+	} else if (state.site === 'dmarket.com') {
+		await handleDMarketChange(state);
 	}
 }
 
@@ -170,6 +173,30 @@ async function handleSkinportChange(state: Extension.URLState) {
 				}
 			}
 		});
+	}
+}
+
+async function handleDMarketChange(state: Extension.URLState) {
+	if (location.pathname === '/ingame-items/item-list/csgo-skins') {
+		const dmAutorefresh = await getSetting('dm-autorefresh');
+		if (dmAutorefresh) {
+			const success = await waitForElement('button.o-filter--refresh');
+			if (success && !document.querySelector('betterfloat-dm-autorefresh')) {
+				const root = await mountShadowRoot(<DmAutorefresh />, {
+					tagName: 'betterfloat-dm-autorefresh',
+					parent: document.querySelector('span.c-assetFilters__spacer'),
+					position: 'before',
+				});
+				// unmount on url change
+				const interval = createUrlListener(() => {
+					if (state.path !== '/ingame-items/item-list/csgo-skins') {
+						root.unmount();
+						document.querySelector('betterfloat-dm-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		}
 	}
 }
 

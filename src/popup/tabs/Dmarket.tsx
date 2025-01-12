@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_DMARKET_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -26,6 +26,9 @@ export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
 				</div>
 				<div className="flex flex-col gap-1">
+					<SettingsCard>
+						<SettingsCheckbox id="dm-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} isNew />
+					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="dm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>

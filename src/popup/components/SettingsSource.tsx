@@ -58,7 +58,9 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 					<div className="flex items-center gap-2">
 						<MaterialSymbolsLightStorefrontOutline className="h-6 w-6" />
 						<Label className="text-balance leading-5">Source Market</Label>
-						<Badge className="text-xs font-semibold text-accent">NEW</Badge>
+						<Badge variant="secondary" className="text-xs font-semibold tracking-wider">
+							POPULAR
+						</Badge>
 					</div>
 					<SettingsTooltip text="Determines the source market for all prices. If you are unsure about this, stick to Buff." asChild>
 						<Button variant="ghost" size="icon" className="size-8 p-1">

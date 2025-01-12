@@ -130,6 +130,7 @@ export const DEFAULT_SETTINGS = {
 	'csm-buffdifferencepercent': true,
 	'csm-listingage': true,
 	'dm-enable': true,
+	'dm-autorefresh': true,
 	'dm-pricingsource': 'buff',
 	'dm-altmarket': 'none',
 	'dm-pricereference': 0,
