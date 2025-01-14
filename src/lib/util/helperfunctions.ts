@@ -6,6 +6,7 @@ import { getPriceMapping } from '../handlers/mappinghandler';
 import { MarketSource } from './globals';
 import { phaseMapping } from './patterns';
 import type { SettingsUser } from './storage';
+import { synchronizePlanWithStorage } from './jwt';
 
 export function parsePrice(priceText: string) {
 	let currency = '';
@@ -135,7 +136,9 @@ export function checkUserPlanPro(user: SettingsUser) {
 	if (new Date().getTime() > new Date('2025-01-25').getTime() && user.plan.type === 'pro') {
 		user.plan.type = 'free';
 	}
-	// TODO: validate JWT
+
+	synchronizePlanWithStorage();
+
 	return user.plan.type === 'pro';
 }
 

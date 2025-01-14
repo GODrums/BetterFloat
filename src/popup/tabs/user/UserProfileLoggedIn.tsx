@@ -1,10 +1,11 @@
 import { Check, Sparkles, X } from 'lucide-react';
-import { useState } from 'react';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent } from '~popup/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~popup/ui/dialog';
+import { decodeJWT, verifyPlan } from '~lib/util/jwt';
+import { useState } from 'react';
+import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 
 interface LoggedInViewProps {
 	user: IStorage['user'];
@@ -12,41 +13,54 @@ interface LoggedInViewProps {
 }
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
-	const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-
+	const [syncing, setSyncing] = useState(false);
+	const [syncCooldown, setSyncCooldown] = useState(false);
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 
 	const steamLogout = () => {
-		setUser({ ...user, steam: { logged_in: false } });
+		setUser({ ...user, steam: { logged_in: false }, plan: { type: 'free' } });
 	};
 
-	const changePlan = () => {
+	const changePlan = async () => {
 		const newPlanType = user.plan.type === 'free' ? 'pro' : 'free';
 
 		if (newPlanType === 'free') {
 			if (!isDevMode) {
 				return;
 			}
+
+			setUser({ ...user, plan: { type: 'free' } });
 		}
 		if (newPlanType === 'pro') {
-			if (new Date().getTime() > new Date('2025-01-25').getTime()) {
+			await chrome.tabs.create({ url: 'https://betterfloat.com/pricing', active: true });
+		}
+	};
+
+	const syncAccount = async () => {
+		if (syncCooldown) return;
+		setSyncing(true);
+		setSyncCooldown(true);
+
+		try {
+			const token = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/subscription/${user.steam.steamid}`)
+				.then((res) => res.json())
+				.then((data) => data.token);
+			if (!token) {
 				return;
 			}
+			const verifiedPlan = await verifyPlan(decodeJWT(token), user);
+			setUser({ ...user, plan: verifiedPlan });
+
 			ExtensionStorage.sync.setItem('bm-enable', true);
 			ExtensionStorage.sync.setItem('lis-enable', true);
 			ExtensionStorage.sync.setItem('csm-enable', true);
 			ExtensionStorage.sync.setItem('dm-enable', true);
 			ExtensionStorage.sync.setItem('baron-enable', true);
 			ExtensionStorage.sync.setItem('bs-enable', true);
+		} finally {
+			setSyncing(false);
+			setTimeout(() => setSyncCooldown(false), 60000); // 1 minute cooldown
 		}
-
-		const newPlan = { type: newPlanType } as IStorage['user']['plan'];
-		if (newPlanType === 'pro') {
-			newPlan.expiry = new Date('2025-01-25').getTime();
-		}
-
-		setUser({ ...user, plan: newPlan });
-		setShowUpgradeDialog(false);
 	};
 
 	const PlanFeatureIcon = user.plan.type === 'free' ? <X className="w-5 h-5 text-red-500" /> : <Check className="w-5 h-5 text-green-500" />;
@@ -81,23 +95,29 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 						) : (
 							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
 						)}
-						<Button variant="secondary" onClick={() => (user.plan.type === 'free' ? setShowUpgradeDialog(true) : changePlan())}>
+						<Button variant="outline" onClick={syncAccount} disabled={syncing || syncCooldown}>
+							{syncing ? <LoadingSpinner /> : 'Sync Account'}
+						</Button>
+						<Button variant="secondary" onClick={changePlan}>
 							{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
 						</Button>
 					</div>
 
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
-						<span>Access to More Markets</span>
+						<span>Access to 9+ Markets</span>
 					</div>
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
-						<span>Enhanced Price Refresh Rate (1 hour)</span>
+						<span>Most Accurate Prices (1 hour refreshes)</span>
 					</div>
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
-						{/* Exclusive Instant Notifications for New Listings */}
-						<span>Live Notifications for New Listings (unavailable in beta)</span>
+						<span>Exclusive Instant Notifications for New Listings</span>
+					</div>
+					<div className="flex items-center gap-2">
+						{PlanFeatureIcon}
+						<span>Auto-Refresh on 3+ Markets</span>
 					</div>
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
@@ -114,32 +134,11 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 				</div>
 			)}
 
-			<div className="flex justify-center mt-4">
+			<div className="flex justify-center mt-2">
 				<Button variant="destructive" onClick={steamLogout}>
 					Logout
 				</Button>
 			</div>
-
-			<Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>Upgrade to Pro Plan</DialogTitle>
-						<DialogDescription>
-							<span className="text-red-500">Please note that this is a beta version, which does not represent the final product and is subject to change.</span>
-							<br />
-							You are encouraged to report all encountered bugs in our Discord server!
-							<br />
-							The Pro Plan is <span className="text-emerald-400">completely free</span> during the beta period and you will automatically be downgraded once the beta ends.
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter className="flex-row justify-center gap-2">
-						<Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
-							Cancel
-						</Button>
-						<Button onClick={changePlan}>Start Testing</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
 		</>
 	);
 }

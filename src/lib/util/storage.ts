@@ -1,4 +1,5 @@
 import { Storage } from '@plasmohq/storage';
+import { SecureStorage } from '@plasmohq/storage/secure';
 import type { Steam } from '~lib/@typings/SteamTypes';
 
 export const ExtensionStorage = {
@@ -9,6 +10,14 @@ export const ExtensionStorage = {
 		area: 'sync',
 	}),
 };
+
+export async function getSecureStorage() {
+	const storage = new SecureStorage({
+		area: 'local',
+	});
+	await storage.setPassword(process.env.PLASMO_PUBLIC_CRYPTO!);
+	return storage;
+}
 
 export async function getSetting<T>(key: keyof IStorage) {
 	const setting = await ExtensionStorage.sync.get(key);
@@ -186,6 +195,7 @@ export type SettingsUser = {
 		type: 'free' | 'pro';
 		expiry?: number;
 		jwt?: string;
+		customerId?: string;
 	};
 };
 
