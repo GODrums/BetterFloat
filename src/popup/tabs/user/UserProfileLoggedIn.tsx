@@ -29,7 +29,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			}
 		}
 		if (newPlanType === 'pro') {
-			if (new Date().getTime() > new Date('2025-01-15').getTime()) {
+			if (new Date().getTime() > new Date('2025-01-25').getTime()) {
 				return;
 			}
 			ExtensionStorage.sync.setItem('bm-enable', true);
@@ -42,7 +42,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 		const newPlan = { type: newPlanType } as IStorage['user']['plan'];
 		if (newPlanType === 'pro') {
-			newPlan.expiry = new Date('2025-01-15').getTime();
+			newPlan.expiry = new Date('2025-01-25').getTime();
 		}
 
 		setUser({ ...user, plan: newPlan });

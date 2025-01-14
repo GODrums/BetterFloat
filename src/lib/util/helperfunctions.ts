@@ -132,7 +132,7 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
  * @returns
  */
 export function checkUserPlanPro(user: SettingsUser) {
-	if (new Date().getTime() > new Date('2025-01-20').getTime() && user.plan.type === 'pro') {
+	if (new Date().getTime() > new Date('2025-01-25').getTime() && user.plan.type === 'pro') {
 		user.plan.type = 'free';
 	}
 	// TODO: validate JWT
