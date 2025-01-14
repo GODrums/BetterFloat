@@ -72,7 +72,7 @@ function applyMutation() {
 					const state = location.pathname.includes('inventory') ? PageState.Inventory : PageState.Market;
 					await adjustItem(addedNode, state);
 				} else if (addedNode.classList.contains(BUFFMARKET_SELECTORS.MUTATION.ITEM_PAGE)) {
-					await adjustItem(addedNode.children[i], PageState.ItemPage);
+					await adjustItem(addedNode, PageState.ItemPage);
 				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MINIMAL_ITEM)) {
 					// addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER)
 					for (let i = 1; i < addedNode.children.length; i++) {

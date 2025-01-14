@@ -58,7 +58,6 @@ export function cacheBuffMarketItems(data: BuffMarket.Item[]) {
 			} else {
 				buffItems[(<BuffMarket.InventoryItem>item).goods_id] = [item];
 			}
-			// buffItems[(<BuffMarket.InventoryItem>item).goods_id] = item;
 		}
 	}
 }
