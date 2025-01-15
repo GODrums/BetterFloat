@@ -18,12 +18,13 @@ import {
 	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
-import { checkUserPlanPro, CurrencyFormatter, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
 
+import { sendToBackground } from '@plasmohq/messaging';
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -31,8 +32,6 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import type { IStorage, SPFilter } from '~lib/util/storage';
-import type React from 'react';
-import { sendToBackground } from '@plasmohq/messaging';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
