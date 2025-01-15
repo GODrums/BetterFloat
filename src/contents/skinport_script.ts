@@ -18,7 +18,7 @@ import {
 	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
-import { CurrencyFormatter, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { checkUserPlanPro, CurrencyFormatter, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
@@ -31,6 +31,8 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import type { IStorage, SPFilter } from '~lib/util/storage';
+import type React from 'react';
+import { sendToBackground } from '@plasmohq/messaging';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -469,6 +471,11 @@ async function adjustItem(container: Element) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
 			return;
 		}
+
+		if (priceResult.percentage && (await checkUserPlanPro(extensionSettings['user']))) {
+			await liveNotifications(cachedItem, priceResult.percentage);
+		}
+
 		// console.log('[BetterFloat] Cached item: ', cachedItem);
 		addPattern(container, cachedItem);
 
@@ -477,6 +484,42 @@ async function adjustItem(container: Element) {
 		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].includes(cachedItem.name) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
+	}
+}
+
+async function liveNotifications(item: Skinport.Item, percentage: Decimal) {
+	const notificationSettings: Skinport.BFNotification = localStorage.getItem('spNotification')
+		? JSON.parse(localStorage.getItem('spNotification') ?? '')
+		: { active: false, name: '', priceBelow: 0 };
+
+	if (notificationSettings.isActive) {
+		if (notificationSettings.name && !item.marketHashName.includes(notificationSettings.name)) {
+			return;
+		}
+
+		if (percentage.gte(notificationSettings.priceBelow)) {
+			return;
+		}
+
+		const currencySymbol = getSymbolFromCurrency(item.currency);
+
+		let priceText = new Decimal(item.salePrice).div(100).toFixed(2);
+		if (currencySymbol === '€') {
+			priceText += currencySymbol;
+		} else {
+			priceText = currencySymbol + priceText;
+		}
+
+		// show notification
+		await sendToBackground({
+			name: 'createNotification',
+			body: {
+				id: `${item.url}/${item.saleId}`,
+				site: 'skinport',
+				title: 'Item Found | BetterFloat Pro',
+				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.marketHashName}`,
+			},
+		});
 	}
 }
 

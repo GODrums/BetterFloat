@@ -1,11 +1,11 @@
 import { Check, Sparkles, X } from 'lucide-react';
+import { useState } from 'react';
+import { decodeJWT, verifyPlan } from '~lib/util/jwt';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
+import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent } from '~popup/ui/card';
-import { decodeJWT, verifyPlan } from '~lib/util/jwt';
-import { useState } from 'react';
-import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 
 interface LoggedInViewProps {
 	user: IStorage['user'];

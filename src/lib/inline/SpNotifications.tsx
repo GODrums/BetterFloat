@@ -1,16 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
+import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
-
-interface SpNotification {
-	name: string;
-	priceBelow: number;
-	isActive: boolean;
-}
 
 const BellRing = (props: React.SVGProps<SVGSVGElement>) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -23,7 +18,7 @@ const BellRing = (props: React.SVGProps<SVGSVGElement>) => (
 
 const SpNotifications: React.FC = () => {
 	const [open, setOpen] = useState(false);
-	const spNotification = JSON.parse(localStorage.getItem('spNotification') ?? '{}') as SpNotification;
+	const spNotification = JSON.parse(localStorage.getItem('spNotification') ?? '{}') as Skinport.BFNotification;
 	const [name, setName] = useState<string>(spNotification.name);
 	const [priceBelow, setPriceBelow] = useState<number>(spNotification.priceBelow ?? 100);
 	const [isActive, setIsActive] = useState(spNotification.isActive);
@@ -61,9 +56,9 @@ const SpNotifications: React.FC = () => {
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3, ease: 'easeOut' }}
 					>
-						<div className="absolute inset-[240px_0_0] bg-black/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-[20px]">
+						{/* <div className="absolute inset-[240px_0_0] bg-black/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-[20px]">
 							<p className="text-white font-bold text-lg px-4 text-center">Notifications are not available in the beta version</p>
-						</div>
+						</div> */}
 						<h3 className="pt-2 pb-0 mb-0 font-bold uppercase text-white" style={{ lineHeight: 0.5, fontSize: '18px' }}>
 							Notifications
 						</h3>

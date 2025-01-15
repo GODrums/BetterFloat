@@ -1,6 +1,12 @@
 import type { ItemStyle } from './FloatTypes';
 
 export namespace Skinport {
+	export interface BFNotification {
+		name: string;
+		priceBelow: number;
+		isActive: boolean;
+	}
+
 	export type MarketData = {
 		filter: MarketFilter;
 		items: Item[];

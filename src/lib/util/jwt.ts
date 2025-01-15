@@ -1,5 +1,5 @@
-import { decodeJwt, type JWTPayload } from 'jose';
-import { ExtensionStorage, getSecureStorage, getSetting, type IStorage } from './storage';
+import { type JWTPayload, decodeJwt } from 'jose';
+import { ExtensionStorage, type IStorage, getSecureStorage, getSetting } from './storage';
 
 interface CustomerClaims extends JWTPayload {
 	customerId: string;
@@ -33,7 +33,7 @@ function checkJwtClaims(decodedJwt: CustomerClaims & JWTPayload, steamId: string
 	}
 }
 
-export async function synchronizePlanWithStorage() {
+export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
 	const secureStorage = await getSecureStorage();
 	const decodedJwt = await secureStorage.getItem<CustomerClaims & JWTPayload>('decodedJwt');
 
@@ -57,7 +57,11 @@ export async function synchronizePlanWithStorage() {
 		newPlan = await verifyPlan(decodedJwt, user);
 	}
 
-	ExtensionStorage.sync.setItem('user', { ...user, plan: newPlan });
+	const newUser = { ...user, plan: newPlan };
+
+	ExtensionStorage.sync.setItem('user', newUser);
+
+	return newUser;
 }
 
 export function decodeJWT(jwt: string) {

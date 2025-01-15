@@ -139,7 +139,7 @@ async function firstLaunch() {
 	}
 
 	// refresh prices every hour if user has pro plan
-	if (checkUserPlanPro(extensionSettings['user'])) {
+	if (await checkUserPlanPro(extensionSettings['user'])) {
 		refreshInterval = setInterval(
 			async () => {
 				console.log('[BetterFloat] Refreshing prices (hourly) ...');

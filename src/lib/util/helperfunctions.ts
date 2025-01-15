@@ -4,9 +4,9 @@ import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 import { MarketSource } from './globals';
+import { synchronizePlanWithStorage } from './jwt';
 import { phaseMapping } from './patterns';
 import type { SettingsUser } from './storage';
-import { synchronizePlanWithStorage } from './jwt';
 
 export function parsePrice(priceText: string) {
 	let currency = '';
@@ -127,17 +127,22 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 	}
 }
 
+let lastProCheck = 0;
+
 /**
  * Checks if the user has a pro plan and validate the plan
  * @param user
  * @returns
  */
-export function checkUserPlanPro(user: SettingsUser) {
+export async function checkUserPlanPro(user: SettingsUser) {
 	if (new Date().getTime() > new Date('2025-01-25').getTime() && user.plan.type === 'pro') {
 		user.plan.type = 'free';
 	}
 
-	synchronizePlanWithStorage();
+	if (user.plan.type === 'pro' && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
+		user = await synchronizePlanWithStorage();
+		lastProCheck = new Date().getTime();
+	}
 
 	return user.plan.type === 'pro';
 }
