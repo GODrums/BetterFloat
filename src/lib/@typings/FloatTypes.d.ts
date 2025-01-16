@@ -19,6 +19,12 @@ export interface EventData<T> {
 }
 
 export namespace CSFloat {
+	export interface BFNotification {
+		name: string;
+		percentage: number;
+		active: boolean;
+	}
+
 	export type ListingsResponse = {
 		cursor: string;
 		data: ListingData[];

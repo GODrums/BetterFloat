@@ -81,6 +81,7 @@ const CSFAutorefresh: React.FC = () => {
 
 	const setActive = (value: boolean) => {
 		setIsActive(value);
+		refreshButton?.setAttribute('data-betterfloat-auto-refresh', value.toString());
 		if (value) {
 			const newInterval = setInterval(() => {
 				if (!refreshButton && interval) {
@@ -124,7 +125,7 @@ const CSFAutorefresh: React.FC = () => {
 		if (notificationSettings) {
 			const { name: savedName, percentage: savedPercentage, active: savedActive } = JSON.parse(notificationSettings) as NotificationSettings;
 			setName(savedName || '');
-			setPercentage(savedPercentage || 0);
+			setPercentage(savedPercentage || 100);
 			setNActive(savedActive || false);
 		}
 	}, []);

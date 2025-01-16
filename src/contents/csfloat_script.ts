@@ -52,6 +52,7 @@ import {
 	waitForElement,
 } from '../lib/util/helperfunctions';
 
+import { sendToBackground } from '@plasmohq/messaging';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -599,6 +600,14 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			return;
 		}
 
+		// notification check
+		if (extensionSettings['user'].plan.type === 'pro') {
+			const autoRefreshLabel = document.querySelector('.refresh > button');
+			if (autoRefreshLabel?.getAttribute('data-betterfloat-auto-refresh') === 'true') {
+				await liveNotifications(apiItem, priceResult.percentage);
+			}
+		}
+
 		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
 		} else {
@@ -666,6 +675,44 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			addScreenshotListener(container, apiItem.item);
 		}
 		addBargainListener(container);
+	}
+}
+
+async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decimal) {
+	const notificationSettings: CSFloat.BFNotification = localStorage.getItem('betterfloat-notification')
+		? JSON.parse(localStorage.getItem('betterfloat-notification') ?? '')
+		: { active: false, name: '', priceBelow: 0 };
+
+	if (notificationSettings.active) {
+		const item = apiItem.item;
+		if (notificationSettings.name && !item.market_hash_name.includes(notificationSettings.name)) {
+			return;
+		}
+
+		if (percentage.gte(notificationSettings.percentage)) {
+			return;
+		}
+
+		const { userCurrency, currencyRate } = await getCurrencyRate();
+		const currencySymbol = getSymbolFromCurrency(userCurrency);
+
+		let priceText = new Decimal(apiItem.price).div(100).mul(currencyRate).toFixed(2);
+		if (currencySymbol === '€') {
+			priceText += currencySymbol;
+		} else {
+			priceText = currencySymbol + priceText;
+		}
+
+		// show notification
+		await sendToBackground({
+			name: 'createNotification',
+			body: {
+				id: apiItem.id,
+				site: 'csfloat',
+				title: 'Item Found | BetterFloat Pro',
+				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`,
+			},
+		});
 	}
 }
 
@@ -1538,6 +1585,7 @@ async function addBuffPrice(
 	popout: POPOUT_ITEM
 ): Promise<{
 	price_difference: number;
+	percentage: Decimal;
 }> {
 	const isSellTab = location.pathname === '/sell';
 	const isPopout = popout === POPOUT_ITEM.PAGE;
@@ -1621,6 +1669,7 @@ async function addBuffPrice(
 			flexGrow?.insertAdjacentHTML('afterend', steamContainer);
 		}
 	}
+	let percentage = new Decimal(0);
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
 	if (
@@ -1663,7 +1712,7 @@ async function addBuffPrice(
 		// tags may get too long, so we may need to break them into two lines
 		let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${currencyFormatter.format(difference.abs().toNumber())}</span>` : '';
 		if ((extensionSettings['csf-buffdifferencepercent'] || isPopout) && priceFromReference) {
-			const percentage = new Decimal(item.price).div(priceFromReference).times(100);
+			percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const percentageDecimalPlaces = percentage.toDP(percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2).toNumber();
 				saleTagInner += html`
@@ -1702,6 +1751,7 @@ async function addBuffPrice(
 
 	return {
 		price_difference: difference.toNumber(),
+		percentage: percentage,
 	};
 }
 
