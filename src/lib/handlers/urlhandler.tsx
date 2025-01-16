@@ -120,7 +120,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 				});
 				// unmount on url change
 				const interval = createUrlListener((newUrl) => {
-					if (newUrl.pathname !== '/search') {
+					if (newUrl.pathname !== '/search' && !newUrl.pathname.startsWith('/item/')) {
 						root.unmount();
 						document.querySelector('betterfloat-autorefresh')?.remove();
 						clearInterval(interval);
