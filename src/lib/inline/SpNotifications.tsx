@@ -56,9 +56,6 @@ const SpNotifications: React.FC = () => {
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.3, ease: 'easeOut' }}
 					>
-						<div className="absolute inset-[240px_0_0] bg-black/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-[20px]">
-							<p className="text-white font-bold text-lg px-4 text-center">Notifications are not available in the beta version</p>
-						</div>
 						<h3 className="pt-2 pb-0 mb-0 font-bold uppercase text-white" style={{ lineHeight: 0.5, fontSize: '18px' }}>
 							Notifications
 						</h3>

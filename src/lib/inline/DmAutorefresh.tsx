@@ -118,7 +118,7 @@ const DmAutorefresh: React.FC = () => {
 								<ActivityBadge active={isActive} />
 							</div>
 							<div className="flex items-center gap-2 mt-2">
-								<Switch checked={isActive} disabled /> {/* onCheckedChange={setActive} */}
+								<Switch checked={isActive} onCheckedChange={setActive} />
 								<MaterialSymbolsAvgTimeOutlineRounded className="ml-2 h-6 w-6 text-white" />
 								<select
 									className="appearance-none bg-transparent text-[#9EA7B1] border border-[#c1ceff12] rounded-lg py-1 px-2 cursor-pointer"
@@ -132,11 +132,6 @@ const DmAutorefresh: React.FC = () => {
 									))}
 								</select>
 							</div>
-							<p className="text-[#9EA7B1] text-sm text-center">
-								Unavailable
-								<br />
-								in the beta version.
-							</p>
 						</motion.div>
 					</div>
 				)}

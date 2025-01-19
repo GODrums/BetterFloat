@@ -212,18 +212,12 @@ const CSFAutorefresh: React.FC = () => {
 								<Button variant="default" className="w-full mt-2 bg-blue-600 hover:bg-blue-700" onClick={handleSave} disabled={user?.plan.type !== 'pro'}>
 									Save
 								</Button>
-								{user?.plan.type !== 'pro' ? (
+								{user?.plan.type !== 'pro' && (
 									<p className="text-[#9EA7B1] text-sm text-center">
 										Upgrade to BetterFloat Pro
 										<br />
 										to activate Notifications
 										<br />& use 20s intervals!
-									</p>
-								) : (
-									<p className="text-[#9EA7B1] text-sm text-center">
-										Notifications are unavailable
-										<br />
-										in the beta version.
 									</p>
 								)}
 							</div>

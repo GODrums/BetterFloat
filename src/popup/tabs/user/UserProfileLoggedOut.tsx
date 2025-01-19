@@ -48,9 +48,6 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 		<>
 			<div className="flex flex-col items-center justify-center gap-1 mb-2">
 				<h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">BetterFloat Pro</h1>
-				<Badge variant="outline" className="border-muted">
-					BETA
-				</Badge>
 			</div>
 			<Button variant="default" className="flex gap-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-200" onClick={steamSignin} disabled={isLoading}>
 				{isLoading ? (
@@ -68,11 +65,6 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 				</div>
 			)}
 			{permissionDenied && <WarningCallout text="Please allow access to Steam to login" />}
-			<div className="flex items-center justify-center gap-2 px-3 py-2 my-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
-				<Sparkles className="w-5 h-5 text-purple-500 animate-pulse" />
-				<span className="text-lg font-semibold text-center">Free during the Beta!</span>
-				<Sparkles className="w-5 h-5 text-purple-500 animate-pulse" />
-			</div>
 			<Card className="shadow-md border-muted mx-1 w-full">
 				<CardContent className="space-y-3 flex flex-col justify-center">
 					<p className="text-base font-semibold leading-none tracking-tight uppercase">Features</p>
