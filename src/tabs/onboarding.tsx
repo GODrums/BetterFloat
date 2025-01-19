@@ -73,7 +73,12 @@ export default function OnboardingPage() {
 				>
 					Welcome to <Highlight className="text-neutral-100">BetterFloat</Highlight>!
 				</motion.h1>
-				<div className="container grid grid-cols-3 justify-items-center gap-4 mt-6">
+				<div className="container grid grid-cols-3 justify-items-center gap-4">
+					<div className="col-span-3 mx-auto flex items-center gap-8 px-4 py-2">
+						<div className="mt-2 p-3 bg-sky-500/10 border border-sky-500/30 rounded-lg">
+							<p className="text-sky-200 text-sm text-center">Not interested in Pro? No worries, all previous features will remain completely free to use forever 🚀</p>
+						</div>
+					</div>
 					<div className="col-span-3">
 						<Card className="shadow-md border-muted mx-1">
 							<CardContent className="h-full grid grid-cols-4 gap-4">
