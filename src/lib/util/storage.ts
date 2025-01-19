@@ -196,6 +196,8 @@ export type SettingsUser = {
 		expiry?: number;
 		jwt?: string;
 		customerId?: string;
+		provider?: 'stripe' | 'crypto' | 'custom';
+		endDate?: number;
 	};
 };
 

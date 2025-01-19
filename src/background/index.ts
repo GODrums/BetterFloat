@@ -2,6 +2,7 @@ import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
 
 // Check whether new version is installed
@@ -28,27 +29,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		await initializeSettings();
 	}
 });
-
-// check user plan
-async function checkUserPlan() {
-	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
-	// reset the beta version after the beta period
-	if (new Date().getTime() > new Date('2025-01-25').getTime() && user?.plan.type === 'pro') {
-		user.plan.type = 'free';
-		await ExtensionStorage.sync.setItem('user', user);
-	}
-
-	// if (user?.plan.type === 'pro') {
-	// 	// check for expiry
-	// 	if (!user.plan.expiry || user.plan.expiry < new Date().getTime()) {
-	// 		user.plan.type = 'free';
-	// 		await ExtensionStorage.sync.setItem('user', user);
-	// 	}
-	// 	// TODO: verify JWT
-	// }
-}
-
-checkUserPlan();
 
 async function initializeSettings() {
 	const data = await ExtensionStorage.sync.getAll();
@@ -107,3 +87,12 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 	}
 	sendResponse({ success: true });
 });
+
+async function checkUserPlan() {
+	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
+	if (user?.plan.type === 'pro') {
+		await synchronizePlanWithStorage();
+	}
+}
+
+checkUserPlan();

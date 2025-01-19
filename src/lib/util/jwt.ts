@@ -12,7 +12,7 @@ interface CustomerClaims extends JWTPayload {
 }
 
 function checkJwtClaims(decodedJwt: CustomerClaims & JWTPayload, steamId: string | undefined) {
-	if (!decodedJwt.customerId || !decodedJwt.exp || !decodedJwt.sub) {
+	if (!decodedJwt.exp || !decodedJwt.sub || decodedJwt.customerId === undefined) {
 		throw new Error('Invalid JWT decodedJwt');
 	}
 
@@ -35,31 +35,29 @@ function checkJwtClaims(decodedJwt: CustomerClaims & JWTPayload, steamId: string
 
 export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
 	const secureStorage = await getSecureStorage();
-	const decodedJwt = await secureStorage.getItem<CustomerClaims & JWTPayload>('decodedJwt');
+	let decodedJwt = await secureStorage.getItem<CustomerClaims & JWTPayload>('decodedJwt');
 
 	let newPlan: IStorage['user']['plan'] = { type: 'free' };
 
 	const user = await getSetting<IStorage['user']>('user');
-	if (!user.steam?.steamid) {
-		newPlan = { type: 'free' };
-	}
 
-	if (!decodedJwt) {
-		newPlan = { type: 'free' };
-	} else {
-		try {
-			checkJwtClaims(decodedJwt, user.steam.steamid);
-		} catch (e) {
-			console.error(e);
-			newPlan = { type: 'free' };
+	if (decodedJwt && user.steam?.steamid) {
+		// check if token is expired and refresh
+		if (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime()) {
+			const newToken = await refreshToken(user!.steam!.steamid!);
+			if (!newToken) {
+				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
+				throw new Error('Failed to refresh token');
+			}
+			decodedJwt = decodeJWT(newToken);
 		}
-
+		// verify token contents
 		newPlan = await verifyPlan(decodedJwt, user);
 	}
 
 	const newUser = { ...user, plan: newPlan };
 
-	ExtensionStorage.sync.setItem('user', newUser);
+	await ExtensionStorage.sync.setItem('user', newUser);
 
 	return newUser;
 }
@@ -76,7 +74,8 @@ export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: 
 		console.error(e);
 		return { type: 'free' };
 	}
-	const endDate = new Date(decodedJwt.plan.currentPeriodEnd * 1000);
+	const endDate = new Date(decodedJwt.plan.currentPeriodEnd);
+	console.log('Subscription expires at', endDate);
 	if (endDate.getTime() < new Date().getTime()) {
 		console.error('Subscription expired');
 		return { type: 'free' };
@@ -84,5 +83,25 @@ export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: 
 
 	secureStorage.setItem('decodedJwt', decodedJwt);
 
-	return { type: 'pro', expiry: Math.min(decodedJwt.exp!, decodedJwt.plan.currentPeriodEnd), customerId: decodedJwt.customerId };
+	return {
+		type: 'pro',
+		expiry: Math.min(decodedJwt.exp! * 1000, decodedJwt.plan.currentPeriodEnd),
+		customerId: decodedJwt.customerId,
+		provider: decodedJwt.customerId ? 'stripe' : 'crypto',
+		endDate: decodedJwt.plan.currentPeriodEnd,
+	};
+}
+
+interface TokenResponse {
+	token: string;
+}
+
+export async function refreshToken(steamid: string) {
+	const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/subscription/${steamid}`)
+		.then((res) => res.json() as Promise<TokenResponse>)
+		.catch((e) => {
+			console.error('Failed to refresh token', e);
+			return { token: null };
+		});
+	return response.token;
 }

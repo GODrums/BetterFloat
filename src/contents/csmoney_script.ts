@@ -53,7 +53,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	// replaceHistory();
 
 	await initPriceMapping(extensionSettings, 'csm');
 

@@ -1,6 +1,6 @@
 import { Check, Sparkles, X } from 'lucide-react';
 import { useState } from 'react';
-import { decodeJWT, verifyPlan } from '~lib/util/jwt';
+import { decodeJWT, refreshToken, verifyPlan } from '~lib/util/jwt';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
@@ -37,14 +37,12 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	};
 
 	const syncAccount = async () => {
-		if (syncCooldown) return;
+		if (syncCooldown || !user?.steam?.steamid) return;
 		setSyncing(true);
 		setSyncCooldown(true);
 
 		try {
-			const token = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/subscription/${user.steam.steamid}`)
-				.then((res) => res.json())
-				.then((data) => data.token);
+			const token = await refreshToken(user.steam.steamid);
 			if (!token) {
 				return;
 			}
@@ -102,6 +100,9 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 							{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
 						</Button>
 					</div>
+					{user.plan.type === 'pro' && user.plan.endDate && (
+						<p className="text-sm text-muted-foreground text-center">Subscription ends on {new Date(user.plan.endDate).toLocaleDateString()}</p>
+					)}
 
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}

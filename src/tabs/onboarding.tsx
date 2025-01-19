@@ -1,30 +1,29 @@
 import BetterfloatLogo from 'data-base64:~/../assets/icon.png';
-import DataImage from 'data-base64:~/../assets/illustrations/data-extraction-amico.svg';
 import NotificationExample from 'data-base64:~/../assets/screenshots/notification-example.png';
 import { motion } from 'framer-motion';
 import { Highlight } from '~popup/components/Highlight';
 import { Vortex } from '~popup/components/Vortex';
 import '~style.css';
-import IconX from 'react:/assets/icons/x.svg';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
 	DISCORD_URL,
-	GITHUB_URL,
 	ICON_BITSKINS_FULL,
 	ICON_BUFFMARKET_FULL,
 	ICON_CSFLOAT,
+	ICON_CSFLOAT_FULL,
 	ICON_CSMONEY_FULL,
+	ICON_DMARKET,
 	ICON_DMARKET_FULL,
+	ICON_LISSKINS,
 	ICON_LISSKINS_FULL,
 	ICON_SKINBARON_FULL,
 	ICON_SKINPORT,
-	TWITTER_URL,
+	ICON_SKINPORT_FULL,
 	WEBSITE_URL,
 } from '~lib/util/globals';
-import { MaterialSymbolsUpdate, MdiGithub, SkillIconsDiscord } from '~popup/components/Icons';
+import { MaterialSymbolsFilterAlt, MaterialSymbolsUpdate } from '~popup/components/Icons';
 import { AnimatedCircularProgressBar } from '~popup/components/ProgressCircle';
-import { Button } from '~popup/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~popup/ui/card';
 
 export default function OnboardingPage() {
@@ -43,6 +42,17 @@ export default function OnboardingPage() {
 				<a href={WEBSITE_URL} target="_blank" rel="noreferrer" className="z-20">
 					<img className="h-20 rounded-full shadow-2xl" src={BetterfloatLogo} alt="BetterFloat Logo" />
 				</a>
+			</div>
+			<div className="absolute top-5 left-5 z-20 flex items-center gap-8 px-4 py-2">
+				<div className="mt-2 p-3 bg-teal-500/10 border border-teal-500/20 rounded-lg">
+					<p className="text-teal-300 text-sm text-center">
+						🎉 New here? Check out our
+						<a href="https://betterfloat.com/onboarding" target="_blank" className="z-20 ml-1 text-blue-500" rel="noreferrer">
+							Onboarding Guide
+						</a>
+						.
+					</p>
+				</div>
 			</div>
 			<Vortex backgroundColor="black" rangeY={800} particleCount={250} rangeSpeed={0.5} baseHue={200} className="flex items-center flex-col justify-between px-2 py-8 w-full h-full">
 				<motion.h1
@@ -63,10 +73,10 @@ export default function OnboardingPage() {
 					Welcome to <Highlight className="text-neutral-100">BetterFloat</Highlight>!
 				</motion.h1>
 				<div className="container grid grid-cols-3 justify-items-center gap-4 mt-6">
-					<div className="col-span-2">
+					<div className="col-span-3">
 						<Card className="shadow-md border-muted mx-1">
-							<CardContent className="h-full grid grid-cols-3 gap-4">
-								<p className="text-neutral-100 text-2xl font-semibold text-center col-span-3 mt-2">
+							<CardContent className="h-full grid grid-cols-4 gap-4">
+								<p className="text-neutral-100 text-2xl font-semibold text-center col-span-4 mt-2">
 									Unlock even more features with <span className="text-purple-500"> Pro</span>.
 								</p>
 								<div className="col-span-1">
@@ -136,7 +146,48 @@ export default function OnboardingPage() {
 										</CardContent>
 									</Card>
 								</div>
-								<div className="col-span-3 w-full flex justify-center gap-8 my-6">
+								<div className="col-span-1 flex flex-col justify-between">
+									<Card className="shadow-md border-muted p-4">
+										<CardHeader className="text-center">
+											<CardTitle>Critial Sniping Features</CardTitle>
+											<CardDescription>Don't let others steal your deals.</CardDescription>
+										</CardHeader>
+										<CardContent className="flex flex-col justify-center gap-1">
+											<p className="flex gap-1 items-center justify-center text-sm text-muted-foreground">
+												Exclusive
+												<MaterialSymbolsUpdate className="h-6 w-6" />
+												auto refresh for
+											</p>
+											<div className="flex items-center justify-center gap-4">
+												{[ICON_DMARKET, ICON_LISSKINS].map((icon, index) => (
+													<img key={index + 10} src={icon} className="h-10" />
+												))}
+											</div>
+											<p className="flex gap-1 items-center justify-center text-sm text-muted-foreground mt-2">
+												<MaterialSymbolsUpdate className="h-6 w-6" />
+												20s refreshes for
+											</p>
+											<img key={15} src={ICON_CSFLOAT_FULL} className="h-10 object-contain" />
+											<p className="flex gap-1 items-center justify-center text-sm text-muted-foreground mt-2">
+												<MaterialSymbolsFilterAlt className="h-6 w-6" />
+												Filter items by Buff %
+											</p>
+											<img key={16} src={ICON_SKINPORT_FULL} className="h-10 object-contain" />
+										</CardContent>
+									</Card>
+									<Card className="shadow-md border-muted p-2">
+										<CardHeader className="text-center">
+											<CardTitle>Early Access Features</CardTitle>
+											<CardDescription>Keep the edge over your competition.</CardDescription>
+										</CardHeader>
+										<CardContent>
+											<p className="text-sm text-muted-foreground text-center">Be the first to try out new features</p>
+											<p className="text-sm text-muted-foreground text-center">before they are officially released.</p>
+										</CardContent>
+									</Card>
+								</div>
+
+								<div className="col-span-4 w-full flex justify-center gap-8 my-6">
 									<motion.p
 										initial={{ y: -50, opacity: 0 }}
 										animate={{ y: 0, opacity: 1 }}
@@ -156,48 +207,6 @@ export default function OnboardingPage() {
 											Subscribe to Pro
 										</div>
 									</a>
-								</div>
-							</CardContent>
-						</Card>
-					</div>
-					<div className="space-y-8">
-						<Card className="shadow-md border-muted mx-1">
-							<CardContent className="h-full space-y-3 flex flex-col items-center justify-center">
-								<p className="text-neutral-100 text-2xl font-semibold text-center">
-									{/* Check out our <span className="text-purple-500">onboarding guide</span> to get started with BetterFloat. */}
-									New here? Check out our <span className="text-purple-500">onboarding guide</span>.
-								</p>
-								<div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
-									<Button variant="outline" asChild>
-										<a href={`${WEBSITE_URL}onboarding`} target="_blank" rel="noreferrer">
-											Get started
-										</a>
-									</Button>
-								</div>
-							</CardContent>
-						</Card>
-						<Card className="shadow-md border-muted mx-1">
-							<CardContent className="h-full space-y-3 flex flex-col items-center justify-center">
-								<p className="text-neutral-100 text-2xl font-semibold text-center">
-									{/* Check out our <span className="text-purple-500">onboarding guide</span> to get started with BetterFloat. */}
-									Stay updated:
-								</p>
-								<div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
-									<Button variant="ghost" size="largeIcon" title={DISCORD_URL}>
-										<a href={GITHUB_URL} target="_blank" rel="noreferrer">
-											<SkillIconsDiscord height={38} width={38} />
-										</a>
-									</Button>
-									<Button variant="ghost" size="largeIcon" asChild>
-										<a href={GITHUB_URL} target="_blank" rel="noreferrer">
-											<MdiGithub height={38} width={38} color="white" />
-										</a>
-									</Button>
-									<Button variant="ghost" size="largeIcon" asChild>
-										<a href={TWITTER_URL} target="_blank" rel="noreferrer">
-											<IconX className="h-8 fill-white" />
-										</a>
-									</Button>
 								</div>
 							</CardContent>
 						</Card>
