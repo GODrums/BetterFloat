@@ -15,21 +15,23 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
 		}
 
-		// get extension url
-		// const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
-		// await chrome.tabs.create({ url: onboardingUrl });
+		if (!chrome.runtime.getManifest().name.includes('DEV')) {
+			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+			await chrome.tabs.create({ url: onboardingUrl });
+		}
 	} else if (details.reason === 'update') {
 		const thisVersion = chrome.runtime.getManifest().version;
 		console.log('[BetterFloat] Updated from version ' + details.previousVersion + ' to ' + thisVersion + '!');
 
-		// delete user setting
-		// ExtensionStorage.sync.removeItem('user');
-
 		// set default settings
 		await initializeSettings();
 
-		const versionParts = details.previousVersion?.split('.').map((part) => parseInt(part));
-		if (versionParts && versionParts[0] < 3) {
+		// make sure we're not in dev mode
+		if (thisVersion === '3.0.0' && !chrome.runtime.getManifest().name.includes('DEV')) {
+			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+			await chrome.tabs.create({ url: onboardingUrl });
+		}
+		if (details.previousVersion && (!details.previousVersion.startsWith('3.') || details.previousVersion.toLowerCase().includes('beta'))) {
 			const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
 			if (user?.plan.type === 'pro') {
 				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });

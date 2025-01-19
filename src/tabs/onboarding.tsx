@@ -24,6 +24,7 @@ import {
 } from '~lib/util/globals';
 import { MaterialSymbolsFilterAlt, MaterialSymbolsUpdate } from '~popup/components/Icons';
 import { AnimatedCircularProgressBar } from '~popup/components/ProgressCircle';
+import { Button } from '~popup/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~popup/ui/card';
 
 export default function OnboardingPage() {
@@ -80,27 +81,22 @@ export default function OnboardingPage() {
 									Unlock even more features with <span className="text-purple-500"> Pro</span>.
 								</p>
 								<div className="col-span-1">
-									<Card className="shadow-md border-muted p-4">
+									<Card className="h-full shadow-md border-muted p-4">
 										<CardHeader className="text-center">
 											<CardTitle>5+ Exclusive Markets</CardTitle>
 											<CardDescription>More opportunities to find great deals.</CardDescription>
 										</CardHeader>
-										<CardContent className="h-full flex flex-col justify-center gap-4">
+										<CardContent className="flex flex-col justify-center gap-4">
 											{[ICON_CSMONEY_FULL, ICON_BUFFMARKET_FULL, ICON_DMARKET_FULL, ICON_BITSKINS_FULL, ICON_LISSKINS_FULL, ICON_SKINBARON_FULL].map((icon, index) => (
 												<img key={index} src={icon} className="h-10" />
 											))}
-											<p className="flex gap-1 items-center justify-center text-sm text-muted-foreground">
-												with
-												<MaterialSymbolsUpdate className="h-6 w-6" />
-												auto refresh
-											</p>
 											<p className="text-sm text-muted-foreground text-center">+ more markets soon!</p>
 										</CardContent>
 									</Card>
 								</div>
 
 								<div className="col-span-2 flex flex-col justify-between">
-									<Card className="shadow-md border-muted mx-1 p-4">
+									<Card className="shadow-md border-muted mx-1 p-4 py-2">
 										<CardHeader className="text-center">
 											<CardTitle>Price Refresh Rate</CardTitle>
 											<CardDescription>Maximize profits with the most accurate prices.</CardDescription>
@@ -115,12 +111,12 @@ export default function OnboardingPage() {
 										</CardContent>
 									</Card>
 
-									<Card className="shadow-md border-muted mx-1 p-4">
+									<Card className="shadow-md border-muted mx-1 p-4 py-2">
 										<CardHeader className="text-center">
 											<CardTitle>New Listing Notifications</CardTitle>
 											<CardDescription>React as fast as the Terms of Service allow.</CardDescription>
 										</CardHeader>
-										<CardContent className="flex justify-between gap-4 mx-4">
+										<CardContent className="flex justify-center gap-8 mx-4">
 											<motion.img
 												initial={{
 													opacity: 0,
@@ -140,14 +136,14 @@ export default function OnboardingPage() {
 											/>
 											<div className="flex flex-col items-center justify-center gap-2">
 												<p className="text-muted-foreground text-sm font-semibold">Supports</p>
-												<img src={ICON_SKINPORT} className="h-10 object-contain" />
 												<img src={ICON_CSFLOAT} className="h-10 object-contain" />
+												<img src={ICON_SKINPORT} className="h-10 object-contain" />
 											</div>
 										</CardContent>
 									</Card>
 								</div>
 								<div className="col-span-1 flex flex-col justify-between">
-									<Card className="shadow-md border-muted p-4">
+									<Card className="shadow-md border-muted p-4 py-2">
 										<CardHeader className="text-center">
 											<CardTitle>Critial Sniping Features</CardTitle>
 											<CardDescription>Don't let others steal your deals.</CardDescription>
@@ -175,7 +171,7 @@ export default function OnboardingPage() {
 											<img key={16} src={ICON_SKINPORT_FULL} className="h-10 object-contain" />
 										</CardContent>
 									</Card>
-									<Card className="shadow-md border-muted p-2">
+									<Card className="shadow-md border-muted">
 										<CardHeader className="text-center">
 											<CardTitle>Early Access Features</CardTitle>
 											<CardDescription>Keep the edge over your competition.</CardDescription>
@@ -207,6 +203,9 @@ export default function OnboardingPage() {
 											Subscribe to Pro
 										</div>
 									</a>
+									<Button variant="ghost" onClick={() => window.close()}>
+										Continue for Free
+									</Button>
 								</div>
 							</CardContent>
 						</Card>

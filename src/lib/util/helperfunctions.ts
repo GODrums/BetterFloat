@@ -135,10 +135,6 @@ let lastProCheck = 0;
  * @returns
  */
 export async function checkUserPlanPro(user: SettingsUser) {
-	if (new Date().getTime() > new Date('2025-01-25').getTime() && user.plan.type === 'pro') {
-		user.plan.type = 'free';
-	}
-
 	if (user.plan.type === 'pro' && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
 		user = await synchronizePlanWithStorage();
 		lastProCheck = new Date().getTime();
