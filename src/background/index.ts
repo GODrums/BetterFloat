@@ -27,6 +27,14 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 		// set default settings
 		await initializeSettings();
+
+		const versionParts = details.previousVersion?.split('.').map((part) => parseInt(part));
+		if (versionParts && versionParts[0] < 3) {
+			const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
+			if (user?.plan.type === 'pro') {
+				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
+			}
+		}
 	}
 });
 
