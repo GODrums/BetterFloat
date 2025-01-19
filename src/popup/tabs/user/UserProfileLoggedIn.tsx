@@ -1,10 +1,11 @@
 import { Check, Sparkles, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { decodeJWT, refreshToken, verifyPlan } from '~lib/util/jwt';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import { Button } from '~popup/ui/button';
+import { WarningCallout } from '~popup/ui/callout';
 import { Card, CardContent } from '~popup/ui/card';
 
 interface LoggedInViewProps {
@@ -13,6 +14,7 @@ interface LoggedInViewProps {
 }
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
+	const [permissionDenied, setPermissionDenied] = useState(false);
 	const [syncing, setSyncing] = useState(false);
 	const [syncCooldown, setSyncCooldown] = useState(false);
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
@@ -38,6 +40,17 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 	const syncAccount = async () => {
 		if (syncCooldown || !user?.steam?.steamid) return;
+		// make sure we got the required permissions
+
+		if (permissionDenied) {
+			const newlyGranted = await chrome.permissions.request({ origins: ['https://*/*', 'http://*/*'], permissions: ['notifications'] });
+			if (!newlyGranted) {
+				console.warn('Permission denied');
+				return;
+			}
+			setPermissionDenied(false);
+		}
+
 		setSyncing(true);
 		setSyncCooldown(true);
 
@@ -60,6 +73,15 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			setTimeout(() => setSyncCooldown(false), 60000); // 1 minute cooldown
 		}
 	};
+
+	useEffect(() => {
+		// check for permissions
+		chrome.permissions.contains({ origins: ['https://*/*', 'http://*/*'], permissions: ['notifications'] }, (result) => {
+			if (!result) {
+				setPermissionDenied(true);
+			}
+		});
+	}, []);
 
 	const PlanFeatureIcon = user.plan.type === 'free' ? <X className="w-5 h-5 text-red-500" /> : <Check className="w-5 h-5 text-green-500" />;
 
@@ -103,6 +125,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					{user.plan.type === 'pro' && user.plan.endDate && (
 						<p className="text-sm text-muted-foreground text-center">Subscription ends on {new Date(user.plan.endDate).toLocaleDateString()}</p>
 					)}
+					{permissionDenied && <WarningCallout text="Please grant the required permissions to sync your account!" className="text-center" />}
 
 					<div className="flex items-center gap-2">
 						{PlanFeatureIcon}
