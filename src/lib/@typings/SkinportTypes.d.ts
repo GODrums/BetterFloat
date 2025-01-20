@@ -331,6 +331,7 @@ export namespace Skinport {
 		wear_name: string;
 		currency: string;
 		saleId: number;
+		url: string;
 	};
 
 	export type Item = {

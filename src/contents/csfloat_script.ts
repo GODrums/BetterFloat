@@ -689,7 +689,11 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 			return;
 		}
 
-		if (percentage.gte(notificationSettings.percentage)) {
+		if (percentage.gte(notificationSettings.percentage) || percentage.lt(1)) {
+			return;
+		}
+
+		if (apiItem.type === 'auction') {
 			return;
 		}
 

@@ -62,7 +62,7 @@ function getSiteURL(site: string) {
 		case 'csfloat':
 			return 'https://csfloat.com/item/';
 		case 'skinport':
-			return 'https://skinport.com/item/';
+			return 'https://skinport.com';
 		default:
 			return '';
 	}

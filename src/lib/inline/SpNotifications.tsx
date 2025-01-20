@@ -83,7 +83,7 @@ const SpNotifications: React.FC = () => {
 						<div className="flex justify-center w-4/5">
 							<div className="flex items-center pb-1 pl-1.5 gap-0.5">
 								<label className="mr-1.5 text-sm" htmlFor="notifications-buff-below">
-									Price below (Buff %):
+									Price below (Market %):
 								</label>
 								<input
 									type="number"

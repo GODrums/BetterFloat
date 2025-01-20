@@ -146,7 +146,7 @@ const SpLiveFilter: React.FC = () => {
 							<div className="flex flex-col items-center">
 								<div className="flex items-center gap-2">
 									<Label htmlFor="filter-percentage" className="font-semibold my-1.5">
-										Below Buff %
+										Maximum Market %
 									</Label>
 									<Badge variant="purple" className="text-white font-medium">
 										Pro

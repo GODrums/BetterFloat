@@ -199,7 +199,7 @@ const CSFAutorefresh: React.FC = () => {
 								</div>
 								<div className="flex flex-col items-start">
 									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-percentage">
-										Below Buff %
+										Maximum Market %
 									</label>
 									<input
 										type="number"

@@ -464,15 +464,15 @@ async function adjustItem(container: Element) {
 		addFloatColoring(container, item);
 	}
 
+	if (isLiveActive && priceResult.percentage && (await checkUserPlanPro(extensionSettings['user']))) {
+		await liveNotifications(item, priceResult.percentage);
+	}
+
 	const cachedItem = getFirstSpItem();
 	if (cachedItem) {
 		if (cachedItem.name !== item.name) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
 			return;
-		}
-
-		if (priceResult.percentage && (await checkUserPlanPro(extensionSettings['user']))) {
-			await liveNotifications(cachedItem, priceResult.percentage);
 		}
 
 		// console.log('[BetterFloat] Cached item: ', cachedItem);
@@ -486,37 +486,35 @@ async function adjustItem(container: Element) {
 	}
 }
 
-async function liveNotifications(item: Skinport.Item, percentage: Decimal) {
+async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 	const notificationSettings: Skinport.BFNotification = localStorage.getItem('spNotification')
 		? JSON.parse(localStorage.getItem('spNotification') ?? '')
 		: { active: false, name: '', priceBelow: 0 };
 
 	if (notificationSettings.isActive) {
-		if (notificationSettings.name && !item.marketHashName.includes(notificationSettings.name)) {
+		if (notificationSettings.name && !item.full_name.includes(notificationSettings.name)) {
 			return;
 		}
 
-		if (percentage.gte(notificationSettings.priceBelow)) {
+		if (percentage.gte(notificationSettings.priceBelow) || percentage.lt(1)) {
 			return;
 		}
 
-		const currencySymbol = getSymbolFromCurrency(item.currency);
-
-		let priceText = new Decimal(item.salePrice).div(100).toFixed(2);
-		if (currencySymbol === '€') {
-			priceText += currencySymbol;
+		let priceText = String(item.price);
+		if (item.currency === '€') {
+			priceText += item.currency;
 		} else {
-			priceText = currencySymbol + priceText;
+			priceText = item.currency + priceText;
 		}
 
 		// show notification
 		await sendToBackground({
 			name: 'createNotification',
 			body: {
-				id: `${item.url}/${item.saleId}`,
+				id: item.url,
 				site: 'skinport',
 				title: 'Item Found | BetterFloat Pro',
-				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.marketHashName}`,
+				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`,
 			},
 		});
 	}
@@ -863,7 +861,8 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 
 	const full_name = container.querySelector(selector.alt)?.getAttribute('alt') ?? '';
 
-	const saleId = Number(container.querySelector('.ItemPreview-link')?.getAttribute('href')?.split('/').pop() ?? 0);
+	const url = container.querySelector('.ItemPreview-link')?.getAttribute('href') ?? '';
+	const saleId = Number(url?.split('/').pop() ?? 0);
 	return {
 		name: name,
 		price: Number.isNaN(price) ? 0 : price,
@@ -877,6 +876,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 		currency: currency,
 		saleId: saleId,
 		full_name: full_name,
+		url,
 	};
 }
 
