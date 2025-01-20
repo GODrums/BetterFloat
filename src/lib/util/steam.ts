@@ -30,6 +30,27 @@ export async function getSteamLogin(): Promise<SettingsUser['steam'] | null> {
 	if (avatarMatch) {
 		settingsUser.steam.avatar_url = avatarMatch[1];
 		settingsUser.steam.display_name = avatarMatch[2];
+	} else {
+		try {
+			const name = steamPageText
+				.substring(steamPageText.indexOf('data-miniprofile=') + 25)
+				.split('">')?.[1]
+				.split('</a>')?.[0];
+
+			const avatar = steamPageText
+				.substring(steamPageText.indexOf('user_avatar') + 40)
+				.split('src="')?.[1]
+				.split('"')?.[0];
+
+			if (avatar) {
+				settingsUser.steam.avatar_url = avatar;
+			}
+			if (name) {
+				settingsUser.steam.display_name = name;
+			}
+		} catch (e) {
+			console.error('Error parsing avatar', e);
+		}
 	}
 
 	console.log(settingsUser);

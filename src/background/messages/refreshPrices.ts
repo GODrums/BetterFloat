@@ -3,6 +3,7 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 
 type PriceBody = {
 	source: string;
+	steamId?: string;
 };
 
 type PriceResponse = {
@@ -36,13 +37,15 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 		headers: {
 			'Content-Type': 'application/json',
 			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+			'x-id': `chrome-extension://${chrome.runtime.id}`,
+			'x-steam': req.body?.steamId || '',
 		},
 	});
 
 	if (response.ok) {
 		const responseJson = (await response.json()) as Extension.ApiBuffResponse;
 		if (responseJson?.data) {
-			chrome.storage.local.set({
+			await chrome.storage.local.set({
 				[`${pricesURL}`]: JSON.stringify(responseJson.data),
 				[`${source}-update`]: Date.now(), // responseJson.time,
 			});

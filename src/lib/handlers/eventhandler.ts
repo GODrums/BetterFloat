@@ -10,7 +10,7 @@ import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
-import type { IStorage } from '~lib/util/storage';
+import { type IStorage, getSetting } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
@@ -98,16 +98,17 @@ export async function initPriceMapping(extensionSettings: IStorage, prefix: stri
 	}
 	console.log('[BetterFloat] Sources:', sources);
 	console.time('[BetterFloat] PriceRefresh');
-	await Promise.all(Array.from(sources).map((source) => sourceRefresh(source)));
+	await Promise.all(Array.from(sources).map((source) => sourceRefresh(source, extensionSettings.user?.steam?.steamid)));
 	await Promise.all(Array.from(sources).map((source) => loadMapping(source)));
 	console.timeEnd('[BetterFloat] PriceRefresh');
 }
 
-async function sourceRefresh(source: MarketSource) {
+export async function sourceRefresh(source: MarketSource, steamId: string | null = null) {
 	const updateSetting = `${source}-update`;
-	const storageData = await chrome.storage.local.get([updateSetting, 'user']);
+	const storageData = await chrome.storage.local.get(updateSetting);
 	const lastUpdate = storageData[updateSetting] ?? 0;
-	const refreshIntervalPlan = storageData.user?.pro_plan ? 1 : 2;
+	const hasProPlan = (await getSetting<IStorage['user']>('user')).plan.type === 'pro';
+	const refreshIntervalPlan = hasProPlan ? 1 : 2;
 	// refresh only if prices are older than 1 hour
 	if (lastUpdate < Date.now() - 1000 * 60 * 60 * refreshIntervalPlan) {
 		console.debug(`[BetterFloat] ${toTitleCase(source)} prices are older than ${refreshIntervalPlan} hour(s), last update: ${new Date(lastUpdate)}. Refreshing ${toTitleCase(source)} prices...`);
@@ -116,6 +117,7 @@ async function sourceRefresh(source: MarketSource) {
 			name: 'refreshPrices',
 			body: {
 				source: source,
+				steamId: steamId,
 			},
 		});
 

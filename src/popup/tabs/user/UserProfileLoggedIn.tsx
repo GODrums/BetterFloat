@@ -1,6 +1,8 @@
-import { Check, Sparkles, X } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { MarketSource } from '~lib/util/globals';
 import { decodeJWT, refreshToken, verifyPlan } from '~lib/util/jwt';
+import { getSteamLogin } from '~lib/util/steam';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
@@ -17,10 +19,31 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [permissionDenied, setPermissionDenied] = useState(false);
 	const [syncing, setSyncing] = useState(false);
 	const [syncCooldown, setSyncCooldown] = useState(false);
+	const [refreshing, setRefreshing] = useState(false);
+	const [refreshCooldown, setRefreshCooldown] = useState(false);
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 
 	const steamLogout = () => {
 		setUser({ ...user, steam: { logged_in: false }, plan: { type: 'free' } });
+	};
+
+	const resetUpdateCounter = (source: MarketSource) => {
+		return ExtensionStorage.sync.setItem(`${source}-update`, 0);
+	};
+
+	const refreshPrices = async () => {
+		if (refreshCooldown || !user?.steam?.steamid) return;
+
+		setRefreshing(true);
+		setRefreshCooldown(true);
+
+		try {
+			const allSources = [MarketSource.Buff, MarketSource.Steam, MarketSource.YouPin, MarketSource.C5Game, MarketSource.CSFloat];
+			await Promise.all(allSources.map((source) => resetUpdateCounter(source)));
+		} finally {
+			setRefreshing(false);
+			setTimeout(() => setRefreshCooldown(false), 60000); // 1 minute cooldown
+		}
 	};
 
 	const changePlan = async () => {
@@ -53,6 +76,11 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 		setSyncing(true);
 		setSyncCooldown(true);
+
+		const steamUser = await getSteamLogin();
+		if (steamUser?.steamid) {
+			setUser({ ...user, steam: steamUser });
+		}
 
 		try {
 			const token = await refreshToken(user.steam.steamid);
@@ -123,7 +151,12 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 						</Button>
 					</div>
 					{user.plan.type === 'pro' && user.plan.endDate && (
-						<p className="text-sm text-muted-foreground text-center">Subscription ends on {new Date(user.plan.endDate).toLocaleDateString()}</p>
+						<>
+							<p className="text-sm text-muted-foreground text-center">Subscription ends on {new Date(user.plan.endDate).toLocaleDateString()}</p>
+							<Button variant="outline" onClick={refreshPrices} disabled={refreshing || refreshCooldown}>
+								{refreshing ? <LoadingSpinner /> : 'Refresh prices manually'}
+							</Button>
+						</>
 					)}
 					{permissionDenied && <WarningCallout text="Please grant the required permissions to sync your account!" className="text-center" />}
 
