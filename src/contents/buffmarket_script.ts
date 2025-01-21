@@ -39,7 +39,7 @@ async function init() {
 	if (!extensionSettings['bm-enable']) return;
 
 	// check if user has the required plan
-	if (!checkUserPlanPro(extensionSettings['user'])) {
+	if (!(await checkUserPlanPro(extensionSettings['user']))) {
 		console.log('[BetterFloat] Pro plan required for BuffMarket features');
 		return;
 	}

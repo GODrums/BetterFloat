@@ -1,7 +1,9 @@
+import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
+import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
@@ -22,6 +24,8 @@ const SpNotifications: React.FC = () => {
 	const [name, setName] = useState<string>(spNotification.name);
 	const [priceBelow, setPriceBelow] = useState<number>(spNotification.priceBelow ?? 100);
 	const [isActive, setIsActive] = useState(spNotification.isActive);
+
+	const [user] = useStorage<SettingsUser>('user');
 
 	const toggleOpen = () => {
 		setOpen(!open);
@@ -78,6 +82,7 @@ const SpNotifications: React.FC = () => {
 								className="w-full h-9 pb-1 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base"
 								value={name}
 								onChange={(e) => setName(e.target.value)}
+								disabled={user?.plan.type !== 'pro'}
 							/>
 						</div>
 						<div className="flex justify-center w-4/5">
@@ -95,17 +100,18 @@ const SpNotifications: React.FC = () => {
 									onChange={(e) => {
 										setPriceBelow(parseFloat(e.target.value));
 									}}
+									disabled={user?.plan.type !== 'pro'}
 								/>
 							</div>
 						</div>
 						<div className="absolute bottom-5 right-7 flex gap-4">
-							<Button variant="ghost" className="gap-2 font-semibold" onClick={() => setIsActive(!isActive)}>
+							<Button variant="ghost" className="gap-2 font-semibold" onClick={() => setIsActive(!isActive)} disabled={user?.plan.type !== 'pro'}>
 								active
 								<Badge className={cn('text-white font-normal', isActive ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>
 									{isActive ? 'ON' : 'OFF'}
 								</Badge>
 							</Button>
-							<Button className="font-semibold bg-[#4db5da]" onClick={handleSave}>
+							<Button className="font-semibold bg-[#4db5da]" onClick={handleSave} disabled={user?.plan.type !== 'pro'}>
 								Save
 							</Button>
 						</div>

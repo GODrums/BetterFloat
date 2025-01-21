@@ -47,7 +47,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	};
 
 	const changePlan = async () => {
-		const newPlanType = user.plan.type === 'free' ? 'pro' : 'free';
+		const newPlanType = user?.plan?.type === 'pro' ? 'free' : 'pro';
 
 		if (newPlanType === 'free') {
 			if (!isDevMode) {
@@ -111,7 +111,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		});
 	}, []);
 
-	const PlanFeatureIcon = user.plan.type === 'free' ? <X className="w-5 h-5 text-red-500" /> : <Check className="w-5 h-5 text-green-500" />;
+	const PlanFeatureIcon = user.plan.type === 'pro' ? <Check className="w-5 h-5 text-green-500" /> : <X className="w-5 h-5 text-red-500" />;
 
 	return (
 		<>
@@ -138,16 +138,16 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					<p className="text-base font-semibold leading-none tracking-tight uppercase">Current plan</p>
 
 					<div className="flex justify-between items-center gap-2">
-						{user.plan.type === 'free' ? (
-							<span className="text-lg font-semibold text-center">Free</span>
-						) : (
+						{user.plan.type === 'pro' ? (
 							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
+						) : (
+							<span className="text-lg font-semibold text-center">Free</span>
 						)}
 						<Button variant="outline" onClick={syncAccount} disabled={syncing || syncCooldown}>
 							{syncing ? <LoadingSpinner /> : 'Sync Account'}
 						</Button>
 						<Button variant="secondary" onClick={changePlan}>
-							{user.plan.type === 'free' ? 'Upgrade' : 'Manage'}
+							{user.plan.type === 'pro' ? 'Manage' : 'Upgrade'}
 						</Button>
 					</div>
 					{user.plan.type === 'pro' && user.plan.endDate && (

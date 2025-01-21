@@ -48,7 +48,7 @@ async function init() {
 	if (!extensionSettings['csm-enable']) return;
 
 	// check if user has the required plan
-	if (!checkUserPlanPro(extensionSettings['user'])) {
+	if (!(await checkUserPlanPro(extensionSettings['user']))) {
 		console.log('[BetterFloat] Pro plan required for CSMoney features');
 		return;
 	}

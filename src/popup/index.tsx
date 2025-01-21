@@ -35,7 +35,7 @@ export default function IndexPopup() {
 		});
 	});
 
-	const hasProPlan = user.plan.type === 'pro';
+	const hasProPlan = user?.plan?.type === 'pro';
 
 	return (
 		<div className="dark flex flex-col bg-card justify-between h-[600px] w-[480px]">
