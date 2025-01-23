@@ -42,7 +42,7 @@ const SpNotifications: React.FC = () => {
 	return (
 		<div className="mr-4 bg-transparent" style={{ fontFamily: 'Montserrat,sans-serif' }}>
 			<Button variant="invisible" size="icon" className="hover:bg-neutral-700 relative" onClick={toggleOpen}>
-				{isActive && (
+				{spNotification.isActive && (
 					<span className="absolute -top-1 -right-1 flex size-2">
 						<span className="absolute inline-flex size-full animate-ping rounded-full bg-[#ff5722] opacity-75 duration-1000" />
 						<span className="relative inline-flex size-2 rounded-full bg-[#ff5722]" />
