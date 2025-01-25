@@ -265,7 +265,7 @@ function getFooterContainer(state: PageState, container: Element): HTMLElement |
 	} else if (state === PageState.Inventory) {
 		footerContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.INVENTORY.FOOTER);
 	} else if (state === PageState.Popup) {
-		footerContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.POPUP.FOOTER);
+		footerContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.BARGAIN.FOOTER) ?? container.querySelector(BUFFMARKET_SELECTORS.STATE.POPUP.FOOTER);
 	}
 	if (!footerContainer) {
 		footerContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.INVENTORY.FOOTER);
@@ -323,7 +323,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.ITEMPAGE.PRICE_ALT);
 		newline = true;
 	} else if (state === PageState.Popup) {
-		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.POPUP.PRICE);
+		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.BARGAIN.PRICE) ?? container.querySelector(BUFFMARKET_SELECTORS.STATE.POPUP.PRICE);
 	} else {
 		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.ITEMPAGE.PRICE_ALT)?.parentElement as HTMLElement;
 		difference = new Decimal(getItemPrice(item)).minus(priceFromReference ?? 0);
