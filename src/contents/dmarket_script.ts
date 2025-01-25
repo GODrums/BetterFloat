@@ -7,6 +7,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
@@ -71,7 +72,7 @@ async function replaceHistory() {
 		}
 	});
 
-	const isLoggedOut = document.querySelector('header-user-auth-btn');
+	const isLoggedOut = document.querySelector(DMARKET_SELECTORS.other.authBtn);
 	if (isLoggedOut && !location.search.includes('ref=')) {
 		createHistoryRewrite({ ref: 'rqKYzZ36Bw' }, true);
 	}
@@ -84,12 +85,10 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[Plasmo] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				// c-asset__figure c-asset__exterior
 				if (addedNode.className.startsWith('c-asset__price')) {
-					// console.debug('[Plasmo] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
-					adjustItem(addedNode.closest('asset-card')!, PageState.Market);
+					adjustItem(addedNode.closest('asset-card-v2')!, PageState.Market);
 				}
 			}
 		}
@@ -114,11 +113,11 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 
 	let footerContainer: Element | null = null;
 	if (state === PageState.ItemPage) {
-		footerContainer = document.querySelector('.goods-message');
+		footerContainer = document.querySelector(DMARKET_SELECTORS.itempage.footer);
 	} else if (state === PageState.Market) {
-		footerContainer = container.querySelector('.c-asset__footerInner');
+		footerContainer = container.querySelector(DMARKET_SELECTORS.market.footer);
 	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector('.goods-item-info');
+		footerContainer = container.querySelector(DMARKET_SELECTORS.inventory.footer);
 	}
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
@@ -148,7 +147,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 
 	let priceContainer: Element | null = null;
 	if (state === PageState.Market) {
-		priceContainer = container.querySelector('.c-asset__price');
+		priceContainer = container.querySelector(DMARKET_SELECTORS.market.price);
 	}
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
