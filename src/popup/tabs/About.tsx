@@ -46,7 +46,7 @@ export const About = () => {
 			<footer className="absolute bottom-2 w-full text-center text-xs font-semibold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
 				<p>
 					Built with 🖤 in Munich by{' '}
-					<span className="cursor-pointer text-green-900" onClick={() => window.open('https://github.com/GODrums')}>
+					<span className="cursor-pointer text-green-900" onClick={() => window.open('https://x.com/rumscsgo')}>
 						Rums
 					</span>
 				</p>
