@@ -131,15 +131,20 @@ let lastProCheck = 0;
 
 /**
  * Checks if the user has a pro plan and validate the plan
+ * Only synchronizes once every 5 minutes
  * @param user
  * @returns
  */
 export async function checkUserPlanPro(user: SettingsUser) {
-	if (user?.plan?.type === 'pro' && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
+	if (isUserPro(user) && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
 		user = await synchronizePlanWithStorage();
 		lastProCheck = new Date().getTime();
 	}
 
+	return isUserPro(user);
+}
+
+export function isUserPro(user: SettingsUser) {
 	return user?.plan?.type === 'pro';
 }
 

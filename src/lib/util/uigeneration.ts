@@ -22,6 +22,7 @@ export function generatePriceLine({
 	priceClass: containerClass,
 	addSpaceBetweenPrices = true,
 	showPrefix = true,
+	hasPro = false,
 }: {
 	source: MarketSource;
 	market_id: number | string | undefined;
@@ -38,6 +39,7 @@ export function generatePriceLine({
 	priceClass?: string;
 	addSpaceBetweenPrices?: boolean;
 	showPrefix?: boolean;
+	hasPro?: boolean;
 }) {
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	let icon = '';
@@ -66,6 +68,8 @@ export function generatePriceLine({
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = showPrefix && priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
+
+	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
 			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom hint--rounded hint--no-arrow" 
@@ -79,7 +83,7 @@ export function generatePriceLine({
 				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" 
 			>
 				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
+					showBothPrices
 						? html`
 							<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
 							<span style="color: gray;${addSpaceBetweenPrices ? 'margin: 0 3px 0 3px;' : ''}">|</span>

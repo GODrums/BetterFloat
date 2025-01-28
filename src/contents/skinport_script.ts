@@ -18,7 +18,7 @@ import {
 	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
@@ -945,12 +945,14 @@ function generateBuffContainer(container: HTMLElement, priceListing: Decimal | u
 			break;
 	}
 
+	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user']));
+
 	const buffContainer = html`
 		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
 			<img src="${icon}" style="${iconStyle}" />
 			<div class="suggested-price betterfloat-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
 				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
+					showBothPrices
 						? html`
 							<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
 							<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
@@ -1025,7 +1027,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		}
 	}
 
-	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['sp-pricereference'] === 0 ? priceOrder : priceListing;
+	const priceFromReference =
+		extensionSettings['sp-pricereference'] === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const percentage = new Decimal(item.price).div(priceFromReference ?? item.price).mul(100);
 	if ((!extensionSettings['sp-buffdifference'] && !extensionSettings['sp-buffdifferencepercent']) || location.pathname === '/myitems/inventory' || location.pathname.startsWith('/sell/')) {

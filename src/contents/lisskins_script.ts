@@ -7,7 +7,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -256,7 +256,11 @@ async function getBuffItem(item: HTMLItem) {
 		priceListing = priceListing?.mul(currencyRate);
 		priceOrder = priceOrder?.mul(currencyRate);
 	}
-	const priceFromReference = Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const priceFromReference =
+		Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 &&
+		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 
 	const priceDifference = priceFromReference ? item.price.minus(priceFromReference) : new Decimal(0);
 	return {
@@ -301,6 +305,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 			addSpaceBetweenPrices: false,
 			showPrefix: false,
 			iconHeight: '15px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 
 		elementContainer.insertAdjacentHTML(isItemPage ? 'beforeend' : 'afterend', buffContainer);

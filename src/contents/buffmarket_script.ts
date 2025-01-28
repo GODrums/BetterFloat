@@ -9,7 +9,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { ICON_CLOCK, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -184,7 +184,10 @@ async function getBuffItem(item: ExtendedBuffItem) {
 		priceOrder = priceOrder.mul(currencyItem.rate);
 	}
 
-	const referencePrice = Number(extensionSettings['bm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const referencePrice =
+		Number(extensionSettings['bm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 
 	const priceDifference = referencePrice ? item.price.minus(referencePrice) : new Decimal(0);
 	return {
@@ -303,6 +306,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		isPopout: state === PageState.Popup,
 		addSpaceBetweenPrices: false,
 		showPrefix: false,
+		hasPro: isUserPro(extensionSettings['user']),
 	});
 	if (footerContainer) {
 		if (state === PageState.ItemPage) {

@@ -18,7 +18,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, parsePrice, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -288,7 +288,10 @@ export async function getBuffItem(container: Element, item: CSMoney.Item, select
 	}
 
 	const itemPrice = new Decimal(getHTMLPrice(container, selector)!.price);
-	const referencePrice = Number(extensionSettings['csm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const referencePrice =
+		Number(extensionSettings['csm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 	return {
 		buff_name,
@@ -402,6 +405,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 			addSpaceBetweenPrices: isPopout,
 			showPrefix: false,
 			iconHeight: isPopout ? '20px' : '15px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 
 		footerContainer.insertAdjacentHTML('afterend', buffContainer);

@@ -48,6 +48,7 @@ import {
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
+	isUserPro,
 	toTruncatedString,
 	waitForElement,
 } from '../lib/util/helperfunctions';
@@ -257,6 +258,7 @@ export async function adjustOfferContainer(container: Element) {
 		isDoppler: false,
 		isPopout: false,
 		iconHeight: '20px',
+		hasPro: isUserPro(extensionSettings['user']),
 	});
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
@@ -1565,10 +1567,12 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	const { currencyRate } = await getCurrencyRate();
 
-	let priceFromReference =
-		pricingData.priceOrder && extensionSettings['csf-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source)
-			? pricingData.priceOrder
-			: (pricingData.priceListing ?? new Decimal(0));
+	const useOrderPrice =
+		pricingData.priceOrder &&
+		extensionSettings['csf-pricereference'] === 0 &&
+		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
+
+	let priceFromReference = useOrderPrice ? pricingData.priceOrder : (pricingData.priceListing ?? new Decimal(0));
 
 	priceFromReference = priceFromReference?.mul(currencyRate);
 
@@ -1621,6 +1625,7 @@ async function addBuffPrice(
 			isDoppler,
 			isPopout,
 			iconHeight: '20px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
@@ -1631,7 +1636,7 @@ async function addBuffPrice(
 			}
 		}
 		if (isPopout) {
-			container.querySelector('.betterfloat-big-price')?.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference: priceFromReference.toFixed(2), userCurrency }));
+			container.querySelector('.betterfloat-big-price')?.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference: priceFromReference?.toFixed(2) ?? 0, userCurrency }));
 		}
 	}
 

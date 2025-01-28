@@ -8,7 +8,7 @@ import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -210,6 +210,7 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			addSpaceBetweenPrices: true,
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : '20px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 		footerContainer.outerHTML = buffContainer;
 	}
@@ -288,7 +289,10 @@ async function getBuffItem(item: Bitskins.Item) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 
-	const referencePrice = Number(extensionSettings['bs-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const referencePrice =
+		Number(extensionSettings['bs-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 
 	return {

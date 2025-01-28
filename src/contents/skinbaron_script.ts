@@ -9,7 +9,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -269,6 +269,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
 			iconHeight: '15px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 		if (selector === SKINBARON_SELECTORS.card) {
 			container.querySelector('.offer-card')?.setAttribute('style', 'height: 290px');
@@ -393,7 +394,11 @@ async function getBuffItem(item: Skinbaron.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const priceFromReference = Number(extensionSettings['skinbaron-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const priceFromReference =
+		Number(extensionSettings['skinbaron-pricereference']) === 0 &&
+		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 	const priceDifference = getItemPrice(item).minus(priceFromReference ?? 0);
 
 	return {

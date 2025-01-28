@@ -10,7 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -88,7 +88,10 @@ function applyMutation() {
 
 				// c-asset__figure c-asset__exterior
 				if (addedNode.className.startsWith('c-asset__price')) {
-					adjustItem(addedNode.closest('asset-card-v2')!, PageState.Market);
+					const parent = addedNode.closest('asset-card') ?? addedNode.closest('asset-card-v2');
+					if (parent) {
+						adjustItem(parent, PageState.Market);
+					}
 				}
 			}
 		}
@@ -141,6 +144,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
 			iconHeight: '15px',
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
@@ -224,7 +228,10 @@ async function getBuffItem(item: DMarket.Item) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 
-	const referencePrice = Number(extensionSettings['dm-pricereference']) === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const referencePrice =
+		Number(extensionSettings['dm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
 
 	return {
