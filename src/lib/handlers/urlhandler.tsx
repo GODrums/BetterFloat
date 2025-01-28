@@ -16,8 +16,9 @@ import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
+import UpdatePopup from '~lib/inline/UpdatePopup';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
-import { getSetting } from '~lib/util/storage';
+import { ExtensionStorage, getSetting } from '~lib/util/storage';
 
 export function urlHandler() {
 	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
@@ -70,6 +71,19 @@ export function dynamicUIHandler() {
 		};
 		await handleChange(state);
 	}, 1500);
+
+	setTimeout(async () => {
+		const storageKey = `show-update-popup-${chrome.runtime.getManifest().version}`;
+		const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
+		// show update popup
+		if (showUpdate !== false) {
+			await mountShadowRoot(<UpdatePopup />, {
+				tagName: 'betterfloat-update-popup',
+				parent: document.body,
+			});
+			await ExtensionStorage.sync.set(storageKey, false);
+		}
+	}, 3000);
 }
 
 async function handleChange(state: Extension.URLState) {
