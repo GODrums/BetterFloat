@@ -27,7 +27,7 @@ export default function UpdatePopup() {
 
 					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">Choosing Youpin now displays separate Bid (highest buy order) and Ask (lowest listing) prices.</p>
 					<img src={YoupinBuyOrder} alt="Youpin" className="h-24 rounded-lg" />
-					{user?.plan?.type === 'pro' && (
+					{user?.plan?.type !== 'pro' && (
 						<Button className="absolute right-8 bottom-4" onClick={() => window.open('https://betterfloat.com/pricing')}>
 							Upgrade now
 						</Button>
