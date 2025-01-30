@@ -20,10 +20,12 @@ import {
 	ICON_SKINBARON_FULL,
 	ICON_SKINPORT,
 	ICON_SKINPORT_FULL,
+	ICON_YOUPIN,
 	WEBSITE_URL,
 } from '~lib/util/globals';
 import { MaterialSymbolsFilterAlt, MaterialSymbolsUpdate } from '~popup/components/Icons';
 import { AnimatedCircularProgressBar } from '~popup/components/ProgressCircle';
+import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~popup/ui/card';
 
@@ -113,6 +115,12 @@ export default function OnboardingPage() {
 												<ArrowRight className="h-10 fill-white stroke-[4]" />
 											</div>
 											<AnimatedCircularProgressBar max={100} min={0} value={priceProValue} text="1h" gaugePrimaryColor="purple" gaugeSecondaryColor="rgba(0, 0, 0, 0.1)" />
+
+											<div className="flex flex-col items-center justify-center gap-2">
+												<Badge variant="secondary"> NEW </Badge>
+												<img src={ICON_YOUPIN} className="size-10 rounded-lg border border-gray-300/30" alt="Youpin" />
+												<span className="text-muted-foreground text-xs font-semibold">Buy order prices</span>
+											</div>
 										</CardContent>
 									</Card>
 
