@@ -4,6 +4,7 @@ export namespace Skinport {
 	export interface BFNotification {
 		name: string;
 		priceBelow: number;
+		floatRanges: number[];
 		isActive: boolean;
 	}
 

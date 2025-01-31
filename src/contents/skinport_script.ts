@@ -27,6 +27,7 @@ import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handl
 import { sendToBackground } from '@plasmohq/messaging';
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
+import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
@@ -500,6 +501,10 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 			return;
 		}
 
+		if (notificationSettings.floatRanges && (item.wear < notificationSettings.floatRanges[0] || item.wear > notificationSettings.floatRanges[1])) {
+			return;
+		}
+
 		let priceText = String(item.price);
 		if (item.currency === '€') {
 			priceText += item.currency;
@@ -544,7 +549,9 @@ export async function patternDetections(container: Element, item: Skinport.Item)
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern).catch(() => null);
+	if (item.category !== 'Knife') return;
+
+	const patternElement = await fetchCSBlueGemPatternData(item.subCategory?.replaceAll(' ', '_'), item.pattern);
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
@@ -565,8 +572,9 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const patternElement = await fetchCSBlueGemPatternData(item.subCategory, item.pattern);
-	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
+	const patternElement = await fetchCSBlueGemPatternData(item.subCategory.replaceAll(' ', '_'), item.pattern);
+	// const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
+	const pastSales = [] as BlueGem.PastSale[];
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader || !patternElement) return;

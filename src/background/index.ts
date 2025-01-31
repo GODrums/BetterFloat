@@ -25,18 +25,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 		// set default settings
 		await initializeSettings();
-
-		// make sure we're not in dev mode
-		if (thisVersion === '3.0.0' && !chrome.runtime.getManifest().name.includes('DEV')) {
-			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
-			await chrome.tabs.create({ url: onboardingUrl });
-		}
-		if (details.previousVersion && (!details.previousVersion.startsWith('3.') || details.previousVersion.toLowerCase().includes('beta'))) {
-			const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
-			if (user?.plan.type === 'pro') {
-				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
-			}
-		}
 	}
 });
 

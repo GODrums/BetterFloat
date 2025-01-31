@@ -28,9 +28,9 @@ export const SkinportSettings = () => {
 					<SettingsCard>
 						<SettingsCheckbox
 							id="sp-csbluegem"
-							text="CSBlueGem Integration"
+							text="Blue Gem Enhancements"
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
-							tooltipText="Adds pattern details and past sales to case hardened skins. Data powered by CSBlueGem.com."
+							tooltipText="Adds pattern details and past sales to case hardened skins."
 						/>
 					</SettingsCard>
 				</div>

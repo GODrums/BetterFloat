@@ -173,8 +173,27 @@ export namespace Extension {
 	};
 }
 
-// reponse from https://csbluegem.com/api
 export namespace BlueGem {
+	export type BluePercent = {
+		[type: string]: {
+			playside: {
+				[seed: string]: number;
+			};
+			backside: {
+				[seed: string]: number;
+			};
+			double_sided: {
+				[seed: string]: number;
+			};
+		};
+	};
+
+	export type BlueData = {
+		playside: number;
+		backside: number;
+		double_sided: number;
+	};
+
 	export type PatternDataResponse = {
 		data: PatternData[];
 		meta: {

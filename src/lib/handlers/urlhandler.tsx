@@ -262,11 +262,14 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 }
 
 export async function mountSpItemPageBuffContainer() {
-	await mountShadowRoot(<SPBuffContainer />, {
-		tagName: 'betterfloat-buff-container',
-		parent: document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns'),
-		position: 'before',
-	});
+	const parent = document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns');
+	if (parent) {
+		await mountShadowRoot(<SPBuffContainer />, {
+			tagName: 'betterfloat-buff-container',
+			parent,
+			position: 'before',
+		});
+	}
 }
 
 export async function mountCSFBargainButtons() {

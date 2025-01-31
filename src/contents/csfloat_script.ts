@@ -1126,7 +1126,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	)
 		return;
 
-	let patternElement: BlueGem.PatternData | null = null;
+	let patternElement: BlueGem.BlueData | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
 	let type = '';
@@ -1137,16 +1137,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	} else {
 		type = item.item_name.split(' | ')[0];
 	}
-
-	const refetchPatternData = async () => {
-		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!).catch(() => null);
-		if (!patternElement) {
-			console.warn('[BetterFloat] Could not fetch pattern data for ', item.item_name);
-			return false;
-		}
-		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
-		return true;
-	};
+	type = type.replaceAll(' ', '_');
 
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {
@@ -1157,13 +1148,17 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		}
 	}
 	if (!patternElement) {
-		const success = await refetchPatternData();
-		if (!success) return;
+		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!);
+		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
 	}
-	if (!patternElement) return;
+	if (!patternElement) {
+		console.warn('[BetterFloat] Could not fetch pattern data for ', item.item_name);
+		return false;
+	}
 
 	// add gem icon and blue gem percent if item is a knife
-	if ([4, 5, 6].includes(item.rarity)) {
+	// for ht items: [4, 5, 6].includes(item.rarity)
+	if (item.rarity === 6) {
 		let tierContainer = container.querySelector('.badge-container');
 		if (!tierContainer) {
 			tierContainer = document.createElement('div');
@@ -1184,13 +1179,15 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	}
 
 	// past sales table
-	const pastSales = await fetchCSBlueGemPastSales({ type, paint_seed: item.paint_seed, currency: userCurrency });
-	const gridHistory = document.querySelector('.grid-history');
+	// const pastSales = await fetchCSBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });
+	// const gridHistory = document.querySelector('.grid-history');
+	const pastSales = null as BlueGem.PastSale[] | null;
+	const gridHistory = null as Element | null;
 	if (!gridHistory || !pastSales) return;
 	const salesHeader = document.createElement('mat-button-toggle');
 	salesHeader.setAttribute('role', 'presentation');
 	salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
-	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales.length})</span></button>`;
+	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales?.length})</span></button>`;
 	gridHistory.querySelector('mat-button-toggle-group.sort')?.appendChild(salesHeader);
 	salesHeader.addEventListener('click', () => {
 		Array.from(gridHistory.querySelectorAll('mat-button-toggle') ?? []).forEach((element) => {

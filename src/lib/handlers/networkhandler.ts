@@ -7,13 +7,14 @@ import { cacheRealCurrencyRates } from './mappinghandler';
 const CSBLUEGEM_API_URL = 'https://api.csbluegem.com/';
 
 export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
-	const response = await fetch(`${CSBLUEGEM_API_URL}/v2/patterndata?skin=${type}&pattern=${pattern}`)
-		.then((res) => res.json() as Promise<BlueGem.PatternDataResponse>)
-		.catch(() => null);
-	if (response?.data) {
-		return response.data[0];
-	}
-	return null;
+	const response = await sendToBackground({
+		name: 'getBluePercent',
+		body: {
+			type,
+			pattern,
+		},
+	});
+	return response as BlueGem.BlueData;
 }
 
 type CSBlueGemOptions = {
