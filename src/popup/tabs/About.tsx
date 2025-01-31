@@ -24,10 +24,6 @@ export const About = () => {
 						<div className="flex flex-col">
 							<h4 className="dark:text-white text-black font-medium text-base pb-2">Our Partners</h4>
 							<div className="flex gap-2 items-center flex-wrap justify-center">
-								<Button variant="outline" className="flex flex-col h-16" onClick={() => window.open('https://csbluegem.com/')}>
-									<img className="h-6 w-6 rounded-lg" src={ICON_CSBLUEGEM} />
-									<p className="text-base font-normal">CSBlueGem</p>
-								</Button>
 								<Button
 									variant="outline"
 									className="w-32 h-16"
