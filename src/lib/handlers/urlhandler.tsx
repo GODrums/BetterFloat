@@ -72,18 +72,20 @@ export function dynamicUIHandler() {
 		await handleChange(state);
 	}, 1500);
 
-	// setTimeout(async () => {
-	// 	const storageKey = `show-update-popup-${chrome.runtime.getManifest().version}`;
-	// 	const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
-	// 	// show update popup
-	// 	if (showUpdate !== false) {
-	// 		await mountShadowRoot(<UpdatePopup />, {
-	// 			tagName: 'betterfloat-update-popup',
-	// 			parent: document.body,
-	// 		});
-	// 		await ExtensionStorage.sync.set(storageKey, false);
-	// 	}
-	// }, 3000);
+	// setTimeout(showUpdatePopup, 3000);
+}
+
+async function showUpdatePopup() {
+	const storageKey = `show-update-popup-${chrome.runtime.getManifest().version}`;
+	const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
+	// show update popup
+	if (showUpdate !== false) {
+		await mountShadowRoot(<UpdatePopup />, {
+			tagName: 'betterfloat-update-popup',
+			parent: document.body,
+		});
+		await ExtensionStorage.sync.set(storageKey, false);
+	}
 }
 
 async function handleChange(state: Extension.URLState) {

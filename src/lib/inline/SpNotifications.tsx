@@ -1,4 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { Slider } from '@radix-ui/react-slider';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
@@ -8,6 +9,7 @@ import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
+import { DualRangeSlider } from '~popup/ui/dualrangeslider';
 
 const BellRing = (props: React.SVGProps<SVGSVGElement>) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -22,6 +24,7 @@ const SpNotifications: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const spNotification = JSON.parse(localStorage.getItem('spNotification') ?? '{}') as Skinport.BFNotification;
 	const [name, setName] = useState<string>(spNotification.name);
+	const [floatRanges, setFloatRanges] = useState<number[]>(spNotification.floatRanges ?? [0, 1]);
 	const [priceBelow, setPriceBelow] = useState<number>(spNotification.priceBelow ?? 100);
 	const [isActive, setIsActive] = useState(spNotification.isActive);
 
@@ -34,6 +37,7 @@ const SpNotifications: React.FC = () => {
 	const handleSave = () => {
 		spNotification.name = name;
 		spNotification.priceBelow = priceBelow;
+		spNotification.floatRanges = floatRanges;
 		spNotification.isActive = isActive;
 		localStorage.setItem('spNotification', JSON.stringify(spNotification));
 		setOpen(false);
@@ -53,7 +57,7 @@ const SpNotifications: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[350px] h-[320px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
+						className="fixed w-[350px] h-[390px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -72,7 +76,7 @@ const SpNotifications: React.FC = () => {
 						<Button variant="invisible" size="icon" className="absolute top-4 right-7" onClick={() => setOpen(false)}>
 							<MaterialSymbolsCloseSmallOutlineRounded className="h-8 w-8" />
 						</Button>
-						<div className="flex flex-col items-start w-4/5 mx-5">
+						<div className="flex flex-col items-start">
 							<label className="font-semibold my-1 mx-0" htmlFor="notifications-name">
 								NAME
 							</label>
@@ -85,7 +89,22 @@ const SpNotifications: React.FC = () => {
 								disabled={user?.plan.type !== 'pro'}
 							/>
 						</div>
-						<div className="flex justify-center w-4/5">
+						<div className="dark flex flex-col items-start gap-3 w-3/5">
+							<label className="font-semibold mt-1 mb-2 mx-0" htmlFor="notifications-float">
+								FLOAT
+							</label>
+							<DualRangeSlider
+								id="notifications-float"
+								label={(value) => value}
+								value={floatRanges}
+								onValueChange={(value) => setFloatRanges(value)}
+								min={0}
+								max={1}
+								step={0.01}
+								disabled={user?.plan.type !== 'pro'}
+							/>
+						</div>
+						<div className="flex justify-center">
 							<div className="flex items-center pb-1 pl-1.5 gap-0.5">
 								<label className="mr-1.5 text-sm" htmlFor="notifications-buff-below">
 									Price below (Market %):
