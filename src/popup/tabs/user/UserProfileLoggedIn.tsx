@@ -15,6 +15,8 @@ interface LoggedInViewProps {
 	setUser: (user: IStorage['user']) => void;
 }
 
+const features = ['Access to 9+ Markets', 'Most Accurate Prices (1 hour refreshes)', 'Exclusive Instant Notifications for New Listings', 'Auto-Refresh on 3+ Markets', 'Early Access to New Features'];
+
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [permissionDenied, setPermissionDenied] = useState(false);
 	const [syncing, setSyncing] = useState(false);
@@ -160,26 +162,12 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					)}
 					{permissionDenied && <WarningCallout text="Please grant the required permissions to sync your account!" className="text-center" />}
 
-					<div className="flex items-center gap-2">
-						{PlanFeatureIcon}
-						<span>Access to 9+ Markets</span>
-					</div>
-					<div className="flex items-center gap-2">
-						{PlanFeatureIcon}
-						<span>Most Accurate Prices (1 hour refreshes)</span>
-					</div>
-					<div className="flex items-center gap-2">
-						{PlanFeatureIcon}
-						<span>Exclusive Instant Notifications for New Listings</span>
-					</div>
-					<div className="flex items-center gap-2">
-						{PlanFeatureIcon}
-						<span>Auto-Refresh on 3+ Markets</span>
-					</div>
-					<div className="flex items-center gap-2">
-						{PlanFeatureIcon}
-						<span>Early Access to New Features</span>
-					</div>
+					{features.map((feature, index) => (
+						<div key={index} className="flex items-center gap-2 text-xs">
+							{PlanFeatureIcon}
+							<span>{feature}</span>
+						</div>
+					))}
 				</CardContent>
 			</Card>
 

@@ -25,6 +25,12 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 		// set default settings
 		await initializeSettings();
+
+		// make sure we're not in dev mode
+		if (details.previousVersion && !details.previousVersion.startsWith('3.') && !chrome.runtime.getManifest().name.includes('DEV')) {
+			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+			await chrome.tabs.create({ url: onboardingUrl });
+		}
 	}
 });
 

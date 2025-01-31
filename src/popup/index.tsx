@@ -49,16 +49,16 @@ export default function IndexPopup() {
 						<p className="text-md font-bold py-2 uppercase">Sites</p>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="csfloat">
-								<img className="h-9 w-9 rounded-lg" src={ICON_CSFLOAT} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_CSFLOAT} />
 							</TabsTrigger>
 							<TabsTrigger value="csmoney">
-								<img className="h-9 w-9 rounded-lg" src={ICON_CSMONEY} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_CSMONEY} />
 							</TabsTrigger>
 							<TabsTrigger value="skinport">
-								<img className="h-9 w-9 rounded-lg" src={ICON_SKINPORT} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_SKINPORT} />
 							</TabsTrigger>
 							<TabsTrigger value="buffmarket">
-								<img className="h-9 w-9 rounded-lg" src={ICON_BUFFMARKET} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_BUFFMARKET} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
@@ -67,13 +67,13 @@ export default function IndexPopup() {
 								<img className="h-9 w-9 rounded-lg" src={ICON_DMARKET} />
 							</TabsTrigger>
 							<TabsTrigger value="bitskins">
-								<img className="h-9 w-9 rounded-lg" src={ICON_BITSKINS} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_BITSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="lisskins">
-								<img className="h-9 w-9 rounded-lg" src={ICON_LISSKINS} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_LISSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbaron">
-								<img className="h-9 w-9 rounded-lg" src={ICON_SKINBARON} />
+								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_SKINBARON} />
 							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
