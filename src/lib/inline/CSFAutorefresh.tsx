@@ -45,6 +45,8 @@ const CSFAutorefresh: React.FC = () => {
 	// [low, high]
 	const [floatRanges, setFloatRanges] = useState<number[]>([0, 1]);
 
+	const [saveSuccess, setSaveSuccess] = useState(false);
+
 	const [user] = useStorage<SettingsUser>('user');
 
 	const refreshButton = document.querySelector<HTMLButtonElement>('.refresh > button');
@@ -98,6 +100,8 @@ const CSFAutorefresh: React.FC = () => {
 	const handleSave = () => {
 		const notificationSettings: CSFloat.BFNotification = { name, percentage, active: nActive, floatRanges };
 		localStorage.setItem('betterfloat-notification', JSON.stringify(notificationSettings));
+		setSaveSuccess(true);
+		setTimeout(() => setSaveSuccess(false), 2000);
 	};
 
 	const intervalOptions = ['20s', '30s', '60s', '2min', '5min'];
@@ -224,8 +228,13 @@ const CSFAutorefresh: React.FC = () => {
 										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
 									/>
 								</div>
-								<Button variant="default" className="w-full mt-2 bg-blue-600 hover:bg-blue-700" onClick={handleSave} disabled={user?.plan.type !== 'pro'}>
-									Save
+								<Button
+									variant="default"
+									className={cn('w-full mt-2 transition-colors duration-200', saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700')}
+									onClick={handleSave}
+									disabled={user?.plan.type !== 'pro'}
+								>
+									{saveSuccess ? 'Saved!' : 'Save'}
 								</Button>
 								{user?.plan.type !== 'pro' && (
 									<p className="text-[#9EA7B1] text-sm text-center">
