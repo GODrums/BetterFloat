@@ -281,12 +281,12 @@ async function getBuffItem(item: Bitskins.Item) {
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {
-			priceListing = priceListing.mul(currencyRate);
+			priceListing = priceListing.div(currencyRate);
 		}
 		if (priceOrder) {
-			priceOrder = priceOrder.mul(currencyRate);
+			priceOrder = priceOrder.div(currencyRate);
 		}
-		itemPrice = itemPrice.mul(currencyRate);
+		itemPrice = itemPrice.div(currencyRate);
 	}
 
 	const referencePrice =
