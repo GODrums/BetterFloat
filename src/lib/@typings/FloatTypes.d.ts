@@ -23,6 +23,7 @@ export namespace CSFloat {
 		name: string;
 		percentage: number;
 		active: boolean;
+		floatRanges: number[];
 	}
 
 	export type ListingsResponse = {

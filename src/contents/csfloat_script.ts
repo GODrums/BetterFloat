@@ -695,6 +695,15 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 			return;
 		}
 
+		if (
+			notificationSettings.floatRanges &&
+			notificationSettings.floatRanges.length === 2 &&
+			(notificationSettings.floatRanges[0] > 0 || notificationSettings.floatRanges[1] < 1) &&
+			(!item.float_value || item.float_value < notificationSettings.floatRanges[0] || item.float_value > notificationSettings.floatRanges[1])
+		) {
+			return;
+		}
+
 		if (apiItem.type === 'auction') {
 			return;
 		}

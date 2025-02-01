@@ -506,7 +506,7 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 			notificationSettings.floatRanges.length === 2 &&
 			notificationSettings.floatRanges[0] > 0 &&
 			notificationSettings.floatRanges[1] < 1 &&
-			(item.wear < notificationSettings.floatRanges[0] || item.wear > notificationSettings.floatRanges[1])
+			(!item.wear || item.wear < notificationSettings.floatRanges[0] || item.wear > notificationSettings.floatRanges[1])
 		) {
 			return;
 		}

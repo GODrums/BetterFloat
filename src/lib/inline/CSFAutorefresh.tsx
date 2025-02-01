@@ -2,20 +2,16 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { CSFloat } from '~lib/@typings/FloatTypes';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { CSFCheckbox } from '~popup/ui/checkbox';
+import { DualRangeSlider } from '~popup/ui/dualrangeslider';
 import { Separator } from '~popup/ui/separator';
 import { Switch } from '~popup/ui/switch';
-
-type NotificationSettings = {
-	name: string;
-	percentage: number;
-	active: boolean;
-};
 
 function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (
@@ -46,6 +42,8 @@ const CSFAutorefresh: React.FC = () => {
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 	const [name, setName] = useState('');
 	const [percentage, setPercentage] = useState(0);
+	// [low, high]
+	const [floatRanges, setFloatRanges] = useState<number[]>([0, 1]);
 
 	const [user] = useStorage<SettingsUser>('user');
 
@@ -98,7 +96,7 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const handleSave = () => {
-		const notificationSettings: NotificationSettings = { name, percentage, active: nActive };
+		const notificationSettings: CSFloat.BFNotification = { name, percentage, active: nActive, floatRanges };
 		localStorage.setItem('betterfloat-notification', JSON.stringify(notificationSettings));
 	};
 
@@ -123,10 +121,11 @@ const CSFAutorefresh: React.FC = () => {
 	useEffect(() => {
 		const notificationSettings = localStorage.getItem('betterfloat-notification');
 		if (notificationSettings) {
-			const { name: savedName, percentage: savedPercentage, active: savedActive } = JSON.parse(notificationSettings) as NotificationSettings;
+			const { name: savedName, percentage: savedPercentage, active: savedActive, floatRanges: savedFloat } = JSON.parse(notificationSettings) as CSFloat.BFNotification;
 			setName(savedName || '');
 			setPercentage(savedPercentage || 100);
 			setNActive(savedActive || false);
+			setFloatRanges(savedFloat || [0, 1]);
 		}
 	}, []);
 
@@ -195,6 +194,22 @@ const CSFAutorefresh: React.FC = () => {
 										value={name}
 										onChange={(e) => setName(e.target.value)}
 										className="bg-transparent border border-[#c1ceff12] rounded-lg py-1 px-2 text-[#9EA7B1]"
+									/>
+								</div>
+								<div className="dark flex flex-col items-start gap-6">
+									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-float">
+										Float
+									</label>
+									<DualRangeSlider
+										id="notification-float"
+										label={(value) => value}
+										value={floatRanges}
+										onValueChange={(value) => setFloatRanges(value)}
+										min={0}
+										max={1}
+										step={0.01}
+										className="text-[#9EA7B1]"
+										style={{ '--primary': '0 0% 80%' } as React.CSSProperties}
 									/>
 								</div>
 								<div className="flex flex-col items-start">
