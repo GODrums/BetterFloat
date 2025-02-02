@@ -107,8 +107,8 @@ export function generatePriceLine({
 	return buffContainer;
 }
 
-export function genGemContainer({ patternElement, site, large = false }: { patternElement: BlueGem.BlueData | null; site: 'CSF' | 'SP'; large?: boolean }) {
-	if (!patternElement?.playside && !patternElement?.playside) {
+export function genGemContainer({ patternElement, site, large = false }: { patternElement: Partial<BlueGem.PatternData> | null; site: 'CSF' | 'SP'; large?: boolean }) {
+	if (patternElement?.playside_blue === undefined && patternElement?.backside_blue === undefined) {
 		return null;
 	}
 	const gemContainer = document.createElement('div');
@@ -133,7 +133,11 @@ export function genGemContainer({ patternElement, site, large = false }: { patte
 	gemContainer.appendChild(gemImage);
 	const gemValue = document.createElement('span');
 	gemValue.setAttribute('style', 'color: deepskyblue;' + (site === 'CSF' ? (large ? 'font-size: 14px; font-weight: 500;' : 'font-size: 13px;') : 'font-weight: 600;'));
-	gemValue.textContent = `${patternElement.playside?.toFixed(0) ?? 0}% / ${patternElement.backside?.toFixed(0) ?? 0}%`;
+	let gemValueText = `${patternElement.playside_blue?.toFixed(0) ?? 0}%`;
+	if (patternElement?.backside_blue !== undefined) {
+		gemValueText += ` / ${patternElement.backside_blue.toFixed(0) ?? 0}%`;
+	}
+	gemValue.textContent = gemValueText;
 	gemContainer.appendChild(gemValue);
 	return gemContainer;
 }

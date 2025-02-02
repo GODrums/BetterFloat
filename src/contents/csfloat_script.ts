@@ -1126,16 +1126,9 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
-	if (
-		(!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) ||
-		item.item_name.includes('Gloves') ||
-		item.item_name.includes('Five-SeveN | Case Hardened') ||
-		!item.paint_seed ||
-		(!isPopout && item.item_name.includes('MAC-10 | Case Hardened'))
-	)
-		return;
+	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || !item.paint_seed) return;
 
-	let patternElement: BlueGem.BlueData | null = null;
+	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
 	let type = '';
@@ -1165,9 +1158,8 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		return false;
 	}
 
-	// add gem icon and blue gem percent if item is a knife
-	// for ht items: [4, 5, 6].includes(item.rarity)
-	if (item.rarity === 6) {
+	// add gem icon and blue gem percent badge
+	if ([4, 5, 6].includes(item.rarity)) {
 		let tierContainer = container.querySelector('.badge-container');
 		if (!tierContainer) {
 			tierContainer = document.createElement('div');

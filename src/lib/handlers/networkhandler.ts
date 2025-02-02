@@ -14,7 +14,7 @@ export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
 			pattern,
 		},
 	});
-	return response as BlueGem.BlueData;
+	return response as Partial<BlueGem.PatternData>;
 }
 
 type CSBlueGemOptions = {

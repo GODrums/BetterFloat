@@ -555,7 +555,6 @@ export async function patternDetections(container: Element, item: Skinport.Item)
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-	if (item.category !== 'Knife') return;
 
 	const patternElement = await fetchCSBlueGemPatternData(item.subCategory?.replaceAll(' ', '_'), item.pattern);
 	if (!patternElement) {
