@@ -1,5 +1,4 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
-import BluepercentJson from '~/../assets/bluepercent.json';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 
 type GetBlueBody = {
