@@ -202,11 +202,7 @@ export namespace BlueGem {
 		};
 	};
 	export type SearchResponse = {
-		sales: PastSale[];
-		meta: {
-			total: number;
-			size: number;
-		};
+		data: PastSale[];
 	};
 	export type PatternData = {
 		backside_blue: number;
@@ -242,8 +238,8 @@ export namespace BlueGem {
 		sale_id: 'string';
 		screenshots: {
 			inspect?: string; // only for Buff
-			inspect_backside?: string; // only for CSFloat
-			inspect_playside?: string; // only for CSFloat
+			inspect_backside?: string | null; // only for CSFloat
+			inspect_playside?: string | null; // only for CSFloat
 		};
 		steam_inspect_link: string;
 		type: 'normal' | 'stattrak';

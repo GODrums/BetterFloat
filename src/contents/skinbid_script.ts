@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
-import { fetchCSBlueGemPastSales } from '~lib/handlers/networkhandler';
+import { fetchBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
@@ -243,7 +243,7 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 		currency = 'USD';
 	}
 	const currencySymbol = getSymbolFromCurrency(currency);
-	const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.paintSeed, currency });
+	const pastSales = await fetchBlueGemPastSales({ type: item.subCategory, paint_seed: item.paintSeed, currency });
 
 	const newTab = document.createElement('div');
 	newTab.className = 'tab betterfloat-tab-bluegem';

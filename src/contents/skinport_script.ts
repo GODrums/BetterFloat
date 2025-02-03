@@ -22,7 +22,7 @@ import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColor
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
+import { fetchBlueGemPastSales, fetchBlueGemPatternData } from '../lib/handlers/networkhandler';
 
 import { sendToBackground } from '@plasmohq/messaging';
 import { html } from 'common-tags';
@@ -556,7 +556,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 
-	const patternElement = await fetchCSBlueGemPatternData(item.subCategory?.replaceAll(' ', '_'), item.pattern);
+	const patternElement = await fetchBlueGemPatternData(item.subCategory?.replaceAll(' ', '_'), item.pattern);
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
@@ -577,9 +577,8 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const patternElement = await fetchCSBlueGemPatternData(item.subCategory.replaceAll(' ', '_'), item.pattern);
-	// const pastSales = await fetchCSBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
-	const pastSales = [] as BlueGem.PastSale[];
+	const patternElement = await fetchBlueGemPatternData(item.subCategory.replaceAll(' ', '_'), item.pattern);
+	const pastSales = await fetchBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader || !patternElement) return;

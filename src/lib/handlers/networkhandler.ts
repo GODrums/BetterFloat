@@ -4,9 +4,7 @@ import { sendToBackground } from '@plasmohq/messaging';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import { cacheRealCurrencyRates } from './mappinghandler';
 
-const CSBLUEGEM_API_URL = 'https://api.csbluegem.com/';
-
-export async function fetchCSBlueGemPatternData(type: string, pattern: number) {
+export async function fetchBlueGemPatternData(type: string, pattern: number) {
 	const response = await sendToBackground({
 		name: 'getBluePercent',
 		body: {
@@ -23,14 +21,16 @@ type CSBlueGemOptions = {
 	currency?: string;
 };
 
-export async function fetchCSBlueGemPastSales({ type, paint_seed, currency = 'USD' }: CSBlueGemOptions) {
-	const response = await fetch(`${CSBLUEGEM_API_URL}/v2/search?skin=${type}&pattern=${paint_seed}&currency=${currency}`)
-		.then((res) => res.json() as Promise<BlueGem.SearchResponse>)
-		.catch(() => null);
-	if (response?.sales) {
-		return response.sales;
-	}
-	return null;
+export async function fetchBlueGemPastSales({ type, paint_seed: pattern, currency = 'USD' }: CSBlueGemOptions) {
+	const response = await sendToBackground({
+		name: 'getBlueSales',
+		body: {
+			type,
+			pattern,
+			currency,
+		},
+	});
+	return response as BlueGem.PastSale[];
 }
 
 let isCurrencyFetched = false;

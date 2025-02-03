@@ -36,7 +36,7 @@ import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
-import { fetchCSBlueGemPastSales, fetchCSBlueGemPatternData } from '../lib/handlers/networkhandler';
+import { fetchBlueGemPastSales, fetchBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
@@ -1139,7 +1139,6 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	} else {
 		type = item.item_name.split(' | ')[0];
 	}
-	type = type.replaceAll(' ', '_');
 
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {
@@ -1150,7 +1149,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		}
 	}
 	if (!patternElement) {
-		patternElement = await fetchCSBlueGemPatternData(type, item.paint_seed!);
+		patternElement = await fetchBlueGemPatternData(type.replaceAll(' ', '_'), item.paint_seed!);
 		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
 	}
 	if (!patternElement) {
@@ -1180,10 +1179,8 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 	}
 
 	// past sales table
-	// const pastSales = await fetchCSBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });
-	// const gridHistory = document.querySelector('.grid-history');
-	const pastSales = null as BlueGem.PastSale[] | null;
-	const gridHistory = null as Element | null;
+	const pastSales = await fetchBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });
+	const gridHistory = document.querySelector('.grid-history');
 	if (!gridHistory || !pastSales) return;
 	const salesHeader = document.createElement('mat-button-toggle');
 	salesHeader.setAttribute('role', 'presentation');
