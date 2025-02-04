@@ -164,6 +164,7 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
 		cacheSkinbidCurrencyRates(rates);
 	} else if (eventData.url.includes('api/user/whoami')) {
 		// Skinbid.UserData
+		cacheSkinbidUserCurrency((eventData.data as Skinbid.UserData).preferences?.currency);
 	} else if (eventData.url.includes('api/user/preferences')) {
 		// Skinbid.UserPreferences
 		cacheSkinbidUserCurrency((eventData.data as Skinbid.UserPreferences).currency);

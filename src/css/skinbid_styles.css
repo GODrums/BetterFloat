@@ -87,3 +87,13 @@
 	margin-left: 3px;
 	white-space: nowrap;
 }
+
+.betterfloat-tab-bluegem {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	padding: 8px;
+	font-size: 14px;
+	border-bottom: 2px solid transparent;
+	color: deepskyblue;
+}
