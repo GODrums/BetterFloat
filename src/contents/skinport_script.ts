@@ -497,6 +497,10 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 			return;
 		}
 
+		if (notificationSettings.excludeStatTrak && item.full_name.includes('StatTrak')) {
+			return;
+		}
+
 		if (percentage.gte(notificationSettings.priceBelow) || percentage.lt(1)) {
 			return;
 		}
@@ -556,7 +560,8 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock');
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 
-	const patternElement = await fetchBlueGemPatternData(item.subCategory?.replaceAll(' ', '_'), item.pattern);
+	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated'.replaceAll(' ', '_') : item.subCategory.replaceAll(' ', '_');
+	const patternElement = await fetchBlueGemPatternData(blueType, item.pattern);
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
@@ -577,7 +582,8 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const patternElement = await fetchBlueGemPatternData(item.subCategory.replaceAll(' ', '_'), item.pattern);
+	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
+	const patternElement = await fetchBlueGemPatternData(blueType.replaceAll(' ', '_'), item.pattern);
 	const pastSales = await fetchBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
@@ -607,7 +613,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 			<div>Float Value</div>
 			<div>Price</div>
 			<div>
-				<a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${item.pattern}" target="_blank" style="margin-right: 15px;"
+				<a href="https://csbluegem.com/search?skin=${blueType}&pattern=${item.pattern}" target="_blank" style="margin-right: 15px;"
 					>${ICON_ARROWUP_SMALL}</a
 				>
 			</div>

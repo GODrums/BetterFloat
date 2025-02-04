@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { Slider } from '@radix-ui/react-slider';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
@@ -27,6 +26,7 @@ const SpNotifications: React.FC = () => {
 	const [floatRanges, setFloatRanges] = useState<number[]>(spNotification.floatRanges ?? [0, 1]);
 	const [priceBelow, setPriceBelow] = useState<number>(spNotification.priceBelow ?? 100);
 	const [isActive, setIsActive] = useState(spNotification.isActive);
+	const [excludeStatTrak, setExcludeStatTrak] = useState(spNotification.excludeStatTrak ?? false);
 
 	const [user] = useStorage<SettingsUser>('user');
 
@@ -39,6 +39,7 @@ const SpNotifications: React.FC = () => {
 		spNotification.priceBelow = priceBelow;
 		spNotification.floatRanges = floatRanges;
 		spNotification.isActive = isActive;
+		spNotification.excludeStatTrak = excludeStatTrak;
 		localStorage.setItem('spNotification', JSON.stringify(spNotification));
 		setOpen(false);
 	};
@@ -57,7 +58,7 @@ const SpNotifications: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[350px] h-[390px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
+						className="fixed w-[350px] h-[420px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -88,8 +89,22 @@ const SpNotifications: React.FC = () => {
 								onChange={(e) => setName(e.target.value)}
 								disabled={user?.plan.type !== 'pro'}
 							/>
+							<div className="flex items-center gap-2 mt-2">
+								<input
+									type="checkbox"
+									id="notifications-stattrak"
+									className="w-4 h-4 rounded bg-[#2a2d2f]"
+									style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }}
+									checked={excludeStatTrak}
+									onChange={(e) => setExcludeStatTrak(e.target.checked)}
+									disabled={user?.plan.type !== 'pro'}
+								/>
+								<label htmlFor="notifications-stattrak" className="text-sm">
+									Exclude StatTrak™ items
+								</label>
+							</div>
 						</div>
-						<div className="dark flex flex-col items-start gap-3 w-3/5">
+						<div className="dark flex flex-col items-start gap-4 w-3/5">
 							<label className="font-semibold mt-1 mb-2 mx-0" htmlFor="notifications-float">
 								FLOAT
 							</label>
