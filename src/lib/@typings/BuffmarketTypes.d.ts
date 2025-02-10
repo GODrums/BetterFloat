@@ -324,8 +324,11 @@ export namespace BuffMarket {
 
 	export interface InventoryItem extends Item {
 		action_link: string;
+		allow_auction: boolean;
 		allow_bundle_inventory: boolean;
+		allow_rent: boolean;
 		amount: number;
+		appid: number;
 		asset_info: {
 			action_link: string;
 			appid: number;
@@ -360,6 +363,8 @@ export namespace BuffMarket {
 		assetid: string;
 		background_image_url: string;
 		buff163_price: string;
+		buy_max_price: string;
+		buy_max_price_auto_accept: string | null;
 		can_use_inspect_trn_url: boolean;
 		classid: string;
 		contextid: number;
@@ -372,6 +377,7 @@ export namespace BuffMarket {
 		icon_url: string;
 		img_src: string;
 		instanceid: string;
+		is_renting: boolean;
 		item_id: number | null;
 		market_hash_name: string;
 		market_min_price: string;
@@ -382,7 +388,8 @@ export namespace BuffMarket {
 		properties: any;
 		punish_end_time: any;
 		sell_min_price: string;
-		sell_order_id: string;
+		sell_order_coupon_infos: any;
+		sell_order_id: string | null;
 		sell_order_income: string;
 		sell_order_mode: number;
 		sell_order_price: string;

@@ -203,7 +203,9 @@ async function getBuffItem(item: ExtendedBuffItem) {
 }
 
 function getItemPrice(item: BuffMarket.Item): number {
-	if ((<BuffMarket.MarketListing>item).sell_min_price) {
+	if ((<BuffMarket.InventoryItem>item).buff163_price) {
+		return Number((<BuffMarket.InventoryItem>item).buff163_price);
+	} else if ((<BuffMarket.MarketListing>item).sell_min_price) {
 		return Number((<BuffMarket.MarketListing>item).sell_min_price);
 	} else if ((<BuffMarket.SellOrderListing>item).price) {
 		const currencyRate = getBuffCurrencyRate();
