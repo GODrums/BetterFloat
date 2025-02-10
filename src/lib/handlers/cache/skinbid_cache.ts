@@ -56,33 +56,32 @@ export function getSpecificSkbItem(auction_hash: string) {
 }
 
 export function getSkbCurrency() {
+	if (!skinbidUserCurrency) {
+		loadSkbUserCurrency();
+	}
 	return skinbidUserCurrency;
 }
 
 export async function getSkbUserCurrencyRate() {
-	if (skinbidUserCurrency === '') {
-		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
-	}
+	const currency = getSkbCurrency();
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}
-	if (skinbidUserCurrency === 'USD') return 1;
-	else if (skinbidUserCurrency === 'EUR') return 1 / skinbidRates[0].rate;
+	if (currency === 'USD') return 1;
+	else if (currency === 'EUR') return 1 / skinbidRates[0].rate;
 	// origin is USD, first convert to EUR, then to user currency: USD -> EUR -> user currency
 	// example: 1 USD -> 1/USDrate EUR -> 1/USDrate * EURUserCurrency
-	else return (skinbidRates.find((rate) => rate.currencyCode === skinbidUserCurrency)?.rate ?? 1) / skinbidRates[0].rate;
+	else return (skinbidRates.find((rate) => rate.currencyCode === currency)?.rate ?? 1) / skinbidRates[0].rate;
 }
 
 export async function getSkbUserConversion() {
-	if (skinbidUserCurrency === '') {
-		skinbidUserCurrency = document.querySelector('.currency-selector .hide-mobile')?.textContent?.trim() ?? 'USD';
-	}
+	const currency = getSkbCurrency();
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}
 
-	if (skinbidUserCurrency === 'EUR') return 1;
-	else return skinbidRates.find((rate) => rate.currencyCode === skinbidUserCurrency)?.rate ?? 1;
+	if (currency === 'EUR') return 1;
+	else return skinbidRates.find((rate) => rate.currencyCode === currency)?.rate ?? 1;
 }
 
 async function fetchSkbExchangeRates() {
@@ -92,4 +91,14 @@ async function fetchSkbExchangeRates() {
 			console.debug('[BetterFloat] Received exchange rates from Rums.dev: ', data);
 			cacheSkinbidCurrencyRates(data);
 		});
+}
+
+function loadSkbUserCurrency() {
+	const localSettings = localStorage.getItem('settings');
+	if (localSettings) {
+		const settings = JSON.parse(localSettings);
+		cacheSkinbidUserCurrency(settings.currency);
+	} else {
+		console.warn('[BetterFloat] No currency found in user preferences.');
+	}
 }

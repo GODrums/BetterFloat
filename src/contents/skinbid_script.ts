@@ -21,10 +21,9 @@ import { getAllSettings } from '~lib/util/storage';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
-import type { SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import type { IStorage } from '~lib/util/storage';
 
@@ -563,10 +562,10 @@ export async function addBuffPrice(
 }
 
 function getUserCurrency() {
-	const currencyContainer = document.querySelector('app-currency-selector-dropdown')?.querySelector('.text-purple200');
+	const currencyText = getSkbCurrency();
 	return {
-		text: currencyContainer?.nextElementSibling?.textContent?.trim(),
-		symbol: currencyContainer?.textContent?.trim(),
+		text: currencyText,
+		symbol: getSymbolFromCurrency(currencyText),
 	};
 }
 
