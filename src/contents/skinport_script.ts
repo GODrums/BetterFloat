@@ -481,7 +481,7 @@ async function adjustItem(container: Element) {
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].includes(cachedItem.name) && cachedItem.category !== 'Gloves') {
+		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].some((name) => cachedItem.name.includes(name)) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
 	}
@@ -557,11 +557,11 @@ export async function patternDetections(container: Element, item: Skinport.Item)
 }
 
 export async function addBlueBadge(container: Element, item: Skinport.Item) {
-	const itemHeader = container.querySelector('.TradeLock-lock');
+	const itemHeader = container.querySelector('.TradeLock-lock')?.firstChild;
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 
-	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated'.replaceAll(' ', '_') : item.subCategory.replaceAll(' ', '_');
-	const patternElement = await fetchBlueGemPatternData(blueType, item.pattern);
+	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
+	const patternElement = await fetchBlueGemPatternData(blueType.replaceAll(' ', '_'), item.pattern);
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
@@ -584,7 +584,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
 	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
 	const patternElement = await fetchBlueGemPatternData(blueType.replaceAll(' ', '_'), item.pattern);
-	const pastSales = await fetchBlueGemPastSales({ type: item.subCategory, paint_seed: item.pattern, currency: usedCurrency });
+	const pastSales = await fetchBlueGemPastSales({ type: blueType, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
 	if (!itemHeader || !patternElement) return;
