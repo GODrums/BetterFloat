@@ -80,21 +80,6 @@ export async function getItemPrice(buff_name: string, source: MarketSource): Pro
 	};
 }
 
-export async function getStallData(stall_id: string) {
-	const request = await fetch('https://api.rums.dev/v2/csfloatstalls/' + stall_id);
-	if (request.status !== 200) {
-		console.warn('[BetterFloat] Invalid stall data from Rums.dev: ', request);
-		return null;
-	}
-	const response = (await request.json()) as Extension.CustomStallData;
-	console.debug('[BetterFloat] Received stall data from Rums.dev: ', response);
-	if (response && response.status === 'OK' && response.data) {
-		return response.data;
-	} else {
-		return null;
-	}
-}
-
 export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, paint_seed: number) {
 	if (!crimsonWebMapping) {
 		await loadCrimsonWebMapping();

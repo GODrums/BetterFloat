@@ -19,6 +19,14 @@ const BellRing = (props: React.SVGProps<SVGSVGElement>) => (
 	</svg>
 );
 
+const CircleHelp = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+		<circle cx="12" cy="12" r="10" />
+		<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+		<path d="M12 17h.01" />
+	</svg>
+);
+
 const SpNotifications: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const spNotification = JSON.parse(localStorage.getItem('spNotification') ?? '{}') as Skinport.BFNotification;
@@ -76,6 +84,11 @@ const SpNotifications: React.FC = () => {
 						</Badge>
 						<Button variant="invisible" size="icon" className="absolute top-4 right-7" onClick={() => setOpen(false)}>
 							<MaterialSymbolsCloseSmallOutlineRounded className="h-8 w-8" />
+						</Button>
+						<Button variant="invisible" size="icon" className="absolute top-4 left-7" asChild>
+							<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
+								<CircleHelp className="h-8 w-8" />
+							</a>
 						</Button>
 						<div className="flex flex-col items-start">
 							<label className="font-semibold my-1 mx-0" htmlFor="notifications-name">

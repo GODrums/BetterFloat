@@ -99,10 +99,6 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 
-	if (extensionSettings['csf-topbutton']) {
-		CSFloatHelpers.createTopButton();
-	}
-
 	//check if url is in supported subpages
 	if (location.pathname === '/') {
 		await firstLaunch();
@@ -123,6 +119,10 @@ async function init() {
 	}
 
 	dynamicUIHandler();
+
+	if (extensionSettings['csf-topbutton']) {
+		CSFloatHelpers.createTopButton();
+	}
 }
 
 // required as mutation does not detect initial DOM
