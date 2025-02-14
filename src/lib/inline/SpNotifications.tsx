@@ -92,7 +92,7 @@ const SpNotifications: React.FC = () => {
 						</Button>
 						<div className="flex flex-col items-start">
 							<label className="font-semibold my-1 mx-0" htmlFor="notifications-name">
-								NAME
+								ITEM NAME
 							</label>
 							<input
 								type="text"

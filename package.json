@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.0.12",
+	"version": "3.0.13",
 	"description": "Enhance your experience on CSFloat.com, Skinport.com & Skinbid.com!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -47,7 +47,7 @@
 		"framer-motion": "^11.18.2",
 		"jose": "^5.9.6",
 		"lucide-react": "^0.469.0",
-		"plasmo": "0.90.2",
+		"plasmo": "0.90.3",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",
@@ -56,7 +56,7 @@
 		"socket.io-msgpack-parser": "^3.0.2",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
-		"zod": "^3.24.1"
+		"zod": "^3.24.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
@@ -120,6 +120,9 @@
 			"allowedVersions": {
 				"svgo": "2.8.0"
 			}
-		}
+		},
+		"onlyBuiltDependencies": [
+			"@swc/core"
+		]
 	}
 }
