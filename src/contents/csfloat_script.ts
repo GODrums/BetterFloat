@@ -1306,7 +1306,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 	}
 
 	const listingAge = html`
-		<div class="betterfloat-listing-age" style="display: flex; align-items: flex-end;">
+		<div class="betterfloat-listing-age hint--bottom hint--rounded hint--no-arrow" style="display: flex; align-items: flex-end;" aria-label="${new Date(listing.created_at).toLocaleString()}">
 			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
@@ -1334,7 +1334,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 		if (statusButton?.hasAttribute('disabled')) {
 			const buttonLabel = statusButton.querySelector('span.mdc-button__label');
 			if (buttonLabel) {
-				buttonLabel.textContent = `Sold (${sellingAge})`;
+				buttonLabel.textContent = `Sold ${sellingAge} (${new Date(listing.sold_at).toLocaleString()})`;
 			}
 		}
 	}
