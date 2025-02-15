@@ -156,20 +156,15 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
 			cacheSkbItems((eventData.data as Skinbid.MarketData).items);
 		}
 	} else if (eventData.url.includes('api/auction/')) {
-		// Skinbid.Listing
 		cacheSkbItems([eventData.data as Skinbid.Listing]);
 	} else if (eventData.url.includes('api/public/exchangeRates')) {
-		// Skinbid.ExchangeRates
 		const rates = eventData.data as Skinbid.ExchangeRates;
 		cacheSkinbidCurrencyRates(rates);
 	} else if (eventData.url.includes('api/user/whoami')) {
-		// Skinbid.UserData
 		cacheSkinbidUserCurrency((eventData.data as Skinbid.UserData).preferences?.currency);
 	} else if (eventData.url.includes('api/user/preferences')) {
-		// Skinbid.UserPreferences
 		cacheSkinbidUserCurrency((eventData.data as Skinbid.UserPreferences).currency);
-	} else if (eventData.url.includes('api/user/me/inventory') || eventData.url.includes('api/inventory?')) {
-		// Skinbid.UserPreferences
+	} else if (eventData.url.includes('api/inventory/personal') || eventData.url.includes('api/inventory/bots')) {
 		cacheSkbInventory((eventData.data as Skinbid.Inventory).items);
 	}
 }

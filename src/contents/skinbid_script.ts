@@ -131,7 +131,7 @@ function applyMutation() {
 							continue;
 						}
 					}
-					if (addedNode.tagName === 'APP-INVENTORY-LIST-ITEM') {
+					if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
 						await adjustInventoryItem(addedNode);
 					}
 					if (addedNode.className) {
@@ -197,7 +197,7 @@ async function adjustInventoryItem(container: Element) {
 	const source = extensionSettings['skb-pricingsource'] as MarketSource;
 	const steamImage = container.querySelector('.item-image > img')?.getAttribute('src');
 	const listedItem = getSpecificSkbInventoryItem(steamImage ?? '');
-	console.log('[BetterFloat] Inventory item: ', listedItem);
+	// console.log('[BetterFloat] Inventory item: ', listedItem);
 	if (!listedItem) return;
 
 	const item = listedItem.item;
