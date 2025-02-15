@@ -97,14 +97,7 @@ export function deleteBuffMarketItems() {
 }
 
 export function getBuffMarketItem(id: number) {
-	if (buffItems[id]) {
-		if (buffItems[id].length > 1) {
-			return buffItems[id].shift();
-		} else {
-			return buffItems[id][0];
-		}
-	}
-	return null;
+	return buffItems[id]?.shift();
 }
 
 export function getFirstBuffRecommendation() {
