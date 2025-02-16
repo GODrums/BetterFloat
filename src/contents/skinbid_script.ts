@@ -21,7 +21,7 @@ import { getAllSettings } from '~lib/util/storage';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { ItemStyle } from '~lib/@typings/FloatTypes';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
@@ -74,7 +74,7 @@ async function init() {
 async function firstLaunch() {
 	console.log('[BetterFloat] First launch, url: ', location.pathname, location.search);
 	if (location.pathname === '/') {
-		const items = document.getElementsByTagName('NGU-TILE');
+		const items = document.getElementsByTagName('APP-ITEM-CARD');
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], SKINBID_SELECTORS.card);
 		}
@@ -194,25 +194,31 @@ async function adjustInventoryItem(container: Element) {
 	if (!document.querySelector('.betterfloat-buffprice')) {
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 	}
-	const source = extensionSettings['skb-pricingsource'] as MarketSource;
+	let source = extensionSettings['skb-pricingsource'] as MarketSource;
 	const steamImage = container.querySelector('.item-image > img')?.getAttribute('src');
 	const listedItem = getSpecificSkbInventoryItem(steamImage ?? '');
 	// console.log('[BetterFloat] Inventory item: ', listedItem);
 	if (!listedItem) return;
 
 	const item = listedItem.item;
-	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item);
-	const market_id = getMarketID(buff_name, source);
-	const buffHref =
-		source === MarketSource.Buff && Number(market_id) > 0
-			? getBuffLink(Number(market_id), item.dopplerPhase)
-			: `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
+	let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(item, source);
 
+	if ((source === MarketSource.Buff && isBuffBannedItem(buff_name)) || (!priceListing && !priceOrder)) {
+		source = extensionSettings['skb-altmarket'] as MarketSource;
+		if (source !== MarketSource.None) {
+			const pricingData = await calculateBuffPrice(item, source);
+			priceListing = pricingData.priceListing;
+			priceOrder = pricingData.priceOrder;
+		}
+	}
+
+	const market_id = getMarketID(buff_name, source);
+	const marketUrl = getMarketURL({ source, buff_name, market_id, phase: item.dopplerPhase as DopplerPhase });
 	if (priceListing || priceOrder) {
 		const currencyText = getUserCurrency().text;
 		const cardFooter = container.querySelector<HTMLElement>('.card-footer > div');
 		if (cardFooter && !container.querySelector('.betterfloat-buffprice')) {
-			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', buffHref, source);
+			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', marketUrl, source);
 		}
 	}
 }
@@ -435,13 +441,16 @@ export async function addBuffPrice(
 } | void> {
 	const listingItem = cachedItem?.items?.at(0)?.item;
 	if (!listingItem) return;
-	const { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem);
-	const market_id = getMarketID(buff_name, MarketSource.Buff);
-	const source = extensionSettings['skb-pricingsource'] as MarketSource;
+	let source = extensionSettings['skb-pricingsource'] as MarketSource;
+	let { buff_name, priceListing, priceOrder } = await calculateBuffPrice(listingItem, source);
 
 	if ((source === MarketSource.Buff && isBuffBannedItem(buff_name)) || (!priceListing && !priceOrder)) {
-		console.debug('[BetterFloat] No buff price found for ', buff_name);
-		return;
+		source = extensionSettings['skb-altmarket'] as MarketSource;
+		if (source !== MarketSource.None) {
+			const pricingData = await calculateBuffPrice(listingItem, source);
+			priceListing = pricingData.priceListing;
+			priceOrder = pricingData.priceOrder;
+		}
 	}
 
 	// restyle layout to make it more compact
@@ -451,6 +460,7 @@ export async function addBuffPrice(
 
 	const priceDiv = container.querySelector(selector.priceDiv);
 	const currency = getUserCurrency();
+	const market_id = getMarketID(buff_name, source);
 	const href = getMarketURL({ source, buff_name, market_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currency.text ?? 'USD', href, source, selector.self === 'page');
@@ -628,7 +638,7 @@ function generateBuffContainer(
 				  `
 					: html`<img src="${icon}" style="${iconStyle}" />`
 			}
-			<div class="suggested-price betterfloat-buffprice" style="margin: 2px 0 0 0; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
+			<div class="suggested-price betterfloat-buffprice" style="height: 100%; margin: 0; line-height: 1; align-items: center; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
 				${
 					[MarketSource.Buff, MarketSource.Steam].includes(source)
 						? html`
@@ -647,10 +657,10 @@ function generateBuffContainer(
 	}
 }
 
-async function calculateBuffPrice(item: Skinbid.Item) {
+async function calculateBuffPrice(item: Skinbid.Item, source: MarketSource) {
 	const buff_name = handleSpecialStickerNames(item.fullName);
 	const style: ItemStyle = item.dopplerPhase ?? (item.paintIndex === 0 ? 'Vanilla' : '');
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style, extensionSettings['skb-pricingsource'] as MarketSource);
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, style, source);
 
 	// convert prices to user's currency
 	const currencyRate = await getSkbUserCurrencyRate();

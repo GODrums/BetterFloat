@@ -374,7 +374,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 		priceOrder = new Decimal(0);
 	}
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['csm-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['baron-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['baron-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
@@ -395,7 +395,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 	}
 
 	const priceFromReference =
-		Number(extensionSettings['skinbaron-pricereference']) === 0 &&
+		Number(extensionSettings['baron-pricereference']) === 0 &&
 		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;

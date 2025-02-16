@@ -88,7 +88,7 @@ async function fetchSkbExchangeRates() {
 	await fetch('https://api.skinbid.com/api/public/exchangeRates')
 		.then((response) => response.json() as Promise<Skinbid.ExchangeRates>)
 		.then((data) => {
-			console.debug('[BetterFloat] Received exchange rates from Rums.dev: ', data);
+			console.debug('[BetterFloat] Received exchange rates: ', data);
 			cacheSkinbidCurrencyRates(data);
 		});
 }

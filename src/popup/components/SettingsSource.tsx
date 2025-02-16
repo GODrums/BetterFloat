@@ -77,7 +77,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 				{[MarketSource.Buff, MarketSource.Steam].includes(source) && (
 					<div className="pt-1 px-4">
 						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
-						{prefix !== 'skb' && <SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />}
+						<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />
 					</div>
 				)}
 				{source === MarketSource.YouPin && (
