@@ -56,13 +56,15 @@ async function init() {
 	extensionSettings = await getAllSettings();
 	console.debug('[BetterFloat] Settings: ', extensionSettings);
 
-	if (extensionSettings['sp-enable'] && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
-		console.warn('[BetterFloat] Skinport has to be set to the English language for this extension to work. Aborting ...');
-		createLanguagePopup();
-		return;
-	}
-
 	await initPriceMapping(extensionSettings, 'sp');
+
+	await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
+		if (extensionSettings['sp-enable'] && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
+			console.warn('[BetterFloat] Skinport has to be set to the English language for this extension to work. Aborting ...');
+			createLanguagePopup();
+			return;
+		}
+	});
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
 
