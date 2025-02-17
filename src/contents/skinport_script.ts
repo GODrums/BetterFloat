@@ -22,16 +22,14 @@ import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColor
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-import { fetchBlueGemPastSales, fetchBlueGemPatternData } from '../lib/handlers/networkhandler';
 
-import { sendToBackground } from '@plasmohq/messaging';
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
+import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -525,14 +523,11 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 		}
 
 		// show notification
-		await sendToBackground({
-			name: 'createNotification',
-			body: {
-				id: item.url,
-				site: 'skinport',
-				title: 'Item Found | BetterFloat Pro',
-				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`,
-			},
+		await createNotificationMessage({
+			id: item.url,
+			site: 'skinport',
+			title: 'Item Found | BetterFloat Pro',
+			message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`,
 		});
 	}
 }
@@ -563,7 +558,10 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 
 	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
-	const patternElement = await fetchBlueGemPatternData(blueType.replaceAll(' ', '_'), item.pattern);
+	const patternElement = await fetchBlueGemPatternData({
+		type: blueType.replaceAll(' ', '_'),
+		pattern: item.pattern,
+	});
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
 		return;
@@ -585,7 +583,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
 	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
-	const patternElement = await fetchBlueGemPatternData(blueType.replaceAll(' ', '_'), item.pattern);
+	const patternElement = await fetchBlueGemPatternData({ type: blueType.replaceAll(' ', '_'), pattern: item.pattern });
 	const pastSales = await fetchBlueGemPastSales({ type: blueType, paint_seed: item.pattern, currency: usedCurrency });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');

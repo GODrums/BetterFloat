@@ -36,7 +36,6 @@ import { getAllSettings, getSetting } from '~lib/util/storage';
 import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
-import { fetchBlueGemPastSales, fetchBlueGemPatternData } from '../lib/handlers/networkhandler';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
@@ -53,7 +52,6 @@ import {
 	waitForElement,
 } from '../lib/util/helperfunctions';
 
-import { sendToBackground } from '@plasmohq/messaging';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -68,6 +66,7 @@ import {
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
+import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
 import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
@@ -441,7 +440,7 @@ async function adjustSalesTableRow(container: Element) {
 	if (seedContainer) {
 		if ((item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) && !item.item_name.includes('Gloves') && item.paint_seed && extensionSettings['csf-csbluegem']) {
 			const type = getBlueGemName(item.item_name);
-			const patternElement = await fetchBlueGemPatternData(type.replaceAll(' ', '_'), item.paint_seed!);
+			const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
 
 			const gemText = `${patternElement.playside_blue?.toFixed(0) ?? 0}% ` + (patternElement.backside_blue ? `/ ${patternElement.backside_blue.toFixed(0)}%` : '');
 			const gemContainer = html`
@@ -706,7 +705,7 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 
 	if (notificationSettings.active) {
 		const item = apiItem.item;
-		if (notificationSettings.name && !item.market_hash_name.includes(notificationSettings.name)) {
+		if (notificationSettings.name && notificationSettings.name.trim().length > 0 && !item.market_hash_name.includes(notificationSettings.name)) {
 			return;
 		}
 
@@ -738,14 +737,11 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 		}
 
 		// show notification
-		await sendToBackground({
-			name: 'createNotification',
-			body: {
-				id: apiItem.id,
-				site: 'csfloat',
-				title: 'Item Found | BetterFloat Pro',
-				message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`,
-			},
+		await createNotificationMessage({
+			id: apiItem.id,
+			site: 'csfloat',
+			title: 'Item Found | BetterFloat Pro',
+			message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`,
 		});
 	}
 }
@@ -1171,7 +1167,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		}
 	}
 	if (!patternElement) {
-		patternElement = await fetchBlueGemPatternData(type.replaceAll(' ', '_'), item.paint_seed!);
+		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
 		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
 	}
 	if (!patternElement) {

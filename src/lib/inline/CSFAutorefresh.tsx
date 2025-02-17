@@ -190,7 +190,7 @@ const CSFAutorefresh: React.FC = () => {
 								</div>
 								<div className="flex flex-col items-start">
 									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-name">
-										Name
+										Item Name
 									</label>
 									<input
 										type="text"

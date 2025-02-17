@@ -20,6 +20,7 @@ import Header from './layout/header';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { UserProfile } from './tabs/user/UserProfile';
+import { Badge } from './ui/badge';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export default function IndexPopup() {
@@ -46,40 +47,48 @@ export default function IndexPopup() {
 				</div>
 				<Tabs defaultValue="csfloat" className="flex gap-2 my-2 h-full" orientation="vertical">
 					<TabsList className="w-[130px] flex justify-between bg-background/80 text-card-foreground z-50">
-						<p className="text-md font-bold py-2 uppercase">Sites</p>
+						<p className="text-sm font-bold py-2 uppercase">Sites</p>
+						<Badge variant="secondary" className="mb-4">
+							Free
+						</Badge>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="csfloat">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_CSFLOAT} />
-							</TabsTrigger>
-							<TabsTrigger value="csmoney">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_CSMONEY} />
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSFLOAT} />
 							</TabsTrigger>
 							<TabsTrigger value="skinport">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_SKINPORT} />
-							</TabsTrigger>
-							<TabsTrigger value="buffmarket">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_BUFFMARKET} />
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPORT} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
+						</div>
+						<Badge variant="purple" className="my-4">
+							Pro
+						</Badge>
+						<div className="grid grid-cols-2 gap-2">
+							<TabsTrigger value="csmoney">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
+							</TabsTrigger>
+							<TabsTrigger value="buffmarket">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BUFFMARKET} />
+							</TabsTrigger>
 							<TabsTrigger value="dmarket">
-								<img className="h-9 w-9 rounded-lg" src={ICON_DMARKET} />
+								<img className="h-10 w-10 rounded-lg" src={ICON_DMARKET} />
 							</TabsTrigger>
 							<TabsTrigger value="bitskins">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_BITSKINS} />
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BITSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="lisskins">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_LISSKINS} />
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_LISSKINS} />
 							</TabsTrigger>
 							<TabsTrigger value="skinbaron">
-								<img className="h-9 w-9 rounded-lg object-contain" src={ICON_SKINBARON} />
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
 							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
 						<div className="w-full flex flex-col items-stretch justify-center">
 							<TabsTrigger value="about">
-								<Info className="h-9 w-9 text-gray-400/60" />
+								<Info className="h-10 w-10 text-gray-400/60" />
 							</TabsTrigger>
 							<TabsTrigger value="user">
 								{user.steam.logged_in && user.steam.avatar_url ? (

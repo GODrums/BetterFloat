@@ -1,14 +1,14 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 import { ICON_CSFLOAT, ICON_SKINPORT } from '~lib/util/globals';
 
-type CreateNotificationBody = {
+export type CreateNotificationBody = {
 	id: string;
 	title: string;
 	message: string;
 	site: string;
 };
 
-type CreateNotificationResponse = {
+export type CreateNotificationResponse = {
 	success: boolean;
 };
 

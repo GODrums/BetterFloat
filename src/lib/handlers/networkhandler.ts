@@ -1,37 +1,9 @@
 import { ExtensionStorage } from '~lib/util/storage';
 
 import { sendToBackground } from '@plasmohq/messaging';
+import type { GetBlueSalesBody } from '~background/messages/getBlueSales';
 import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
 import { cacheRealCurrencyRates } from './mappinghandler';
-
-export async function fetchBlueGemPatternData(type: string, pattern: number) {
-	const response = await sendToBackground({
-		name: 'getBluePercent',
-		body: {
-			type,
-			pattern,
-		},
-	});
-	return response as Partial<BlueGem.PatternData>;
-}
-
-type CSBlueGemOptions = {
-	type: string;
-	paint_seed: number;
-	currency?: string;
-};
-
-export async function fetchBlueGemPastSales({ type, paint_seed: pattern, currency = 'USD' }: CSBlueGemOptions) {
-	const response = await sendToBackground({
-		name: 'getBlueSales',
-		body: {
-			type,
-			pattern,
-			currency,
-		},
-	});
-	return response as BlueGem.PastSale[];
-}
 
 let isCurrencyFetched = false;
 let isCurrencyFetchDone = false;

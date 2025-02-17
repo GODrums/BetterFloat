@@ -1,7 +1,7 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 
-type GetBlueSalesBody = {
+export type GetBlueSalesBody = {
 	type: string;
 	pattern: number;
 	currency: string;

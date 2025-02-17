@@ -3,7 +3,6 @@ import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
-import { fetchBlueGemPastSales } from '~lib/handlers/networkhandler';
 import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
@@ -25,6 +24,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
+import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
