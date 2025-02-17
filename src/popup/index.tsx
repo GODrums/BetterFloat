@@ -45,7 +45,7 @@ export default function IndexPopup() {
 					<SparklesCore id="tsparticlesfullpage" background="transparent" minSize={0.6} maxSize={1.4} particleDensity={50} className="w-full h-full" particleColor="#FFFFFF" />
 				</div>
 				<Tabs defaultValue="csfloat" className="flex gap-2 my-2 h-full" orientation="vertical">
-					<TabsList className="w-[140px] flex justify-between bg-background/80 text-card-foreground z-50">
+					<TabsList className="w-[130px] flex justify-between bg-background/80 text-card-foreground z-50">
 						<p className="text-md font-bold py-2 uppercase">Sites</p>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="csfloat">

@@ -378,6 +378,7 @@ async function adjustSalesTableRow(container: Element) {
 	if (!cachedSale) {
 		return;
 	}
+	const item = cachedSale.item;
 
 	const priceData = getJSONAttribute(document.querySelector('.betterfloat-big-price')?.getAttribute('data-betterfloat'));
 	if (!priceData.priceFromReference) return;
@@ -403,8 +404,8 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add sticker percentage
 	const appStickerView = container.querySelector<HTMLElement>('app-sticker-view');
-	const stickerData = cachedSale.item.stickers;
-	if (appStickerView && stickerData && cachedSale.item?.quality !== 12 && extensionSettings['csf-stickerprices']) {
+	const stickerData = item.stickers;
+	if (appStickerView && stickerData && item?.quality !== 12 && extensionSettings['csf-stickerprices']) {
 		appStickerView.style.justifyContent = 'center';
 		if (stickerData.length > 0) {
 			const stickerContainer = document.createElement('div');
@@ -422,9 +423,9 @@ async function adjustSalesTableRow(container: Element) {
 
 	// add keychain coloring
 	const patternContainer = container.querySelector('.cdk-column-pattern')?.firstElementChild;
-	if (patternContainer && cachedSale.item.keychain_pattern) {
-		const pattern = cachedSale.item.keychain_pattern;
-		const badgeProps = getCharmColoring(pattern, cachedSale.item.item_name);
+	if (patternContainer && item.keychain_pattern) {
+		const pattern = item.keychain_pattern;
+		const badgeProps = getCharmColoring(pattern, item.item_name);
 
 		const patternCell = html`
 			<div style="display: flex; align-items: center; justify-content: center;">
@@ -434,6 +435,24 @@ async function adjustSalesTableRow(container: Element) {
 			</div>
 		`;
 		patternContainer.outerHTML = patternCell;
+	}
+
+	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
+	if (seedContainer) {
+		if ((item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) && !item.item_name.includes('Gloves') && item.paint_seed && extensionSettings['csf-csbluegem']) {
+			const type = getBlueGemName(item.item_name);
+			const patternElement = await fetchBlueGemPatternData(type.replaceAll(' ', '_'), item.paint_seed!);
+
+			const gemText = `${patternElement.playside_blue?.toFixed(0) ?? 0}% ` + (patternElement.backside_blue ? `/ ${patternElement.backside_blue.toFixed(0)}%` : '');
+			const gemContainer = html`
+				<div style="color: deepskyblue;font-size: 13px;">
+					${gemText}
+				</div>
+			`;
+
+			seedContainer.insertAdjacentHTML('afterend', gemContainer);
+			seedContainer.parentElement!.style.lineHeight = '1.5';
+		}
 	}
 
 	// add float coloring
@@ -1125,20 +1144,23 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	}
 }
 
+function getBlueGemName(item_name: string) {
+	if (item_name.startsWith('★')) {
+		return item_name.split(' | ')[0].split('★ ')[1];
+	} else if (item_name === 'Five-SeveN | Heat Treated') {
+		return 'Five-SeveN Heat Treated';
+	} else {
+		return item_name.split(' | ')[0];
+	}
+}
+
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
 	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || !item.paint_seed) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
-	let type = '';
-	if (item.item_name.startsWith('★')) {
-		type = item.item_name.split(' | ')[0].split('★ ')[1];
-	} else if (item.item_name === 'Five-SeveN | Heat Treated') {
-		type = 'Five-SeveN Heat Treated';
-	} else {
-		type = item.item_name.split(' | ')[0];
-	}
+	const type = getBlueGemName(item.item_name);
 
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {
