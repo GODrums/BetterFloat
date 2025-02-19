@@ -1,7 +1,9 @@
+import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
+import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -50,6 +52,18 @@ const SpNotifications: React.FC = () => {
 		spNotification.excludeStatTrak = excludeStatTrak;
 		localStorage.setItem('spNotification', JSON.stringify(spNotification));
 		setOpen(false);
+	};
+
+	const testNotification = async () => {
+		await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
+			name: 'createNotification',
+			body: {
+				id: Math.random().toString(36).substring(2, 9), // generate a random id
+				message: 'This is a test notification',
+				title: 'BetterFloat Notification',
+				site: 'csfloat',
+			},
+		});
 	};
 
 	return (
@@ -151,7 +165,12 @@ const SpNotifications: React.FC = () => {
 								/>
 							</div>
 						</div>
-						<div className="absolute bottom-5 right-7 flex gap-4">
+						<div className="absolute bottom-5 left-7 flex gap-4">
+							<Button className="font-semibold bg-slate-600 hover:bg-slate-700" onClick={testNotification} disabled={user?.plan.type !== 'pro'}>
+								Test
+							</Button>
+						</div>
+						<div className="absolute bottom-5 right-7 flex gap-2">
 							<Button variant="ghost" className="gap-2 font-semibold" onClick={() => setIsActive(!isActive)} disabled={user?.plan.type !== 'pro'}>
 								active
 								<Badge className={cn('text-white font-normal', isActive ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>

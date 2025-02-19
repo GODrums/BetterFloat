@@ -1,7 +1,8 @@
+import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
-import type React from 'react';
 import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -20,6 +21,16 @@ function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 				fill="currentColor"
 				d="M12 21q-1.875 0-3.512-.712t-2.85-1.925q-1.213-1.213-1.925-2.85T3 12q0-1.875.713-3.512t1.924-2.85q1.213-1.213 2.85-1.925T12 3q2.05 0 3.888.875T19 6.35V4h2v6h-6V8h2.75q-1.025-1.4-2.525-2.2T12 5Q9.075 5 7.038 7.038T5 12q0 2.925 2.038 4.963T12 19q2.625 0 4.588-1.7T18.9 13h2.05q-.375 3.425-2.937 5.713T12 21m2.8-4.8L11 12.4V7h2v4.6l3.2 3.2z"
 			></path>
+		</svg>
+	);
+}
+
+function CircleHelp() {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+			<circle cx="12" cy="12" r="10" />
+			<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+			<path d="M12 17h.01" />
 		</svg>
 	);
 }
@@ -110,6 +121,18 @@ const CSFAutorefresh: React.FC = () => {
 		setOpen(false);
 	};
 
+	const testNotification = async () => {
+		await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
+			name: 'createNotification',
+			body: {
+				id: Math.random().toString(36).substring(2, 9), // generate a random id
+				message: 'This is a test notification',
+				title: 'BetterFloat Notification',
+				site: 'csfloat',
+			},
+		});
+	};
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-AUTOREFRESH') {
@@ -187,6 +210,12 @@ const CSFAutorefresh: React.FC = () => {
 									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-enable">
 										Enable
 									</label>
+
+									<Button variant="invisible" size="icon" className="h-8 w-8 text-[#9EA7B1]" asChild>
+										<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
+											<CircleHelp />
+										</a>
+									</Button>
 								</div>
 								<div className="flex flex-col items-start">
 									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-name">
@@ -236,7 +265,11 @@ const CSFAutorefresh: React.FC = () => {
 								>
 									{saveSuccess ? 'Saved!' : 'Save'}
 								</Button>
-								{user?.plan.type !== 'pro' && (
+								{user?.plan.type === 'pro' ? (
+									<Button variant="default" className="w-full bg-slate-600 hover:bg-slate-700" onClick={testNotification}>
+										Send Test Notification
+									</Button>
+								) : (
 									<p className="text-[#9EA7B1] text-sm text-center">
 										Upgrade to BetterFloat Pro
 										<br />

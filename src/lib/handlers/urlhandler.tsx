@@ -3,6 +3,7 @@ import { createIsolatedElement } from '@webext-core/isolated-element';
 
 import { createRoot } from 'react-dom/client';
 
+import { relayMessage } from '@plasmohq/messaging';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
@@ -142,6 +143,10 @@ async function handleCSFloatChange(state: Extension.URLState) {
 						clearInterval(interval);
 					}
 				}, 1000);
+
+				relayMessage({
+					name: 'createNotification',
+				});
 			}
 		}
 	}
@@ -191,6 +196,10 @@ async function handleSkinportChange(state: Extension.URLState) {
 							clearInterval(notifyInterval);
 						}
 					}, 1000);
+
+					relayMessage({
+						name: 'createNotification',
+					});
 				}
 
 				if (!document.querySelector('betterfloat-live-filter')) {
