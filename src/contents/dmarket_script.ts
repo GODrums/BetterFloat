@@ -10,7 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -109,6 +109,31 @@ async function adjustItem(container: Element, state: PageState) {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(item, container, state);
+
+	waitForElement(DMARKET_SELECTORS.market.infoButton).then((success) => {
+		if (success) {
+			addPopupListener(container, item);
+		}
+	});
+}
+
+function addPopupListener(container: Element, item: DMarket.Item) {
+	const popupButton = container.querySelector(DMARKET_SELECTORS.market.infoButton);
+	if (popupButton) {
+		popupButton.addEventListener('click', async () => {
+			console.log('Popup button clicked');
+			let popup = document.getElementById(DMARKET_SELECTORS.popup.container);
+			let tries = 10;
+			while (!popup && tries-- > 0) {
+				await new Promise((resolve) => setTimeout(resolve, 200));
+				popup = document.getElementById(DMARKET_SELECTORS.popup.container);
+			}
+			console.log('Popup found:', popup);
+			if (!popup) return;
+
+			const priceResult = await addBuffPrice(item, popup, PageState.Popup);
+		});
+	}
 }
 
 async function addBuffPrice(item: DMarket.Item, container: Element, state: PageState): Promise<PriceResult> {
@@ -121,6 +146,8 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 		footerContainer = container.querySelector(DMARKET_SELECTORS.market.footer);
 	} else if (state === PageState.Inventory) {
 		footerContainer = container.querySelector(DMARKET_SELECTORS.inventory.footer);
+	} else if (state === PageState.Popup) {
+		footerContainer = container.querySelector(DMARKET_SELECTORS.popup.footer);
 	}
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
@@ -139,11 +166,11 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
-			isPopout: false,
+			isPopout: state === PageState.Popup,
 			priceClass: 'suggested-price',
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
-			iconHeight: '15px',
+			iconHeight: state === PageState.Popup ? '20px' : '15px',
 			hasPro: isUserPro(extensionSettings['user']),
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
@@ -152,6 +179,8 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 	let priceContainer: Element | null = null;
 	if (state === PageState.Market) {
 		priceContainer = container.querySelector(DMARKET_SELECTORS.market.price);
+	} else if (state === PageState.Popup) {
+		priceContainer = container.querySelector(DMARKET_SELECTORS.popup.price);
 	}
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
@@ -171,7 +200,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 		const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 		const buffPriceHTML = html`
-            <div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+            <div class="sale-tag betterfloat-sale-tag ${state === PageState.Popup ? 'betterfloat-big-sale' : ''}" style="background-color: ${background}; color: ${color};">
 				${extensionSettings['dm-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(absDifference.toNumber())} </span>` : ''}
 				${extensionSettings['dm-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
             </div>
@@ -308,6 +337,7 @@ enum PageState {
 	Market = 0,
 	ItemPage = 1,
 	Inventory = 2,
+	Popup = 3,
 }
 
 // mutation observer active?

@@ -8,6 +8,10 @@
 	letter-spacing: .02em;
 }
 
+.betterfloat-big-price {
+	font-size: 14px;
+}
+
 .betterfloat-big-a {
 	margin-top: 10px;
 }
@@ -22,6 +26,13 @@
 	padding: 1px 3px;
 	border-radius: 4px;
 	margin-top: 3px;
+}
+
+.betterfloat-big-sale {
+	font-size: 14px;
+	margin-top: 0;
+	margin-left: 5px;
+	padding: 3px 5px;
 }
 
 .betterfloat-buff-a {
