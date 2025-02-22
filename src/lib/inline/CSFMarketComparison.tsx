@@ -194,10 +194,9 @@ const CSFMarketComparison: React.FC = () => {
 				}))
 				.filter((entry) => entry.market !== 'liquidity');
 
-			console.log('User:', user);
 			// Filter markets for free users
 			if (user?.plan.type !== 'pro') {
-				convertedData = convertedData.filter((entry) => entry.market === MarketSource.Buff || entry.market === MarketSource.YouPin);
+				convertedData = convertedData.filter((entry) => entry.market === MarketSource.Buff || entry.market === MarketSource.Steam);
 			}
 
 			if (isBannedOnBuff(listing?.item)) {
@@ -222,7 +221,8 @@ const CSFMarketComparison: React.FC = () => {
 	const initData = async () => {
 		setCurrency(localStorage.getItem('selected_currency') || 'USD');
 
-		const itemContainer = document.querySelector('mat-dialog-container item-detail');
+		const itemId = location.pathname.split('/').pop();
+		const itemContainer = document.querySelector(`.item-${itemId}`);
 		let betterfloatData = itemContainer?.getAttribute('data-betterfloat');
 		while (!betterfloatData) {
 			await new Promise((resolve) => setTimeout(resolve, 200));
@@ -234,12 +234,14 @@ const CSFMarketComparison: React.FC = () => {
 	};
 
 	useEffect(() => {
+		console.log('User:', user);
 		if (user) {
 			initData();
 		}
 	}, [user]);
 
 	useEffect(() => {
+		console.log('Listing:', listing);
 		if (listing && marketData.length === 0) {
 			fetchMarketData()
 				.catch((error) => {
@@ -275,7 +277,7 @@ const CSFMarketComparison: React.FC = () => {
 							</div>
 						)}
 					</div>
-					<ScrollArea className="w-full h-[80vh] [--border:227_100%_88%_/_0.07]">
+					<ScrollArea className="w-full h-[90vh] [--border:227_100%_88%_/_0.07]">
 						{listing && marketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 						{user?.plan.type !== 'pro' && (
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">

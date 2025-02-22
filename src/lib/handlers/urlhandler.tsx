@@ -52,29 +52,24 @@ export function dynamicUIHandler() {
 		}
 	});
 
-	// dmarket is a bit special and needs an additional listener
-	if (location.hostname === 'dmarket.com') {
-		createUrlListener((newUrl) => {
-			handleChange({
-				site: newUrl.hostname,
-				path: newUrl.pathname,
-				search: newUrl.search,
-				hash: newUrl.hash,
-			});
-		}, 1500);
-	}
-
-	setTimeout(async () => {
+	const callHandleChange = async (url: URL) => {
 		const state: Extension.URLState = {
-			site: location.hostname,
-			path: location.pathname,
-			search: location.search,
-			hash: location.hash,
+			site: url.hostname,
+			path: url.pathname,
+			search: url.search,
+			hash: url.hash,
 		};
 		await handleChange(state);
-	}, 1500);
+	};
 
-	setTimeout(showUpdatePopup, 3000);
+	// dmarket is a bit special and needs an additional listener
+	if (location.hostname === 'dmarket.com') {
+		createUrlListener(callHandleChange, 1500);
+	}
+
+	callHandleChange(new URL(location.href));
+
+	// setTimeout(showUpdatePopup, 3000);
 }
 
 async function showUpdatePopup() {
@@ -153,7 +148,11 @@ async function handleCSFloatChange(state: Extension.URLState) {
 	}
 
 	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('csf-marketcomparison');
-	if (showMarketComparison && state.path.includes('/item/') && !document.querySelector('betterfloat-market-comparison')) {
+	if (showMarketComparison && state.path.includes('/item/')) {
+		if (document.querySelector('betterfloat-market-comparison')) {
+			// wait for the new dialog to replace the old one
+			await new Promise((resolve) => setTimeout(resolve, 500));
+		}
 		const success = await waitForElement('div.full-screen-dialog .container');
 		if (!success) return;
 		const popup = document.querySelector<HTMLElement>('div.full-screen-dialog');
@@ -161,7 +160,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		if (popup && container) {
 			popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
 			container.style.gridTemplateColumns = '250px 1fr 210px 210px';
-			const root = await mountShadowRoot(<CSFMarketComparison />, {
+			await mountShadowRoot(<CSFMarketComparison />, {
 				tagName: 'betterfloat-market-comparison',
 				parent: container,
 			});
@@ -169,14 +168,6 @@ async function handleCSFloatChange(state: Extension.URLState) {
 			if (ownContainer) {
 				ownContainer.style.gridRow = '1 / span 2';
 			}
-			// unmount on url change
-			const interval = createUrlListener((url) => {
-				if (!url.pathname.includes('/item/')) {
-					root.unmount();
-					document.querySelector('betterfloat-market-comparison')?.remove();
-					clearInterval(interval);
-				}
-			}, 1000);
 		}
 	}
 

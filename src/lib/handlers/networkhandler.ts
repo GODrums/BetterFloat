@@ -1,8 +1,7 @@
 import { ExtensionStorage } from '~lib/util/storage';
 
 import { sendToBackground } from '@plasmohq/messaging';
-import type { GetBlueSalesBody } from '~background/messages/getBlueSales';
-import type { BlueGem, Extension } from '../@typings/ExtensionTypes';
+import type { Extension } from '../@typings/ExtensionTypes';
 import { cacheRealCurrencyRates } from './mappinghandler';
 
 let isCurrencyFetched = false;

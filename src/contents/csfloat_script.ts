@@ -637,7 +637,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		if (extensionSettings['csf-floatcoloring']) {
 			addFloatColoring(container, apiItem);
 		}
-		patternDetections(container, apiItem, false);
+		await patternDetections(container, apiItem, false);
 
 		if (location.pathname !== '/sell') {
 			if (extensionSettings['csf-listingage']) {
