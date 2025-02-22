@@ -1,7 +1,7 @@
 import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
 import { useStorage } from '@plasmohq/storage/hook';
 import type { SVGProps } from 'react';
-import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
@@ -50,6 +50,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 		{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
 		{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
 		{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat },
+		{ text: 'CSMoney', logo: ICON_CSMONEY, source: MarketSource.CSMoney },
 	];
 
 	return (

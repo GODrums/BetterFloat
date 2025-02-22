@@ -27,7 +27,8 @@ const priceMapping: {
 	c5game: Extension.PriceMappingMisc;
 	steam: Extension.PriceMappingSteam;
 	csfloat: Extension.PriceMappingMisc;
-} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {} };
+	csmoney: Extension.PriceMappingMisc;
+} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {}, csmoney: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 
@@ -104,7 +105,7 @@ export function getMarketID(name: string, source: MarketSource) {
 			case MarketSource.C5Game:
 				return 'c5';
 			default:
-				// csfloat can be queried via buff name
+				// other markets can be queried via buff name
 				return null;
 		}
 	};

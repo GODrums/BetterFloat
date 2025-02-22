@@ -1,7 +1,7 @@
 import betterfloatLogo from 'data-base64:/assets/icon.png';
-import YoupinBuyOrder from 'data-base64:/assets/screenshots/youpin-buyorder-example.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import type { SettingsUser } from '~lib/util/storage';
+import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 
 export default function UpdatePopup() {
@@ -21,16 +21,22 @@ export default function UpdatePopup() {
 					</Button>
 
 					<h1 className="flex items-center font-bold text-xl text-white mb-4 relative z-50">
-						<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8 mr-2" />
-						New Pro exclusive feature!
+						<img src={betterfloatLogo} alt="BetterFloat" className="h-10 w-10 mr-2" />
+						<span>BetterFloat Market Comparison</span>
+						<Badge variant="default" className="ml-2">
+							NEW
+						</Badge>
 					</h1>
 
-					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">Choosing Youpin now displays separate Bid (highest buy order) and Ask (lowest listing) prices.</p>
-					<img src={YoupinBuyOrder} alt="Youpin" className="h-24 rounded-lg" />
-					{user?.plan?.type !== 'pro' && (
-						<Button className="absolute right-8 bottom-4" onClick={() => window.open('https://betterfloat.com/pricing')}>
-							Upgrade now
-						</Button>
+					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">
+						Item popups on CSFloat now display reference prices of a variety of different markets. Get the Pro plan to unlock all markets!
+					</p>
+					{user?.plan?.type === 'pro' && (
+						<div className="w-full flex items-center justify-end">
+							<Button variant="purple" className="font-semibold" onClick={() => window.open('https://betterfloat.com/pricing')}>
+								Upgrade now
+							</Button>
+						</div>
 					)}
 				</div>
 			</div>

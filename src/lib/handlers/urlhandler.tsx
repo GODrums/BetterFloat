@@ -9,6 +9,7 @@ import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
 import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
+import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
@@ -73,7 +74,7 @@ export function dynamicUIHandler() {
 		await handleChange(state);
 	}, 1500);
 
-	// setTimeout(showUpdatePopup, 3000);
+	setTimeout(showUpdatePopup, 3000);
 }
 
 async function showUpdatePopup() {
@@ -148,6 +149,34 @@ async function handleCSFloatChange(state: Extension.URLState) {
 					name: 'createNotification',
 				});
 			}
+		}
+	}
+
+	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('csf-marketcomparison');
+	if (showMarketComparison && state.path.includes('/item/') && !document.querySelector('betterfloat-market-comparison')) {
+		const success = await waitForElement('div.full-screen-dialog .container');
+		if (!success) return;
+		const popup = document.querySelector<HTMLElement>('div.full-screen-dialog');
+		const container = popup?.querySelector<HTMLElement>('.container');
+		if (popup && container) {
+			popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
+			container.style.gridTemplateColumns = '250px 1fr 210px 210px';
+			const root = await mountShadowRoot(<CSFMarketComparison />, {
+				tagName: 'betterfloat-market-comparison',
+				parent: container,
+			});
+			const ownContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison');
+			if (ownContainer) {
+				ownContainer.style.gridRow = '1 / span 2';
+			}
+			// unmount on url change
+			const interval = createUrlListener((url) => {
+				if (!url.pathname.includes('/item/')) {
+					root.unmount();
+					document.querySelector('betterfloat-market-comparison')?.remove();
+					clearInterval(interval);
+				}
+			}, 1000);
 		}
 	}
 

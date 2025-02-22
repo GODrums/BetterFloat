@@ -42,6 +42,7 @@ import iconLisskins from 'data-base64:~/../assets/logos/lisskins.svg';
 import iconLisskinsFull from 'data-base64:~/../assets/logos/lisskins_full.svg';
 import iconSkinbaron from 'data-base64:~/../assets/logos/skinbaron.svg';
 import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg';
+import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
 import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
 import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
@@ -72,6 +73,7 @@ export const ICON_CSMONEY_FULL = csmoneyFull;
 export const ICON_CSBLUEGEM = iconCSBlueGem;
 export const ICON_SKINPORT = iconSkinport;
 export const ICON_SKINPORT_FULL = iconSkinportFull;
+export const ICON_SKINBID = iconSkinbid;
 export const ICON_SKINBID_FULL = iconSkinbidFull;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;
@@ -110,12 +112,26 @@ export enum MarketSource {
 	YouPin = 'youpin',
 	C5Game = 'c5game',
 	CSFloat = 'csfloat',
+	CSMoney = 'csmoney',
+	DMarket = 'dmarket',
+	Bitskins = 'bitskins',
+	BuffMarket = 'buffmarket',
+	Lisskins = 'lisSkins',
+	Skinbid = 'skinbid',
+	Skinport = 'skinport',
 }
 
 export const AvailableMarketSources = [
-	{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff },
-	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam },
-	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
-	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
-	{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat },
+	{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff, style: 'border: 1px solid dimgray; border-radius: 4px;' },
+	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam, style: '' },
+	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin, style: 'border: 1px solid black; border-radius: 4px;' },
+	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game, style: 'border: 1px solid black; border-radius: 4px;' },
+	{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat, style: 'border: 1px solid black; border-radius: 4px;' },
+	{ text: 'CSMoney', logo: ICON_CSMONEY, source: MarketSource.CSMoney, style: '' },
+	{ text: 'DMarket', logo: ICON_DMARKET, source: MarketSource.DMarket, style: '' },
+	{ text: 'Bitskins', logo: ICON_BITSKINS, source: MarketSource.Bitskins, style: '' },
+	{ text: 'BuffMarket', logo: ICON_BUFFMARKET, source: MarketSource.BuffMarket, style: 'border: 1px solid black; border-radius: 4px;' },
+	{ text: 'Lisskins', logo: ICON_LISSKINS, source: MarketSource.Lisskins, style: '' },
+	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;' },
+	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '' },
 ];

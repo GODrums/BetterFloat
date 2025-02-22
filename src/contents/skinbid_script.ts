@@ -3,7 +3,7 @@ import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_C5GAME, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
@@ -604,27 +604,8 @@ function generateBuffContainer(
 	source: MarketSource,
 	isItemPage = false
 ) {
-	let icon = '';
-	let iconStyle = 'height: 20px; margin-right: 5px;';
-	let containerStyle = '';
-	if (source === MarketSource.Buff) {
-		icon = ICON_BUFF;
-		iconStyle += 'border: 1px solid #323c47;';
-	} else if (source === MarketSource.Steam) {
-		icon = ICON_STEAM;
-	} else if (source === MarketSource.C5Game) {
-		icon = ICON_C5GAME;
-		iconStyle += 'border: 1px solid #323c47;';
-		containerStyle = 'justify-content: flex-start;';
-	} else if (source === MarketSource.YouPin) {
-		icon = ICON_YOUPIN;
-		iconStyle += 'border: 1px solid #323c47;';
-		containerStyle = 'justify-content: flex-start;';
-	} else if (source === MarketSource.CSFloat) {
-		icon = ICON_CSFLOAT;
-		iconStyle += 'border: 1px solid #323c47;';
-		containerStyle = 'justify-content: flex-start;';
-	}
+	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
+	const containerStyle = priceListing && priceOrder ? '' : 'justify-content: flex-start;';
 	const formatter = CurrencyFormatter(currencyText);
 	const buffContainer = html`
 		<a class="betterfloat-buff-container" target="_blank" href="${href}" style="display: flex; margin: 5px 0; cursor: pointer; align-items: center;">
@@ -632,11 +613,11 @@ function generateBuffContainer(
 				isItemPage
 					? html`
 						<div style="display: flex; align-items: center; gap: 4px; width: 50%">
-							<img src="${icon}" style="${iconStyle}" />
+							<img src="${icon}" style="height: 20px; margin-right: 5px; ${iconStyle}" />
 							<span style="font-size: 14px; font-weight: 700; color: #a3a3cb;">${toTitleCase(source)}</span>
 						</div>
 				  `
-					: html`<img src="${icon}" style="${iconStyle}" />`
+					: html`<img src="${icon}" style="height: 20px; margin-right: 5px; ${iconStyle}" />`
 			}
 			<div class="suggested-price betterfloat-buffprice" style="height: 100%; margin: 0; line-height: 1; align-items: center; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
 				${

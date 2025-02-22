@@ -3,7 +3,7 @@ import { html } from 'common-tags';
 import type Decimal from 'decimal.js';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import type { BlueGem } from '../@typings/ExtensionTypes';
-import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_EXCLAMATION, ICON_STEAM, ICON_YOUPIN, MarketSource } from './globals';
+import { AvailableMarketSources, ICON_EXCLAMATION, MarketSource } from './globals';
 import { getMarketURL } from './helperfunctions';
 
 export function generatePriceLine({
@@ -42,31 +42,9 @@ export function generatePriceLine({
 	hasPro?: boolean;
 }) {
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
-	let icon = '';
-	let iconStyle = `height: ${iconHeight ?? '15px'}; margin-right: 5px;`;
-	switch (source) {
-		case MarketSource.Buff:
-			icon = ICON_BUFF;
-			iconStyle += ' border: 1px solid dimgray; border-radius: 4px;';
-			break;
-		case MarketSource.Steam:
-			icon = ICON_STEAM;
-			break;
-		case MarketSource.C5Game:
-			icon = ICON_C5GAME;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.YouPin:
-			icon = ICON_YOUPIN;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-		case MarketSource.CSFloat:
-			icon = ICON_CSFLOAT;
-			iconStyle += ' border: 1px solid black; border-radius: 4px;';
-			break;
-	}
+	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const extendedDisplay = showPrefix && priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning;
+	const extendedDisplay = showPrefix && (isPopout || (priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning));
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
 
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && hasPro);
@@ -78,7 +56,7 @@ export function generatePriceLine({
 			aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"
 			data-betterfloat='${bfDataAttribute}'
 		>
-			<img src="${icon}" style="${iconStyle}" />
+			<img src="${icon}" style="height: ${iconHeight ?? '15px'}; margin-right: 5px; ${iconStyle}" />
 			<div 
 				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" 
 			>

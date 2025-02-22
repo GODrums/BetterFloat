@@ -198,6 +198,20 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		}
 		case MarketSource.CSFloat:
 			return `https://csfloat.com/search?sort_by=lowest_price&type=buy_now&market_hash_name=${encodeURIComponent(buff_name)}`;
+		case MarketSource.DMarket:
+			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&ref=rqKYzZ36Bw&utm_source=betterfloat`;
+		case MarketSource.CSMoney:
+			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=market&utm_content=link`;
+		case MarketSource.Bitskins:
+			return `https://bitskins.com/market/csgo?search={%22order%22:[{%22field%22:%22price%22,%22order%22:%22ASC%22}],%22where%22:{%22skin_name%22:%22${encodeURIComponent(buff_name)}%22}}&ref_alias=betterfloat`;
+		case MarketSource.Lisskins:
+			return `https://lis-skins.ru/market/csgo/?query=${encodeURIComponent(buff_name)}&rf=130498354&utm_source=betterfloat&utm_content=link&utm_campaign=mainpage`;
+		case MarketSource.BuffMarket:
+			return `https://buff.market/market/all?search=${encodeURIComponent(buff_name)}`;
+		case MarketSource.Skinbid:
+			return `https://skinbid.com/market?search=${encodeURIComponent(buff_name)}&utm_source=betterfloat`;
+		case MarketSource.Skinport:
+			return `https://skinport.com/market/730?search=${encodeURIComponent(buff_name)}&sort=price&order=asc&utm_source=betterfloat`;
 	}
 	return '';
 }

@@ -1622,7 +1622,8 @@ async function addBuffPrice(
 		source === MarketSource.Steam ||
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing) ||
-		(source === MarketSource.CSFloat && priceListing);
+		(source === MarketSource.CSFloat && priceListing) ||
+		(source === MarketSource.CSMoney && priceListing);
 
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && popout !== POPOUT_ITEM.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine({

@@ -4,18 +4,16 @@ import Decimal from 'decimal.js';
 import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import {
+	AvailableMarketSources,
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
-	ICON_C5GAME,
 	ICON_CAMERA,
 	ICON_CAMERA_FLIPPED,
 	ICON_CSFLOAT,
 	ICON_CSGOSTASH,
 	ICON_EXCLAMATION,
 	ICON_PRICEMPIRE,
-	ICON_STEAM,
 	ICON_STEAMANALYST,
-	ICON_YOUPIN,
 	MarketSource,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
@@ -940,34 +938,13 @@ function convertCurrency(price: Decimal, currencyRate: number, settingRate: stri
 
 function generateBuffContainer(container: HTMLElement, priceListing: Decimal | undefined, priceOrder: Decimal | undefined, currencySymbol: string, source: MarketSource, containerIsParent = false) {
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currencySymbol, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-	let icon = '';
-	let iconStyle = 'height: 22px; margin-right: 5px; border-radius: 5px;';
-	switch (source) {
-		case MarketSource.Buff:
-			icon = ICON_BUFF;
-			iconStyle += 'border: 1px solid #323c47;';
-			break;
-		case MarketSource.Steam:
-			icon = ICON_STEAM;
-			break;
-		case MarketSource.C5Game:
-			icon = ICON_C5GAME;
-			iconStyle += 'border: 1px solid #323c47;';
-			break;
-		case MarketSource.YouPin:
-			icon = ICON_YOUPIN;
-			iconStyle += 'border: 1px solid #323c47;';
-			break;
-		case MarketSource.CSFloat:
-			icon = ICON_CSFLOAT;
-			break;
-	}
+	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
 
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user']));
 
 	const buffContainer = html`
 		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
-			<img src="${icon}" style="${iconStyle}" />
+			<img src="${icon}" style="height: 22px; margin-right: 5px; border-radius: 5px; ${iconStyle}" />
 			<div class="suggested-price betterfloat-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
 				${
 					showBothPrices

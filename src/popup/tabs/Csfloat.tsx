@@ -7,6 +7,7 @@ import {
 	MaterialSymbolsImageOutlineRounded,
 	MaterialSymbolsTravelExplore,
 	MaterialSymbolsUpdate,
+	MdiShoppingSearchOutline,
 	MdiSteam,
 	PhSticker,
 	StreamlineDiscountPercentCoupon,
@@ -46,6 +47,9 @@ export const CSFloatSettings = () => {
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} />}
 							tooltipText="Adds pattern details and past sales to case hardened skins."
 						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="csf-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
 					</SettingsCard>
 				</div>
 			</div>
