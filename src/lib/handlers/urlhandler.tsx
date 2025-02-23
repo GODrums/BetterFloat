@@ -69,11 +69,14 @@ export function dynamicUIHandler() {
 
 	callHandleChange(new URL(location.href));
 
-	// setTimeout(showUpdatePopup, 3000);
+	setTimeout(showUpdatePopup, 3000);
 }
 
 async function showUpdatePopup() {
-	const storageKey = `show-update-popup-${chrome.runtime.getManifest().version}`;
+	// minor updates don't receive a new popup
+	const version = chrome.runtime.getManifest().version.split('.').slice(0, 2).join('.') + '.0';
+	const storageKey = `show-update-popup-${version}`;
+	console.debug('[BetterFloat] Checking for update popup', storageKey);
 	const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
 	// show update popup
 	if (showUpdate !== false) {

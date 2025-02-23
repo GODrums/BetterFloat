@@ -26,13 +26,6 @@ interface APIMarketResponse {
 	[market: string]: Partial<MarketEntry>;
 }
 
-const InfoIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-		<circle cx="12" cy="12" r="10" />
-		<path d="M12 16v-4" />
-		<path d="M12 8h.01" />
-	</svg>
-);
 const CirclePlus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="none" width="19" height="19" {...props}>
 		<circle cx="7" cy="7.5" r="7" fill="#FD484A" fillOpacity="0.25"></circle>
@@ -112,7 +105,7 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 
 	const getHref = () => {
 		const market_id = getMarketID(item.market_hash_name, marketDetails.source);
-		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name: item.market_hash_name });
+		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name: item.market_hash_name, phase: item.phase });
 		return href;
 	};
 
@@ -180,8 +173,13 @@ const CSFMarketComparison: React.FC = () => {
 			console.error('No item data found');
 			return;
 		}
+
+		let buff_name = item.market_hash_name;
+		if (item.phase) {
+			buff_name += ` - ${item.phase}`;
+		}
 		try {
-			const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/price/${item.market_hash_name}`);
+			const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/price/${buff_name}`);
 			const data = (await response.json()) as APIMarketResponse;
 
 			let convertedData = Object.entries(data)
@@ -211,7 +209,7 @@ const CSFMarketComparison: React.FC = () => {
 				setLiquidity(Number(data.liquidity));
 			}
 
-			const sortedData = convertedData.sort((a, b) => (!b.ask ? -1 : (a.ask ?? 0) - b.ask));
+			const sortedData = convertedData.sort((a, b) => (!b.ask ? -1 : !a.ask ? 1 : a.ask - b.ask));
 			setMarketData(sortedData || []);
 		} catch (error) {
 			console.error('Error fetching market data:', error);
@@ -234,14 +232,12 @@ const CSFMarketComparison: React.FC = () => {
 	};
 
 	useEffect(() => {
-		console.log('User:', user);
 		if (user) {
 			initData();
 		}
 	}, [user]);
 
 	useEffect(() => {
-		console.log('Listing:', listing);
 		if (listing && marketData.length === 0) {
 			fetchMarketData()
 				.catch((error) => {
