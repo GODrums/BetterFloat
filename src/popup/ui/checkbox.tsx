@@ -26,7 +26,7 @@ const CSFCheckbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.R
 	<CheckboxPrimitive.Root
 		ref={ref}
 		className={cn(
-			'peer h-6 w-6 shrink-0 rounded-md border-2 border-[#ffffff8a] shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#237bff] data-[state=checked]:text-white',
+			'peer h-6 w-6 shrink-0 rounded-md border-2 border-[#ffffff8a] shadow focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-[#237bff] data-[state=checked]:text-white',
 			className
 		)}
 		{...props}

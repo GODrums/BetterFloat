@@ -6,6 +6,10 @@ export namespace Extension {
 		hash: string;
 	};
 
+	export interface APIMarketResponse {
+		[market: string]: Partial<MarketEntry>;
+	}
+
 	export interface AbstractPriceMapping {
 		[name: string]: any;
 	}

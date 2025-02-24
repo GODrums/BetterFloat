@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { ScrollArea } from '~popup/ui/scroll-area';
@@ -6,13 +6,17 @@ import { ScrollArea } from '~popup/ui/scroll-area';
 import betterfloatLogo from 'data-base64:/assets/icon.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
+import { AnimatePresence } from 'framer-motion';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { fetchMarketComparisonData } from '~lib/handlers/networkhandler';
 import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getMarketURL } from '~lib/util/helperfunctions';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
+import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
+import { CSFCheckbox } from '~popup/ui/checkbox';
 
 interface MarketEntry {
 	market: string;
@@ -20,10 +24,6 @@ interface MarketEntry {
 	bid?: number;
 	count: number;
 	updated: number;
-}
-
-interface APIMarketResponse {
-	[market: string]: Partial<MarketEntry>;
 }
 
 const CirclePlus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -50,6 +50,18 @@ const ShieldCheck: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
 		<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
 		<path d="m9 12 2 2 4-4" />
+	</svg>
+);
+const Settings: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+		<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+		<circle cx="12" cy="12" r="3" />
+	</svg>
+);
+const BanIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+		<circle cx="12" cy="12" r="10" />
+		<path d="m4.9 4.9 14.2 14.2" />
 	</svg>
 );
 
@@ -158,14 +170,23 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 	);
 };
 
+const freeMarkets = [MarketSource.Buff, MarketSource.Steam];
+
 const CSFMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [listing, setListing] = useState<CSFloat.ListingData | null>(null);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [currency, setCurrency] = useState('USD');
 
+	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
+		'csf-visible-markets',
+		AvailableMarketSources.map((m) => m.source)
+	);
 	const [user] = useStorage<SettingsUser>('user');
+
+	const ref = useRef(null);
 
 	const fetchMarketData = async () => {
 		const item = listing?.item;
@@ -179,8 +200,7 @@ const CSFMarketComparison: React.FC = () => {
 			buff_name += ` - ${item.phase}`;
 		}
 		try {
-			const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/price/${buff_name}`);
-			const data = (await response.json()) as APIMarketResponse;
+			const data = await fetchMarketComparisonData(buff_name, user?.steam?.steamid);
 
 			let convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
@@ -194,7 +214,7 @@ const CSFMarketComparison: React.FC = () => {
 
 			// Filter markets for free users
 			if (user?.plan.type !== 'pro') {
-				convertedData = convertedData.filter((entry) => entry.market === MarketSource.Buff || entry.market === MarketSource.Steam);
+				convertedData = convertedData.filter((entry) => freeMarkets.includes(entry.market as MarketSource));
 			}
 
 			if (isBannedOnBuff(listing?.item)) {
@@ -249,6 +269,19 @@ const CSFMarketComparison: React.FC = () => {
 		}
 	}, [listing]);
 
+	const toggleMarket = (market: string) => {
+		setVisibleMarkets((prev) => {
+			if (!prev) return [market];
+			if (prev.includes(market)) {
+				return prev.filter((m) => m !== market);
+			}
+			return [...prev, market];
+		});
+	};
+
+	// Filter market data based on visibility settings
+	const filteredMarketData = marketData.filter((entry) => visibleMarkets.includes(entry.market));
+
 	return (
 		<div className="dark w-[210px] max-h-[90vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
 			{isLoading ? (
@@ -257,10 +290,51 @@ const CSFMarketComparison: React.FC = () => {
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
-					<div className="w-full bg-[--highlight-background-minimal] flex justify-center items-center gap-2 rounded-md py-2">
-						<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-						<span className="text-white font-bold">Market Comparison</span>
+					<div className="w-full bg-[--highlight-background-minimal] rounded-md py-2 flex flex-col items-center gap-1">
+						<div className="flex justify-center items-center gap-2">
+							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
+							<span className="text-white font-bold">Market Comparison</span>
+						</div>
+						<div className="flex justify-center items-center gap-2">
+							<Button className="h-9 gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background-heavy] text-white" onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
+								<Settings className="h-6 w-6" />
+								<span className="text-sm">Settings</span>
+							</Button>
+						</div>
 					</div>
+					<AnimatePresence>
+						{isSettingsOpen && (
+							<div ref={ref} className="w-full bg-[--highlight-background-minimal] rounded-md p-4 flex flex-col items-center gap-1">
+								<div className="w-full flex justify-between items-center gap-2 pb-2">
+									<div className="font-bold text-lg text-white">Settings</div>
+									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-neutral-500/70" onClick={() => setIsSettingsOpen(false)}>
+										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
+									</Button>
+								</div>
+								<div className="w-full space-y-3 text-[--subtext-color]">
+									{AvailableMarketSources.map((market) => (
+										<div key={market.source} className="flex justify-between items-center space-x-2">
+											<div className="flex items-center space-x-2">
+												<CSFCheckbox id={market.source} checked={visibleMarkets.includes(market.source)} onCheckedChange={() => toggleMarket(market.source)} />
+												<div className="flex items-center gap-2">
+													<img src={market.logo} className="h-6 w-6" style={convertStylesStringToObject(market.style)} />
+													<label htmlFor={market.source} className="text-sm font-medium leading-none cursor-pointer">
+														{market.text}
+													</label>
+												</div>
+											</div>
+											{!freeMarkets.includes(market.source) && (
+												<Badge variant="purple" className="text-white">
+													Pro
+												</Badge>
+											)}
+										</div>
+									))}
+								</div>
+							</div>
+						)}
+					</AnimatePresence>
+
 					<div className="flex flex-col justify-center gap-1 p-4 bg-[--highlight-background-minimal] text-[--subtext-color] text-sm rounded-md">
 						<div className="flex items-center justify-between">
 							<span>Total Listings:</span>
@@ -274,7 +348,15 @@ const CSFMarketComparison: React.FC = () => {
 						)}
 					</div>
 					<ScrollArea className="w-full h-[90vh] [--border:227_100%_88%_/_0.07]">
-						{listing && marketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
+						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
+						{filteredMarketData.length === 0 && (
+							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
+								<div className="flex flex-col items-center justify-center gap-1 p-4">
+									<BanIcon className="size-8 text-white" />
+									<span className="text-base text-center text-white">No listings found</span>
+								</div>
+							</div>
+						)}
 						{user?.plan.type !== 'pro' && (
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">

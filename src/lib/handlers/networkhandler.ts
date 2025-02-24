@@ -7,6 +7,22 @@ import { cacheRealCurrencyRates } from './mappinghandler';
 let isCurrencyFetched = false;
 let isCurrencyFetchDone = false;
 
+export async function fetchMarketComparisonData(buff_name: string, steamId?: string): Promise<Extension.APIMarketResponse> {
+	const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/price/${buff_name}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
+			'x-steamid': steamId || '',
+		},
+	});
+	const data = (await response.json()) as Extension.APIMarketResponse;
+	if (!response.ok) {
+		throw new Error(`Error fetching market comparison data: ${data.message || 'Unknown error'}`);
+	}
+	return data;
+}
+
 // fetches currency rates from freecurrencyapi through my api to avoid rate limits
 export async function fetchCurrencyRates() {
 	if (isCurrencyFetched) {
