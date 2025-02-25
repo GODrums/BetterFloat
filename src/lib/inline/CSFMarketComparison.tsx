@@ -250,6 +250,10 @@ const CSFMarketComparison: React.FC = () => {
 			setListing(JSON.parse(betterfloatData));
 		}
 	};
+	useEffect(() => {
+		document.documentElement.style.height = '100%';
+		document.body.style.height = '100%';
+	}, []);
 
 	useEffect(() => {
 		if (user) {
@@ -283,7 +287,7 @@ const CSFMarketComparison: React.FC = () => {
 	const filteredMarketData = marketData.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
-		<div className="dark w-[210px] max-h-[90vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
+		<div className="dark w-[210px] max-h-[60vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
 					<LoadingSpinner className="size-10 text-white" />
@@ -347,7 +351,7 @@ const CSFMarketComparison: React.FC = () => {
 							</div>
 						)}
 					</div>
-					<ScrollArea className="w-full h-[90vh] [--border:227_100%_88%_/_0.07]">
+					<ScrollArea className="w-full flex-1 [--border:227_100%_88%_/_0.07]" viewportClass="h-[825px]">
 						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 						{filteredMarketData.length === 0 && (
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">

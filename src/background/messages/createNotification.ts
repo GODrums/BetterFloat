@@ -25,10 +25,24 @@ const handler: PlasmoMessaging.MessageHandler<CreateNotificationBody, CreateNoti
 	if (!isListenerActive) {
 		const granted = await chrome.permissions.contains({ permissions: ['notifications'] });
 		if (!granted) {
-			res.send({
-				success: false,
-			});
-			return;
+			let permission = false;
+			try {
+				permission = await chrome.permissions.request({ permissions: ['notifications'] });
+				if (!permission) {
+					res.send({
+						success: false,
+					});
+					return;
+				}
+			} catch (e) {
+				console.error(e);
+			}
+			if (!permission) {
+				res.send({
+					success: false,
+				});
+				return;
+			}
 		}
 		isListenerActive = true;
 		chrome.notifications.onClicked.addListener(onClickNotification);
