@@ -183,6 +183,7 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('api/data/')) {
 		// Data from first page load
 		const data = eventData.data as Skinport.UserData;
+		localStorage.setItem('userData', JSON.stringify(data));
 		cacheSkinportCurrencyRates(data.rates, data.currency);
 		cacheSpMinOrderPrice(data.limits.minOrderValue);
 	} else if (eventData.url.includes('api/inventory/listed')) {
@@ -235,7 +236,9 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('v1/meta/location')) {
 		cacheCSFLocation(eventData.data as CSFloat.Location);
 	} else if (eventData.url.includes('v1/meta/exchange-rates')) {
-		cacheCSFExchangeRates(eventData.data as CSFloat.ExchangeRates);
+		const currencyRates = eventData.data as CSFloat.ExchangeRates;
+		cacheCSFExchangeRates(currencyRates);
+		localStorage.setItem('currency_rates', JSON.stringify(currencyRates.data));
 	} else if (eventData.url.includes('v1/me/inventory')) {
 		// user inventory
 		cacheCSFInventory(eventData.data as CSFloat.InventoryReponse);

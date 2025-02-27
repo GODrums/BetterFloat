@@ -179,6 +179,7 @@ const CSFMarketComparison: React.FC = () => {
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [currency, setCurrency] = useState('USD');
+	const [currencyRates, setCurrencyRates] = useState<{ [key: string]: number }>({});
 
 	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
 		'csf-visible-markets',
@@ -201,12 +202,11 @@ const CSFMarketComparison: React.FC = () => {
 		}
 		try {
 			const data = await fetchMarketComparisonData(buff_name, user?.steam?.steamid);
-
 			let convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
-					ask: entry.ask,
-					bid: entry.bid,
+					ask: entry.ask ? entry.ask * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
+					bid: entry.bid ? entry.bid * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
 					count: entry.count || 0,
 					updated: entry.updated || 0,
 				}))
@@ -237,7 +237,10 @@ const CSFMarketComparison: React.FC = () => {
 	};
 
 	const initData = async () => {
-		setCurrency(localStorage.getItem('selected_currency') || 'USD');
+		const localCurrency = localStorage.getItem('selected_currency') || 'USD';
+		setCurrency(localCurrency);
+		const currencyRates = JSON.parse(localStorage.getItem('currency_rates') || '{"usd": 1}');
+		setCurrencyRates(currencyRates);
 
 		const itemId = location.pathname.split('/').pop();
 		const itemContainer = document.querySelector(`.item-${itemId}`);

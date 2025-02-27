@@ -126,9 +126,10 @@ export function getSpecificCSFInventoryItem(item_name: string, float?: number) {
 
 async function fetchCSFCurrencyRates() {
 	await fetch('https://csfloat.com/api/v1/meta/exchange-rates')
-		.then((response) => response.json())
+		.then((response) => response.json() as Promise<CSFloat.ExchangeRates>)
 		.then((data) => {
 			console.debug('[BetterFloat] Received currency rates from CSFloat: ', data);
+			localStorage.setItem('currency_rates', JSON.stringify(data.data));
 			cacheCSFExchangeRates(data);
 		});
 }
