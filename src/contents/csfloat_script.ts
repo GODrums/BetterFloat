@@ -14,7 +14,7 @@ import {
 	ICON_CLOCK,
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
-	ICON_CSGOSTASH,
+	ICON_CSGOSKINS,
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
@@ -85,14 +85,14 @@ async function init() {
 		return;
 	}
 
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	activateHandler();
-
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csf-enable']) return;
+
+	// catch the events thrown by the script
+	// this has to be done as first thing to not miss timed events
+	activateHandler();
 
 	await initPriceMapping(extensionSettings, 'csf');
 
@@ -790,6 +790,12 @@ function addBargainListener(container: Element | null) {
 	}
 }
 
+function getAlternativeItemLink(item: CSFloat.Item) {
+	const namePart = item.item_name.toLowerCase().replace('★ ', '').replace(' | ', '-').replaceAll(' ', '-');
+	const wearPart = item.wear_name ? `/${item.is_stattrak ? 'stattrak-' : ''}${item.wear_name.toLowerCase().replaceAll(' ', '-')}` : '';
+	return namePart + wearPart;
+}
+
 type QuickLink = {
 	icon: string;
 	tooltip: string;
@@ -801,22 +807,23 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	if (!actionsContainer) return;
 
 	actionsContainer.setAttribute('style', 'flex-wrap: wrap;');
-	const altURL = createAlternativeItemLink(container, listing.item);
+	const altURL = getAlternativeItemLink(listing.item);
+	const pricempireURL = createPricempireItemLink(container, listing.item);
 	const quickLinks: QuickLink[] = [
 		{
-			icon: ICON_CSGOSTASH,
-			tooltip: 'Show CSGOStash Page',
-			link: 'https://csgostash.com/markethash/' + listing.item.market_hash_name,
+			icon: ICON_CSGOSKINS,
+			tooltip: 'Show CSGOSkins.gg Page',
+			link: `https://csgoskins.gg/items/${altURL}?utm_source=betterfloat`,
 		},
 		{
 			icon: ICON_STEAMANALYST,
 			tooltip: 'Show SteamAnalyst Page',
-			link: `https://csgo.steamanalyst.com/${altURL}`,
+			link: `https://csgo.steamanalyst.com/skin/${altURL.replace('/', '-')}?utm_source=betterfloat`,
 		},
 		{
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
-			link: `https://app.pricempire.com/item/cs2/${altURL}`,
+			link: `https://app.pricempire.com/item/cs2/${pricempireURL}?utm_source=betterfloat`,
 		},
 	];
 	// inventory link if seller stall is public
@@ -852,7 +859,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	}
 }
 
-function createAlternativeItemLink(container: Element, item: CSFloat.Item) {
+function createPricempireItemLink(container: Element, item: CSFloat.Item) {
 	const itemType = (item: CSFloat.Item) => {
 		if (item.type === 'container' && !item.item_name.includes('Case')) {
 			return 'sticker-capsule';
