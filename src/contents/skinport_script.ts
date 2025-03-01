@@ -1,31 +1,19 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
-import { dynamicUIHandler, mountSpItemPageBuffContainer } from '~lib/handlers/urlhandler';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import {
-	AvailableMarketSources,
-	ICON_ARROWUP_SMALL,
-	ICON_BUFF,
-	ICON_CAMERA,
-	ICON_CAMERA_FLIPPED,
-	ICON_CSFLOAT,
-	ICON_CSGOSTASH,
-	ICON_EXCLAMATION,
-	ICON_PRICEMPIRE,
-	ICON_STEAMANALYST,
-	MarketSource,
-} from '~lib/util/globals';
+import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_CSGOSKINS, ICON_EXCLAMATION, ICON_PRICEMPIRE, ICON_STEAMANALYST, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { genGemContainer, generateSpStickerContainer } from '~lib/util/uigeneration';
+import { genGemContainer, generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 
 import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getFirstSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
+import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
@@ -45,17 +33,22 @@ async function init() {
 
 	console.log('[BetterFloat] Starting BetterFloat');
 	console.time('[BetterFloat] Skinport init timer');
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	await activateHandler();
 
 	extensionSettings = await getAllSettings();
 	console.debug('[BetterFloat] Settings: ', extensionSettings);
 
+	if (!extensionSettings['sp-enable']) {
+		return;
+	}
+
+	// catch the events thrown by the script
+	// this has to be done as first thing to not miss timed events
+	await activateHandler();
+
 	await initPriceMapping(extensionSettings, 'sp');
 
 	await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
-		if (extensionSettings['sp-enable'] && document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
+		if (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
 			console.warn('[BetterFloat] Skinport has to be set to the English language for this extension to work. Aborting ...');
 			createLanguagePopup();
 			return;
@@ -113,9 +106,13 @@ async function firstLaunch() {
 			await adjustCart(cartContainer);
 		}
 	} else if (path.startsWith('/item/') || path.startsWith('/i/') || path.startsWith('/myitems/i/')) {
-		const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
-		for (const item of itemPage) {
-			await adjustItemPage(item);
+		// const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
+		// for (const item of itemPage) {
+		// 	await adjustItemPage(item);
+		// }
+		const itemPage = document.querySelector('.ItemPage');
+		if (itemPage) {
+			await adjustItem(itemPage, itemSelectors.page);
 		}
 	} else if (path.startsWith('/myitems/')) {
 		const inventoryItems = Array.from(document.querySelectorAll('.InventoryPage-item'));
@@ -206,7 +203,8 @@ async function applyMutation() {
 					} else if (className.includes('Cart-container')) {
 						await adjustCart(addedNode);
 					} else if (className.includes('ItemPage')) {
-						await adjustItemPage(addedNode);
+						// await adjustItemPage(addedNode);
+						await adjustItem(addedNode, itemSelectors.page);
 					} else if (className.includes('PopularList')) {
 						await handlePopularList(addedNode);
 					} else if (className.includes('CatalogHeader-tooltipLive')) {
@@ -262,146 +260,12 @@ async function handlePopularList(list: Element) {
 	}
 }
 
-async function adjustItemPage(container: Element) {
-	const itemRating = container.querySelector('.ItemPage-rating');
-	if (itemRating) {
-		itemRating.remove();
-	}
-
-	const getPopupItem = () => {
-		return location.pathname.includes('myitems/i/') ? getSpPopupInventoryItem() : getSpPopupItem();
-	};
-	let popupItem = getPopupItem();
-	let tries = 0;
-	while (!popupItem && tries++ < 10) {
-		await delay(200);
-		popupItem = getPopupItem();
-	}
-	if (tries >= 5) {
-		console.error('[BetterFloat] Could not fetch popup item');
-	}
-	console.log('[BetterFloat] Popup item:', popupItem);
-
-	if (popupItem && container.querySelector('.ItemPage-notListed')) {
-		await addSoldPrice(container, popupItem.data.item);
-	}
-
-	await waitForElement('.ItemPage-image > img');
-	const item = getSkinportItem(container, itemSelectors.page);
-	if (!item) return;
-	if (item.currency === '') {
-		item.currency = getSymbolFromCurrency(await getSpUserCurrency()) ?? '€';
-	}
-	const buffItem = await getBuffItem(item.full_name, item.style);
-	const market_id = getMarketID(buffItem.buff_name, buffItem.source);
-	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
-
-	const link = getMarketURL({ source: buffItem.source, buff_name: buffItem.buff_name, market_id, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
-
-	container.setAttribute('data-betterfloat', JSON.stringify({ itemPrice: item.price, currency: item.currency, buff_id: market_id, link, ...buffItem }));
-
-	const suggestedContainer = container.querySelector('.ItemPage-suggested');
-	if (suggestedContainer) {
-		await mountSpItemPageBuffContainer();
-	}
-
-	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(buffItem.source) && extensionSettings['sp-pricereference'] === 0 ? buffItem.priceOrder : buffItem.priceListing;
-	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
-	const priceContainer = <HTMLElement>container.querySelector('.ItemPage-price');
-	if (priceContainer && priceFromReference) {
-		const newContainer = html`
-			<div
-				class="ItemPage-discount betterfloat-discount-container"
-				style="background: linear-gradient(135deg, #0073d5, ${
-					difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
-				}); transform: skewX(-15deg); border-radius: 3px; padding-top: 2px;"
-			>
-				<span style="margin: 5px; font-weight: 700;"
-					>${difference.isZero() ? `-${item.currency}0` : (difference.isPos() ? '+' : '-') + item.currency + difference.abs().toFixed(2)}
-					(${new Decimal(item.price).div(priceFromReference).mul(100).toFixed(2)}%)</span
-				>
-			</div>
-		`;
-		priceContainer.insertAdjacentHTML('beforeend', newContainer);
-	}
-
-	if (extensionSettings['sp-stickerprices']) {
-		await addStickerInfo(container, item, itemSelectors.page, difference, true);
-	}
-
-	addFloatColoring(container, item);
-
-	if (popupItem) {
-		if (extensionSettings['sp-csbluegem']) {
-			await patternDetections(container, popupItem.data.item);
-		}
-		const suggestedText = container.querySelector('.ItemPage-suggested');
-		if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
-			let formattedPrice = '-';
-			if ((<Skinport.ItemData>popupItem).data.offers?.lowPrice) {
-				const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers.lowPrice ?? 0).div(100).toDP(2).toNumber();
-				formattedPrice = CurrencyFormatter(popupItem.data.item.currency).format(lowPrice);
-			}
-			suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
-		}
-
-		const buttonGroup = container.querySelector('.ItemPage-btnGroup');
-		if (buttonGroup) {
-			const item = popupItem.data.item;
-			const quickLinks = [
-				{
-					icon: ICON_CSGOSTASH,
-					text: 'CSGOStash',
-					link: `https://csgostash.com/markethash/${item.marketHashName}`,
-				},
-				{
-					icon: ICON_STEAMANALYST,
-					text: 'SteamAnalyst',
-					link: `https://csgo.steamanalyst.com/skin/${item.url}`,
-				},
-				{
-					icon: ICON_PRICEMPIRE,
-					text: 'Pricempire',
-					link: `https://app.pricempire.com/item/cs2/${item.url}`,
-				},
-			];
-
-			const quickLinksContainer = html`
-			<div class="betterfloat-quicklinks" style="flex-basis: 100%; display: flex; justify-content: space-evenly;">
-				${quickLinks
-					.map(
-						(link) => html`
-							<a href="${link.link}" target="_blank" style="margin: 12px 0; padding: 4px 2px; border-radius: 8px; border: 1px solid #43484a;">
-								<div style="display: flex; align-items: center; gap: 6px; padding: 2px 8px;">
-									<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
-									<span>${link.text}</span>
-								</div>
-							</a>
-						`
-					)
-					.join('')}
-			</div>
-		`;
-
-			if (!buttonGroup.querySelector('.betterfloat-quicklinks')) {
-				buttonGroup.insertAdjacentHTML('afterend', quickLinksContainer);
-			}
-		}
-	}
-
-	const embeddedItems = Array.from(document.querySelectorAll('.ItemList-item'));
-	for (const item of embeddedItems) {
-		await adjustItem(item);
-	}
-}
-
 async function adjustCart(container: Element) {
 	// adjust the cart with Buff prices?
 }
 
 async function addSoldPrice(container: Element, item: Skinport.Item) {
 	const currency = await getSpUserCurrency();
-	const differencePercentage = new Decimal(item.suggestedPrice).minus(item.salePrice).div(item.suggestedPrice).mul(100).toDP(0);
 
 	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currency, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 	const priceContainer = html`
@@ -409,17 +273,6 @@ async function addSoldPrice(container: Element, item: Skinport.Item) {
 			<div class="ItemPage-value">
 				<div class="Tooltip-link">${CurrencyFormatter.format(new Decimal(item.salePrice).div(100).toNumber())}</div>
 			</div>
-			${
-				differencePercentage.isPos()
-					? html`
-				<div class="ItemPage-discount">
-					<div class="GradientLabel">
-						<span>− ${differencePercentage.toFixed(0)}%</span>
-					</div>
-				</div>
-			`
-					: ''
-			}
 		</div>
 		<div class="ItemPage-suggested">Suggested price ${CurrencyFormatter.format(new Decimal(item.suggestedPrice).div(100).toNumber())}</div>
 	`;
@@ -427,11 +280,22 @@ async function addSoldPrice(container: Element, item: Skinport.Item) {
 	container.querySelector('.ItemPage-notListed')?.insertAdjacentHTML('beforebegin', priceContainer);
 }
 
-async function adjustItem(container: Element) {
-	const item = getSkinportItem(container, itemSelectors.preview);
-	if (!item) return;
+async function adjustItem(container: Element, selector: ItemSelectors = itemSelectors.preview) {
+	const isItemPage = selector === itemSelectors.page;
+	if (isItemPage) {
+		const itemRating = container.querySelector('.ItemPage-rating');
+		if (itemRating) {
+			itemRating.remove();
+		}
 
-	storeItem(container, item);
+		// wait until document title has loaded, which we use to get the item name
+		while (document.title.startsWith('Skinport')) {
+			await delay(100);
+		}
+	}
+
+	const item = getSkinportItem(container, selector);
+	if (!item) return;
 
 	const isLiveActive = document.querySelector('.LiveBtn')?.className.includes('--isActive');
 	const filterItem = isLiveActive ? applyFilter(item, container) : false;
@@ -444,10 +308,19 @@ async function adjustItem(container: Element) {
 	if (item.type === 'Key') {
 		return;
 	}
-	const priceResult = await addBuffPrice(item, container);
-	// if (location.pathname.startsWith('/market')) {
-	// 	addInstantOrder(item, container);
-	// }
+
+	let popupItem: Skinport.ItemData | Skinport.InventoryItem | null = null;
+	if (isItemPage && container.querySelector('.ItemPage-notListed')) {
+		while (!popupItem) {
+			await delay(100);
+			popupItem = getSpPopupItem();
+		}
+		await addSoldPrice(container, popupItem.data.item);
+		item.price = new Decimal(popupItem.data.item.salePrice).div(100).toDP(2).toNumber();
+	}
+
+	storeItem(container, item);
+	const priceResult = await addBuffPrice(item, container, selector);
 
 	if (isLiveActive && extensionSettings['user'].plan.type === 'pro') {
 		if (liveBuffFilter(priceResult)) {
@@ -457,7 +330,7 @@ async function adjustItem(container: Element) {
 	}
 
 	if (extensionSettings['sp-stickerprices'] && !location.pathname.startsWith('/sell/')) {
-		await addStickerInfo(container, item, itemSelectors.preview, priceResult.price_difference);
+		await addStickerInfo(container, item, selector, priceResult.price_difference, isItemPage);
 	}
 	if (extensionSettings['sp-floatcoloring']) {
 		addFloatColoring(container, item);
@@ -467,14 +340,46 @@ async function adjustItem(container: Element) {
 		await liveNotifications(item, priceResult.percentage);
 	}
 
-	const cachedItem = getFirstSpItem();
+	const getAPIItem = () => {
+		if (isItemPage) {
+			popupItem = location.pathname.includes('myitems/i/') ? getSpPopupInventoryItem() : getSpPopupItem();
+			return popupItem?.data.item as Skinport.Item;
+		} else {
+			return getSpItem(String(item.saleId));
+		}
+	};
+
+	let cachedItem = getAPIItem();
+	if (isItemPage) {
+		let tries = 0;
+		while (!cachedItem && tries++ < 10) {
+			await delay(100);
+			cachedItem = getAPIItem();
+		}
+		if (tries >= 10) {
+			console.error('[BetterFloat] Could not get item from API');
+		}
+	}
 	if (cachedItem) {
 		if (cachedItem.name !== item.name) {
 			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
 			return;
 		}
 
-		// console.log('[BetterFloat] Cached item: ', cachedItem);
+		if (isItemPage && popupItem) {
+			const suggestedText = container.querySelector('.ItemPage-suggested');
+			if (suggestedText && (<Skinport.ItemData>popupItem).data.offers) {
+				let formattedPrice = '-';
+				if ((<Skinport.ItemData>popupItem).data.offers?.lowPrice) {
+					const lowPrice = new Decimal((<Skinport.ItemData>popupItem).data.offers.lowPrice ?? 0).div(100).toDP(2).toNumber();
+					formattedPrice = CurrencyFormatter(popupItem.data.item.currency).format(lowPrice);
+				}
+				suggestedText.innerHTML += `<br>Lowest on Skinport: ${formattedPrice} (${(<Skinport.ItemData>popupItem).data.offers?.offerCount} offers)`;
+			}
+
+			addQuickLinks(container, popupItem);
+		}
+
 		addPattern(container, cachedItem);
 
 		addAdditionalStickerInfo(container, cachedItem);
@@ -482,6 +387,66 @@ async function adjustItem(container: Element) {
 		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].some((name) => cachedItem.name.includes(name)) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
+	}
+
+	if (isItemPage) {
+		const embeddedItems = Array.from(document.querySelectorAll('.ItemList-item'));
+		for (const item of embeddedItems) {
+			await adjustItem(item);
+		}
+	}
+}
+
+function getAlternativeItemLink(item: Skinport.Item) {
+	const typePart = `${(item.subCategory ?? item.title).toLowerCase().replaceAll(' ', '-')}-${item.family.toLowerCase().replaceAll(' ', '-')}`;
+	const exteriorPart = item.exterior ? `/${item.exterior.toLowerCase().replaceAll(' ', '-')}` : '';
+	return typePart + exteriorPart;
+}
+
+function addQuickLinks(container: Element, popupItem: Skinport.InventoryItem | Skinport.ItemData) {
+	const buttonGroup = container.querySelector('.ItemPage-btnGroup');
+	if (!buttonGroup) {
+		return;
+	}
+
+	const item = popupItem.data.item;
+	const adjustedURL = item.url.replace('+', '-');
+	const altURL = getAlternativeItemLink(item);
+	const quickLinks = [
+		{
+			icon: ICON_CSGOSKINS,
+			text: 'CSGOSkins',
+			link: `https://csgoskins.gg/items/${altURL}`,
+		},
+		{
+			icon: ICON_STEAMANALYST,
+			text: 'SteamAnalyst',
+			link: `https://csgo.steamanalyst.com/skin/${adjustedURL}`,
+		},
+		{
+			icon: ICON_PRICEMPIRE,
+			text: 'Pricempire',
+			link: `https://app.pricempire.com/item/cs2/${adjustedURL}`,
+		},
+	];
+
+	const quickLinksContainer = html`
+		<div class="ButtonGroup ItemPage-btnGroup betterfloat-quicklinks" style="margin-top: 10px;">
+			${quickLinks
+				.map(
+					(link) => html`
+						<button type="button" onclick="window.open('${link.link}?utm_source=betterfloat', '_blank')" style="flex-direction: column; gap: 4px;">
+							<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
+							<span>${link.text}</span>
+						</button>
+					`
+				)
+				.join('')}
+		</div>
+	`;
+
+	if (!buttonGroup.querySelector('.betterfloat-quicklinks')) {
+		buttonGroup.insertAdjacentHTML('afterend', quickLinksContainer);
 	}
 }
 
@@ -555,7 +520,7 @@ export async function addBlueBadge(container: Element, item: Skinport.Item) {
 	const itemHeader = container.querySelector('.TradeLock-lock')?.firstChild;
 	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
 
-	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
+	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory!;
 	const patternElement = await fetchBlueGemPatternData({
 		type: blueType.replaceAll(' ', '_'),
 		pattern: item.pattern,
@@ -580,7 +545,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory;
+	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory!;
 	const patternElement = await fetchBlueGemPatternData({ type: blueType.replaceAll(' ', '_'), pattern: item.pattern });
 	const pastSales = await fetchBlueGemPastSales({ type: blueType, paint_seed: item.pattern, currency: usedCurrency });
 
@@ -780,6 +745,8 @@ const itemSelectors = {
 		price: '.ItemPreview-price',
 		info: '.ItemPreview-itemInfo',
 		alt: '.ItemPreview-itemImage > img',
+		priceParent: '.ItemPreview-priceValue',
+		oldPrice: '.ItemPreview-oldPrice',
 	},
 	page: {
 		name: '.ItemPage-name',
@@ -789,6 +756,8 @@ const itemSelectors = {
 		price: '.ItemPage-price',
 		info: '.ItemPage-include',
 		alt: '.ItemImage-img',
+		priceParent: '.ItemPage-price',
+		oldPrice: '.ItemPage-suggested',
 	},
 } as const;
 
@@ -875,9 +844,9 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	const wearDiv = container.querySelector('.WearBar-value');
 	const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
 
-	const full_name = container.querySelector(selector.alt)?.getAttribute('alt') ?? '';
+	const full_name = selector === itemSelectors.page ? document.title.split(' - ').slice(0, -2).join(' - ') : (container.querySelector(selector.alt)?.getAttribute('alt') ?? '');
 
-	const url = container.querySelector('.ItemPreview-link')?.getAttribute('href') ?? '';
+	const url = selector === itemSelectors.page ? location.pathname : (container.querySelector('.ItemPreview-link')?.getAttribute('href') ?? '');
 	const saleId = Number(url?.split('/').pop() ?? 0);
 	return {
 		name: name,
@@ -936,70 +905,54 @@ function convertCurrency(price: Decimal, currencyRate: number, settingRate: stri
 	return settingRate === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
 }
 
-function generateBuffContainer(container: HTMLElement, priceListing: Decimal | undefined, priceOrder: Decimal | undefined, currencySymbol: string, source: MarketSource, containerIsParent = false) {
-	const CurrencyFormatter = new Intl.NumberFormat(undefined, { style: 'currency', currency: currencySymbol, currencyDisplay: 'narrowSymbol', minimumFractionDigits: 0, maximumFractionDigits: 2 });
-	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
-
-	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user']));
-
-	const buffContainer = html`
-		<div class="betterfloat-buff-container" style="display: flex; margin-top: 5px; align-items: center;">
-			<img src="${icon}" style="height: 22px; margin-right: 5px; border-radius: 5px; ${iconStyle}" />
-			<div class="suggested-price betterfloat-buffprice" data-betterfloat="${JSON.stringify({ priceListing, priceOrder, currencySymbol })}">
-				${
-					showBothPrices
-						? html`
-							<span class="betterfloat-buff-tooltip">Bid: Highest buy order price; Ask: Lowest listing price</span>
-							<span style="color: orange; font-weight: 600;">${priceOrder?.lt(100) && 'Bid '}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)}</span>
-							<span style="color: gray;margin: 0 3px 0 3px;">|</span>
-							<span style="color: greenyellow; font-weight: 600;">${priceOrder?.lt(100) && 'Ask '}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span>
-					  `
-						: html` <span style="color: white; font-weight: 600;">${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)}</span> `
-				}
-				${
-					priceOrder?.gt(priceListing ?? 0) &&
-					html`
-					<img
-						src="${ICON_EXCLAMATION}"
-						style="height: 20px; margin-left: 5px; filter: brightness(0) saturate(100%) invert(28%) sepia(95%) saturate(4997%) hue-rotate(3deg) brightness(103%) contrast(104%);"
-					/>
-				`
-				}
-			</div>
-		</div>
-	`;
-
-	if (containerIsParent) {
-		const divider = document.createElement('div');
-		container.appendChild(divider);
-		container.insertAdjacentHTML('beforeend', buffContainer);
-	} else if (extensionSettings['sp-steamprices']) {
-		const divider = document.createElement('div');
-		container.insertAdjacentHTML('beforeend', buffContainer);
-		container.after(divider);
-	} else {
-		container.outerHTML = buffContainer;
-	}
-}
-
-async function addBuffPrice(item: Skinport.Listing, container: Element) {
+async function addBuffPrice(item: Skinport.Listing, container: Element, selector: ItemSelectors) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
 	const market_id = getMarketID(buff_name, source);
 
-	const tooltipLink = <HTMLElement>container.querySelector('.ItemPreview-priceValue')?.firstChild;
-	const priceDiv = container.querySelector('.ItemPreview-oldPrice');
+	const priceParent = container.querySelector<HTMLElement>(selector.priceParent)!;
+	const priceDiv = container.querySelector<HTMLElement>(selector.oldPrice);
 	const currencyRate = await getSpUserCurrency();
+	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
 	if (!container.querySelector('.betterfloat-buffprice')) {
-		if (!priceDiv) {
-			const priceParent = container.querySelector('.ItemPreview-priceValue');
-			generateBuffContainer(priceParent as HTMLElement, priceListing, priceOrder, currencyRate, source, true);
-			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
+		const buffContainer = generatePriceLine({
+			source,
+			market_id,
+			buff_name,
+			priceOrder,
+			priceListing,
+			priceFromReference: priceListing,
+			userCurrency: currencyRate,
+			itemStyle: item.style as DopplerPhase,
+			CurrencyFormatter: new Intl.NumberFormat(undefined, {
+				style: 'currency',
+				currency: currencyRate,
+				currencyDisplay: 'narrowSymbol',
+				minimumFractionDigits: 0,
+				maximumFractionDigits: 2,
+			}),
+			isDoppler,
+			isPopout: selector === itemSelectors.page,
+		});
+
+		const parentContainer = priceDiv ?? priceParent;
+		if (selector === itemSelectors.page) {
+			parentContainer.insertAdjacentHTML('afterend', buffContainer);
+		} else if (!priceDiv) {
+			const divider = document.createElement('div');
+			parentContainer.appendChild(divider);
+			parentContainer.insertAdjacentHTML('beforeend', buffContainer);
+		} else if (extensionSettings['sp-steamprices']) {
+			const divider = document.createElement('div');
+			parentContainer.insertAdjacentHTML('beforeend', buffContainer);
+			parentContainer.after(divider);
 		} else {
-			generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currencyRate, source);
+			parentContainer.outerHTML = buffContainer;
+		}
+
+		if (!priceDiv) {
+			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
 		}
 	}
-
-	const isDoppler = item.name.includes('Doppler') && (item.category === 'Knife' || item.category === 'Weapon');
 
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
 
@@ -1039,16 +992,16 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		discountContainer.className = 'GradientLabel ItemPreview-discount';
 		const newSaleTag = document.createElement('span');
 		discountContainer.appendChild(newSaleTag);
-		container.querySelector('.ItemPreview-priceValue')?.appendChild(discountContainer);
+		priceParent?.appendChild(discountContainer);
 	}
 	const saleTag = discountContainer.firstChild as HTMLElement;
-	if (item.price !== 0 && !Number.isNaN(item.price) && saleTag && tooltipLink && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
+	if (item.price !== 0 && !Number.isNaN(item.price) && saleTag && !discountContainer.querySelector('.betterfloat-sale-tag') && (priceListing?.gt(0) || priceOrder?.gt(0))) {
 		saleTag.className = 'sale-tag betterfloat-sale-tag';
 		discountContainer.style.background = `linear-gradient(135deg,#0073d5,${
 			difference.isZero() ? extensionSettings['sp-color-neutral'] : difference.isNeg() ? extensionSettings['sp-color-profit'] : extensionSettings['sp-color-loss']
 		})`;
 
-		const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;';
+		const saleTagStyle = 'display: flex; flex-direction: column; align-items: center; line-height: 16px;' + (selector === itemSelectors.page ? 'font-weight: 700;' : '');
 
 		const percentageText = `${percentage.toFixed(percentage.gt(150) ? 0 : 2)}%`;
 		const buffPriceHTML = html`
@@ -1066,38 +1019,6 @@ async function addBuffPrice(item: Skinport.Listing, container: Element) {
 		price_difference: difference,
 		percentage,
 	};
-}
-
-/**
- * @deprecated just left for reference
- */
-function createBuffName(item: Skinport.Listing): string {
-	let full_name = `${item.name}`;
-	if (item.type.includes('Sticker') || item.type.includes('Patch') || item.type.includes('Music Kit')) {
-		full_name = item.type + ' | ' + full_name;
-	} else if (
-		item.text.includes('Container') ||
-		item.text.includes('Collectible') ||
-		item.type.includes('Gift') ||
-		item.type.includes('Key') ||
-		item.type.includes('Pass') ||
-		item.type.includes('Pin') ||
-		item.type.includes('Tool') ||
-		item.type.includes('Tag')
-	) {
-		full_name = item.name;
-	} else if (item.text.includes('Graffiti')) {
-		full_name = 'Sealed Graffiti | ' + item.name;
-	} else if (item.text.includes('Agent')) {
-		full_name = `${item.name} | ${item.type}`;
-	} else if (item.name.includes('Dragon King')) {
-		full_name = `${item.text.includes('StatTrak') ? 'StatTrak™ ' : ''}M4A4 | 龍王 (Dragon King)${' (' + item.wear_name + ')'}`;
-	} else {
-		full_name = `${(item.text.includes('Knife') || item.text.includes('Gloves')) && !item.text.includes('StatTrak') ? '★ ' : ''}${item.type}${
-			item.name.includes('Vanilla') ? '' : ' | ' + item.name.split(' (')[0].trim()
-		}${item.name.includes('Vanilla') ? '' : ' (' + item.wear_name + ')'}`;
-	}
-	return full_name.replace(/ +(?= )/g, '').replace(/\//g, '-');
 }
 
 let extensionSettings: IStorage;

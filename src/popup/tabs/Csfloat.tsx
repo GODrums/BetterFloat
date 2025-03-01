@@ -94,7 +94,6 @@ export const CSFloatSettings = () => {
 							text="Show In-Game Pictures"
 							icon={<MaterialSymbolsImageOutlineRounded className="h-6 w-6" />}
 							tooltipText="Show in-game screenshots instead of the default preview image. Be careful: this uses a lot of additional bandwith and memory. If your site loads slowly, keep this option turned off."
-							isNew
 						/>
 					</SettingsCard>
 					<SettingsCard>
@@ -138,13 +137,12 @@ export const CSFloatSettings = () => {
 					<SettingsCard>
 						<SettingsCheckbox
 							id="csf-quickmenu"
-							isNew
 							text="Show Quick Menu"
 							tooltipText="Shows a menu for quick access in the top toolbar. Contains similar elements to the menu accessible through a click on the user avatar."
 						/>
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-themetoggle" isNew text="Show Theme Toggle" />
+						<SettingsCheckbox id="csf-themetoggle" text="Show Theme Toggle" />
 					</SettingsCard>
 					<SettingsColorPicker prefix="csf" />
 				</div>

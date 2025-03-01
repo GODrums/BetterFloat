@@ -381,8 +381,8 @@ export namespace Skinport {
 		stattrak: boolean;
 		steamid: string;
 		stickers: StickerData[];
-		subCategory: string;
-		subCategory_localized: string;
+		subCategory?: string;
+		subCategory_localized?: string;
 		suggestedPrice: number;
 		tags: [
 			{

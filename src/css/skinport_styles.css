@@ -252,3 +252,32 @@
 	background: #f6f6f6;
 	color: #1d2021;
 }
+
+.betterfloat-buff-a {
+	width: fit-content;
+	display: flex;
+	margin-top: 5px;
+	align-items: center;
+}
+
+.betterfloat-buff-a img {
+	height: 22px !important;
+}
+
+.betterfloat-buff-a.betterfloat-big-a img {
+	height: 1.5rem !important;
+	width: 1.5rem !important;
+}
+
+.betterfloat-big-a {
+	gap: 0.375rem;
+}
+
+.betterfloat-buff-a .betterfloat-buffprice {
+	font-weight: 600;
+}
+
+.betterfloat-buff-a .betterfloat-big-price {
+	font-size: 1.125rem;
+	line-height: 1.75rem;
+}

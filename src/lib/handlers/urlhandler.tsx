@@ -15,8 +15,8 @@ import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
-import SPBuffContainer from '~lib/inline/SpBuffContainer';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
+import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
 import UpdatePopup from '~lib/inline/UpdatePopup';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
@@ -36,6 +36,8 @@ export function urlHandler() {
 				createLiveLink();
 				if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
 					filterDisplay();
+				} else if (state.path.startsWith('/item/')) {
+					mountSpMarketComparison();
 				}
 			}
 		}
@@ -76,7 +78,6 @@ async function showUpdatePopup() {
 	// minor updates don't receive a new popup
 	const version = chrome.runtime.getManifest().version.split('.').slice(0, 2).join('.') + '.0';
 	const storageKey = `show-update-popup-${version}`;
-	console.debug('[BetterFloat] Checking for update popup', storageKey);
 	const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
 	// show update popup
 	if (showUpdate !== false) {
@@ -150,26 +151,28 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		}
 	}
 
-	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('csf-marketcomparison');
-	if (showMarketComparison && state.path.includes('/item/')) {
-		if (document.querySelector('betterfloat-market-comparison')) {
-			// wait for the new dialog to replace the old one
-			await new Promise((resolve) => setTimeout(resolve, 500));
-		}
-		const success = await waitForElement('div.full-screen-dialog .container');
-		if (!success) return;
-		const popup = document.querySelector<HTMLElement>('div.full-screen-dialog');
-		const container = popup?.querySelector<HTMLElement>('.container');
-		if (popup && container) {
-			popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
-			container.style.gridTemplateColumns = '250px 1fr 210px 210px';
-			await mountShadowRoot(<CSFMarketComparison />, {
-				tagName: 'betterfloat-market-comparison',
-				parent: container,
-			});
-			const ownContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison');
-			if (ownContainer) {
-				ownContainer.style.gridRow = '1 / span 2';
+	if (state.path.includes('/item/')) {
+		const showMarketComparison = await ExtensionStorage.sync.get<boolean>('csf-marketcomparison');
+		if (showMarketComparison) {
+			if (showMarketComparison && document.querySelector('betterfloat-market-comparison')) {
+				// wait for the new dialog to replace the old one
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			}
+			const success = await waitForElement('div.full-screen-dialog .container');
+			if (!success) return;
+			const popup = document.querySelector<HTMLElement>('div.full-screen-dialog');
+			const container = popup?.querySelector<HTMLElement>('.container');
+			if (popup && container) {
+				popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
+				container.style.gridTemplateColumns = '250px 1fr 210px 210px';
+				await mountShadowRoot(<CSFMarketComparison />, {
+					tagName: 'betterfloat-market-comparison',
+					parent: container,
+				});
+				const ownContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison');
+				if (ownContainer) {
+					ownContainer.style.gridRow = '1 / span 2';
+				}
 			}
 		}
 	}
@@ -293,13 +296,30 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 	}
 }
 
-export async function mountSpItemPageBuffContainer() {
-	const parent = document.querySelector('.ItemPage-notListed') ?? document.querySelector('.ItemPage-btns');
-	if (parent) {
-		await mountShadowRoot(<SPBuffContainer />, {
-			tagName: 'betterfloat-buff-container',
-			parent,
-			position: 'before',
+async function mountSpMarketComparison() {
+	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('sp-marketcomparison');
+	if (!showMarketComparison) {
+		return;
+	}
+
+	let suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
+	while (!suggestedPrice || !suggestedPrice.textContent?.startsWith('Suggested price')) {
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
+	}
+	if (suggestedPrice) {
+		const leftColumn = document.querySelector<HTMLElement>('.ItemPage-column--left')!;
+		leftColumn.style.width = '55%';
+		const rightColumn = document.querySelector<HTMLElement>('.ItemPage-column--right')!;
+		rightColumn.style.width = '45%';
+		const itemPage = suggestedPrice.closest<HTMLElement>('.ItemPage-info')!;
+		itemPage.style.maxWidth = '450px';
+		itemPage.style.paddingRight = '30px';
+		itemPage.style.borderRight = '2px solid #1d2021';
+		await mountShadowRoot(<SpMarketComparison />, {
+			tagName: 'betterfloat-market-comparison',
+			parent: itemPage,
+			position: 'after',
 		});
 	}
 }

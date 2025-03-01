@@ -225,7 +225,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, source: MarketSource = MarketSource.Buff) {
 	let queryName = buff_name;
 
-	if (source === MarketSource.Buff && itemStyle !== '' && itemStyle !== 'Vanilla') {
+	if ([MarketSource.Buff, MarketSource.YouPin, MarketSource.CSFloat].includes(source) && itemStyle !== '' && itemStyle !== 'Vanilla') {
 		queryName = buff_name + ' - ' + itemStyle;
 	}
 

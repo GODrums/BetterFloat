@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_CSBLUEGEM, ICON_SKINPORT_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, MdiShoppingSearchOutline, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -32,6 +32,9 @@ export const SkinportSettings = () => {
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
 							tooltipText="Adds pattern details and past sales to case hardened skins."
 						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="sp-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
 					</SettingsCard>
 				</div>
 			</div>
