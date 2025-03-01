@@ -12,7 +12,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { fetchMarketComparisonData } from '~lib/handlers/networkhandler';
 import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getMarketURL, isBuffBannedItem } from '~lib/util/helperfunctions';
-import type { SettingsUser } from '~lib/util/storage';
+import { ExtensionStorage, type SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
@@ -181,6 +181,7 @@ const SpMarketComparison: React.FC = () => {
 		AvailableMarketSources.map((m) => m.source)
 	);
 	const [user] = useStorage<SettingsUser>('user');
+	const [ratesSetting] = useStorage<string>('sp-currencyrates', '0');
 
 	const ref = useRef(null);
 
@@ -196,13 +197,20 @@ const SpMarketComparison: React.FC = () => {
 			buff_name += ` - ${listing.style}`;
 		}
 
+		const convertCurrency = (input: number) => {
+			if (Number(ratesSetting) === 0) {
+				return new Decimal(input).mul(currencyRate);
+			}
+			return new Decimal(input).div(currencyRate);
+		};
+
 		try {
 			const data = await fetchMarketComparisonData(buff_name, user?.steam?.steamid);
 			let convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
-					ask: entry.ask ? entry.ask * currencyRate : undefined,
-					bid: entry.bid ? entry.bid * currencyRate : undefined,
+					ask: entry.ask ? convertCurrency(entry.ask).toDP(2).toNumber() : undefined,
+					bid: entry.bid ? convertCurrency(entry.bid).toDP(2).toNumber() : undefined,
 					count: entry.count || 0,
 					updated: entry.updated || 0,
 				}))
@@ -236,7 +244,15 @@ const SpMarketComparison: React.FC = () => {
 		const userData = JSON.parse(localStorage.getItem('userData') || '{}') as Skinport.UserData;
 		if (userData.currency) {
 			setCurrency(userData.currency);
-			setCurrencyRate(userData.rate);
+			setCurrencyRate(userData.rates['USD']);
+		}
+
+		if (Number(ratesSetting) === 0) {
+			const currencyRates = await ExtensionStorage.local.getItem<{ [key: string]: number }>('currencyrates');
+			const rate = currencyRates?.rates[userData.currency];
+			if (rate) {
+				setCurrencyRate(rate);
+			}
 		}
 
 		const itemContainer = document.querySelector('.ItemPage');
@@ -247,6 +263,7 @@ const SpMarketComparison: React.FC = () => {
 		}
 		setListing(JSON.parse(betterfloatData));
 	};
+
 	useEffect(() => {
 		document.documentElement.style.height = '100%';
 		document.body.style.height = '100%';
