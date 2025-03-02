@@ -37,7 +37,7 @@ body.light-theme {
 	display: inline-flex;
 	align-items: center;
 	font-size: 15px;
-	width: fit-content;
+	width: auto;
 }
 
 .betterfloat-sale-tag {

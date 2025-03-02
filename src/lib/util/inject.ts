@@ -61,7 +61,7 @@ function xmlHttpRequestIntercept() {
 								},
 							})
 						);
-					}, 1000);
+					}, 500);
 				}
 			}
 		});

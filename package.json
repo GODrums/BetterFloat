@@ -39,13 +39,13 @@
 		"@tsparticles/react": "^3.0.0",
 		"@tsparticles/slim": "^3.8.1",
 		"@types/common-tags": "^1.8.4",
-		"@types/webextension-polyfill": "^0.12.1",
+		"@types/webextension-polyfill": "^0.12.3",
 		"@webext-core/isolated-element": "^1.1.2",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
 		"framer-motion": "^11.18.2",
-		"jose": "^5.9.6",
+		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
 		"plasmo": "0.90.3",
 		"react": "18.3.1",
@@ -68,7 +68,7 @@
 		"csgo-fade-percentage-calculator": "^1.1.6",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.5.0",
-		"lefthook": "^1.10.10",
+		"lefthook": "^1.11.2",
 		"postcss": "8.4.49",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
@@ -122,7 +122,8 @@
 			}
 		},
 		"onlyBuiltDependencies": [
-			"@swc/core"
+			"@swc/core",
+			"lefthook"
 		]
 	}
 }

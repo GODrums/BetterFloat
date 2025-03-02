@@ -9,6 +9,7 @@
 		},
 		"baseUrl": ".",
 		"resolveJsonModule": true,
-		"strictNullChecks": true
+		"strictNullChecks": true,
+		"jsx": "react-jsx"
 	}
 }

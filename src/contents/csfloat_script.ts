@@ -85,30 +85,22 @@ async function init() {
 		return;
 	}
 
+	// catch the events thrown by the script
+	// this has to be done as first thing to not miss timed events
+	activateHandler();
+
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csf-enable']) return;
 
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	activateHandler();
-
 	await initPriceMapping(extensionSettings, 'csf');
 
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 
-	//check if url is in supported subpages
-	if (location.pathname === '/') {
-		await firstLaunch();
-	} else {
-		for (let i = 0; i < supportedSubPages.length; i++) {
-			if (location.pathname.includes(supportedSubPages[i])) {
-				await firstLaunch();
-				break;
-			}
-		}
-	}
+	dynamicUIHandler();
+
+	await firstLaunch();
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {
@@ -116,8 +108,6 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
-
-	dynamicUIHandler();
 
 	if (extensionSettings['csf-topbutton']) {
 		CSFloatHelpers.createTopButton();
@@ -127,7 +117,7 @@ async function init() {
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
 	// required timeout to wait for advanced elements like similar items
-	await new Promise((r) => setTimeout(r, 350));
+	// await new Promise((r) => setTimeout(r, 350));
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {
@@ -1807,7 +1797,6 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		.trim();
 }
 
-const supportedSubPages = ['/item/', '/stall', '/profile/watchlist', '/search', '/profile/offers', '/sell', '/ref/', '/checkout'];
 const unsupportedSubPages = ['blog.csfloat', '/db'];
 
 let extensionSettings: IStorage;
