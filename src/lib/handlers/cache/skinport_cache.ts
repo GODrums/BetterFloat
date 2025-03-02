@@ -21,6 +21,30 @@ export function cacheSpMinOrderPrice(price: number) {
 
 export function cacheSpPopupItem(data: Skinport.ItemData) {
 	skinportPopupItem = data;
+
+	// other sales
+	if (data.data?.otherSales?.items && data.data.otherSales.items.length > 0) {
+		const otherSalesItems = [...data.data.otherSales.items];
+		otherSalesItems.forEach((item) => {
+			skinportItemsMap[item.saleId] = { ...item };
+		});
+	}
+
+	// similar items
+	if (data.data?.similarItems && data.data.similarItems.length > 0) {
+		const similarItems = [...data.data.similarItems];
+		similarItems.forEach((item) => {
+			skinportItemsMap[item.saleId] = { ...item };
+		});
+	}
+
+	// recently viewed items
+	if (data.data?.recentViewed?.items && data.data.recentViewed.items.length > 0) {
+		const recentlyViewedItems = [...data.data.recentViewed.items];
+		recentlyViewedItems.forEach((item) => {
+			skinportItemsMap[item.saleId] = { ...item };
+		});
+	}
 }
 
 export function cacheSpPopupInventoryItem(data: Skinport.InventoryItem) {

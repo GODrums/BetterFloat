@@ -180,6 +180,8 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 		cacheSpPopupItem(eventData.data as Skinport.ItemData);
 	} else if (eventData.url.includes('api/home')) {
 		// Skinport.HomeData
+		const data = eventData.data as Skinport.HomeData;
+		cacheSpItems([...data.sales[0].items]);
 	} else if (eventData.url.includes('api/data/')) {
 		// Data from first page load
 		const data = eventData.data as Skinport.UserData;

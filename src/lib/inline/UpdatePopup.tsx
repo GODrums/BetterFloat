@@ -29,7 +29,7 @@ export default function UpdatePopup() {
 					</h1>
 
 					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">
-						Item popups on CSFloat now display reference prices of a variety of different markets. Get the Pro plan to unlock all markets!
+						Item popups on CSFloat & Skinport now display reference prices of a variety of different markets. Get the Pro plan to unlock all markets!
 					</p>
 					{user?.plan?.type === 'pro' && (
 						<div className="w-full flex items-center justify-end">

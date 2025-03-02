@@ -122,7 +122,7 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 	};
 
 	return (
-		<div className="flex flex-col text-[--subtext-color] my-2 bg-[--highlight-background-minimal] rounded-md">
+		<div className="w-[210px] text-[--subtext-color] my-2 bg-[--highlight-background-minimal] rounded-md">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
@@ -210,7 +210,8 @@ const CSFMarketComparison: React.FC = () => {
 					count: entry.count || 0,
 					updated: entry.updated || 0,
 				}))
-				.filter((entry) => entry.market !== 'liquidity');
+				.filter((entry) => entry.market !== 'liquidity')
+				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
 
 			// Filter markets for free users
 			if (user?.plan.type !== 'pro') {
