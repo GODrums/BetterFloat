@@ -1689,7 +1689,8 @@ async function addBuffPrice(
 			flexGrow?.insertAdjacentHTML('afterend', steamContainer);
 		}
 	}
-	let percentage = new Decimal(0);
+
+	const percentage = priceFromReference?.isPositive() ? new Decimal(item.price).div(priceFromReference).times(100) : new Decimal(0);
 
 	// edge case handling: reference price may be a valid 0 for some paper stickers etc.
 	if (
@@ -1732,7 +1733,6 @@ async function addBuffPrice(
 		// tags may get too long, so we may need to break them into two lines
 		let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${currencyFormatter.format(difference.abs().toNumber())}</span>` : '';
 		if ((extensionSettings['csf-buffdifferencepercent'] || isPopout) && priceFromReference) {
-			percentage = new Decimal(item.price).div(priceFromReference).times(100);
 			if (percentage.isFinite()) {
 				const percentageDecimalPlaces = percentage.toDP(percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2).toNumber();
 				saleTagInner += html`

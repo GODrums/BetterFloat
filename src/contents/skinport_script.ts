@@ -378,6 +378,8 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 			}
 
 			addQuickLinks(container, popupItem);
+
+			await patternDetections(container, cachedItem);
 		}
 
 		addPattern(container, cachedItem);
@@ -932,6 +934,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 			}),
 			isDoppler,
 			isPopout: selector === itemSelectors.page,
+			hasPro: isUserPro(extensionSettings['user']),
 		});
 
 		const parentContainer = priceDiv ?? priceParent;

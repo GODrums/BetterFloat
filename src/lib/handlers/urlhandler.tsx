@@ -164,7 +164,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 			const container = popup?.querySelector<HTMLElement>('.container');
 			if (popup && container) {
 				popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
-				container.style.gridTemplateColumns = '250px 1fr 210px 210px';
+				container.id = 'bf-popup-item-container';
 				await mountShadowRoot(<CSFMarketComparison />, {
 					tagName: 'betterfloat-market-comparison',
 					parent: container,
