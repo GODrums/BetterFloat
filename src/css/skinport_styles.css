@@ -222,3 +222,17 @@
 	font-size: 1.125rem;
 	line-height: 1.75rem;
 }
+
+@media (max-width: 1200px) {
+	betterfloat-market-comparison {
+		display: none;
+	}
+}
+
+@media (min-width: 1200px) {
+	.betterfloat-itempage-info {
+		max-width: 450px;
+		padding-right: 30px;
+		border-right: 2px solid rgb(29, 32, 33);
+	}
+}

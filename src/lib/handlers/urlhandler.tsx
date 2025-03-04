@@ -19,13 +19,13 @@ import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
 import UpdatePopup from '~lib/inline/UpdatePopup';
+import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
 
 export function urlHandler() {
-	// To be improved: sometimes the page is not fully loaded yet when the initial URL state is sent
 	chrome.runtime.onMessage.addListener((message) => {
-		if (message.type === 'BetterFloat_URL_CHANGED') {
+		if (message.type === EVENT_URL_CHANGED) {
 			const state: Extension.URLState = message.state;
 
 			console.debug('[BetterFloat] URLHandler - changed to: ', state);
@@ -47,7 +47,7 @@ export function urlHandler() {
 export function dynamicUIHandler() {
 	//listener for messages from background
 	chrome.runtime.onMessage.addListener(async (message) => {
-		if (message.type === 'BetterFloat_URL_CHANGED') {
+		if (message.type === EVENT_URL_CHANGED) {
 			const state: Extension.URLState = message.state;
 
 			await handleChange(state);
@@ -114,7 +114,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 	lastCSFState = state;
 	const sideMenu = document.querySelector<HTMLElement>('app-advanced-search');
 	if (sideMenu?.offsetWidth && sideMenu.offsetWidth > 0 && !document.querySelector('betterfloat-menucontrol')) {
-		const root = await mountShadowRoot(<CSFMenuControl />, {
+		const { root } = await mountShadowRoot(<CSFMenuControl />, {
 			tagName: 'betterfloat-menucontrol',
 			parent: document.querySelector('.search-bar .drill-down'),
 			position: 'before',
@@ -130,7 +130,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		if (csfAutorefresh) {
 			const success = await waitForElement('.refresh > button');
 			if (success && !document.querySelector('betterfloat-autorefresh')) {
-				const root = await mountShadowRoot(<CSFAutorefresh />, {
+				const { root } = await mountShadowRoot(<CSFAutorefresh />, {
 					tagName: 'betterfloat-autorefresh',
 					parent: document.querySelector('.refresh'),
 					position: 'before',
@@ -173,13 +173,19 @@ async function handleCSFloatChange(state: Extension.URLState) {
 				if (ownContainer) {
 					ownContainer.style.gridRow = '1 / span 2';
 				}
+				const interval = createUrlListener((url) => {
+					if (!url.pathname.includes('/item/')) {
+						ownContainer?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
 			}
 		}
 	}
 
 	const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
 	if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
-		const root = await mountShadowRoot(<CSFThemeToggle />, {
+		const { root } = await mountShadowRoot(<CSFThemeToggle />, {
 			tagName: 'betterfloat-theme-toggle',
 			parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
 			position: 'after',
@@ -193,7 +199,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 	const isLoggedIn = !!document.querySelector('app-header .avatar');
 	const csfShowQuickMenu = await getSetting<boolean>('csf-quickmenu');
 	if (isLoggedIn && csfShowQuickMenu && !document.querySelector('betterfloat-quick-menu')) {
-		const root = await mountShadowRoot(<CSFQuickMenu />, {
+		const { root } = await mountShadowRoot(<CSFQuickMenu />, {
 			tagName: 'betterfloat-quick-menu',
 			parent: document.querySelector('app-header .balance-container')?.parentElement,
 			position: 'before',
@@ -210,7 +216,7 @@ async function handleSkinportChange(state: Extension.URLState) {
 		waitForElement('.CatalogHeader-tooltipLive').then(async (success) => {
 			if (success) {
 				if (!document.querySelector('betterfloat-skinport-notifications')) {
-					const notifyRoot = await mountShadowRoot(<SpNotifications />, {
+					const { root: notifyRoot } = await mountShadowRoot(<SpNotifications />, {
 						tagName: 'betterfloat-skinport-notifications',
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
 						position: 'before',
@@ -229,7 +235,7 @@ async function handleSkinportChange(state: Extension.URLState) {
 				}
 
 				if (!document.querySelector('betterfloat-live-filter')) {
-					const root = await mountShadowRoot(<SpLiveFilter />, {
+					const { root } = await mountShadowRoot(<SpLiveFilter />, {
 						tagName: 'betterfloat-live-filter',
 						parent: document.querySelector('.CatalogHeader-tooltipLive'),
 						position: 'before',
@@ -254,7 +260,7 @@ async function handleDMarketChange(state: Extension.URLState) {
 		if (dmAutorefresh) {
 			const success = await waitForElement('button.o-filter--refresh', { maxTries: 30 });
 			if (success && !document.querySelector('betterfloat-dm-autorefresh')) {
-				const root = await mountShadowRoot(<DmAutorefresh />, {
+				const { root } = await mountShadowRoot(<DmAutorefresh />, {
 					tagName: 'betterfloat-dm-autorefresh',
 					parent: document.querySelector('span.c-assetFilters__spacer'),
 					position: 'before',
@@ -278,7 +284,7 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 		if (lisAutorefresh) {
 			const success = await waitForElement('div.reload');
 			if (success && !document.querySelector('betterfloat-lis-autorefresh')) {
-				const root = await mountShadowRoot(<LisAutorefresh />, {
+				const { root } = await mountShadowRoot(<LisAutorefresh />, {
 					tagName: 'betterfloat-lis-autorefresh',
 					parent: document.querySelector('div.reload'),
 					position: 'after',
@@ -313,14 +319,14 @@ async function mountSpMarketComparison() {
 		const rightColumn = document.querySelector<HTMLElement>('.ItemPage-column--right')!;
 		rightColumn.style.width = '45%';
 		const itemPage = suggestedPrice.closest<HTMLElement>('.ItemPage-info')!;
-		itemPage.style.maxWidth = '450px';
-		itemPage.style.paddingRight = '30px';
-		itemPage.style.borderRight = '2px solid #1d2021';
+		itemPage.classList.add('betterfloat-itempage-info');
 		await mountShadowRoot(<SpMarketComparison />, {
 			tagName: 'betterfloat-market-comparison',
 			parent: itemPage,
 			position: 'after',
 		});
+		const rootContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison')!;
+		rootContainer.style.backgroundColor = '#2b2f30';
 	}
 }
 
@@ -367,5 +373,5 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 		root.unmount();
 	});
 
-	return root;
+	return { root, parentElement, isolatedElement };
 }

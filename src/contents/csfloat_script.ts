@@ -98,6 +98,8 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] CSFloat init timer');
 
+	// it makes sense to init UI elements first as it takes some time to load
+	// this leaves room for the website to finish loading before trying to detect items
 	dynamicUIHandler();
 
 	await firstLaunch();
@@ -116,8 +118,6 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	// required timeout to wait for advanced elements like similar items
-	// await new Promise((r) => setTimeout(r, 350));
 	const items = document.querySelectorAll('item-card');
 
 	for (let i = 0; i < items.length; i++) {

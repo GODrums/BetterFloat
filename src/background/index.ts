@@ -58,8 +58,16 @@ async function initializeSettings() {
 
 const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https://skinbid.com'];
 
+// prevent spamming the same URL
+// url -> timestamp
+const lastSentMessage: Record<string, number> = {};
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 	if (tab.url && changeInfo.status === 'complete' && urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
+		if (lastSentMessage[tab.url] && Date.now() - lastSentMessage[tab.url] < 200) {
+			console.debug('[BetterFloat] URL changed to: ', tab.url, ' but not sending message because it was sent less than 200ms ago');
+			return;
+		}
 		const url = new URL(tab.url);
 		const state: Extension.URLState = {
 			site: url.hostname,
@@ -68,10 +76,27 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 			hash: url.hash,
 		};
 		console.debug('[BetterFloat] URL changed to: ', state);
-		chrome.tabs.sendMessage(tabId, {
-			type: EVENT_URL_CHANGED,
-			state,
-		});
+
+		// retry sending the message if no receiver is found
+		const sendMessageWithRetry = async (retryCount = 0) => {
+			lastSentMessage[tab.url!] = Date.now();
+			try {
+				await chrome.tabs.sendMessage(tabId, {
+					type: EVENT_URL_CHANGED,
+					state,
+				});
+			} catch (error) {
+				// Retry up to 3 times
+				if (retryCount < 3) {
+					console.debug(`[BetterFloat] Message send failed, retrying (${retryCount + 1}/3)...`);
+					setTimeout(() => sendMessageWithRetry(retryCount + 1), 1000); // Retry after 1 second
+				} else {
+					console.error('[BetterFloat] Failed to send message after 3 retries:', error);
+				}
+			}
+		};
+
+		sendMessageWithRetry();
 	}
 });
 

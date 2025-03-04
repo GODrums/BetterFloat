@@ -244,7 +244,15 @@ const CSFMarketComparison: React.FC = () => {
 		setCurrencyRates(currencyRates);
 
 		const itemId = location.pathname.split('/').pop();
-		const itemContainer = document.querySelector(`.item-${itemId}`);
+		let itemContainer = document.querySelector(`.item-${itemId}`);
+
+		// wait for the init item enhancements to be loaded
+		let attempts = 0;
+		while (!itemContainer && attempts-- < 10) {
+			await new Promise((resolve) => setTimeout(resolve, 200));
+			itemContainer = document.querySelector(`.item-${itemId}`);
+		}
+
 		let betterfloatData = itemContainer?.getAttribute('data-betterfloat');
 		while (!betterfloatData) {
 			await new Promise((resolve) => setTimeout(resolve, 200));
