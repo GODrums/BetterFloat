@@ -55,10 +55,6 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'skb');
 
-	console.group('[BetterFloat] Loading mappings...');
-	await loadMapping(extensionSettings['skb-pricingsource'] as MarketSource);
-	console.groupEnd();
-
 	console.timeEnd('[BetterFloat] Skinbid init timer');
 
 	await firstLaunch();
@@ -72,92 +68,38 @@ async function init() {
 }
 
 async function firstLaunch() {
-	console.log('[BetterFloat] First launch, url: ', location.pathname, location.search);
-	if (location.pathname === '/') {
-		const items = document.getElementsByTagName('APP-ITEM-CARD');
-		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i], SKINBID_SELECTORS.card);
-		}
-	} else if (location.pathname === '/listings') {
-		const items = document.getElementsByClassName('item-card');
-		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i], SKINBID_SELECTORS.list);
-		}
-	} else if (location.pathname.startsWith('/market/') || location.pathname.startsWith('/auctions/')) {
-		const items = document.querySelectorAll('.item');
-		// first one is big item
-		await adjustItem(items[0], SKINBID_SELECTORS.page);
-		for (let i = 1; i < items.length; i++) {
-			await adjustItem(items[i], SKINBID_SELECTORS.card);
-		}
-	} else if (location.pathname.includes('/shop/')) {
-		const items = document.querySelectorAll('.items-desktop .auction-item-card');
-		for (let i = 0; i < items.length; i++) {
-			await adjustItem(items[i].parentElement!, SKINBID_SELECTORS.card);
-		}
-	} else if (location.pathname.includes('/inventory')) {
-		const items = document.querySelectorAll('APP-INVENTORY-LIST-ITEM');
-		for (let i = 0; i < items.length; i++) {
-			await adjustInventoryItem(items[i]);
-		}
+	const items = document.getElementsByTagName('APP-ITEM-CARD');
+	for (let i = 0; i < items.length; i++) {
+		await adjustItem(items[i], SKINBID_SELECTORS.card);
 	}
 }
 
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
-		if (extensionSettings['skb-enable']) {
-			for (const mutation of mutations) {
-				for (let i = 0; i < mutation.addedNodes.length; i++) {
-					const addedNode = mutation.addedNodes[i];
-					// some nodes are not elements, so we need to check
-					if (!(addedNode instanceof HTMLElement)) continue;
-					// console.log("Added node: ", addedNode);
+		if (!extensionSettings['skb-enable']) {
+			return;
+		}
+		for (const mutation of mutations) {
+			for (let i = 0; i < mutation.addedNodes.length; i++) {
+				const addedNode = mutation.addedNodes[i];
+				// some nodes are not elements, so we need to check
+				if (!(addedNode instanceof HTMLElement)) continue;
+				// console.log('Added node: ', addedNode);
 
-					if (addedNode.children.length === 1) {
-						const firstChild = addedNode.children[0];
-						if (firstChild.tagName === 'AUCTION-LIST-ITEM') {
-							await adjustItem(firstChild, SKINBID_SELECTORS.list);
-							continue;
-						} else if (firstChild.tagName === 'APP-AUCTION-CARD-ITEM') {
-							// Items in user shop
-							await adjustItem(firstChild, SKINBID_SELECTORS.card);
-							continue;
-						} else if (firstChild.tagName === 'APP-ITEM-CARD') {
-							if (location.pathname === '/listings') {
-								await adjustItem(firstChild, SKINBID_SELECTORS.list);
-							} else {
-								await adjustItem(firstChild, SKINBID_SELECTORS.card);
-							}
-							continue;
-						}
+				if (addedNode.children.length === 1) {
+					const firstChild = addedNode.children[0];
+					if (firstChild.tagName === 'APP-ITEM-CARD') {
+						await adjustItem(firstChild, SKINBID_SELECTORS.card);
+						continue;
 					}
-					if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
-						await adjustInventoryItem(addedNode);
-					}
-					if (addedNode.className) {
-						const className = addedNode.className.toString();
-						if (className.includes('item') && addedNode.tagName === 'NGU-TILE' && !isMobileItem(addedNode)) {
-							// console.log('Found item: ', addedNode);
-							await adjustItem(addedNode, SKINBID_SELECTORS.card);
-						} else if (className.includes('item-category')) {
-							// big item page
-							const item = document.querySelector('.item');
-							if (item) {
-								await adjustItem(item, SKINBID_SELECTORS.page);
-							}
-						} else if (addedNode.tagName === 'APP-PRICE-CHART') {
-							// console.log('Found price chart: ', addedNode);
-						}
-					}
+				}
+				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
+					await adjustInventoryItem(addedNode);
 				}
 			}
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
-}
-
-function isMobileItem(container: Element) {
-	return container.parentElement?.parentElement?.parentElement?.parentElement?.className.includes('item');
 }
 
 async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
