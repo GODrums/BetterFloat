@@ -29,6 +29,7 @@ export function cacheSkbInventory(data: Skinbid.ListedItem[]) {
 
 export function cacheSkinbidCurrencyRates(rates: Skinbid.ExchangeRates) {
 	skinbidRates = rates;
+	localStorage.setItem('exchangeRates', JSON.stringify(rates));
 }
 
 export function cacheSkinbidUserCurrency(currency: string) {
@@ -85,6 +86,17 @@ export async function getSkbUserConversion() {
 }
 
 async function fetchSkbExchangeRates() {
+	//get from local storage
+	const localRates = localStorage.getItem('exchangeRates');
+	if (localRates) {
+		skinbidRates = JSON.parse(localRates) as Skinbid.ExchangeRates;
+		// only fetch if rates are older than 1 day
+		const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
+		const ratesDate = new Date(skinbidRates[0].updated);
+		if (ratesDate > oneDayAgo) {
+			return;
+		}
+	}
 	await fetch('https://api.skinbid.com/api/public/exchangeRates')
 		.then((response) => response.json() as Promise<Skinbid.ExchangeRates>)
 		.then((data) => {
