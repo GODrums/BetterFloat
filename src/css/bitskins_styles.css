@@ -1,5 +1,18 @@
+[class*="hint--"][aria-label]:after {
+	z-index: 1300;
+	transition: 0.3s opacity;
+	background: #2e343e;
+	color: #fff;
+	font-size: 13px;
+	line-height: 15px;
+	padding: 10px 15px;
+	box-shadow: 0 0 15px #121720;
+	border-radius: 5px;
+}
+
 .betterfloat-buff-a {
 	display: inline-flex;
+	align-items: center;
 	font-size: 13px;
 	line-height: 21px;
 }

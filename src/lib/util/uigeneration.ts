@@ -23,6 +23,7 @@ export function generatePriceLine({
 	addSpaceBetweenPrices = true,
 	showPrefix = true,
 	hasPro = false,
+	tooltipArrow = false,
 }: {
 	source: MarketSource;
 	market_id: number | string | undefined;
@@ -40,6 +41,7 @@ export function generatePriceLine({
 	addSpaceBetweenPrices?: boolean;
 	showPrefix?: boolean;
 	hasPro?: boolean;
+	tooltipArrow?: boolean;
 }) {
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
@@ -50,7 +52,7 @@ export function generatePriceLine({
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
-			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom hint--rounded hint--no-arrow" 
+			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom  hint--rounded ${tooltipArrow ? '' : 'hint--no-arrow'}" 
 			href="${href}" 
 			target="_blank"
 			aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"

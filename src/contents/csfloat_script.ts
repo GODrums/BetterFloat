@@ -120,7 +120,6 @@ async function init() {
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
 	let items = document.querySelectorAll('item-card');
-	// console.log('[BetterFloat] Found items:', items.length);
 	while (items.length === 0 && (location.pathname === '/search' || location.pathname.startsWith('/item/'))) {
 		await new Promise((r) => setTimeout(r, 100));
 		items = document.querySelectorAll('item-card');
@@ -133,6 +132,26 @@ async function firstLaunch() {
 				? POPOUT_ITEM.NONE
 				: POPOUT_ITEM.SIMILAR;
 		await adjustItem(items[i], popoutVersion);
+	}
+
+	if (location.pathname.startsWith('/item/')) {
+		// enhance item page
+		let popoutItem = document.querySelector('.grid-item > item-card');
+		while (!popoutItem) {
+			await new Promise((r) => setTimeout(r, 100));
+			popoutItem = document.querySelector('.grid-item > item-card');
+		}
+		await adjustItem(popoutItem, POPOUT_ITEM.PAGE);
+
+		// enhance similar items
+		let similarItems = document.querySelectorAll('app-similar-items item-card');
+		while (!similarItems || similarItems.length === 0) {
+			await new Promise((r) => setTimeout(r, 100));
+			similarItems = document.querySelectorAll('app-similar-items item-card');
+		}
+		for (const item of similarItems) {
+			await adjustItem(item, POPOUT_ITEM.SIMILAR);
+		}
 	}
 
 	// refresh prices every hour if user has pro plan

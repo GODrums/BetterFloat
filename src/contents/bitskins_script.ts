@@ -95,8 +95,10 @@ function applyMutation() {
 					for (let i = 0; i < items.length; i++) {
 						await adjustItem(items[i], PageState.Market);
 					}
-				} else if (addedNode.classList.contains('item')) {
-					// adjustItem(addedNode, PageState.Market);
+				} else if (addedNode.classList.contains('featured-item')) {
+					if (addedNode.style.display !== 'none') {
+						adjustItem(addedNode, PageState.List);
+					}
 				} else if (addedNode.id === 'item-page') {
 					adjustItem(addedNode, PageState.ItemPage);
 				} else if (addedNode.className === 'similar-items') {
@@ -153,11 +155,13 @@ function getItemID(container: Element, state: PageState) {
 		return location.pathname.split('/')[3];
 	} else if (state === PageState.Similar) {
 		return container.querySelector('a')?.getAttribute('href')?.split('/')[3];
+	} else if (state === PageState.List) {
+		return container.getAttribute('href')?.split('/')[3];
 	}
 }
 
 function getAPIItem(state: PageState, itemID: string) {
-	if (state === PageState.Market) {
+	if (state === PageState.Market || state === PageState.List) {
 		return getSpecificBitskinsItem(itemID);
 	} else if (state === PageState.ItemPage) {
 		return getBitskinsPopoutItem();
@@ -180,7 +184,7 @@ async function adjustItem(container: Element, state: PageState) {
 	const priceResult = await addBuffPrice(item, container, state);
 
 	// store item in html
-	container.setAttribute('data-betterfloat', JSON.stringify(item));
+	// container.setAttribute('data-betterfloat', JSON.stringify(item));
 
 	await patternDetections(container, item, state);
 }
@@ -252,16 +256,20 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, st
 async function addBuffPrice(item: Bitskins.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer = container.querySelector('.ref-price');
+	let footerContainer = container.querySelector<HTMLElement>('.ref-price');
 	if (state === PageState.ItemPage) {
 		const newContainer = document.createElement('div');
 		footerContainer?.before(newContainer);
+		footerContainer = newContainer;
+	} else if (state === PageState.List) {
+		const newContainer = document.createElement('div');
+		container.querySelector('.top')?.after(newContainer);
 		footerContainer = newContainer;
 	}
 
 	const isItemPage = state === PageState.ItemPage;
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage ? 0 : 2;
+	const maximumFractionDigits = state === PageState.List || (priceListing?.gt(1000) && state !== PageState.ItemPage) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
@@ -279,8 +287,9 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			isPopout: isItemPage,
 			addSpaceBetweenPrices: true,
 			showPrefix: isItemPage,
-			iconHeight: isItemPage ? '24px' : '20px',
+			iconHeight: isItemPage ? '24px' : state === PageState.List ? '16px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
+			tooltipArrow: true,
 		});
 		footerContainer.outerHTML = buffContainer;
 	}
@@ -293,7 +302,12 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 		discountContainer = newContainer;
 	}
 
-	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['bs-buffdifference'] || extensionSettings['bs-buffdifferencepercent'])) {
+	if (
+		discountContainer &&
+		!container.querySelector('.betterfloat-sale-tag') &&
+		state !== PageState.List &&
+		(extensionSettings['bs-buffdifference'] || extensionSettings['bs-buffdifferencepercent'])
+	) {
 		discountContainer.outerHTML = createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter);
 	}
 
@@ -336,8 +350,8 @@ async function getBuffItem(item: Bitskins.Item) {
 		priceOrder = new Decimal(0);
 	}
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['csm-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
-		source = extensionSettings['csm-altmarket'] as MarketSource;
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bs-altmarket'] && extensionSettings['bs-altmarket'] !== MarketSource.None) {
+		source = extensionSettings['bs-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
@@ -412,6 +426,7 @@ enum PageState {
 	Market = 0,
 	ItemPage = 1,
 	Similar = 2,
+	List = 3,
 }
 
 // mutation observer active?
