@@ -141,6 +141,8 @@ function addSimilarItemsSaleTags(container: Element) {
 			discountContainer.outerHTML = saleTag;
 		}
 		el.querySelector('.item-price')?.setAttribute('style', 'align-items: center;');
+
+		patternDetections(el, item, PageState.Similar);
 	}
 }
 
@@ -180,20 +182,20 @@ async function adjustItem(container: Element, state: PageState) {
 	// store item in html
 	container.setAttribute('data-betterfloat', JSON.stringify(item));
 
-	await patternDetections(container, item, state === PageState.ItemPage);
+	await patternDetections(container, item, state);
 }
 
-async function patternDetections(container: Element, item: Bitskins.Item, isPopout: boolean) {
-	console.log('item', item);
+async function patternDetections(container: Element, item: Bitskins.Item, state: PageState) {
 	if (item.name.includes('Case Hardened') || item.name.includes('Heat Treated')) {
-		if (extensionSettings['bs-csbluegem'] || isPopout) {
-			await caseHardenedDetection(container, item, isPopout);
+		if (extensionSettings['bs-csbluegem'] || state !== PageState.Market) {
+			await caseHardenedDetection(container, item, state);
 		}
 	}
 }
 
-async function caseHardenedDetection(container: Element, item: Bitskins.Item, isPopout: boolean) {
+async function caseHardenedDetection(container: Element, item: Bitskins.Item, state: PageState) {
 	if (item.name.includes('Gloves') || !item.paint_seed) return;
+	const isPopout = state === PageState.ItemPage;
 
 	const type = getBlueGemName(item.name.replace('StatTrak™ ', ''));
 	// const userCurrency = getUserCurrency();
@@ -209,7 +211,11 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, is
 
 	// add gem icon and blue gem percent badge
 	if (!item.name.includes('Gloves')) {
-		const exteriorContainer = isPopout ? container.querySelector('#info .item-info .wrapper') : container.querySelector('.item-details');
+		const exteriorContainer = isPopout
+			? container.querySelector('#info .item-info .wrapper')
+			: state === PageState.Market
+				? container.querySelector('.item-details')
+				: container.querySelector('.item-float');
 		if (!exteriorContainer) return;
 
 		// if (!isPopout) {
