@@ -3,14 +3,16 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
+import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { generatePriceLine } from '~lib/util/uigeneration';
+import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.bitskins.com/*'],
@@ -177,6 +179,68 @@ async function adjustItem(container: Element, state: PageState) {
 
 	// store item in html
 	container.setAttribute('data-betterfloat', JSON.stringify(item));
+
+	await patternDetections(container, item, state === PageState.ItemPage);
+}
+
+async function patternDetections(container: Element, item: Bitskins.Item, isPopout: boolean) {
+	console.log('item', item);
+	if (item.name.includes('Case Hardened') || item.name.includes('Heat Treated')) {
+		if (extensionSettings['bs-csbluegem'] || isPopout) {
+			await caseHardenedDetection(container, item, isPopout);
+		}
+	}
+}
+
+async function caseHardenedDetection(container: Element, item: Bitskins.Item, isPopout: boolean) {
+	if (item.name.includes('Gloves') || !item.paint_seed) return;
+
+	const type = getBlueGemName(item.name.replace('StatTrak™ ', ''));
+	// const userCurrency = getUserCurrency();
+	// const currencySymbol = getSymbolFromCurrency(userCurrency);
+	// const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed });
+	container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+
+	if (!patternElement) {
+		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
+		return false;
+	}
+
+	// add gem icon and blue gem percent badge
+	if (!item.name.includes('Gloves')) {
+		const exteriorContainer = isPopout ? container.querySelector('#info .item-info .wrapper') : container.querySelector('.item-details');
+		if (!exteriorContainer) return;
+
+		// if (!isPopout) {
+		// 	exteriorContainer.setAttribute('style', 'display: flex; align-items: center; gap: 8px;');
+		// 	exteriorContainer.closest('.c-asset__footerLeft')?.setAttribute('style', 'max-width: 100%');
+		// }
+
+		const gemContainer = genGemContainer({ patternElement, site: 'BS', large: isPopout });
+		if (!gemContainer) return;
+		if (isPopout) {
+			gemContainer.setAttribute('style', 'display: flex; align-items: center;');
+			gemContainer.classList.add('value');
+			const element = document.createElement('div');
+			element.classList.add('element');
+			const name = document.createElement('div');
+			name.classList.add('name');
+			name.textContent = 'Blue Data';
+			element.appendChild(name);
+			element.appendChild(gemContainer);
+			exteriorContainer.appendChild(element);
+		} else {
+			gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: center;');
+			exteriorContainer.appendChild(gemContainer);
+		}
+	}
+
+	if (!isPopout) {
+		return;
+	}
+
+	// todo: add past sales
 }
 
 async function addBuffPrice(item: Bitskins.Item, container: Element, state: PageState): Promise<PriceResult> {

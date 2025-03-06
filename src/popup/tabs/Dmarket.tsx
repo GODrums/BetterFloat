@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { ICON_DMARKET_FULL } from '~lib/util/globals';
+import { ICON_CSBLUEGEM, ICON_DMARKET_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -27,7 +27,16 @@ export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="dm-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} isNew />
+						<SettingsCheckbox id="dm-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} />
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox
+							id="dm-csbluegem"
+							text="Blue Gem Enhancements"
+							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
+							tooltipText="Adds pattern details and past sales to case hardened skins."
+							isNew
+						/>
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="dm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />

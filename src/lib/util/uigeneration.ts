@@ -85,7 +85,7 @@ export function generatePriceLine({
 	return buffContainer;
 }
 
-export function genGemContainer({ patternElement, site, large = false }: { patternElement: Partial<BlueGem.PatternData> | null; site: 'CSF' | 'SP'; large?: boolean }) {
+export function genGemContainer({ patternElement, site, large = false }: { patternElement: Partial<BlueGem.PatternData> | null; site: 'CSF' | 'SP' | 'DM' | 'BS'; large?: boolean }) {
 	if (patternElement?.playside_blue === undefined && patternElement?.backside_blue === undefined) {
 		return null;
 	}
@@ -100,15 +100,40 @@ export function genGemContainer({ patternElement, site, large = false }: { patte
 	if (site === 'SP' && !large) {
 		gemContainer.style.position = 'absolute';
 	}
+	const getAttributes = () => {
+		if (site === 'DM') {
+			return {
+				height: large ? '20' : '14',
+				valueStyle: 'font-size: 13px;',
+			};
+		}
+		if (site === 'CSF') {
+			return {
+				height: large ? '20' : '16',
+				valueStyle: large ? 'font-size: 14px; font-weight: 500;' : 'font-size: 13px;',
+			};
+		}
+		if (site === 'SP') {
+			return {
+				height: large ? '25' : '18',
+				valueStyle: 'font-weight: 600;',
+			};
+		}
+		return {
+			height: '16',
+			valueStyle: 'font-weight: 600;',
+		};
+	};
+	const { height, valueStyle } = getAttributes();
 	const gemImage = document.createElement('img');
 	gemImage.setAttribute('src', iconGemshop);
 	gemImage.setAttribute(
 		'style',
-		`height: ${site === 'SP' ? (large ? '25' : '18') : large ? '20' : '16'}px; margin-right: 5px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
+		`height: ${height}px; margin-right: 5px; filter: brightness(0) saturate(100%) invert(57%) sepia(46%) saturate(3174%) hue-rotate(160deg) brightness(102%) contrast(105%);`
 	);
 	gemContainer.appendChild(gemImage);
 	const gemValue = document.createElement('span');
-	gemValue.setAttribute('style', 'color: deepskyblue;' + (site === 'CSF' ? (large ? 'font-size: 14px; font-weight: 500;' : 'font-size: 13px;') : 'font-weight: 600;'));
+	gemValue.setAttribute('style', 'color: deepskyblue;' + valueStyle);
 	let gemValueText = `${patternElement.playside_blue?.toFixed(0) ?? 0}%`;
 	if (patternElement?.backside_blue !== undefined) {
 		gemValueText += ` / ${patternElement.backside_blue.toFixed(0) ?? 0}%`;

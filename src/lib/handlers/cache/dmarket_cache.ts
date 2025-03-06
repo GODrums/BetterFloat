@@ -2,7 +2,15 @@ import type { DMarket } from '~lib/@typings/DMarketTypes';
 
 // dmarket: cached items from api
 const dmarketItems: DMarket.Item[] = [];
+let dmarketCurrency: string | null = null;
 let dmarketExchangeRates: { [key: string]: number } = {};
+
+export function getDMarketCurrency() {
+	if (!dmarketCurrency) {
+		dmarketCurrency = JSON.parse(localStorage.getItem('dmarket/AkitaStores') || '{}').currency?.currency;
+	}
+	return dmarketCurrency || 'USD';
+}
 
 export function cacheDMarketItems(data: DMarket.Item[]) {
 	data.forEach((item) => {

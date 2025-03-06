@@ -31,10 +31,12 @@ export namespace Bitskins {
 		discount: number;
 		exterior_id?: number;
 		float_id?: number;
+		float_value?: number;
 		hightier?: number; // 0 or 1
 		id: string;
 		name: string; // full name
-		paint_id?: number;
+		paint_index?: number;
+		paint_seed?: number;
 		phase_id?: number;
 		price: number; // in ct
 		quality_id: number;

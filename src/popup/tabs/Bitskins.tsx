@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { ICON_BITSKINS_FULL } from '~lib/util/globals';
+import { ICON_BITSKINS_FULL, ICON_CSBLUEGEM } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -26,6 +26,15 @@ export const BitskinsSettings = ({ hasProPlan }: BitskinsSettingsProps) => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
 				</div>
 				<div className="flex flex-col gap-1">
+					<SettingsCard>
+						<SettingsCheckbox
+							id="bs-csbluegem"
+							text="Blue Gem Enhancements"
+							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
+							tooltipText="Adds pattern details and past sales to case hardened skins."
+							isNew
+						/>
+					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="bs-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>

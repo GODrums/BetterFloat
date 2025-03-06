@@ -8,6 +8,16 @@ import { synchronizePlanWithStorage } from './jwt';
 import { phaseMapping } from './patterns';
 import type { SettingsUser } from './storage';
 
+export function getBlueGemName(name: string) {
+	if (name.startsWith('★')) {
+		return name.split(' | ')[0].split('★ ')[1];
+	} else if (name === 'Five-SeveN | Heat Treated') {
+		return 'Five-SeveN Heat Treated';
+	} else {
+		return name.split(' | ')[0];
+	}
+}
+
 export function parsePrice(priceText: string) {
 	let currency = '';
 	// regex also detects &nbsp as whitespace!

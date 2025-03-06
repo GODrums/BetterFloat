@@ -3,16 +3,28 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
+import { getDMarketCurrency, getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import {
+	CurrencyFormatter,
+	checkUserPlanPro,
+	createHistoryRewrite,
+	getBlueGemName,
+	getBuffPrice,
+	handleSpecialStickerNames,
+	isBuffBannedItem,
+	isUserPro,
+	waitForElement,
+} from '~lib/util/helperfunctions';
+import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { generatePriceLine } from '~lib/util/uigeneration';
+import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.dmarket.com/*'],
@@ -60,6 +72,8 @@ async function init() {
 	}
 
 	dynamicUIHandler();
+
+	console.log('[BetterFloat] DMarket script initialized', location.pathname);
 }
 
 async function replaceHistory() {
@@ -115,6 +129,8 @@ async function adjustItem(container: Element, state: PageState) {
 			addPopupListener(container, item);
 		}
 	});
+
+	patternDetections(container, item, false);
 }
 
 function addPopupListener(container: Element, item: DMarket.Item) {
@@ -132,8 +148,67 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 			if (!popup) return;
 
 			const priceResult = await addBuffPrice(item, popup, PageState.Popup);
+
+			await patternDetections(popup, item, true);
 		});
 	}
+}
+
+async function patternDetections(container: Element, item: DMarket.Item, isPopout: boolean) {
+	if (item.title.includes('Case Hardened') || item.title.includes('Heat Treated')) {
+		if (extensionSettings['dm-csbluegem'] || isPopout) {
+			await caseHardenedDetection(container, item, isPopout);
+		}
+	}
+}
+
+async function caseHardenedDetection(container: Element, item: DMarket.Item, isPopout: boolean) {
+	if (item.title.includes('Gloves') || !item.extra.paintSeed) return;
+
+	let patternElement: Partial<BlueGem.PatternData> | null = null;
+	// const userCurrency = getDMarketCurrency();
+	// const currencySymbol = getSymbolFromCurrency(userCurrency);
+	// const currencyRate = getDMarketExchangeRate(userCurrency);
+	const type = getBlueGemName(item.title.replace('StatTrak™ ', ''));
+
+	// retrieve the stored data instead of fetching newly
+	if (isPopout) {
+		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
+		if (csbluegem && csbluegem.length > 0) {
+			patternElement = JSON.parse(csbluegem);
+		}
+	}
+	if (!patternElement) {
+		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.extra.paintSeed });
+		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+	}
+	if (!patternElement) {
+		console.warn('[BetterFloat] Could not fetch pattern data for ', item.title);
+		return false;
+	}
+
+	// add gem icon and blue gem percent badge
+	if (!item.title.includes('Gloves')) {
+		const exteriorContainer = isPopout ? container.querySelector('share-link')?.parentElement : container.querySelector('asset-exterior-quality');
+		if (!exteriorContainer) return;
+
+		if (!isPopout) {
+			exteriorContainer.setAttribute('style', 'display: flex; align-items: center; gap: 8px;');
+			exteriorContainer.closest('.c-asset__footerLeft')?.setAttribute('style', 'max-width: 100%');
+		}
+
+		const gemContainer = genGemContainer({ patternElement, site: 'DM', large: isPopout });
+		if (!gemContainer) return;
+		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
+		exteriorContainer.appendChild(gemContainer);
+	}
+
+	if (!isPopout) {
+		return;
+	}
+
+	// todo: add past sales
 }
 
 async function addBuffPrice(item: DMarket.Item, container: Element, state: PageState): Promise<PriceResult> {
@@ -243,7 +318,7 @@ async function getBuffItem(item: DMarket.Item) {
 	const market_id = getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(item);
-	const userCurrency = getUserCurrency();
+	const userCurrency = getDMarketCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
 	const currencyRate = getDMarketExchangeRate(userCurrency);
 
@@ -279,11 +354,6 @@ async function getBuffItem(item: DMarket.Item) {
 			symbol: currencySymbol,
 		},
 	};
-}
-
-function getUserCurrency() {
-	const currency = JSON.parse(localStorage.getItem('dmarket/AkitaStores') ?? '{}').currency?.activeCurrency;
-	return currency || 'USD';
 }
 
 function getItemPrice(item: DMarket.Item) {
@@ -327,10 +397,7 @@ function createBuffItem(item: DMarket.Item): { name: string; style: ItemStyle } 
 				break;
 		}
 	}
-	return {
-		name: buff_item.name,
-		style: buff_item.style,
-	};
+	return buff_item;
 }
 
 enum PageState {

@@ -41,6 +41,7 @@ import {
 	calculateEpochFromDate,
 	calculateTime,
 	checkUserPlanPro,
+	getBlueGemName,
 	getBuffPrice,
 	getCharmColoring,
 	getFadePercentage,
@@ -118,7 +119,12 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	const items = document.querySelectorAll('item-card');
+	let items = document.querySelectorAll('item-card');
+	// console.log('[BetterFloat] Found items:', items.length);
+	while (items.length === 0 && (location.pathname === '/search' || location.pathname.startsWith('/item/'))) {
+		await new Promise((r) => setTimeout(r, 100));
+		items = document.querySelectorAll('item-card');
+	}
 
 	for (let i = 0; i < items.length; i++) {
 		const popoutVersion = items[i].getAttribute('width')?.includes('100%')
@@ -1134,16 +1140,6 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 			badgeContainer.setAttribute('style', 'gap: 5px;');
 		}
 		badgeContainer.insertAdjacentHTML('beforeend', fadeContainer);
-	}
-}
-
-function getBlueGemName(item_name: string) {
-	if (item_name.startsWith('★')) {
-		return item_name.split(' | ')[0].split('★ ')[1];
-	} else if (item_name === 'Five-SeveN | Heat Treated') {
-		return 'Five-SeveN Heat Treated';
-	} else {
-		return item_name.split(' | ')[0];
 	}
 }
 
