@@ -86,15 +86,15 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.log('Added node: ', addedNode);
 
-				if (addedNode.children.length === 1) {
+				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
+					await adjustInventoryItem(addedNode);
+				} else if (addedNode.tagName === 'NGU-TILE') {
+					await adjustItem(addedNode.querySelector('app-item-card') as Element, SKINBID_SELECTORS.card);
+				} else if (addedNode.children.length === 1) {
 					const firstChild = addedNode.children[0];
 					if (firstChild.tagName === 'APP-ITEM-CARD') {
 						await adjustItem(firstChild, SKINBID_SELECTORS.card);
-						continue;
 					}
-				}
-				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
-					await adjustInventoryItem(addedNode);
 				}
 			}
 		}
