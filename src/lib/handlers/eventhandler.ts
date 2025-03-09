@@ -145,6 +145,8 @@ function processSkinbidEvent(eventData: EventData<unknown>) {
 
 	if (eventData.url.includes('api/search/auctions')) {
 		cacheSkbItems((eventData.data as Skinbid.MarketData).items);
+	} else if (eventData.url.includes('api/search/similar')) {
+		cacheSkbItems(eventData.data as Skinbid.Listing[]);
 	} else if (eventData.url.includes('api/auction/itemInventoryStatus')) {
 		// content: { cachedResult: boolean, inSellerInventory: boolean }
 	} else if (eventData.url.includes('api/auction/shop')) {

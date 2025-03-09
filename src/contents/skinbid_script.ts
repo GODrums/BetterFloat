@@ -96,6 +96,13 @@ function applyMutation() {
 						await adjustItem(firstChild, SKINBID_SELECTORS.card);
 					}
 				}
+				if (addedNode.className.includes('item-category')) {
+					// big item page
+					const item = document.querySelector('.item');
+					if (item) {
+						await adjustItem(item, SKINBID_SELECTORS.page);
+					}
+				}
 			}
 		}
 	});
