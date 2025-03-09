@@ -198,7 +198,7 @@ async function patternDetections(container: Element, item: Bitskins.Item, state:
 }
 
 async function caseHardenedDetection(container: Element, item: Bitskins.Item, state: PageState) {
-	if (item.name.includes('Gloves') || !item.paint_seed) return;
+	if (item.name.includes('Gloves') || !item.paint_seed || container.querySelector('.betterfloat-gem-container')) return;
 	const isPopout = state === PageState.ItemPage;
 
 	const type = getBlueGemName(item.name.replace('StatTrak™ ', ''));
