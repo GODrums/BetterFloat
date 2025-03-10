@@ -1,0 +1,97 @@
+You are an expert in Chrome Extension Development, JavaScript, TypeScript, HTML, CSS, Shadcn UI, Radix UI, Tailwind and Web APIs.
+
+Code Style:
+
+-   Write concise, technical JavaScript/TypeScript code with accurate examples
+-   Use modern JavaScript features and best practices
+-   Prefer functional programming patterns; avoid the use of classes
+-   Use descriptive variable names (e.g., isExtensionEnabled, hasPermission)
+-   Structure files: manifest.json, background scripts, content scripts, popup scripts, options page
+
+Code Structure:
+
+-   package.json: contains the extension's metadata and configuration. Also contains the manifest attributes under the "manifest" key
+-   assets: contains the extension's assets, such as images, icons, etc.
+-   src/popup: contains React components for the extension's popup
+-   src/background: contains the background script and message handlers
+-   src/contents: contains the content scripts
+-   src/css: contains the CSS files. These are automatically injected into the extension via the content scripts
+-   src/lib/@typings: contains the TypeScript type definitions
+-   src/lib/handlers: contains useful utility functions and handlers for the extension
+-   src/lib/inline: contains inline React components, which are injected into the page via the urlhandler.tsx file
+-   src/lib/utils: contains more utility functions for the extension
+
+Naming Conventions:
+
+-   Use lowercase with underscores for file names (e.g., content_script.js, background_worker.js)
+-   Use camelCase for function and variable names
+-   Use PascalCase for class names (if used)
+
+TypeScript Usage:
+
+-   Encourage type safety with explicit types whenever possible
+-   Prefer using types over interfaces for defining message structures and API responses
+-   Leverage TypeScript's union types and type guards for runtime checks
+
+Extension Architecture:
+
+-   Implement a clear separation of concerns between different extension components
+-   Every enhanced website should have its own content script, which is executed in the context of the website
+-   Use message passing for communication between different parts of the extension. Message handlers are defined in the background script and the sendBackground-function is used in content scripts to send messages to the background script
+-   The background script is used for long-running or resource intensive tasks, such as API requests or loading local files
+-   Implement proper state management using the storage as defined in src/lib/util/storage.ts
+
+Manifest and Permissions:
+
+-   Use the latest manifest version (v3) unless there's a specific need for v2
+-   Follow the principle of least privilege for permissions
+-   Implement optional permissions where possible
+
+Security and Privacy:
+
+-   Implement Content Security Policy (CSP) in manifest.json
+-   Use HTTPS for all network requests
+-   Sanitize user inputs and validate data from external sources
+-   Implement proper error handling and logging
+
+UI and Styling:
+
+-   Create responsive designs for popup and options pages
+-   Use CSS Grid or Flexbox for layouts
+-   Implement consistent styling across all extension UI elements
+-   The popup and inline components have access to Tailwind and Shadcn UI components as defined in src/popup/ui
+-   Content scripts have access to the styles in src/style.css and in the corresponding src/css folder
+
+Performance Optimization:
+
+-   Minimize resource usage in content scripts and move intensive tasks to background scripts via a message handler
+-   Implement lazy loading for non-critical extension features
+-   Optimize content scripts to minimize impact on web page performance
+
+Browser API Usage:
+
+-   Utilize chrome.\* APIs effectively (e.g., chrome.tabs, chrome.storage, chrome.runtime)
+-   Implement proper error handling for all API calls
+-   Use chrome.alarms for scheduling tasks instead of setInterval
+
+Testing and Debugging:
+
+-   Utilize Chrome DevTools for debugging
+-   Do NOT use any testing frameworks and do NOT implement tests
+-   Use Chrome's built-in extension loading for testing during development
+
+Context-Aware Development:
+
+-   Always consider the whole project context when providing suggestions or generating code
+-   Avoid duplicating existing functionality or creating conflicting implementations
+-   Ensure that new code integrates seamlessly with the existing project structure and architecture
+-   Before adding new features or modifying existing ones, review the current project state to maintain consistency and avoid redundancy
+-   When answering questions or providing solutions, take into account previously discussed or implemented features to prevent contradictions or repetitions
+
+Code Output:
+
+-   Include all necessary imports, declarations, and surrounding code to ensure the file is complete and functional
+-   Provide comments or explanations for significant changes or additions within the file
+-   If the file is too large to reasonably include in full, provide the most relevant complete section and clearly indicate where it fits in the larger file structure
+
+Follow Chrome Extension documentation for best practices, security guidelines, and API usage
