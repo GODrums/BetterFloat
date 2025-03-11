@@ -1821,6 +1821,10 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
 			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
 		}
+		// fix name inconsistency
+		if (item.name.endsWith('| 027')) {
+			full_name = full_name.replace('027', '27');
+		}
 		if (item.style !== 'Vanilla') {
 			full_name += ` (${item.condition})`;
 		}
