@@ -47,9 +47,13 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 		if (responseJson?.data) {
 			await chrome.storage.local.set({
 				[`${pricesURL}`]: JSON.stringify(responseJson.data),
-				[`${source}-update`]: Date.now(), // responseJson.time,
+				[`${source}-update`]: Date.now(),
 			});
 		}
+	} else if (response.status === 403) {
+		await chrome.storage.local.set({
+			[`${source}-update`]: Date.now(), // avoid refetches until auth is resolved
+		});
 	}
 	res.send({
 		status: response.status,

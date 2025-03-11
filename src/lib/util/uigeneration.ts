@@ -73,7 +73,7 @@ export function generatePriceLine({
 				}
 			</div>
 			${
-				(source === MarketSource.Buff || source === MarketSource.Steam) && isWarning
+				showBothPrices && isWarning
 					? html`
 						<img
 							src="${ICON_EXCLAMATION}"

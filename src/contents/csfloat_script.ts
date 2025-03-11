@@ -120,10 +120,12 @@ async function init() {
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
 	let items = document.querySelectorAll('item-card');
-	while (items.length === 0 && (location.pathname === '/search' || location.pathname.startsWith('/item/'))) {
+	let tries = 20;
+	while (items.length === 0 && tries-- > 0) {
 		await new Promise((r) => setTimeout(r, 100));
 		items = document.querySelectorAll('item-card');
 	}
+	// console.log('[BetterFloat] Found', items.length, 'items');
 
 	for (let i = 0; i < items.length; i++) {
 		const popoutVersion = items[i].getAttribute('width')?.includes('100%')
@@ -134,14 +136,28 @@ async function firstLaunch() {
 		await adjustItem(items[i], popoutVersion);
 	}
 
+	if (items.length < 40) {
+		const newItems = document.querySelectorAll('item-card');
+		for (let i = 0; i < newItems.length; i++) {
+			const popoutVersion = newItems[i].getAttribute('width')?.includes('100%')
+				? POPOUT_ITEM.PAGE
+				: newItems[i].className.includes('flex-item') || location.pathname === '/'
+					? POPOUT_ITEM.NONE
+					: POPOUT_ITEM.SIMILAR;
+			await adjustItem(newItems[i], popoutVersion);
+		}
+	}
+
 	if (location.pathname.startsWith('/item/')) {
 		// enhance item page
 		let popoutItem = document.querySelector('.grid-item > item-card');
-		while (!popoutItem) {
-			await new Promise((r) => setTimeout(r, 100));
-			popoutItem = document.querySelector('.grid-item > item-card');
+		if (!popoutItem?.querySelector('.betterfloat-buff-a')) {
+			while (!popoutItem) {
+				await new Promise((r) => setTimeout(r, 100));
+				popoutItem = document.querySelector('.grid-item > item-card');
+			}
+			await adjustItem(popoutItem, POPOUT_ITEM.PAGE);
 		}
-		await adjustItem(popoutItem, POPOUT_ITEM.PAGE);
 
 		// enhance similar items
 		let similarItems = document.querySelectorAll('app-similar-items item-card');
@@ -562,6 +578,9 @@ function addScreenshotListener(container: Element, item: CSFloat.Item) {
 }
 
 async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
+	if (container.querySelector('.betterfloat-buff-a')) {
+		return;
+	}
 	if (popout > 0) {
 		// wait for popup UI to load
 		await new Promise((r) => setTimeout(r, 100));
