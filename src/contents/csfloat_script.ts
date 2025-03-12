@@ -771,12 +771,30 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 		}
 
 		// show notification
-		await createNotificationMessage({
-			id: apiItem.id,
-			site: 'csfloat',
-			title: 'Item Found | BetterFloat Pro',
-			message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`,
-		});
+		const title = 'Item Found | BetterFloat Pro';
+		const body = `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`;
+		if (notificationSettings.browser) {
+			// create new notification
+			const notification = new Notification(title, {
+				body,
+				icon: ICON_CSFLOAT,
+				tag: 'betterfloat-notification-' + String(apiItem.id),
+				silent: false,
+			});
+			notification.onclick = () => {
+				window.open(`https://csfloat.com/item/${apiItem.id}`, '_blank');
+			};
+			notification.onerror = () => {
+				console.error('[BetterFloat] Error creating notification:', notification);
+			};
+		} else {
+			await createNotificationMessage({
+				id: apiItem.id,
+				site: 'csfloat',
+				title,
+				message: body,
+			});
+		}
 	}
 }
 

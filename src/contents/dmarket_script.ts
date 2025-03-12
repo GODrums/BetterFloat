@@ -163,7 +163,7 @@ async function patternDetections(container: Element, item: DMarket.Item, isPopou
 }
 
 async function caseHardenedDetection(container: Element, item: DMarket.Item, isPopout: boolean) {
-	if (item.title.includes('Gloves') || !item.extra.paintSeed) return;
+	if (item.title.includes('Gloves') || !item.extra.paintSeed || container.querySelector('.betterfloat-gem-container')) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	// const userCurrency = getDMarketCurrency();
@@ -201,7 +201,9 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 		const gemContainer = genGemContainer({ patternElement, site: 'DM', large: isPopout });
 		if (!gemContainer) return;
 		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-		exteriorContainer.appendChild(gemContainer);
+		if (!container.querySelector('.betterfloat-gem-container')) {
+			exteriorContainer.appendChild(gemContainer);
+		}
 	}
 
 	if (!isPopout) {

@@ -24,6 +24,7 @@ export namespace CSFloat {
 		percentage: number;
 		active: boolean;
 		floatRanges: number[];
+		browser: boolean;
 	}
 
 	export type ListingsResponse = {

@@ -3,7 +3,19 @@ import Decimal from 'decimal.js';
 
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CAMERA_FLIPPED, ICON_CSFLOAT, ICON_CSGOSKINS, ICON_EXCLAMATION, ICON_PRICEMPIRE, ICON_STEAMANALYST, MarketSource } from '~lib/util/globals';
+import {
+	ICON_ARROWUP_SMALL,
+	ICON_BUFF,
+	ICON_CAMERA,
+	ICON_CAMERA_FLIPPED,
+	ICON_CSFLOAT,
+	ICON_CSGOSKINS,
+	ICON_EXCLAMATION,
+	ICON_PRICEMPIRE,
+	ICON_SKINPORT,
+	ICON_STEAMANALYST,
+	MarketSource,
+} from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { genGemContainer, generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
@@ -487,13 +499,29 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 			priceText = item.currency + priceText;
 		}
 
-		// show notification
-		await createNotificationMessage({
-			id: item.url,
-			site: 'skinport',
-			title: 'Item Found | BetterFloat Pro',
-			message: `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`,
-		});
+		const title = 'Item Found | BetterFloat Pro';
+		const body = `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`;
+		if (notificationSettings.browser) {
+			// show notification
+			const notification = new Notification(title, {
+				body,
+				icon: ICON_SKINPORT,
+				silent: false,
+			});
+			notification.onclick = () => {
+				window.open(`https://skinport.com${item.url}`, '_blank');
+			};
+			notification.onerror = () => {
+				console.error('[BetterFloat] Error creating notification:', notification);
+			};
+		} else {
+			await createNotificationMessage({
+				id: item.url,
+				site: 'skinport',
+				title,
+				message: body,
+			});
+		}
 	}
 }
 

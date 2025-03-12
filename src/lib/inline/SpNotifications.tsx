@@ -37,7 +37,7 @@ const SpNotifications: React.FC = () => {
 	const [priceBelow, setPriceBelow] = useState<number>(spNotification.priceBelow ?? 100);
 	const [isActive, setIsActive] = useState(spNotification.isActive);
 	const [excludeStatTrak, setExcludeStatTrak] = useState(spNotification.excludeStatTrak ?? false);
-
+	const [useBrowser, setUseBrowser] = useState(spNotification.browser ?? false);
 	const [user] = useStorage<SettingsUser>('user');
 
 	const toggleOpen = () => {
@@ -50,20 +50,32 @@ const SpNotifications: React.FC = () => {
 		spNotification.floatRanges = floatRanges;
 		spNotification.isActive = isActive;
 		spNotification.excludeStatTrak = excludeStatTrak;
+		spNotification.browser = useBrowser;
 		localStorage.setItem('spNotification', JSON.stringify(spNotification));
 		setOpen(false);
 	};
 
 	const testNotification = async () => {
-		await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
-			name: 'createNotification',
-			body: {
-				id: Math.random().toString(36).substring(2, 9), // generate a random id
-				message: 'This is a test notification',
-				title: 'BetterFloat Notification',
-				site: 'csfloat',
-			},
-		});
+		if (useBrowser) {
+			const notification = new Notification('BetterFloat Notification', {
+				body: 'This is a test notification',
+				icon: 'https://skinport.com/static/favicon.ico',
+				silent: false,
+			});
+			notification.onclick = () => {
+				window.open(location.href, '_blank');
+			};
+		} else {
+			await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
+				name: 'createNotification',
+				body: {
+					id: Math.random().toString(36).substring(2, 9), // generate a random id
+					message: 'This is a test notification',
+					title: 'BetterFloat Notification',
+					site: 'skinport',
+				},
+			});
+		}
 	};
 
 	return (
@@ -80,7 +92,7 @@ const SpNotifications: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[350px] h-[420px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
+						className="fixed w-[350px] h-[450px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -105,6 +117,20 @@ const SpNotifications: React.FC = () => {
 							</a>
 						</Button>
 						<div className="flex flex-col items-start">
+							<div className="flex items-center gap-2 mt-2">
+								<input
+									type="checkbox"
+									id="notifications-use-browser"
+									className="w-4 h-4 rounded bg-[#2a2d2f]"
+									style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }}
+									checked={useBrowser}
+									onChange={(e) => setUseBrowser(e.target.checked)}
+									disabled={user?.plan.type !== 'pro'}
+								/>
+								<label htmlFor="notifications-use-browser" className="text-sm">
+									Use Site Notifications
+								</label>
+							</div>
 							<label className="font-semibold my-1 mx-0" htmlFor="notifications-name">
 								ITEM NAME
 							</label>

@@ -55,6 +55,7 @@ const CSFAutorefresh: React.FC = () => {
 	const [percentage, setPercentage] = useState(0);
 	// [low, high]
 	const [floatRanges, setFloatRanges] = useState<number[]>([0, 1]);
+	const [useBrowser, setUseBrowser] = useState(false);
 
 	const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -109,7 +110,7 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const handleSave = () => {
-		const notificationSettings: CSFloat.BFNotification = { name, percentage, active: nActive, floatRanges };
+		const notificationSettings: CSFloat.BFNotification = { name, percentage, active: nActive, floatRanges, browser: useBrowser };
 		localStorage.setItem('betterfloat-notification', JSON.stringify(notificationSettings));
 		setSaveSuccess(true);
 		setTimeout(() => setSaveSuccess(false), 2000);
@@ -122,15 +123,27 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const testNotification = async () => {
-		await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
-			name: 'createNotification',
-			body: {
-				id: Math.random().toString(36).substring(2, 9), // generate a random id
-				message: 'This is a test notification',
-				title: 'BetterFloat Notification',
-				site: 'csfloat',
-			},
-		});
+		if (useBrowser) {
+			const notification = new Notification('BetterFloat Notification', {
+				body: 'This is a test notification',
+				tag: 'betterfloat-notification-test',
+				icon: 'https://csfloat.com/assets/n-mini-logo.png',
+				silent: false,
+			});
+			notification.onclick = () => {
+				window.open(location.href, '_blank');
+			};
+		} else {
+			await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
+				name: 'createNotification',
+				body: {
+					id: Math.random().toString(36).substring(2, 9), // generate a random id
+					message: 'This is a test notification',
+					title: 'BetterFloat Notification',
+					site: 'csfloat',
+				},
+			});
+		}
 	};
 
 	useEffect(() => {
@@ -216,6 +229,17 @@ const CSFAutorefresh: React.FC = () => {
 											<CircleHelp />
 										</a>
 									</Button>
+								</div>
+								<div className="flex items-center gap-2">
+									<CSFCheckbox
+										id="notification-use-browser"
+										checked={useBrowser}
+										onCheckedChange={(state) => setUseBrowser(state === 'indeterminate' ? false : state)}
+										disabled={user?.plan.type !== 'pro'}
+									/>
+									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-use-browser">
+										Use Site Notifications
+									</label>
 								</div>
 								<div className="flex flex-col items-start">
 									<label className="text-[#9EA7B1] text-sm" htmlFor="notification-name">

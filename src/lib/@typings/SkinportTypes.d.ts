@@ -7,6 +7,7 @@ export namespace Skinport {
 		floatRanges: number[];
 		isActive: boolean;
 		excludeStatTrak: boolean;
+		browser: boolean;
 	}
 
 	export type MarketData = {
