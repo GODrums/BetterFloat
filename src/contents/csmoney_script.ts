@@ -53,14 +53,14 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] CSMoney init timer');
 
-	await firstLaunch();
-
 	// mutation observer is only needed once
 	if (!isObserverActive) {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	await firstLaunch();
 }
 
 async function firstLaunch() {
@@ -86,26 +86,15 @@ async function firstLaunch() {
 		}
 	} else if (location.pathname === '/csgo/trade/') {
 		// reload bot inventory
-		const reloadButton = document.querySelector<HTMLElement>('div[class^="ReloadButton_reload_button__"]');
-		if (reloadButton) {
-			reloadButton.click();
-		}
+		const buttonSelector = 'button[class^="ReloadButton_reload_button__"]';
+		waitForElement(buttonSelector).then(async (success) => {
+			if (success) {
+				const reloadButtons = document.querySelectorAll<HTMLElement>(buttonSelector);
+				Array.from(reloadButtons).pop()?.click();
+			}
+		});
 	} else if (location.pathname === '/profile/offers') {
 		//
-	}
-}
-
-function replaceHistory() {
-	const sessionMedium = sessionStorage.getItem('bf.utm_medium');
-	if (sessionMedium) return;
-
-	let utmMedium = new URLSearchParams(location.search).get('utm_medium');
-	if (!utmMedium) {
-		utmMedium = 'betterfloat';
-		sessionStorage.setItem('bf.utm_medium', utmMedium);
-	}
-	if (utmMedium === 'betterfloat' && Math.random() < 0.5) {
-		createHistoryRewrite({ utm_campaign: 'market', utm_source: 'mediabuy', utm_medium: utmMedium, utm_content: 'link' });
 	}
 }
 
@@ -171,14 +160,11 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		}
 	};
 	let apiItem = getApiItem();
-
-	let attempts = 0;
-	while (!apiItem && attempts++ < 5 && isInventoryEmpty()) {
-		// wait for 1s and try again
-		console.debug('[BetterFloat] No item found, waiting 1s and trying again...', container);
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		apiItem = getApiItem();
+	if (!apiItem) {
+		console.error('[BetterFloat] No item found, skipping...');
+		return;
 	}
+
 	// make sure item id matches with queue, otherwise bring the queue up to date
 	if (itemId && apiItem && apiItem.id !== Number(itemId)) {
 		console.debug('[BetterFloat] Item ID mismatch, bringing queue up to date...');
