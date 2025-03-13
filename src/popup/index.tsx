@@ -61,14 +61,14 @@ export default function IndexPopup() {
 							<TabsTrigger value="skinbid">
 								<SkinBidIcon height={40} width={40} />
 							</TabsTrigger>
+							<TabsTrigger value="csmoney">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
+							</TabsTrigger>
 						</div>
 						<Badge variant="purple" className="my-4">
 							Pro
 						</Badge>
 						<div className="grid grid-cols-2 gap-2">
-							<TabsTrigger value="csmoney">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
-							</TabsTrigger>
 							<TabsTrigger value="buffmarket">
 								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BUFFMARKET} />
 							</TabsTrigger>
@@ -105,7 +105,7 @@ export default function IndexPopup() {
 					<CSFloatSettings />
 					<SkinportSettings />
 					<SkinbidSettings />
-					<CSMoneySettings hasProPlan={hasProPlan} />
+					<CSMoneySettings />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<BitskinsSettings hasProPlan={hasProPlan} />

@@ -862,7 +862,10 @@ export function getPricempireLink(itemType: string, itemName: string, dopplerTyp
 					.replace(/\s+/g, '-')
 					.replace(/[^\w-]+/g, '')
 					.replace('--', '-')
-					.replace(/^-+|-+$/g, '')}-${dopplerType.toLowerCase().replace(' ', '-')}${itemName.includes('StatTrak') ? '/stattrak-' : '/'}${condition.replace(' ', '-').toLowerCase()}`;
+					.replace(
+						/^-+|-+$/g,
+						''
+					)}${dopplerType ? `-${dopplerType.toLowerCase().replace(' ', '-')}` : ''}${itemName.includes('StatTrak') ? '/stattrak-' : '/'}${condition.replace(' ', '-').toLowerCase()}`;
 		}
 	} catch (error) {
 		console.error('An error occurred:', error.message);

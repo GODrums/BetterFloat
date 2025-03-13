@@ -1296,13 +1296,19 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 									<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
 										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 									</a>
+							  	`
+								: ''
+						}
+						${
+							sale.screenshots.inspect_backside
+								? html`
 									<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
 										<img
 											src="${ICON_CAMERA_FLIPPED}"
 											style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);"
 										/>
 									</a>
-							  `
+								`
 								: ''
 						}
 					</td>

@@ -7,17 +7,15 @@ import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
-import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-export const CSMoneySettings = ({ hasProPlan }: { hasProPlan: boolean }) => {
+export const CSMoneySettings = () => {
 	const [checked] = useStorage<boolean>('csm-enable');
 
 	return (
 		<TabTemplate value="csmoney" checked={checked}>
-			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access CSMoney features" />}
 			<MarketLogoFull icon={ICON_CSMONEY_FULL} />
-			<SettingsEnable id="csm-enable" isPremiumFeature hasProPlan={hasProPlan} />
+			<SettingsEnable id="csm-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

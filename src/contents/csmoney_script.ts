@@ -18,7 +18,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -46,12 +46,6 @@ async function init() {
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csm-enable']) return;
-
-	// check if user has the required plan
-	if (!(await checkUserPlanPro(extensionSettings['user']))) {
-		console.log('[BetterFloat] Pro plan required for CSMoney features');
-		return;
-	}
 
 	// replaceHistory();
 
@@ -122,7 +116,7 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
+				// console.debug('[|BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				if (addedNode.tagName === 'DIV' && addedNode.className.startsWith('InventorySearchResults_item__') && addedNode.firstElementChild?.getAttribute('data-card-id')) {
 					// item in buy-tab
