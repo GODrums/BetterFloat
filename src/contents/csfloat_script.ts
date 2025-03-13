@@ -27,6 +27,7 @@ import {
 	ICON_PINK_GALAXY_2,
 	ICON_PINK_GALAXY_3,
 	ICON_PRICEMPIRE,
+	ICON_PRICEMPIRE_APP,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
@@ -46,6 +47,7 @@ import {
 	getCharmColoring,
 	getFadePercentage,
 	getFloatColoring,
+	getPricempireLink,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isUserPro,
@@ -719,7 +721,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			await patternDetections(container, apiItem, isMainItem);
 			if (isMainItem) {
 				addQuickLinks(container, apiItem);
-				CSFloatHelpers.copyNameOnClick(container);
+				CSFloatHelpers.copyNameOnClick(container, apiItem.item);
 			}
 			CSFloatHelpers.storeApiItem(container, apiItem);
 			await showBargainPrice(container, apiItem, popout);
@@ -873,9 +875,14 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 			link: `https://csgo.steamanalyst.com/skin/${altURL.replace('/', '-')}?utm_source=betterfloat`,
 		},
 		{
+			icon: ICON_PRICEMPIRE_APP,
+			tooltip: 'Show Pricempire App Page',
+			link: `https://app.pricempire.com/item/cs2/${pricempireURL}?utm_source=betterfloat`,
+		},
+		{
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
-			link: `https://app.pricempire.com/item/cs2/${pricempireURL}?utm_source=betterfloat`,
+			link: `https://pricempire.com/${getPricempireLink(listing.item.type, listing.item.item_name, listing.item.phase ?? ('' as DopplerPhase), listing.item.wear_name)}`,
 		},
 	];
 	// inventory link if seller stall is public

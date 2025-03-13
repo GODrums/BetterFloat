@@ -281,15 +281,14 @@ export namespace CSFloatHelpers {
 		});
 	}
 
-	export function copyNameOnClick(container: Element) {
+	export function copyNameOnClick(container: Element, item: CSFloat.Item) {
 		const itemName = container.querySelector('app-item-name');
 		if (itemName) {
 			itemName.setAttribute('style', 'cursor: pointer;');
 			itemName.setAttribute('title', 'Click to copy item name');
 			itemName.addEventListener('click', () => {
-				const name = itemName.textContent;
-				if (name) {
-					navigator.clipboard.writeText(name);
+				if (item.market_hash_name) {
+					navigator.clipboard.writeText(item.market_hash_name);
 					itemName.setAttribute('title', 'Copied!');
 					itemName.setAttribute('style', 'cursor: default;');
 					setTimeout(() => {
