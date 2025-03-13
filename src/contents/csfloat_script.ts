@@ -47,7 +47,6 @@ import {
 	getCharmColoring,
 	getFadePercentage,
 	getFloatColoring,
-	getPricempireLink,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isUserPro,
@@ -863,6 +862,10 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 	actionsContainer.setAttribute('style', 'flex-wrap: wrap;');
 	const altURL = getAlternativeItemLink(listing.item);
 	const pricempireURL = createPricempireItemLink(container, listing.item);
+	let buff_name = listing.item.market_hash_name;
+	if (listing.item.phase) {
+		buff_name += ` - ${listing.item.phase}`;
+	}
 	const quickLinks: QuickLink[] = [
 		{
 			icon: ICON_CSGOSKINS,
@@ -882,7 +885,7 @@ function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
 		{
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
-			link: `https://pricempire.com/${getPricempireLink(listing.item.type, listing.item.item_name, listing.item.phase ?? ('' as DopplerPhase), listing.item.wear_name)}`,
+			link: `https://pricempire.com/item/${buff_name}`,
 		},
 	];
 	// inventory link if seller stall is public

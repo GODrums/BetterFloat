@@ -440,8 +440,8 @@ function addQuickLinks(container: Element, popupItem: Skinport.InventoryItem | S
 		{
 			icon: ICON_PRICEMPIRE,
 			text: 'Pricempire',
-			link: `https://app.pricempire.com/item/cs2/${adjustedURL}`,
-			// link: `https://pricempire.com/${getPricempireLink(item.category.toLowerCase(), item.marketHashName, item.version as DopplerPhase, item.exterior)}`,
+			// Old site: `https://app.pricempire.com/item/cs2/${adjustedURL}`,
+			link: `https://pricempire.com/item/${adjustedURL}`,
 		},
 	];
 
