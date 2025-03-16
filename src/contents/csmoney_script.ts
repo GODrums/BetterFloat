@@ -74,19 +74,19 @@ async function firstLaunch() {
 	// as the injected script is too slow for the initial load
 	if (location.pathname === '/market/buy/') {
 		// reload market page
-		const reloadButton = document.querySelector<HTMLElement>('div[class^="InventoryReloadButton_container__"]');
+		const reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
 		if (reloadButton) {
 			reloadButton.click();
 		}
 	} else if (location.pathname === '/market/instant-sell/' || location.pathname === '/market/sell/') {
 		// reload instant sell page
-		const reloadButton = document.querySelector<HTMLElement>('div[class^="InventoryReloadButton_wrapper__"]');
+		const reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.sell.reloadButton);
 		if (reloadButton) {
 			reloadButton.click();
 		}
 	} else if (location.pathname === '/csgo/trade/') {
 		// reload bot inventory
-		const buttonSelector = 'button[class^="ReloadButton_reload_button__"]';
+		const buttonSelector = CSMONEY_SELECTORS.trade.reloadButton;
 		waitForElement(buttonSelector).then(async (success) => {
 			if (success) {
 				const reloadButtons = document.querySelectorAll<HTMLElement>(buttonSelector);
@@ -149,14 +149,6 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 				newItem = getSpecificCSMoneyItem(itemId ? Number(itemId) : 0);
 			}
 			return newItem;
-		}
-	};
-	const isInventoryEmpty = () => {
-		if (location.pathname === '/csgo/trade/') {
-			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
-			return isUserItem ? isCSMoneyUserInventoryEmpty() : isCSMoneyBotInventoryEmpty();
-		} else {
-			return isCSMoneyItemsEmpty();
 		}
 	};
 	let apiItem = getApiItem();
@@ -397,9 +389,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	}
 
 	if (priceListing?.gt(0.06) && location.pathname !== '/market/sell/') {
-		// remove csmoney's sale tag
-		// container.querySelector('span[class*="Tag-module_green__"]')?.remove();
-
 		const priceContainer = container.querySelector<HTMLElement>(selector.price);
 
 		if (isPopout) {
