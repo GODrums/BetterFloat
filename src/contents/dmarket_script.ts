@@ -130,7 +130,7 @@ async function adjustItem(container: Element, state: PageState) {
 		}
 	});
 
-	patternDetections(container, item, false);
+	await patternDetections(container, item, false);
 }
 
 function addPopupListener(container: Element, item: DMarket.Item) {
@@ -361,6 +361,8 @@ async function getBuffItem(item: DMarket.Item) {
 function getItemPrice(item: DMarket.Item) {
 	if (location.search.includes('exchangeTab=myItems')) {
 		return new Decimal(item.instantPrice.USD).div(100);
+	} else if (location.search.includes('exchangeTab=exchange')) {
+		return item.type === 'offer' ? new Decimal(item.price.USD).div(100) : new Decimal(item.exchangePrice.USD).div(100);
 	}
 	return new Decimal(item.price.USD).div(100);
 }
