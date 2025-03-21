@@ -470,7 +470,12 @@ async function adjustSalesTableRow(container: Element) {
 
 	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
 	if (seedContainer) {
-		if ((item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) && !item.item_name.includes('Gloves') && item.paint_seed && extensionSettings['csf-csbluegem']) {
+		if (
+			(item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) &&
+			!item.item_name.includes('Gloves') &&
+			item.paint_seed !== undefined &&
+			extensionSettings['csf-csbluegem']
+		) {
 			const type = getBlueGemName(item.item_name);
 			const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
 
@@ -1210,7 +1215,7 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 }
 
 async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
-	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || !item.paint_seed) return;
+	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || item.paint_seed === undefined) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
