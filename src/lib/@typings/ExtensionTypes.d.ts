@@ -219,16 +219,6 @@ export namespace BlueGem {
 		playside_contour_purple: number;
 		playside_gold: number;
 		playside_purple: number;
-		extra: {
-			csfloat_link: string;
-			search: string;
-			similar_backside: string;
-			similar_playside: string;
-		};
-		screenshot: {
-			aq_oiled: string;
-			csbluegem_screenshot: string;
-		};
 	};
 
 	export type PastSale = {
