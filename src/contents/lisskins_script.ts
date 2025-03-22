@@ -186,7 +186,21 @@ async function adjustItem(container: Element, page = PageType.Market) {
 		for (let i = 0; i < rows.length; i++) {
 			addSaleTag(rows[i], priceResult);
 		}
+
+		addQuickLinks(container, item);
 	}
+}
+
+function addQuickLinks(container: Element, item: HTMLItem) {
+	const quickLinks = container.querySelector('div.links');
+	if (!quickLinks) return;
+
+	const actionButton = html`
+		<a href="https://pricempire.com/item/${item.name}" class="market-view-in-game-link" target="_blank">
+			View on Pricempire
+		</a>
+	`;
+	quickLinks.insertAdjacentHTML('beforeend', actionButton);
 }
 
 function generateSaleTagMeta(): PriceResult {

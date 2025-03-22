@@ -150,8 +150,22 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 			const priceResult = await addBuffPrice(item, popup, PageState.Popup);
 
 			await patternDetections(popup, item, true);
+
+			addQuickLinks(popup, item);
 		});
 	}
+}
+
+function addQuickLinks(container: HTMLElement, item: DMarket.Item) {
+	const quickLinks = container.querySelector('asset-action-button > .c-assetPreviewButtons');
+	if (!quickLinks) {
+		return;
+	}
+
+	const actionButton = quickLinks.firstElementChild?.cloneNode(true) as HTMLElement;
+	actionButton.querySelector('.mdc-button__label')!.textContent = 'Pricempire';
+	actionButton.querySelector('a')?.setAttribute('href', `https://pricempire.com/item/${item.title}`);
+	quickLinks.appendChild(actionButton);
 }
 
 async function patternDetections(container: Element, item: DMarket.Item, isPopout: boolean) {
