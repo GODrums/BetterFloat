@@ -32,6 +32,9 @@ async function init() {
 	if (location.host !== 'tradeit.gg') {
 		return;
 	}
+
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -87,6 +90,23 @@ async function firstLaunch() {
 	}
 }
 
+async function replaceHistory() {
+	// wait for the page to load
+	const loggedOut = await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			if (document.querySelector('button.login-btn') || document.querySelector('div.user-section')) {
+				clearInterval(interval);
+				resolve(!!document.querySelector('button.login-btn'));
+			}
+		}, 100);
+	});
+	console.log('[BetterFloat] Replace history: ', loggedOut, location.search);
+
+	if (loggedOut && !location.search.includes('aff')) {
+		location.search += `${location.search ? '&' : ''}aff=betterfloat`;
+	}
+}
+
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		for (const mutation of mutations) {
@@ -94,7 +114,7 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
+				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				if (addedNode.className.toString().includes(TRADEIT_SELECTORS.itemContainer)) {
 					const inventoryContainer = Array.from(document.querySelectorAll(TRADEIT_SELECTORS.inventory.container));
