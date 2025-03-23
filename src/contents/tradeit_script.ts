@@ -100,7 +100,6 @@ async function replaceHistory() {
 			}
 		}, 100);
 	});
-	console.log('[BetterFloat] Replace history: ', loggedOut, location.search);
 
 	if (loggedOut && !location.search.includes('aff')) {
 		location.search += `${location.search ? '&' : ''}aff=betterfloat`;
