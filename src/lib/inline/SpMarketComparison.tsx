@@ -9,9 +9,9 @@ import Decimal from 'decimal.js';
 import { AnimatePresence } from 'framer-motion';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { fetchMarketComparisonData } from '~lib/handlers/networkhandler';
-import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
+import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getMarketURL, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { fetchMarketComparisonData } from '~lib/util/messaging';
 import { ExtensionStorage, type SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
@@ -165,8 +165,6 @@ const MarketCard: React.FC<{ listing: Skinport.Listing; entry: MarketEntry; curr
 	);
 };
 
-const freeMarkets = [MarketSource.Buff, MarketSource.Steam];
-
 const SpMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -205,7 +203,7 @@ const SpMarketComparison: React.FC = () => {
 		};
 
 		try {
-			const data = await fetchMarketComparisonData(buff_name, user?.steam?.steamid);
+			const { data } = await fetchMarketComparisonData(buff_name);
 			let convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
@@ -216,11 +214,6 @@ const SpMarketComparison: React.FC = () => {
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
-
-			// Filter markets for free users
-			if (user?.plan.type !== 'pro') {
-				convertedData = convertedData.filter((entry) => freeMarkets.includes(entry.market as MarketSource));
-			}
 
 			if (isBuffBannedItem(listing.full_name)) {
 				convertedData = convertedData.filter((entry) => entry.market !== MarketSource.Buff);
@@ -348,7 +341,7 @@ const SpMarketComparison: React.FC = () => {
 													</label>
 												</div>
 											</div>
-											{!freeMarkets.includes(market.source) && (
+											{!FreeMarkets.includes(market.source) && (
 												<Badge variant="purple" className="text-white">
 													Pro
 												</Badge>

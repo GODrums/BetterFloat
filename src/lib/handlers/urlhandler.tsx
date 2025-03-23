@@ -101,6 +101,20 @@ async function handleChange(state: Extension.URLState) {
 	} else if (state.site === 'lis-skins.com') {
 		await handleLisSkinsChange(state);
 	}
+
+	if (state.site === 'skinport.com' || state.site === 'csfloat.com') {
+		addMessageRelays();
+	}
+}
+
+function addMessageRelays() {
+	relayMessage({
+		name: 'createNotification',
+	});
+
+	relayMessage({
+		name: 'getMarketComparison',
+	});
 }
 
 let lastCSFState: Extension.URLState | null = null;
@@ -143,10 +157,6 @@ async function handleCSFloatChange(state: Extension.URLState) {
 						clearInterval(interval);
 					}
 				}, 1000);
-
-				relayMessage({
-					name: 'createNotification',
-				});
 			}
 		}
 	}

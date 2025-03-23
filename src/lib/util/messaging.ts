@@ -1,7 +1,9 @@
-import { sendToBackground } from '@plasmohq/messaging';
+import { sendToBackground, sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { GetBlueBody } from '~background/messages/getBluePercent';
 import type { GetBlueSalesBody } from '~background/messages/getBlueSales';
+import type { GetMarketComparisonResponse } from '~background/messages/getMarketComparison';
+import type { GetMarketComparisonBody } from '~background/messages/getMarketComparison';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 
 export async function createNotificationMessage(body: CreateNotificationBody) {
@@ -33,5 +35,15 @@ export async function fetchBlueGemPatternData(body: GetBlueBody) {
 	return await sendToBackground<GetBlueBody, Partial<BlueGem.PatternData>>({
 		name: 'getBluePercent',
 		body,
+	});
+}
+
+// to be used in page scripts
+export async function fetchMarketComparisonData(buff_name: string) {
+	return await sendToBackgroundViaRelay<GetMarketComparisonBody, GetMarketComparisonResponse>({
+		name: 'getMarketComparison',
+		body: {
+			buff_name,
+		},
 	});
 }
