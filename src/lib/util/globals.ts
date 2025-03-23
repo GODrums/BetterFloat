@@ -137,3 +137,5 @@ export const AvailableMarketSources = [
 	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;' },
 	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '' },
 ];
+
+export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney];
