@@ -481,7 +481,7 @@ export async function addBuffPrice(
 			}
 		} else if (selector.self === 'page') {
 			const startingPriceDiv = container.querySelector('.item-bids-time-info .item-detail');
-			if (startingPriceDiv) {
+			if (startingPriceDiv && cachedItem.auction.sellType !== 'AUCTION') {
 				const startingDifference = new Decimal(listingPrice).minus(priceFromReference);
 				const startingPrice = document.createElement('div');
 				startingPrice.className = 'betterfloat-sale-tag';
@@ -496,10 +496,13 @@ export async function addBuffPrice(
 			}
 
 			const bids = container.querySelectorAll('.bids .bid-price');
+			const currencyRate = getSkbCurrency() !== 'EUR' ? await getSkbUserConversion() : null;
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
 				const bidData = cachedItem.bids[i];
-				const bidDifference = new Decimal(bidData.amount).minus(priceFromReference);
+
+				const bidAmount = currencyRate ? new Decimal(bidData.amount).mul(currencyRate) : new Decimal(bidData.amount);
+				const bidDifference = bidAmount.minus(priceFromReference);
 				const bidDiscountContainer = document.createElement('div');
 				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
 				bidDiscountContainer.setAttribute(
@@ -529,17 +532,22 @@ function getUserCurrency() {
 }
 
 async function getListingPrice(listing: Skinbid.Listing) {
+	const isEur = getSkbCurrency() === 'EUR';
 	if (listing.currentHighestBid > 0 && listing.auction?.sellType === 'AUCTION') {
-		if (listing.currentHighestBidEur === 0) {
-			return listing.currentHighestBid * (await getSkbUserConversion());
+		if (isEur) {
+			return listing.currentHighestBidEur ?? listing.currentHighestBid;
 		} else {
-			return listing.currentHighestBidEur;
+			return listing.currentHighestBid ?? listing.currentHighestBidEur;
 		}
 	} else {
-		if (listing.auction.startBidEur === 0) {
-			return listing.auction.startBid * (await getSkbUserConversion());
+		if (isEur) {
+			return listing.auction.startBidEur > 0 ? listing.auction.startBidEur : listing.auction.startBid;
 		} else {
-			return listing.auction.startBidEur;
+			if (listing.auction.startBidEur === 0) {
+				return listing.auction.startBid * (await getSkbUserConversion());
+			} else {
+				return listing.auction.startBid ?? listing.auction.startBidEur;
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { FreeMarkets } from '~lib/util/globals';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 
 export type GetMarketComparisonBody = {
@@ -62,11 +63,11 @@ const fetchMarketComparisonData = async (buffName: string, user: IStorage['user'
 		let data = (await response.json()) as Extension.APIMarketResponse;
 
 		if (user?.plan.type !== 'pro') {
-			data = {
-				buff: data.buff ?? {},
-				steam: data.steam ?? {},
-				csmoney: data.csmoney ?? {},
-			};
+			const newData: Partial<Extension.APIMarketResponse> = {};
+			for (const market of FreeMarkets) {
+				newData[market] = data[market];
+			}
+			data = newData;
 		}
 
 		// Update both caches
