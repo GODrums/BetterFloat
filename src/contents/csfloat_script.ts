@@ -34,7 +34,7 @@ import {
 	MarketSource,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
+import { generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import {
@@ -55,7 +55,7 @@ import {
 } from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
+import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
 	cacheCSFInventory,
@@ -68,7 +68,7 @@ import {
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
-import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
+import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
@@ -466,29 +466,6 @@ async function adjustSalesTableRow(container: Element) {
 			</div>
 		`;
 		patternContainer.outerHTML = patternCell;
-	}
-
-	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
-	if (seedContainer) {
-		if (
-			(item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) &&
-			!item.item_name.includes('Gloves') &&
-			item.paint_seed !== undefined &&
-			extensionSettings['csf-csbluegem']
-		) {
-			const type = getBlueGemName(item.item_name);
-			const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
-
-			const gemText = `${patternElement.playside_blue?.toFixed(0) ?? 0}% ` + (patternElement.backside_blue ? `/ ${patternElement.backside_blue.toFixed(0)}%` : '');
-			const gemContainer = html`
-				<div style="color: deepskyblue;font-size: 13px;">
-					${gemText}
-				</div>
-			`;
-
-			seedContainer.insertAdjacentHTML('afterend', gemContainer);
-			seedContainer.parentElement!.style.lineHeight = '1.5';
-		}
 	}
 
 	// add float coloring
@@ -1002,8 +979,8 @@ function getRankedFloatColoring(float: number, min: number, max: number, vanilla
 async function patternDetections(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
 	const item = listing.item;
 	if (item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) {
-		if (extensionSettings['csf-csbluegem'] || isPopout) {
-			await caseHardenedDetection(container, item, isPopout);
+		if (extensionSettings['csf-csbluegem'] && isPopout) {
+			await addCaseHardenedSales(item);
 		}
 	} else if (item.item_name.includes('Fade')) {
 		addFadePercentages(container, item);
@@ -1214,51 +1191,12 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	}
 }
 
-async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
+async function addCaseHardenedSales(item: CSFloat.Item) {
 	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || item.paint_seed === undefined) return;
 
-	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
 	const type = getBlueGemName(item.item_name);
-
-	// retrieve the stored data instead of fetching newly
-	if (isPopout) {
-		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
-		if (csbluegem && csbluegem.length > 0) {
-			patternElement = JSON.parse(csbluegem);
-		}
-	}
-	if (!patternElement) {
-		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
-		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
-	}
-	if (!patternElement) {
-		console.warn('[BetterFloat] Could not fetch pattern data for ', item.item_name);
-		return false;
-	}
-
-	// add gem icon and blue gem percent badge
-	if ([4, 5, 6].includes(item.rarity)) {
-		let tierContainer = container.querySelector('.badge-container');
-		if (!tierContainer) {
-			tierContainer = document.createElement('div');
-			tierContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-			container.querySelector('.item-img')?.after(tierContainer);
-		} else {
-			tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
-			tierContainer.setAttribute('style', 'gap: 5px;');
-		}
-		const gemContainer = genGemContainer({ patternElement, site: 'CSF', large: isPopout });
-		if (!gemContainer) return;
-		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-		tierContainer.appendChild(gemContainer);
-	}
-
-	if (!isPopout) {
-		return;
-	}
 
 	// past sales table
 	const pastSales = await fetchBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });

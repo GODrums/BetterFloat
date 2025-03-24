@@ -45,7 +45,7 @@ export const CSFloatSettings = () => {
 							id="csf-csbluegem"
 							text="Blue Gem Enhancements"
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} />}
-							tooltipText="Adds pattern details and past sales to case hardened skins."
+							tooltipText="Adds past sales to case hardened skins."
 						/>
 					</SettingsCard>
 					<SettingsCard>
