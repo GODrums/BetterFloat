@@ -6,6 +6,7 @@ import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -32,6 +33,8 @@ import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_ca
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { cacheTradeitOwnItems } from './cache/tradeit_cache';
+import { cacheTradeitBotItems } from './cache/tradeit_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 
@@ -65,6 +68,8 @@ export async function activateHandler() {
 			processSkinbaronEvent(eventData);
 		} else if (location.host === 'bitskins.com') {
 			processBitskinsEvent(eventData);
+		} else if (location.host === 'tradeit.gg') {
+			processTradeitEvent(eventData);
 		}
 	});
 
@@ -122,6 +127,19 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processTradeitEvent(eventData: EventData<unknown>) {
+	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/v2/inventory/data')) {
+		// trade page. Bots inventory
+		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+		cacheTradeitBotItems([...(eventData.data as Tradeit.BotDataResponse).items]);
+	} else if (eventData.url.includes('api/v2/inventory/my/data')) {
+		// own inventory
+		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+		cacheTradeitOwnItems((eventData.data as Tradeit.OwnInventoryResponse).items);
 	}
 }
 
