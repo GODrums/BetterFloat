@@ -2,19 +2,19 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
+import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
 	calculateTime,
-	getBuffLink,
 	getBuffPrice,
 	getMarketURL,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isBuffBannedItem,
 	toTitleCase,
+	waitForElement,
 } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 
@@ -39,6 +39,8 @@ async function init() {
 	if (location.host !== 'skinbid.com') {
 		return;
 	}
+
+	replaceHistory();
 
 	console.log('[BetterFloat] Starting BetterFloat');
 	console.time('[BetterFloat] Skinbid init timer');
@@ -71,6 +73,13 @@ async function firstLaunch() {
 	const items = document.getElementsByTagName('APP-ITEM-CARD');
 	for (let i = 0; i < items.length; i++) {
 		await adjustItem(items[i], SKINBID_SELECTORS.card);
+	}
+}
+
+function replaceHistory() {
+	const settings = JSON.parse(localStorage.getItem('settings') ?? '{}');
+	if (!settings.userId && !location.href.includes('ref=')) {
+		location.search += `${location.search ? '&' : ''}ref=betterfloat`;
 	}
 }
 
