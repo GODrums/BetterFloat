@@ -308,6 +308,11 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 	// if (!eventData.url.includes('notifications')) {
 	// 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	// }
+	if (!eventData.data || (typeof eventData.data !== 'object' && !Object.hasOwn(eventData.data, 'error'))) {
+		console.error('[BetterFloat] Error:', eventData.data);
+		return;
+	}
+
 	if (eventData.url.includes('1.0/market/sell-orders/')) {
 		// item popup
 		cacheCSMoneyPopupItem((eventData.data as CSMoney.SingleSellOrderResponse).item);

@@ -1163,6 +1163,7 @@ function addFadePercentages(container: Element, item: CSFloat.Item) {
 	const itemName = item.item_name;
 	const paintSeed = item.paint_seed;
 	if (!paintSeed || container.querySelector('.bf-fadecontainer')) return;
+	if (container.querySelector('.amber-fade') || container.querySelector('.acid-fade')) return;
 	const fadePercentage = getFadePercentage(itemName.split(' | ')[0], itemName, paintSeed);
 	if (fadePercentage) {
 		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);

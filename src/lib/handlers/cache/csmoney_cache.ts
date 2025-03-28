@@ -45,16 +45,8 @@ export function getFirstCSMoneyUserInventoryItem() {
 	return csmoneyUserInventory?.shift();
 }
 
-export function isCSMoneyUserInventoryEmpty() {
-	return csmoneyUserInventory.length === 0;
-}
-
 export function getFirstCSMoneyBotInventoryItem() {
 	return csmoneyBotInventory?.shift();
-}
-
-export function isCSMoneyBotInventoryEmpty() {
-	return csmoneyBotInventory.length === 0;
 }
 
 export function getFirstCSMoneyItem() {
@@ -68,10 +60,6 @@ export function getFirstCSMoneyItem() {
 	} else {
 		return null;
 	}
-}
-
-export function isCSMoneyItemsEmpty() {
-	return csmoneyItems.length === 0;
 }
 
 export function getSpecificCSMoneyItem(itemId: number) {
