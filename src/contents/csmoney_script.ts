@@ -243,7 +243,10 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const itemPrice = getHTMLPrice(container, item);
+	let itemPrice = getHTMLPrice(container, item);
+	if (currencyRate) {
+		itemPrice = itemPrice.mul(currencyRate);
+	}
 	const referencePrice =
 		Number(extensionSettings['csm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
