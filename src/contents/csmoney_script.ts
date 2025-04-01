@@ -191,7 +191,8 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
  */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
 	const selector = CSMONEY_SELECTORS.other.similarContainer;
-	const parentElement = Array.from(container.querySelectorAll(selector))[1]?.parentElement;
+	const allSelectors = Array.from(container.querySelectorAll(selector));
+	const parentElement = allSelectors.length === 3 ? allSelectors[1]?.parentElement : allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild;
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
