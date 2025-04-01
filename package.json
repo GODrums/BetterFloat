@@ -12,6 +12,7 @@
 		"dev:firefox": "plasmo dev --target=firefox-mv3",
 		"build": "plasmo build",
 		"build:firefox": "plasmo build --target=firefox-mv3",
+		"build-action": "cross-env PARCEL_WORKER_BACKEND=process plasmo build",
 		"package": "plasmo package",
 		"lint": "biome lint --write src/",
 		"format": "biome format --write src/ && biome check --write src/"
@@ -63,6 +64,7 @@
 		"@types/node": "22.10.2",
 		"@types/react": "18.3.11",
 		"@types/react-dom": "18.3.1",
+		"cross-env": "^7.0.3",
 		"cs-tierlist": "^1.2.2",
 		"csgo-fade-percentage-calculator": "^1.1.6",
 		"currency-symbol-map": "^5.1.0",
