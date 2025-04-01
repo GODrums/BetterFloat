@@ -23,6 +23,9 @@ jobs:
               with:
                   node-version: 20.x
                   cache: "pnpm"
+            - name: Write system variables
+              run: |
+                echo "export PARCEL_WORKER_BACKEND=process"
             - name: Create envfile
               run: |
                 echo "PLASMO_PUBLIC_PRICINGAPI=${{ secrets.PLASMO_PUBLIC_PRICINGAPI }}" >> .env
