@@ -176,8 +176,8 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
 				if (bigCard) {
 					if (location.pathname === '/market/buy/') {
 						await adjustItem(bigCard, true, item);
+						addSimilarButton(bigCard, item);
 					}
-					// addSimilarButton(bigCard, item);
 				}
 			}
 		});
@@ -191,7 +191,7 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
  */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
 	const selector = CSMONEY_SELECTORS.other.similarContainer;
-	const parentElement = container.querySelector(selector);
+	const parentElement = Array.from(container.querySelectorAll(selector))[1]?.parentElement;
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
