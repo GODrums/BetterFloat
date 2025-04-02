@@ -15,6 +15,9 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	if (!csmoneyItems) {
 		csmoneyItems = [];
 	}
+	if (!data) {
+		return;
+	}
 	data.forEach((item) => {
 		csmoneyItemMapping[item.id] = item;
 	});

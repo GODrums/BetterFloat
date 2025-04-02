@@ -66,9 +66,15 @@ async function firstLaunch() {
 	// as the injected script is too slow for the initial load
 	if (location.pathname === '/market/buy/') {
 		// reload market page
-		const reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
+		let reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
 		if (reloadButton) {
 			reloadButton.click();
+		} else {
+			await waitForElement(CSMONEY_SELECTORS.market.reloadButton);
+			reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
+			if (reloadButton) {
+				reloadButton.click();
+			}
 		}
 	} else if (location.pathname === '/market/instant-sell/' || location.pathname === '/market/sell/') {
 		// reload instant sell page
