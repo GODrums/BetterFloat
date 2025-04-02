@@ -45,12 +45,10 @@ import {
 	getBlueGemName,
 	getBuffPrice,
 	getCharmColoring,
-	getFadePercentage,
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
 	isUserPro,
-	toTruncatedString,
 	waitForElement,
 } from '../lib/util/helperfunctions';
 
@@ -983,7 +981,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 			await addCaseHardenedSales(item);
 		}
 	} else if (item.item_name.includes('Fade')) {
-		addFadePercentages(container, item);
+		// csfloat supports fades natively now
 	} else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
 		await webDetection(container, item);
 	} else if (item.item_name.includes('Specialist Gloves | Crimson Kimono')) {
@@ -1157,39 +1155,6 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 		badgeText: cw_data.type === 'Triple Web' ? '3' : cw_data.type === 'Double Web' ? '2' : '1',
 		badgeStyle: `color: ${item.item_name.includes('Crimson') ? 'lightgrey' : 'white'}; font-size: 18px; font-weight: 500; position: absolute; top: 7px;`,
 	});
-}
-
-function addFadePercentages(container: Element, item: CSFloat.Item) {
-	const itemName = item.item_name;
-	const paintSeed = item.paint_seed;
-	if (!paintSeed || container.querySelector('.bf-fadecontainer')) return;
-	if (container.querySelector('.amber-fade') || container.querySelector('.acid-fade')) return;
-	const fadePercentage = getFadePercentage(itemName.split(' | ')[0], itemName, paintSeed);
-	if (fadePercentage) {
-		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
-		const fadeContainer = html`
-			<div class="bf-tooltip bf-fadecontainer" style="display: flex; align-items: center; justify-content: center;">
-				<div class="bf-badge-text" style="background-position-x: ${backgroundPositionX}%; background-image: ${fadePercentage.background};">
-					<span style="color: #00000080;">${toTruncatedString(fadePercentage.percentage, 1)}</span>
-				</div>
-				<div class="bf-tooltip-inner" style="translate: 0 50px">
-					<span>Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%</span>
-					<span>Rank #${fadePercentage.ranking}</span>
-				</div>
-			</div>
-		`;
-		let badgeContainer = container.querySelector('.badge-container');
-		if (!badgeContainer) {
-			badgeContainer = document.createElement('div');
-			badgeContainer.className = 'badge-container';
-			badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-			container.querySelector('.item-img')?.after(badgeContainer);
-		} else {
-			badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
-			badgeContainer.setAttribute('style', 'gap: 5px;');
-		}
-		badgeContainer.insertAdjacentHTML('beforeend', fadeContainer);
-	}
 }
 
 async function addCaseHardenedSales(item: CSFloat.Item) {
