@@ -57,6 +57,16 @@ async function init() {
 	// this has to be done as first thing to not miss timed events
 	await activateHandler();
 
+	if (location.pathname.startsWith('/item/') || location.pathname.startsWith('/i/') || location.pathname.startsWith('/myitems/i/')) {
+		const interval = setInterval(() => {
+			const iconPath = document.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]');
+			if (iconPath) {
+				iconPath.closest('div')?.remove();
+				clearInterval(interval);
+			}
+		}, 100);
+	}
+
 	await initPriceMapping(extensionSettings, 'sp');
 
 	await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
@@ -118,10 +128,6 @@ async function firstLaunch() {
 			await adjustCart(cartContainer);
 		}
 	} else if (path.startsWith('/item/') || path.startsWith('/i/') || path.startsWith('/myitems/i/')) {
-		// const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
-		// for (const item of itemPage) {
-		// 	await adjustItemPage(item);
-		// }
 		const itemPage = document.querySelector('.ItemPage');
 		if (itemPage) {
 			await adjustItem(itemPage, itemSelectors.page);
@@ -201,7 +207,8 @@ async function applyMutation() {
 				for (let i = 0; i < mutation.addedNodes.length; i++) {
 					const addedNode = mutation.addedNodes[i];
 					// some nodes are not elements, so we need to check
-					if (!(addedNode instanceof HTMLElement) || !addedNode.className) continue;
+					if (!(addedNode instanceof HTMLElement)) continue;
+					console.debug('[BetterFloat] Mutation detected:', addedNode);
 
 					const className = addedNode.className.toString();
 					if (
@@ -226,6 +233,10 @@ async function applyMutation() {
 						autoCloseTooltip(addedNode);
 					} else if (className.includes('Message')) {
 						// contains 'item has been sold' message
+					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]')) {
+							addedNode.remove();
+						}
 					}
 				}
 			}

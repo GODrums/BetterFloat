@@ -245,6 +245,10 @@ function applyMutation() {
 						offerItemClickListener(addedNode);
 					} else if (addedNode.tagName.toLowerCase() === 'app-markdown-dialog') {
 						CSFloatHelpers.adjustCurrencyChangeNotice(addedNode);
+					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]')) {
+							addedNode.remove();
+						}
 					}
 				}
 			}

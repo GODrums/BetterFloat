@@ -33,7 +33,7 @@ const CSMAutorefresh: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	// auto-refresh
 	const [isActive, setIsActive] = useState(false);
-	const [rInterval, setRInterval] = useStorage('dm-refreshinterval');
+	const [rInterval, setRInterval] = useStorage('csm-refreshinterval');
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 
 	const [user] = useStorage<SettingsUser>('user');
@@ -90,7 +90,7 @@ const CSMAutorefresh: React.FC = () => {
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
-			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-DM-AUTOREFRESH') {
+			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-CSM-AUTOREFRESH') {
 				onClickOutside();
 			}
 		};
