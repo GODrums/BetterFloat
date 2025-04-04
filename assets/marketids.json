@@ -18419,7 +18419,8 @@
   },
   "Souvenir AUG | Condemned (Battle-Scarred)": {
     "buff": 37523,
-    "c5": "514814357"
+    "c5": "514814357",
+    "uu": 110636
   },
   "Souvenir AUG | Condemned (Field-Tested)": {
     "buff": 37524,
@@ -20065,7 +20066,8 @@
   },
   "Souvenir Nova | Sand Dune (Factory New)": {
     "buff": 37853,
-    "c5": "553422523"
+    "c5": "553422523",
+    "uu": 110609
   },
   "Souvenir Nova | Sand Dune (Field-Tested)": {
     "buff": 37854,
@@ -21458,7 +21460,8 @@
   },
   "Souvenir XM1014 | CaliCamo (Battle-Scarred)": {
     "buff": 38133,
-    "c5": "956369516613509120"
+    "c5": "956369516613509120",
+    "uu": 110632
   },
   "Souvenir XM1014 | CaliCamo (Factory New)": {
     "buff": 38134,
@@ -53509,7 +53512,8 @@
   },
   "★ StatTrak™ Shadow Daggers | Crimson Web (Well-Worn)": {
     "buff": 44538,
-    "c5": "171945486"
+    "c5": "171945486",
+    "uu": 110635
   },
   "★ StatTrak™ Bayonet | Freehand (Battle-Scarred)": {
     "buff": 44541,
@@ -55464,7 +55468,8 @@
   },
   "Souvenir XM1014 | Blue Steel (Factory New)": {
     "buff": 755706,
-    "c5": "553422514"
+    "c5": "553422514",
+    "uu": 110608
   },
   "★ Gut Knife | Night (Factory New)": {
     "buff": 755720,
@@ -55883,6 +55888,7 @@
   },
   "Souvenir R8 Revolver | Bone Mask (Minimal Wear)": {
     "buff": 757431,
+    "uu": 110649,
     "c5": "931479748323655680"
   },
   "★ StatTrak™ Butterfly Knife | Rust Coat (Well-Worn)": {
@@ -55956,7 +55962,8 @@
   },
   "★ StatTrak™ Falchion Knife | Forest DDPAT (Factory New)": {
     "buff": 757599,
-    "c5": "75173190"
+    "c5": "75173190",
+    "uu": 110637
   },
   "★ StatTrak™ Gut Knife | Scorched (Factory New)": {
     "buff": 757600,
@@ -56002,7 +56009,8 @@
   },
   "★ StatTrak™ Flip Knife | Forest DDPAT (Factory New)": {
     "buff": 757610,
-    "c5": "553422498"
+    "c5": "553422498",
+    "uu": 110645
   },
   "★ StatTrak™ Butterfly Knife | Scorched (Factory New)": {
     "buff": 757611,
@@ -56032,6 +56040,7 @@
   },
   "★ StatTrak™ Gut Knife | Crimson Web (Factory New)": {
     "buff": 757617,
+    "uu": 110653,
     "c5": "553422494"
   },
   "★ StatTrak™ Huntsman Knife | Urban Masked (Factory New)": {
@@ -56049,7 +56058,8 @@
   },
   "★ StatTrak™ Huntsman Knife | Crimson Web (Factory New)": {
     "buff": 757686,
-    "c5": "553422487"
+    "c5": "553422487",
+    "uu": 110652
   },
   "★ Sport Gloves | Amphibious (Factory New)": {
     "buff": 757697,
@@ -62337,7 +62347,8 @@
   },
   "★ StatTrak™ Stiletto Knife | Boreal Forest (Factory New)": {
     "buff": 761941,
-    "c5": "553483258"
+    "c5": "553483258",
+    "uu": 110644
   },
   "★ Stiletto Knife | Forest DDPAT (Factory New)": {
     "buff": 761942,
@@ -64585,7 +64596,8 @@
   },
   "★ StatTrak™ Navaja Knife | Safari Mesh (Factory New)": {
     "buff": 768025,
-    "c5": -1
+    "c5": -1,
+    "uu": 110646
   },
   "★ StatTrak™ Ursus Knife | Night Stripe (Factory New)": {
     "buff": 768026,
@@ -64616,7 +64628,8 @@
     "c5": "553483621"
   },
   "★ StatTrak™ Talon Knife | Crimson Web (Factory New)": {
-    "buff": 768148
+    "buff": 768148,
+    "uu": 110654
   },
   "Sticker | Tyloo (Holo) | Katowice 2019": {
     "buff": 768152,
@@ -81270,7 +81283,8 @@
     "c5": "826561050129465344"
   },
   "★ StatTrak™ Survival Knife | Crimson Web (Factory New)": {
-    "buff": 777379
+    "buff": 777379,
+    "uu": 110650
   },
   "★ Classic Knife | Forest DDPAT (Factory New)": {
     "buff": 777385,
@@ -81358,7 +81372,8 @@
   },
   "★ StatTrak™ Navaja Knife | Crimson Web (Factory New)": {
     "buff": 777549,
-    "c5": "553488928"
+    "c5": "553488928",
+    "uu": 110651
   },
   "★ StatTrak™ Survival Knife | Urban Masked (Minimal Wear)": {
     "buff": 777550,
@@ -81461,7 +81476,8 @@
   },
   "Souvenir XM1014 | Blue Spruce (Factory New)": {
     "buff": 778258,
-    "c5": "553466351"
+    "c5": "553466351",
+    "uu": 110641
   },
   "★ StatTrak™ Nomad Knife | Night Stripe (Minimal Wear)": {
     "buff": 778314,
@@ -81470,7 +81486,8 @@
   },
   "★ StatTrak™ Skeleton Knife | Scorched (Factory New)": {
     "buff": 778315,
-    "c5": "553488452"
+    "c5": "553488452",
+    "uu": 110648
   },
   "★ StatTrak™ Nomad Knife | Urban Masked (Factory New)": {
     "buff": 778320,
@@ -81688,7 +81705,8 @@
   },
   "★ StatTrak™ Paracord Knife | Boreal Forest (Factory New)": {
     "buff": 778843,
-    "c5": "801933500349415424"
+    "c5": "801933500349415424",
+    "uu": 110634
   },
   "★ Skeleton Knife | Scorched (Factory New)": {
     "buff": 778849,
@@ -83899,7 +83917,8 @@
     "c5": "553491732"
   },
   "★ StatTrak™ Ursus Knife | Crimson Web (Factory New)": {
-    "buff": 781739
+    "buff": 781739,
+    "uu": 110656
   },
   "★ Nomad Knife | Forest DDPAT (Factory New)": {
     "buff": 781914,
@@ -90411,7 +90430,8 @@
   },
   "★ StatTrak™ Survival Knife | Scorched (Factory New)": {
     "buff": 868699,
-    "c5": "992396860781711360"
+    "c5": "992396860781711360",
+    "uu": 110647
   },
   "★ StatTrak™ Classic Knife | Boreal Forest (Factory New)": {
     "buff": 868955,
@@ -114378,7 +114398,8 @@
     "c5": -1
   },
   "★ StatTrak™ Ursus Knife | Forest DDPAT (Factory New)": {
-    "buff": 937944
+    "buff": 937944,
+    "uu": 110655
   },
   "★ StatTrak™ Classic Knife | Crimson Web (Factory New)": {
     "buff": 952132
@@ -126830,5 +126851,4093 @@
   "Shanghai 2024 Inferno Souvenir Package": {
     "buff": 1114857,
     "uu": 110597
+  },
+  "Sticker | brnz4n | Shanghai 2024": {
+    "buff": 1114882,
+    "uu": 110603,
+    "c5": 0,
+    "buff_sticker": 129258
+  },
+  "Sticker | brnz4n (Glitter) | Shanghai 2024": {
+    "buff": 1114883,
+    "uu": 110604,
+    "c5": 0,
+    "buff_sticker": 129282
+  },
+  "Sticker | brnz4n (Holo) | Shanghai 2024": {
+    "buff": 1114884,
+    "uu": 110605,
+    "c5": 0,
+    "buff_sticker": 129244
+  },
+  "Sticker | brnz4n (Gold) | Shanghai 2024": {
+    "buff": 1114885,
+    "uu": 110606,
+    "c5": 0,
+    "buff_sticker": 129458
+  },
+  "Sticker | sh1ro (Glitter, Champion) | Shanghai 2024": {
+    "buff": 1114952,
+    "uu": 110614,
+    "c5": 0,
+    "buff_sticker": 129651
+  },
+  "Sticker | chopper (Champion) | Shanghai 2024": {
+    "buff": 1114953,
+    "uu": 110611,
+    "c5": 0,
+    "buff_sticker": 129652
+  },
+  "Sticker | zont1x (Glitter, Champion) | Shanghai 2024": {
+    "buff": 1114954,
+    "uu": 110617,
+    "c5": 0,
+    "buff_sticker": 129653
+  },
+  "Sticker | magixx (Champion) | Shanghai 2024": {
+    "buff": 1114955,
+    "uu": 110615,
+    "c5": 0,
+    "buff_sticker": 129654
+  },
+  "Sticker | sh1ro (Champion) | Shanghai 2024": {
+    "buff": 1114956,
+    "uu": 110613,
+    "c5": 0,
+    "buff_sticker": 129655
+  },
+  "Sticker | donk (Glitter, Champion) | Shanghai 2024": {
+    "buff": 1114958,
+    "uu": 110622,
+    "c5": 0,
+    "buff_sticker": 129656
+  },
+  "Sticker | zont1x (Champion) | Shanghai 2024": {
+    "buff": 1114959,
+    "uu": 110612,
+    "c5": 0,
+    "buff_sticker": 129657
+  },
+  "Sticker | donk (Champion) | Shanghai 2024": {
+    "buff": 1114960,
+    "uu": 110616,
+    "c5": 0,
+    "buff_sticker": 129658
+  },
+  "Sticker | magixx (Holo, Champion) | Shanghai 2024": {
+    "buff": 1114968,
+    "uu": 110618,
+    "c5": 0,
+    "buff_sticker": 129659
+  },
+  "Sticker | chopper (Glitter, Champion) | Shanghai 2024": {
+    "buff": 1114969,
+    "uu": 110621,
+    "c5": 0,
+    "buff_sticker": 129660
+  },
+  "Sticker | chopper (Holo, Champion) | Shanghai 2024": {
+    "buff": 1114970,
+    "uu": 110620,
+    "c5": 0,
+    "buff_sticker": 129661
+  },
+  "Sticker | magixx (Glitter, Champion) | Shanghai 2024": {
+    "buff": 1114971,
+    "uu": 110624,
+    "c5": 0,
+    "buff_sticker": 129662
+  },
+  "Sticker | sh1ro (Holo, Champion) | Shanghai 2024": {
+    "buff": 1114973,
+    "uu": 110626,
+    "c5": 0,
+    "buff_sticker": 129663
+  },
+  "Sticker | zont1x (Gold, Champion) | Shanghai 2024": {
+    "buff": 1114976,
+    "uu": 110629,
+    "c5": 0,
+    "buff_sticker": 129664
+  },
+  "Shanghai 2024 Champions Autograph Capsule": {
+    "buff": 1114977,
+    "uu": 110619,
+    "c5": 0
+  },
+  "Sticker | donk (Holo, Champion) | Shanghai 2024": {
+    "buff": 1114979,
+    "uu": 110628,
+    "c5": 0,
+    "buff_sticker": 129665
+  },
+  "Sticker | magixx (Gold, Champion) | Shanghai 2024": {
+    "buff": 1114981,
+    "uu": 110631,
+    "c5": 0,
+    "buff_sticker": 129666
+  },
+  "Sticker | chopper (Gold, Champion) | Shanghai 2024": {
+    "buff": 1114982,
+    "uu": 110625,
+    "c5": 0,
+    "buff_sticker": 129667
+  },
+  "Sticker | donk (Gold, Champion) | Shanghai 2024": {
+    "buff": 1114983,
+    "uu": 110630,
+    "c5": 0,
+    "buff_sticker": 129668
+  },
+  "Sticker | sh1ro (Gold, Champion) | Shanghai 2024": {
+    "buff": 1114984,
+    "uu": 110627,
+    "c5": 0,
+    "buff_sticker": 129669
+  },
+  "Sticker | zont1x (Holo, Champion) | Shanghai 2024": {
+    "buff": 1114985,
+    "uu": 110623,
+    "c5": 0,
+    "buff_sticker": 129670
+  },
+  "Sticker | volt (Glitter) | Shanghai 2024": {
+    "buff": 1115105,
+    "uu": 110064,
+    "c5": 0,
+    "buff_sticker": 129298
+  },
+  "Sticker | volt | Shanghai 2024": {
+    "buff": 1115109,
+    "uu": 110082,
+    "c5": 0,
+    "buff_sticker": 129207
+  },
+  "Sticker | volt (Holo) | Shanghai 2024": {
+    "buff": 1115111,
+    "uu": 110373,
+    "c5": 0,
+    "buff_sticker": 129335
+  },
+  "Sticker | volt (Gold) | Shanghai 2024": {
+    "buff": 1115112,
+    "uu": 110527,
+    "c5": 0,
+    "buff_sticker": 129489
+  },
+  "★ StatTrak™ Kukri Knife | Night Stripe (Factory New)": {
+    "buff": 1115210,
+    "uu": 110642,
+    "c5": 0
+  },
+  "Galil AR | Green Apple (Minimal Wear)": {
+    "buff": 1115496,
+    "uu": 110688,
+    "c5": 0
+  },
+  "AUG | Steel Sentinel (Field-Tested)": {
+    "buff": 1115497,
+    "uu": 110693,
+    "c5": 0
+  },
+  "SSG 08 | Memorial (Minimal Wear)": {
+    "buff": 1115498,
+    "uu": 110682,
+    "c5": 0
+  },
+  "Fever Case": {
+    "buff": 1115500,
+    "uu": 110657,
+    "c5": 0
+  },
+  "FAMAS | Palm (Field-Tested)": {
+    "buff": 1115501,
+    "uu": 110855,
+    "c5": 0
+  },
+  "PP-Bizon | Wood Block Camo (Field-Tested)": {
+    "buff": 1115503,
+    "uu": 110795,
+    "c5": 0
+  },
+  "CZ75-Auto | Copper Fiber (Field-Tested)": {
+    "buff": 1115504,
+    "uu": 110676,
+    "c5": 0
+  },
+  "StatTrak™ P2000 | Sure Grip (Well-Worn)": {
+    "buff": 1115505,
+    "uu": 110658,
+    "c5": 0
+  },
+  "CZ75-Auto | Copper Fiber (Minimal Wear)": {
+    "buff": 1115506,
+    "uu": 110686,
+    "c5": 0
+  },
+  "FAMAS | 2A2F (Minimal Wear)": {
+    "buff": 1115507,
+    "uu": 110730,
+    "c5": 0
+  },
+  "Zeus x27 | Tosai (Minimal Wear)": {
+    "buff": 1115508,
+    "uu": 110756,
+    "c5": 0
+  },
+  "M4A4 | Choppa (Field-Tested)": {
+    "buff": 1115509,
+    "uu": 110721,
+    "c5": 0
+  },
+  "SSG 08 | Memorial (Field-Tested)": {
+    "buff": 1115510,
+    "uu": 110696,
+    "c5": 0
+  },
+  "P90 | Wave Breaker (Field-Tested)": {
+    "buff": 1115511,
+    "uu": 110712,
+    "c5": 0
+  },
+  "StatTrak™ USP-S | PC-GRN (Field-Tested)": {
+    "buff": 1115512,
+    "uu": 110840,
+    "c5": 0
+  },
+  "Galil AR | Green Apple (Factory New)": {
+    "buff": 1115513,
+    "uu": 110669,
+    "c5": 0
+  },
+  "CZ75-Auto | Copper Fiber (Well-Worn)": {
+    "buff": 1115514,
+    "uu": 110690,
+    "c5": 0
+  },
+  "XM1014 | Run Run Run (Field-Tested)": {
+    "buff": 1115517,
+    "uu": 110692,
+    "c5": 0
+  },
+  "Nova | Rain Station (Field-Tested)": {
+    "buff": 1115518,
+    "uu": 110675,
+    "c5": 0
+  },
+  "Nova | Rain Station (Factory New)": {
+    "buff": 1115519,
+    "uu": 110685,
+    "c5": 0
+  },
+  "P250 | Constructivist (Minimal Wear)": {
+    "buff": 1115520,
+    "uu": 110661,
+    "c5": 0
+  },
+  "UMP-45 | Late Night Transit (Field-Tested)": {
+    "buff": 1115521,
+    "uu": 110687,
+    "c5": 0
+  },
+  "P250 | Constructivist (Field-Tested)": {
+    "buff": 1115522,
+    "uu": 110691,
+    "c5": 0
+  },
+  "P90 | Straight Dimes (Minimal Wear)": {
+    "buff": 1115525,
+    "uu": 110689,
+    "c5": 0
+  },
+  "Glock-18 | Green Line (Field-Tested)": {
+    "buff": 1115528,
+    "uu": 110665,
+    "c5": 0
+  },
+  "MAG-7 | Resupply (Minimal Wear)": {
+    "buff": 1115530,
+    "uu": 110724,
+    "c5": 0
+  },
+  "Glock-18 | Shinobu (Well-Worn)": {
+    "buff": 1115531,
+    "uu": 110770,
+    "c5": 0
+  },
+  "Glock-18 | Green Line (Well-Worn)": {
+    "buff": 1115532,
+    "uu": 110762,
+    "c5": 0
+  },
+  "Nova | Rain Station (Minimal Wear)": {
+    "buff": 1115533,
+    "uu": 110706,
+    "c5": 0
+  },
+  "XM1014 | Run Run Run (Minimal Wear)": {
+    "buff": 1115534,
+    "uu": 110733,
+    "c5": 0
+  },
+  "UMP-45 | Late Night Transit (Minimal Wear)": {
+    "buff": 1115535,
+    "uu": 110760,
+    "c5": 0
+  },
+  "Zeus x27 | Charged Up (Field-Tested)": {
+    "buff": 1115536,
+    "uu": 110708,
+    "c5": 0
+  },
+  "P2000 | Sure Grip (Field-Tested)": {
+    "buff": 1115537,
+    "uu": 110715,
+    "c5": 0
+  },
+  "USP-S | PC-GRN (Well-Worn)": {
+    "buff": 1115538,
+    "uu": 110765,
+    "c5": 0
+  },
+  "P2000 | Sure Grip (Minimal Wear)": {
+    "buff": 1115539,
+    "uu": 110662,
+    "c5": 0
+  },
+  "StatTrak™ MAG-7 | Resupply (Field-Tested)": {
+    "buff": 1115540,
+    "uu": 110699,
+    "c5": 0
+  },
+  "USP-S | PC-GRN (Field-Tested)": {
+    "buff": 1115541,
+    "uu": 110698,
+    "c5": 0
+  },
+  "UMP-45 | K.O. Factory (Battle-Scarred)": {
+    "buff": 1115542,
+    "uu": 110800,
+    "c5": 0
+  },
+  "SSG 08 | Memorial (Well-Worn)": {
+    "buff": 1115543,
+    "uu": 110700,
+    "c5": 0
+  },
+  "XM1014 | Mockingbird (Field-Tested)": {
+    "buff": 1115544,
+    "uu": 110681,
+    "c5": 0
+  },
+  "P2000 | Sure Grip (Battle-Scarred)": {
+    "buff": 1115545,
+    "uu": 110679,
+    "c5": 0
+  },
+  "M4A4 | Choppa (Well-Worn)": {
+    "buff": 1115546,
+    "uu": 110716,
+    "c5": 0
+  },
+  "AK-47 | Searing Rage (Field-Tested)": {
+    "buff": 1115547,
+    "uu": 110711,
+    "c5": 0
+  },
+  "AK-47 | Searing Rage (Battle-Scarred)": {
+    "buff": 1115548,
+    "uu": 110816,
+    "c5": 0
+  },
+  "Nova | Rising Sun (Well-Worn)": {
+    "buff": 1115549,
+    "uu": 110842,
+    "c5": 0
+  },
+  "XM1014 | Solitude (Minimal Wear)": {
+    "buff": 1115550,
+    "uu": 110664,
+    "c5": 0
+  },
+  "XM1014 | Solitude (Field-Tested)": {
+    "buff": 1115551,
+    "uu": 110666,
+    "c5": 0
+  },
+  "MP9 | Latte Rush (Well-Worn)": {
+    "buff": 1115552,
+    "uu": 110742,
+    "c5": 0
+  },
+  "SG 553 | Night Camo (Field-Tested)": {
+    "buff": 1115554,
+    "uu": 110709,
+    "c5": 0
+  },
+  "Desert Eagle | Serpent Strike (Field-Tested)": {
+    "buff": 1115555,
+    "uu": 110701,
+    "c5": 0
+  },
+  "Glock-18 | Shinobu (Minimal Wear)": {
+    "buff": 1115556,
+    "uu": 110798,
+    "c5": 0
+  },
+  "StatTrak™ SSG 08 | Memorial (Minimal Wear)": {
+    "buff": 1115557,
+    "uu": 110753,
+    "c5": 0
+  },
+  "UMP-45 | K.O. Factory (Field-Tested)": {
+    "buff": 1115558,
+    "uu": 110824,
+    "c5": 0
+  },
+  "MP9 | Nexus (Field-Tested)": {
+    "buff": 1115559,
+    "uu": 110755,
+    "c5": 0
+  },
+  "Glock-18 | Green Line (Minimal Wear)": {
+    "buff": 1115560,
+    "uu": 110671,
+    "c5": 0
+  },
+  "MP9 | Multi-Terrain (Field-Tested)": {
+    "buff": 1115561,
+    "uu": 110943,
+    "c5": 0
+  },
+  "M4A4 | Choppa (Minimal Wear)": {
+    "buff": 1115562,
+    "uu": 110683,
+    "c5": 0
+  },
+  "Nova | Rising Sun (Field-Tested)": {
+    "buff": 1115564,
+    "uu": 110779,
+    "c5": 0
+  },
+  "XM1014 | Canvas Cloud (Minimal Wear)": {
+    "buff": 1115565,
+    "uu": 110778,
+    "c5": 0
+  },
+  "Nova | Rising Sun (Minimal Wear)": {
+    "buff": 1115566,
+    "uu": 110722,
+    "c5": 0
+  },
+  "Dual Berettas | BorDeux (Field-Tested)": {
+    "buff": 1115567,
+    "uu": 110791,
+    "c5": 0
+  },
+  "SG 553 | Night Camo (Battle-Scarred)": {
+    "buff": 1115568,
+    "uu": 110940,
+    "c5": 0
+  },
+  "AUG | Commando Company (Battle-Scarred)": {
+    "buff": 1115569,
+    "uu": 111221,
+    "c5": 0
+  },
+  "Zeus x27 | Tosai (Field-Tested)": {
+    "buff": 1115570,
+    "uu": 110678,
+    "c5": 0
+  },
+  "CZ75-Auto | Copper Fiber (Factory New)": {
+    "buff": 1115571,
+    "uu": 110729,
+    "c5": 0
+  },
+  "Galil AR | Control (Minimal Wear)": {
+    "buff": 1115572,
+    "uu": 110680,
+    "c5": 0
+  },
+  "P90 | Straight Dimes (Well-Worn)": {
+    "buff": 1115573,
+    "uu": 110674,
+    "c5": 0
+  },
+  "SSG 08 | Memorial (Battle-Scarred)": {
+    "buff": 1115574,
+    "uu": 110714,
+    "c5": 0
+  },
+  "MAC-10 | Bronzer (Battle-Scarred)": {
+    "buff": 1115575,
+    "uu": 111048,
+    "c5": 0
+  },
+  "P90 | Straight Dimes (Field-Tested)": {
+    "buff": 1115576,
+    "uu": 110677,
+    "c5": 0
+  },
+  "AUG | Steel Sentinel (Well-Worn)": {
+    "buff": 1115578,
+    "uu": 110660,
+    "c5": 0
+  },
+  "Tec-9 | Whiteout (Minimal Wear)": {
+    "buff": 1115579,
+    "uu": 110885,
+    "c5": 0
+  },
+  "StatTrak™ M4A4 | Choppa (Field-Tested)": {
+    "buff": 1115580,
+    "uu": 110825,
+    "c5": 0
+  },
+  "Galil AR | Green Apple (Field-Tested)": {
+    "buff": 1115581,
+    "uu": 110673,
+    "c5": 0
+  },
+  "M4A4 | Choppa (Factory New)": {
+    "buff": 1115582,
+    "uu": 110802,
+    "c5": 0
+  },
+  "MP9 | Buff Blue (Field-Tested)": {
+    "buff": 1115583,
+    "uu": 110955,
+    "c5": 0
+  },
+  "MP9 | Nexus (Well-Worn)": {
+    "buff": 1115584,
+    "uu": 110757,
+    "c5": 0
+  },
+  "MAG-7 | Resupply (Field-Tested)": {
+    "buff": 1115585,
+    "uu": 110732,
+    "c5": 0
+  },
+  "StatTrak™ M4A4 | Choppa (Minimal Wear)": {
+    "buff": 1115586,
+    "uu": 110783,
+    "c5": 0
+  },
+  "MAG-7 | Resupply (Factory New)": {
+    "buff": 1115587,
+    "uu": 110823,
+    "c5": 0
+  },
+  "USP-S | PC-GRN (Minimal Wear)": {
+    "buff": 1115588,
+    "uu": 110759,
+    "c5": 0
+  },
+  "XM1014 | Mockingbird (Minimal Wear)": {
+    "buff": 1115590,
+    "uu": 110751,
+    "c5": 0
+  },
+  "AK-47 | Searing Rage (Minimal Wear)": {
+    "buff": 1115591,
+    "uu": 110826,
+    "c5": 0
+  },
+  "Zeus x27 | Tosai (Battle-Scarred)": {
+    "buff": 1115593,
+    "uu": 110915,
+    "c5": 0
+  },
+  "P90 | Wave Breaker (Battle-Scarred)": {
+    "buff": 1115594,
+    "uu": 110780,
+    "c5": 0
+  },
+  "Galil AR | Control (Field-Tested)": {
+    "buff": 1115595,
+    "uu": 110684,
+    "c5": 0
+  },
+  "P250 | Constructivist (Factory New)": {
+    "buff": 1115596,
+    "uu": 110670,
+    "c5": 0
+  },
+  "XM1014 | Run Run Run (Well-Worn)": {
+    "buff": 1115599,
+    "uu": 110884,
+    "c5": 0
+  },
+  "XM1014 | Mockingbird (Well-Worn)": {
+    "buff": 1115602,
+    "uu": 110697,
+    "c5": 0
+  },
+  "Tec-9 | Whiteout (Field-Tested)": {
+    "buff": 1115603,
+    "uu": 110739,
+    "c5": 0
+  },
+  "FAMAS | 2A2F (Field-Tested)": {
+    "buff": 1115604,
+    "uu": 110707,
+    "c5": 0
+  },
+  "StatTrak™ MP9 | Nexus (Battle-Scarred)": {
+    "buff": 1115605,
+    "uu": 110808,
+    "c5": 0
+  },
+  "AUG | Steel Sentinel (Minimal Wear)": {
+    "buff": 1115606,
+    "uu": 110731,
+    "c5": 0
+  },
+  "P90 | Straight Dimes (Battle-Scarred)": {
+    "buff": 1115607,
+    "uu": 110728,
+    "c5": 0
+  },
+  "XM1014 | Run Run Run (Battle-Scarred)": {
+    "buff": 1115610,
+    "uu": 110789,
+    "c5": 0
+  },
+  "AUG | Steel Sentinel (Battle-Scarred)": {
+    "buff": 1115611,
+    "uu": 110744,
+    "c5": 0
+  },
+  "P90 | Wave Breaker (Minimal Wear)": {
+    "buff": 1115613,
+    "uu": 110719,
+    "c5": 0
+  },
+  "XM1014 | Solitude (Well-Worn)": {
+    "buff": 1115614,
+    "uu": 110713,
+    "c5": 0
+  },
+  "StatTrak™ MP9 | Nexus (Minimal Wear)": {
+    "buff": 1115615,
+    "uu": 110815,
+    "c5": 0
+  },
+  "MAG-7 | Resupply (Battle-Scarred)": {
+    "buff": 1115616,
+    "uu": 110752,
+    "c5": 0
+  },
+  "USP-S | Royal Guard (Factory New)": {
+    "buff": 1115617,
+    "uu": 110951,
+    "c5": 0
+  },
+  "MP9 | Nexus (Minimal Wear)": {
+    "buff": 1115618,
+    "uu": 110667,
+    "c5": 0
+  },
+  "XM1014 | Run Run Run (Factory New)": {
+    "buff": 1115619,
+    "uu": 110782,
+    "c5": 0
+  },
+  "MAG-7 | Resupply (Well-Worn)": {
+    "buff": 1115620,
+    "uu": 110738,
+    "c5": 0
+  },
+  "UMP-45 | K.O. Factory (Minimal Wear)": {
+    "buff": 1115621,
+    "uu": 110781,
+    "c5": 0
+  },
+  "M4A4 | Steel Work (Field-Tested)": {
+    "buff": 1115622,
+    "uu": 110851,
+    "c5": 0
+  },
+  "XM1014 | Mockingbird (Battle-Scarred)": {
+    "buff": 1115623,
+    "uu": 110710,
+    "c5": 0
+  },
+  "USP-S | PC-GRN (Battle-Scarred)": {
+    "buff": 1115624,
+    "uu": 110748,
+    "c5": 0
+  },
+  "StatTrak™ SSG 08 | Memorial (Well-Worn)": {
+    "buff": 1115625,
+    "uu": 110750,
+    "c5": 0
+  },
+  "StatTrak™ XM1014 | Mockingbird (Well-Worn)": {
+    "buff": 1115626,
+    "uu": 110764,
+    "c5": 0
+  },
+  "P2000 | Sure Grip (Well-Worn)": {
+    "buff": 1115627,
+    "uu": 110694,
+    "c5": 0
+  },
+  "Galil AR | Control (Factory New)": {
+    "buff": 1115628,
+    "uu": 110934,
+    "c5": 0
+  },
+  "MP9 | Nexus (Battle-Scarred)": {
+    "buff": 1115629,
+    "uu": 110726,
+    "c5": 0
+  },
+  "StatTrak™ XM1014 | Mockingbird (Field-Tested)": {
+    "buff": 1115630,
+    "uu": 110926,
+    "c5": 0
+  },
+  "P2000 | Sure Grip (Factory New)": {
+    "buff": 1115631,
+    "uu": 110843,
+    "c5": 0
+  },
+  "StatTrak™ P2000 | Sure Grip (Minimal Wear)": {
+    "buff": 1115635,
+    "uu": 110702,
+    "c5": 0
+  },
+  "M4A4 | Choppa (Battle-Scarred)": {
+    "buff": 1115637,
+    "uu": 110754,
+    "c5": 0
+  },
+  "Desert Eagle | Serpent Strike (Battle-Scarred)": {
+    "buff": 1115638,
+    "uu": 110910,
+    "c5": 0
+  },
+  "FAMAS | Bad Trip (Well-Worn)": {
+    "buff": 1115640,
+    "uu": 110900,
+    "c5": 0
+  },
+  "Desert Eagle | Serpent Strike (Factory New)": {
+    "buff": 1115641,
+    "uu": 110720,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Doppler (Factory New)": {
+    "buff": 1115642,
+    "uu": 110935,
+    "c5": 0
+  },
+  "Glock-18 | Shinobu (Battle-Scarred)": {
+    "buff": 1115643,
+    "uu": 110872,
+    "c5": 0
+  },
+  "StatTrak™ MAG-7 | Resupply (Battle-Scarred)": {
+    "buff": 1115644,
+    "uu": 110763,
+    "c5": 0
+  },
+  "M249 | Sage Camo (Field-Tested)": {
+    "buff": 1115645,
+    "uu": 111026,
+    "c5": 0
+  },
+  "SG 553 | Basket Halftone (Field-Tested)": {
+    "buff": 1115646,
+    "uu": 110911,
+    "c5": 0
+  },
+  "MAC-10 | Storm Camo (Minimal Wear)": {
+    "buff": 1115647,
+    "uu": 110978,
+    "c5": 0
+  },
+  "PP-Bizon | Wood Block Camo (Battle-Scarred)": {
+    "buff": 1115648,
+    "uu": 110786,
+    "c5": 0
+  },
+  "StatTrak™ MAG-7 | Resupply (Minimal Wear)": {
+    "buff": 1115649,
+    "uu": 110845,
+    "c5": 0
+  },
+  "Sawed-Off | Runoff (Field-Tested)": {
+    "buff": 1115650,
+    "uu": 110747,
+    "c5": 0
+  },
+  "StatTrak™ SSG 08 | Memorial (Field-Tested)": {
+    "buff": 1115651,
+    "uu": 110876,
+    "c5": 0
+  },
+  "StatTrak™ M4A4 | Choppa (Well-Worn)": {
+    "buff": 1115652,
+    "uu": 110668,
+    "c5": 0
+  },
+  "StatTrak™ SSG 08 | Memorial (Battle-Scarred)": {
+    "buff": 1115653,
+    "uu": 110836,
+    "c5": 0
+  },
+  "StatTrak™ Glock-18 | Shinobu (Minimal Wear)": {
+    "buff": 1115654,
+    "uu": 110917,
+    "c5": 0
+  },
+  "SSG 08 | Memorial (Factory New)": {
+    "buff": 1115655,
+    "uu": 110867,
+    "c5": 0
+  },
+  "Nova | Rising Sun (Battle-Scarred)": {
+    "buff": 1115656,
+    "uu": 110659,
+    "c5": 0
+  },
+  "UMP-45 | Late Night Transit (Well-Worn)": {
+    "buff": 1115657,
+    "uu": 110774,
+    "c5": 0
+  },
+  "StatTrak™ Zeus x27 | Tosai (Field-Tested)": {
+    "buff": 1115658,
+    "uu": 110772,
+    "c5": 0
+  },
+  "SCAR-20 | Short Ochre (Field-Tested)": {
+    "buff": 1115659,
+    "uu": 110787,
+    "c5": 0
+  },
+  "Zeus x27 | Tosai (Factory New)": {
+    "buff": 1115660,
+    "uu": 110895,
+    "c5": 0
+  },
+  "StatTrak™ MP9 | Nexus (Field-Tested)": {
+    "buff": 1115661,
+    "uu": 110844,
+    "c5": 0
+  },
+  "StatTrak™ MP9 | Nexus (Well-Worn)": {
+    "buff": 1115662,
+    "uu": 110870,
+    "c5": 0
+  },
+  "MAC-10 | Derailment (Field-Tested)": {
+    "buff": 1115663,
+    "uu": 110776,
+    "c5": 0
+  },
+  "Negev | Raw Ceramic (Field-Tested)": {
+    "buff": 1115664,
+    "uu": 110939,
+    "c5": 0
+  },
+  "P90 | Straight Dimes (Factory New)": {
+    "buff": 1115665,
+    "uu": 110839,
+    "c5": 0
+  },
+  "MAC-10 | Derailment (Well-Worn)": {
+    "buff": 1115666,
+    "uu": 111020,
+    "c5": 0
+  },
+  "Glock-18 | Green Line (Battle-Scarred)": {
+    "buff": 1115667,
+    "uu": 110740,
+    "c5": 0
+  },
+  "Zeus x27 | Charged Up (Minimal Wear)": {
+    "buff": 1115668,
+    "uu": 110741,
+    "c5": 0
+  },
+  "MAC-10 | Derailment (Battle-Scarred)": {
+    "buff": 1115670,
+    "uu": 110866,
+    "c5": 0
+  },
+  "UMP-45 | Late Night Transit (Battle-Scarred)": {
+    "buff": 1115671,
+    "uu": 110743,
+    "c5": 0
+  },
+  "MAC-10 | Derailment (Minimal Wear)": {
+    "buff": 1115675,
+    "uu": 110784,
+    "c5": 0
+  },
+  "MP9 | Pine (Battle-Scarred)": {
+    "buff": 1115679,
+    "uu": 110989,
+    "c5": 0
+  },
+  "MP9 | Buff Blue (Well-Worn)": {
+    "buff": 1115680,
+    "uu": 111058,
+    "c5": 0
+  },
+  "XM1014 | Solitude (Factory New)": {
+    "buff": 1115681,
+    "uu": 110723,
+    "c5": 0
+  },
+  "UMP-45 | Green Swirl (Field-Tested)": {
+    "buff": 1115682,
+    "uu": 110875,
+    "c5": 0
+  },
+  "StatTrak™ FAMAS | Bad Trip (Factory New)": {
+    "buff": 1115683,
+    "uu": 110857,
+    "c5": 0
+  },
+  "StatTrak™ XM1014 | Mockingbird (Battle-Scarred)": {
+    "buff": 1115684,
+    "uu": 110820,
+    "c5": 0
+  },
+  "XM1014 | Gum Wall Camo (Well-Worn)": {
+    "buff": 1115685,
+    "uu": 110801,
+    "c5": 0
+  },
+  "Tec-9 | Blue Blast (Minimal Wear)": {
+    "buff": 1115686,
+    "uu": 111004,
+    "c5": 0
+  },
+  "MAC-10 | Bronzer (Field-Tested)": {
+    "buff": 1115688,
+    "uu": 110794,
+    "c5": 0
+  },
+  "P250 | Plum Netting (Field-Tested)": {
+    "buff": 1115689,
+    "uu": 110832,
+    "c5": 0
+  },
+  "StatTrak™ Desert Eagle | Serpent Strike (Field-Tested)": {
+    "buff": 1115690,
+    "uu": 110906,
+    "c5": 0
+  },
+  "UMP-45 | K.O. Factory (Well-Worn)": {
+    "buff": 1115691,
+    "uu": 110924,
+    "c5": 0
+  },
+  "StatTrak™ AWP | Printstream (Well-Worn)": {
+    "buff": 1115692,
+    "uu": 110941,
+    "c5": 0
+  },
+  "Zeus x27 | Swamp DDPAT (Field-Tested)": {
+    "buff": 1115693,
+    "uu": 110897,
+    "c5": 0
+  },
+  "FAMAS | 2A2F (Battle-Scarred)": {
+    "buff": 1115695,
+    "uu": 110806,
+    "c5": 0
+  },
+  "MP9 | Pine (Field-Tested)": {
+    "buff": 1115696,
+    "uu": 110796,
+    "c5": 0
+  },
+  "P250 | Copper Oxide (Field-Tested)": {
+    "buff": 1115697,
+    "uu": 110797,
+    "c5": 0
+  },
+  "MP7 | Short Ochre (Field-Tested)": {
+    "buff": 1115701,
+    "uu": 110793,
+    "c5": 0
+  },
+  "P90 | Desert Halftone (Field-Tested)": {
+    "buff": 1115704,
+    "uu": 110792,
+    "c5": 0
+  },
+  "CZ75-Auto | Pink Pearl (Field-Tested)": {
+    "buff": 1115706,
+    "uu": 110863,
+    "c5": 0
+  },
+  "MP9 | Latte Rush (Field-Tested)": {
+    "buff": 1115707,
+    "uu": 110736,
+    "c5": 0
+  },
+  "M4A4 | Hellish (Field-Tested)": {
+    "buff": 1115708,
+    "uu": 110773,
+    "c5": 0
+  },
+  "Galil AR | Control (Well-Worn)": {
+    "buff": 1115709,
+    "uu": 110827,
+    "c5": 0
+  },
+  "Glock-18 | Green Line (Factory New)": {
+    "buff": 1115710,
+    "uu": 110788,
+    "c5": 0
+  },
+  "★ Nomad Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1115711,
+    "uu": 110837,
+    "c5": 0
+  },
+  "Desert Eagle | Serpent Strike (Minimal Wear)": {
+    "buff": 1115712,
+    "uu": 110767,
+    "c5": 0
+  },
+  "FAMAS | Grey Ghost (Battle-Scarred)": {
+    "buff": 1115713,
+    "uu": 111059,
+    "c5": 0
+  },
+  "P90 | Wave Breaker (Well-Worn)": {
+    "buff": 1115714,
+    "uu": 110809,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1115715,
+    "uu": 111437,
+    "c5": 0
+  },
+  "StatTrak™ USP-S | PC-GRN (Minimal Wear)": {
+    "buff": 1115716,
+    "uu": 110768,
+    "c5": 0
+  },
+  "StatTrak™ USP-S | PC-GRN (Well-Worn)": {
+    "buff": 1115717,
+    "uu": 110879,
+    "c5": 0
+  },
+  "AUG | Commando Company (Field-Tested)": {
+    "buff": 1115718,
+    "uu": 110811,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Tiger Tooth (Factory New)": {
+    "buff": 1115719,
+    "uu": 110810,
+    "c5": 0
+  },
+  "UMP-45 | Green Swirl (Minimal Wear)": {
+    "buff": 1115720,
+    "uu": 110812,
+    "c5": 0
+  },
+  "StatTrak™ Nova | Rising Sun (Well-Worn)": {
+    "buff": 1115721,
+    "uu": 110785,
+    "c5": 0
+  },
+  "StatTrak™ M4A4 | Choppa (Battle-Scarred)": {
+    "buff": 1115722,
+    "uu": 110799,
+    "c5": 0
+  },
+  "AWP | Printstream (Well-Worn)": {
+    "buff": 1115723,
+    "uu": 110902,
+    "c5": 0
+  },
+  "MP9 | Buff Blue (Minimal Wear)": {
+    "buff": 1115724,
+    "uu": 110831,
+    "c5": 0
+  },
+  "CZ75-Auto | Copper Fiber (Battle-Scarred)": {
+    "buff": 1115725,
+    "uu": 110705,
+    "c5": 0
+  },
+  "Zeus x27 | Charged Up (Well-Worn)": {
+    "buff": 1115727,
+    "uu": 110830,
+    "c5": 0
+  },
+  "Tec-9 | Whiteout (Battle-Scarred)": {
+    "buff": 1115728,
+    "uu": 110834,
+    "c5": 0
+  },
+  "R8 Revolver | Leafhopper (Minimal Wear)": {
+    "buff": 1115729,
+    "uu": 110982,
+    "c5": 0
+  },
+  "AWP | Arsenic Spill (Minimal Wear)": {
+    "buff": 1115730,
+    "uu": 111011,
+    "c5": 0
+  },
+  "StatTrak™ UMP-45 | K.O. Factory (Field-Tested)": {
+    "buff": 1115731,
+    "uu": 111047,
+    "c5": 0
+  },
+  "XM1014 | Solitude (Battle-Scarred)": {
+    "buff": 1115732,
+    "uu": 110725,
+    "c5": 0
+  },
+  "R8 Revolver | Cobalt Grip (Minimal Wear)": {
+    "buff": 1115733,
+    "uu": 111007,
+    "c5": 0
+  },
+  "FAMAS | 2A2F (Factory New)": {
+    "buff": 1115734,
+    "uu": 110835,
+    "c5": 0
+  },
+  "UMP-45 | Late Night Transit (Factory New)": {
+    "buff": 1115735,
+    "uu": 110813,
+    "c5": 0
+  },
+  "StatTrak™ M4A4 | Choppa (Factory New)": {
+    "buff": 1115736,
+    "uu": 110749,
+    "c5": 0
+  },
+  "AWP | LongDog (Well-Worn)": {
+    "buff": 1115737,
+    "uu": 110761,
+    "c5": 0
+  },
+  "★ Nomad Knife | Doppler (Factory New)": {
+    "buff": 1115738,
+    "uu": 111055,
+    "c5": 0
+  },
+  "Galil AR | Control (Battle-Scarred)": {
+    "buff": 1115739,
+    "uu": 110737,
+    "c5": 0
+  },
+  "AUG | Commando Company (Minimal Wear)": {
+    "buff": 1115740,
+    "uu": 111062,
+    "c5": 0
+  },
+  "AWP | Printstream (Minimal Wear)": {
+    "buff": 1115741,
+    "uu": 110819,
+    "c5": 0
+  },
+  "MP9 | Buff Blue (Battle-Scarred)": {
+    "buff": 1115743,
+    "uu": 111186,
+    "c5": 0
+  },
+  "MAC-10 | Bronzer (Minimal Wear)": {
+    "buff": 1115744,
+    "uu": 110933,
+    "c5": 0
+  },
+  "StatTrak™ P2000 | Sure Grip (Battle-Scarred)": {
+    "buff": 1115745,
+    "uu": 110838,
+    "c5": 0
+  },
+  "Nova | Rising Sun (Factory New)": {
+    "buff": 1115746,
+    "uu": 110923,
+    "c5": 0
+  },
+  "StatTrak™ Galil AR | Control (Field-Tested)": {
+    "buff": 1115747,
+    "uu": 110746,
+    "c5": 0
+  },
+  "AK-47 | VariCamo Grey (Field-Tested)": {
+    "buff": 1115748,
+    "uu": 110856,
+    "c5": 0
+  },
+  "Tec-9 | Citric Acid (Well-Worn)": {
+    "buff": 1115749,
+    "uu": 110862,
+    "c5": 0
+  },
+  "AK-47 | Searing Rage (Well-Worn)": {
+    "buff": 1115750,
+    "uu": 110695,
+    "c5": 0
+  },
+  "MP9 | Nexus (Factory New)": {
+    "buff": 1115751,
+    "uu": 110927,
+    "c5": 0
+  },
+  "★ Nomad Knife | Tiger Tooth (Factory New)": {
+    "buff": 1115752,
+    "uu": 110980,
+    "c5": 0
+  },
+  "SSG 08 | Green Ceramic (Field-Tested)": {
+    "buff": 1115753,
+    "uu": 111069,
+    "c5": 0
+  },
+  "StatTrak™ Galil AR | Control (Minimal Wear)": {
+    "buff": 1115754,
+    "uu": 110822,
+    "c5": 0
+  },
+  "M4A4 | Steel Work (Factory New)": {
+    "buff": 1115755,
+    "uu": 110868,
+    "c5": 0
+  },
+  "P90 | Desert Halftone (Factory New)": {
+    "buff": 1115756,
+    "uu": 110871,
+    "c5": 0
+  },
+  "PP-Bizon | Wood Block Camo (Minimal Wear)": {
+    "buff": 1115758,
+    "uu": 110945,
+    "c5": 0
+  },
+  "FAMAS | Bad Trip (Minimal Wear)": {
+    "buff": 1115759,
+    "uu": 110717,
+    "c5": 0
+  },
+  "M4A4 | Hellish (Battle-Scarred)": {
+    "buff": 1115760,
+    "uu": 110847,
+    "c5": 0
+  },
+  "MAG-7 | Copper Oxide (Factory New)": {
+    "buff": 1115761,
+    "uu": 111088,
+    "c5": 0
+  },
+  "USP-S | PC-GRN (Factory New)": {
+    "buff": 1115762,
+    "uu": 110777,
+    "c5": 0
+  },
+  "StatTrak™ USP-S | PC-GRN (Battle-Scarred)": {
+    "buff": 1115763,
+    "uu": 110758,
+    "c5": 0
+  },
+  "StatTrak™ P90 | Wave Breaker (Field-Tested)": {
+    "buff": 1115764,
+    "uu": 110892,
+    "c5": 0
+  },
+  "Galil AR | Grey Smoke (Field-Tested)": {
+    "buff": 1115765,
+    "uu": 110852,
+    "c5": 0
+  },
+  "FAMAS | Bad Trip (Field-Tested)": {
+    "buff": 1115766,
+    "uu": 110864,
+    "c5": 0
+  },
+  "Tec-9 | Whiteout (Well-Worn)": {
+    "buff": 1115767,
+    "uu": 110865,
+    "c5": 0
+  },
+  "★ Survival Knife | Doppler (Factory New)": {
+    "buff": 1115768,
+    "uu": 110869,
+    "c5": 0
+  },
+  "StatTrak™ P90 | Wave Breaker (Well-Worn)": {
+    "buff": 1115769,
+    "uu": 110873,
+    "c5": 0
+  },
+  "MAC-10 | Acid Hex (Field-Tested)": {
+    "buff": 1115770,
+    "uu": 111083,
+    "c5": 0
+  },
+  "Glock-18 | Shinobu (Field-Tested)": {
+    "buff": 1115771,
+    "uu": 110727,
+    "c5": 0
+  },
+  "M4A1-S | Glitched Paint (Field-Tested)": {
+    "buff": 1115772,
+    "uu": 110907,
+    "c5": 0
+  },
+  "StatTrak™ Glock-18 | Shinobu (Field-Tested)": {
+    "buff": 1115773,
+    "uu": 110909,
+    "c5": 0
+  },
+  "AUG | Steel Sentinel (Factory New)": {
+    "buff": 1115774,
+    "uu": 110814,
+    "c5": 0
+  },
+  "AWP | LongDog (Battle-Scarred)": {
+    "buff": 1115775,
+    "uu": 110850,
+    "c5": 0
+  },
+  "StatTrak™ Nova | Rising Sun (Field-Tested)": {
+    "buff": 1115776,
+    "uu": 110893,
+    "c5": 0
+  },
+  "P90 | Blue Tac (Minimal Wear)": {
+    "buff": 1115777,
+    "uu": 111114,
+    "c5": 0
+  },
+  "R8 Revolver | Cobalt Grip (Field-Tested)": {
+    "buff": 1115778,
+    "uu": 110803,
+    "c5": 0
+  },
+  "XM1014 | Mockingbird (Factory New)": {
+    "buff": 1115779,
+    "uu": 110818,
+    "c5": 0
+  },
+  "Five-SeveN | Autumn Thicket (Field-Tested)": {
+    "buff": 1115780,
+    "uu": 110957,
+    "c5": 0
+  },
+  "MP9 | Pine (Minimal Wear)": {
+    "buff": 1115782,
+    "uu": 110952,
+    "c5": 0
+  },
+  "StatTrak™ XM1014 | Mockingbird (Minimal Wear)": {
+    "buff": 1115783,
+    "uu": 110828,
+    "c5": 0
+  },
+  "UMP-45 | K.O. Factory (Factory New)": {
+    "buff": 1115784,
+    "uu": 110976,
+    "c5": 0
+  },
+  "Nova | Marsh Grass (Factory New)": {
+    "buff": 1115785,
+    "uu": 110999,
+    "c5": 0
+  },
+  "G3SG1 | Green Cell (Factory New)": {
+    "buff": 1115786,
+    "uu": 110804,
+    "c5": 0
+  },
+  "G3SG1 | Green Cell (Minimal Wear)": {
+    "buff": 1115787,
+    "uu": 111087,
+    "c5": 0
+  },
+  "Galil AR | Grey Smoke (Factory New)": {
+    "buff": 1115788,
+    "uu": 110861,
+    "c5": 0
+  },
+  "P250 | Plum Netting (Minimal Wear)": {
+    "buff": 1115789,
+    "uu": 111106,
+    "c5": 0
+  },
+  "P90 | Blue Tac (Field-Tested)": {
+    "buff": 1115790,
+    "uu": 110986,
+    "c5": 0
+  },
+  "Zeus x27 | Tosai (Well-Worn)": {
+    "buff": 1115791,
+    "uu": 110771,
+    "c5": 0
+  },
+  "FAMAS | Bad Trip (Battle-Scarred)": {
+    "buff": 1115792,
+    "uu": 110769,
+    "c5": 0
+  },
+  "SSG 08 | Grey Smoke (Field-Tested)": {
+    "buff": 1115793,
+    "uu": 111052,
+    "c5": 0
+  },
+  "P250 | Plum Netting (Battle-Scarred)": {
+    "buff": 1115794,
+    "uu": 110805,
+    "c5": 0
+  },
+  "P90 | Wave Breaker (Factory New)": {
+    "buff": 1115795,
+    "uu": 110833,
+    "c5": 0
+  },
+  "MAC-10 | Derailment (Factory New)": {
+    "buff": 1115796,
+    "uu": 110849,
+    "c5": 0
+  },
+  "M249 | Sage Camo (Well-Worn)": {
+    "buff": 1115797,
+    "uu": 111113,
+    "c5": 0
+  },
+  "Galil AR | O-Ranger (Field-Tested)": {
+    "buff": 1115798,
+    "uu": 111030,
+    "c5": 0
+  },
+  "StatTrak™ XM1014 | Mockingbird (Factory New)": {
+    "buff": 1115800,
+    "uu": 111002,
+    "c5": 0
+  },
+  "Zeus x27 | Charged Up (Battle-Scarred)": {
+    "buff": 1115801,
+    "uu": 110891,
+    "c5": 0
+  },
+  "P90 | Desert Halftone (Minimal Wear)": {
+    "buff": 1115803,
+    "uu": 110858,
+    "c5": 0
+  },
+  "P250 | Copper Oxide (Minimal Wear)": {
+    "buff": 1115804,
+    "uu": 110975,
+    "c5": 0
+  },
+  "StatTrak™ AWP | Printstream (Minimal Wear)": {
+    "buff": 1115805,
+    "uu": 111077,
+    "c5": 0
+  },
+  "FAMAS | Yeti Camo (Minimal Wear)": {
+    "buff": 1115806,
+    "uu": 110901,
+    "c5": 0
+  },
+  "Zeus x27 | Electric Blue (Well-Worn)": {
+    "buff": 1115807,
+    "uu": 110903,
+    "c5": 0
+  },
+  "Zeus x27 | Charged Up (Factory New)": {
+    "buff": 1115808,
+    "uu": 110944,
+    "c5": 0
+  },
+  "FAMAS | 2A2F (Well-Worn)": {
+    "buff": 1115809,
+    "uu": 110672,
+    "c5": 0
+  },
+  "StatTrak™ P90 | Wave Breaker (Battle-Scarred)": {
+    "buff": 1115810,
+    "uu": 110718,
+    "c5": 0
+  },
+  "SCAR-20 | Short Ochre (Minimal Wear)": {
+    "buff": 1115811,
+    "uu": 110998,
+    "c5": 0
+  },
+  "G3SG1 | Red Jasper (Minimal Wear)": {
+    "buff": 1115812,
+    "uu": 110734,
+    "c5": 0
+  },
+  "Sawed-Off | Runoff (Battle-Scarred)": {
+    "buff": 1115813,
+    "uu": 110950,
+    "c5": 0
+  },
+  "StatTrak™ MAG-7 | Resupply (Well-Worn)": {
+    "buff": 1115814,
+    "uu": 110829,
+    "c5": 0
+  },
+  "StatTrak™ P2000 | Sure Grip (Field-Tested)": {
+    "buff": 1115815,
+    "uu": 110745,
+    "c5": 0
+  },
+  "Five-SeveN | Autumn Thicket (Minimal Wear)": {
+    "buff": 1115816,
+    "uu": 110914,
+    "c5": 0
+  },
+  "Nova | Marsh Grass (Field-Tested)": {
+    "buff": 1115817,
+    "uu": 110853,
+    "c5": 0
+  },
+  "P90 | Blue Tac (Factory New)": {
+    "buff": 1115818,
+    "uu": 110912,
+    "c5": 0
+  },
+  "StatTrak™ AK-47 | Searing Rage (Well-Worn)": {
+    "buff": 1115819,
+    "uu": 110929,
+    "c5": 0
+  },
+  "G3SG1 | Red Jasper (Field-Tested)": {
+    "buff": 1115820,
+    "uu": 110919,
+    "c5": 0
+  },
+  "AWP | Printstream (Field-Tested)": {
+    "buff": 1115821,
+    "uu": 110925,
+    "c5": 0
+  },
+  "M249 | Sage Camo (Minimal Wear)": {
+    "buff": 1115822,
+    "uu": 111060,
+    "c5": 0
+  },
+  "MP7 | Short Ochre (Factory New)": {
+    "buff": 1115823,
+    "uu": 110916,
+    "c5": 0
+  },
+  "FAMAS | Grey Ghost (Minimal Wear)": {
+    "buff": 1115824,
+    "uu": 111053,
+    "c5": 0
+  },
+  "Dual Berettas | Polished Malachite (Minimal Wear)": {
+    "buff": 1115825,
+    "uu": 111096,
+    "c5": 0
+  },
+  "Dual Berettas | Rose Nacre (Field-Tested)": {
+    "buff": 1115826,
+    "uu": 111164,
+    "c5": 0
+  },
+  "Nova | Marsh Grass (Minimal Wear)": {
+    "buff": 1115827,
+    "uu": 111000,
+    "c5": 0
+  },
+  "Galil AR | Grey Smoke (Minimal Wear)": {
+    "buff": 1115828,
+    "uu": 110877,
+    "c5": 0
+  },
+  "P250 | Plum Netting (Factory New)": {
+    "buff": 1115829,
+    "uu": 110988,
+    "c5": 0
+  },
+  "AK-47 | VariCamo Grey (Minimal Wear)": {
+    "buff": 1115830,
+    "uu": 110942,
+    "c5": 0
+  },
+  "P90 | Mustard Gas (Field-Tested)": {
+    "buff": 1115831,
+    "uu": 110947,
+    "c5": 0
+  },
+  "StatTrak™ AK-47 | Searing Rage (Field-Tested)": {
+    "buff": 1115832,
+    "uu": 110928,
+    "c5": 0
+  },
+  "★ Survival Knife | Tiger Tooth (Factory New)": {
+    "buff": 1115833,
+    "uu": 111237,
+    "c5": 0
+  },
+  "XM1014 | Gum Wall Camo (Factory New)": {
+    "buff": 1115834,
+    "uu": 111084,
+    "c5": 0
+  },
+  "USP-S | Tropical Breeze (Factory New)": {
+    "buff": 1115835,
+    "uu": 110932,
+    "c5": 0
+  },
+  "MAG-7 | Copper Oxide (Minimal Wear)": {
+    "buff": 1115836,
+    "uu": 110881,
+    "c5": 0
+  },
+  "SSG 08 | Green Ceramic (Minimal Wear)": {
+    "buff": 1115837,
+    "uu": 110938,
+    "c5": 0
+  },
+  "MP9 | Latte Rush (Minimal Wear)": {
+    "buff": 1115838,
+    "uu": 110996,
+    "c5": 0
+  },
+  "StatTrak™ Galil AR | Control (Factory New)": {
+    "buff": 1115839,
+    "uu": 110904,
+    "c5": 0
+  },
+  "StatTrak™ Nova | Rising Sun (Minimal Wear)": {
+    "buff": 1115840,
+    "uu": 111071,
+    "c5": 0
+  },
+  "Tec-9 | Blue Blast (Field-Tested)": {
+    "buff": 1115841,
+    "uu": 110807,
+    "c5": 0
+  },
+  "Desert Eagle | Serpent Strike (Well-Worn)": {
+    "buff": 1115842,
+    "uu": 111012,
+    "c5": 0
+  },
+  "Glock-18 | Ocean Topo (Minimal Wear)": {
+    "buff": 1115843,
+    "uu": 111145,
+    "c5": 0
+  },
+  "M4A4 | Hellish (Minimal Wear)": {
+    "buff": 1115844,
+    "uu": 110874,
+    "c5": 0
+  },
+  "StatTrak™ AWP | Printstream (Field-Tested)": {
+    "buff": 1115845,
+    "uu": 111196,
+    "c5": 0
+  },
+  "Galil AR | Robin's Egg (Battle-Scarred)": {
+    "buff": 1115846,
+    "uu": 110958,
+    "c5": 0
+  },
+  "SG 553 | Night Camo (Minimal Wear)": {
+    "buff": 1115847,
+    "uu": 110878,
+    "c5": 0
+  },
+  "FAMAS | Palm (Minimal Wear)": {
+    "buff": 1115848,
+    "uu": 111074,
+    "c5": 0
+  },
+  "USP-S | Bleeding Edge (Field-Tested)": {
+    "buff": 1115849,
+    "uu": 110953,
+    "c5": 0
+  },
+  "Dual Berettas | Polished Malachite (Field-Tested)": {
+    "buff": 1115851,
+    "uu": 111032,
+    "c5": 0
+  },
+  "Tec-9 | Citric Acid (Minimal Wear)": {
+    "buff": 1115852,
+    "uu": 110890,
+    "c5": 0
+  },
+  "MP5-SD | Lime Hex (Factory New)": {
+    "buff": 1115853,
+    "uu": 111013,
+    "c5": 0
+  },
+  "Zeus x27 | Swamp DDPAT (Minimal Wear)": {
+    "buff": 1115854,
+    "uu": 110766,
+    "c5": 0
+  },
+  "P250 | Sedimentary (Field-Tested)": {
+    "buff": 1115855,
+    "uu": 110922,
+    "c5": 0
+  },
+  "MAC-10 | Storm Camo (Field-Tested)": {
+    "buff": 1115856,
+    "uu": 110992,
+    "c5": 0
+  },
+  "Dual Berettas | BorDeux (Battle-Scarred)": {
+    "buff": 1115857,
+    "uu": 110956,
+    "c5": 0
+  },
+  "XM1014 | Canvas Cloud (Factory New)": {
+    "buff": 1115858,
+    "uu": 111049,
+    "c5": 0
+  },
+  "SSG 08 | Tiger Tear (Field-Tested)": {
+    "buff": 1115859,
+    "uu": 110973,
+    "c5": 0
+  },
+  "FAMAS | Grey Ghost (Field-Tested)": {
+    "buff": 1115860,
+    "uu": 110974,
+    "c5": 0
+  },
+  "AWP | LongDog (Field-Tested)": {
+    "buff": 1115863,
+    "uu": 111014,
+    "c5": 0
+  },
+  "XM1014 | Canvas Cloud (Well-Worn)": {
+    "buff": 1115864,
+    "uu": 111107,
+    "c5": 0
+  },
+  "StatTrak™ UMP-45 | K.O. Factory (Minimal Wear)": {
+    "buff": 1115865,
+    "uu": 110886,
+    "c5": 0
+  },
+  "StatTrak™ AK-47 | Searing Rage (Minimal Wear)": {
+    "buff": 1115866,
+    "uu": 111046,
+    "c5": 0
+  },
+  "M4A4 | Naval Shred Camo (Field-Tested)": {
+    "buff": 1115867,
+    "uu": 111034,
+    "c5": 0
+  },
+  "SG 553 | Night Camo (Factory New)": {
+    "buff": 1115868,
+    "uu": 110966,
+    "c5": 0
+  },
+  "MP5-SD | Lime Hex (Field-Tested)": {
+    "buff": 1115869,
+    "uu": 110908,
+    "c5": 0
+  },
+  "P90 | Blue Tac (Battle-Scarred)": {
+    "buff": 1115870,
+    "uu": 111110,
+    "c5": 0
+  },
+  "Tec-9 | Raw Ceramic (Field-Tested)": {
+    "buff": 1115871,
+    "uu": 110965,
+    "c5": 0
+  },
+  "P250 | Red Tide (Field-Tested)": {
+    "buff": 1115872,
+    "uu": 110931,
+    "c5": 0
+  },
+  "MP9 | Latte Rush (Battle-Scarred)": {
+    "buff": 1115873,
+    "uu": 110995,
+    "c5": 0
+  },
+  "MAC-10 | Storm Camo (Factory New)": {
+    "buff": 1115874,
+    "uu": 111039,
+    "c5": 0
+  },
+  "P250 | Copper Oxide (Battle-Scarred)": {
+    "buff": 1115875,
+    "uu": 111265,
+    "c5": 0
+  },
+  "MP9 | Multi-Terrain (Factory New)": {
+    "buff": 1115876,
+    "uu": 110948,
+    "c5": 0
+  },
+  "Desert Eagle | Mint Fan (Minimal Wear)": {
+    "buff": 1115877,
+    "uu": 111105,
+    "c5": 0
+  },
+  "Nova | Turquoise Pour (Minimal Wear)": {
+    "buff": 1115878,
+    "uu": 110964,
+    "c5": 0
+  },
+  "Negev | Raw Ceramic (Minimal Wear)": {
+    "buff": 1115879,
+    "uu": 111085,
+    "c5": 0
+  },
+  "Five-SeveN | Sky Blue (Field-Tested)": {
+    "buff": 1115880,
+    "uu": 111182,
+    "c5": 0
+  },
+  "Tec-9 | Citric Acid (Factory New)": {
+    "buff": 1115881,
+    "uu": 110854,
+    "c5": 0
+  },
+  "StatTrak™ SSG 08 | Memorial (Factory New)": {
+    "buff": 1115882,
+    "uu": 110887,
+    "c5": 0
+  },
+  "G3SG1 | Red Jasper (Factory New)": {
+    "buff": 1115883,
+    "uu": 111086,
+    "c5": 0
+  },
+  "StatTrak™ Zeus x27 | Tosai (Minimal Wear)": {
+    "buff": 1115884,
+    "uu": 110920,
+    "c5": 0
+  },
+  "AWP | Arsenic Spill (Field-Tested)": {
+    "buff": 1115885,
+    "uu": 110983,
+    "c5": 0
+  },
+  "MP5-SD | Lime Hex (Well-Worn)": {
+    "buff": 1115886,
+    "uu": 110954,
+    "c5": 0
+  },
+  "MAC-10 | Acid Hex (Factory New)": {
+    "buff": 1115887,
+    "uu": 111159,
+    "c5": 0
+  },
+  "MP9 | Shredded (Field-Tested)": {
+    "buff": 1115888,
+    "uu": 111236,
+    "c5": 0
+  },
+  "MP5-SD | Gold Leaf (Minimal Wear)": {
+    "buff": 1115889,
+    "uu": 111175,
+    "c5": 0
+  },
+  "Negev | Sour Grapes (Field-Tested)": {
+    "buff": 1115890,
+    "uu": 111056,
+    "c5": 0
+  },
+  "Zeus x27 | Swamp DDPAT (Factory New)": {
+    "buff": 1115891,
+    "uu": 111097,
+    "c5": 0
+  },
+  "FAMAS | Yeti Camo (Field-Tested)": {
+    "buff": 1115892,
+    "uu": 111281,
+    "c5": 0
+  },
+  "Tec-9 | Citric Acid (Field-Tested)": {
+    "buff": 1115893,
+    "uu": 110970,
+    "c5": 0
+  },
+  "XM1014 | Canvas Cloud (Field-Tested)": {
+    "buff": 1115895,
+    "uu": 110979,
+    "c5": 0
+  },
+  "Tec-9 | Raw Ceramic (Minimal Wear)": {
+    "buff": 1115896,
+    "uu": 110991,
+    "c5": 0
+  },
+  "AK-47 | Nouveau Rouge (Field-Tested)": {
+    "buff": 1115897,
+    "uu": 110990,
+    "c5": 0
+  },
+  "MAC-10 | Acid Hex (Minimal Wear)": {
+    "buff": 1115898,
+    "uu": 111216,
+    "c5": 0
+  },
+  "StatTrak™ USP-S | PC-GRN (Factory New)": {
+    "buff": 1115899,
+    "uu": 111082,
+    "c5": 0
+  },
+  "M4A4 | Hellish (Well-Worn)": {
+    "buff": 1115900,
+    "uu": 110775,
+    "c5": 0
+  },
+  "StatTrak™ AK-47 | Searing Rage (Battle-Scarred)": {
+    "buff": 1115901,
+    "uu": 111072,
+    "c5": 0
+  },
+  "StatTrak™ Zeus x27 | Tosai (Battle-Scarred)": {
+    "buff": 1115902,
+    "uu": 110913,
+    "c5": 0
+  },
+  "Tec-9 | Garter-9 (Factory New)": {
+    "buff": 1115903,
+    "uu": 111139,
+    "c5": 0
+  },
+  "MP9 | Multi-Terrain (Minimal Wear)": {
+    "buff": 1115904,
+    "uu": 110984,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1115905,
+    "uu": 111354,
+    "c5": 0
+  },
+  "P250 | Sedimentary (Minimal Wear)": {
+    "buff": 1115906,
+    "uu": 110883,
+    "c5": 0
+  },
+  "MAG-7 | Copper Oxide (Field-Tested)": {
+    "buff": 1115907,
+    "uu": 110997,
+    "c5": 0
+  },
+  "PP-Bizon | Wood Block Camo (Factory New)": {
+    "buff": 1115908,
+    "uu": 111061,
+    "c5": 0
+  },
+  "CZ75-Auto | Pink Pearl (Minimal Wear)": {
+    "buff": 1115909,
+    "uu": 111009,
+    "c5": 0
+  },
+  "Dual Berettas | BorDeux (Minimal Wear)": {
+    "buff": 1115910,
+    "uu": 110790,
+    "c5": 0
+  },
+  "★ Survival Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1115911,
+    "uu": 111330,
+    "c5": 0
+  },
+  "StatTrak™ P2000 | Sure Grip (Factory New)": {
+    "buff": 1115912,
+    "uu": 110841,
+    "c5": 0
+  },
+  "Galil AR | O-Ranger (Minimal Wear)": {
+    "buff": 1115913,
+    "uu": 110905,
+    "c5": 0
+  },
+  "StatTrak™ UMP-45 | K.O. Factory (Well-Worn)": {
+    "buff": 1115914,
+    "uu": 110704,
+    "c5": 0
+  },
+  "StatTrak™ AWP | Printstream (Battle-Scarred)": {
+    "buff": 1115915,
+    "uu": 111029,
+    "c5": 0
+  },
+  "AK-47 | VariCamo Grey (Factory New)": {
+    "buff": 1115916,
+    "uu": 111172,
+    "c5": 0
+  },
+  "StatTrak™ P90 | Wave Breaker (Minimal Wear)": {
+    "buff": 1115917,
+    "uu": 110894,
+    "c5": 0
+  },
+  "Nova | Turquoise Pour (Factory New)": {
+    "buff": 1115918,
+    "uu": 111021,
+    "c5": 0
+  },
+  "Five-SeveN | Autumn Thicket (Well-Worn)": {
+    "buff": 1115919,
+    "uu": 110899,
+    "c5": 0
+  },
+  "Negev | Sour Grapes (Minimal Wear)": {
+    "buff": 1115920,
+    "uu": 111067,
+    "c5": 0
+  },
+  "AWP | Printstream (Battle-Scarred)": {
+    "buff": 1115921,
+    "uu": 110959,
+    "c5": 0
+  },
+  "★ Paracord Knife | Doppler (Factory New)": {
+    "buff": 1115922,
+    "uu": 111035,
+    "c5": 0
+  },
+  "★ Nomad Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1115923,
+    "uu": 110960,
+    "c5": 0
+  },
+  "MAC-10 | Poplar Thicket (Minimal Wear)": {
+    "buff": 1115924,
+    "uu": 111043,
+    "c5": 0
+  },
+  "AWP | Arsenic Spill (Factory New)": {
+    "buff": 1115925,
+    "uu": 111023,
+    "c5": 0
+  },
+  "Galil AR | Robin's Egg (Minimal Wear)": {
+    "buff": 1115926,
+    "uu": 111031,
+    "c5": 0
+  },
+  "P90 | Desert Halftone (Battle-Scarred)": {
+    "buff": 1115927,
+    "uu": 111005,
+    "c5": 0
+  },
+  "SSG 08 | Grey Smoke (Minimal Wear)": {
+    "buff": 1115928,
+    "uu": 110971,
+    "c5": 0
+  },
+  "MAC-10 | Storm Camo (Battle-Scarred)": {
+    "buff": 1115929,
+    "uu": 111178,
+    "c5": 0
+  },
+  "Five-SeveN | Sky Blue (Factory New)": {
+    "buff": 1115930,
+    "uu": 111132,
+    "c5": 0
+  },
+  "StatTrak™ Desert Eagle | Serpent Strike (Factory New)": {
+    "buff": 1115931,
+    "uu": 111104,
+    "c5": 0
+  },
+  "Dual Berettas | Rose Nacre (Minimal Wear)": {
+    "buff": 1115932,
+    "uu": 111169,
+    "c5": 0
+  },
+  "Galil AR | Acid Dart (Minimal Wear)": {
+    "buff": 1115933,
+    "uu": 111045,
+    "c5": 0
+  },
+  "AUG | Commando Company (Factory New)": {
+    "buff": 1115934,
+    "uu": 111197,
+    "c5": 0
+  },
+  "Glock-18 | Shinobu (Factory New)": {
+    "buff": 1115935,
+    "uu": 110880,
+    "c5": 0
+  },
+  "Nova | Marsh Grass (Battle-Scarred)": {
+    "buff": 1115936,
+    "uu": 111134,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1115937,
+    "uu": 111226,
+    "c5": 0
+  },
+  "StatTrak™ Glock-18 | Shinobu (Well-Worn)": {
+    "buff": 1115938,
+    "uu": 110967,
+    "c5": 0
+  },
+  "P2000 | Marsh (Minimal Wear)": {
+    "buff": 1115939,
+    "uu": 111065,
+    "c5": 0
+  },
+  "XM1014 | Gum Wall Camo (Field-Tested)": {
+    "buff": 1115940,
+    "uu": 110703,
+    "c5": 0
+  },
+  "AK-47 | Searing Rage (Factory New)": {
+    "buff": 1115941,
+    "uu": 111124,
+    "c5": 0
+  },
+  "Tec-9 | Garter-9 (Minimal Wear)": {
+    "buff": 1115942,
+    "uu": 111121,
+    "c5": 0
+  },
+  "SSG 08 | Blush Pour (Field-Tested)": {
+    "buff": 1115943,
+    "uu": 111122,
+    "c5": 0
+  },
+  "P250 | Sedimentary (Factory New)": {
+    "buff": 1115944,
+    "uu": 111050,
+    "c5": 0
+  },
+  "AWP | LongDog (Minimal Wear)": {
+    "buff": 1115945,
+    "uu": 110888,
+    "c5": 0
+  },
+  "Galil AR | Robin's Egg (Field-Tested)": {
+    "buff": 1115946,
+    "uu": 110981,
+    "c5": 0
+  },
+  "AK-47 | Midnight Laminate (Minimal Wear)": {
+    "buff": 1115947,
+    "uu": 111075,
+    "c5": 0
+  },
+  "P90 | Mustard Gas (Factory New)": {
+    "buff": 1115948,
+    "uu": 111038,
+    "c5": 0
+  },
+  "R8 Revolver | Leafhopper (Field-Tested)": {
+    "buff": 1115952,
+    "uu": 110972,
+    "c5": 0
+  },
+  "G3SG1 | Green Cell (Field-Tested)": {
+    "buff": 1115953,
+    "uu": 110949,
+    "c5": 0
+  },
+  "AK-47 | Midnight Laminate (Field-Tested)": {
+    "buff": 1115954,
+    "uu": 111042,
+    "c5": 0
+  },
+  "P2000 | Royal Baroque (Minimal Wear)": {
+    "buff": 1115955,
+    "uu": 110937,
+    "c5": 0
+  },
+  "StatTrak™ P90 | Wave Breaker (Factory New)": {
+    "buff": 1115956,
+    "uu": 111010,
+    "c5": 0
+  },
+  "M249 | Sage Camo (Factory New)": {
+    "buff": 1115957,
+    "uu": 110735,
+    "c5": 0
+  },
+  "P2000 | Royal Baroque (Field-Tested)": {
+    "buff": 1115958,
+    "uu": 111120,
+    "c5": 0
+  },
+  "MP9 | Shredded (Minimal Wear)": {
+    "buff": 1115960,
+    "uu": 111057,
+    "c5": 0
+  },
+  "Negev | Sour Grapes (Factory New)": {
+    "buff": 1115961,
+    "uu": 111353,
+    "c5": 0
+  },
+  "★ Survival Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1115962,
+    "uu": 111300,
+    "c5": 0
+  },
+  "SCAR-20 | Short Ochre (Factory New)": {
+    "buff": 1115963,
+    "uu": 111137,
+    "c5": 0
+  },
+  "P90 | Desert Halftone (Well-Worn)": {
+    "buff": 1115964,
+    "uu": 111215,
+    "c5": 0
+  },
+  "USP-S | Royal Guard (Minimal Wear)": {
+    "buff": 1115965,
+    "uu": 111128,
+    "c5": 0
+  },
+  "Nova | Turquoise Pour (Field-Tested)": {
+    "buff": 1115966,
+    "uu": 110963,
+    "c5": 0
+  },
+  "MP9 | Shredded (Factory New)": {
+    "buff": 1115967,
+    "uu": 111211,
+    "c5": 0
+  },
+  "Zeus x27 | Electric Blue (Minimal Wear)": {
+    "buff": 1115968,
+    "uu": 111025,
+    "c5": 0
+  },
+  "Tec-9 | Blue Blast (Battle-Scarred)": {
+    "buff": 1115969,
+    "uu": 111028,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Tiger Tooth (Factory New)": {
+    "buff": 1115970,
+    "uu": 111190,
+    "c5": 0
+  },
+  "R8 Revolver | Leafhopper (Battle-Scarred)": {
+    "buff": 1115971,
+    "uu": 111092,
+    "c5": 0
+  },
+  "R8 Revolver | Cobalt Grip (Factory New)": {
+    "buff": 1115972,
+    "uu": 110921,
+    "c5": 0
+  },
+  "MP5-SD | Gold Leaf (Factory New)": {
+    "buff": 1115973,
+    "uu": 111094,
+    "c5": 0
+  },
+  "MP7 | Short Ochre (Battle-Scarred)": {
+    "buff": 1115974,
+    "uu": 110946,
+    "c5": 0
+  },
+  "MAC-10 | Storm Camo (Well-Worn)": {
+    "buff": 1115975,
+    "uu": 111248,
+    "c5": 0
+  },
+  "Dual Berettas | Polished Malachite (Well-Worn)": {
+    "buff": 1115976,
+    "uu": 111363,
+    "c5": 0
+  },
+  "SSG 08 | Green Ceramic (Battle-Scarred)": {
+    "buff": 1115977,
+    "uu": 110859,
+    "c5": 0
+  },
+  "P250 | Plum Netting (Well-Worn)": {
+    "buff": 1115978,
+    "uu": 111119,
+    "c5": 0
+  },
+  "AK-47 | Wintergreen (Field-Tested)": {
+    "buff": 1115979,
+    "uu": 111068,
+    "c5": 0
+  },
+  "SCAR-20 | Short Ochre (Battle-Scarred)": {
+    "buff": 1115980,
+    "uu": 111073,
+    "c5": 0
+  },
+  "★ Nomad Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1115981,
+    "uu": 111252,
+    "c5": 0
+  },
+  "UMP-45 | Green Swirl (Factory New)": {
+    "buff": 1115982,
+    "uu": 111024,
+    "c5": 0
+  },
+  "Five-SeveN | Autumn Thicket (Factory New)": {
+    "buff": 1115983,
+    "uu": 110846,
+    "c5": 0
+  },
+  "Dual Berettas | Polished Malachite (Battle-Scarred)": {
+    "buff": 1115985,
+    "uu": 111180,
+    "c5": 0
+  },
+  "Galil AR | O-Ranger (Factory New)": {
+    "buff": 1115986,
+    "uu": 111138,
+    "c5": 0
+  },
+  "M4A4 | Steel Work (Minimal Wear)": {
+    "buff": 1115987,
+    "uu": 111076,
+    "c5": 0
+  },
+  "Nova | Marsh Grass (Well-Worn)": {
+    "buff": 1115988,
+    "uu": 111063,
+    "c5": 0
+  },
+  "M4A4 | Steel Work (Battle-Scarred)": {
+    "buff": 1115989,
+    "uu": 111144,
+    "c5": 0
+  },
+  "Galil AR | Acid Dart (Field-Tested)": {
+    "buff": 1115990,
+    "uu": 111103,
+    "c5": 0
+  },
+  "MP9 | Cobalt Paisley (Field-Tested)": {
+    "buff": 1115991,
+    "uu": 110962,
+    "c5": 0
+  },
+  "G3SG1 | Green Cell (Battle-Scarred)": {
+    "buff": 1115992,
+    "uu": 111235,
+    "c5": 0
+  },
+  "MAG-7 | Copper Oxide (Battle-Scarred)": {
+    "buff": 1115993,
+    "uu": 111224,
+    "c5": 0
+  },
+  "M4A1-S | Glitched Paint (Minimal Wear)": {
+    "buff": 1115995,
+    "uu": 111081,
+    "c5": 0
+  },
+  "SG 553 | Basket Halftone (Minimal Wear)": {
+    "buff": 1115996,
+    "uu": 111017,
+    "c5": 0
+  },
+  "XM1014 | Gum Wall Camo (Battle-Scarred)": {
+    "buff": 1115998,
+    "uu": 111163,
+    "c5": 0
+  },
+  "SG 553 | Basket Halftone (Well-Worn)": {
+    "buff": 1116000,
+    "uu": 111285,
+    "c5": 0
+  },
+  "SG 553 | Basket Halftone (Factory New)": {
+    "buff": 1116001,
+    "uu": 111079,
+    "c5": 0
+  },
+  "Desert Eagle | Mulberry (Field-Tested)": {
+    "buff": 1116002,
+    "uu": 111225,
+    "c5": 0
+  },
+  "StatTrak™ Galil AR | Control (Battle-Scarred)": {
+    "buff": 1116003,
+    "uu": 111161,
+    "c5": 0
+  },
+  "P90 | Reef Grief (Minimal Wear)": {
+    "buff": 1116004,
+    "uu": 111273,
+    "c5": 0
+  },
+  "M249 | Sage Camo (Battle-Scarred)": {
+    "buff": 1116005,
+    "uu": 111041,
+    "c5": 0
+  },
+  "Glock-18 | Ocean Topo (Field-Tested)": {
+    "buff": 1116007,
+    "uu": 110993,
+    "c5": 0
+  },
+  "P90 | Mustard Gas (Minimal Wear)": {
+    "buff": 1116008,
+    "uu": 111168,
+    "c5": 0
+  },
+  "P2000 | Marsh (Field-Tested)": {
+    "buff": 1116009,
+    "uu": 111152,
+    "c5": 0
+  },
+  "Tec-9 | Raw Ceramic (Battle-Scarred)": {
+    "buff": 1116010,
+    "uu": 111198,
+    "c5": 0
+  },
+  "MAC-10 | Poplar Thicket (Battle-Scarred)": {
+    "buff": 1116011,
+    "uu": 111093,
+    "c5": 0
+  },
+  "M4A4 | Naval Shred Camo (Minimal Wear)": {
+    "buff": 1116012,
+    "uu": 111165,
+    "c5": 0
+  },
+  "MP7 | Short Ochre (Minimal Wear)": {
+    "buff": 1116013,
+    "uu": 111037,
+    "c5": 0
+  },
+  "Five-SeveN | Sky Blue (Minimal Wear)": {
+    "buff": 1116014,
+    "uu": 111251,
+    "c5": 0
+  },
+  "R8 Revolver | Cobalt Grip (Battle-Scarred)": {
+    "buff": 1116015,
+    "uu": 110860,
+    "c5": 0
+  },
+  "FAMAS | Grey Ghost (Factory New)": {
+    "buff": 1116016,
+    "uu": 111127,
+    "c5": 0
+  },
+  "StatTrak™ Zeus x27 | Tosai (Factory New)": {
+    "buff": 1116018,
+    "uu": 110896,
+    "c5": 0
+  },
+  "MP9 | Pine (Factory New)": {
+    "buff": 1116019,
+    "uu": 111099,
+    "c5": 0
+  },
+  "P90 | Blue Tac (Well-Worn)": {
+    "buff": 1116020,
+    "uu": 111183,
+    "c5": 0
+  },
+  "Galil AR | Grey Smoke (Battle-Scarred)": {
+    "buff": 1116021,
+    "uu": 111015,
+    "c5": 0
+  },
+  "FAMAS | Bad Trip (Factory New)": {
+    "buff": 1116022,
+    "uu": 111117,
+    "c5": 0
+  },
+  "MP9 | Buff Blue (Factory New)": {
+    "buff": 1116023,
+    "uu": 111080,
+    "c5": 0
+  },
+  "P250 | Red Tide (Minimal Wear)": {
+    "buff": 1116024,
+    "uu": 111176,
+    "c5": 0
+  },
+  "Zeus x27 | Electric Blue (Battle-Scarred)": {
+    "buff": 1116025,
+    "uu": 111155,
+    "c5": 0
+  },
+  "Glock-18 | Coral Bloom (Field-Tested)": {
+    "buff": 1116026,
+    "uu": 111130,
+    "c5": 0
+  },
+  "Galil AR | Acid Dart (Battle-Scarred)": {
+    "buff": 1116028,
+    "uu": 111323,
+    "c5": 0
+  },
+  "M4A1-S | Rose Hex (Field-Tested)": {
+    "buff": 1116029,
+    "uu": 110987,
+    "c5": 0
+  },
+  "Tec-9 | Garter-9 (Field-Tested)": {
+    "buff": 1116030,
+    "uu": 111008,
+    "c5": 0
+  },
+  "Glock-18 | Glockingbird (Factory New)": {
+    "buff": 1116031,
+    "uu": 111280,
+    "c5": 0
+  },
+  "CZ75-Auto | Pink Pearl (Battle-Scarred)": {
+    "buff": 1116032,
+    "uu": 111173,
+    "c5": 0
+  },
+  "MAC-10 | Bronzer (Factory New)": {
+    "buff": 1116033,
+    "uu": 111136,
+    "c5": 0
+  },
+  "StatTrak™ MAG-7 | Resupply (Factory New)": {
+    "buff": 1116034,
+    "uu": 110977,
+    "c5": 0
+  },
+  "Dual Berettas | Rose Nacre (Factory New)": {
+    "buff": 1116035,
+    "uu": 111118,
+    "c5": 0
+  },
+  "FAMAS | Yeti Camo (Factory New)": {
+    "buff": 1116036,
+    "uu": 111357,
+    "c5": 0
+  },
+  "Dual Berettas | Polished Malachite (Factory New)": {
+    "buff": 1116037,
+    "uu": 111255,
+    "c5": 0
+  },
+  "StatTrak™ Desert Eagle | Serpent Strike (Battle-Scarred)": {
+    "buff": 1116038,
+    "uu": 111123,
+    "c5": 0
+  },
+  "SSG 08 | Green Ceramic (Well-Worn)": {
+    "buff": 1116039,
+    "uu": 111089,
+    "c5": 0
+  },
+  "MAC-10 | Poplar Thicket (Well-Worn)": {
+    "buff": 1116040,
+    "uu": 111389,
+    "c5": 0
+  },
+  "Glock-18 | Ocean Topo (Battle-Scarred)": {
+    "buff": 1116041,
+    "uu": 111240,
+    "c5": 0
+  },
+  "P250 | Red Tide (Factory New)": {
+    "buff": 1116042,
+    "uu": 111319,
+    "c5": 0
+  },
+  "Sawed-Off | Runoff (Minimal Wear)": {
+    "buff": 1116043,
+    "uu": 111091,
+    "c5": 0
+  },
+  "Five-SeveN | Sky Blue (Well-Worn)": {
+    "buff": 1116044,
+    "uu": 111360,
+    "c5": 0
+  },
+  "StatTrak™ FAMAS | Bad Trip (Battle-Scarred)": {
+    "buff": 1116045,
+    "uu": 110817,
+    "c5": 0
+  },
+  "Galil AR | Acid Dart (Factory New)": {
+    "buff": 1116046,
+    "uu": 111006,
+    "c5": 0
+  },
+  "Glock-18 | Ocean Topo (Factory New)": {
+    "buff": 1116047,
+    "uu": 111246,
+    "c5": 0
+  },
+  "M4A4 | Naval Shred Camo (Factory New)": {
+    "buff": 1116048,
+    "uu": 110898,
+    "c5": 0
+  },
+  "CZ75-Auto | Pink Pearl (Factory New)": {
+    "buff": 1116049,
+    "uu": 111022,
+    "c5": 0
+  },
+  "XM1014 | Gum Wall Camo (Minimal Wear)": {
+    "buff": 1116050,
+    "uu": 111133,
+    "c5": 0
+  },
+  "AK-47 | Wintergreen (Minimal Wear)": {
+    "buff": 1116051,
+    "uu": 111162,
+    "c5": 0
+  },
+  "MP5-SD | Lime Hex (Minimal Wear)": {
+    "buff": 1116052,
+    "uu": 111126,
+    "c5": 0
+  },
+  "Zeus x27 | Electric Blue (Field-Tested)": {
+    "buff": 1116053,
+    "uu": 111108,
+    "c5": 0
+  },
+  "Galil AR | Grey Smoke (Well-Worn)": {
+    "buff": 1116054,
+    "uu": 111115,
+    "c5": 0
+  },
+  "Glock-18 | Glockingbird (Field-Tested)": {
+    "buff": 1116055,
+    "uu": 111207,
+    "c5": 0
+  },
+  "StatTrak™ Desert Eagle | Serpent Strike (Minimal Wear)": {
+    "buff": 1116056,
+    "uu": 110968,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116057,
+    "uu": 111111,
+    "c5": 0
+  },
+  "MAC-10 | Poplar Thicket (Field-Tested)": {
+    "buff": 1116058,
+    "uu": 111189,
+    "c5": 0
+  },
+  "★ Nomad Knife | Doppler (Minimal Wear)": {
+    "buff": 1116059,
+    "uu": 111284,
+    "c5": 0
+  },
+  "Zeus x27 | Swamp DDPAT (Battle-Scarred)": {
+    "buff": 1116060,
+    "uu": 111116,
+    "c5": 0
+  },
+  "Tec-9 | Raw Ceramic (Factory New)": {
+    "buff": 1116061,
+    "uu": 111003,
+    "c5": 0
+  },
+  "SSG 08 | Blush Pour (Minimal Wear)": {
+    "buff": 1116062,
+    "uu": 111259,
+    "c5": 0
+  },
+  "MP9 | Cobalt Paisley (Minimal Wear)": {
+    "buff": 1116063,
+    "uu": 111147,
+    "c5": 0
+  },
+  "FAMAS | Palm (Well-Worn)": {
+    "buff": 1116064,
+    "uu": 111148,
+    "c5": 0
+  },
+  "M4A1-S | Rose Hex (Minimal Wear)": {
+    "buff": 1116065,
+    "uu": 111066,
+    "c5": 0
+  },
+  "MP5-SD | Lime Hex (Battle-Scarred)": {
+    "buff": 1116066,
+    "uu": 111156,
+    "c5": 0
+  },
+  "M4A4 | Sheet Lightning (Field-Tested)": {
+    "buff": 1116067,
+    "uu": 111157,
+    "c5": 0
+  },
+  "StatTrak™ FAMAS | Bad Trip (Well-Worn)": {
+    "buff": 1116068,
+    "uu": 110889,
+    "c5": 0
+  },
+  "Tec-9 | Citric Acid (Battle-Scarred)": {
+    "buff": 1116069,
+    "uu": 111269,
+    "c5": 0
+  },
+  "P250 | Copper Oxide (Well-Worn)": {
+    "buff": 1116070,
+    "uu": 111229,
+    "c5": 0
+  },
+  "Nova | Turquoise Pour (Battle-Scarred)": {
+    "buff": 1116071,
+    "uu": 111158,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Doppler (Factory New)": {
+    "buff": 1116072,
+    "uu": 111208,
+    "c5": 0
+  },
+  "SSG 08 | Grey Smoke (Factory New)": {
+    "buff": 1116073,
+    "uu": 111151,
+    "c5": 0
+  },
+  "USP-S | Tropical Breeze (Field-Tested)": {
+    "buff": 1116074,
+    "uu": 111154,
+    "c5": 0
+  },
+  "★ Nomad Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116075,
+    "uu": 111019,
+    "c5": 0
+  },
+  "MAG-7 | Copper Oxide (Well-Worn)": {
+    "buff": 1116076,
+    "uu": 111184,
+    "c5": 0
+  },
+  "Glock-18 | Glockingbird (Minimal Wear)": {
+    "buff": 1116077,
+    "uu": 111256,
+    "c5": 0
+  },
+  "★ Nomad Knife | Damascus Steel (Factory New)": {
+    "buff": 1116078,
+    "uu": 111167,
+    "c5": 0
+  },
+  "M4A4 | Sheet Lightning (Minimal Wear)": {
+    "buff": 1116079,
+    "uu": 111166,
+    "c5": 0
+  },
+  "StatTrak™ Nova | Rising Sun (Factory New)": {
+    "buff": 1116080,
+    "uu": 111191,
+    "c5": 0
+  },
+  "USP-S | Bleeding Edge (Well-Worn)": {
+    "buff": 1116081,
+    "uu": 111427,
+    "c5": 0
+  },
+  "StatTrak™ Zeus x27 | Tosai (Well-Worn)": {
+    "buff": 1116082,
+    "uu": 111201,
+    "c5": 0
+  },
+  "AK-47 | Nouveau Rouge (Minimal Wear)": {
+    "buff": 1116083,
+    "uu": 111129,
+    "c5": 0
+  },
+  "Negev | Raw Ceramic (Battle-Scarred)": {
+    "buff": 1116084,
+    "uu": 111018,
+    "c5": 0
+  },
+  "XM1014 | Canvas Cloud (Battle-Scarred)": {
+    "buff": 1116085,
+    "uu": 111193,
+    "c5": 0
+  },
+  "Sawed-Off | Runoff (Factory New)": {
+    "buff": 1116086,
+    "uu": 111199,
+    "c5": 0
+  },
+  "Desert Eagle | Mint Fan (Field-Tested)": {
+    "buff": 1116087,
+    "uu": 111202,
+    "c5": 0
+  },
+  "P250 | Sedimentary (Battle-Scarred)": {
+    "buff": 1116088,
+    "uu": 111334,
+    "c5": 0
+  },
+  "Glock-18 | Coral Bloom (Minimal Wear)": {
+    "buff": 1116090,
+    "uu": 111238,
+    "c5": 0
+  },
+  "AUG | Commando Company (Well-Worn)": {
+    "buff": 1116091,
+    "uu": 111131,
+    "c5": 0
+  },
+  "AK-47 | Nouveau Rouge (Battle-Scarred)": {
+    "buff": 1116092,
+    "uu": 111262,
+    "c5": 0
+  },
+  "M4A1-S | Glitched Paint (Battle-Scarred)": {
+    "buff": 1116093,
+    "uu": 111141,
+    "c5": 0
+  },
+  "★ Survival Knife | Marble Fade (Factory New)": {
+    "buff": 1116094,
+    "uu": 111345,
+    "c5": 0
+  },
+  "Desert Eagle | Mint Fan (Factory New)": {
+    "buff": 1116095,
+    "uu": 111286,
+    "c5": 0
+  },
+  "★ Paracord Knife | Tiger Tooth (Factory New)": {
+    "buff": 1116096,
+    "uu": 111203,
+    "c5": 0
+  },
+  "P90 | Reef Grief (Field-Tested)": {
+    "buff": 1116097,
+    "uu": 111027,
+    "c5": 0
+  },
+  "Zeus x27 | Electric Blue (Factory New)": {
+    "buff": 1116098,
+    "uu": 111188,
+    "c5": 0
+  },
+  "XM1014 | Copperflage (Field-Tested)": {
+    "buff": 1116099,
+    "uu": 111192,
+    "c5": 0
+  },
+  "M4A1-S | Stratosphere (Minimal Wear)": {
+    "buff": 1116100,
+    "uu": 111321,
+    "c5": 0
+  },
+  "Dual Berettas | BorDeux (Well-Worn)": {
+    "buff": 1116101,
+    "uu": 111272,
+    "c5": 0
+  },
+  "FAMAS | Palm (Battle-Scarred)": {
+    "buff": 1116102,
+    "uu": 111276,
+    "c5": 0
+  },
+  "StatTrak™ Nova | Rising Sun (Battle-Scarred)": {
+    "buff": 1116103,
+    "uu": 111051,
+    "c5": 0
+  },
+  "MP9 | Pine (Well-Worn)": {
+    "buff": 1116104,
+    "uu": 111200,
+    "c5": 0
+  },
+  "P2000 | Marsh (Factory New)": {
+    "buff": 1116105,
+    "uu": 111078,
+    "c5": 0
+  },
+  "M4A1-S | Rose Hex (Factory New)": {
+    "buff": 1116106,
+    "uu": 111179,
+    "c5": 0
+  },
+  "AK-47 | VariCamo Grey (Well-Worn)": {
+    "buff": 1116107,
+    "uu": 111277,
+    "c5": 0
+  },
+  "SSG 08 | Grey Smoke (Battle-Scarred)": {
+    "buff": 1116108,
+    "uu": 111253,
+    "c5": 0
+  },
+  "FAMAS | Palm (Factory New)": {
+    "buff": 1116109,
+    "uu": 111206,
+    "c5": 0
+  },
+  "M4A1-S | Glitched Paint (Well-Worn)": {
+    "buff": 1116110,
+    "uu": 111228,
+    "c5": 0
+  },
+  "P90 | Reef Grief (Factory New)": {
+    "buff": 1116111,
+    "uu": 111311,
+    "c5": 0
+  },
+  "AK-47 | Midnight Laminate (Battle-Scarred)": {
+    "buff": 1116112,
+    "uu": 111361,
+    "c5": 0
+  },
+  "SSG 08 | Blush Pour (Battle-Scarred)": {
+    "buff": 1116113,
+    "uu": 111231,
+    "c5": 0
+  },
+  "Galil AR | Robin's Egg (Factory New)": {
+    "buff": 1116114,
+    "uu": 111185,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116115,
+    "uu": 111408,
+    "c5": 0
+  },
+  "M4A1-S | Glitched Paint (Factory New)": {
+    "buff": 1116116,
+    "uu": 111233,
+    "c5": 0
+  },
+  "Galil AR | O-Ranger (Battle-Scarred)": {
+    "buff": 1116117,
+    "uu": 111098,
+    "c5": 0
+  },
+  "★ Paracord Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116118,
+    "uu": 111230,
+    "c5": 0
+  },
+  "MAC-10 | Bronzer (Well-Worn)": {
+    "buff": 1116119,
+    "uu": 111214,
+    "c5": 0
+  },
+  "P2000 | Marsh (Battle-Scarred)": {
+    "buff": 1116120,
+    "uu": 111350,
+    "c5": 0
+  },
+  "StatTrak™ Glock-18 | Shinobu (Battle-Scarred)": {
+    "buff": 1116121,
+    "uu": 111100,
+    "c5": 0
+  },
+  "PP-Bizon | Wood Block Camo (Well-Worn)": {
+    "buff": 1116122,
+    "uu": 111160,
+    "c5": 0
+  },
+  "Tec-9 | Whiteout (Factory New)": {
+    "buff": 1116123,
+    "uu": 111254,
+    "c5": 0
+  },
+  "Tec-9 | Blue Blast (Factory New)": {
+    "buff": 1116124,
+    "uu": 111209,
+    "c5": 0
+  },
+  "SCAR-20 | Short Ochre (Well-Worn)": {
+    "buff": 1116125,
+    "uu": 111278,
+    "c5": 0
+  },
+  "AK-47 | Nouveau Rouge (Well-Worn)": {
+    "buff": 1116126,
+    "uu": 111219,
+    "c5": 0
+  },
+  "Zeus x27 | Swamp DDPAT (Well-Worn)": {
+    "buff": 1116127,
+    "uu": 111263,
+    "c5": 0
+  },
+  "M4A4 | Hellish (Factory New)": {
+    "buff": 1116128,
+    "uu": 111040,
+    "c5": 0
+  },
+  "Dual Berettas | BorDeux (Factory New)": {
+    "buff": 1116129,
+    "uu": 111247,
+    "c5": 0
+  },
+  "G3SG1 | Green Cell (Well-Worn)": {
+    "buff": 1116130,
+    "uu": 111299,
+    "c5": 0
+  },
+  "MP9 | Latte Rush (Factory New)": {
+    "buff": 1116131,
+    "uu": 111171,
+    "c5": 0
+  },
+  "StatTrak™ MP9 | Nexus (Factory New)": {
+    "buff": 1116132,
+    "uu": 111033,
+    "c5": 0
+  },
+  "SSG 08 | Green Ceramic (Factory New)": {
+    "buff": 1116133,
+    "uu": 111249,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Doppler (Factory New)": {
+    "buff": 1116134,
+    "uu": 111223,
+    "c5": 0
+  },
+  "P90 | Mustard Gas (Battle-Scarred)": {
+    "buff": 1116135,
+    "uu": 111227,
+    "c5": 0
+  },
+  "AWP | Printstream (Factory New)": {
+    "buff": 1116136,
+    "uu": 111298,
+    "c5": 0
+  },
+  "Dual Berettas | Rose Nacre (Well-Worn)": {
+    "buff": 1116137,
+    "uu": 111358,
+    "c5": 0
+  },
+  "SSG 08 | Tiger Tear (Minimal Wear)": {
+    "buff": 1116138,
+    "uu": 111218,
+    "c5": 0
+  },
+  "Negev | Raw Ceramic (Factory New)": {
+    "buff": 1116139,
+    "uu": 110961,
+    "c5": 0
+  },
+  "USP-S | Tropical Breeze (Minimal Wear)": {
+    "buff": 1116140,
+    "uu": 111232,
+    "c5": 0
+  },
+  "AWP | Green Energy (Field-Tested)": {
+    "buff": 1116141,
+    "uu": 111289,
+    "c5": 0
+  },
+  "M4A4 | Steel Work (Well-Worn)": {
+    "buff": 1116142,
+    "uu": 111245,
+    "c5": 0
+  },
+  "R8 Revolver | Cobalt Grip (Well-Worn)": {
+    "buff": 1116143,
+    "uu": 111234,
+    "c5": 0
+  },
+  "G3SG1 | Red Jasper (Battle-Scarred)": {
+    "buff": 1116144,
+    "uu": 110936,
+    "c5": 0
+  },
+  "CZ75-Auto | Pink Pearl (Well-Worn)": {
+    "buff": 1116145,
+    "uu": 111239,
+    "c5": 0
+  },
+  "USP-S | Royal Guard (Field-Tested)": {
+    "buff": 1116146,
+    "uu": 111170,
+    "c5": 0
+  },
+  "SSG 08 | Tiger Tear (Factory New)": {
+    "buff": 1116147,
+    "uu": 111257,
+    "c5": 0
+  },
+  "StatTrak™ UMP-45 | K.O. Factory (Battle-Scarred)": {
+    "buff": 1116148,
+    "uu": 111101,
+    "c5": 0
+  },
+  "USP-S | Bleeding Edge (Factory New)": {
+    "buff": 1116149,
+    "uu": 111313,
+    "c5": 0
+  },
+  "AK-47 | VariCamo Grey (Battle-Scarred)": {
+    "buff": 1116150,
+    "uu": 111102,
+    "c5": 0
+  },
+  "AK-47 | Midnight Laminate (Factory New)": {
+    "buff": 1116151,
+    "uu": 111310,
+    "c5": 0
+  },
+  "Five-SeveN | Sky Blue (Battle-Scarred)": {
+    "buff": 1116152,
+    "uu": 110882,
+    "c5": 0
+  },
+  "Desert Eagle | Mulberry (Minimal Wear)": {
+    "buff": 1116153,
+    "uu": 111258,
+    "c5": 0
+  },
+  "R8 Revolver | Leafhopper (Factory New)": {
+    "buff": 1116154,
+    "uu": 111044,
+    "c5": 0
+  },
+  "StatTrak™ FAMAS | Bad Trip (Field-Tested)": {
+    "buff": 1116155,
+    "uu": 111112,
+    "c5": 0
+  },
+  "P250 | Copper Oxide (Factory New)": {
+    "buff": 1116156,
+    "uu": 111142,
+    "c5": 0
+  },
+  "MP5-SD | Gold Leaf (Field-Tested)": {
+    "buff": 1116157,
+    "uu": 111222,
+    "c5": 0
+  },
+  "M4A1-S | Stratosphere (Field-Tested)": {
+    "buff": 1116158,
+    "uu": 111244,
+    "c5": 0
+  },
+  "AWP | Arsenic Spill (Well-Worn)": {
+    "buff": 1116159,
+    "uu": 111302,
+    "c5": 0
+  },
+  "P250 | Sedimentary (Well-Worn)": {
+    "buff": 1116160,
+    "uu": 111261,
+    "c5": 0
+  },
+  "MP7 | Short Ochre (Well-Worn)": {
+    "buff": 1116161,
+    "uu": 111241,
+    "c5": 0
+  },
+  "Desert Eagle | Mint Fan (Battle-Scarred)": {
+    "buff": 1116162,
+    "uu": 111294,
+    "c5": 0
+  },
+  "★ Survival Knife | Doppler (Minimal Wear)": {
+    "buff": 1116163,
+    "uu": 111335,
+    "c5": 0
+  },
+  "XM1014 | Copperflage (Minimal Wear)": {
+    "buff": 1116164,
+    "uu": 111070,
+    "c5": 0
+  },
+  "AK-47 | Wintergreen (Factory New)": {
+    "buff": 1116165,
+    "uu": 111291,
+    "c5": 0
+  },
+  "MP9 | Cobalt Paisley (Factory New)": {
+    "buff": 1116166,
+    "uu": 111001,
+    "c5": 0
+  },
+  "★ Nomad Knife | Marble Fade (Factory New)": {
+    "buff": 1116167,
+    "uu": 111149,
+    "c5": 0
+  },
+  "USP-S | Bleeding Edge (Minimal Wear)": {
+    "buff": 1116168,
+    "uu": 111260,
+    "c5": 0
+  },
+  "G3SG1 | Red Jasper (Well-Worn)": {
+    "buff": 1116169,
+    "uu": 111293,
+    "c5": 0
+  },
+  "SSG 08 | Blush Pour (Factory New)": {
+    "buff": 1116170,
+    "uu": 111212,
+    "c5": 0
+  },
+  "Tec-9 | Garter-9 (Battle-Scarred)": {
+    "buff": 1116171,
+    "uu": 111268,
+    "c5": 0
+  },
+  "Negev | Sour Grapes (Battle-Scarred)": {
+    "buff": 1116172,
+    "uu": 111267,
+    "c5": 0
+  },
+  "USP-S | Royal Guard (Battle-Scarred)": {
+    "buff": 1116173,
+    "uu": 111125,
+    "c5": 0
+  },
+  "StatTrak™ FAMAS | Bad Trip (Minimal Wear)": {
+    "buff": 1116174,
+    "uu": 111283,
+    "c5": 0
+  },
+  "P90 | Reef Grief (Well-Worn)": {
+    "buff": 1116175,
+    "uu": 111270,
+    "c5": 0
+  },
+  "StatTrak™ Galil AR | Control (Well-Worn)": {
+    "buff": 1116176,
+    "uu": 111220,
+    "c5": 0
+  },
+  "★ Paracord Knife | Marble Fade (Factory New)": {
+    "buff": 1116177,
+    "uu": 111213,
+    "c5": 0
+  },
+  "MP9 | Multi-Terrain (Battle-Scarred)": {
+    "buff": 1116178,
+    "uu": 111243,
+    "c5": 0
+  },
+  "★ Nomad Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116179,
+    "uu": 111194,
+    "c5": 0
+  },
+  "FAMAS | Yeti Camo (Well-Worn)": {
+    "buff": 1116180,
+    "uu": 111364,
+    "c5": 0
+  },
+  "Tec-9 | Raw Ceramic (Well-Worn)": {
+    "buff": 1116181,
+    "uu": 111036,
+    "c5": 0
+  },
+  "Glock-18 | Coral Bloom (Factory New)": {
+    "buff": 1116182,
+    "uu": 111367,
+    "c5": 0
+  },
+  "Glock-18 | Coral Bloom (Battle-Scarred)": {
+    "buff": 1116184,
+    "uu": 111250,
+    "c5": 0
+  },
+  "Dual Berettas | Rose Nacre (Battle-Scarred)": {
+    "buff": 1116185,
+    "uu": 111306,
+    "c5": 0
+  },
+  "FAMAS | Yeti Camo (Battle-Scarred)": {
+    "buff": 1116187,
+    "uu": 111348,
+    "c5": 0
+  },
+  "Five-SeveN | Autumn Thicket (Battle-Scarred)": {
+    "buff": 1116188,
+    "uu": 110969,
+    "c5": 0
+  },
+  "P90 | Reef Grief (Battle-Scarred)": {
+    "buff": 1116189,
+    "uu": 111339,
+    "c5": 0
+  },
+  "MP9 | Shredded (Battle-Scarred)": {
+    "buff": 1116190,
+    "uu": 111292,
+    "c5": 0
+  },
+  "M4A1-S | Rose Hex (Well-Worn)": {
+    "buff": 1116191,
+    "uu": 111279,
+    "c5": 0
+  },
+  "M4A4 | Naval Shred Camo (Battle-Scarred)": {
+    "buff": 1116192,
+    "uu": 111275,
+    "c5": 0
+  },
+  "M4A4 | Naval Shred Camo (Well-Worn)": {
+    "buff": 1116193,
+    "uu": 111174,
+    "c5": 0
+  },
+  "MAC-10 | Acid Hex (Battle-Scarred)": {
+    "buff": 1116194,
+    "uu": 111204,
+    "c5": 0
+  },
+  "MP9 | Cobalt Paisley (Battle-Scarred)": {
+    "buff": 1116195,
+    "uu": 111090,
+    "c5": 0
+  },
+  "MP9 | Multi-Terrain (Well-Worn)": {
+    "buff": 1116196,
+    "uu": 111095,
+    "c5": 0
+  },
+  "P2000 | Royal Baroque (Factory New)": {
+    "buff": 1116198,
+    "uu": 111296,
+    "c5": 0
+  },
+  "P250 | Red Tide (Well-Worn)": {
+    "buff": 1116199,
+    "uu": 111314,
+    "c5": 0
+  },
+  "P90 | Mustard Gas (Well-Worn)": {
+    "buff": 1116200,
+    "uu": 111373,
+    "c5": 0
+  },
+  "SSG 08 | Blush Pour (Well-Worn)": {
+    "buff": 1116201,
+    "uu": 111337,
+    "c5": 0
+  },
+  "SSG 08 | Tiger Tear (Battle-Scarred)": {
+    "buff": 1116202,
+    "uu": 111143,
+    "c5": 0
+  },
+  "SSG 08 | Tiger Tear (Well-Worn)": {
+    "buff": 1116203,
+    "uu": 111304,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116204,
+    "uu": 111217,
+    "c5": 0
+  },
+  "Sawed-Off | Runoff (Well-Worn)": {
+    "buff": 1116205,
+    "uu": 111271,
+    "c5": 0
+  },
+  "UMP-45 | Green Swirl (Battle-Scarred)": {
+    "buff": 1116206,
+    "uu": 111187,
+    "c5": 0
+  },
+  "UMP-45 | Green Swirl (Well-Worn)": {
+    "buff": 1116207,
+    "uu": 111150,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Marble Fade (Factory New)": {
+    "buff": 1116208,
+    "uu": 111287,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Doppler (Factory New)": {
+    "buff": 1116209,
+    "uu": 111282,
+    "c5": 0
+  },
+  "Tec-9 | Blue Blast (Well-Worn)": {
+    "buff": 1116210,
+    "uu": 111109,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116211,
+    "uu": 111205,
+    "c5": 0
+  },
+  "XM1014 | Copperflage (Factory New)": {
+    "buff": 1116212,
+    "uu": 111301,
+    "c5": 0
+  },
+  "StatTrak™ AK-47 | Searing Rage (Factory New)": {
+    "buff": 1116213,
+    "uu": 110994,
+    "c5": 0
+  },
+  "USP-S | Tropical Breeze (Battle-Scarred)": {
+    "buff": 1116214,
+    "uu": 111406,
+    "c5": 0
+  },
+  "Galil AR | Robin's Egg (Well-Worn)": {
+    "buff": 1116215,
+    "uu": 111349,
+    "c5": 0
+  },
+  "P2000 | Marsh (Well-Worn)": {
+    "buff": 1116216,
+    "uu": 111290,
+    "c5": 0
+  },
+  "M4A4 | Sheet Lightning (Factory New)": {
+    "buff": 1116217,
+    "uu": 111351,
+    "c5": 0
+  },
+  "SSG 08 | Grey Smoke (Well-Worn)": {
+    "buff": 1116218,
+    "uu": 111016,
+    "c5": 0
+  },
+  "P2000 | Royal Baroque (Battle-Scarred)": {
+    "buff": 1116219,
+    "uu": 111210,
+    "c5": 0
+  },
+  "Galil AR | O-Ranger (Well-Worn)": {
+    "buff": 1116221,
+    "uu": 111352,
+    "c5": 0
+  },
+  "USP-S | Royal Guard (Well-Worn)": {
+    "buff": 1116222,
+    "uu": 111153,
+    "c5": 0
+  },
+  "Negev | Raw Ceramic (Well-Worn)": {
+    "buff": 1116223,
+    "uu": 110985,
+    "c5": 0
+  },
+  "USP-S | Tropical Breeze (Well-Worn)": {
+    "buff": 1116224,
+    "uu": 111325,
+    "c5": 0
+  },
+  "XM1014 | Copperflage (Battle-Scarred)": {
+    "buff": 1116225,
+    "uu": 111307,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Doppler (Factory New)": {
+    "buff": 1116226,
+    "uu": 111177,
+    "c5": 0
+  },
+  "Glock-18 | Ocean Topo (Well-Worn)": {
+    "buff": 1116227,
+    "uu": 111336,
+    "c5": 0
+  },
+  "M4A1-S | Stratosphere (Well-Worn)": {
+    "buff": 1116228,
+    "uu": 111388,
+    "c5": 0
+  },
+  "R8 Revolver | Leafhopper (Well-Worn)": {
+    "buff": 1116229,
+    "uu": 111338,
+    "c5": 0
+  },
+  "StatTrak™ Desert Eagle | Serpent Strike (Well-Worn)": {
+    "buff": 1116230,
+    "uu": 110918,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116231,
+    "uu": 111309,
+    "c5": 0
+  },
+  "XM1014 | Copperflage (Well-Worn)": {
+    "buff": 1116232,
+    "uu": 111312,
+    "c5": 0
+  },
+  "★ Survival Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116233,
+    "uu": 111381,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Damascus Steel (Factory New)": {
+    "buff": 1116234,
+    "uu": 111305,
+    "c5": 0
+  },
+  "StatTrak™ UMP-45 | K.O. Factory (Factory New)": {
+    "buff": 1116235,
+    "uu": 111195,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Marble Fade (Factory New)": {
+    "buff": 1116236,
+    "uu": 111379,
+    "c5": 0
+  },
+  "★ Paracord Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116237,
+    "uu": 111315,
+    "c5": 0
+  },
+  "FAMAS | Grey Ghost (Well-Worn)": {
+    "buff": 1116238,
+    "uu": 111316,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116239,
+    "uu": 111369,
+    "c5": 0
+  },
+  "StatTrak™ Glock-18 | Shinobu (Factory New)": {
+    "buff": 1116240,
+    "uu": 111346,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116241,
+    "uu": 111288,
+    "c5": 0
+  },
+  "MAC-10 | Poplar Thicket (Factory New)": {
+    "buff": 1116242,
+    "uu": 111370,
+    "c5": 0
+  },
+  "SG 553 | Basket Halftone (Battle-Scarred)": {
+    "buff": 1116243,
+    "uu": 111135,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Tiger Tooth (Factory New)": {
+    "buff": 1116244,
+    "uu": 111340,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116245,
+    "uu": 111320,
+    "c5": 0
+  },
+  "Nova | Turquoise Pour (Well-Worn)": {
+    "buff": 1116246,
+    "uu": 111242,
+    "c5": 0
+  },
+  "Glock-18 | Glockingbird (Battle-Scarred)": {
+    "buff": 1116247,
+    "uu": 111378,
+    "c5": 0
+  },
+  "★ Paracord Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1116248,
+    "uu": 111295,
+    "c5": 0
+  },
+  "Desert Eagle | Mulberry (Factory New)": {
+    "buff": 1116249,
+    "uu": 111322,
+    "c5": 0
+  },
+  "★ Survival Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116250,
+    "uu": 111054,
+    "c5": 0
+  },
+  "Galil AR | Acid Dart (Well-Worn)": {
+    "buff": 1116251,
+    "uu": 111303,
+    "c5": 0
+  },
+  "P250 | Red Tide (Battle-Scarred)": {
+    "buff": 1116252,
+    "uu": 111341,
+    "c5": 0
+  },
+  "AWP | Green Energy (Battle-Scarred)": {
+    "buff": 1116253,
+    "uu": 111342,
+    "c5": 0
+  },
+  "★ Nomad Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116254,
+    "uu": 110821,
+    "c5": 0
+  },
+  "MAC-10 | Acid Hex (Well-Worn)": {
+    "buff": 1116255,
+    "uu": 111375,
+    "c5": 0
+  },
+  "M4A4 | Sheet Lightning (Battle-Scarred)": {
+    "buff": 1116256,
+    "uu": 111327,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116257,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ Nomad Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116258,
+    "uu": 111333,
+    "c5": 0
+  },
+  "★ Paracord Knife | Doppler (Minimal Wear)": {
+    "buff": 1116259,
+    "uu": 111317,
+    "c5": 0
+  },
+  "AWP | Arsenic Spill (Battle-Scarred)": {
+    "buff": 1116260,
+    "uu": 111398,
+    "c5": 0
+  },
+  "Negev | Sour Grapes (Well-Worn)": {
+    "buff": 1116261,
+    "uu": 111266,
+    "c5": 0
+  },
+  "★ Survival Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116262,
+    "uu": 111396,
+    "c5": 0
+  },
+  "SG 553 | Night Camo (Well-Worn)": {
+    "buff": 1116263,
+    "uu": 111140,
+    "c5": 0
+  },
+  "AWP | Green Energy (Minimal Wear)": {
+    "buff": 1116264,
+    "uu": 111344,
+    "c5": 0
+  },
+  "MP5-SD | Gold Leaf (Battle-Scarred)": {
+    "buff": 1116265,
+    "uu": 111400,
+    "c5": 0
+  },
+  "★ Survival Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116266,
+    "uu": 111343,
+    "c5": 0
+  },
+  "★ Survival Knife | Damascus Steel (Factory New)": {
+    "buff": 1116267,
+    "uu": 110930,
+    "c5": 0
+  },
+  "AK-47 | Midnight Laminate (Well-Worn)": {
+    "buff": 1116268,
+    "uu": 110848,
+    "c5": 0
+  },
+  "★ Paracord Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116271,
+    "uu": 111181,
+    "c5": 0
+  },
+  "Glock-18 | Glockingbird (Well-Worn)": {
+    "buff": 1116272,
+    "uu": 111331,
+    "c5": 0
+  },
+  "M4A4 | Sheet Lightning (Well-Worn)": {
+    "buff": 1116273,
+    "uu": 111384,
+    "c5": 0
+  },
+  "★ Paracord Knife | Damascus Steel (Factory New)": {
+    "buff": 1116274,
+    "uu": 111399,
+    "c5": 0
+  },
+  "Desert Eagle | Mulberry (Battle-Scarred)": {
+    "buff": 1116275,
+    "uu": 111146,
+    "c5": 0
+  },
+  "AK-47 | Wintergreen (Battle-Scarred)": {
+    "buff": 1116276,
+    "uu": 111377,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Marble Fade (Factory New)": {
+    "buff": 1116277,
+    "uu": 111355,
+    "c5": 0
+  },
+  "AWP | Green Energy (Factory New)": {
+    "buff": 1116278,
+    "uu": 111362,
+    "c5": 0
+  },
+  "AK-47 | Wintergreen (Well-Worn)": {
+    "buff": 1116279,
+    "uu": 111359,
+    "c5": 0
+  },
+  "★ Nomad Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116280,
+    "uu": 111416,
+    "c5": 0
+  },
+  "★ Paracord Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116281,
+    "uu": 111439,
+    "c5": 0
+  },
+  "Desert Eagle | Mulberry (Well-Worn)": {
+    "buff": 1116282,
+    "uu": 111380,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116283,
+    "uu": 111415,
+    "c5": 0
+  },
+  "Tec-9 | Garter-9 (Well-Worn)": {
+    "buff": 1116284,
+    "uu": 111328,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Tiger Tooth (Factory New)": {
+    "buff": 1116285,
+    "uu": 111411,
+    "c5": 0
+  },
+  "M4A1-S | Stratosphere (Factory New)": {
+    "buff": 1116286,
+    "uu": 111412,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Doppler (Minimal Wear)": {
+    "buff": 1116287,
+    "uu": 111382,
+    "c5": 0
+  },
+  "AWP | LongDog (Factory New)": {
+    "buff": 1116288,
+    "uu": 111297,
+    "c5": 0
+  },
+  "P2000 | Royal Baroque (Well-Worn)": {
+    "buff": 1116289,
+    "uu": 111274,
+    "c5": 0
+  },
+  "MP9 | Cobalt Paisley (Well-Worn)": {
+    "buff": 1116290,
+    "uu": 111372,
+    "c5": 0
+  },
+  "M4A1-S | Rose Hex (Battle-Scarred)": {
+    "buff": 1116291,
+    "uu": 111383,
+    "c5": 0
+  },
+  "AK-47 | Nouveau Rouge (Factory New)": {
+    "buff": 1116292,
+    "uu": 111393,
+    "c5": 0
+  },
+  "★ Nomad Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116293,
+    "uu": 111401,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1116294,
+    "uu": 111368,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1116295,
+    "uu": 111064,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116296,
+    "uu": 111371,
+    "c5": 0
+  },
+  "M4A1-S | Stratosphere (Battle-Scarred)": {
+    "buff": 1116297,
+    "uu": 111423,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1116298,
+    "uu": 111264,
+    "c5": 0
+  },
+  "★ Paracord Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116299,
+    "uu": 111386,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Tiger Tooth (Factory New)": {
+    "buff": 1116300,
+    "uu": 111365,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Doppler (Minimal Wear)": {
+    "buff": 1116301,
+    "uu": 111318,
+    "c5": 0
+  },
+  "★ Survival Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116302,
+    "uu": 111394,
+    "c5": 0
+  },
+  "★ Survival Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116303,
+    "uu": 111329,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116304,
+    "uu": 111419,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116305,
+    "uu": 111366,
+    "c5": 0
+  },
+  "★ Paracord Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116306,
+    "uu": 111421,
+    "c5": 0
+  },
+  "StatTrak™ AWP | Printstream (Factory New)": {
+    "buff": 1116307,
+    "uu": 111356,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116308,
+    "uu": 111418,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Rust Coat (Battle-Scarred)": {
+    "buff": 1116309,
+    "uu": 111347,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116312,
+    "uu": 111422,
+    "c5": 0
+  },
+  "MP9 | Shredded (Well-Worn)": {
+    "buff": 1116313,
+    "uu": 111420,
+    "c5": 0
+  },
+  "MP5-SD | Gold Leaf (Well-Worn)": {
+    "buff": 1116314,
+    "uu": 111392,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Damascus Steel (Factory New)": {
+    "buff": 1116315,
+    "uu": 111397,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116316,
+    "uu": 111402,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Marble Fade (Factory New)": {
+    "buff": 1116317,
+    "uu": 111308,
+    "c5": 0
+  },
+  "Glock-18 | Coral Bloom (Well-Worn)": {
+    "buff": 1116318,
+    "uu": 111403,
+    "c5": 0
+  },
+  "Desert Eagle | Mint Fan (Well-Worn)": {
+    "buff": 1116319,
+    "uu": 111387,
+    "c5": 0
+  },
+  "★ Paracord Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116320,
+    "uu": 111428,
+    "c5": 0
+  },
+  "★ Paracord Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116321,
+    "uu": 111374,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116322,
+    "uu": 111407,
+    "c5": 0
+  },
+  "USP-S | Bleeding Edge (Battle-Scarred)": {
+    "buff": 1116323,
+    "uu": 111395,
+    "c5": 0
+  },
+  "★ Paracord Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116324,
+    "uu": 111414,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Marble Fade (Factory New)": {
+    "buff": 1116325,
+    "uu": 111404,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116326,
+    "uu": 111385,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116327,
+    "uu": 111429,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116328,
+    "uu": 111433,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116329,
+    "uu": 111417,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116330,
+    "uu": 111434,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116331,
+    "uu": 111332,
+    "c5": 0
+  },
+  "AWP | Green Energy (Well-Worn)": {
+    "buff": 1116332,
+    "uu": 111425,
+    "c5": 0
+  },
+  "★ Survival Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116333,
+    "uu": 111431,
+    "c5": 0
+  },
+  "★ Nomad Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116334,
+    "uu": 111326,
+    "c5": 0
+  },
+  "★ Survival Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116335,
+    "uu": 111409,
+    "c5": 0
+  },
+  "★ Paracord Knife | Ultraviolet (Factory New)": {
+    "buff": 1116336,
+    "uu": 111432,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Doppler (Minimal Wear)": {
+    "buff": 1116337,
+    "uu": 111390,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116338,
+    "uu": 111405,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116339,
+    "uu": 111391,
+    "c5": 0
+  },
+  "★ Skeleton Knife | Ultraviolet (Factory New)": {
+    "buff": 1116340,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ Nomad Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116341,
+    "uu": 111435,
+    "c5": 0
+  },
+  "★ Nomad Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116342,
+    "uu": 111440,
+    "c5": 0
+  },
+  "★ Paracord Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116343,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Damascus Steel (Factory New)": {
+    "buff": 1116344,
+    "uu": 111410,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Damascus Steel (Field-Tested)": {
+    "buff": 1116345,
+    "uu": 111426,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Ultraviolet (Field-Tested)": {
+    "buff": 1116347,
+    "uu": 111424,
+    "c5": 0
+  },
+  "★ Survival Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116348,
+    "uu": 111436,
+    "c5": 0
+  },
+  "★ Paracord Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116349,
+    "uu": 111441,
+    "c5": 0
   }
 }
