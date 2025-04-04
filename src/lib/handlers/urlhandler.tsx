@@ -13,6 +13,7 @@ import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
+import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
@@ -22,6 +23,7 @@ import UpdatePopup from '~lib/inline/UpdatePopup';
 import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
+import { CSMONEY_SELECTORS } from './selectors/csmoney_selectors';
 
 export function urlHandler() {
 	chrome.runtime.onMessage.addListener((message) => {
@@ -100,6 +102,8 @@ async function handleChange(state: Extension.URLState) {
 		await handleDMarketChange(state);
 	} else if (state.site === 'lis-skins.com') {
 		await handleLisSkinsChange(state);
+	} else if (state.site === 'cs.money') {
+		await handleCSMoneyChange(state);
 	}
 
 	if (state.site === 'skinport.com' || state.site === 'csfloat.com') {
@@ -384,4 +388,27 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 	});
 
 	return { root, parentElement, isolatedElement };
+}
+async function handleCSMoneyChange(state: Extension.URLState) {
+	if (state.path === '/market/buy/') {
+		const csmAutorefresh = await getSetting('csm-autorefresh');
+		console.log('csmAutorefresh', csmAutorefresh);
+		if (csmAutorefresh) {
+			const success = await waitForElement(CSMONEY_SELECTORS.market.reloadButton, { maxTries: 30 });
+			if (success && !document.querySelector('betterfloat-csm-autorefresh')) {
+				const { root } = await mountShadowRoot(<CSMAutorefresh />, {
+					tagName: 'betterfloat-csm-autorefresh',
+					parent: document.querySelector(CSMONEY_SELECTORS.market.reloadButton)?.parentElement,
+				});
+				// unmount on url change
+				const interval = createUrlListener((url) => {
+					if (url.pathname !== '/market/buy/') {
+						root.unmount();
+						document.querySelector('betterfloat-csm-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		}
+	}
 }

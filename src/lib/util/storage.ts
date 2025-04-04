@@ -134,6 +134,7 @@ export const DEFAULT_SETTINGS = {
 	'lis-listingage': true,
 	'lis-stickerprices': true,
 	'csm-enable': true,
+	'csm-autorefresh': true,
 	'csm-stickerprices': true,
 	'csm-pricingsource': 'buff',
 	'csm-altmarket': 'none',

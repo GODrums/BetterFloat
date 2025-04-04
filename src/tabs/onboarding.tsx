@@ -12,6 +12,7 @@ import {
 	ICON_BUFFMARKET_FULL,
 	ICON_CSFLOAT,
 	ICON_CSFLOAT_FULL,
+	ICON_CSMONEY,
 	ICON_CSMONEY_FULL,
 	ICON_DMARKET,
 	ICON_DMARKET_FULL,
@@ -168,7 +169,7 @@ export default function OnboardingPage() {
 												auto refresh for
 											</p>
 											<div className="flex items-center justify-center gap-4">
-												{[ICON_DMARKET, ICON_LISSKINS].map((icon, index) => (
+												{[ICON_DMARKET, ICON_LISSKINS, ICON_CSMONEY].map((icon, index) => (
 													<img key={index + 10} src={icon} className="h-10" />
 												))}
 											</div>

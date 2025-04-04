@@ -8,6 +8,7 @@ import { getCSMoneyPopupItem, getFirstCSMoneyBotInventoryItem, getFirstCSMoneyIt
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -38,8 +39,6 @@ async function init() {
 
 	if (!extensionSettings['csm-enable']) return;
 
-	// replaceHistory();
-
 	await initPriceMapping(extensionSettings, 'csm');
 
 	console.timeEnd('[BetterFloat] CSMoney init timer');
@@ -52,6 +51,8 @@ async function init() {
 	}
 
 	await firstLaunch();
+
+	dynamicUIHandler();
 }
 
 async function firstLaunch() {
