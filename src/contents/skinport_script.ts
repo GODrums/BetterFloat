@@ -208,7 +208,7 @@ async function applyMutation() {
 					const addedNode = mutation.addedNodes[i];
 					// some nodes are not elements, so we need to check
 					if (!(addedNode instanceof HTMLElement)) continue;
-					console.debug('[BetterFloat] Mutation detected:', addedNode);
+					// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
 					const className = addedNode.className.toString();
 					if (

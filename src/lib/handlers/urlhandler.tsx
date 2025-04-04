@@ -392,7 +392,6 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 async function handleCSMoneyChange(state: Extension.URLState) {
 	if (state.path === '/market/buy/') {
 		const csmAutorefresh = await getSetting('csm-autorefresh');
-		console.log('csmAutorefresh', csmAutorefresh);
 		if (csmAutorefresh) {
 			const success = await waitForElement(CSMONEY_SELECTORS.market.reloadButton, { maxTries: 30 });
 			if (success && !document.querySelector('betterfloat-csm-autorefresh')) {

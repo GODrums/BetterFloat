@@ -130502,7 +130502,7 @@
   },
   "★ StatTrak™ Skeleton Knife | Rust Coat (Well-Worn)": {
     "buff": 1116257,
-    "uu": 0,
+    "uu": 111442,
     "c5": 0
   },
   "★ Nomad Knife | Damascus Steel (Minimal Wear)": {
@@ -130938,6 +130938,31 @@
   "★ Paracord Knife | Ultraviolet (Well-Worn)": {
     "buff": 1116349,
     "uu": 111441,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116355,
+    "uu": 111443,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116356,
+    "uu": 111445,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116357,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116359,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Damascus Steel (Factory New)": {
+    "buff": 1116360,
+    "uu": 111376,
     "c5": 0
   }
 }

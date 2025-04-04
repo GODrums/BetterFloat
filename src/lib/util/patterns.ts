@@ -839,6 +839,42 @@ export const phaseMapping: PhaseMapping = {
 		'Phase 3': 12548510,
 		'Phase 4': 13681459,
 	},
+	1115642: {
+		Ruby: 22738649,
+		Sapphire: 22738651,
+		'Black Pearl': 22738652,
+		'Phase 1': 22738653,
+		'Phase 2': 22738654,
+		'Phase 3': 22738655,
+		'Phase 4': 22738656,
+	},
+	1115738: {
+		Ruby: 22738662,
+		Sapphire: 22738664,
+		'Black Pearl': 22738665,
+		'Phase 1': 22738666,
+		'Phase 2': 22738667,
+		'Phase 3': 22738669,
+		'Phase 4': 22738670,
+	},
+	1115768: {
+		Ruby: 22738681,
+		Sapphire: 22738684,
+		'Black Pearl': 22738685,
+		'Phase 1': 22738686,
+		'Phase 2': 22738687,
+		'Phase 3': 22738689,
+		'Phase 4': 22738690,
+	},
+	1115922: {
+		Ruby: 22738709,
+		Sapphire: 22738711,
+		'Black Pearl': 22738713,
+		'Phase 1': 22738715,
+		'Phase 2': 22738716,
+		'Phase 3': 22738717,
+		'Phase 4': 22738719,
+	},
 };
 
 export const PinkGalaxyMapping: { [pattern: number]: 1 | 2 | 3 } = {
