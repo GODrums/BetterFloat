@@ -412,6 +412,10 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].some((name) => cachedItem.name.includes(name)) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
+
+		if (extensionSettings['sp-displayconvertedprice']) {
+			await displayAlternativePrice(container, cachedItem);
+		}
 	}
 
 	if (isItemPage) {
@@ -420,6 +424,23 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 			await adjustItem(item);
 		}
 	}
+}
+
+async function displayAlternativePrice(container: Element, item: Skinport.Item) {
+	const priceContainer = container.querySelector('.ItemPreview-priceValue');
+	if (!priceContainer) return;
+
+	const userData = JSON.parse(localStorage.getItem('userData') ?? '{}') as Skinport.UserData;
+	if (userData.currency === 'EUR') return;
+	const currencyRate = userData.rate;
+
+	const newPrice = html`
+		<div class="ItemPreview-oldPrice" style="font-size: 15px; color: lightgray; font-weight: 600; margin-top: 0; margin-bottom: -5px;">
+			Converted: ${CurrencyFormatter('EUR', 2, 2).format(new Decimal(item.salePrice).div(currencyRate).div(100).toNumber())}
+		</div>
+	`;
+
+	priceContainer.insertAdjacentHTML('afterend', newPrice);
 }
 
 function getAlternativeItemLink(item: Skinport.Item) {
@@ -943,7 +964,7 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity, source };
 }
 
-function convertCurrency(price: Decimal, currencyRate: number, settingRate: string) {
+function convertCurrency(price: Decimal, currencyRate: number, settingRate: 'real' | 'skinport') {
 	return settingRate === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
 }
 

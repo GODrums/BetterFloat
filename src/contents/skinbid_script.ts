@@ -14,7 +14,6 @@ import {
 	handleSpecialStickerNames,
 	isBuffBannedItem,
 	toTitleCase,
-	waitForElement,
 } from '~lib/util/helperfunctions';
 import { getAllSettings } from '~lib/util/storage';
 

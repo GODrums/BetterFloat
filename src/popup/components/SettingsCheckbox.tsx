@@ -15,6 +15,7 @@ type CheckboxProps = {
 	tooltipText?: string;
 	disabled?: boolean;
 	isNew?: boolean;
+	isPro?: boolean;
 };
 
 export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGElement>) {
@@ -28,7 +29,7 @@ export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGEl
 	);
 }
 
-export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false }: CheckboxProps) => {
+export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false, isPro = false }: CheckboxProps) => {
 	const [checked, setChecked] = useStorage(id);
 
 	return (
@@ -39,6 +40,11 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 					{text}
 				</Label>
 				{isNew && <Badge className="text-xs font-semibold text-accent">NEW</Badge>}
+				{isPro && (
+					<Badge variant="purple" className="text-xs font-semibold text-white">
+						PRO
+					</Badge>
+				)}
 			</div>
 			<div className="flex items-center gap-2">
 				{disabled && (

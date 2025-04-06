@@ -196,7 +196,7 @@ function addQuickLinks(container: Element, item: HTMLItem) {
 	if (!quickLinks) return;
 
 	const actionButton = html`
-		<a href="https://pricempire.com/item/${item.name}" class="market-view-in-game-link" target="_blank">
+		<a href="https://pricempire.com/item/${item.name}" target="_blank">
 			View on Pricempire
 		</a>
 	`;

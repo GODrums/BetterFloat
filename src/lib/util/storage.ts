@@ -96,6 +96,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-steamprices': false,
 	'sp-buffdifference': true,
 	'sp-buffdifferencepercent': true,
+	'sp-displayconvertedprice': false,
 	'sp-bufflink': 0,
 	'sp-autoclosepopup': true,
 	'sp-floatcoloring': true,
