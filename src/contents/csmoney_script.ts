@@ -176,15 +176,14 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 
 async function addPopupListener(container: Element, item: CSMoney.Item) {
 	container.addEventListener('click', async () => {
-		const selector = CSMONEY_SELECTORS.market.popup;
-		waitForElement(selector).then(async (success) => {
+		const selector = location.pathname === '/market/buy/' ? CSMONEY_SELECTORS.market : CSMONEY_SELECTORS.sell;
+		waitForElement(selector.popup).then(async (success) => {
 			if (success) {
-				const bigCard = document.querySelector(selector);
+				console.log('[BetterFloat] Popup listener executed');
+				const bigCard = document.querySelector(selector.popup);
 				if (bigCard) {
-					if (location.pathname === '/market/buy/') {
-						await adjustItem(bigCard, true, item);
-						addSimilarButton(bigCard, item);
-					}
+					await adjustItem(bigCard, true, item);
+					addSimilarButton(bigCard, item);
 				}
 			}
 		});
@@ -197,9 +196,14 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
  * @param item item object from the API
  */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
-	const selector = CSMONEY_SELECTORS.other.similarContainer;
-	const allSelectors = Array.from(container.querySelectorAll(selector));
-	const parentElement = allSelectors.length === 3 ? allSelectors[1]?.parentElement : allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild;
+	let parentElement: HTMLElement | null = null;
+	if (location.pathname === '/market/buy/') {
+		const selector = CSMONEY_SELECTORS.market.popup_similar;
+		const allSelectors = Array.from(container.querySelectorAll(selector));
+		parentElement = allSelectors.length === 3 ? allSelectors[1]?.parentElement : (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
+	} else if (location.pathname === '/market/sell/') {
+		parentElement = container.querySelector(CSMONEY_SELECTORS.sell.popup_similar) as HTMLElement;
+	}
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
@@ -366,6 +370,9 @@ function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
 	} else if (location.pathname === '/market/instant-sell/') {
 		return CSMONEY_SELECTORS.instant_sell;
 	} else if (location.pathname === '/market/sell/') {
+		if (isPopout) {
+			return CSMONEY_SELECTORS.sell_popout;
+		}
 		return CSMONEY_SELECTORS.sell;
 	} else if (location.pathname === '/csgo/trade/') {
 		return CSMONEY_SELECTORS.trade;
@@ -379,6 +386,8 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
 
 	const footerContainer = container.querySelector<HTMLElement>(selector.footer)?.parentElement;
+
+	console.log('[BetterFloat] Footer container:', footerContainer, selector.footer);
 
 	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);

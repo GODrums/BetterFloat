@@ -110,10 +110,6 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
-
-	if (extensionSettings['csf-topbutton']) {
-		CSFloatHelpers.createTopButton();
-	}
 }
 
 // required as mutation does not detect initial DOM

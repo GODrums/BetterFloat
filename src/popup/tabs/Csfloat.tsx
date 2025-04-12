@@ -11,7 +11,6 @@ import {
 	MdiSteam,
 	PhSticker,
 	StreamlineDiscountPercentCoupon,
-	TablerCircleChevronUp,
 } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -130,9 +129,6 @@ export const CSFloatSettings = () => {
 							options={['30s', '60s', '2min', '5min']}
 							icon={<MaterialSymbolsAvgTimeOutlineRounded className="h-6 w-6" />}
 						/>
-					</SettingsCard>
-					<SettingsCard>
-						<SettingsCheckbox id="csf-topbutton" text="Show 'Back to Top'-Button" icon={<TablerCircleChevronUp className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox

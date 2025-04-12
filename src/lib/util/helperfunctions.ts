@@ -190,7 +190,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			if (Number(market_id) === 0) {
 				return `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 			}
-			return `https://buff.163.com/goods/${market_id}${phase ? `#tag_ids=${phaseMapping[market_id][phase]}` : ''}`;
+			return `https://buff.163.com/goods/${market_id}${phase && phaseMapping[market_id] ? `#tag_ids=${phaseMapping[market_id][phase]}` : ''}`;
 		}
 		case MarketSource.Steam:
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;
