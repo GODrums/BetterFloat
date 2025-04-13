@@ -32,6 +32,7 @@ import {
 	ICON_STEAM,
 	ICON_STEAMANALYST,
 	MarketSource,
+	isProduction,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -242,7 +243,7 @@ function applyMutation() {
 					} else if (addedNode.tagName.toLowerCase() === 'app-markdown-dialog') {
 						CSFloatHelpers.adjustCurrencyChangeNotice(addedNode);
 					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
-						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]')) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
 							addedNode.remove();
 						}
 					}

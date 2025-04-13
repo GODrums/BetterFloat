@@ -143,6 +143,8 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 	if (selector.self === 'page') {
 		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
+	} else {
+		addPattern(container, cachedItem);
 	}
 }
 
@@ -178,6 +180,24 @@ async function adjustInventoryItem(container: Element) {
 			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', marketUrl, source);
 		}
 	}
+}
+
+function addPattern(container: Element, item: Skinbid.Listing) {
+	const floatContainer = container.querySelector('app-quality-float-row');
+	if (!floatContainer) return;
+
+	const paintSeed = item.items?.at(0)?.item.paintSeed;
+
+	if (paintSeed === undefined) return;
+
+	const pattern = html`
+		<div class="betterfloat-paintseed-container"> 
+			Seed 
+			<span>/</span>
+			<span> ${paintSeed} </span>
+		</div>
+	`;
+	floatContainer.insertAdjacentHTML('afterend', pattern);
 }
 
 export function addBrowserInspect(container: Element, item: Skinbid.Listing) {

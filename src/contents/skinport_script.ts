@@ -15,6 +15,7 @@ import {
 	ICON_SKINPORT,
 	ICON_STEAMANALYST,
 	MarketSource,
+	isProduction,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
@@ -57,7 +58,7 @@ async function init() {
 	// this has to be done as first thing to not miss timed events
 	await activateHandler();
 
-	if (location.pathname.startsWith('/item/') || location.pathname.startsWith('/i/') || location.pathname.startsWith('/myitems/i/')) {
+	if (isProduction && (location.pathname.startsWith('/item/') || location.pathname.startsWith('/i/') || location.pathname.startsWith('/myitems/i/'))) {
 		const interval = setInterval(() => {
 			const iconPath = document.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]');
 			if (iconPath) {
@@ -234,7 +235,7 @@ async function applyMutation() {
 					} else if (className.includes('Message')) {
 						// contains 'item has been sold' message
 					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
-						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]')) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
 							addedNode.remove();
 						}
 					}

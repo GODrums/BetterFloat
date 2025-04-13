@@ -139,3 +139,5 @@ export const AvailableMarketSources = [
 ];
 
 export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney];
+
+export const isProduction = process.env.NODE_ENV === 'production';
