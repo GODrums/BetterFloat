@@ -82,7 +82,7 @@ init();
 async function init() {
 	console.time('[BetterFloat] CSFloat init timer');
 
-	if (location.host !== 'csfloat.com') {
+	if (location.host !== 'csfloat.com' && !location.host.endsWith('.csfloat.com')) {
 		return;
 	}
 
@@ -226,9 +226,8 @@ function applyMutation() {
 						// await customStall(location.pathname.split('/').pop() ?? '');
 					} else if (addedNode.tagName === 'ITEM-CARD') {
 						await adjustItem(addedNode, addedNode.className.includes('flex-item') || location.pathname === '/' ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR);
-					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
-						// row of the latest sales table of an item popup
-						await adjustSalesTableRow(addedNode);
+					} else if (addedNode.tagName === 'ITEM-LATEST-SALES') {
+						await adjustLatestSales(addedNode);
 					} else if (addedNode.className.toString().includes('mat-mdc-header-row')) {
 						// header of the latest sales table of an item popup
 					} else if (addedNode.className.toString().includes('chart-container')) {
@@ -403,6 +402,19 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	}
 }
 
+async function adjustLatestSales(addedNode: Element) {
+	const rowSelector = 'tbody tr.mdc-data-table__row';
+	let rows = addedNode.querySelectorAll(rowSelector);
+	let tries = 20;
+	while (rows.length === 0 && tries-- > 0) {
+		await new Promise((r) => setTimeout(r, 100));
+		rows = addedNode.querySelectorAll(rowSelector);
+	}
+	for (const row of rows) {
+		await adjustSalesTableRow(row);
+	}
+}
+
 async function adjustSalesTableRow(container: Element) {
 	const cachedSale = getFirstHistorySale();
 	if (!cachedSale) {
@@ -446,7 +458,6 @@ async function adjustSalesTableRow(container: Element) {
 			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiff.toNumber());
 			if (doChange) {
 				appStickerView.appendChild(stickerContainer);
-				// (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
 			}
 		}
 	}
