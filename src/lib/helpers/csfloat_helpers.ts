@@ -2,13 +2,12 @@ import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 
 import { adjustOfferContainer } from '~contents/csfloat_script';
-import { ICON_BUFF, ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
+import { ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
 import { getSetting } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 
-import iconChevronUp from 'data-base64:/assets/icons/chevron-up-solid.svg';
 import { toTitleCase } from '~lib/util/helperfunctions';
 
 export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
@@ -32,6 +31,8 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 		console.warn('[BetterFloat] Bubbles and offers length mismatch');
 		return;
 	}
+
+	const marketIcon = buffA?.querySelector('img')?.src;
 
 	for (let i = 0; i < bubbles.length; i++) {
 		const bubble = bubbles[i];
@@ -61,7 +62,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 
 			const buffHTML = html`
 				<div class="betterfloat-bubble-buff" style="display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'};">
-					<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
+					<img src="${marketIcon}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
 					<span style="color: var(--primary-color); font-weight: 500;">
 						${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}
 					</span>
