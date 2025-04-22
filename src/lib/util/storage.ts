@@ -188,6 +188,9 @@ export const DEFAULT_FILTER = {
 		equipment: true,
 		pass: true,
 		charm: true,
+		graffiti: true,
+		patch: true,
+		'music-kit': true,
 	},
 	new: false,
 };

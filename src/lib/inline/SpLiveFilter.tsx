@@ -40,7 +40,7 @@ const SpLiveFilter: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const spFilter = JSON.parse(localStorage.getItem('spFilter') ?? JSON.stringify(DEFAULT_FILTER)) as SPFilter;
 	const [name, setName] = useState<string>(spFilter.name);
-	const [types, setTypes] = useState(spFilter.types);
+	const [types, setTypes] = useState<SPFilter['types']>(spFilter.types);
 	const [priceLow, setPriceLow] = useState<number>(spFilter.priceLow);
 	const [priceHigh, setPriceHigh] = useState<number>(spFilter.priceHigh);
 	const [percentage, setPercentage] = useState<number>(spFilter.percentage);
@@ -78,7 +78,7 @@ const SpLiveFilter: React.FC = () => {
 		localStorage.setItem('spFilter', JSON.stringify(DEFAULT_FILTER));
 	};
 
-	const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker', 'Charm', 'Equipment', 'Pass'];
+	const filterLabels = ['Knife', 'Gloves', 'Agent', 'Weapon', 'Collectible', 'Container', 'Sticker', 'Charm', 'Equipment', 'Pass', 'Graffiti', 'Patch', 'Music Kit'];
 
 	useEffect(() => {
 		let count = 0;
@@ -114,7 +114,7 @@ const SpLiveFilter: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[450px] h-[450px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
+						className="fixed w-[450px] h-[520px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
