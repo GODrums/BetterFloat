@@ -1345,7 +1345,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 }
 
 async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
-	if (!apiItem.item?.stickers || apiItem.item.is_commodity) return;
+	if (!apiItem.item?.stickers) return;
 
 	// quality 12 is souvenir
 	if (apiItem.item?.quality === 12) {
