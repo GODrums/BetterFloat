@@ -21,7 +21,15 @@ import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
+import {
+	getFirstSkbItem,
+	getSkbCurrency,
+	getSkbInventoryItemByHash,
+	getSkbInventoryItemByImage,
+	getSkbUserConversion,
+	getSkbUserCurrencyRate,
+	getSpecificSkbItem,
+} from '~lib/handlers/cache/skinbid_cache';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
@@ -149,14 +157,18 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 }
 
 async function adjustInventoryItem(container: Element) {
-	// on the first item, wait for the api data
-	if (!document.querySelector('.betterfloat-buffprice')) {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-	}
 	let source = extensionSettings['skb-pricingsource'] as MarketSource;
-	const steamImage = container.querySelector('.item-image > img')?.getAttribute('src');
-	const listedItem = getSpecificSkbInventoryItem(steamImage ?? '');
-	// console.log('[BetterFloat] Inventory item: ', listedItem);
+	const imageURL = container.querySelector('.item-image > img')?.getAttribute('src');
+	if (!imageURL) return;
+	const getInventoryItem = (url: URL) => {
+		if (url.hostname === 'skinbid.ams3.digitaloceanspaces.com') {
+			return getSkbInventoryItemByHash(url.pathname.split('_')[0].substring(1));
+		} else {
+			return getSkbInventoryItemByImage(url.toString());
+		}
+	};
+
+	const listedItem = getInventoryItem(new URL(imageURL));
 	if (!listedItem) return;
 
 	const item = listedItem.item;

@@ -45,8 +45,12 @@ export function getFirstSkbItem() {
 	}
 }
 
-export function getSpecificSkbInventoryItem(steamImage: string) {
+export function getSkbInventoryItemByImage(steamImage: string) {
 	return skinbidInventory.find((item) => item?.item.imageUrl === steamImage);
+}
+
+export function getSkbInventoryItemByHash(itemHash: string) {
+	return skinbidInventory.find((item) => item?.itemHash === itemHash);
 }
 
 export function getSpecificSkbItem(auction_hash: string) {
