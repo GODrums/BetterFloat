@@ -174,14 +174,7 @@ export function isBuffBannedItem(name: string) {
 		'ESL One Cologne 2014 Challengers',
 		'ESL One Cologne 2015 Legends (Foil)',
 	];
-	return (
-		(!name.includes('Case Hardened') && name.includes('Case')) ||
-		name.includes('Capsule') ||
-		name.includes('Package') ||
-		name.includes('Patch Pack') ||
-		name.includes('Holo-Foil') ||
-		bannedItems.includes(name)
-	);
+	return name.includes('Capsule') || name.includes('Patch Pack') || name.includes('Holo-Foil') || bannedItems.includes(name);
 }
 
 export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {
