@@ -16,6 +16,7 @@ import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
+import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
@@ -40,6 +41,10 @@ export function urlHandler() {
 					filterDisplay();
 				} else if (state.path.startsWith('/item/')) {
 					mountSpMarketComparison();
+				}
+			} else if (state.site === 'lis-skins.com') {
+				if (state.path.includes('/market/csgo/')) {
+					mountLisMarketComparison();
 				}
 			}
 		}
@@ -106,7 +111,7 @@ async function handleChange(state: Extension.URLState) {
 		await handleCSMoneyChange(state);
 	}
 
-	if (state.site === 'skinport.com' || state.site === 'csfloat.com') {
+	if (state.site === 'skinport.com' || state.site === 'csfloat.com' || state.site === 'lis-skins.com') {
 		addMessageRelays();
 	}
 }
@@ -179,7 +184,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 			if (popup && container) {
 				popup.style.width = Number(popup.style.width.substring(0, popup.style.width.length - 2)) + 230 + 'px';
 				container.id = 'bf-popup-item-container';
-				await mountShadowRoot(<CSFMarketComparison />, {
+				const { root: comparisonRoot } = await mountShadowRoot(<CSFMarketComparison />, {
 					tagName: 'betterfloat-market-comparison',
 					parent: container,
 				});
@@ -189,6 +194,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 				}
 				const interval = createUrlListener((url) => {
 					if (!url.pathname.includes('/item/')) {
+						comparisonRoot.unmount();
 						ownContainer?.remove();
 						clearInterval(interval);
 					}
@@ -266,6 +272,9 @@ async function handleSkinportChange(state: Extension.URLState) {
 			}
 		});
 	}
+	if (state.path.startsWith('/item/')) {
+		await mountSpMarketComparison();
+	}
 }
 
 async function handleDMarketChange(state: Extension.URLState) {
@@ -293,7 +302,9 @@ async function handleDMarketChange(state: Extension.URLState) {
 }
 
 async function handleLisSkinsChange(state: Extension.URLState) {
-	if (state.path === '/ru/market/cs2/' || state.path === '/ru/market/csgo/') {
+	const isItemPage = state.path.includes('/market/csgo/') || state.path.includes('/market/cs2/');
+
+	if (isItemPage) {
 		const lisAutorefresh = await getSetting('lis-autorefresh');
 		if (lisAutorefresh) {
 			const success = await waitForElement('div.reload');
@@ -305,7 +316,7 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 				});
 				// unmount on url change
 				const interval = createUrlListener((url) => {
-					if (!url.pathname.includes('/ru/market/')) {
+					if (!url.pathname.includes('/market/')) {
 						root.unmount();
 						document.querySelector('betterfloat-lis-autorefresh')?.remove();
 						clearInterval(interval);
@@ -313,6 +324,45 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 				}, 1000);
 			}
 		}
+	}
+
+	if (isItemPage && document.querySelector('div.skins-market-view')) {
+		await mountLisMarketComparison();
+	}
+}
+
+async function mountLisMarketComparison() {
+	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('lis-marketcomparison');
+	if (!showMarketComparison) {
+		return;
+	}
+
+	// Wait for the main item container identified by the content script
+	const itemPageContainerResult = await waitForElement('div.skins-market-view[data-betterfloat]', { maxTries: 20 });
+
+	// Check if the result is an Element (truthy and not a boolean)
+	if (itemPageContainerResult && !document.querySelector('betterfloat-lis-market-comparison')) {
+		const itemPageContainer = document.querySelector<HTMLElement>('div.market-skin-preview');
+
+		const { root } = await mountShadowRoot(<LisMarketComparison />, {
+			tagName: 'betterfloat-lis-market-comparison',
+			parent: itemPageContainer,
+			position: 'after',
+		});
+
+		const comparisonElement = document.querySelector('betterfloat-lis-market-comparison');
+		if (comparisonElement) {
+			(comparisonElement as HTMLElement).style.width = '240px';
+			(comparisonElement as HTMLElement).style.flexShrink = '0';
+		}
+
+		const interval = createUrlListener((url) => {
+			if (!url.pathname.includes('/market/csgo/') || !document.querySelector('div.skins-market-view')) {
+				root.unmount();
+				document.querySelector('betterfloat-lis-market-comparison')?.remove();
+				clearInterval(interval);
+			}
+		}, 1000);
 	}
 }
 
@@ -326,21 +376,47 @@ async function mountSpMarketComparison() {
 	while (!suggestedPrice || !suggestedPrice.textContent?.startsWith('Suggested price')) {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
+		if (!suggestedPrice) {
+			suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-suggestedPrice');
+		}
+		let waitCounter = 0;
+		if (waitCounter++ > 50) {
+			console.warn('[BetterFloat] mountSpMarketComparison: Timeout waiting for suggested price element.');
+			return;
+		}
 	}
-	if (suggestedPrice) {
-		const leftColumn = document.querySelector<HTMLElement>('.ItemPage-column--left')!;
-		leftColumn.style.width = '55%';
-		const rightColumn = document.querySelector<HTMLElement>('.ItemPage-column--right')!;
-		rightColumn.style.width = '45%';
-		const itemPage = suggestedPrice.closest<HTMLElement>('.ItemPage-info')!;
-		itemPage.classList.add('betterfloat-itempage-info');
-		await mountShadowRoot(<SpMarketComparison />, {
-			tagName: 'betterfloat-market-comparison',
-			parent: itemPage,
-			position: 'after',
-		});
-		const rootContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison')!;
-		rootContainer.style.backgroundColor = '#2b2f30';
+
+	if (suggestedPrice && !document.querySelector('betterfloat-market-comparison')) {
+		const leftColumn = document.querySelector<HTMLElement>('.ItemPage-column--left');
+		const rightColumn = document.querySelector<HTMLElement>('.ItemPage-column--right');
+		const itemPageInfo = suggestedPrice.closest<HTMLElement>('.ItemPage-info');
+
+		if (leftColumn && rightColumn && itemPageInfo) {
+			leftColumn.style.width = '55%';
+			rightColumn.style.width = '45%';
+			itemPageInfo.classList.add('betterfloat-itempage-info');
+
+			const { root } = await mountShadowRoot(<SpMarketComparison />, {
+				tagName: 'betterfloat-market-comparison',
+				parent: itemPageInfo,
+				position: 'after',
+			});
+			const rootContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison');
+			if (rootContainer) {
+				rootContainer.style.backgroundColor = '#2b2f30';
+				const interval = createUrlListener((url) => {
+					if (!url.pathname.startsWith('/item/')) {
+						root.unmount();
+						rootContainer.remove();
+						leftColumn.style.width = '';
+						rightColumn.style.width = '';
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		} else {
+			console.error('[BetterFloat] mountSpMarketComparison: Could not find required page elements (columns or info container).');
+		}
 	}
 }
 
@@ -382,10 +458,30 @@ async function mountShadowRoot(component: JSX.Element, options: { tagName: strin
 		parent.appendChild(parentElement);
 	}
 
-	// Handle unmounting if the parent element is removed
-	parentElement.addEventListener('remove', () => {
-		root.unmount();
-	});
+	// Handle unmounting if the parent element is removed (e.g., via React Router navigation)
+	if (parentElement) {
+		const observer = new MutationObserver((mutationsList, obs) => {
+			for (const mutation of mutationsList) {
+				if (mutation.removedNodes) {
+					mutation.removedNodes.forEach((node) => {
+						if (node === parentElement) {
+							try {
+								root.unmount();
+							} catch (e) {
+								console.warn('[BetterFloat] Error unmounting shadow root:', e);
+							}
+							obs.disconnect();
+							return;
+						}
+					});
+				}
+			}
+		});
+
+		if (parentElement.parentNode) {
+			observer.observe(parentElement.parentNode, { childList: true });
+		}
+	}
 
 	return { root, parentElement, isolatedElement };
 }

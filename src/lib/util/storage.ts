@@ -127,6 +127,7 @@ export const DEFAULT_SETTINGS = {
 	'bm-stickerprices': true,
 	'lis-enable': true,
 	'lis-autorefresh': true,
+	'lis-marketcomparison': true,
 	'lis-pricingsource': 'buff',
 	'lis-altmarket': 'none',
 	'lis-pricereference': 0,

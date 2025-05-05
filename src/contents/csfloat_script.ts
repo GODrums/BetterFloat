@@ -49,6 +49,7 @@ import {
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
+	isBuffBannedItem,
 	isUserPro,
 	waitForElement,
 } from '../lib/util/helperfunctions';
@@ -1540,10 +1541,6 @@ async function getCurrencyRate() {
 	return { userCurrency, currencyRate };
 }
 
-function isBannedOnBuff(item: CSFloat.FloatItem) {
-	return item.quality.includes('Case') || item.quality.includes('Container');
-}
-
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
@@ -1551,7 +1548,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
-	if (source === MarketSource.Buff && isBannedOnBuff(item)) {
+	if (source === MarketSource.Buff && isBuffBannedItem(item.name)) {
 		pricingData.priceListing = new Decimal(0);
 		pricingData.priceOrder = new Decimal(0);
 		market_id = undefined;

@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_LISSKINS_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, MdiShoppingSearchOutline, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -31,6 +31,9 @@ export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="lis-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="lis-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
 					</SettingsCard>
 				</div>
 			</div>

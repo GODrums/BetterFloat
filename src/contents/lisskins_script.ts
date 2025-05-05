@@ -187,6 +187,9 @@ async function adjustItem(container: Element, page = PageType.Market) {
 			addSaleTag(rows[i], priceResult);
 		}
 
+		// Add data-betterfloat attribute to the main container for the market comparison component
+		container.setAttribute('data-betterfloat', JSON.stringify({ name: item.name, phase: item.style, price: item.price.toNumber() }));
+
 		addQuickLinks(container, item);
 	}
 }
