@@ -1500,7 +1500,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 			switch (node.nodeType) {
 				case Node.ELEMENT_NODE: {
 					const text = node.textContent?.trim();
-					if (text && ['StatTrak', 'Souvenir', 'Container', 'Sticker', 'Agent', 'Patch', 'Charm'].some((x) => text.includes(x))) {
+					if (text && ['StatTrak', 'Souvenir', 'Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'].some((x) => text.includes(x))) {
 						// TODO: integrate the ItemQuality type
 						// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 						quality = text;
@@ -1769,7 +1769,7 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Patch | ' + full_name;
 	} else if (item.quality.includes('Charm')) {
 		full_name = 'Charm | ' + full_name;
-	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent')) {
+	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible') && !item.quality.includes('Music Kit')) {
 		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
 			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
 		}
