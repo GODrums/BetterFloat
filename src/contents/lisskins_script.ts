@@ -7,7 +7,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -307,7 +307,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 	if (elementContainer && !container.querySelector('.betterfloat-buff-a')) {
 		const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 		const buffContainer = generatePriceLine({
-			source: extensionSettings['csf-pricingsource'] as MarketSource,
+			source: extensionSettings['lis-pricingsource'] as MarketSource,
 			market_id,
 			buff_name,
 			priceOrder,
