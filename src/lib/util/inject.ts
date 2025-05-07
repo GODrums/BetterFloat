@@ -1,3 +1,5 @@
+import { resq$ } from 'resq';
+
 let loadNumber = 0;
 xmlHttpRequestIntercept();
 fetchIntercept();
@@ -110,4 +112,34 @@ function fetchIntercept() {
 
 		return response;
 	};
+}
+
+async function observeGamerpay() {
+	const observer = new MutationObserver(async (mutations) => {
+		for (const mutation of mutations) {
+			for (const node of mutation.addedNodes) {
+				if (node instanceof HTMLElement) {
+					if (node.className.toString().startsWith('ItemCard_wrapper')) {
+						annotateReactNode(node as HTMLElement);
+					} else if (node.className.toString().startsWith('ItemFeed_feed')) {
+						for (const item of node.children) {
+							if (item instanceof HTMLElement && item.className.toString().startsWith('ItemCard_wrapper')) {
+								annotateReactNode(item as HTMLElement);
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+	observer.observe(document, { childList: true, subtree: true });
+}
+
+function annotateReactNode(node: HTMLElement) {
+	const item = resq$('P', node as HTMLElement);
+	node.setAttribute('data-betterfloat', JSON.stringify(item.props));
+}
+
+if (location.hostname === 'gamerpay.gg') {
+	observeGamerpay();
 }
