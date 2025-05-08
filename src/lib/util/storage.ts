@@ -169,6 +169,13 @@ export const DEFAULT_SETTINGS = {
 	'bs-buffdifference': true,
 	'bs-buffdifferencepercent': true,
 	'bs-listingage': true,
+	'wp-enable': true,
+	'wp-pricingsource': 'buff',
+	'wp-altmarket': 'none',
+	'wp-pricereference': 0,
+	'wp-buffdifference': true,
+	'wp-buffdifferencepercent': true,
+	'wp-listingage': true,
 	'display-updatepopup': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };

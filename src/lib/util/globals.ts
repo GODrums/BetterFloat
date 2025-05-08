@@ -46,6 +46,7 @@ import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg'
 import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
 import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
 import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
+import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
@@ -76,6 +77,7 @@ export const ICON_SKINPORT = iconSkinport;
 export const ICON_SKINPORT_FULL = iconSkinportFull;
 export const ICON_SKINBID = iconSkinbid;
 export const ICON_SKINBID_FULL = iconSkinbidFull;
+export const ICON_WAXPEER = iconWaxpeer;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;
 export const ICON_CAMERA_FLIPPED = iconCameraFlipped;
