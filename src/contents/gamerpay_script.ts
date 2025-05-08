@@ -92,11 +92,11 @@ async function adjustItem(container: Element) {
 	let item = container.getAttribute('data-betterfloat');
 
 	let tries = 10;
-	while ((!item || item.length < 1) && tries-- > 0) {
+	while ((!item || item.length < 1 || item === 'undefined') && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = container.getAttribute('data-betterfloat');
 	}
-	if (!item || item.length < 1) return;
+	if (!item || item.length < 1 || item === 'undefined') return;
 
 	const itemData = JSON.parse(item) as Gamerpay.ReactItem;
 
@@ -223,7 +223,6 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 		},
 	};
 
-	const absDifference = difference.abs();
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
@@ -240,7 +239,7 @@ function getUserCurrency() {
 
 function createBuffItem(item: Gamerpay.Item) {
 	return {
-		name: item.marketHashName ?? item.name,
+		name: item.marketHashName ?? `${item.name} (${item.wearName})`,
 		style: '' as ItemStyle,
 	};
 }

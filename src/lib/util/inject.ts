@@ -119,6 +119,7 @@ async function observeGamerpay() {
 		for (const mutation of mutations) {
 			for (const node of mutation.addedNodes) {
 				if (node instanceof HTMLElement) {
+					// console.log(node);
 					if (node.className.toString().startsWith('ItemCard_wrapper')) {
 						annotateReactNode(node as HTMLElement);
 					} else if (node.className.toString().startsWith('ItemFeed_feed')) {
@@ -127,6 +128,13 @@ async function observeGamerpay() {
 								annotateReactNode(item as HTMLElement);
 							}
 						}
+					} else if (node.className.toString().startsWith('Page_wrapper')) {
+						setTimeout(() => {
+							const items = document.querySelectorAll('div[class*="FeedPreview_itemWrapper"]');
+							for (const item of items) {
+								annotateReactNode(item as HTMLElement);
+							}
+						}, 1000);
 					}
 				}
 			}
