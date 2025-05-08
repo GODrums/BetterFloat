@@ -1769,7 +1769,9 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Patch | ' + full_name;
 	} else if (item.quality.includes('Charm')) {
 		full_name = 'Charm | ' + full_name;
-	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible') && !item.quality.includes('Music Kit')) {
+	} else if (item.quality.includes('Music Kit')) {
+		full_name = 'Music Kit | ' + full_name;
+	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible')) {
 		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
 			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
 		}
