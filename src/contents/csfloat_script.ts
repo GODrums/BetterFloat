@@ -1494,13 +1494,22 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	let condition: ItemCondition = '';
 	let quality = '';
 	let style: ItemStyle = '';
+	let isStatTrak = false;
+	let isSouvenir = false;
 
 	if (header_details) {
 		header_details.childNodes.forEach((node) => {
 			switch (node.nodeType) {
 				case Node.ELEMENT_NODE: {
 					const text = node.textContent?.trim();
-					if (text && ['StatTrak', 'Souvenir', 'Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'].some((x) => text.includes(x))) {
+					if (!text) {
+						break;
+					}
+					if (text.includes('StatTrak')) {
+						isStatTrak = true;
+					} else if (text.includes('Souvenir')) {
+						isSouvenir = true;
+					} else if (['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'].some((x) => text.includes(x))) {
 						// TODO: integrate the ItemQuality type
 						// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 						quality = text;
@@ -1528,6 +1537,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		condition: condition,
 		float: float,
 		price: price,
+		isStatTrak,
+		isSouvenir,
 	};
 }
 
@@ -1771,9 +1782,14 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Charm | ' + full_name;
 	} else if (item.quality.includes('Music Kit')) {
 		full_name = 'Music Kit | ' + full_name;
+		if (item.isStatTrak) {
+			full_name = 'StatTrak™ ' + full_name;
+		}
 	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible')) {
-		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
-			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
+		if (item.isSouvenir) {
+			full_name = 'Souvenir ' + full_name;
+		} else if (item.isStatTrak) {
+			full_name = full_name.includes('★') ? full_name.replace('★', '★ StatTrak™') : `StatTrak™ ${full_name}`;
 		}
 		// fix name inconsistency
 		if (item.name.endsWith('| 027')) {
