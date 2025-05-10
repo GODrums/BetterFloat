@@ -66,7 +66,9 @@ export default function IndexPopup() {
 							</TabsTrigger>
 						</div>
 						<Badge variant="purple" className="my-4">
-							Pro
+							<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+								Pro
+							</a>
 						</Badge>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="buffmarket">
