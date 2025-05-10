@@ -169,6 +169,13 @@ export const DEFAULT_SETTINGS = {
 	'bs-buffdifference': true,
 	'bs-buffdifferencepercent': true,
 	'bs-listingage': true,
+	'shp-enable': true,
+	'shp-pricingsource': 'buff',
+	'shp-altmarket': 'none',
+	'shp-pricereference': 0,
+	'shp-buffdifference': true,
+	'shp-buffdifferencepercent': true,
+	'shp-listingage': true,
 	'display-updatepopup': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
