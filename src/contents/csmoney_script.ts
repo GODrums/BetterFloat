@@ -207,7 +207,7 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
-	url.searchParams.append('utm_campaign', 'market');
+	url.searchParams.append('utm_campaign', 'regular');
 	url.searchParams.append('utm_source', 'mediabuy');
 	url.searchParams.append('utm_medium', 'betterfloat');
 	url.searchParams.append('utm_content', 'link');

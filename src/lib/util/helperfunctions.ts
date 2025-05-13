@@ -204,7 +204,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.DMarket:
 			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&ref=rqKYzZ36Bw&utm_source=betterfloat`;
 		case MarketSource.CSMoney:
-			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=market&utm_content=link`;
+			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=regular&utm_content=link`;
 		case MarketSource.Bitskins:
 			return `https://bitskins.com/market/csgo?search={%22order%22:[{%22field%22:%22price%22,%22order%22:%22ASC%22}],%22where%22:{%22skin_name%22:%22${encodeURIComponent(buff_name)}%22}}&ref_alias=betterfloat`;
 		case MarketSource.Lisskins:
