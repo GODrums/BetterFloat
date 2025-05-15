@@ -252,7 +252,7 @@ async function getBuffItem(item: HTMLItem) {
 	let source = (extensionSettings['lis-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_name = handleSpecialStickerNames(item.name);
 
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style);
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style, source);
 
 	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
 		priceListing = new Decimal(0);
