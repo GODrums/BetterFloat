@@ -7,7 +7,7 @@ let dmarketExchangeRates: { [key: string]: number } = {};
 
 export function getDMarketCurrency() {
 	if (!dmarketCurrency) {
-		dmarketCurrency = JSON.parse(localStorage.getItem('dmarket/AkitaStores') || '{}').currency?.currency;
+		dmarketCurrency = JSON.parse(localStorage.getItem('dmarket/AkitaStores') || '{}').currency?.activeCurrency;
 	}
 	return dmarketCurrency || 'USD';
 }
