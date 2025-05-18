@@ -262,7 +262,7 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, sour
 			values.count = new Decimal(priceMapping[queryName]['count'] ?? 0);
 		}
 	} else {
-		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+		console.debug(`[BetterFloat] No price mapping found for ${queryName}`);
 	}
 
 	return values;

@@ -255,8 +255,8 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	let itemPrice = getHTMLPrice(container, item);
-	if (currencyRate) {
+	let { itemPrice, converted } = getHTMLPrice(container, item);
+	if (!converted && currencyRate) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 	const referencePrice =
@@ -282,22 +282,22 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 	};
 }
 
-function getHTMLPrice(container: Element, item: CSMoney.Item) {
+function getHTMLPrice(container: Element, item: CSMoney.Item): { itemPrice: Decimal; converted: boolean } {
 	const cardPrice = container.getAttribute('data-card-price');
 	if (cardPrice) {
-		return new Decimal(cardPrice);
+		return { itemPrice: new Decimal(cardPrice), converted: false };
 	}
 
 	if ((item as CSMoney.MarketItem)?.pricing?.computed) {
-		return new Decimal((item as CSMoney.MarketItem).pricing.computed);
+		return { itemPrice: new Decimal((item as CSMoney.MarketItem).pricing.computed), converted: true };
 	}
 
 	const priceText = container.querySelector(CSMONEY_SELECTORS.trade.price)?.textContent;
 	if (!priceText) {
-		return new Decimal(0);
+		return { itemPrice: new Decimal(0), converted: true };
 	}
 
-	return new Decimal(parsePrice(priceText).price);
+	return { itemPrice: new Decimal(parsePrice(priceText).price), converted: true };
 }
 
 function getItemName(item: CSMoney.Item) {
@@ -386,8 +386,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
 
 	const footerContainer = container.querySelector<HTMLElement>(selector.footer)?.parentElement;
-
-	console.log('[BetterFloat] Footer container:', footerContainer, selector.footer);
 
 	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
