@@ -120,7 +120,7 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 async function checkUserPlan() {
 	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
 	if (user?.plan.type === 'pro') {
-		await synchronizePlanWithStorage();
+		await synchronizePlanWithStorage(true);
 	}
 }
 

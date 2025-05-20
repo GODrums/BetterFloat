@@ -147,7 +147,8 @@ let lastProCheck = 0;
  */
 export async function checkUserPlanPro(user: SettingsUser) {
 	if (isUserPro(user) && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
-		user = await synchronizePlanWithStorage();
+		const expired = typeof user.plan.expiry === 'number' && user.plan.expiry < new Date().getTime();
+		user = await synchronizePlanWithStorage(expired);
 		lastProCheck = new Date().getTime();
 	}
 
