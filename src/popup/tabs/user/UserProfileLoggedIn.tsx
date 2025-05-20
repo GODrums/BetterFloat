@@ -77,7 +77,9 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		}
 
 		setSyncing(true);
-		setSyncCooldown(true);
+		if (!isDevMode) {
+			setSyncCooldown(true);
+		}
 
 		const steamUser = await getSteamLogin();
 		if (steamUser?.steamid) {
@@ -89,7 +91,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			if (!token) {
 				return;
 			}
-			const verifiedPlan = await verifyPlan(decodeJWT(token), user);
+			const { plan: verifiedPlan } = await verifyPlan(decodeJWT(token), user);
 			setUser({ ...user, plan: verifiedPlan });
 
 			ExtensionStorage.sync.setItem('bm-enable', true);

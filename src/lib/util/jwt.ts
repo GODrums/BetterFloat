@@ -43,6 +43,7 @@ export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
 
 	if (decodedJwt && user.steam?.steamid) {
 		// check if token is expired and refresh
+		let hasRefreshed = false;
 		if (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime()) {
 			const newToken = await refreshToken(user!.steam!.steamid!);
 			if (!newToken) {
@@ -50,9 +51,22 @@ export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
 				throw new Error('Failed to refresh token');
 			}
 			decodedJwt = decodeJWT(newToken);
+			hasRefreshed = true;
 		}
 		// verify token contents
-		newPlan = await verifyPlan(decodedJwt, user);
+		let { plan, expired } = await verifyPlan(decodedJwt, user);
+		// if plan is expired and we still got an old token, refresh again
+		if (plan.type === 'free' && expired && !hasRefreshed) {
+			const newToken = await refreshToken(user!.steam!.steamid!);
+			if (!newToken) {
+				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
+				throw new Error('Failed to refresh token');
+			}
+			decodedJwt = decodeJWT(newToken);
+			const { plan: secondPlan } = await verifyPlan(decodedJwt, user);
+			plan = secondPlan;
+		}
+		newPlan = plan;
 	}
 
 	const newUser = { ...user, plan: newPlan };
@@ -66,28 +80,30 @@ export function decodeJWT(jwt: string) {
 	return decodeJwt<CustomerClaims>(jwt);
 }
 
-export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: IStorage['user']): Promise<IStorage['user']['plan']> {
+export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: IStorage['user']): Promise<{ plan: IStorage['user']['plan']; expired?: boolean }> {
 	const secureStorage = await getSecureStorage();
 	try {
 		checkJwtClaims(decodedJwt, user.steam.steamid);
 	} catch (e) {
 		console.error(e);
-		return { type: 'free' };
+		return { plan: { type: 'free' } };
 	}
 	const endDate = new Date(decodedJwt.plan.currentPeriodEnd);
 	if (endDate.getTime() < new Date().getTime()) {
 		console.error('Subscription expired');
-		return { type: 'free' };
+		return { plan: { type: 'free' }, expired: true };
 	}
 
 	secureStorage.setItem('decodedJwt', decodedJwt);
 
 	return {
-		type: 'pro',
-		expiry: Math.min(decodedJwt.exp! * 1000, decodedJwt.plan.currentPeriodEnd),
-		customerId: decodedJwt.customerId,
-		provider: decodedJwt.customerId ? 'stripe' : 'crypto',
-		endDate: decodedJwt.plan.currentPeriodEnd,
+		plan: {
+			type: 'pro',
+			expiry: Math.min(decodedJwt.exp! * 1000, decodedJwt.plan.currentPeriodEnd),
+			customerId: decodedJwt.customerId,
+			provider: decodedJwt.customerId ? 'stripe' : 'crypto',
+			endDate: decodedJwt.plan.currentPeriodEnd,
+		},
 	};
 }
 
