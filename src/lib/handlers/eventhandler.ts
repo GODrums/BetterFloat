@@ -320,7 +320,7 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('2.0/market/sell-orders')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
-	} else if (eventData.url.includes('2.0/market/user-inventory')) {
+	} else if (eventData.url.includes('market/user-inventory')) {
 		if (eventData.url.includes('user-inventory/')) {
 			cacheCSMoneyPopupItem((eventData.data as CSMoney.UserInventoryPopupResponse).item);
 		} else {

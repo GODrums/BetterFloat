@@ -177,9 +177,8 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 async function addPopupListener(container: Element, item: CSMoney.Item) {
 	container.addEventListener('click', async () => {
 		const selector = location.pathname === '/market/buy/' ? CSMONEY_SELECTORS.market : CSMONEY_SELECTORS.sell;
-		waitForElement(selector.popup).then(async (success) => {
+		waitForElement(selector.popup, { interval: 200, maxTries: 50 }).then(async (success) => {
 			if (success) {
-				console.log('[BetterFloat] Popup listener executed');
 				const bigCard = document.querySelector(selector.popup);
 				if (bigCard) {
 					await adjustItem(bigCard, true, item);
@@ -200,8 +199,13 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 	if (location.pathname === '/market/buy/') {
 		const selector = CSMONEY_SELECTORS.market.popup_similar;
 		const allSelectors = Array.from(container.querySelectorAll(selector));
-		parentElement = allSelectors.length === 3 ? allSelectors[1]?.parentElement : (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
-	} else if (location.pathname === '/market/sell/') {
+		parentElement =
+			allSelectors.length === 3
+				? allSelectors[1]?.parentElement
+				: allSelectors.length === 2
+					? allSelectors[0]?.parentElement
+					: (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
+	} else if (location.pathname === '/market/sell/' || location.pathname === '/market/instant-sell/') {
 		parentElement = container.querySelector(CSMONEY_SELECTORS.sell.popup_similar) as HTMLElement;
 	}
 	if (!parentElement) return;
