@@ -714,6 +714,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (isMainItem) {
 				addQuickLinks(container, apiItem);
 				CSFloatHelpers.copyNameOnClick(container, apiItem.item);
+				addCollectionLink(container);
 			}
 			CSFloatHelpers.storeApiItem(container, apiItem);
 			await showBargainPrice(container, apiItem, popout);
@@ -789,6 +790,18 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 				message: body,
 			});
 		}
+	}
+}
+
+function addCollectionLink(container: Element) {
+	const collectionLink = container.querySelector('div.collection');
+	if (collectionLink) {
+		const link = html`
+			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.toLowerCase()}" target="_blank">
+			 	${collectionLink.textContent}
+			</a>
+		`;
+		collectionLink.innerHTML = link;
 	}
 }
 
