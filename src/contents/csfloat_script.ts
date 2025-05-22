@@ -810,7 +810,7 @@ async function showBargainPrice(container: Element, listing: CSFloat.ListingData
 	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
 		const { userCurrency, currencyRate } = await getCurrencyRate();
 		const minBargainLabel = html`
-			<span class="betterfloat-minbargain-label" style="color: slategrey;">
+			<span class="betterfloat-minbargain-label" style="color: var(--subtext-color);">
 				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat(undefined, {
 					style: 'currency',
 					currency: userCurrency,
@@ -1272,7 +1272,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		for (let i = 0; i < headerValues.length; i++) {
 			const headerCell = document.createElement('th');
 			headerCell.setAttribute('role', 'columnheader');
-			const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
+			const headerCellStyle = `text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
 				i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
 			}`;
 			headerCell.setAttribute('style', headerCellStyle);
@@ -1284,7 +1284,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		linkHeaderCell.setAttribute('role', 'columnheader');
 		linkHeaderCell.setAttribute(
 			'style',
-			'text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
+			'text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
@@ -1325,7 +1325,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 
 	const listingAge = html`
 		<div class="betterfloat-listing-age hint--bottom hint--rounded hint--no-arrow" style="display: flex; align-items: flex-end;" aria-label="${new Date(listing.created_at).toLocaleString()}">
-			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: var(--subtext-color);">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
 	`;

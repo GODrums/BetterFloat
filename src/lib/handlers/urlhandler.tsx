@@ -12,7 +12,6 @@ import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
-import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
@@ -200,19 +199,6 @@ async function handleCSFloatChange(state: Extension.URLState) {
 					}
 				}, 1000);
 			}
-		}
-	}
-
-	const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
-	if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
-		const { root } = await mountShadowRoot(<CSFThemeToggle />, {
-			tagName: 'betterfloat-theme-toggle',
-			parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
-			position: 'after',
-		});
-		if (Array.from(document.querySelectorAll('betterfloat-theme-toggle')).length > 1) {
-			root.unmount();
-			document.querySelector('betterfloat-theme-toggle')?.remove();
 		}
 	}
 

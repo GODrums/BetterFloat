@@ -127,7 +127,7 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
-						<span className="text-lg font-bold text-white">{marketDetails.text}</span>
+						<span className="text-lg font-bold text-[--primary-text-color]">{marketDetails.text}</span>
 						{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
@@ -142,15 +142,15 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between">
-								<span>Buy Order</span>
-								<span className="text-sm" style={{ color: 'orange' }}>
+								<span className="text-[--subtext-color]">Buy Order</span>
+								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
 						<div className="flex items-center justify-between">
-							<span className="text-white">Lowest</span>
-							<span className="text-sm" style={{ color: 'greenyellow' }}>
+							<span className="text-[--primary-text-color]">Lowest</span>
+							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
 							</span>
 						</div>
@@ -295,17 +295,20 @@ const CSFMarketComparison: React.FC = () => {
 		<div className="dark w-[210px] max-h-[60vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
-					<LoadingSpinner className="size-10 text-white" />
+					<LoadingSpinner className="size-10 text-[--primary-text-color]" />
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
 					<div className="w-full bg-[--highlight-background-minimal] rounded-md py-2 flex flex-col items-center gap-1">
 						<div className="flex justify-center items-center gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-white font-bold">Market Comparison</span>
+							<span className="text-[--primary-text-color] font-bold">Market Comparison</span>
 						</div>
 						<div className="flex justify-center items-center gap-2">
-							<Button className="h-9 gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background-heavy] text-white" onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
+							<Button
+								className="h-9 gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background-heavy] text-[--primary-text-color]"
+								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+							>
 								<Settings className="h-6 w-6" />
 								<span className="text-sm">Settings</span>
 							</Button>
@@ -315,7 +318,7 @@ const CSFMarketComparison: React.FC = () => {
 						{isSettingsOpen && (
 							<div ref={ref} className="w-full bg-[--highlight-background-minimal] rounded-md p-4 flex flex-col items-center gap-1">
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-bold text-lg text-white">Settings</div>
+									<div className="font-bold text-lg text-[--primary-text-color]">Settings</div>
 									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-neutral-500/70" onClick={() => setIsSettingsOpen(false)}>
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
@@ -333,7 +336,7 @@ const CSFMarketComparison: React.FC = () => {
 												</div>
 											</div>
 											{!FreeMarkets.includes(market.source) && (
-												<Badge variant="purple" className="text-white">
+												<Badge variant="purple" className="text-[--primary-text-color]">
 													Pro
 												</Badge>
 											)}
@@ -361,16 +364,16 @@ const CSFMarketComparison: React.FC = () => {
 						{filteredMarketData.length === 0 && (
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<BanIcon className="size-8 text-white" />
-									<span className="text-base text-center text-white">No listings found</span>
+									<BanIcon className="size-8 text-[--primary-text-color]" />
+									<span className="text-base text-center text-[--primary-text-color]">No listings found</span>
 								</div>
 							</div>
 						)}
 						{user?.plan.type !== 'pro' && (
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<LockKeyhole className="h-8 w-8 text-white" />
-									<span className="text-base text-center text-white">Unlock 10+ more markets</span>
+									<LockKeyhole className="h-8 w-8 text-[--primary-text-color]" />
+									<span className="text-base text-center text-[--primary-text-color]">Unlock 10+ more markets</span>
 									<Button variant="purple" size="sm" asChild>
 										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
 											Upgrade to Pro

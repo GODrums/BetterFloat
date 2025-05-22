@@ -81,7 +81,6 @@ export const DEFAULT_SETTINGS = {
 	'csf-listingage': true,
 	'csf-topbutton': true,
 	'csf-quickmenu': false,
-	'csf-themetoggle': false,
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
 	'csf-showbargainprice': true,

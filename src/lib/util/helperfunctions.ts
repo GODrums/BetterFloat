@@ -140,13 +140,13 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 let lastProCheck = 0;
 
 /**
- * Checks if the user has a pro plan and validate the plan
- * Only synchronizes once every 5 minutes
+ * Checks if the user has a pro plan and validates the plan
+ * Only synchronizes once every 60 minutes
  * @param user
  * @returns
  */
 export async function checkUserPlanPro(user: SettingsUser) {
-	if (isUserPro(user) && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
+	if (isUserPro(user) && lastProCheck + 60 * 60 * 1000 < new Date().getTime()) {
 		const expired = typeof user.plan.expiry === 'number' && user.plan.expiry < new Date().getTime();
 		user = await synchronizePlanWithStorage(expired);
 		lastProCheck = new Date().getTime();
