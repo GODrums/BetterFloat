@@ -1678,7 +1678,7 @@ async function addBuffPrice(
 								class="betterfloat-steamlink"
 								href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
 								target="_blank"
-								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
+								style="display: flex; align-items: center; gap: 4px; background: var(--highlight-background); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
 							>
 								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(percentage.gt(130) || percentage.lt(80) ? 0 : 1)}%</span>
 								<div>
