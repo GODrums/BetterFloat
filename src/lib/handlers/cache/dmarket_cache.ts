@@ -4,6 +4,15 @@ import type { DMarket } from '~lib/@typings/DMarketTypes';
 const dmarketItems: DMarket.Item[] = [];
 let dmarketCurrency: string | null = null;
 let dmarketExchangeRates: { [key: string]: number } = {};
+let dmarketLatestSales: DMarket.LatestSale[] = [];
+
+export function cacheDMarketLatestSales(data: DMarket.LatestSale[]) {
+	dmarketLatestSales = data;
+}
+
+export function getDMarketLatestSales() {
+	return dmarketLatestSales;
+}
 
 export function getDMarketCurrency() {
 	if (!dmarketCurrency) {

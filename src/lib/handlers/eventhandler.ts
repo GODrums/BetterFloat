@@ -28,7 +28,7 @@ import {
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
 import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
-import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
+import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales } from './cache/dmarket_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
@@ -345,6 +345,8 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('currency-rate/v1/rates')) {
 		cacheDMarketExchangeRates((eventData.data as DMarket.ExchangeRates).Rates);
+	} else if (eventData.url.includes('trade-aggregator/v1/last-sales')) {
+		cacheDMarketLatestSales((eventData.data as DMarket.LatestSalesResponse).sales);
 	}
 }
 

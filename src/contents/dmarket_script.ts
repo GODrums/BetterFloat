@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getDMarketCurrency, getDMarketExchangeRate, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
+import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
@@ -152,7 +152,68 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 			await patternDetections(popup, item, true);
 
 			addQuickLinks(popup, item);
+
+			const popupContainer = popup.closest<HTMLElement>('asset-description-layout');
+			if (popupContainer) {
+				await addLatestSalesEnhancements(popupContainer);
+			}
 		});
+	}
+}
+
+async function addLatestSalesEnhancements(container: HTMLElement) {
+	const latestSalesContainer = container.querySelector('last-sales');
+	if (!latestSalesContainer) {
+		return;
+	}
+
+	const buffData = JSON.parse(container.querySelector('.betterfloat-big-a')?.getAttribute('data-betterfloat') ?? '{}');
+	let latestSales = getDMarketLatestSales();
+
+	let tries = 10;
+	while (latestSales.length === 0 && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		latestSales = getDMarketLatestSales();
+	}
+
+	const styling = {
+		profit: {
+			color: '#5bc27a',
+			background: '#142a0e',
+		},
+		loss: {
+			color: '#ff8095',
+			background: '#3a0e0e',
+		},
+	};
+	const userCurrency = getDMarketCurrency();
+	const currencyFormatter = CurrencyFormatter(userCurrency ?? 'USD');
+
+	let rows = latestSalesContainer.querySelectorAll('tr.c-assetPreview__row');
+	tries = 10;
+	while (rows.length === 0 && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		rows = latestSalesContainer.querySelectorAll('tr.c-assetPreview__row');
+	}
+	for (let i = 0; i < rows.length; i++) {
+		const row = rows[i];
+		const sale = latestSales[i];
+
+		const innerContainer = row.querySelector('last-sales-details-popup > div.c-assetPreview_icon');
+		if (innerContainer) {
+			const price = new Decimal(sale.price);
+			const difference = price.minus(buffData.priceFromReference);
+
+			const { color, background } = difference.gt(0) ? styling.loss : styling.profit;
+
+			const differenceElement = html`
+            	<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; font-size: 12px; margin-left: 8px;">
+					${html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>`}
+            	</div>
+			`;
+
+			innerContainer.insertAdjacentHTML('beforeend', differenceElement);
+		}
 	}
 }
 
@@ -180,9 +241,6 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 	if (item.title.includes('Gloves') || !item.extra.paintSeed || container.querySelector('.betterfloat-gem-container')) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
-	// const userCurrency = getDMarketCurrency();
-	// const currencySymbol = getSymbolFromCurrency(userCurrency);
-	// const currencyRate = getDMarketExchangeRate(userCurrency);
 	const type = getBlueGemName(item.title.replace('StatTrak™ ', ''));
 
 	// retrieve the stored data instead of fetching newly
@@ -223,8 +281,6 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 	if (!isPopout) {
 		return;
 	}
-
-	// todo: add past sales
 }
 
 async function addBuffPrice(item: DMarket.Item, container: Element, state: PageState): Promise<PriceResult> {
