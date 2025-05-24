@@ -9,7 +9,7 @@ import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getS
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
@@ -144,7 +144,6 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 				await new Promise((resolve) => setTimeout(resolve, 200));
 				popup = document.getElementById(DMARKET_SELECTORS.popup.container);
 			}
-			console.log('Popup found:', popup);
 			if (!popup) return;
 
 			const priceResult = await addBuffPrice(item, popup, PageState.Popup);
@@ -156,6 +155,12 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 			const popupContainer = popup.closest<HTMLElement>('asset-description-layout');
 			if (popupContainer) {
 				await addLatestSalesEnhancements(popupContainer);
+
+				popupContainer.setAttribute('data-betterfloat', JSON.stringify(item));
+
+				if (extensionSettings['dm-marketcomparison']) {
+					mountDMarketMarketComparison(popupContainer);
+				}
 			}
 		});
 	}

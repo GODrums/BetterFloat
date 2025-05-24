@@ -13,6 +13,7 @@ import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
+import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
@@ -110,7 +111,7 @@ async function handleChange(state: Extension.URLState) {
 		await handleCSMoneyChange(state);
 	}
 
-	if (state.site === 'skinport.com' || state.site === 'csfloat.com' || state.site === 'lis-skins.com') {
+	if (['skinport.com', 'csfloat.com', 'lis-skins.com', 'dmarket.com'].includes(state.site)) {
 		addMessageRelays();
 	}
 }
@@ -315,6 +316,13 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 	if (isItemPage && document.querySelector('div.skins-market-view')) {
 		await mountLisMarketComparison();
 	}
+}
+
+export async function mountDMarketMarketComparison(container: HTMLElement) {
+	const { root } = await mountShadowRoot(<DMMarketComparison />, {
+		tagName: 'betterfloat-dm-market-comparison',
+		parent: container,
+	});
 }
 
 async function mountLisMarketComparison() {

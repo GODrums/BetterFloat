@@ -145,6 +145,7 @@ export const DEFAULT_SETTINGS = {
 	'csm-listingage': true,
 	'dm-enable': true,
 	'dm-autorefresh': true,
+	'dm-marketcomparison': true,
 	'dm-csbluegem': true,
 	'dm-pricingsource': 'buff',
 	'dm-altmarket': 'none',
