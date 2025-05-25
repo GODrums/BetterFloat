@@ -18,6 +18,9 @@ import {
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
+	ICON_EMERALD_1,
+	ICON_EMERALD_2,
+	ICON_EMERALD_3,
 	ICON_NOCTS_1,
 	ICON_NOCTS_2,
 	ICON_NOCTS_3,
@@ -31,6 +34,12 @@ import {
 	ICON_PINK_GALAXY_3,
 	ICON_PRICEMPIRE,
 	ICON_PRICEMPIRE_APP,
+	ICON_RUBY_1,
+	ICON_RUBY_2,
+	ICON_RUBY_3,
+	ICON_SAPPHIRE_1,
+	ICON_SAPPHIRE_2,
+	ICON_SAPPHIRE_3,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
@@ -72,7 +81,7 @@ import {
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { DiamonGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -1019,15 +1028,55 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePhoenix(container, item);
 	} else if (item.item_name.includes('Overprint')) {
 		await badgeOverprint(container, item);
-	} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
-		await badgePinkGalaxy(container, item);
-	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
-		await badgeDiamondGem(container, item);
+	} else if (item.phase) {
+		if (item.phase === 'Ruby' || item.phase === 'Sapphire' || item.phase === 'Emerald') {
+			await badgeChromaGems(container, item);
+		} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
+			await badgePinkGalaxy(container, item);
+		} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
+			await badgeDiamondGem(container, item);
+		}
 	} else if (item.item_name.includes('Nocts')) {
 		await badgeNocts(container, item);
 	} else if (item.type === 'charm') {
 		badgeCharm(container, item);
 	}
+}
+
+async function badgeChromaGems(container: Element, item: CSFloat.Item) {
+	let gem_data: number | undefined;
+	if (item.item_name.includes('Karambit')) {
+		gem_data = KarambitGemMapping[item.paint_seed!];
+	} else if (item.item_name.includes('Butterfly Knife')) {
+		gem_data = ButterflyGemMapping[item.paint_seed!];
+	}
+	if (!gem_data) return;
+
+	const iconMapping = {
+		Sapphire: {
+			1: ICON_SAPPHIRE_1,
+			2: ICON_SAPPHIRE_2,
+			3: ICON_SAPPHIRE_3,
+		},
+		Ruby: {
+			1: ICON_RUBY_1,
+			2: ICON_RUBY_2,
+			3: ICON_RUBY_3,
+		},
+		Emerald: {
+			1: ICON_EMERALD_1,
+			2: ICON_EMERALD_2,
+			3: ICON_EMERALD_3,
+		},
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[item.phase as 'Sapphire' | 'Ruby' | 'Emerald'][gem_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Max ${item.phase}`, `Rank ${gem_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
 }
 
 async function badgeNocts(container: Element, item: CSFloat.Item) {
@@ -1048,6 +1097,7 @@ async function badgeNocts(container: Element, item: CSFloat.Item) {
 		tooltipStyle: 'translate: -25px 15px; width: 60px;',
 	});
 }
+
 function badgeCharm(container: Element, item: CSFloat.Item) {
 	const pattern = item.keychain_pattern;
 	if (!pattern) return;
