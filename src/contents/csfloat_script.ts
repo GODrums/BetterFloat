@@ -1799,13 +1799,13 @@ async function addBuffPrice(
 		let backgroundColor: string;
 		let differenceSymbol: string;
 		if (difference.isNegative()) {
-			backgroundColor = extensionSettings['csf-color-profit'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
 			differenceSymbol = '-';
 		} else if (difference.isPos()) {
-			backgroundColor = extensionSettings['csf-color-loss'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
 			differenceSymbol = '+';
 		} else {
-			backgroundColor = extensionSettings['csf-color-neutral'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
 			differenceSymbol = '-';
 		}
 
