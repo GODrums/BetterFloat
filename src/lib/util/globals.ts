@@ -24,6 +24,9 @@ import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
 import iconDiamondGem1 from 'data-base64:/assets/patterns/diamond-gem-1.png';
 import iconDiamondGem2 from 'data-base64:/assets/patterns/diamond-gem-2.png';
 import iconDiamondGem3 from 'data-base64:/assets/patterns/diamond-gem-3.png';
+import iconNocts1 from 'data-base64:/assets/patterns/nocts-tier-1.png';
+import iconNocts2 from 'data-base64:/assets/patterns/nocts-tier-2.png';
+import iconNocts3 from 'data-base64:/assets/patterns/nocts-tier-3.png';
 import iconOverprintArrow from 'data-base64:/assets/patterns/overprint-arrow.svg';
 import iconOverprintFlower from 'data-base64:/assets/patterns/overprint-flower.svg';
 import iconOverprintMixed from 'data-base64:/assets/patterns/overprint-mixed.svg';
@@ -102,6 +105,9 @@ export const ICON_PINK_GALAXY_3 = iconPinkGalaxy3;
 export const ICON_DIAMOND_GEM_1 = iconDiamondGem1;
 export const ICON_DIAMOND_GEM_2 = iconDiamondGem2;
 export const ICON_DIAMOND_GEM_3 = iconDiamondGem3;
+export const ICON_NOCTS_1 = iconNocts1;
+export const ICON_NOCTS_2 = iconNocts2;
+export const ICON_NOCTS_3 = iconNocts3;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

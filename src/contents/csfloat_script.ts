@@ -18,6 +18,9 @@ import {
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
+	ICON_NOCTS_1,
+	ICON_NOCTS_2,
+	ICON_NOCTS_3,
 	ICON_OVERPRINT_ARROW,
 	ICON_OVERPRINT_FLOWER,
 	ICON_OVERPRINT_MIXED,
@@ -69,7 +72,7 @@ import {
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import { DiamonGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -1020,11 +1023,31 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePinkGalaxy(container, item);
 	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
 		await badgeDiamondGem(container, item);
+	} else if (item.item_name.includes('Nocts')) {
+		await badgeNocts(container, item);
 	} else if (item.type === 'charm') {
 		badgeCharm(container, item);
 	}
 }
 
+async function badgeNocts(container: Element, item: CSFloat.Item) {
+	const nocts_data = NoctsMapping[item.paint_seed!];
+	if (!nocts_data) return;
+
+	const iconMapping = {
+		1: ICON_NOCTS_1,
+		2: ICON_NOCTS_2,
+		3: ICON_NOCTS_3,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[nocts_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Max Black', `Tier ${nocts_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
+}
 function badgeCharm(container: Element, item: CSFloat.Item) {
 	const pattern = item.keychain_pattern;
 	if (!pattern) return;
