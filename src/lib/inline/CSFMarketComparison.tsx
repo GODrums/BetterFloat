@@ -128,7 +128,7 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
 						<span className="text-lg font-bold text-[--primary-text-color]">{marketDetails.text}</span>
-						{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
+						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />

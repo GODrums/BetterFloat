@@ -74,9 +74,13 @@ export function dynamicUIHandler() {
 	// dmarket is a bit special and needs an additional listener
 	if (location.hostname === 'dmarket.com') {
 		createUrlListener(callHandleChange, 1500);
+	} else {
+		callHandleChange(new URL(location.href));
 	}
 
-	callHandleChange(new URL(location.href));
+	if (['skinport.com', 'csfloat.com', 'lis-skins.com', 'dmarket.com'].includes(location.hostname)) {
+		addMessageRelays();
+	}
 
 	setTimeout(showUpdatePopup, 3000);
 }
@@ -109,10 +113,6 @@ async function handleChange(state: Extension.URLState) {
 		await handleLisSkinsChange(state);
 	} else if (state.site === 'cs.money') {
 		await handleCSMoneyChange(state);
-	}
-
-	if (['skinport.com', 'csfloat.com', 'lis-skins.com', 'dmarket.com'].includes(state.site)) {
-		addMessageRelays();
 	}
 }
 

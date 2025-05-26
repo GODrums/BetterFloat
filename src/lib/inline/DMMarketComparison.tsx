@@ -156,26 +156,26 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntry; currency: s
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
 						<span className="text-lg font-semibold text-[--ex-color-primary]">{marketDetails.text}</span>
-						{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
+						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />
-						<span className="text-sm">
+						<span className="text-xs">
 							{entry.count} item{entry.count !== 1 ? 's' : ''} in stock
 						</span>
 					</div>
 				</div>
-				<a className="border-t border-border hover:bg-[--ex-bg-color--100]" href={getHref()} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={getHref()} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
-							<div className="flex items-center justify-between">
+							<div className="flex items-center justify-between text-sm">
 								<span className="text-[--subtext-color]">Buy Order</span>
 								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
-						<div className="flex items-center justify-between">
+						<div className="flex items-center justify-between text-sm">
 							<span className="text-[--ex-color-primary]">Lowest</span>
 							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
@@ -256,7 +256,6 @@ const DMMarketComparison: React.FC = () => {
 
 	useEffect(() => {
 		if (user && item && buffData) {
-			console.log(buffData, item);
 			fetchMarketData()
 				.catch((error) => {
 					console.error('Error fetching market data:', error);
