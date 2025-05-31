@@ -2,18 +2,17 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
-import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
+import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getShadowpayInventoryItem, getSpecificShadowpayItem } from '~lib/handlers/cache/shadowpay_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { SHADOWPAY_SELECTORS } from '~lib/handlers/selectors/shadowpay_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { fetchBlueGemPatternData } from '~lib/util/messaging';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
+import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.shadowpay.com/*'],
@@ -37,9 +36,14 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['shp-enable']) return;
+
+	// check if user has the required plan
+	if (!(await checkUserPlanPro(extensionSettings['user']))) {
+		console.log('[BetterFloat] Pro plan required for Shadowpay features');
+		return;
+	}
 
 	await initPriceMapping(extensionSettings, 'shp');
 
@@ -64,8 +68,8 @@ function applyMutation() {
 
 				if (addedNode.tagName === 'A' && addedNode.getAttribute('href')?.includes('/item/')) {
 					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.tagName === 'DIV' && addedNode.className === 'user-inventory__items-wrapper') {
-					const items = addedNode.querySelectorAll('div.item-sell-card');
+				} else if (addedNode.tagName === 'DIV' && addedNode.className === SHADOWPAY_SELECTORS.classes.inventoryWrapper) {
+					const items = addedNode.querySelectorAll(SHADOWPAY_SELECTORS.inventory.itemCard);
 					for (const item of items) {
 						await adjustItem(item, PageState.Inventory);
 					}
@@ -80,7 +84,7 @@ function getItemID(container: Element, state: PageState) {
 	if (state === PageState.Market) {
 		return container.getAttribute('href')?.split('/')[2]?.split('-')[0];
 	} else if (state === PageState.Inventory) {
-		return container.querySelector('img.img-lazy')?.getAttribute('src')?.split('/')[5];
+		return container.querySelector(SHADOWPAY_SELECTORS.inventory.itemImage)?.getAttribute('src')?.split('/')[5];
 	}
 }
 
@@ -118,9 +122,9 @@ async function addBuffPrice(item: Shadowpay.Item, container: Element, state: Pag
 
 	let footerContainer: HTMLElement | null = null;
 	if (state === PageState.Market) {
-		footerContainer = container.querySelector<HTMLElement>('div.item-buy-card__footer');
+		footerContainer = container.querySelector<HTMLElement>(SHADOWPAY_SELECTORS.market.footer);
 	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector<HTMLElement>('div.item-sell-card__container');
+		footerContainer = container.querySelector<HTMLElement>(SHADOWPAY_SELECTORS.inventory.container);
 	}
 
 	const isItemPage = state === PageState.ItemPage;
@@ -150,14 +154,14 @@ async function addBuffPrice(item: Shadowpay.Item, container: Element, state: Pag
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 
 		if (state === PageState.Market) {
-			footerContainer.querySelector('span.item-buy-card__steam-price')?.remove();
+			footerContainer.querySelector(SHADOWPAY_SELECTORS.market.steamPrice)?.remove();
 		} else if (state === PageState.Inventory) {
-			container.querySelector('div.item-sell-card__container')?.setAttribute('style', 'gap: 0px;');
+			container.querySelector(SHADOWPAY_SELECTORS.inventory.container)?.setAttribute('style', 'gap: 0px;');
 		}
 	}
 
-	const priceContainer = container.querySelector('div.item-buy-card__sell-price');
-	container.querySelector('div.item-buy-card__discount')?.remove();
+	const priceContainer = container.querySelector(SHADOWPAY_SELECTORS.market.priceContainer);
+	container.querySelector(SHADOWPAY_SELECTORS.market.discount)?.remove();
 
 	if (
 		priceContainer &&
