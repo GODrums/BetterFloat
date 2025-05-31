@@ -65,11 +65,11 @@ export function generatePriceLine({
 				${
 					showBothPrices
 						? html`
-							<span style="color: orange;"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
+							<span style="color: light-dark(darkorange, orange);"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
 							<span style="color: gray;${addSpaceBetweenPrices ? 'margin: 0 3px 0 3px;' : ''}">|</span>
-							<span style="color: greenyellow;"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
+							<span style="color: light-dark(forestgreen, greenyellow);"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
 					  `
-						: html` <span style="color: white;"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
+						: html` <span style="color: var(--primary-text-color, white);"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
 				}
 			</div>
 			${

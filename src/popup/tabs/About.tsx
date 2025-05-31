@@ -27,7 +27,7 @@ export const About = () => {
 								<Button
 									variant="outline"
 									className="w-32 h-16"
-									onClick={() => window.open('https://cs.money/market/buy/?utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=market&utm_content=link')}
+									onClick={() => window.open('https://cs.money/market/buy/?utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=regular&utm_content=link')}
 								>
 									<img src={ICON_CSMONEY_FULL} />
 								</Button>

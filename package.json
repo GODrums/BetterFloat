@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.1.25",
+	"version": "3.1.33",
 	"description": "Enhance your website experience on 9+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -46,7 +46,7 @@
 		"framer-motion": "^11.18.2",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
-		"plasmo": "0.90.3",
+		"plasmo": "0.90.5",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",

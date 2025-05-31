@@ -12,8 +12,8 @@ import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
-import CSFThemeToggle from '~lib/inline/CSFThemeToggle';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
+import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
@@ -74,9 +74,13 @@ export function dynamicUIHandler() {
 	// dmarket is a bit special and needs an additional listener
 	if (location.hostname === 'dmarket.com') {
 		createUrlListener(callHandleChange, 1500);
+	} else {
+		callHandleChange(new URL(location.href));
 	}
 
-	callHandleChange(new URL(location.href));
+	if (['skinport.com', 'csfloat.com', 'lis-skins.com', 'dmarket.com'].includes(location.hostname)) {
+		addMessageRelays();
+	}
 
 	setTimeout(showUpdatePopup, 3000);
 }
@@ -109,10 +113,6 @@ async function handleChange(state: Extension.URLState) {
 		await handleLisSkinsChange(state);
 	} else if (state.site === 'cs.money') {
 		await handleCSMoneyChange(state);
-	}
-
-	if (state.site === 'skinport.com' || state.site === 'csfloat.com' || state.site === 'lis-skins.com') {
-		addMessageRelays();
 	}
 }
 
@@ -200,19 +200,6 @@ async function handleCSFloatChange(state: Extension.URLState) {
 					}
 				}, 1000);
 			}
-		}
-	}
-
-	const csfShowThemeToggle = await getSetting<boolean>('csf-themetoggle');
-	if (csfShowThemeToggle && !document.querySelector('betterfloat-theme-toggle')) {
-		const { root } = await mountShadowRoot(<CSFThemeToggle />, {
-			tagName: 'betterfloat-theme-toggle',
-			parent: document.querySelector('.toolbar > .mat-mdc-menu-trigger'),
-			position: 'after',
-		});
-		if (Array.from(document.querySelectorAll('betterfloat-theme-toggle')).length > 1) {
-			root.unmount();
-			document.querySelector('betterfloat-theme-toggle')?.remove();
 		}
 	}
 
@@ -329,6 +316,13 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 	if (isItemPage && document.querySelector('div.skins-market-view')) {
 		await mountLisMarketComparison();
 	}
+}
+
+export async function mountDMarketMarketComparison(container: HTMLElement) {
+	const { root } = await mountShadowRoot(<DMMarketComparison />, {
+		tagName: 'betterfloat-dm-market-comparison',
+		parent: container,
+	});
 }
 
 async function mountLisMarketComparison() {

@@ -111,7 +111,7 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntry; currency
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" />
 						<span className="text-lg font-bold text-gray-200">{marketDetails.text}</span>
-						{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-400" />}
+						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-400" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />

@@ -77,7 +77,9 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		}
 
 		setSyncing(true);
-		setSyncCooldown(true);
+		if (!isDevMode) {
+			setSyncCooldown(true);
+		}
 
 		const steamUser = await getSteamLogin();
 		if (steamUser?.steamid) {

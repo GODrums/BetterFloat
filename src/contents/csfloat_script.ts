@@ -18,6 +18,12 @@ import {
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
+	ICON_EMERALD_1,
+	ICON_EMERALD_2,
+	ICON_EMERALD_3,
+	ICON_NOCTS_1,
+	ICON_NOCTS_2,
+	ICON_NOCTS_3,
 	ICON_OVERPRINT_ARROW,
 	ICON_OVERPRINT_FLOWER,
 	ICON_OVERPRINT_MIXED,
@@ -28,6 +34,12 @@ import {
 	ICON_PINK_GALAXY_3,
 	ICON_PRICEMPIRE,
 	ICON_PRICEMPIRE_APP,
+	ICON_RUBY_1,
+	ICON_RUBY_2,
+	ICON_RUBY_3,
+	ICON_SAPPHIRE_1,
+	ICON_SAPPHIRE_2,
+	ICON_SAPPHIRE_3,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
@@ -69,7 +81,7 @@ import {
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -92,7 +104,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csf-enable']) return;
 
@@ -714,6 +725,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (isMainItem) {
 				addQuickLinks(container, apiItem);
 				CSFloatHelpers.copyNameOnClick(container, apiItem.item);
+				addCollectionLink(container);
 			}
 			CSFloatHelpers.storeApiItem(container, apiItem);
 			await showBargainPrice(container, apiItem, popout);
@@ -792,12 +804,24 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 	}
 }
 
+function addCollectionLink(container: Element) {
+	const collectionLink = container.querySelector('div.collection');
+	if (collectionLink) {
+		const link = html`
+			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.toLowerCase()}" target="_blank">
+			 	${collectionLink.textContent}
+			</a>
+		`;
+		collectionLink.innerHTML = link;
+	}
+}
+
 async function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
 	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
 	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
 		const { userCurrency, currencyRate } = await getCurrencyRate();
 		const minBargainLabel = html`
-			<span class="betterfloat-minbargain-label" style="color: slategrey;">
+			<span class="betterfloat-minbargain-label" style="color: var(--subtext-color);">
 				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat(undefined, {
 					style: 'currency',
 					currency: userCurrency,
@@ -1003,13 +1027,74 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePhoenix(container, item);
 	} else if (item.item_name.includes('Overprint')) {
 		await badgeOverprint(container, item);
-	} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
-		await badgePinkGalaxy(container, item);
-	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
-		await badgeDiamondGem(container, item);
+	} else if (item.phase) {
+		if (item.phase === 'Ruby' || item.phase === 'Sapphire' || item.phase === 'Emerald') {
+			await badgeChromaGems(container, item);
+		} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
+			await badgePinkGalaxy(container, item);
+		} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
+			await badgeDiamondGem(container, item);
+		}
+	} else if (item.item_name.includes('Nocts')) {
+		await badgeNocts(container, item);
 	} else if (item.type === 'charm') {
 		badgeCharm(container, item);
 	}
+}
+
+async function badgeChromaGems(container: Element, item: CSFloat.Item) {
+	let gem_data: number | undefined;
+	if (item.item_name.includes('Karambit')) {
+		gem_data = KarambitGemMapping[item.paint_seed!];
+	} else if (item.item_name.includes('Butterfly Knife')) {
+		gem_data = ButterflyGemMapping[item.paint_seed!];
+	}
+	if (!gem_data) return;
+
+	const iconMapping = {
+		Sapphire: {
+			1: ICON_SAPPHIRE_1,
+			2: ICON_SAPPHIRE_2,
+			3: ICON_SAPPHIRE_3,
+		},
+		Ruby: {
+			1: ICON_RUBY_1,
+			2: ICON_RUBY_2,
+			3: ICON_RUBY_3,
+		},
+		Emerald: {
+			1: ICON_EMERALD_1,
+			2: ICON_EMERALD_2,
+			3: ICON_EMERALD_3,
+		},
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[item.phase as 'Sapphire' | 'Ruby' | 'Emerald'][gem_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Max ${item.phase}`, `Rank ${gem_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
+}
+
+async function badgeNocts(container: Element, item: CSFloat.Item) {
+	const nocts_data = NoctsMapping[item.paint_seed!];
+	if (!nocts_data) return;
+
+	const iconMapping = {
+		1: ICON_NOCTS_1,
+		2: ICON_NOCTS_2,
+		3: ICON_NOCTS_3,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[nocts_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Max Black', `Tier ${nocts_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
 }
 
 function badgeCharm(container: Element, item: CSFloat.Item) {
@@ -1259,7 +1344,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		for (let i = 0; i < headerValues.length; i++) {
 			const headerCell = document.createElement('th');
 			headerCell.setAttribute('role', 'columnheader');
-			const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
+			const headerCellStyle = `text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
 				i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
 			}`;
 			headerCell.setAttribute('style', headerCellStyle);
@@ -1271,7 +1356,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		linkHeaderCell.setAttribute('role', 'columnheader');
 		linkHeaderCell.setAttribute(
 			'style',
-			'text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
+			'text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
@@ -1312,7 +1397,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 
 	const listingAge = html`
 		<div class="betterfloat-listing-age hint--bottom hint--rounded hint--no-arrow" style="display: flex; align-items: flex-end;" aria-label="${new Date(listing.created_at).toLocaleString()}">
-			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: var(--subtext-color);">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
 	`;
@@ -1665,7 +1750,7 @@ async function addBuffPrice(
 								class="betterfloat-steamlink"
 								href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
 								target="_blank"
-								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
+								style="display: flex; align-items: center; gap: 4px; background: var(--highlight-background); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
 							>
 								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(percentage.gt(130) || percentage.lt(80) ? 0 : 1)}%</span>
 								<div>
@@ -1713,13 +1798,13 @@ async function addBuffPrice(
 		let backgroundColor: string;
 		let differenceSymbol: string;
 		if (difference.isNegative()) {
-			backgroundColor = extensionSettings['csf-color-profit'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
 			differenceSymbol = '-';
 		} else if (difference.isPos()) {
-			backgroundColor = extensionSettings['csf-color-loss'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
 			differenceSymbol = '+';
 		} else {
-			backgroundColor = extensionSettings['csf-color-neutral'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
 			differenceSymbol = '-';
 		}
 
