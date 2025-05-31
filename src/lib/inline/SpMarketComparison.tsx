@@ -358,12 +358,18 @@ const SpMarketComparison: React.FC = () => {
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
 						</div>
-						{liquidity && (
-							<div className="flex items-center justify-between">
-								<span>Liquidity:</span>
+						<div className="flex items-center justify-between">
+							<span>Liquidity:</span>
+							{liquidity !== null ? (
 								<span>{liquidity.toFixed(2)}%</span>
-							</div>
-						)}
+							) : (
+								<Badge variant="purple" className="text-white">
+									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+										Pro
+									</a>
+								</Badge>
+							)}
+						</div>
 					</div>
 					<ScrollArea className="w-full flex-1 [--border:227_100%_88%_/_0.07]" viewportClass="h-[825px]">
 						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}

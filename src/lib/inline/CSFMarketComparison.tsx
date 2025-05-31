@@ -352,12 +352,18 @@ const CSFMarketComparison: React.FC = () => {
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
 						</div>
-						{liquidity && (
-							<div className="flex items-center justify-between">
-								<span>Liquidity:</span>
+						<div className="flex items-center justify-between">
+							<span>Liquidity:</span>
+							{liquidity !== null ? (
 								<span>{liquidity.toFixed(2)}%</span>
-							</div>
-						)}
+							) : (
+								<Badge variant="purple" className="text-[--primary-text-color]">
+									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+										Pro
+									</a>
+								</Badge>
+							)}
+						</div>
 					</div>
 					<ScrollArea className="w-full flex-1 [--border:227_100%_88%_/_0.07]" viewportClass="h-[825px]">
 						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
@@ -373,7 +379,7 @@ const CSFMarketComparison: React.FC = () => {
 							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-[--primary-text-color]" />
-									<span className="text-base text-center text-[--primary-text-color]">Unlock 10+ more markets</span>
+									<span className="text-base text-center text-[--primary-text-color]">Unlock 10+ more markets and a liquidity tracker</span>
 									<Button variant="purple" size="sm" asChild>
 										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
 											Upgrade to Pro
