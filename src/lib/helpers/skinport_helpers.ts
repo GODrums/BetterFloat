@@ -9,10 +9,19 @@ import { getCharmColoring, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 // get the user's currency. needed for the websocket connection init.
-const userCurrency = async () => {
-	const response = await fetch('https://skinport.com/api/data/');
-	const data = await response.json();
-	return data.currency;
+const userCurrency = async (): Promise<string | null> => {
+	try {
+		const response = await fetch('https://skinport.com/api/data/');
+		if (!response.ok) {
+			console.warn('[BetterFloat] Failed to fetch user currency:', response.status);
+			return null;
+		}
+		const data = await response.json();
+		return data.currency || null;
+	} catch (error) {
+		console.error('[BetterFloat] Error fetching user currency:', error);
+		return null;
+	}
 };
 
 export function startSkinportSocket() {
