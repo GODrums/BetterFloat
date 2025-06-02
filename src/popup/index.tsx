@@ -2,7 +2,7 @@ import '~style.css';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
-import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SKINBARON, ICON_SKINPORT } from '~lib/util/globals';
+import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SHADOWPAY, ICON_SKINBARON, ICON_SKINPORT } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
 import { SparklesCore } from '~popup/components/Sparkles';
@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
+import { ShadowpaySettings } from './tabs/Shadowpay';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
@@ -86,6 +87,9 @@ export default function IndexPopup() {
 							<TabsTrigger value="skinbaron">
 								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
 							</TabsTrigger>
+							<TabsTrigger value="shadowpay">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
+							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
 						<div className="w-full flex flex-col items-stretch justify-center">
@@ -113,6 +117,7 @@ export default function IndexPopup() {
 					<BitskinsSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
+					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>
