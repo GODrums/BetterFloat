@@ -8,7 +8,6 @@ export function addScript() {
 	function xmlHttpRequestIntercept() {
 		// Check if we've already intercepted XMLHttpRequest
 		if ((window as any).__BetterFloat_XMLHttpRequest_Intercepted) {
-			console.log('[BetterFloat] XMLHttpRequest already intercepted, skipping...');
 			return;
 		}
 
@@ -86,7 +85,6 @@ export function addScript() {
 	function fetchIntercept() {
 		// Check if we've already intercepted fetch
 		if ((window as any).__BetterFloat_Fetch_Intercepted) {
-			console.log('[BetterFloat] Fetch already intercepted, skipping...');
 			return;
 		}
 
