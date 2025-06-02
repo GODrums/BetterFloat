@@ -1,0 +1,76 @@
+[class*="hint--"][aria-label]:after {
+	font-family: Inter, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+	color: #bbb9c7;
+}
+.betterfloat-buffprice {
+	margin-left: 2px;
+	padding-top: 1px;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: .02em;
+}
+
+.betterfloat-big-price {
+	font-size: 15px;
+}
+
+.betterfloat-sale-tag {
+	font-size: 11px;
+	font-style: normal;
+	font-weight: 525;
+	line-height: 17px;
+	letter-spacing: -.005em;
+	text-wrap: nowrap;
+	display: flex;
+	flex-direction: column;
+	padding: 1px 3px;
+	border-radius: 4px;
+}
+
+.betterfloat-big-tag {
+	flex-direction: row;
+	font-size: 15px;
+	padding: 5px 8px;
+	gap: 4px;
+}
+
+.betterfloat-sale-tag span {
+	vertical-align: middle;
+}
+
+.betterfloat-buff-a {
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	flex-direction: row;
+	text-decoration: none;
+	position: absolute;
+	left: 0;
+	z-index: 100;
+	padding: 0 12px;
+}
+
+.betterfloat-big-a {
+	margin-top: 5px;
+	gap: 4px;
+}
+
+.betterfloat-similar-a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 4px;
+	background-color: #47435c;
+	border-radius: 4px;
+	font-size: var(--frontly-label-sm-font-size);
+	font-weight: var(--frontly-label-sm-font-weight);
+	line-height: var(--frontly-label-sm-line-height);
+	letter-spacing: var(--frontly-label-sm-letter-spacing);
+	height: 38px;
+}
+
+.betterfloat-similar-a:hover {
+	background-color: #77709b;
+}
