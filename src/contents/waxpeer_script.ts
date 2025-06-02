@@ -8,7 +8,7 @@ import { getSpecificWaxpeerItem } from '~lib/handlers/cache/waxpeer_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -113,6 +113,7 @@ async function adjustItem(container: Element, state: PageState) {
 	// const name = item?.name ?? container.querySelector('a.hidden')?.textContent;
 	// if (!name) return;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(item, container, state);
 }
 
