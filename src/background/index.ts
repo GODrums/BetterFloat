@@ -6,10 +6,6 @@ import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
 import { INJECTION_DOMAINS, executeInjection } from './scripting/injectionhandler';
 
-// Supported trading sites for script injection
-// These correspond to the INJECTION_DOMAINS in injectionhandler.ts
-const SUPPORTED_TRADING_SITES = ['csfloat.com', 'skinport.com', 'skinbid.com', 'buff.market', 'cs.money', 'dmarket.com', 'skinbaron.de', 'bitskins.com'];
-
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
 	if (details.reason === 'install') {
