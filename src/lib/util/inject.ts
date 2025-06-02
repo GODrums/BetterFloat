@@ -6,6 +6,12 @@ export function addScript() {
 	 * Older frameworks and libraries use XMLHttpRequests to fetch data.
 	 */
 	function xmlHttpRequestIntercept() {
+		// Check if we've already intercepted XMLHttpRequest
+		if ((window as any).__BetterFloat_XMLHttpRequest_Intercepted) {
+			console.log('[BetterFloat] XMLHttpRequest already intercepted, skipping...');
+			return;
+		}
+
 		const open = window.XMLHttpRequest.prototype.open;
 		console.log('[BetterFloat] Activating HttpRequest Intercept...');
 
@@ -68,6 +74,9 @@ export function addScript() {
 
 			return open.apply(this, arguments);
 		};
+
+		// Mark as intercepted
+		(window as any).__BetterFloat_XMLHttpRequest_Intercepted = true;
 	}
 
 	/**
@@ -75,6 +84,12 @@ export function addScript() {
 	 * so we need to intercept fetch requests as well.
 	 */
 	function fetchIntercept() {
+		// Check if we've already intercepted fetch
+		if ((window as any).__BetterFloat_Fetch_Intercepted) {
+			console.log('[BetterFloat] Fetch already intercepted, skipping...');
+			return;
+		}
+
 		const originalFetch = window.fetch;
 		console.log('[BetterFloat] Activating Fetch Intercept...');
 
@@ -110,6 +125,9 @@ export function addScript() {
 
 			return response;
 		};
+
+		// Mark as intercepted
+		(window as any).__BetterFloat_Fetch_Intercepted = true;
 	}
 
 	xmlHttpRequestIntercept();
