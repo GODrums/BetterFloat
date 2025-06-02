@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CSFloat } from '~lib/@typings/FloatTypes';
+import type { DMarket } from '~lib/@typings/DMarketTypes';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { ScrollArea } from '~popup/ui/scroll-area';
 
@@ -7,9 +7,11 @@ import betterfloatLogo from 'data-base64:/assets/icon.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
 import { AnimatePresence } from 'framer-motion';
+import type { DopplerPhase } from '~lib/@typings/FloatTypes';
+import { getDMarketCurrency } from '~lib/handlers/cache/dmarket_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getMarketURL, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -77,10 +79,6 @@ const ActivityPing: React.FC<{ activity: number }> = ({ activity }) => {
 	);
 };
 
-function isBannedOnBuff(item: CSFloat.Item) {
-	return item.type === 'container';
-}
-
 const convertStylesStringToObject = (stringStyles: string) =>
 	typeof stringStyles === 'string'
 		? stringStyles.split(';').reduce((acc, style) => {
@@ -103,60 +101,89 @@ const convertStylesStringToObject = (stringStyles: string) =>
 			}, {})
 		: {};
 
-const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; currency: string }> = ({ listing, entry, currency }) => {
-	const item = listing.item;
+const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntry; currency: string }> = ({ item, entry, currency }) => {
+	const itemPrice = new Decimal(item.price.USD).div(100);
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
-	const priceDifference = entry.ask ? new Decimal(listing.price).minus(entry.ask) : null;
-	const pricePercentage = entry.ask ? new Decimal(listing.price).div(entry.ask).mul(100).minus(100) : null;
+	const priceDifference = entry.ask ? itemPrice.minus(entry.ask) : null;
+	const pricePercentage = entry.ask ? itemPrice.div(entry.ask).mul(100).minus(100) : null;
 
 	if (!marketDetails) {
 		return <span className="text-red-500">Unknown market: {entry.market}</span>;
 	}
 
-	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).div(100).toNumber());
+	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).toNumber());
 
 	const getHref = () => {
-		const market_id = getMarketID(item.market_hash_name, marketDetails.source);
-		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name: item.market_hash_name, phase: item.phase });
+		const buff_name = handleSpecialStickerNames(item.title);
+		const market_id = getMarketID(buff_name, marketDetails.source);
+		let phase: DopplerPhase | undefined;
+		if (item.extra.phase) {
+			switch (item.extra.phase) {
+				case 'phase-1':
+					phase = 'Phase 1';
+					break;
+				case 'phase-2':
+					phase = 'Phase 2';
+					break;
+				case 'phase-3':
+					phase = 'Phase 3';
+					break;
+				case 'phase-4':
+					phase = 'Phase 4';
+					break;
+				case 'ruby':
+					phase = 'Ruby';
+					break;
+				case 'sapphire':
+					phase = 'Sapphire';
+					break;
+				case 'emerald':
+					phase = 'Emerald';
+					break;
+				case 'black-pearl':
+					phase = 'Black Pearl';
+					break;
+			}
+		}
+		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name, phase });
 		return href;
 	};
 
 	return (
-		<div className="w-[210px] text-[--subtext-color] my-2 bg-[--highlight-background-minimal] rounded-md">
+		<div className="w-[210px] text-[--ex-color-primary] my-2 bg-[--ex-mat-button-background] rounded-md">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
-						<span className="text-lg font-bold text-[--primary-text-color]">{marketDetails.text}</span>
+						<span className="text-lg font-semibold text-[--ex-color-primary]">{marketDetails.text}</span>
 						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />
-						<span className="text-sm">
+						<span className="text-xs">
 							{entry.count} item{entry.count !== 1 ? 's' : ''} in stock
 						</span>
-						{/* <span className="text-sm">{entry.updated}</span> */}
 					</div>
 				</div>
-				<a className="border-t border-border hover:bg-[--highlight-background-heavy]" href={getHref()} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={getHref()} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
-							<div className="flex items-center justify-between">
+							<div className="flex items-center justify-between text-sm">
 								<span className="text-[--subtext-color]">Buy Order</span>
 								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
-						<div className="flex items-center justify-between">
-							<span className="text-[--primary-text-color]">Lowest</span>
+						<div className="flex items-center justify-between text-sm">
+							<span className="text-[--ex-color-primary]">Lowest</span>
 							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
 							</span>
 						</div>
 						{priceDifference && pricePercentage && (
 							<div className="flex items-center justify-center mt-1">
-								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-[--highlight-background-minimal] font-semibold">
+								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-[--ex-bg-color--100] font-semibold">
 									{priceDifference.isPositive() ? <CirclePlus /> : <CircleMinus />}
 									<span>{formatCurrency(priceDifference.abs().toNumber())}</span>
 									<span>({pricePercentage.add(100).toDP(2).toNumber()}%)</span>
@@ -170,17 +197,17 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntry; c
 	);
 };
 
-const CSFMarketComparison: React.FC = () => {
+const DMMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-	const [listing, setListing] = useState<CSFloat.ListingData | null>(null);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
-	const [currency, setCurrency] = useState('USD');
-	const [currencyRates, setCurrencyRates] = useState<{ [key: string]: number }>({});
+	const [buffData, setBuffData] = useState<any>(null);
+	const [item, setItemData] = useState<any>(null);
+	const [currency, setCurrency] = useState<string | null>(null);
 
 	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
-		'csf-visible-markets',
+		'dm-visible-markets',
 		AvailableMarketSources.map((m) => m.source)
 	);
 	const [user] = useStorage<SettingsUser>('user');
@@ -188,30 +215,27 @@ const CSFMarketComparison: React.FC = () => {
 	const ref = useRef(null);
 
 	const fetchMarketData = async () => {
-		const item = listing?.item;
-		if (!item) {
+		if (!buffData) {
 			console.error('No item data found');
 			return;
 		}
 
-		let buff_name = item.market_hash_name;
-		if (item.phase) {
-			buff_name += ` - ${item.phase}`;
-		}
+		const buff_name = buffData.buff_name;
+
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
 			let convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
-					ask: entry.ask ? entry.ask * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
-					bid: entry.bid ? entry.bid * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
+					ask: entry.ask ? new Decimal(entry.ask).div(100).toNumber() : undefined,
+					bid: entry.bid ? new Decimal(entry.bid).div(100).toNumber() : undefined,
 					count: entry.count || 0,
 					updated: entry.updated || 0,
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
 
-			if (isBannedOnBuff(listing?.item)) {
+			if (isBuffBannedItem(buff_name)) {
 				convertedData = convertedData.filter((entry) => entry.market !== MarketSource.Buff);
 			}
 
@@ -230,44 +254,8 @@ const CSFMarketComparison: React.FC = () => {
 		}
 	};
 
-	const initData = async () => {
-		const localCurrency = localStorage.getItem('selected_currency') || 'USD';
-		setCurrency(localCurrency);
-		const currencyRates = JSON.parse(localStorage.getItem('currency_rates') || '{"usd": 1}');
-		setCurrencyRates(currencyRates);
-
-		const itemId = location.pathname.split('/').pop();
-		let itemContainer = document.querySelector(`.item-${itemId}`);
-
-		// wait for the init item enhancements to be loaded
-		let attempts = 0;
-		while (!itemContainer && attempts-- < 10) {
-			await new Promise((resolve) => setTimeout(resolve, 200));
-			itemContainer = document.querySelector(`.item-${itemId}`);
-		}
-
-		let betterfloatData = itemContainer?.getAttribute('data-betterfloat');
-		while (!betterfloatData) {
-			await new Promise((resolve) => setTimeout(resolve, 200));
-			betterfloatData = itemContainer?.getAttribute('data-betterfloat');
-		}
-		if (betterfloatData) {
-			setListing(JSON.parse(betterfloatData));
-		}
-	};
 	useEffect(() => {
-		document.documentElement.style.height = '100%';
-		document.body.style.height = '100%';
-	}, []);
-
-	useEffect(() => {
-		if (user) {
-			initData();
-		}
-	}, [user]);
-
-	useEffect(() => {
-		if (listing && marketData.length === 0) {
+		if (user && item && buffData) {
 			fetchMarketData()
 				.catch((error) => {
 					console.error('Error fetching market data:', error);
@@ -276,7 +264,18 @@ const CSFMarketComparison: React.FC = () => {
 					setIsLoading(false);
 				});
 		}
-	}, [listing]);
+	}, [user, buffData, item]);
+
+	useEffect(() => {
+		if (document.querySelector('.betterfloat-big-a')) {
+			setBuffData(JSON.parse(document.querySelector('.betterfloat-big-a')?.getAttribute('data-betterfloat') ?? '{}'));
+		}
+		if (document.querySelector('asset-description-layout')) {
+			setItemData(JSON.parse(document.querySelector('asset-description-layout')?.getAttribute('data-betterfloat') ?? '{}'));
+		}
+		const c = getDMarketCurrency();
+		setCurrency(c);
+	}, []);
 
 	const toggleMarket = (market: string) => {
 		setVisibleMarkets((prev) => {
@@ -292,21 +291,21 @@ const CSFMarketComparison: React.FC = () => {
 	const filteredMarketData = marketData.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
-		<div className="dark w-[210px] max-h-[60vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
+		<div className="bg-[--ex-bg-color--400] w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
-					<LoadingSpinner className="size-10 text-[--primary-text-color]" />
+					<LoadingSpinner className="size-10 text-[--ex-color-primary]" />
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
-					<div className="w-full bg-[--highlight-background-minimal] rounded-md py-2 flex flex-col items-center gap-1">
+					<div className="w-full bg-[--ex-mat-button-background] rounded-md py-2 flex flex-col items-center gap-1">
 						<div className="flex justify-center items-center gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-[--primary-text-color] font-bold">Market Comparison</span>
+							<span className="text-[--ex-color-primary] font-semibold">Market Comparison</span>
 						</div>
 						<div className="flex justify-center items-center gap-2">
 							<Button
-								className="h-9 gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background-heavy] text-[--primary-text-color]"
+								className="h-9 gap-2 bg-[--ex-bg-color--100] hover:bg-[--ex-mat-button-background-hover] text-[--ex-color-primary]"
 								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
 							>
 								<Settings className="h-6 w-6" />
@@ -316,14 +315,14 @@ const CSFMarketComparison: React.FC = () => {
 					</div>
 					<AnimatePresence>
 						{isSettingsOpen && (
-							<div ref={ref} className="w-full bg-[--highlight-background-minimal] rounded-md p-4 flex flex-col items-center gap-1">
+							<div ref={ref} className="w-full bg-[--ex-mat-button-background] rounded-md p-4 flex flex-col items-center gap-1">
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-bold text-lg text-[--primary-text-color]">Settings</div>
-									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-neutral-500/70" onClick={() => setIsSettingsOpen(false)}>
+									<div className="font-semibold text-lg text-[--ex-color-primary]">Settings</div>
+									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-[--ex-mat-button-background-hover]" onClick={() => setIsSettingsOpen(false)}>
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
 								</div>
-								<div className="w-full space-y-3 text-[--subtext-color]">
+								<div className="w-full space-y-3 text-[--ex-color-primary]">
 									{AvailableMarketSources.map((market) => (
 										<div key={market.source} className="flex justify-between items-center space-x-2">
 											<div className="flex items-center space-x-2">
@@ -336,7 +335,7 @@ const CSFMarketComparison: React.FC = () => {
 												</div>
 											</div>
 											{!FreeMarkets.includes(market.source) && (
-												<Badge variant="purple" className="text-[--primary-text-color]">
+												<Badge variant="purple" className="text-white">
 													Pro
 												</Badge>
 											)}
@@ -347,39 +346,35 @@ const CSFMarketComparison: React.FC = () => {
 						)}
 					</AnimatePresence>
 
-					<div className="flex flex-col justify-center gap-1 p-4 bg-[--highlight-background-minimal] text-[--subtext-color] text-sm rounded-md">
+					<div className="flex flex-col justify-center gap-1 p-4 bg-[--ex-mat-button-background] text-[--ex-color-primary] text-sm rounded-md">
 						<div className="flex items-center justify-between">
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
 						</div>
-						<div className="flex items-center justify-between">
-							<span>Liquidity:</span>
-							{liquidity !== null ? (
+						{liquidity && (
+							<div className="flex items-center justify-between">
+								<span>Liquidity:</span>
 								<span>{liquidity.toFixed(2)}%</span>
-							) : (
-								<Badge variant="purple" className="text-[--primary-text-color]">
-									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-										Pro
-									</a>
-								</Badge>
-							)}
-						</div>
+							</div>
+						)}
 					</div>
-					<ScrollArea className="w-full flex-1 [--border:227_100%_88%_/_0.07]" viewportClass="h-[825px]">
-						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
+					<ScrollArea className="w-full flex-1" viewportClass="max-h-[625px]">
+						{filteredMarketData.map((dataEntry) => (
+							<MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />
+						))}
 						{filteredMarketData.length === 0 && (
-							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
+							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<BanIcon className="size-8 text-[--primary-text-color]" />
-									<span className="text-base text-center text-[--primary-text-color]">No listings found</span>
+									<BanIcon className="size-8 text-white" />
+									<span className="text-base text-center text-white">No listings found</span>
 								</div>
 							</div>
 						)}
 						{user?.plan.type !== 'pro' && (
-							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
+							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<LockKeyhole className="h-8 w-8 text-[--primary-text-color]" />
-									<span className="text-base text-center text-[--primary-text-color]">Unlock 10+ more markets and a liquidity tracker</span>
+									<LockKeyhole className="h-8 w-8 text-white" />
+									<span className="text-base text-center text-white">Unlock 10+ more markets</span>
 									<Button variant="purple" size="sm" asChild>
 										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
 											Upgrade to Pro
@@ -395,4 +390,4 @@ const CSFMarketComparison: React.FC = () => {
 	);
 };
 
-export default CSFMarketComparison;
+export default DMMarketComparison;

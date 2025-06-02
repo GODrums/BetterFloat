@@ -9530,7 +9530,8 @@
   },
   "Negev | Anodized Navy (Minimal Wear)": {
     "buff": 35738,
-    "c5": "1706564409908469762"
+    "c5": "1706564409908469762",
+    "uu": 111476
   },
   "Negev | Army Sheen (Factory New)": {
     "buff": 35739,
@@ -20461,7 +20462,8 @@
   },
   "Souvenir P90 | Teardown (Battle-Scarred)": {
     "buff": 37932,
-    "c5": -1
+    "c5": -1,
+    "uu": 111480
   },
   "Souvenir P90 | Teardown (Factory New)": {
     "buff": 37933,
@@ -80909,7 +80911,8 @@
   },
   "Souvenir M4A1-S | Nitro (Well-Worn)": {
     "buff": 777176,
-    "c5": -1
+    "c5": -1,
+    "uu": 111471
   },
   "★ Paracord Knife | Boreal Forest (Factory New)": {
     "buff": 777177,
@@ -90440,7 +90443,8 @@
   },
   "★ StatTrak™ Skeleton Knife | Safari Mesh (Factory New)": {
     "buff": 869088,
-    "c5": -1
+    "c5": -1,
+    "uu": 111478
   },
   "Sticker | Speedy T": {
     "buff": 869866,
@@ -108752,7 +108756,8 @@
   },
   "★ StatTrak™ Talon Knife | Night Stripe (Factory New)": {
     "buff": 915641,
-    "c5": -1
+    "c5": -1,
+    "uu": 111477
   },
   "Revolution Case": {
     "buff": 921379,
@@ -130897,7 +130902,7 @@
   },
   "★ Skeleton Knife | Ultraviolet (Factory New)": {
     "buff": 1116340,
-    "uu": 0,
+    "uu": 111458,
     "c5": 0
   },
   "★ Nomad Knife | Rust Coat (Well-Worn)": {
@@ -130912,7 +130917,7 @@
   },
   "★ Paracord Knife | Damascus Steel (Battle-Scarred)": {
     "buff": 1116343,
-    "uu": 0,
+    "uu": 111447,
     "c5": 0
   },
   "★ StatTrak™ Skeleton Knife | Damascus Steel (Factory New)": {
@@ -130952,17 +130957,5296 @@
   },
   "★ StatTrak™ Skeleton Knife | Damascus Steel (Battle-Scarred)": {
     "buff": 1116357,
-    "uu": 0,
+    "uu": 111460,
     "c5": 0
   },
   "★ StatTrak™ Paracord Knife | Damascus Steel (Well-Worn)": {
     "buff": 1116359,
-    "uu": 0,
+    "uu": 111459,
     "c5": 0
   },
   "★ StatTrak™ Paracord Knife | Damascus Steel (Factory New)": {
     "buff": 1116360,
     "uu": 111376,
     "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116361,
+    "uu": 111450,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Damascus Steel (Factory New)": {
+    "buff": 1116362,
+    "uu": 111448,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116363,
+    "uu": 111430,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Ultraviolet (Battle-Scarred)": {
+    "buff": 1116364,
+    "uu": 111452,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116365,
+    "uu": 111438,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116366,
+    "uu": 111449,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116367,
+    "uu": 111457,
+    "c5": 0
+  },
+  "★ Survival Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116368,
+    "uu": 111413,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Ultraviolet (Minimal Wear)": {
+    "buff": 1116370,
+    "uu": 111324,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116371,
+    "uu": 111451,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116373,
+    "uu": 111453,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Doppler (Minimal Wear)": {
+    "buff": 1116375,
+    "uu": 111456,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116379,
+    "uu": 111463,
+    "c5": 0
+  },
+  "★ Nomad Knife | Ultraviolet (Factory New)": {
+    "buff": 1116380,
+    "uu": 111464,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Damascus Steel (Minimal Wear)": {
+    "buff": 1116381,
+    "uu": 111455,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Doppler (Minimal Wear)": {
+    "buff": 1116383,
+    "uu": 111444,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116386,
+    "uu": 111461,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Ultraviolet (Well-Worn)": {
+    "buff": 1116399,
+    "uu": 111446,
+    "c5": 0
+  },
+  "★ Survival Knife | Ultraviolet (Factory New)": {
+    "buff": 1116401,
+    "uu": 111472,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116402,
+    "uu": 111462,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116405,
+    "uu": 111454,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Damascus Steel (Well-Worn)": {
+    "buff": 1116411,
+    "uu": 111469,
+    "c5": 0
+  },
+  "★ StatTrak™ Skeleton Knife | Ultraviolet (Factory New)": {
+    "buff": 1116412,
+    "uu": 111466,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Marble Fade (Minimal Wear)": {
+    "buff": 1116414,
+    "uu": 111465,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Rust Coat (Well-Worn)": {
+    "buff": 1116417,
+    "uu": 111468,
+    "c5": 0
+  },
+  "★ StatTrak™ Nomad Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116421,
+    "uu": 111470,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Damascus Steel (Battle-Scarred)": {
+    "buff": 1116436,
+    "uu": 111473,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116494,
+    "uu": 111475,
+    "c5": 0
+  },
+  "★ StatTrak™ Survival Knife | Ultraviolet (Factory New)": {
+    "buff": 1116496,
+    "uu": 0,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Tiger Tooth (Minimal Wear)": {
+    "buff": 1116525,
+    "uu": 111467,
+    "c5": 0
+  },
+  "★ StatTrak™ Paracord Knife | Ultraviolet (Factory New)": {
+    "buff": 1116527,
+    "uu": 0,
+    "c5": 0
+  },
+  "Sticker | woxic (Gold) | Austin 2025": {
+    "buff": 1116646,
+    "uu": 111737,
+    "c5": 0,
+    "buff_sticker": 129745
+  },
+  "Sticker | 910 | Austin 2025": {
+    "buff": 1116647,
+    "uu": 111565,
+    "c5": 0,
+    "buff_sticker": 129746
+  },
+  "Sticker | chopper | Austin 2025": {
+    "buff": 1116648,
+    "uu": 111519,
+    "c5": 0,
+    "buff_sticker": 129747
+  },
+  "Sticker | zont1x | Austin 2025": {
+    "buff": 1116649,
+    "uu": 111511,
+    "c5": 0,
+    "buff_sticker": 129748
+  },
+  "Sticker | Heavygod | Austin 2025": {
+    "buff": 1116650,
+    "uu": 111484,
+    "c5": 0,
+    "buff_sticker": 129749
+  },
+  "Sticker | saadzin (Holo) | Austin 2025": {
+    "buff": 1116651,
+    "uu": 112108,
+    "c5": 0,
+    "buff_sticker": 129750
+  },
+  "Sticker | HexT | Austin 2025": {
+    "buff": 1116652,
+    "uu": 111867,
+    "c5": 0,
+    "buff_sticker": 129751
+  },
+  "Sticker | JT (Holo) | Austin 2025": {
+    "buff": 1116653,
+    "uu": 112169,
+    "c5": 0,
+    "buff_sticker": 129752
+  },
+  "Sticker | HexT (Foil) | Austin 2025": {
+    "buff": 1116654,
+    "uu": 111798,
+    "c5": 0,
+    "buff_sticker": 129753
+  },
+  "Sticker | Grim (Foil) | Austin 2025": {
+    "buff": 1116657,
+    "uu": 111864,
+    "c5": 0,
+    "buff_sticker": 129754
+  },
+  "Sticker | westmelon | Austin 2025": {
+    "buff": 1116658,
+    "uu": 111747,
+    "c5": 0,
+    "buff_sticker": 129755
+  },
+  "Sticker | vexite | Austin 2025": {
+    "buff": 1116660,
+    "uu": 111702,
+    "c5": 0,
+    "buff_sticker": 129756
+  },
+  "Sticker | Sonic | Austin 2025": {
+    "buff": 1116661,
+    "uu": 111744,
+    "c5": 0,
+    "buff_sticker": 129757
+  },
+  "Sticker | yxngstxr (Foil) | Austin 2025": {
+    "buff": 1116662,
+    "uu": 111752,
+    "c5": 0,
+    "buff_sticker": 129758
+  },
+  "Sticker | Liazz | Austin 2025": {
+    "buff": 1116663,
+    "uu": 111707,
+    "c5": 0,
+    "buff_sticker": 129759
+  },
+  "Sticker | woxic | Austin 2025": {
+    "buff": 1116670,
+    "uu": 111486,
+    "c5": 0,
+    "buff_sticker": 129760
+  },
+  "Sticker | malbsMd | Austin 2025": {
+    "buff": 1116671,
+    "uu": 111585,
+    "c5": 0,
+    "buff_sticker": 129761
+  },
+  "Sticker | TYLOO | Austin 2025": {
+    "buff": 1116672,
+    "uu": 111622,
+    "c5": 0,
+    "buff_sticker": 129762
+  },
+  "Sticker | NRG | Austin 2025": {
+    "buff": 1116673,
+    "uu": 111594,
+    "c5": 0,
+    "buff_sticker": 129763
+  },
+  "Sticker | Legacy | Austin 2025": {
+    "buff": 1116674,
+    "uu": 111597,
+    "c5": 0,
+    "buff_sticker": 129764
+  },
+  "Sticker | Nemiga (Foil) | Austin 2025": {
+    "buff": 1116675,
+    "uu": 111855,
+    "c5": 0,
+    "buff_sticker": 129765
+  },
+  "Sticker | OG (Foil) | Austin 2025": {
+    "buff": 1116676,
+    "uu": 111623,
+    "c5": 0,
+    "buff_sticker": 129766
+  },
+  "Sticker | Metizport (Foil) | Austin 2025": {
+    "buff": 1116677,
+    "uu": 111823,
+    "c5": 0,
+    "buff_sticker": 129767
+  },
+  "Sticker | Fluxo | Austin 2025": {
+    "buff": 1116679,
+    "uu": 111627,
+    "c5": 0,
+    "buff_sticker": 129768
+  },
+  "Sticker | BLAST.tv | Austin 2025": {
+    "buff": 1116680,
+    "uu": 111483,
+    "c5": 0,
+    "buff_sticker": 129769
+  },
+  "Sticker | B8 (Foil) | Austin 2025": {
+    "buff": 1116681,
+    "uu": 111863,
+    "c5": 0,
+    "buff_sticker": 129770
+  },
+  "Sticker | Legacy (Foil) | Austin 2025": {
+    "buff": 1116682,
+    "uu": 111592,
+    "c5": 0,
+    "buff_sticker": 129771
+  },
+  "Sticker | Legacy (Holo) | Austin 2025": {
+    "buff": 1116684,
+    "uu": 112067,
+    "c5": 0,
+    "buff_sticker": 129772
+  },
+  "Sticker | Chinggis Warriors | Austin 2025": {
+    "buff": 1116686,
+    "uu": 111591,
+    "c5": 0,
+    "buff_sticker": 129773
+  },
+  "Sticker | FlyQuest | Austin 2025": {
+    "buff": 1116687,
+    "uu": 111501,
+    "c5": 0,
+    "buff_sticker": 129774
+  },
+  "Austin 2025 Contenders Sticker Capsule": {
+    "buff": 1116688,
+    "uu": 111551,
+    "c5": 0
+  },
+  "Sticker | HEROIC | Austin 2025": {
+    "buff": 1116693,
+    "uu": 111766,
+    "c5": 0,
+    "buff_sticker": 129775
+  },
+  "Sticker | FL4MUS | Austin 2025": {
+    "buff": 1116700,
+    "uu": 111650,
+    "c5": 0,
+    "buff_sticker": 129776
+  },
+  "Sticker | hades (Foil) | Austin 2025": {
+    "buff": 1116701,
+    "uu": 111593,
+    "c5": 0,
+    "buff_sticker": 129777
+  },
+  "Sticker | Swisher | Austin 2025": {
+    "buff": 1116702,
+    "uu": 111636,
+    "c5": 0,
+    "buff_sticker": 129778
+  },
+  "Sticker | rain (Foil) | Austin 2025": {
+    "buff": 1116703,
+    "uu": 111880,
+    "c5": 0,
+    "buff_sticker": 129779
+  },
+  "Sticker | fame | Austin 2025": {
+    "buff": 1116704,
+    "uu": 111749,
+    "c5": 0,
+    "buff_sticker": 129780
+  },
+  "Sticker | NRG (Holo) | Austin 2025": {
+    "buff": 1116705,
+    "uu": 112186,
+    "c5": 0,
+    "buff_sticker": 129781
+  },
+  "Sticker | Iron Warriors 2": {
+    "buff": 1116706,
+    "uu": 111502,
+    "c5": 0,
+    "buff_sticker": 129782
+  },
+  "Sticker | Night Lords 1": {
+    "buff": 1116707,
+    "uu": 111878,
+    "c5": 0,
+    "buff_sticker": 129783
+  },
+  "Sticker | Lynn Vision | Austin 2025": {
+    "buff": 1116708,
+    "uu": 111499,
+    "c5": 0,
+    "buff_sticker": 129784
+  },
+  "Sticker | OG | Austin 2025": {
+    "buff": 1116709,
+    "uu": 111615,
+    "c5": 0,
+    "buff_sticker": 129785
+  },
+  "Sticker | b1t (Foil) | Austin 2025": {
+    "buff": 1116710,
+    "uu": 111601,
+    "c5": 0,
+    "buff_sticker": 129786
+  },
+  "Sticker | Aleksib (Foil) | Austin 2025": {
+    "buff": 1116711,
+    "uu": 111836,
+    "c5": 0,
+    "buff_sticker": 129787
+  },
+  "Sticker | Metizport | Austin 2025": {
+    "buff": 1116714,
+    "uu": 111619,
+    "c5": 0,
+    "buff_sticker": 129788
+  },
+  "Sticker | Complexity Gaming | Austin 2025": {
+    "buff": 1116715,
+    "uu": 111618,
+    "c5": 0,
+    "buff_sticker": 129789
+  },
+  "Sticker | B8 | Austin 2025": {
+    "buff": 1116716,
+    "uu": 111596,
+    "c5": 0,
+    "buff_sticker": 129790
+  },
+  "Sticker | Alpha Legion 2": {
+    "buff": 1116718,
+    "uu": 111497,
+    "c5": 0,
+    "buff_sticker": 129791
+  },
+  "Sticker | Jimpphat | Austin 2025": {
+    "buff": 1116725,
+    "uu": 111543,
+    "c5": 0,
+    "buff_sticker": 129792
+  },
+  "Sticker | huNter- | Austin 2025": {
+    "buff": 1116726,
+    "uu": 111553,
+    "c5": 0,
+    "buff_sticker": 129793
+  },
+  "Sticker | mzinho | Austin 2025": {
+    "buff": 1116727,
+    "uu": 111600,
+    "c5": 0,
+    "buff_sticker": 129794
+  },
+  "Sticker | Senzu | Austin 2025": {
+    "buff": 1116728,
+    "uu": 111530,
+    "c5": 0,
+    "buff_sticker": 129795
+  },
+  "Sticker | b1t | Austin 2025": {
+    "buff": 1116729,
+    "uu": 111582,
+    "c5": 0,
+    "buff_sticker": 129796
+  },
+  "Sticker | sh1ro | Austin 2025": {
+    "buff": 1116730,
+    "uu": 111576,
+    "c5": 0,
+    "buff_sticker": 129797
+  },
+  "Sticker | npl | Austin 2025": {
+    "buff": 1116731,
+    "uu": 111524,
+    "c5": 0,
+    "buff_sticker": 129798
+  },
+  "Sticker | z4KR | Austin 2025": {
+    "buff": 1116732,
+    "uu": 111641,
+    "c5": 0,
+    "buff_sticker": 129799
+  },
+  "Sticker | Plopski | Austin 2025": {
+    "buff": 1116733,
+    "uu": 111694,
+    "c5": 0,
+    "buff_sticker": 129800
+  },
+  "Sticker | G2 Esports | Austin 2025": {
+    "buff": 1116734,
+    "uu": 111682,
+    "c5": 0,
+    "buff_sticker": 129801
+  },
+  "Sticker | broky | Austin 2025": {
+    "buff": 1116735,
+    "uu": 111759,
+    "c5": 0,
+    "buff_sticker": 129802
+  },
+  "Sticker | Natus Vincere | Austin 2025": {
+    "buff": 1116736,
+    "uu": 111538,
+    "c5": 0,
+    "buff_sticker": 129803
+  },
+  "Sticker | Team Liquid | Austin 2025": {
+    "buff": 1116737,
+    "uu": 111540,
+    "c5": 0,
+    "buff_sticker": 129804
+  },
+  "Sticker | insani (Foil) | Austin 2025": {
+    "buff": 1116739,
+    "uu": 111919,
+    "c5": 0,
+    "buff_sticker": 129805
+  },
+  "Sticker | The Mongolz | Austin 2025": {
+    "buff": 1116740,
+    "uu": 111595,
+    "c5": 0,
+    "buff_sticker": 129806
+  },
+  "Sticker | m0NESY | Austin 2025": {
+    "buff": 1116741,
+    "uu": 111633,
+    "c5": 0,
+    "buff_sticker": 129807
+  },
+  "Sticker | reck | Austin 2025": {
+    "buff": 1116743,
+    "uu": 111842,
+    "c5": 0,
+    "buff_sticker": 129808
+  },
+  "Sticker | BLAST.tv (Foil) | Austin 2025": {
+    "buff": 1116744,
+    "uu": 111784,
+    "c5": 0,
+    "buff_sticker": 129809
+  },
+  "Sticker | MOUZ | Austin 2025": {
+    "buff": 1116745,
+    "uu": 111539,
+    "c5": 0,
+    "buff_sticker": 129810
+  },
+  "Sticker | FL1T | Austin 2025": {
+    "buff": 1116748,
+    "uu": 111828,
+    "c5": 0,
+    "buff_sticker": 129811
+  },
+  "Sticker | Aurora | Austin 2025": {
+    "buff": 1116749,
+    "uu": 111535,
+    "c5": 0,
+    "buff_sticker": 129812
+  },
+  "Sticker | Lake | Austin 2025": {
+    "buff": 1116750,
+    "uu": 111875,
+    "c5": 0,
+    "buff_sticker": 129813
+  },
+  "Sticker | kyxsan | Austin 2025": {
+    "buff": 1116752,
+    "uu": 111639,
+    "c5": 0,
+    "buff_sticker": 129814
+  },
+  "Sticker | karrigan | Austin 2025": {
+    "buff": 1116755,
+    "uu": 111658,
+    "c5": 0,
+    "buff_sticker": 129815
+  },
+  "Sticker | rain | Austin 2025": {
+    "buff": 1116759,
+    "uu": 111761,
+    "c5": 0,
+    "buff_sticker": 129816
+  },
+  "Sticker | frozen | Austin 2025": {
+    "buff": 1116760,
+    "uu": 111781,
+    "c5": 0,
+    "buff_sticker": 129817
+  },
+  "Sticker | MOUZ (Foil) | Austin 2025": {
+    "buff": 1116761,
+    "uu": 111716,
+    "c5": 0,
+    "buff_sticker": 129818
+  },
+  "Sticker | Team Liquid (Foil) | Austin 2025": {
+    "buff": 1116762,
+    "uu": 111722,
+    "c5": 0,
+    "buff_sticker": 129819
+  },
+  "Sticker | Team Liquid (Holo) | Austin 2025": {
+    "buff": 1116763,
+    "uu": 111893,
+    "c5": 0,
+    "buff_sticker": 129820
+  },
+  "Sticker | molodoy | Austin 2025": {
+    "buff": 1116764,
+    "uu": 111632,
+    "c5": 0,
+    "buff_sticker": 129821
+  },
+  "Sticker | brnz4n | Austin 2025": {
+    "buff": 1116765,
+    "uu": 111755,
+    "c5": 0,
+    "buff_sticker": 129822
+  },
+  "Sticker | Natus Vincere (Foil) | Austin 2025": {
+    "buff": 1116767,
+    "uu": 111895,
+    "c5": 0,
+    "buff_sticker": 129823
+  },
+  "Sticker | The Mongolz (Foil) | Austin 2025": {
+    "buff": 1116768,
+    "uu": 111768,
+    "c5": 0,
+    "buff_sticker": 129824
+  },
+  "Sticker | Team Liquid (Gold) | Austin 2025": {
+    "buff": 1116769,
+    "uu": 111912,
+    "c5": 0,
+    "buff_sticker": 129825
+  },
+  "Sticker | Ex3rcice | Austin 2025": {
+    "buff": 1116771,
+    "uu": 111808,
+    "c5": 0,
+    "buff_sticker": 129826
+  },
+  "Sticker | Team Spirit | Austin 2025": {
+    "buff": 1116772,
+    "uu": 111537,
+    "c5": 0,
+    "buff_sticker": 129827
+  },
+  "Sticker | dgt | Austin 2025": {
+    "buff": 1116774,
+    "uu": 111634,
+    "c5": 0,
+    "buff_sticker": 129828
+  },
+  "Sticker | Maka | Austin 2025": {
+    "buff": 1116775,
+    "uu": 111754,
+    "c5": 0,
+    "buff_sticker": 129829
+  },
+  "Sticker | BLAST.tv (Holo) | Austin 2025": {
+    "buff": 1116776,
+    "uu": 111621,
+    "c5": 0,
+    "buff_sticker": 129830
+  },
+  "Sticker | Vitality | Austin 2025": {
+    "buff": 1116778,
+    "uu": 111683,
+    "c5": 0,
+    "buff_sticker": 129831
+  },
+  "Sticker | biguzera | Austin 2025": {
+    "buff": 1116781,
+    "uu": 111762,
+    "c5": 0,
+    "buff_sticker": 129832
+  },
+  "Sticker | Team Spirit (Foil) | Austin 2025": {
+    "buff": 1116784,
+    "uu": 111826,
+    "c5": 0,
+    "buff_sticker": 129833
+  },
+  "Sticker | XANTARES | Austin 2025": {
+    "buff": 1116789,
+    "uu": 111515,
+    "c5": 0,
+    "buff_sticker": 129834
+  },
+  "Sticker | Twistzz | Austin 2025": {
+    "buff": 1116790,
+    "uu": 111510,
+    "c5": 0,
+    "buff_sticker": 129835
+  },
+  "Sticker | donk | Austin 2025": {
+    "buff": 1116791,
+    "uu": 111512,
+    "c5": 0,
+    "buff_sticker": 129836
+  },
+  "Sticker | sh1ro (Holo) | Austin 2025": {
+    "buff": 1116792,
+    "uu": 111581,
+    "c5": 0,
+    "buff_sticker": 129837
+  },
+  "Sticker | Brollan | Austin 2025": {
+    "buff": 1116794,
+    "uu": 111521,
+    "c5": 0,
+    "buff_sticker": 129838
+  },
+  "Sticker | EliGE | Austin 2025": {
+    "buff": 1116795,
+    "uu": 111844,
+    "c5": 0,
+    "buff_sticker": 129839
+  },
+  "Sticker | XANTARES (Holo) | Austin 2025": {
+    "buff": 1116796,
+    "uu": 111933,
+    "c5": 0,
+    "buff_sticker": 129840
+  },
+  "Sticker | Virtus.Pro (Foil) | Austin 2025": {
+    "buff": 1116797,
+    "uu": 111774,
+    "c5": 0,
+    "buff_sticker": 129841
+  },
+  "Sticker | BetBoom | Austin 2025": {
+    "buff": 1116798,
+    "uu": 111625,
+    "c5": 0,
+    "buff_sticker": 129842
+  },
+  "Sticker | C4LLM3SU3 | Austin 2025": {
+    "buff": 1116799,
+    "uu": 111746,
+    "c5": 0,
+    "buff_sticker": 129843
+  },
+  "Sticker | Mercury | Austin 2025": {
+    "buff": 1116800,
+    "uu": 111800,
+    "c5": 0,
+    "buff_sticker": 129844
+  },
+  "Sticker | FURIA | Austin 2025": {
+    "buff": 1116801,
+    "uu": 111573,
+    "c5": 0,
+    "buff_sticker": 129845
+  },
+  "Sticker | L00m1 | Austin 2025": {
+    "buff": 1116802,
+    "uu": 111523,
+    "c5": 0,
+    "buff_sticker": 129846
+  },
+  "Austin 2025 Viewer Pass + 3 Souvenir Tokens": {
+    "buff": 1116803,
+    "uu": 111905,
+    "c5": 0
+  },
+  "Sticker | The Mongolz (Holo) | Austin 2025": {
+    "buff": 1116805,
+    "uu": 111908,
+    "c5": 0,
+    "buff_sticker": 129847
+  },
+  "Sticker | ZywOo (Foil) | Austin 2025": {
+    "buff": 1116806,
+    "uu": 111668,
+    "c5": 0,
+    "buff_sticker": 129848
+  },
+  "Sticker | s1n | Austin 2025": {
+    "buff": 1116807,
+    "uu": 111841,
+    "c5": 0,
+    "buff_sticker": 129849
+  },
+  "Sticker | Magisk | Austin 2025": {
+    "buff": 1116808,
+    "uu": 111856,
+    "c5": 0,
+    "buff_sticker": 129850
+  },
+  "Sticker | XANTARES (Foil) | Austin 2025": {
+    "buff": 1116811,
+    "uu": 111598,
+    "c5": 0,
+    "buff_sticker": 129851
+  },
+  "Sticker | Jimpphat (Foil) | Austin 2025": {
+    "buff": 1116812,
+    "uu": 111493,
+    "c5": 0,
+    "buff_sticker": 129852
+  },
+  "Sticker | saadzin | Austin 2025": {
+    "buff": 1116813,
+    "uu": 111527,
+    "c5": 0,
+    "buff_sticker": 129853
+  },
+  "Sticker | Nemiga | Austin 2025": {
+    "buff": 1116814,
+    "uu": 111590,
+    "c5": 0,
+    "buff_sticker": 129854
+  },
+  "Sticker | Wildcard | Austin 2025": {
+    "buff": 1116815,
+    "uu": 111822,
+    "c5": 0,
+    "buff_sticker": 129855
+  },
+  "Sticker | Twistzz (Foil) | Austin 2025": {
+    "buff": 1116816,
+    "uu": 111531,
+    "c5": 0,
+    "buff_sticker": 129856
+  },
+  "Sticker | iM (Foil) | Austin 2025": {
+    "buff": 1116817,
+    "uu": 111559,
+    "c5": 0,
+    "buff_sticker": 129857
+  },
+  "Sticker | ZywOo | Austin 2025": {
+    "buff": 1116818,
+    "uu": 111508,
+    "c5": 0,
+    "buff_sticker": 129858
+  },
+  "Sticker | apEX (Foil) | Austin 2025": {
+    "buff": 1116819,
+    "uu": 111557,
+    "c5": 0,
+    "buff_sticker": 129859
+  },
+  "Sticker | NertZ (Holo) | Austin 2025": {
+    "buff": 1116820,
+    "uu": 112063,
+    "c5": 0,
+    "buff_sticker": 129860
+  },
+  "Sticker | w0nderful | Austin 2025": {
+    "buff": 1116821,
+    "uu": 111518,
+    "c5": 0,
+    "buff_sticker": 129861
+  },
+  "Sticker | T'au Empire 1": {
+    "buff": 1116822,
+    "uu": 111788,
+    "c5": 0,
+    "buff_sticker": 129862
+  },
+  "Sticker | ropz | Austin 2025": {
+    "buff": 1116823,
+    "uu": 111583,
+    "c5": 0,
+    "buff_sticker": 129863
+  },
+  "Sticker | Iron Hands": {
+    "buff": 1116824,
+    "uu": 112080,
+    "c5": 0,
+    "buff_sticker": 129864
+  },
+  "Sticker | Word Bearers 1": {
+    "buff": 1116825,
+    "uu": 111915,
+    "c5": 0,
+    "buff_sticker": 129865
+  },
+  "Sticker | Adeptus Titanicus 2": {
+    "buff": 1116826,
+    "uu": 112170,
+    "c5": 0,
+    "buff_sticker": 129866
+  },
+  "Sticker | apEX | Austin 2025": {
+    "buff": 1116827,
+    "uu": 111562,
+    "c5": 0,
+    "buff_sticker": 129867
+  },
+  "Sticker | Falcons | Austin 2025": {
+    "buff": 1116828,
+    "uu": 111575,
+    "c5": 0,
+    "buff_sticker": 129868
+  },
+  "Sticker | FlameZ | Austin 2025": {
+    "buff": 1116829,
+    "uu": 111549,
+    "c5": 0,
+    "buff_sticker": 129869
+  },
+  "Sticker | 910 (Foil) | Austin 2025": {
+    "buff": 1116830,
+    "uu": 111586,
+    "c5": 0,
+    "buff_sticker": 129870
+  },
+  "Sticker | Team Spirit (Holo) | Austin 2025": {
+    "buff": 1116831,
+    "uu": 111783,
+    "c5": 0,
+    "buff_sticker": 129871
+  },
+  "Sticker | MIBR | Austin 2025": {
+    "buff": 1116832,
+    "uu": 111728,
+    "c5": 0,
+    "buff_sticker": 129872
+  },
+  "Sticker | w0nderful (Foil) | Austin 2025": {
+    "buff": 1116833,
+    "uu": 111648,
+    "c5": 0,
+    "buff_sticker": 129873
+  },
+  "Sticker | G2 Esports (Foil) | Austin 2025": {
+    "buff": 1116834,
+    "uu": 111507,
+    "c5": 0,
+    "buff_sticker": 129874
+  },
+  "Sticker | w0nderful (Holo) | Austin 2025": {
+    "buff": 1116835,
+    "uu": 111850,
+    "c5": 0,
+    "buff_sticker": 129875
+  },
+  "Sticker | Techno4K (Foil) | Austin 2025": {
+    "buff": 1116836,
+    "uu": 111686,
+    "c5": 0,
+    "buff_sticker": 129876
+  },
+  "Sticker | Metizport (Gold) | Austin 2025": {
+    "buff": 1116837,
+    "uu": 111805,
+    "c5": 0,
+    "buff_sticker": 129877
+  },
+  "Sticker | NAF | Austin 2025": {
+    "buff": 1116838,
+    "uu": 111496,
+    "c5": 0,
+    "buff_sticker": 129878
+  },
+  "Sticker | mzinho (Foil) | Austin 2025": {
+    "buff": 1116839,
+    "uu": 111630,
+    "c5": 0,
+    "buff_sticker": 129879
+  },
+  "Sticker | Snax | Austin 2025": {
+    "buff": 1116840,
+    "uu": 111533,
+    "c5": 0,
+    "buff_sticker": 129880
+  },
+  "Sticker | Xant3r | Austin 2025": {
+    "buff": 1116842,
+    "uu": 111572,
+    "c5": 0,
+    "buff_sticker": 129881
+  },
+  "Sticker | Starry (Foil) | Austin 2025": {
+    "buff": 1116843,
+    "uu": 111631,
+    "c5": 0,
+    "buff_sticker": 129882
+  },
+  "Sticker | susp | Austin 2025": {
+    "buff": 1116844,
+    "uu": 111695,
+    "c5": 0,
+    "buff_sticker": 129883
+  },
+  "Sticker | tN1R | Austin 2025": {
+    "buff": 1116845,
+    "uu": 111604,
+    "c5": 0,
+    "buff_sticker": 129884
+  },
+  "Sticker | Buzz | Austin 2025": {
+    "buff": 1116846,
+    "uu": 111834,
+    "c5": 0,
+    "buff_sticker": 129885
+  },
+  "Sticker | controlez | Austin 2025": {
+    "buff": 1116847,
+    "uu": 111829,
+    "c5": 0,
+    "buff_sticker": 129886
+  },
+  "Sticker | 1eeR (Holo) | Austin 2025": {
+    "buff": 1116848,
+    "uu": 111914,
+    "c5": 0,
+    "buff_sticker": 129887
+  },
+  "Sticker | piriajr | Austin 2025": {
+    "buff": 1116849,
+    "uu": 111544,
+    "c5": 0,
+    "buff_sticker": 129888
+  },
+  "Sticker | hades | Austin 2025": {
+    "buff": 1116851,
+    "uu": 111490,
+    "c5": 0,
+    "buff_sticker": 129889
+  },
+  "Sticker | Heavygod (Foil) | Austin 2025": {
+    "buff": 1116852,
+    "uu": 111560,
+    "c5": 0,
+    "buff_sticker": 129890
+  },
+  "Sticker | siuhy | Austin 2025": {
+    "buff": 1116853,
+    "uu": 111487,
+    "c5": 0,
+    "buff_sticker": 129891
+  },
+  "Sticker | 910 (Holo) | Austin 2025": {
+    "buff": 1116854,
+    "uu": 111928,
+    "c5": 0,
+    "buff_sticker": 129892
+  },
+  "Sticker | apEX (Holo) | Austin 2025": {
+    "buff": 1116855,
+    "uu": 111780,
+    "c5": 0,
+    "buff_sticker": 129893
+  },
+  "Sticker | Wicadia | Austin 2025": {
+    "buff": 1116856,
+    "uu": 111599,
+    "c5": 0,
+    "buff_sticker": 129894
+  },
+  "Sticker | xertioN | Austin 2025": {
+    "buff": 1116857,
+    "uu": 111552,
+    "c5": 0,
+    "buff_sticker": 129895
+  },
+  "Sticker | Aleksib | Austin 2025": {
+    "buff": 1116858,
+    "uu": 111517,
+    "c5": 0,
+    "buff_sticker": 129896
+  },
+  "Sticker | jL | Austin 2025": {
+    "buff": 1116860,
+    "uu": 111509,
+    "c5": 0,
+    "buff_sticker": 129897
+  },
+  "Sticker | Senzu (Foil) | Austin 2025": {
+    "buff": 1116861,
+    "uu": 111620,
+    "c5": 0,
+    "buff_sticker": 129898
+  },
+  "Austin 2025 Viewer Pass": {
+    "buff": 1116862,
+    "uu": 111584,
+    "c5": 0
+  },
+  "Sticker | JamYoung | Austin 2025": {
+    "buff": 1116863,
+    "uu": 111656,
+    "c5": 0,
+    "buff_sticker": 129899
+  },
+  "Sticker | stanislaw | Austin 2025": {
+    "buff": 1116864,
+    "uu": 111804,
+    "c5": 0,
+    "buff_sticker": 129900
+  },
+  "Sticker | hampus | Austin 2025": {
+    "buff": 1116865,
+    "uu": 111810,
+    "c5": 0,
+    "buff_sticker": 129901
+  },
+  "Sticker | Xant3r (Foil) | Austin 2025": {
+    "buff": 1116866,
+    "uu": 111725,
+    "c5": 0,
+    "buff_sticker": 129902
+  },
+  "Sticker | nicx | Austin 2025": {
+    "buff": 1116867,
+    "uu": 111745,
+    "c5": 0,
+    "buff_sticker": 129903
+  },
+  "Sticker | Space Wolves": {
+    "buff": 1116868,
+    "uu": 112223,
+    "c5": 0,
+    "buff_sticker": 129904
+  },
+  "Sticker | Salamanders": {
+    "buff": 1116869,
+    "uu": 112193,
+    "c5": 0,
+    "buff_sticker": 129905
+  },
+  "Sticker | Imperial Fists": {
+    "buff": 1116870,
+    "uu": 112164,
+    "c5": 0,
+    "buff_sticker": 129906
+  },
+  "Sticker | Dark Angels": {
+    "buff": 1116871,
+    "uu": 112085,
+    "c5": 0,
+    "buff_sticker": 129907
+  },
+  "Sticker | White Scars": {
+    "buff": 1116872,
+    "uu": 112192,
+    "c5": 0,
+    "buff_sticker": 129908
+  },
+  "Sticker | Imperial Esports (Foil) | Austin 2025": {
+    "buff": 1116873,
+    "uu": 111821,
+    "c5": 0,
+    "buff_sticker": 129909
+  },
+  "Sticker | BetBoom (Foil) | Austin 2025": {
+    "buff": 1116874,
+    "uu": 111966,
+    "c5": 0,
+    "buff_sticker": 129910
+  },
+  "Sticker | zont1x (Foil) | Austin 2025": {
+    "buff": 1116875,
+    "uu": 111571,
+    "c5": 0,
+    "buff_sticker": 129911
+  },
+  "Sticker | Graviti | Austin 2025": {
+    "buff": 1116876,
+    "uu": 111644,
+    "c5": 0,
+    "buff_sticker": 129912
+  },
+  "Sticker | FalleN (Foil) | Austin 2025": {
+    "buff": 1116877,
+    "uu": 111653,
+    "c5": 0,
+    "buff_sticker": 129913
+  },
+  "Sticker | Vitality (Foil) | Austin 2025": {
+    "buff": 1116878,
+    "uu": 111534,
+    "c5": 0,
+    "buff_sticker": 129914
+  },
+  "Sticker | mezii (Foil) | Austin 2025": {
+    "buff": 1116879,
+    "uu": 111492,
+    "c5": 0,
+    "buff_sticker": 129915
+  },
+  "Sticker | huNter- (Foil) | Austin 2025": {
+    "buff": 1116880,
+    "uu": 111505,
+    "c5": 0,
+    "buff_sticker": 129916
+  },
+  "Sticker | jottAAA | Austin 2025": {
+    "buff": 1116881,
+    "uu": 111506,
+    "c5": 0,
+    "buff_sticker": 129917
+  },
+  "Sticker | NAF (Gold) | Austin 2025": {
+    "buff": 1116882,
+    "uu": 111652,
+    "c5": 0,
+    "buff_sticker": 129918
+  },
+  "Sticker | FL4MUS (Foil) | Austin 2025": {
+    "buff": 1116883,
+    "uu": 111654,
+    "c5": 0,
+    "buff_sticker": 129919
+  },
+  "Sticker | G2 Esports (Holo) | Austin 2025": {
+    "buff": 1116884,
+    "uu": 111779,
+    "c5": 0,
+    "buff_sticker": 129920
+  },
+  "Sticker | FlameZ (Foil) | Austin 2025": {
+    "buff": 1116885,
+    "uu": 111548,
+    "c5": 0,
+    "buff_sticker": 129921
+  },
+  "Sticker | br0 | Austin 2025": {
+    "buff": 1116886,
+    "uu": 111526,
+    "c5": 0,
+    "buff_sticker": 129922
+  },
+  "Sticker | Wicadia (Foil) | Austin 2025": {
+    "buff": 1116887,
+    "uu": 111678,
+    "c5": 0,
+    "buff_sticker": 129923
+  },
+  "Sticker | isak (Foil) | Austin 2025": {
+    "buff": 1116888,
+    "uu": 111932,
+    "c5": 0,
+    "buff_sticker": 129924
+  },
+  "Sticker | SunPayus | Austin 2025": {
+    "buff": 1116889,
+    "uu": 111607,
+    "c5": 0,
+    "buff_sticker": 129925
+  },
+  "Sticker | BetBoom (Holo) | Austin 2025": {
+    "buff": 1116890,
+    "uu": 112042,
+    "c5": 0,
+    "buff_sticker": 129926
+  },
+  "Sticker | Complexity Gaming (Foil) | Austin 2025": {
+    "buff": 1116891,
+    "uu": 111819,
+    "c5": 0,
+    "buff_sticker": 129927
+  },
+  "Sticker | efire | Austin 2025": {
+    "buff": 1116892,
+    "uu": 111522,
+    "c5": 0,
+    "buff_sticker": 129928
+  },
+  "Sticker | NertZ | Austin 2025": {
+    "buff": 1116893,
+    "uu": 111514,
+    "c5": 0,
+    "buff_sticker": 129929
+  },
+  "Sticker | nicoodoz | Austin 2025": {
+    "buff": 1116895,
+    "uu": 111717,
+    "c5": 0,
+    "buff_sticker": 129930
+  },
+  "Sticker | JBa (Gold) | Austin 2025": {
+    "buff": 1116896,
+    "uu": 112336,
+    "c5": 0,
+    "buff_sticker": 129931
+  },
+  "Sticker | zevy (Foil) | Austin 2025": {
+    "buff": 1116897,
+    "uu": 111701,
+    "c5": 0,
+    "buff_sticker": 129932
+  },
+  "Sticker | ropz (Foil) | Austin 2025": {
+    "buff": 1116900,
+    "uu": 111626,
+    "c5": 0,
+    "buff_sticker": 129933
+  },
+  "Sticker | Spinx | Austin 2025": {
+    "buff": 1116901,
+    "uu": 111491,
+    "c5": 0,
+    "buff_sticker": 129934
+  },
+  "Sticker | donk (Foil) | Austin 2025": {
+    "buff": 1116902,
+    "uu": 111904,
+    "c5": 0,
+    "buff_sticker": 129935
+  },
+  "Sticker | INS | Austin 2025": {
+    "buff": 1116903,
+    "uu": 111741,
+    "c5": 0,
+    "buff_sticker": 129936
+  },
+  "Sticker | S1ren (Foil) | Austin 2025": {
+    "buff": 1116904,
+    "uu": 112009,
+    "c5": 0,
+    "buff_sticker": 129937
+  },
+  "Sticker | torzsi | Austin 2025": {
+    "buff": 1116905,
+    "uu": 111541,
+    "c5": 0,
+    "buff_sticker": 129938
+  },
+  "Sticker | jottAAA (Foil) | Austin 2025": {
+    "buff": 1116907,
+    "uu": 111677,
+    "c5": 0,
+    "buff_sticker": 129939
+  },
+  "Sticker | zweih | Austin 2025": {
+    "buff": 1116908,
+    "uu": 111661,
+    "c5": 0,
+    "buff_sticker": 129940
+  },
+  "Sticker | Spinx (Holo) | Austin 2025": {
+    "buff": 1116909,
+    "uu": 111679,
+    "c5": 0,
+    "buff_sticker": 129941
+  },
+  "Sticker | sh1ro (Foil) | Austin 2025": {
+    "buff": 1116910,
+    "uu": 111801,
+    "c5": 0,
+    "buff_sticker": 129942
+  },
+  "Sticker | bLitz | Austin 2025": {
+    "buff": 1116911,
+    "uu": 111488,
+    "c5": 0,
+    "buff_sticker": 129943
+  },
+  "Sticker | siuhy (Foil) | Austin 2025": {
+    "buff": 1116912,
+    "uu": 111579,
+    "c5": 0,
+    "buff_sticker": 129944
+  },
+  "Sticker | iM | Austin 2025": {
+    "buff": 1116913,
+    "uu": 111489,
+    "c5": 0,
+    "buff_sticker": 129945
+  },
+  "Sticker | MAJ3R | Austin 2025": {
+    "buff": 1116914,
+    "uu": 111578,
+    "c5": 0,
+    "buff_sticker": 129946
+  },
+  "Sticker | Techno4K | Austin 2025": {
+    "buff": 1116915,
+    "uu": 111554,
+    "c5": 0,
+    "buff_sticker": 129947
+  },
+  "Sticker | dav1deuS | Austin 2025": {
+    "buff": 1116916,
+    "uu": 111649,
+    "c5": 0,
+    "buff_sticker": 129948
+  },
+  "Sticker | xertioN (Foil) | Austin 2025": {
+    "buff": 1116917,
+    "uu": 111640,
+    "c5": 0,
+    "buff_sticker": 129949
+  },
+  "Sticker | slaxz- | Austin 2025": {
+    "buff": 1116918,
+    "uu": 111647,
+    "c5": 0,
+    "buff_sticker": 129950
+  },
+  "Sticker | exit | Austin 2025": {
+    "buff": 1116919,
+    "uu": 111643,
+    "c5": 0,
+    "buff_sticker": 129951
+  },
+  "Sticker | magixx | Austin 2025": {
+    "buff": 1116920,
+    "uu": 111520,
+    "c5": 0,
+    "buff_sticker": 129952
+  },
+  "Sticker | ZywOo (Holo) | Austin 2025": {
+    "buff": 1116921,
+    "uu": 111739,
+    "c5": 0,
+    "buff_sticker": 129953
+  },
+  "Sticker | ultimate (Holo) | Austin 2025": {
+    "buff": 1116922,
+    "uu": 112043,
+    "c5": 0,
+    "buff_sticker": 129954
+  },
+  "Sticker | ultimate | Austin 2025": {
+    "buff": 1116924,
+    "uu": 111516,
+    "c5": 0,
+    "buff_sticker": 129955
+  },
+  "Austin 2025 Legends Sticker Capsule": {
+    "buff": 1116925,
+    "uu": 111569,
+    "c5": 0
+  },
+  "Austin 2025 Legends Autograph Capsule": {
+    "buff": 1116944,
+    "uu": 111567,
+    "c5": 0
+  },
+  "Sticker | Virtus.Pro | Austin 2025": {
+    "buff": 1117005,
+    "uu": 111724,
+    "c5": 0,
+    "buff_sticker": 129956
+  },
+  "Sticker | FaZe Clan | Austin 2025": {
+    "buff": 1117006,
+    "uu": 111545,
+    "c5": 0,
+    "buff_sticker": 129957
+  },
+  "Sticker | EliGE (Foil) | Austin 2025": {
+    "buff": 1117007,
+    "uu": 111563,
+    "c5": 0,
+    "buff_sticker": 129958
+  },
+  "Sticker | NiKo | Austin 2025": {
+    "buff": 1117008,
+    "uu": 111764,
+    "c5": 0,
+    "buff_sticker": 129959
+  },
+  "Sticker | latto (Foil) | Austin 2025": {
+    "buff": 1117009,
+    "uu": 111809,
+    "c5": 0,
+    "buff_sticker": 129960
+  },
+  "Sticker | electronic | Austin 2025": {
+    "buff": 1117010,
+    "uu": 111675,
+    "c5": 0,
+    "buff_sticker": 129961
+  },
+  "Sticker | bodyy | Austin 2025": {
+    "buff": 1117011,
+    "uu": 111881,
+    "c5": 0,
+    "buff_sticker": 129962
+  },
+  "Sticker | yxngstxr | Austin 2025": {
+    "buff": 1117012,
+    "uu": 111646,
+    "c5": 0,
+    "buff_sticker": 129963
+  },
+  "Sticker | phzy | Austin 2025": {
+    "buff": 1117013,
+    "uu": 111532,
+    "c5": 0,
+    "buff_sticker": 129964
+  },
+  "Sticker | latto | Austin 2025": {
+    "buff": 1117014,
+    "uu": 111736,
+    "c5": 0,
+    "buff_sticker": 129965
+  },
+  "Sticker | mlhzin | Austin 2025": {
+    "buff": 1117015,
+    "uu": 111693,
+    "c5": 0,
+    "buff_sticker": 129966
+  },
+  "Sticker | mezii | Austin 2025": {
+    "buff": 1117016,
+    "uu": 111587,
+    "c5": 0,
+    "buff_sticker": 129967
+  },
+  "Sticker | FalleN | Austin 2025": {
+    "buff": 1117017,
+    "uu": 111638,
+    "c5": 0,
+    "buff_sticker": 129968
+  },
+  "Sticker | mlhzin (Foil) | Austin 2025": {
+    "buff": 1117018,
+    "uu": 111690,
+    "c5": 0,
+    "buff_sticker": 129969
+  },
+  "Sticker | KSCERATO | Austin 2025": {
+    "buff": 1117019,
+    "uu": 111751,
+    "c5": 0,
+    "buff_sticker": 129970
+  },
+  "Sticker | dgt (Foil) | Austin 2025": {
+    "buff": 1117020,
+    "uu": 111921,
+    "c5": 0,
+    "buff_sticker": 129971
+  },
+  "Sticker | TRY | Austin 2025": {
+    "buff": 1117022,
+    "uu": 111723,
+    "c5": 0,
+    "buff_sticker": 129972
+  },
+  "Sticker | Vitality (Holo) | Austin 2025": {
+    "buff": 1117023,
+    "uu": 111681,
+    "c5": 0,
+    "buff_sticker": 129973
+  },
+  "Sticker | VINI | Austin 2025": {
+    "buff": 1117024,
+    "uu": 111660,
+    "c5": 0,
+    "buff_sticker": 129974
+  },
+  "Sticker | S1ren | Austin 2025": {
+    "buff": 1117025,
+    "uu": 111715,
+    "c5": 0,
+    "buff_sticker": 129975
+  },
+  "Sticker | Imperial Esports | Austin 2025": {
+    "buff": 1117026,
+    "uu": 111550,
+    "c5": 0,
+    "buff_sticker": 129976
+  },
+  "Sticker | Chr1zN | Austin 2025": {
+    "buff": 1117027,
+    "uu": 111734,
+    "c5": 0,
+    "buff_sticker": 129977
+  },
+  "Sticker | Ax1Le | Austin 2025": {
+    "buff": 1117028,
+    "uu": 111814,
+    "c5": 0,
+    "buff_sticker": 129978
+  },
+  "Sticker | OG (Gold) | Austin 2025": {
+    "buff": 1117029,
+    "uu": 111684,
+    "c5": 0,
+    "buff_sticker": 129979
+  },
+  "Sticker | mezii (Gold) | Austin 2025": {
+    "buff": 1117030,
+    "uu": 112059,
+    "c5": 0,
+    "buff_sticker": 129980
+  },
+  "Sticker | woxic (Foil) | Austin 2025": {
+    "buff": 1117031,
+    "uu": 111629,
+    "c5": 0,
+    "buff_sticker": 129981
+  },
+  "Sticker | Aleksib (Holo) | Austin 2025": {
+    "buff": 1117032,
+    "uu": 112037,
+    "c5": 0,
+    "buff_sticker": 129982
+  },
+  "Sticker | MAJ3R (Foil) | Austin 2025": {
+    "buff": 1117033,
+    "uu": 111680,
+    "c5": 0,
+    "buff_sticker": 129983
+  },
+  "Sticker | exit (Foil) | Austin 2025": {
+    "buff": 1117034,
+    "uu": 111946,
+    "c5": 0,
+    "buff_sticker": 129984
+  },
+  "Sticker | karrigan (Foil) | Austin 2025": {
+    "buff": 1117035,
+    "uu": 111937,
+    "c5": 0,
+    "buff_sticker": 129985
+  },
+  "Sticker | NQZ | Austin 2025": {
+    "buff": 1117036,
+    "uu": 111657,
+    "c5": 0,
+    "buff_sticker": 129986
+  },
+  "Sticker | saffee | Austin 2025": {
+    "buff": 1117037,
+    "uu": 111556,
+    "c5": 0,
+    "buff_sticker": 129987
+  },
+  "Sticker | oSee | Austin 2025": {
+    "buff": 1117038,
+    "uu": 111732,
+    "c5": 0,
+    "buff_sticker": 129988
+  },
+  "Sticker | regali | Austin 2025": {
+    "buff": 1117039,
+    "uu": 111857,
+    "c5": 0,
+    "buff_sticker": 129989
+  },
+  "Sticker | Lucky | Austin 2025": {
+    "buff": 1117040,
+    "uu": 111555,
+    "c5": 0,
+    "buff_sticker": 129990
+  },
+  "Sticker | magixx (Holo) | Austin 2025": {
+    "buff": 1117042,
+    "uu": 111846,
+    "c5": 0,
+    "buff_sticker": 129991
+  },
+  "Sticker | yuurih | Austin 2025": {
+    "buff": 1117043,
+    "uu": 111852,
+    "c5": 0,
+    "buff_sticker": 129992
+  },
+  "Sticker | SunPayus (Holo) | Austin 2025": {
+    "buff": 1117044,
+    "uu": 112000,
+    "c5": 0,
+    "buff_sticker": 129993
+  },
+  "Sticker | Maka (Foil) | Austin 2025": {
+    "buff": 1117045,
+    "uu": 111776,
+    "c5": 0,
+    "buff_sticker": 129994
+  },
+  "Sticker | isak | Austin 2025": {
+    "buff": 1117046,
+    "uu": 111699,
+    "c5": 0,
+    "buff_sticker": 129995
+  },
+  "Sticker | skullz | Austin 2025": {
+    "buff": 1117047,
+    "uu": 111637,
+    "c5": 0,
+    "buff_sticker": 129996
+  },
+  "Sticker | esenthial (Foil) | Austin 2025": {
+    "buff": 1117048,
+    "uu": 111685,
+    "c5": 0,
+    "buff_sticker": 129997
+  },
+  "Sticker | donk (Holo) | Austin 2025": {
+    "buff": 1117049,
+    "uu": 111839,
+    "c5": 0,
+    "buff_sticker": 129998
+  },
+  "Sticker | cool4st | Austin 2025": {
+    "buff": 1117050,
+    "uu": 111708,
+    "c5": 0,
+    "buff_sticker": 129999
+  },
+  "Sticker | TeSeS | Austin 2025": {
+    "buff": 1117051,
+    "uu": 111756,
+    "c5": 0,
+    "buff_sticker": 130000
+  },
+  "Sticker | nettik | Austin 2025": {
+    "buff": 1117052,
+    "uu": 111714,
+    "c5": 0,
+    "buff_sticker": 130001
+  },
+  "Sticker | Techno4K (Gold) | Austin 2025": {
+    "buff": 1117053,
+    "uu": 112030,
+    "c5": 0,
+    "buff_sticker": 130002
+  },
+  "Sticker | zevy | Austin 2025": {
+    "buff": 1117054,
+    "uu": 111765,
+    "c5": 0,
+    "buff_sticker": 130003
+  },
+  "Sticker | khaN | Austin 2025": {
+    "buff": 1117055,
+    "uu": 111813,
+    "c5": 0,
+    "buff_sticker": 130004
+  },
+  "Sticker | VINI (Foil) | Austin 2025": {
+    "buff": 1117056,
+    "uu": 111984,
+    "c5": 0,
+    "buff_sticker": 130005
+  },
+  "Sticker | nicoodoz (Gold) | Austin 2025": {
+    "buff": 1117057,
+    "uu": 112248,
+    "c5": 0,
+    "buff_sticker": 130006
+  },
+  "Austin 2025 Contenders Autograph Capsule": {
+    "buff": 1117058,
+    "uu": 111566,
+    "c5": 0
+  },
+  "Sticker | Astra Militarum 1": {
+    "buff": 1117059,
+    "uu": 111837,
+    "c5": 0,
+    "buff_sticker": 130007
+  },
+  "Austin 2025 Challengers Sticker Capsule": {
+    "buff": 1117060,
+    "uu": 111568,
+    "c5": 0
+  },
+  "Sticker | JT | Austin 2025": {
+    "buff": 1117070,
+    "uu": 111529,
+    "c5": 0,
+    "buff_sticker": 130008
+  },
+  "Sticker | noway | Austin 2025": {
+    "buff": 1117071,
+    "uu": 111606,
+    "c5": 0,
+    "buff_sticker": 130009
+  },
+  "Sticker | Cxzi | Austin 2025": {
+    "buff": 1117073,
+    "uu": 111806,
+    "c5": 0,
+    "buff_sticker": 130010
+  },
+  "Sticker | nitr0 | Austin 2025": {
+    "buff": 1117074,
+    "uu": 111689,
+    "c5": 0,
+    "buff_sticker": 130011
+  },
+  "Sticker | C4LLM3SU3 (Foil) | Austin 2025": {
+    "buff": 1117075,
+    "uu": 111957,
+    "c5": 0,
+    "buff_sticker": 130012
+  },
+  "Sticker | brnz4n (Foil) | Austin 2025": {
+    "buff": 1117076,
+    "uu": 111757,
+    "c5": 0,
+    "buff_sticker": 130013
+  },
+  "Sticker | chopper (Foil) | Austin 2025": {
+    "buff": 1117077,
+    "uu": 111542,
+    "c5": 0,
+    "buff_sticker": 130014
+  },
+  "Sticker | chayJESUS | Austin 2025": {
+    "buff": 1117078,
+    "uu": 111698,
+    "c5": 0,
+    "buff_sticker": 130015
+  },
+  "Sticker | alex666 | Austin 2025": {
+    "buff": 1117080,
+    "uu": 111835,
+    "c5": 0,
+    "buff_sticker": 130016
+  },
+  "Sticker | zweih (Foil) | Austin 2025": {
+    "buff": 1117081,
+    "uu": 112031,
+    "c5": 0,
+    "buff_sticker": 130017
+  },
+  "Sticker | xfl0ud | Austin 2025": {
+    "buff": 1117082,
+    "uu": 111605,
+    "c5": 0,
+    "buff_sticker": 130018
+  },
+  "Sticker | Boombl4 | Austin 2025": {
+    "buff": 1117083,
+    "uu": 111753,
+    "c5": 0,
+    "buff_sticker": 130019
+  },
+  "Sticker | sh1ro (Gold) | Austin 2025": {
+    "buff": 1117084,
+    "uu": 112096,
+    "c5": 0,
+    "buff_sticker": 130020
+  },
+  "Sticker | Grim | Austin 2025": {
+    "buff": 1117086,
+    "uu": 111735,
+    "c5": 0,
+    "buff_sticker": 130021
+  },
+  "Sticker | LNZ | Austin 2025": {
+    "buff": 1117087,
+    "uu": 111610,
+    "c5": 0,
+    "buff_sticker": 130022
+  },
+  "Sticker | bodyy (Foil) | Austin 2025": {
+    "buff": 1117088,
+    "uu": 111872,
+    "c5": 0,
+    "buff_sticker": 130023
+  },
+  "Sticker | hallzerk (Holo) | Austin 2025": {
+    "buff": 1117089,
+    "uu": 111995,
+    "c5": 0,
+    "buff_sticker": 130024
+  },
+  "Sticker | dav1deuS (Foil) | Austin 2025": {
+    "buff": 1117091,
+    "uu": 111889,
+    "c5": 0,
+    "buff_sticker": 130025
+  },
+  "Sticker | ICY | Austin 2025": {
+    "buff": 1117092,
+    "uu": 111655,
+    "c5": 0,
+    "buff_sticker": 130026
+  },
+  "Sticker | Graviti (Foil) | Austin 2025": {
+    "buff": 1117093,
+    "uu": 111861,
+    "c5": 0,
+    "buff_sticker": 130027
+  },
+  "Sticker | 1eeR | Austin 2025": {
+    "buff": 1117094,
+    "uu": 111688,
+    "c5": 0,
+    "buff_sticker": 130028
+  },
+  "Sticker | susp (Foil) | Austin 2025": {
+    "buff": 1117095,
+    "uu": 111703,
+    "c5": 0,
+    "buff_sticker": 130029
+  },
+  "Sticker | Fluxo (Holo) | Austin 2025": {
+    "buff": 1117096,
+    "uu": 112012,
+    "c5": 0,
+    "buff_sticker": 130030
+  },
+  "Sticker | NRG (Foil) | Austin 2025": {
+    "buff": 1117097,
+    "uu": 111807,
+    "c5": 0,
+    "buff_sticker": 130031
+  },
+  "Sticker | HEROIC (Foil) | Austin 2025": {
+    "buff": 1117098,
+    "uu": 111818,
+    "c5": 0,
+    "buff_sticker": 130032
+  },
+  "Sticker | saffee (Foil) | Austin 2025": {
+    "buff": 1117099,
+    "uu": 111830,
+    "c5": 0,
+    "buff_sticker": 130033
+  },
+  "Sticker | insani | Austin 2025": {
+    "buff": 1117100,
+    "uu": 111709,
+    "c5": 0,
+    "buff_sticker": 130034
+  },
+  "Sticker | skullz (Foil) | Austin 2025": {
+    "buff": 1117101,
+    "uu": 111832,
+    "c5": 0,
+    "buff_sticker": 130035
+  },
+  "Sticker | Aurora (Foil) | Austin 2025": {
+    "buff": 1117102,
+    "uu": 111536,
+    "c5": 0,
+    "buff_sticker": 130036
+  },
+  "Sticker | Senzu (Holo) | Austin 2025": {
+    "buff": 1117103,
+    "uu": 111833,
+    "c5": 0,
+    "buff_sticker": 130037
+  },
+  "Sticker | Snax (Foil) | Austin 2025": {
+    "buff": 1117104,
+    "uu": 111577,
+    "c5": 0,
+    "buff_sticker": 130038
+  },
+  "Sticker | Brollan (Foil) | Austin 2025": {
+    "buff": 1117105,
+    "uu": 111674,
+    "c5": 0,
+    "buff_sticker": 130039
+  },
+  "Sticker | Jimpphat (Holo) | Austin 2025": {
+    "buff": 1117106,
+    "uu": 111740,
+    "c5": 0,
+    "buff_sticker": 130040
+  },
+  "Sticker | Spinx (Foil) | Austin 2025": {
+    "buff": 1117107,
+    "uu": 111504,
+    "c5": 0,
+    "buff_sticker": 130041
+  },
+  "Sticker | malbsMd (Foil) | Austin 2025": {
+    "buff": 1117108,
+    "uu": 111670,
+    "c5": 0,
+    "buff_sticker": 130042
+  },
+  "Sticker | zont1x (Holo) | Austin 2025": {
+    "buff": 1117109,
+    "uu": 111906,
+    "c5": 0,
+    "buff_sticker": 130043
+  },
+  "Sticker | bLitz (Foil) | Austin 2025": {
+    "buff": 1117110,
+    "uu": 111495,
+    "c5": 0,
+    "buff_sticker": 130044
+  },
+  "Sticker | fame (Holo) | Austin 2025": {
+    "buff": 1117111,
+    "uu": 111972,
+    "c5": 0,
+    "buff_sticker": 130045
+  },
+  "Sticker | Ax1Le (Foil) | Austin 2025": {
+    "buff": 1117112,
+    "uu": 111953,
+    "c5": 0,
+    "buff_sticker": 130046
+  },
+  "Sticker | decenty (Foil) | Austin 2025": {
+    "buff": 1117113,
+    "uu": 111860,
+    "c5": 0,
+    "buff_sticker": 130047
+  },
+  "Sticker | F1KU | Austin 2025": {
+    "buff": 1117114,
+    "uu": 111651,
+    "c5": 0,
+    "buff_sticker": 130048
+  },
+  "Sticker | FL1T (Gold) | Austin 2025": {
+    "buff": 1117115,
+    "uu": 112035,
+    "c5": 0,
+    "buff_sticker": 130049
+  },
+  "Sticker | JBa | Austin 2025": {
+    "buff": 1117116,
+    "uu": 111812,
+    "c5": 0,
+    "buff_sticker": 130050
+  },
+  "Sticker | efire (Foil) | Austin 2025": {
+    "buff": 1117117,
+    "uu": 111998,
+    "c5": 0,
+    "buff_sticker": 130051
+  },
+  "Sticker | Jee | Austin 2025": {
+    "buff": 1117118,
+    "uu": 111697,
+    "c5": 0,
+    "buff_sticker": 130052
+  },
+  "Sticker | nicoodoz (Foil) | Austin 2025": {
+    "buff": 1117120,
+    "uu": 111913,
+    "c5": 0,
+    "buff_sticker": 130053
+  },
+  "Sticker | lux | Austin 2025": {
+    "buff": 1117121,
+    "uu": 111612,
+    "c5": 0,
+    "buff_sticker": 130054
+  },
+  "Sticker | esenthial (Holo) | Austin 2025": {
+    "buff": 1117122,
+    "uu": 112036,
+    "c5": 0,
+    "buff_sticker": 130055
+  },
+  "Sticker | EmiliaQAQ | Austin 2025": {
+    "buff": 1117123,
+    "uu": 111777,
+    "c5": 0,
+    "buff_sticker": 130056
+  },
+  "Sticker | snow | Austin 2025": {
+    "buff": 1117124,
+    "uu": 111760,
+    "c5": 0,
+    "buff_sticker": 130057
+  },
+  "Sticker | kye | Austin 2025": {
+    "buff": 1117125,
+    "uu": 111687,
+    "c5": 0,
+    "buff_sticker": 130058
+  },
+  "Sticker | regali (Foil) | Austin 2025": {
+    "buff": 1117126,
+    "uu": 112040,
+    "c5": 0,
+    "buff_sticker": 130059
+  },
+  "Sticker | ROUX | Austin 2025": {
+    "buff": 1117127,
+    "uu": 111602,
+    "c5": 0,
+    "buff_sticker": 130060
+  },
+  "Sticker | hallzerk | Austin 2025": {
+    "buff": 1117129,
+    "uu": 111775,
+    "c5": 0,
+    "buff_sticker": 130061
+  },
+  "Sticker | br0 (Holo) | Austin 2025": {
+    "buff": 1117130,
+    "uu": 112038,
+    "c5": 0,
+    "buff_sticker": 130062
+  },
+  "Sticker | spooke | Austin 2025": {
+    "buff": 1117131,
+    "uu": 111614,
+    "c5": 0,
+    "buff_sticker": 130063
+  },
+  "Sticker | m0NESY (Foil) | Austin 2025": {
+    "buff": 1117132,
+    "uu": 112033,
+    "c5": 0,
+    "buff_sticker": 130064
+  },
+  "Sticker | Ariucle | Austin 2025": {
+    "buff": 1117133,
+    "uu": 111617,
+    "c5": 0,
+    "buff_sticker": 130065
+  },
+  "Sticker | jeorge (Foil) | Austin 2025": {
+    "buff": 1117135,
+    "uu": 111927,
+    "c5": 0,
+    "buff_sticker": 130066
+  },
+  "Sticker | zorte | Austin 2025": {
+    "buff": 1117136,
+    "uu": 111609,
+    "c5": 0,
+    "buff_sticker": 130067
+  },
+  "Sticker | Lucaozy | Austin 2025": {
+    "buff": 1117137,
+    "uu": 111635,
+    "c5": 0,
+    "buff_sticker": 130068
+  },
+  "Sticker | arT | Austin 2025": {
+    "buff": 1117138,
+    "uu": 111956,
+    "c5": 0,
+    "buff_sticker": 130069
+  },
+  "Sticker | ICY (Foil) | Austin 2025": {
+    "buff": 1117141,
+    "uu": 112061,
+    "c5": 0,
+    "buff_sticker": 130070
+  },
+  "Sticker | Plopski (Foil) | Austin 2025": {
+    "buff": 1117142,
+    "uu": 111924,
+    "c5": 0,
+    "buff_sticker": 130071
+  },
+  "Sticker | piriajr (Holo) | Austin 2025": {
+    "buff": 1117143,
+    "uu": 112137,
+    "c5": 0,
+    "buff_sticker": 130072
+  },
+  "Sticker | adamb | Austin 2025": {
+    "buff": 1117144,
+    "uu": 111611,
+    "c5": 0,
+    "buff_sticker": 130073
+  },
+  "Sticker | TYLOO (Foil) | Austin 2025": {
+    "buff": 1117145,
+    "uu": 111778,
+    "c5": 0,
+    "buff_sticker": 130074
+  },
+  "Sticker | hampus (Foil) | Austin 2025": {
+    "buff": 1117146,
+    "uu": 111955,
+    "c5": 0,
+    "buff_sticker": 130075
+  },
+  "Sticker | jL (Foil) | Austin 2025": {
+    "buff": 1117147,
+    "uu": 111803,
+    "c5": 0,
+    "buff_sticker": 130076
+  },
+  "Sticker | Moseyuh | Austin 2025": {
+    "buff": 1117153,
+    "uu": 111859,
+    "c5": 0,
+    "buff_sticker": 130077
+  },
+  "Sticker | Ariucle (Holo) | Austin 2025": {
+    "buff": 1117154,
+    "uu": 112189,
+    "c5": 0,
+    "buff_sticker": 130078
+  },
+  "Sticker | tN1R (Foil) | Austin 2025": {
+    "buff": 1117155,
+    "uu": 111920,
+    "c5": 0,
+    "buff_sticker": 130079
+  },
+  "Sticker | esenthial | Austin 2025": {
+    "buff": 1117156,
+    "uu": 111663,
+    "c5": 0,
+    "buff_sticker": 130080
+  },
+  "Sticker | Swisher (Foil) | Austin 2025": {
+    "buff": 1117157,
+    "uu": 111943,
+    "c5": 0,
+    "buff_sticker": 130081
+  },
+  "Sticker | slaxz- (Foil) | Austin 2025": {
+    "buff": 1117158,
+    "uu": 112020,
+    "c5": 0,
+    "buff_sticker": 130082
+  },
+  "Sticker | headtr1ck | Austin 2025": {
+    "buff": 1117159,
+    "uu": 111525,
+    "c5": 0,
+    "buff_sticker": 130083
+  },
+  "Sticker | dumau (Foil) | Austin 2025": {
+    "buff": 1117160,
+    "uu": 112014,
+    "c5": 0,
+    "buff_sticker": 130084
+  },
+  "Sticker | Imperial Esports (Gold) | Austin 2025": {
+    "buff": 1117161,
+    "uu": 111907,
+    "c5": 0,
+    "buff_sticker": 130085
+  },
+  "Sticker | Lynn Vision (Foil) | Austin 2025": {
+    "buff": 1117162,
+    "uu": 111817,
+    "c5": 0,
+    "buff_sticker": 130086
+  },
+  "Sticker | Starry | Austin 2025": {
+    "buff": 1117163,
+    "uu": 111498,
+    "c5": 0,
+    "buff_sticker": 130087
+  },
+  "Sticker | Xant3r (Holo) | Austin 2025": {
+    "buff": 1117164,
+    "uu": 112267,
+    "c5": 0,
+    "buff_sticker": 130088
+  },
+  "Sticker | riskyb0b | Austin 2025": {
+    "buff": 1117165,
+    "uu": 111891,
+    "c5": 0,
+    "buff_sticker": 130089
+  },
+  "Sticker | spooke (Foil) | Austin 2025": {
+    "buff": 1117166,
+    "uu": 111696,
+    "c5": 0,
+    "buff_sticker": 130090
+  },
+  "Sticker | FURIA (Foil) | Austin 2025": {
+    "buff": 1117168,
+    "uu": 111721,
+    "c5": 0,
+    "buff_sticker": 130091
+  },
+  "Sticker | HexT (Holo) | Austin 2025": {
+    "buff": 1117169,
+    "uu": 112156,
+    "c5": 0,
+    "buff_sticker": 130092
+  },
+  "Sticker | Cxzi (Foil) | Austin 2025": {
+    "buff": 1117170,
+    "uu": 111892,
+    "c5": 0,
+    "buff_sticker": 130093
+  },
+  "Sticker | nicx (Foil) | Austin 2025": {
+    "buff": 1117171,
+    "uu": 112004,
+    "c5": 0,
+    "buff_sticker": 130094
+  },
+  "Sticker | hallzerk (Foil) | Austin 2025": {
+    "buff": 1117173,
+    "uu": 111873,
+    "c5": 0,
+    "buff_sticker": 130095
+  },
+  "Sticker | Magnojez (Foil) | Austin 2025": {
+    "buff": 1117176,
+    "uu": 111950,
+    "c5": 0,
+    "buff_sticker": 130096
+  },
+  "Sticker | xfl0ud (Holo) | Austin 2025": {
+    "buff": 1117177,
+    "uu": 112150,
+    "c5": 0,
+    "buff_sticker": 130097
+  },
+  "Sticker | Attacker (Foil) | Austin 2025": {
+    "buff": 1117178,
+    "uu": 111890,
+    "c5": 0,
+    "buff_sticker": 130098
+  },
+  "Sticker | LNZ (Holo) | Austin 2025": {
+    "buff": 1117180,
+    "uu": 112250,
+    "c5": 0,
+    "buff_sticker": 130099
+  },
+  "Sticker | Jee (Foil) | Austin 2025": {
+    "buff": 1117181,
+    "uu": 111797,
+    "c5": 0,
+    "buff_sticker": 130100
+  },
+  "Sticker | Attacker | Austin 2025": {
+    "buff": 1117182,
+    "uu": 111733,
+    "c5": 0,
+    "buff_sticker": 130101
+  },
+  "Sticker | kensizor | Austin 2025": {
+    "buff": 1117183,
+    "uu": 111546,
+    "c5": 0,
+    "buff_sticker": 130102
+  },
+  "Sticker | Senzu (Gold) | Austin 2025": {
+    "buff": 1117184,
+    "uu": 111624,
+    "c5": 0,
+    "buff_sticker": 130103
+  },
+  "Sticker | jL (Holo) | Austin 2025": {
+    "buff": 1117185,
+    "uu": 111968,
+    "c5": 0,
+    "buff_sticker": 130104
+  },
+  "Sticker | woxic (Holo) | Austin 2025": {
+    "buff": 1117186,
+    "uu": 111795,
+    "c5": 0,
+    "buff_sticker": 130105
+  },
+  "Sticker | hades (Holo) | Austin 2025": {
+    "buff": 1117187,
+    "uu": 111898,
+    "c5": 0,
+    "buff_sticker": 130106
+  },
+  "Sticker | Spinx (Gold) | Austin 2025": {
+    "buff": 1117188,
+    "uu": 111930,
+    "c5": 0,
+    "buff_sticker": 130107
+  },
+  "Sticker | vexite (Foil) | Austin 2025": {
+    "buff": 1117189,
+    "uu": 111887,
+    "c5": 0,
+    "buff_sticker": 130108
+  },
+  "Sticker | jeorge | Austin 2025": {
+    "buff": 1117190,
+    "uu": 111989,
+    "c5": 0,
+    "buff_sticker": 130109
+  },
+  "Sticker | nicoodoz (Holo) | Austin 2025": {
+    "buff": 1117191,
+    "uu": 112007,
+    "c5": 0,
+    "buff_sticker": 130110
+  },
+  "Sticker | huNter- (Holo) | Austin 2025": {
+    "buff": 1117192,
+    "uu": 111843,
+    "c5": 0,
+    "buff_sticker": 130111
+  },
+  "Sticker | reck (Foil) | Austin 2025": {
+    "buff": 1117193,
+    "uu": 111897,
+    "c5": 0,
+    "buff_sticker": 130112
+  },
+  "Sticker | KSCERATO (Foil) | Austin 2025": {
+    "buff": 1117194,
+    "uu": 112066,
+    "c5": 0,
+    "buff_sticker": 130113
+  },
+  "Sticker | broky (Foil) | Austin 2025": {
+    "buff": 1117196,
+    "uu": 112008,
+    "c5": 0,
+    "buff_sticker": 130114
+  },
+  "Sticker | Lucaozy (Holo) | Austin 2025": {
+    "buff": 1117201,
+    "uu": 111882,
+    "c5": 0,
+    "buff_sticker": 130115
+  },
+  "Sticker | mlhzin (Holo) | Austin 2025": {
+    "buff": 1117202,
+    "uu": 111528,
+    "c5": 0,
+    "buff_sticker": 130116
+  },
+  "Sticker | n1ssim | Austin 2025": {
+    "buff": 1117203,
+    "uu": 111665,
+    "c5": 0,
+    "buff_sticker": 130117
+  },
+  "Sticker | stanislaw (Holo) | Austin 2025": {
+    "buff": 1117204,
+    "uu": 111923,
+    "c5": 0,
+    "buff_sticker": 130118
+  },
+  "Sticker | chayJESUS (Foil) | Austin 2025": {
+    "buff": 1117206,
+    "uu": 111692,
+    "c5": 0,
+    "buff_sticker": 130119
+  },
+  "Sticker | Fluxo (Foil) | Austin 2025": {
+    "buff": 1117207,
+    "uu": 111824,
+    "c5": 0,
+    "buff_sticker": 130120
+  },
+  "Sticker | Moseyuh (Foil) | Austin 2025": {
+    "buff": 1117208,
+    "uu": 112015,
+    "c5": 0,
+    "buff_sticker": 130121
+  },
+  "Sticker | dumau | Austin 2025": {
+    "buff": 1117209,
+    "uu": 111616,
+    "c5": 0,
+    "buff_sticker": 130122
+  },
+  "Sticker | Chinggis Warriors (Foil) | Austin 2025": {
+    "buff": 1117210,
+    "uu": 111886,
+    "c5": 0,
+    "buff_sticker": 130123
+  },
+  "Sticker | NAF (Foil) | Austin 2025": {
+    "buff": 1117211,
+    "uu": 111704,
+    "c5": 0,
+    "buff_sticker": 130124
+  },
+  "Sticker | jottAAA (Holo) | Austin 2025": {
+    "buff": 1117212,
+    "uu": 111877,
+    "c5": 0,
+    "buff_sticker": 130125
+  },
+  "Sticker | ropz (Holo) | Austin 2025": {
+    "buff": 1117213,
+    "uu": 111705,
+    "c5": 0,
+    "buff_sticker": 130126
+  },
+  "Sticker | xertioN (Holo) | Austin 2025": {
+    "buff": 1117214,
+    "uu": 111871,
+    "c5": 0,
+    "buff_sticker": 130127
+  },
+  "Sticker | Starry (Holo) | Austin 2025": {
+    "buff": 1117215,
+    "uu": 111916,
+    "c5": 0,
+    "buff_sticker": 130128
+  },
+  "Sticker | FlameZ (Holo) | Austin 2025": {
+    "buff": 1117216,
+    "uu": 111925,
+    "c5": 0,
+    "buff_sticker": 130129
+  },
+  "Sticker | EmiliaQAQ (Foil) | Austin 2025": {
+    "buff": 1117219,
+    "uu": 111999,
+    "c5": 0,
+    "buff_sticker": 130130
+  },
+  "Sticker | paiN Gaming | Austin 2025": {
+    "buff": 1117220,
+    "uu": 111574,
+    "c5": 0,
+    "buff_sticker": 130131
+  },
+  "Sticker | exit (Holo) | Austin 2025": {
+    "buff": 1117221,
+    "uu": 111977,
+    "c5": 0,
+    "buff_sticker": 130132
+  },
+  "Sticker | Virtus.Pro (Holo) | Austin 2025": {
+    "buff": 1117222,
+    "uu": 112107,
+    "c5": 0,
+    "buff_sticker": 130133
+  },
+  "Sticker | M80 | Austin 2025": {
+    "buff": 1117223,
+    "uu": 111772,
+    "c5": 0,
+    "buff_sticker": 130134
+  },
+  "Sticker | paiN Gaming (Foil) | Austin 2025": {
+    "buff": 1117226,
+    "uu": 111827,
+    "c5": 0,
+    "buff_sticker": 130135
+  },
+  "Sticker | Wildcard (Foil) | Austin 2025": {
+    "buff": 1117227,
+    "uu": 111894,
+    "c5": 0,
+    "buff_sticker": 130136
+  },
+  "Sticker | b1t (Holo) | Austin 2025": {
+    "buff": 1117228,
+    "uu": 112026,
+    "c5": 0,
+    "buff_sticker": 130137
+  },
+  "Sticker | F1KU (Foil) | Austin 2025": {
+    "buff": 1117229,
+    "uu": 111719,
+    "c5": 0,
+    "buff_sticker": 130138
+  },
+  "Sticker | stanislaw (Foil) | Austin 2025": {
+    "buff": 1117230,
+    "uu": 111742,
+    "c5": 0,
+    "buff_sticker": 130139
+  },
+  "Sticker | Leagues of Votann 2": {
+    "buff": 1117231,
+    "uu": 112252,
+    "c5": 0,
+    "buff_sticker": 130140
+  },
+  "Sticker | Tyranids 2": {
+    "buff": 1117232,
+    "uu": 112218,
+    "c5": 0,
+    "buff_sticker": 130141
+  },
+  "Sticker | NertZ (Foil) | Austin 2025": {
+    "buff": 1117233,
+    "uu": 111580,
+    "c5": 0,
+    "buff_sticker": 130142
+  },
+  "Sticker | NQZ (Gold) | Austin 2025": {
+    "buff": 1117234,
+    "uu": 112226,
+    "c5": 0,
+    "buff_sticker": 130143
+  },
+  "Sticker | FlyQuest (Holo) | Austin 2025": {
+    "buff": 1117235,
+    "uu": 112184,
+    "c5": 0,
+    "buff_sticker": 130144
+  },
+  "Sticker | fame (Foil) | Austin 2025": {
+    "buff": 1117236,
+    "uu": 112022,
+    "c5": 0,
+    "buff_sticker": 130145
+  },
+  "Sticker | Nemiga (Holo) | Austin 2025": {
+    "buff": 1117237,
+    "uu": 111820,
+    "c5": 0,
+    "buff_sticker": 130146
+  },
+  "Sticker | iM (Holo) | Austin 2025": {
+    "buff": 1117238,
+    "uu": 111792,
+    "c5": 0,
+    "buff_sticker": 130147
+  },
+  "Sticker | frozen (Holo) | Austin 2025": {
+    "buff": 1117239,
+    "uu": 112062,
+    "c5": 0,
+    "buff_sticker": 130148
+  },
+  "Sticker | OG (Holo) | Austin 2025": {
+    "buff": 1117240,
+    "uu": 112057,
+    "c5": 0,
+    "buff_sticker": 130149
+  },
+  "Sticker | TYLOO (Holo) | Austin 2025": {
+    "buff": 1117241,
+    "uu": 112146,
+    "c5": 0,
+    "buff_sticker": 130150
+  },
+  "Sticker | FaZe Clan (Foil) | Austin 2025": {
+    "buff": 1117242,
+    "uu": 111769,
+    "c5": 0,
+    "buff_sticker": 130151
+  },
+  "Sticker | phzy (Foil) | Austin 2025": {
+    "buff": 1117243,
+    "uu": 111980,
+    "c5": 0,
+    "buff_sticker": 130152
+  },
+  "Sticker | npl (Holo) | Austin 2025": {
+    "buff": 1117244,
+    "uu": 112175,
+    "c5": 0,
+    "buff_sticker": 130153
+  },
+  "Sticker | isak (Holo) | Austin 2025": {
+    "buff": 1117245,
+    "uu": 111935,
+    "c5": 0,
+    "buff_sticker": 130154
+  },
+  "Sticker | torzsi (Foil) | Austin 2025": {
+    "buff": 1117246,
+    "uu": 111613,
+    "c5": 0,
+    "buff_sticker": 130155
+  },
+  "Sticker | decenty | Austin 2025": {
+    "buff": 1117247,
+    "uu": 111851,
+    "c5": 0,
+    "buff_sticker": 130156
+  },
+  "Sticker | Emperor's Children 2": {
+    "buff": 1117248,
+    "uu": 111790,
+    "c5": 0,
+    "buff_sticker": 130157
+  },
+  "Sticker | Cxzi (Holo) | Austin 2025": {
+    "buff": 1117249,
+    "uu": 112125,
+    "c5": 0,
+    "buff_sticker": 130158
+  },
+  "Sticker | ultimate (Foil) | Austin 2025": {
+    "buff": 1117250,
+    "uu": 111494,
+    "c5": 0,
+    "buff_sticker": 130159
+  },
+  "Sticker | nettik (Foil) | Austin 2025": {
+    "buff": 1117251,
+    "uu": 111960,
+    "c5": 0,
+    "buff_sticker": 130160
+  },
+  "Sticker | z4KR (Foil) | Austin 2025": {
+    "buff": 1117253,
+    "uu": 111718,
+    "c5": 0,
+    "buff_sticker": 130161
+  },
+  "Sticker | Liazz (Foil) | Austin 2025": {
+    "buff": 1117255,
+    "uu": 111730,
+    "c5": 0,
+    "buff_sticker": 130162
+  },
+  "Sticker | Plopski (Holo) | Austin 2025": {
+    "buff": 1117256,
+    "uu": 112098,
+    "c5": 0,
+    "buff_sticker": 130163
+  },
+  "Sticker | Snax (Holo) | Austin 2025": {
+    "buff": 1117257,
+    "uu": 112039,
+    "c5": 0,
+    "buff_sticker": 130164
+  },
+  "Sticker | yxngstxr (Holo) | Austin 2025": {
+    "buff": 1117258,
+    "uu": 111954,
+    "c5": 0,
+    "buff_sticker": 130165
+  },
+  "Sticker | zweih (Holo) | Austin 2025": {
+    "buff": 1117259,
+    "uu": 112046,
+    "c5": 0,
+    "buff_sticker": 130166
+  },
+  "Sticker | Twistzz (Holo) | Austin 2025": {
+    "buff": 1117260,
+    "uu": 111671,
+    "c5": 0,
+    "buff_sticker": 130167
+  },
+  "Sticker | SunPayus (Foil) | Austin 2025": {
+    "buff": 1117261,
+    "uu": 112079,
+    "c5": 0,
+    "buff_sticker": 130168
+  },
+  "Sticker | khaN (Foil) | Austin 2025": {
+    "buff": 1117262,
+    "uu": 111743,
+    "c5": 0,
+    "buff_sticker": 130169
+  },
+  "Sticker | Wildcard (Holo) | Austin 2025": {
+    "buff": 1117263,
+    "uu": 111991,
+    "c5": 0,
+    "buff_sticker": 130170
+  },
+  "Sticker | arT (Holo) | Austin 2025": {
+    "buff": 1117264,
+    "uu": 112087,
+    "c5": 0,
+    "buff_sticker": 130171
+  },
+  "Sticker | vexite (Holo) | Austin 2025": {
+    "buff": 1117265,
+    "uu": 111994,
+    "c5": 0,
+    "buff_sticker": 130172
+  },
+  "Sticker | mezii (Holo) | Austin 2025": {
+    "buff": 1117283,
+    "uu": 111588,
+    "c5": 0,
+    "buff_sticker": 130173
+  },
+  "Austin 2025 Challengers Autograph Capsule": {
+    "buff": 1117284,
+    "uu": 111513,
+    "c5": 0
+  },
+  "Sticker | Magnojez | Austin 2025": {
+    "buff": 1117289,
+    "uu": 111706,
+    "c5": 0,
+    "buff_sticker": 130174
+  },
+  "Sticker | chopper (Holo) | Austin 2025": {
+    "buff": 1117290,
+    "uu": 111669,
+    "c5": 0,
+    "buff_sticker": 130175
+  },
+  "Sticker | Complexity Gaming (Holo) | Austin 2025": {
+    "buff": 1117292,
+    "uu": 111854,
+    "c5": 0,
+    "buff_sticker": 130176
+  },
+  "Sticker | Vitality (Gold) | Austin 2025": {
+    "buff": 1117293,
+    "uu": 111961,
+    "c5": 0,
+    "buff_sticker": 130177
+  },
+  "Sticker | molodoy (Foil) | Austin 2025": {
+    "buff": 1117294,
+    "uu": 111936,
+    "c5": 0,
+    "buff_sticker": 130178
+  },
+  "Sticker | saadzin (Foil) | Austin 2025": {
+    "buff": 1117295,
+    "uu": 111993,
+    "c5": 0,
+    "buff_sticker": 130179
+  },
+  "Sticker | NiKo (Foil) | Austin 2025": {
+    "buff": 1117296,
+    "uu": 111899,
+    "c5": 0,
+    "buff_sticker": 130180
+  },
+  "Sticker | m0NESY (Gold) | Austin 2025": {
+    "buff": 1117297,
+    "uu": 112028,
+    "c5": 0,
+    "buff_sticker": 130181
+  },
+  "Sticker | Lucky (Foil) | Austin 2025": {
+    "buff": 1117298,
+    "uu": 112013,
+    "c5": 0,
+    "buff_sticker": 130182
+  },
+  "Sticker | TeSeS (Foil) | Austin 2025": {
+    "buff": 1117299,
+    "uu": 111840,
+    "c5": 0,
+    "buff_sticker": 130183
+  },
+  "Sticker | magixx (Foil) | Austin 2025": {
+    "buff": 1117300,
+    "uu": 111672,
+    "c5": 0,
+    "buff_sticker": 130184
+  },
+  "Sticker | 3DMAX (Holo) | Austin 2025": {
+    "buff": 1117301,
+    "uu": 111883,
+    "c5": 0,
+    "buff_sticker": 130185
+  },
+  "Sticker | MIBR (Foil) | Austin 2025": {
+    "buff": 1117302,
+    "uu": 111884,
+    "c5": 0,
+    "buff_sticker": 130186
+  },
+  "Sticker | MAJ3R (Holo) | Austin 2025": {
+    "buff": 1117303,
+    "uu": 112078,
+    "c5": 0,
+    "buff_sticker": 130187
+  },
+  "Sticker | electronic (Holo) | Austin 2025": {
+    "buff": 1117304,
+    "uu": 112002,
+    "c5": 0,
+    "buff_sticker": 130188
+  },
+  "Sticker | donk (Gold) | Austin 2025": {
+    "buff": 1117305,
+    "uu": 111667,
+    "c5": 0,
+    "buff_sticker": 130189
+  },
+  "Sticker | biguzera (Foil) | Austin 2025": {
+    "buff": 1117306,
+    "uu": 111853,
+    "c5": 0,
+    "buff_sticker": 130190
+  },
+  "Sticker | kensizor (Foil) | Austin 2025": {
+    "buff": 1117307,
+    "uu": 111858,
+    "c5": 0,
+    "buff_sticker": 130191
+  },
+  "Sticker | Officio Assassinorum": {
+    "buff": 1117308,
+    "uu": 112019,
+    "c5": 0,
+    "buff_sticker": 130192
+  },
+  "Sticker | 3DMAX | Austin 2025": {
+    "buff": 1117309,
+    "uu": 111726,
+    "c5": 0,
+    "buff_sticker": 130193
+  },
+  "Sticker | Natus Vincere (Gold) | Austin 2025": {
+    "buff": 1117311,
+    "uu": 112149,
+    "c5": 0,
+    "buff_sticker": 130194
+  },
+  "Sticker | Lake (Foil) | Austin 2025": {
+    "buff": 1117312,
+    "uu": 111926,
+    "c5": 0,
+    "buff_sticker": 130195
+  },
+  "Sticker | Techno4K (Holo) | Austin 2025": {
+    "buff": 1117318,
+    "uu": 111628,
+    "c5": 0,
+    "buff_sticker": 130196
+  },
+  "Sticker | snow (Foil) | Austin 2025": {
+    "buff": 1117320,
+    "uu": 111942,
+    "c5": 0,
+    "buff_sticker": 130197
+  },
+  "Sticker | Brollan (Holo) | Austin 2025": {
+    "buff": 1117321,
+    "uu": 111673,
+    "c5": 0,
+    "buff_sticker": 130198
+  },
+  "Sticker | Buzz (Foil) | Austin 2025": {
+    "buff": 1117322,
+    "uu": 111959,
+    "c5": 0,
+    "buff_sticker": 130199
+  },
+  "Sticker | headtr1ck (Holo) | Austin 2025": {
+    "buff": 1117324,
+    "uu": 112065,
+    "c5": 0,
+    "buff_sticker": 130200
+  },
+  "Sticker | yuurih (Foil) | Austin 2025": {
+    "buff": 1117325,
+    "uu": 111939,
+    "c5": 0,
+    "buff_sticker": 130201
+  },
+  "Sticker | broky (Holo) | Austin 2025": {
+    "buff": 1117326,
+    "uu": 112050,
+    "c5": 0,
+    "buff_sticker": 130202
+  },
+  "Sticker | JT (Foil) | Austin 2025": {
+    "buff": 1117328,
+    "uu": 111847,
+    "c5": 0,
+    "buff_sticker": 130203
+  },
+  "Sticker | Sonic (Foil) | Austin 2025": {
+    "buff": 1117329,
+    "uu": 112006,
+    "c5": 0,
+    "buff_sticker": 130204
+  },
+  "Sticker | paiN Gaming (Holo) | Austin 2025": {
+    "buff": 1117330,
+    "uu": 112092,
+    "c5": 0,
+    "buff_sticker": 130205
+  },
+  "Sticker | HEROIC (Gold) | Austin 2025": {
+    "buff": 1117331,
+    "uu": 112077,
+    "c5": 0,
+    "buff_sticker": 130206
+  },
+  "Sticker | FL1T (Holo) | Austin 2025": {
+    "buff": 1117332,
+    "uu": 112024,
+    "c5": 0,
+    "buff_sticker": 130207
+  },
+  "Sticker | saffee (Holo) | Austin 2025": {
+    "buff": 1117333,
+    "uu": 112145,
+    "c5": 0,
+    "buff_sticker": 130208
+  },
+  "Sticker | siuhy (Holo) | Austin 2025": {
+    "buff": 1117334,
+    "uu": 111870,
+    "c5": 0,
+    "buff_sticker": 130209
+  },
+  "Sticker | KSCERATO (Holo) | Austin 2025": {
+    "buff": 1117335,
+    "uu": 111941,
+    "c5": 0,
+    "buff_sticker": 130210
+  },
+  "Sticker | The Mongolz (Gold) | Austin 2025": {
+    "buff": 1117336,
+    "uu": 112142,
+    "c5": 0,
+    "buff_sticker": 130211
+  },
+  "Sticker | nettik (Holo) | Austin 2025": {
+    "buff": 1117337,
+    "uu": 112228,
+    "c5": 0,
+    "buff_sticker": 130212
+  },
+  "Sticker | HEROIC (Holo) | Austin 2025": {
+    "buff": 1117338,
+    "uu": 112005,
+    "c5": 0,
+    "buff_sticker": 130213
+  },
+  "Sticker | Maka (Holo) | Austin 2025": {
+    "buff": 1117339,
+    "uu": 111874,
+    "c5": 0,
+    "buff_sticker": 130214
+  },
+  "Sticker | s1n (Foil) | Austin 2025": {
+    "buff": 1117340,
+    "uu": 112064,
+    "c5": 0,
+    "buff_sticker": 130215
+  },
+  "Sticker | Aeldari 2": {
+    "buff": 1117341,
+    "uu": 111868,
+    "c5": 0,
+    "buff_sticker": 130216
+  },
+  "Sticker | L00m1 (Foil) | Austin 2025": {
+    "buff": 1117342,
+    "uu": 111866,
+    "c5": 0,
+    "buff_sticker": 130217
+  },
+  "Sticker | FaZe Clan (Holo) | Austin 2025": {
+    "buff": 1117343,
+    "uu": 111770,
+    "c5": 0,
+    "buff_sticker": 130218
+  },
+  "Sticker | controlez (Foil) | Austin 2025": {
+    "buff": 1117344,
+    "uu": 111720,
+    "c5": 0,
+    "buff_sticker": 130219
+  },
+  "Sticker | lux (Foil) | Austin 2025": {
+    "buff": 1117345,
+    "uu": 112047,
+    "c5": 0,
+    "buff_sticker": 130220
+  },
+  "Sticker | nicx (Holo) | Austin 2025": {
+    "buff": 1117346,
+    "uu": 112168,
+    "c5": 0,
+    "buff_sticker": 130221
+  },
+  "Sticker | jottAAA (Gold) | Austin 2025": {
+    "buff": 1117347,
+    "uu": 112148,
+    "c5": 0,
+    "buff_sticker": 130222
+  },
+  "Sticker | XANTARES (Gold) | Austin 2025": {
+    "buff": 1117348,
+    "uu": 111845,
+    "c5": 0,
+    "buff_sticker": 130223
+  },
+  "Sticker | frozen (Foil) | Austin 2025": {
+    "buff": 1117349,
+    "uu": 111944,
+    "c5": 0,
+    "buff_sticker": 130224
+  },
+  "Sticker | s1n (Holo) | Austin 2025": {
+    "buff": 1117350,
+    "uu": 112023,
+    "c5": 0,
+    "buff_sticker": 130225
+  },
+  "Sticker | snow (Gold) | Austin 2025": {
+    "buff": 1117351,
+    "uu": 112113,
+    "c5": 0,
+    "buff_sticker": 130226
+  },
+  "Sticker | Aurora (Holo) | Austin 2025": {
+    "buff": 1117352,
+    "uu": 111691,
+    "c5": 0,
+    "buff_sticker": 130227
+  },
+  "Sticker | Falcons (Foil) | Austin 2025": {
+    "buff": 1117353,
+    "uu": 111896,
+    "c5": 0,
+    "buff_sticker": 130228
+  },
+  "Sticker | spooke (Holo) | Austin 2025": {
+    "buff": 1117354,
+    "uu": 111987,
+    "c5": 0,
+    "buff_sticker": 130229
+  },
+  "Sticker | kensizor (Holo) | Austin 2025": {
+    "buff": 1117355,
+    "uu": 112163,
+    "c5": 0,
+    "buff_sticker": 130230
+  },
+  "Sticker | Swisher (Holo) | Austin 2025": {
+    "buff": 1117356,
+    "uu": 112203,
+    "c5": 0,
+    "buff_sticker": 130231
+  },
+  "Sticker | br0 (Foil) | Austin 2025": {
+    "buff": 1117357,
+    "uu": 111983,
+    "c5": 0,
+    "buff_sticker": 130232
+  },
+  "Sticker | S1ren (Holo) | Austin 2025": {
+    "buff": 1117358,
+    "uu": 112072,
+    "c5": 0,
+    "buff_sticker": 130233
+  },
+  "Sticker | FlyQuest (Foil) | Austin 2025": {
+    "buff": 1117359,
+    "uu": 111825,
+    "c5": 0,
+    "buff_sticker": 130234
+  },
+  "Sticker | riskyb0b (Holo) | Austin 2025": {
+    "buff": 1117360,
+    "uu": 112153,
+    "c5": 0,
+    "buff_sticker": 130235
+  },
+  "Sticker | Wildcard (Gold) | Austin 2025": {
+    "buff": 1117361,
+    "uu": 112130,
+    "c5": 0,
+    "buff_sticker": 130236
+  },
+  "Sticker | 3DMAX (Foil) | Austin 2025": {
+    "buff": 1117362,
+    "uu": 111838,
+    "c5": 0,
+    "buff_sticker": 130237
+  },
+  "Sticker | kyxsan (Foil) | Austin 2025": {
+    "buff": 1117363,
+    "uu": 111940,
+    "c5": 0,
+    "buff_sticker": 130238
+  },
+  "Sticker | insani (Holo) | Austin 2025": {
+    "buff": 1117364,
+    "uu": 111903,
+    "c5": 0,
+    "buff_sticker": 130239
+  },
+  "Sticker | Swisher (Gold) | Austin 2025": {
+    "buff": 1117365,
+    "uu": 112049,
+    "c5": 0,
+    "buff_sticker": 130240
+  },
+  "Sticker | biguzera (Holo) | Austin 2025": {
+    "buff": 1117366,
+    "uu": 111947,
+    "c5": 0,
+    "buff_sticker": 130241
+  },
+  "Sticker | FL1T (Foil) | Austin 2025": {
+    "buff": 1117367,
+    "uu": 111758,
+    "c5": 0,
+    "buff_sticker": 130242
+  },
+  "Sticker | Lucaozy (Foil) | Austin 2025": {
+    "buff": 1117370,
+    "uu": 111763,
+    "c5": 0,
+    "buff_sticker": 130243
+  },
+  "Sticker | ICY (Holo) | Austin 2025": {
+    "buff": 1117375,
+    "uu": 112060,
+    "c5": 0,
+    "buff_sticker": 130244
+  },
+  "Sticker | bodyy (Holo) | Austin 2025": {
+    "buff": 1117376,
+    "uu": 111900,
+    "c5": 0,
+    "buff_sticker": 130245
+  },
+  "Sticker | TeSeS (Holo) | Austin 2025": {
+    "buff": 1117377,
+    "uu": 112058,
+    "c5": 0,
+    "buff_sticker": 130246
+  },
+  "Sticker | westmelon (Holo) | Austin 2025": {
+    "buff": 1117380,
+    "uu": 111750,
+    "c5": 0,
+    "buff_sticker": 130247
+  },
+  "Sticker | ropz (Gold) | Austin 2025": {
+    "buff": 1117381,
+    "uu": 112199,
+    "c5": 0,
+    "buff_sticker": 130248
+  },
+  "Sticker | B8 (Gold) | Austin 2025": {
+    "buff": 1117382,
+    "uu": 111965,
+    "c5": 0,
+    "buff_sticker": 130249
+  },
+  "Sticker | Magisk (Foil) | Austin 2025": {
+    "buff": 1117383,
+    "uu": 111938,
+    "c5": 0,
+    "buff_sticker": 130250
+  },
+  "Sticker | riskyb0b (Foil) | Austin 2025": {
+    "buff": 1117384,
+    "uu": 111911,
+    "c5": 0,
+    "buff_sticker": 130251
+  },
+  "Sticker | m0NESY (Holo) | Austin 2025": {
+    "buff": 1117385,
+    "uu": 112073,
+    "c5": 0,
+    "buff_sticker": 130252
+  },
+  "Sticker | FalleN (Holo) | Austin 2025": {
+    "buff": 1117386,
+    "uu": 112074,
+    "c5": 0,
+    "buff_sticker": 130253
+  },
+  "Sticker | brnz4n (Holo) | Austin 2025": {
+    "buff": 1117387,
+    "uu": 112056,
+    "c5": 0,
+    "buff_sticker": 130254
+  },
+  "Sticker | Ex3rcice (Holo) | Austin 2025": {
+    "buff": 1117388,
+    "uu": 112115,
+    "c5": 0,
+    "buff_sticker": 130255
+  },
+  "Sticker | FURIA (Holo) | Austin 2025": {
+    "buff": 1117389,
+    "uu": 112101,
+    "c5": 0,
+    "buff_sticker": 130256
+  },
+  "Sticker | noway (Foil) | Austin 2025": {
+    "buff": 1117390,
+    "uu": 111952,
+    "c5": 0,
+    "buff_sticker": 130257
+  },
+  "Sticker | Liazz (Gold) | Austin 2025": {
+    "buff": 1117391,
+    "uu": 111700,
+    "c5": 0,
+    "buff_sticker": 130258
+  },
+  "Sticker | xfl0ud (Foil) | Austin 2025": {
+    "buff": 1117392,
+    "uu": 111748,
+    "c5": 0,
+    "buff_sticker": 130259
+  },
+  "Sticker | npl (Foil) | Austin 2025": {
+    "buff": 1117393,
+    "uu": 111951,
+    "c5": 0,
+    "buff_sticker": 130260
+  },
+  "Sticker | NRG (Gold) | Austin 2025": {
+    "buff": 1117394,
+    "uu": 112173,
+    "c5": 0,
+    "buff_sticker": 130261
+  },
+  "Sticker | cool4st (Foil) | Austin 2025": {
+    "buff": 1117395,
+    "uu": 111981,
+    "c5": 0,
+    "buff_sticker": 130262
+  },
+  "Sticker | NQZ (Foil) | Austin 2025": {
+    "buff": 1117396,
+    "uu": 111676,
+    "c5": 0,
+    "buff_sticker": 130263
+  },
+  "Sticker | molodoy (Holo) | Austin 2025": {
+    "buff": 1117397,
+    "uu": 112147,
+    "c5": 0,
+    "buff_sticker": 130264
+  },
+  "Sticker | torzsi (Holo) | Austin 2025": {
+    "buff": 1117398,
+    "uu": 112119,
+    "c5": 0,
+    "buff_sticker": 130265
+  },
+  "Sticker | Jimpphat (Gold) | Austin 2025": {
+    "buff": 1117399,
+    "uu": 111934,
+    "c5": 0,
+    "buff_sticker": 130266
+  },
+  "Sticker | Aleksib (Gold) | Austin 2025": {
+    "buff": 1117400,
+    "uu": 112236,
+    "c5": 0,
+    "buff_sticker": 130267
+  },
+  "Sticker | TRY (Foil) | Austin 2025": {
+    "buff": 1117401,
+    "uu": 111849,
+    "c5": 0,
+    "buff_sticker": 130268
+  },
+  "Sticker | piriajr (Foil) | Austin 2025": {
+    "buff": 1117402,
+    "uu": 111996,
+    "c5": 0,
+    "buff_sticker": 130269
+  },
+  "Sticker | b1t (Gold) | Austin 2025": {
+    "buff": 1117403,
+    "uu": 111931,
+    "c5": 0,
+    "buff_sticker": 130270
+  },
+  "Sticker | decenty (Holo) | Austin 2025": {
+    "buff": 1117404,
+    "uu": 112041,
+    "c5": 0,
+    "buff_sticker": 130271
+  },
+  "Sticker | Legacy (Gold) | Austin 2025": {
+    "buff": 1117405,
+    "uu": 112117,
+    "c5": 0,
+    "buff_sticker": 130272
+  },
+  "Sticker | Heavygod (Holo) | Austin 2025": {
+    "buff": 1117406,
+    "uu": 112120,
+    "c5": 0,
+    "buff_sticker": 130273
+  },
+  "Sticker | westmelon (Foil) | Austin 2025": {
+    "buff": 1117407,
+    "uu": 111608,
+    "c5": 0,
+    "buff_sticker": 130274
+  },
+  "Sticker | kyxsan (Holo) | Austin 2025": {
+    "buff": 1117408,
+    "uu": 112088,
+    "c5": 0,
+    "buff_sticker": 130275
+  },
+  "Sticker | mzinho (Holo) | Austin 2025": {
+    "buff": 1117409,
+    "uu": 111879,
+    "c5": 0,
+    "buff_sticker": 130276
+  },
+  "Sticker | dgt (Holo) | Austin 2025": {
+    "buff": 1117410,
+    "uu": 112090,
+    "c5": 0,
+    "buff_sticker": 130277
+  },
+  "Sticker | Chinggis Warriors (Holo) | Austin 2025": {
+    "buff": 1117411,
+    "uu": 112176,
+    "c5": 0,
+    "buff_sticker": 130278
+  },
+  "Sticker | Snax (Gold) | Austin 2025": {
+    "buff": 1117412,
+    "uu": 112097,
+    "c5": 0,
+    "buff_sticker": 130279
+  },
+  "Sticker | adamb (Foil) | Austin 2025": {
+    "buff": 1117413,
+    "uu": 111711,
+    "c5": 0,
+    "buff_sticker": 130280
+  },
+  "Sticker | electronic (Foil) | Austin 2025": {
+    "buff": 1117414,
+    "uu": 111561,
+    "c5": 0,
+    "buff_sticker": 130281
+  },
+  "Sticker | MOUZ (Holo) | Austin 2025": {
+    "buff": 1117415,
+    "uu": 111793,
+    "c5": 0,
+    "buff_sticker": 130282
+  },
+  "Sticker | chayJESUS (Holo) | Austin 2025": {
+    "buff": 1117416,
+    "uu": 112053,
+    "c5": 0,
+    "buff_sticker": 130283
+  },
+  "Sticker | World Eaters 1": {
+    "buff": 1117418,
+    "uu": 111876,
+    "c5": 0,
+    "buff_sticker": 130284
+  },
+  "Sticker | nitr0 (Foil) | Austin 2025": {
+    "buff": 1117419,
+    "uu": 111727,
+    "c5": 0,
+    "buff_sticker": 130285
+  },
+  "Sticker | Ex3rcice (Foil) | Austin 2025": {
+    "buff": 1117420,
+    "uu": 111767,
+    "c5": 0,
+    "buff_sticker": 130286
+  },
+  "Sticker | M80 (Foil) | Austin 2025": {
+    "buff": 1117421,
+    "uu": 112083,
+    "c5": 0,
+    "buff_sticker": 130287
+  },
+  "Sticker | arT (Foil) | Austin 2025": {
+    "buff": 1117422,
+    "uu": 111642,
+    "c5": 0,
+    "buff_sticker": 130288
+  },
+  "Sticker | EliGE (Holo) | Austin 2025": {
+    "buff": 1117423,
+    "uu": 112167,
+    "c5": 0,
+    "buff_sticker": 130289
+  },
+  "Sticker | malbsMd (Holo) | Austin 2025": {
+    "buff": 1117425,
+    "uu": 111917,
+    "c5": 0,
+    "buff_sticker": 130290
+  },
+  "Sticker | Alpha Legion 1": {
+    "buff": 1117426,
+    "uu": 112081,
+    "c5": 0,
+    "buff_sticker": 130291
+  },
+  "Sticker | Blood Angels": {
+    "buff": 1117427,
+    "uu": 111782,
+    "c5": 0,
+    "buff_sticker": 130292
+  },
+  "Sticker | Iron Halo": {
+    "buff": 1117428,
+    "uu": 112310,
+    "c5": 0,
+    "buff_sticker": 130293
+  },
+  "Sticker | Lake (Holo) | Austin 2025": {
+    "buff": 1117433,
+    "uu": 112132,
+    "c5": 0,
+    "buff_sticker": 130294
+  },
+  "Sticker | Team Spirit (Gold) | Austin 2025": {
+    "buff": 1117434,
+    "uu": 112122,
+    "c5": 0,
+    "buff_sticker": 130295
+  },
+  "Sticker | MAJ3R (Gold) | Austin 2025": {
+    "buff": 1117436,
+    "uu": 111918,
+    "c5": 0,
+    "buff_sticker": 130296
+  },
+  "Sticker | MIBR (Gold) | Austin 2025": {
+    "buff": 1117437,
+    "uu": 112308,
+    "c5": 0,
+    "buff_sticker": 130297
+  },
+  "Sticker | Drukhari 2": {
+    "buff": 1117438,
+    "uu": 111974,
+    "c5": 0,
+    "buff_sticker": 130298
+  },
+  "Sticker | Wicadia (Gold) | Austin 2025": {
+    "buff": 1117439,
+    "uu": 111978,
+    "c5": 0,
+    "buff_sticker": 130299
+  },
+  "Sticker | zorte (Foil) | Austin 2025": {
+    "buff": 1117440,
+    "uu": 111710,
+    "c5": 0,
+    "buff_sticker": 130300
+  },
+  "Sticker | Ariucle (Foil) | Austin 2025": {
+    "buff": 1117441,
+    "uu": 111865,
+    "c5": 0,
+    "buff_sticker": 130301
+  },
+  "Sticker | susp (Holo) | Austin 2025": {
+    "buff": 1117442,
+    "uu": 112105,
+    "c5": 0,
+    "buff_sticker": 130302
+  },
+  "Sticker | Natus Vincere (Holo) | Austin 2025": {
+    "buff": 1117443,
+    "uu": 111888,
+    "c5": 0,
+    "buff_sticker": 130303
+  },
+  "Sticker | NAF (Holo) | Austin 2025": {
+    "buff": 1117444,
+    "uu": 111963,
+    "c5": 0,
+    "buff_sticker": 130304
+  },
+  "Sticker | TRY (Holo) | Austin 2025": {
+    "buff": 1117445,
+    "uu": 111713,
+    "c5": 0,
+    "buff_sticker": 130305
+  },
+  "Sticker | L00m1 (Holo) | Austin 2025": {
+    "buff": 1117446,
+    "uu": 111964,
+    "c5": 0,
+    "buff_sticker": 130306
+  },
+  "Sticker | arT (Gold) | Austin 2025": {
+    "buff": 1117447,
+    "uu": 112253,
+    "c5": 0,
+    "buff_sticker": 130307
+  },
+  "Sticker | B8 (Holo) | Austin 2025": {
+    "buff": 1117448,
+    "uu": 112011,
+    "c5": 0,
+    "buff_sticker": 130308
+  },
+  "Sticker | Imperial Esports (Holo) | Austin 2025": {
+    "buff": 1117449,
+    "uu": 111948,
+    "c5": 0,
+    "buff_sticker": 130309
+  },
+  "Sticker | kye (Holo) | Austin 2025": {
+    "buff": 1117450,
+    "uu": 112264,
+    "c5": 0,
+    "buff_sticker": 130310
+  },
+  "Sticker | zevy (Holo) | Austin 2025": {
+    "buff": 1117452,
+    "uu": 111969,
+    "c5": 0,
+    "buff_sticker": 130311
+  },
+  "Sticker | Lynn Vision (Holo) | Austin 2025": {
+    "buff": 1117453,
+    "uu": 111816,
+    "c5": 0,
+    "buff_sticker": 130312
+  },
+  "Sticker | Scythes of the Emperor": {
+    "buff": 1117454,
+    "uu": 112029,
+    "c5": 0,
+    "buff_sticker": 130313
+  },
+  "Sticker | Flesh Tearers": {
+    "buff": 1117455,
+    "uu": 112084,
+    "c5": 0,
+    "buff_sticker": 130314
+  },
+  "Sticker | Crimson Fists": {
+    "buff": 1117456,
+    "uu": 112224,
+    "c5": 0,
+    "buff_sticker": 130315
+  },
+  "Sticker | Mercury (Foil) | Austin 2025": {
+    "buff": 1117458,
+    "uu": 111729,
+    "c5": 0,
+    "buff_sticker": 130316
+  },
+  "Sticker | Wicadia (Holo) | Austin 2025": {
+    "buff": 1117459,
+    "uu": 111589,
+    "c5": 0,
+    "buff_sticker": 130317
+  },
+  "Sticker | n1ssim (Foil) | Austin 2025": {
+    "buff": 1117460,
+    "uu": 112155,
+    "c5": 0,
+    "buff_sticker": 130318
+  },
+  "Sticker | nicx (Gold) | Austin 2025": {
+    "buff": 1117461,
+    "uu": 112143,
+    "c5": 0,
+    "buff_sticker": 130319
+  },
+  "Sticker | ROUX (Foil) | Austin 2025": {
+    "buff": 1117462,
+    "uu": 112003,
+    "c5": 0,
+    "buff_sticker": 130320
+  },
+  "Sticker | bLitz (Gold) | Austin 2025": {
+    "buff": 1117463,
+    "uu": 112181,
+    "c5": 0,
+    "buff_sticker": 130321
+  },
+  "Sticker | Grim (Gold) | Austin 2025": {
+    "buff": 1117465,
+    "uu": 112307,
+    "c5": 0,
+    "buff_sticker": 130322
+  },
+  "Sticker | oSee (Holo) | Austin 2025": {
+    "buff": 1117466,
+    "uu": 111990,
+    "c5": 0,
+    "buff_sticker": 130323
+  },
+  "Sticker | iM (Gold) | Austin 2025": {
+    "buff": 1117467,
+    "uu": 112110,
+    "c5": 0,
+    "buff_sticker": 130324
+  },
+  "Sticker | siuhy (Gold) | Austin 2025": {
+    "buff": 1117468,
+    "uu": 112214,
+    "c5": 0,
+    "buff_sticker": 130325
+  },
+  "Sticker | adamb (Gold) | Austin 2025": {
+    "buff": 1117469,
+    "uu": 112318,
+    "c5": 0,
+    "buff_sticker": 130326
+  },
+  "Sticker | BetBoom (Gold) | Austin 2025": {
+    "buff": 1117470,
+    "uu": 112284,
+    "c5": 0,
+    "buff_sticker": 130327
+  },
+  "Sticker | LNZ (Foil) | Austin 2025": {
+    "buff": 1117471,
+    "uu": 111786,
+    "c5": 0,
+    "buff_sticker": 130328
+  },
+  "Sticker | Lynn Vision (Gold) | Austin 2025": {
+    "buff": 1117473,
+    "uu": 112187,
+    "c5": 0,
+    "buff_sticker": 130329
+  },
+  "Sticker | JamYoung (Gold) | Austin 2025": {
+    "buff": 1117474,
+    "uu": 112333,
+    "c5": 0,
+    "buff_sticker": 130330
+  },
+  "Sticker | nitr0 (Holo) | Austin 2025": {
+    "buff": 1117475,
+    "uu": 112157,
+    "c5": 0,
+    "buff_sticker": 130331
+  },
+  "Sticker | F1KU (Holo) | Austin 2025": {
+    "buff": 1117476,
+    "uu": 112071,
+    "c5": 0,
+    "buff_sticker": 130332
+  },
+  "Sticker | 1eeR (Foil) | Austin 2025": {
+    "buff": 1117477,
+    "uu": 111811,
+    "c5": 0,
+    "buff_sticker": 130333
+  },
+  "Sticker | Metizport (Holo) | Austin 2025": {
+    "buff": 1117478,
+    "uu": 112188,
+    "c5": 0,
+    "buff_sticker": 130334
+  },
+  "Sticker | Liazz (Holo) | Austin 2025": {
+    "buff": 1117479,
+    "uu": 111802,
+    "c5": 0,
+    "buff_sticker": 130335
+  },
+  "Sticker | n1ssim (Holo) | Austin 2025": {
+    "buff": 1117480,
+    "uu": 111986,
+    "c5": 0,
+    "buff_sticker": 130336
+  },
+  "Sticker | Falcons (Holo) | Austin 2025": {
+    "buff": 1117481,
+    "uu": 111771,
+    "c5": 0,
+    "buff_sticker": 130337
+  },
+  "Sticker | efire (Gold) | Austin 2025": {
+    "buff": 1117482,
+    "uu": 112185,
+    "c5": 0,
+    "buff_sticker": 130338
+  },
+  "Sticker | Graviti (Gold) | Austin 2025": {
+    "buff": 1117483,
+    "uu": 112134,
+    "c5": 0,
+    "buff_sticker": 130339
+  },
+  "Sticker | FlameZ (Gold) | Austin 2025": {
+    "buff": 1117484,
+    "uu": 111962,
+    "c5": 0,
+    "buff_sticker": 130340
+  },
+  "Sticker | Jee (Gold) | Austin 2025": {
+    "buff": 1117485,
+    "uu": 112052,
+    "c5": 0,
+    "buff_sticker": 130341
+  },
+  "Sticker | VINI (Holo) | Austin 2025": {
+    "buff": 1117486,
+    "uu": 111970,
+    "c5": 0,
+    "buff_sticker": 130342
+  },
+  "Sticker | noway (Gold) | Austin 2025": {
+    "buff": 1117487,
+    "uu": 112263,
+    "c5": 0,
+    "buff_sticker": 130343
+  },
+  "Sticker | Boombl4 (Foil) | Austin 2025": {
+    "buff": 1117488,
+    "uu": 111848,
+    "c5": 0,
+    "buff_sticker": 130344
+  },
+  "Sticker | INS (Holo) | Austin 2025": {
+    "buff": 1117489,
+    "uu": 112106,
+    "c5": 0,
+    "buff_sticker": 130345
+  },
+  "Sticker | Genestealer Cults 1": {
+    "buff": 1117490,
+    "uu": 112208,
+    "c5": 0,
+    "buff_sticker": 130346
+  },
+  "Sticker | Adeptus Mechanicus 1": {
+    "buff": 1117491,
+    "uu": 112270,
+    "c5": 0,
+    "buff_sticker": 130347
+  },
+  "Sticker | headtr1ck (Foil) | Austin 2025": {
+    "buff": 1117492,
+    "uu": 111799,
+    "c5": 0,
+    "buff_sticker": 130348
+  },
+  "Sticker | reck (Holo) | Austin 2025": {
+    "buff": 1117493,
+    "uu": 112055,
+    "c5": 0,
+    "buff_sticker": 130349
+  },
+  "Sticker | bLitz (Holo) | Austin 2025": {
+    "buff": 1117494,
+    "uu": 111485,
+    "c5": 0,
+    "buff_sticker": 130350
+  },
+  "Sticker | JBa (Foil) | Austin 2025": {
+    "buff": 1117495,
+    "uu": 111982,
+    "c5": 0,
+    "buff_sticker": 130351
+  },
+  "Sticker | alex666 (Foil) | Austin 2025": {
+    "buff": 1117496,
+    "uu": 111997,
+    "c5": 0,
+    "buff_sticker": 130352
+  },
+  "Sticker | JamYoung (Foil) | Austin 2025": {
+    "buff": 1117497,
+    "uu": 111738,
+    "c5": 0,
+    "buff_sticker": 130353
+  },
+  "Sticker | MIBR (Holo) | Austin 2025": {
+    "buff": 1117498,
+    "uu": 112021,
+    "c5": 0,
+    "buff_sticker": 130354
+  },
+  "Sticker | tN1R (Holo) | Austin 2025": {
+    "buff": 1117499,
+    "uu": 112018,
+    "c5": 0,
+    "buff_sticker": 130355
+  },
+  "Sticker | huNter- (Gold) | Austin 2025": {
+    "buff": 1117500,
+    "uu": 112091,
+    "c5": 0,
+    "buff_sticker": 130356
+  },
+  "Sticker | BLAST.tv (Gold) | Austin 2025": {
+    "buff": 1117501,
+    "uu": 111922,
+    "c5": 0,
+    "buff_sticker": 130357
+  },
+  "Sticker | Necron Ankh": {
+    "buff": 1117502,
+    "uu": 112160,
+    "c5": 0,
+    "buff_sticker": 130358
+  },
+  "Sticker | reck (Gold) | Austin 2025": {
+    "buff": 1117503,
+    "uu": 112237,
+    "c5": 0,
+    "buff_sticker": 130359
+  },
+  "Sticker | ultimate (Gold) | Austin 2025": {
+    "buff": 1117504,
+    "uu": 112017,
+    "c5": 0,
+    "buff_sticker": 130360
+  },
+  "Sticker | ZywOo (Gold) | Austin 2025": {
+    "buff": 1117506,
+    "uu": 111564,
+    "c5": 0,
+    "buff_sticker": 130361
+  },
+  "Sticker | 3DMAX (Gold) | Austin 2025": {
+    "buff": 1117507,
+    "uu": 112135,
+    "c5": 0,
+    "buff_sticker": 130362
+  },
+  "Sticker | Chr1zN (Foil) | Austin 2025": {
+    "buff": 1117508,
+    "uu": 112054,
+    "c5": 0,
+    "buff_sticker": 130363
+  },
+  "Sticker | HexT (Gold) | Austin 2025": {
+    "buff": 1117509,
+    "uu": 112304,
+    "c5": 0,
+    "buff_sticker": 130364
+  },
+  "Sticker | zorte (Holo) | Austin 2025": {
+    "buff": 1117510,
+    "uu": 112246,
+    "c5": 0,
+    "buff_sticker": 130365
+  },
+  "Sticker | C4LLM3SU3 (Holo) | Austin 2025": {
+    "buff": 1117511,
+    "uu": 112240,
+    "c5": 0,
+    "buff_sticker": 130366
+  },
+  "Sticker | malbsMd (Gold) | Austin 2025": {
+    "buff": 1117512,
+    "uu": 112121,
+    "c5": 0,
+    "buff_sticker": 130367
+  },
+  "Sticker | chopper (Gold) | Austin 2025": {
+    "buff": 1117513,
+    "uu": 112109,
+    "c5": 0,
+    "buff_sticker": 130368
+  },
+  "Sticker | NertZ (Gold) | Austin 2025": {
+    "buff": 1117514,
+    "uu": 111862,
+    "c5": 0,
+    "buff_sticker": 130369
+  },
+  "Sticker | Black Legion 1": {
+    "buff": 1117515,
+    "uu": 111975,
+    "c5": 0,
+    "buff_sticker": 130370
+  },
+  "Sticker | Genestealer Cults 2": {
+    "buff": 1117516,
+    "uu": 112171,
+    "c5": 0,
+    "buff_sticker": 130371
+  },
+  "Sticker | NQZ (Holo) | Austin 2025": {
+    "buff": 1117517,
+    "uu": 111547,
+    "c5": 0,
+    "buff_sticker": 130372
+  },
+  "Sticker | TYLOO (Gold) | Austin 2025": {
+    "buff": 1117518,
+    "uu": 112183,
+    "c5": 0,
+    "buff_sticker": 130373
+  },
+  "Sticker | bodyy (Gold) | Austin 2025": {
+    "buff": 1117519,
+    "uu": 112266,
+    "c5": 0,
+    "buff_sticker": 130374
+  },
+  "Sticker | kyxsan (Gold) | Austin 2025": {
+    "buff": 1117520,
+    "uu": 112265,
+    "c5": 0,
+    "buff_sticker": 130375
+  },
+  "Sticker | dav1deuS (Holo) | Austin 2025": {
+    "buff": 1117521,
+    "uu": 111902,
+    "c5": 0,
+    "buff_sticker": 130376
+  },
+  "Sticker | INS (Foil) | Austin 2025": {
+    "buff": 1117522,
+    "uu": 111910,
+    "c5": 0,
+    "buff_sticker": 130377
+  },
+  "Sticker | Jee (Holo) | Austin 2025": {
+    "buff": 1117523,
+    "uu": 112152,
+    "c5": 0,
+    "buff_sticker": 130378
+  },
+  "Sticker | Twistzz (Gold) | Austin 2025": {
+    "buff": 1117524,
+    "uu": 111773,
+    "c5": 0,
+    "buff_sticker": 130379
+  },
+  "Sticker | cool4st (Holo) | Austin 2025": {
+    "buff": 1117525,
+    "uu": 112095,
+    "c5": 0,
+    "buff_sticker": 130380
+  },
+  "Sticker | phzy (Holo) | Austin 2025": {
+    "buff": 1117526,
+    "uu": 112102,
+    "c5": 0,
+    "buff_sticker": 130381
+  },
+  "Sticker | snow (Holo) | Austin 2025": {
+    "buff": 1117527,
+    "uu": 112075,
+    "c5": 0,
+    "buff_sticker": 130382
+  },
+  "Sticker | brnz4n (Gold) | Austin 2025": {
+    "buff": 1117528,
+    "uu": 111558,
+    "c5": 0,
+    "buff_sticker": 130383
+  },
+  "Sticker | torzsi (Gold) | Austin 2025": {
+    "buff": 1117529,
+    "uu": 111815,
+    "c5": 0,
+    "buff_sticker": 130384
+  },
+  "Sticker | Ax1Le (Holo) | Austin 2025": {
+    "buff": 1117530,
+    "uu": 112292,
+    "c5": 0,
+    "buff_sticker": 130385
+  },
+  "Sticker | stanislaw (Gold) | Austin 2025": {
+    "buff": 1117531,
+    "uu": 112194,
+    "c5": 0,
+    "buff_sticker": 130386
+  },
+  "Sticker | Nemiga (Gold) | Austin 2025": {
+    "buff": 1117533,
+    "uu": 112262,
+    "c5": 0,
+    "buff_sticker": 130387
+  },
+  "Sticker | z4KR (Gold) | Austin 2025": {
+    "buff": 1117535,
+    "uu": 112103,
+    "c5": 0,
+    "buff_sticker": 130388
+  },
+  "Sticker | rain (Holo) | Austin 2025": {
+    "buff": 1117536,
+    "uu": 112129,
+    "c5": 0,
+    "buff_sticker": 130389
+  },
+  "Sticker | khaN (Holo) | Austin 2025": {
+    "buff": 1117537,
+    "uu": 112001,
+    "c5": 0,
+    "buff_sticker": 130390
+  },
+  "Sticker | Fluxo (Gold) | Austin 2025": {
+    "buff": 1117539,
+    "uu": 112131,
+    "c5": 0,
+    "buff_sticker": 130391
+  },
+  "Sticker | Moseyuh (Holo) | Austin 2025": {
+    "buff": 1117540,
+    "uu": 112111,
+    "c5": 0,
+    "buff_sticker": 130392
+  },
+  "Sticker | Lucky (Holo) | Austin 2025": {
+    "buff": 1117541,
+    "uu": 112126,
+    "c5": 0,
+    "buff_sticker": 130393
+  },
+  "Sticker | yuurih (Gold) | Austin 2025": {
+    "buff": 1117542,
+    "uu": 112201,
+    "c5": 0,
+    "buff_sticker": 130394
+  },
+  "Sticker | TeSeS (Gold) | Austin 2025": {
+    "buff": 1117543,
+    "uu": 112139,
+    "c5": 0,
+    "buff_sticker": 130395
+  },
+  "Sticker | G2 Esports (Gold) | Austin 2025": {
+    "buff": 1117544,
+    "uu": 112136,
+    "c5": 0,
+    "buff_sticker": 130396
+  },
+  "Sticker | z4KR (Holo) | Austin 2025": {
+    "buff": 1117545,
+    "uu": 112138,
+    "c5": 0,
+    "buff_sticker": 130397
+  },
+  "Sticker | skullz (Holo) | Austin 2025": {
+    "buff": 1117546,
+    "uu": 112089,
+    "c5": 0,
+    "buff_sticker": 130398
+  },
+  "Sticker | Lucaozy (Gold) | Austin 2025": {
+    "buff": 1117547,
+    "uu": 112235,
+    "c5": 0,
+    "buff_sticker": 130399
+  },
+  "Sticker | Adeptus Titanicus 1": {
+    "buff": 1117548,
+    "uu": 112162,
+    "c5": 0,
+    "buff_sticker": 130400
+  },
+  "Sticker | Aeldari 1": {
+    "buff": 1117549,
+    "uu": 112161,
+    "c5": 0,
+    "buff_sticker": 130401
+  },
+  "Sticker | Thousand Sons 2": {
+    "buff": 1117550,
+    "uu": 112165,
+    "c5": 0,
+    "buff_sticker": 130402
+  },
+  "Sticker | Sisters of Battle 2": {
+    "buff": 1117551,
+    "uu": 111785,
+    "c5": 0,
+    "buff_sticker": 130403
+  },
+  "Sticker | 910 (Gold) | Austin 2025": {
+    "buff": 1117552,
+    "uu": 111971,
+    "c5": 0,
+    "buff_sticker": 130404
+  },
+  "Sticker | apEX (Gold) | Austin 2025": {
+    "buff": 1117553,
+    "uu": 112034,
+    "c5": 0,
+    "buff_sticker": 130405
+  },
+  "Sticker | oSee (Foil) | Austin 2025": {
+    "buff": 1117554,
+    "uu": 111831,
+    "c5": 0,
+    "buff_sticker": 130406
+  },
+  "Sticker | decenty (Gold) | Austin 2025": {
+    "buff": 1117555,
+    "uu": 111949,
+    "c5": 0,
+    "buff_sticker": 130407
+  },
+  "Sticker | Heavygod (Gold) | Austin 2025": {
+    "buff": 1117556,
+    "uu": 112094,
+    "c5": 0,
+    "buff_sticker": 130408
+  },
+  "Sticker | broky (Gold) | Austin 2025": {
+    "buff": 1117557,
+    "uu": 112257,
+    "c5": 0,
+    "buff_sticker": 130409
+  },
+  "Sticker | karrigan (Holo) | Austin 2025": {
+    "buff": 1117558,
+    "uu": 111945,
+    "c5": 0,
+    "buff_sticker": 130410
+  },
+  "Sticker | kye (Foil) | Austin 2025": {
+    "buff": 1117559,
+    "uu": 111731,
+    "c5": 0,
+    "buff_sticker": 130411
+  },
+  "Sticker | dumau (Holo) | Austin 2025": {
+    "buff": 1117560,
+    "uu": 111901,
+    "c5": 0,
+    "buff_sticker": 130412
+  },
+  "Sticker | F1KU (Gold) | Austin 2025": {
+    "buff": 1117561,
+    "uu": 112294,
+    "c5": 0,
+    "buff_sticker": 130413
+  },
+  "Sticker | hampus (Holo) | Austin 2025": {
+    "buff": 1117562,
+    "uu": 112172,
+    "c5": 0,
+    "buff_sticker": 130414
+  },
+  "Sticker | Plopski (Gold) | Austin 2025": {
+    "buff": 1117563,
+    "uu": 111958,
+    "c5": 0,
+    "buff_sticker": 130415
+  },
+  "Sticker | magixx (Gold) | Austin 2025": {
+    "buff": 1117565,
+    "uu": 112010,
+    "c5": 0,
+    "buff_sticker": 130416
+  },
+  "Sticker | jL (Gold) | Austin 2025": {
+    "buff": 1117566,
+    "uu": 112112,
+    "c5": 0,
+    "buff_sticker": 130417
+  },
+  "Sticker | xertioN (Gold) | Austin 2025": {
+    "buff": 1117567,
+    "uu": 112128,
+    "c5": 0,
+    "buff_sticker": 130418
+  },
+  "Sticker | EliGE (Gold) | Austin 2025": {
+    "buff": 1117568,
+    "uu": 111929,
+    "c5": 0,
+    "buff_sticker": 130419
+  },
+  "Sticker | mzinho (Gold) | Austin 2025": {
+    "buff": 1117569,
+    "uu": 112032,
+    "c5": 0,
+    "buff_sticker": 130420
+  },
+  "Sticker | Imperial Knights": {
+    "buff": 1117570,
+    "uu": 112274,
+    "c5": 0,
+    "buff_sticker": 130421
+  },
+  "Sticker | T'au Empire 2": {
+    "buff": 1117571,
+    "uu": 112179,
+    "c5": 0,
+    "buff_sticker": 130422
+  },
+  "Sticker | Ultramarines": {
+    "buff": 1117572,
+    "uu": 112225,
+    "c5": 0,
+    "buff_sticker": 130423
+  },
+  "Sticker | Adeptus Mechanicus 2": {
+    "buff": 1117573,
+    "uu": 112222,
+    "c5": 0,
+    "buff_sticker": 130424
+  },
+  "Sticker | Thousand Sons 1": {
+    "buff": 1117574,
+    "uu": 112219,
+    "c5": 0,
+    "buff_sticker": 130425
+  },
+  "Sticker | Necron Glyphs": {
+    "buff": 1117575,
+    "uu": 112217,
+    "c5": 0,
+    "buff_sticker": 130426
+  },
+  "Sticker | Night Lords 2": {
+    "buff": 1117576,
+    "uu": 111789,
+    "c5": 0,
+    "buff_sticker": 130427
+  },
+  "Sticker | Ecclesiarchy": {
+    "buff": 1117577,
+    "uu": 112221,
+    "c5": 0,
+    "buff_sticker": 130428
+  },
+  "Sticker | Death Guard 2": {
+    "buff": 1117579,
+    "uu": 111973,
+    "c5": 0,
+    "buff_sticker": 130429
+  },
+  "Sticker | Cadia": {
+    "buff": 1117580,
+    "uu": 112220,
+    "c5": 0,
+    "buff_sticker": 130430
+  },
+  "Sticker | zevy (Gold) | Austin 2025": {
+    "buff": 1117581,
+    "uu": 112154,
+    "c5": 0,
+    "buff_sticker": 130431
+  },
+  "Sticker | Adeptus Astartes": {
+    "buff": 1117582,
+    "uu": 112190,
+    "c5": 0,
+    "buff_sticker": 130432
+  },
+  "Sticker | Magisk (Holo) | Austin 2025": {
+    "buff": 1117583,
+    "uu": 112204,
+    "c5": 0,
+    "buff_sticker": 130433
+  },
+  "Sticker | Chr1zN (Holo) | Austin 2025": {
+    "buff": 1117584,
+    "uu": 112076,
+    "c5": 0,
+    "buff_sticker": 130434
+  },
+  "Sticker | Falcons (Gold) | Austin 2025": {
+    "buff": 1117585,
+    "uu": 112254,
+    "c5": 0,
+    "buff_sticker": 130435
+  },
+  "Sticker | noway (Holo) | Austin 2025": {
+    "buff": 1117586,
+    "uu": 112068,
+    "c5": 0,
+    "buff_sticker": 130436
+  },
+  "Sticker | EmiliaQAQ (Gold) | Austin 2025": {
+    "buff": 1117587,
+    "uu": 112290,
+    "c5": 0,
+    "buff_sticker": 130437
+  },
+  "Sticker | adamb (Holo) | Austin 2025": {
+    "buff": 1117588,
+    "uu": 112231,
+    "c5": 0,
+    "buff_sticker": 130438
+  },
+  "Sticker | Silver Skulls": {
+    "buff": 1117589,
+    "uu": 112233,
+    "c5": 0,
+    "buff_sticker": 130439
+  },
+  "Sticker | Adeptus Custodes 2": {
+    "buff": 1117590,
+    "uu": 112271,
+    "c5": 0,
+    "buff_sticker": 130440
+  },
+  "Sticker | FlyQuest (Gold) | Austin 2025": {
+    "buff": 1117591,
+    "uu": 112116,
+    "c5": 0,
+    "buff_sticker": 130441
+  },
+  "Sticker | rain (Gold) | Austin 2025": {
+    "buff": 1117592,
+    "uu": 112230,
+    "c5": 0,
+    "buff_sticker": 130442
+  },
+  "Sticker | Buzz (Holo) | Austin 2025": {
+    "buff": 1117593,
+    "uu": 112283,
+    "c5": 0,
+    "buff_sticker": 130443
+  },
+  "Sticker | M80 (Holo) | Austin 2025": {
+    "buff": 1117594,
+    "uu": 112195,
+    "c5": 0,
+    "buff_sticker": 130444
+  },
+  "Sticker | Harlequins 1": {
+    "buff": 1117595,
+    "uu": 112277,
+    "c5": 0,
+    "buff_sticker": 130445
+  },
+  "Sticker | Starry (Gold) | Austin 2025": {
+    "buff": 1117596,
+    "uu": 112197,
+    "c5": 0,
+    "buff_sticker": 130446
+  },
+  "Sticker | khaN (Gold) | Austin 2025": {
+    "buff": 1117597,
+    "uu": 112260,
+    "c5": 0,
+    "buff_sticker": 130447
+  },
+  "Sticker | Cxzi (Gold) | Austin 2025": {
+    "buff": 1117598,
+    "uu": 112238,
+    "c5": 0,
+    "buff_sticker": 130448
+  },
+  "Sticker | slaxz- (Holo) | Austin 2025": {
+    "buff": 1117599,
+    "uu": 112123,
+    "c5": 0,
+    "buff_sticker": 130449
+  },
+  "Sticker | zorte (Gold) | Austin 2025": {
+    "buff": 1117600,
+    "uu": 112313,
+    "c5": 0,
+    "buff_sticker": 130450
+  },
+  "Sticker | Death Guard 1": {
+    "buff": 1117601,
+    "uu": 111503,
+    "c5": 0,
+    "buff_sticker": 130451
+  },
+  "Sticker | ROUX (Holo) | Austin 2025": {
+    "buff": 1117602,
+    "uu": 111988,
+    "c5": 0,
+    "buff_sticker": 130452
+  },
+  "Sticker | Inquisition": {
+    "buff": 1117604,
+    "uu": 112259,
+    "c5": 0,
+    "buff_sticker": 130453
+  },
+  "Sticker | Adeptus Arbites": {
+    "buff": 1117605,
+    "uu": 112278,
+    "c5": 0,
+    "buff_sticker": 130454
+  },
+  "Sticker | Word Bearers 2": {
+    "buff": 1117606,
+    "uu": 112288,
+    "c5": 0,
+    "buff_sticker": 130455
+  },
+  "Sticker | Tyranids 1": {
+    "buff": 1117607,
+    "uu": 112025,
+    "c5": 0,
+    "buff_sticker": 130456
+  },
+  "Sticker | Drukhari 1": {
+    "buff": 1117608,
+    "uu": 111992,
+    "c5": 0,
+    "buff_sticker": 130457
+  },
+  "Sticker | Raptors": {
+    "buff": 1117609,
+    "uu": 112182,
+    "c5": 0,
+    "buff_sticker": 130458
+  },
+  "Sticker | Adeptus Custodes 1": {
+    "buff": 1117611,
+    "uu": 112159,
+    "c5": 0,
+    "buff_sticker": 130459
+  },
+  "Sticker | Black Legion 2": {
+    "buff": 1117613,
+    "uu": 111500,
+    "c5": 0,
+    "buff_sticker": 130460
+  },
+  "Sticker | Harlequins 2": {
+    "buff": 1117614,
+    "uu": 112298,
+    "c5": 0,
+    "buff_sticker": 130461
+  },
+  "Sticker | World Eaters 2": {
+    "buff": 1117615,
+    "uu": 111796,
+    "c5": 0,
+    "buff_sticker": 130462
+  },
+  "Sticker | karrigan (Gold) | Austin 2025": {
+    "buff": 1117617,
+    "uu": 112158,
+    "c5": 0,
+    "buff_sticker": 130463
+  },
+  "Sticker | EmiliaQAQ (Holo) | Austin 2025": {
+    "buff": 1117618,
+    "uu": 111666,
+    "c5": 0,
+    "buff_sticker": 130464
+  },
+  "Sticker | KSCERATO (Gold) | Austin 2025": {
+    "buff": 1117619,
+    "uu": 112276,
+    "c5": 0,
+    "buff_sticker": 130465
+  },
+  "Sticker | NiKo (Holo) | Austin 2025": {
+    "buff": 1117620,
+    "uu": 111885,
+    "c5": 0,
+    "buff_sticker": 130466
+  },
+  "Sticker | regali (Holo) | Austin 2025": {
+    "buff": 1117622,
+    "uu": 112244,
+    "c5": 0,
+    "buff_sticker": 130467
+  },
+  "Sticker | latto (Holo) | Austin 2025": {
+    "buff": 1117623,
+    "uu": 112239,
+    "c5": 0,
+    "buff_sticker": 130468
+  },
+  "Sticker | Brollan (Gold) | Austin 2025": {
+    "buff": 1117624,
+    "uu": 112140,
+    "c5": 0,
+    "buff_sticker": 130469
+  },
+  "Sticker | w0nderful (Gold) | Austin 2025": {
+    "buff": 1117625,
+    "uu": 112133,
+    "c5": 0,
+    "buff_sticker": 130470
+  },
+  "Sticker | Virtus.Pro (Gold) | Austin 2025": {
+    "buff": 1117626,
+    "uu": 112291,
+    "c5": 0,
+    "buff_sticker": 130471
+  },
+  "Sticker | FL4MUS (Gold) | Austin 2025": {
+    "buff": 1117627,
+    "uu": 112178,
+    "c5": 0,
+    "buff_sticker": 130472
+  },
+  "Sticker | FL4MUS (Holo) | Austin 2025": {
+    "buff": 1117628,
+    "uu": 112051,
+    "c5": 0,
+    "buff_sticker": 130473
+  },
+  "Sticker | saadzin (Gold) | Austin 2025": {
+    "buff": 1117629,
+    "uu": 112070,
+    "c5": 0,
+    "buff_sticker": 130474
+  },
+  "Sticker | Aurora (Gold) | Austin 2025": {
+    "buff": 1117630,
+    "uu": 112196,
+    "c5": 0,
+    "buff_sticker": 130475
+  },
+  "Sticker | susp (Gold) | Austin 2025": {
+    "buff": 1117631,
+    "uu": 112234,
+    "c5": 0,
+    "buff_sticker": 130476
+  },
+  "Sticker | Sonic (Holo) | Austin 2025": {
+    "buff": 1117632,
+    "uu": 112211,
+    "c5": 0,
+    "buff_sticker": 130477
+  },
+  "Sticker | spooke (Gold) | Austin 2025": {
+    "buff": 1117633,
+    "uu": 112338,
+    "c5": 0,
+    "buff_sticker": 130478
+  },
+  "Sticker | MOUZ (Gold) | Austin 2025": {
+    "buff": 1117634,
+    "uu": 112141,
+    "c5": 0,
+    "buff_sticker": 130479
+  },
+  "Sticker | JamYoung (Holo) | Austin 2025": {
+    "buff": 1117635,
+    "uu": 112093,
+    "c5": 0,
+    "buff_sticker": 130480
+  },
+  "Sticker | lux (Holo) | Austin 2025": {
+    "buff": 1117636,
+    "uu": 111712,
+    "c5": 0,
+    "buff_sticker": 130481
+  },
+  "Sticker | Rogue Trader": {
+    "buff": 1117638,
+    "uu": 112255,
+    "c5": 0,
+    "buff_sticker": 130482
+  },
+  "Sticker | Blood Ravens": {
+    "buff": 1117639,
+    "uu": 112082,
+    "c5": 0,
+    "buff_sticker": 130483
+  },
+  "Sticker | Attacker (Gold) | Austin 2025": {
+    "buff": 1117640,
+    "uu": 112287,
+    "c5": 0,
+    "buff_sticker": 130484
+  },
+  "Sticker | TRY (Gold) | Austin 2025": {
+    "buff": 1117641,
+    "uu": 112328,
+    "c5": 0,
+    "buff_sticker": 130485
+  },
+  "Sticker | Buzz (Gold) | Austin 2025": {
+    "buff": 1117642,
+    "uu": 112296,
+    "c5": 0,
+    "buff_sticker": 130486
+  },
+  "Sticker | latto (Gold) | Austin 2025": {
+    "buff": 1117643,
+    "uu": 112229,
+    "c5": 0,
+    "buff_sticker": 130487
+  },
+  "Sticker | controlez (Holo) | Austin 2025": {
+    "buff": 1117644,
+    "uu": 112086,
+    "c5": 0,
+    "buff_sticker": 130488
+  },
+  "Sticker | Magisk (Gold) | Austin 2025": {
+    "buff": 1117647,
+    "uu": 112275,
+    "c5": 0,
+    "buff_sticker": 130489
+  },
+  "Sticker | Magnojez (Holo) | Austin 2025": {
+    "buff": 1117648,
+    "uu": 112273,
+    "c5": 0,
+    "buff_sticker": 130490
+  },
+  "Sticker | yuurih (Holo) | Austin 2025": {
+    "buff": 1117649,
+    "uu": 112124,
+    "c5": 0,
+    "buff_sticker": 130491
+  },
+  "Sticker | C4LLM3SU3 (Gold) | Austin 2025": {
+    "buff": 1117650,
+    "uu": 112232,
+    "c5": 0,
+    "buff_sticker": 130492
+  },
+  "Sticker | Emperor's Children 1": {
+    "buff": 1117651,
+    "uu": 111791,
+    "c5": 0,
+    "buff_sticker": 130493
+  },
+  "Sticker | FaZe Clan (Gold) | Austin 2025": {
+    "buff": 1117652,
+    "uu": 112289,
+    "c5": 0,
+    "buff_sticker": 130494
+  },
+  "Sticker | Iron Warriors 1": {
+    "buff": 1117653,
+    "uu": 111794,
+    "c5": 0,
+    "buff_sticker": 130495
+  },
+  "Sticker | chayJESUS (Gold) | Austin 2025": {
+    "buff": 1117654,
+    "uu": 112279,
+    "c5": 0,
+    "buff_sticker": 130496
+  },
+  "Sticker | paiN Gaming (Gold) | Austin 2025": {
+    "buff": 1117656,
+    "uu": 112331,
+    "c5": 0,
+    "buff_sticker": 130497
+  },
+  "Sticker | Graviti (Holo) | Austin 2025": {
+    "buff": 1117657,
+    "uu": 112114,
+    "c5": 0,
+    "buff_sticker": 130498
+  },
+  "Sticker | oSee (Gold) | Austin 2025": {
+    "buff": 1117658,
+    "uu": 112241,
+    "c5": 0,
+    "buff_sticker": 130499
+  },
+  "Sticker | jeorge (Holo) | Austin 2025": {
+    "buff": 1117659,
+    "uu": 111979,
+    "c5": 0,
+    "buff_sticker": 130500
+  },
+  "Sticker | saffee (Gold) | Austin 2025": {
+    "buff": 1117660,
+    "uu": 112177,
+    "c5": 0,
+    "buff_sticker": 130501
+  },
+  "Sticker | regali (Gold) | Austin 2025": {
+    "buff": 1117661,
+    "uu": 112286,
+    "c5": 0,
+    "buff_sticker": 130502
+  },
+  "Sticker | hades (Gold) | Austin 2025": {
+    "buff": 1117662,
+    "uu": 112206,
+    "c5": 0,
+    "buff_sticker": 130503
+  },
+  "Sticker | zont1x (Gold) | Austin 2025": {
+    "buff": 1117664,
+    "uu": 111976,
+    "c5": 0,
+    "buff_sticker": 130504
+  },
+  "Sticker | Complexity Gaming (Gold) | Austin 2025": {
+    "buff": 1117665,
+    "uu": 112048,
+    "c5": 0,
+    "buff_sticker": 130505
+  },
+  "Sticker | Chinggis Warriors (Gold) | Austin 2025": {
+    "buff": 1117666,
+    "uu": 112100,
+    "c5": 0,
+    "buff_sticker": 130506
+  },
+  "Sticker | dav1deuS (Gold) | Austin 2025": {
+    "buff": 1117667,
+    "uu": 112285,
+    "c5": 0,
+    "buff_sticker": 130507
+  },
+  "Sticker | kensizor (Gold) | Austin 2025": {
+    "buff": 1117668,
+    "uu": 112180,
+    "c5": 0,
+    "buff_sticker": 130508
+  },
+  "Sticker | Maka (Gold) | Austin 2025": {
+    "buff": 1117669,
+    "uu": 112202,
+    "c5": 0,
+    "buff_sticker": 130509
+  },
+  "Sticker | esenthial (Gold) | Austin 2025": {
+    "buff": 1117670,
+    "uu": 112069,
+    "c5": 0,
+    "buff_sticker": 130510
+  },
+  "Sticker | JBa (Holo) | Austin 2025": {
+    "buff": 1117671,
+    "uu": 112215,
+    "c5": 0,
+    "buff_sticker": 130511
+  },
+  "Sticker | Attacker (Holo) | Austin 2025": {
+    "buff": 1117672,
+    "uu": 112282,
+    "c5": 0,
+    "buff_sticker": 130512
+  },
+  "Sticker | Leagues of Votann 1": {
+    "buff": 1117673,
+    "uu": 112256,
+    "c5": 0,
+    "buff_sticker": 130513
+  },
+  "Sticker | efire (Holo) | Austin 2025": {
+    "buff": 1117674,
+    "uu": 112311,
+    "c5": 0,
+    "buff_sticker": 130514
+  },
+  "Sticker | L00m1 (Gold) | Austin 2025": {
+    "buff": 1117675,
+    "uu": 112174,
+    "c5": 0,
+    "buff_sticker": 130515
+  },
+  "Sticker | alex666 (Holo) | Austin 2025": {
+    "buff": 1117676,
+    "uu": 112118,
+    "c5": 0,
+    "buff_sticker": 130516
+  },
+  "Sticker | s1n (Gold) | Austin 2025": {
+    "buff": 1117677,
+    "uu": 112301,
+    "c5": 0,
+    "buff_sticker": 130517
+  },
+  "Sticker | electronic (Gold) | Austin 2025": {
+    "buff": 1117680,
+    "uu": 112044,
+    "c5": 0,
+    "buff_sticker": 130518
+  },
+  "Sticker | INS (Gold) | Austin 2025": {
+    "buff": 1117681,
+    "uu": 112200,
+    "c5": 0,
+    "buff_sticker": 130519
+  },
+  "Sticker | Orks 1": {
+    "buff": 1117682,
+    "uu": 111787,
+    "c5": 0,
+    "buff_sticker": 130520
+  },
+  "Sticker | Sisters of Battle 1": {
+    "buff": 1117683,
+    "uu": 112207,
+    "c5": 0,
+    "buff_sticker": 130521
+  },
+  "Sticker | Boombl4 (Holo) | Austin 2025": {
+    "buff": 1117684,
+    "uu": 112099,
+    "c5": 0,
+    "buff_sticker": 130522
+  },
+  "Sticker | westmelon (Gold) | Austin 2025": {
+    "buff": 1117686,
+    "uu": 112303,
+    "c5": 0,
+    "buff_sticker": 130523
+  },
+  "Sticker | Lucky (Gold) | Austin 2025": {
+    "buff": 1117687,
+    "uu": 112299,
+    "c5": 0,
+    "buff_sticker": 130524
+  },
+  "Sticker | LNZ (Gold) | Austin 2025": {
+    "buff": 1117688,
+    "uu": 112305,
+    "c5": 0,
+    "buff_sticker": 130525
+  },
+  "Sticker | yxngstxr (Gold) | Austin 2025": {
+    "buff": 1117689,
+    "uu": 112243,
+    "c5": 0,
+    "buff_sticker": 130526
+  },
+  "Sticker | NiKo (Gold) | Austin 2025": {
+    "buff": 1117690,
+    "uu": 112227,
+    "c5": 0,
+    "buff_sticker": 130527
+  },
+  "Sticker | Sonic (Gold) | Austin 2025": {
+    "buff": 1117691,
+    "uu": 112322,
+    "c5": 0,
+    "buff_sticker": 130528
+  },
+  "Sticker | dumau (Gold) | Austin 2025": {
+    "buff": 1117692,
+    "uu": 112315,
+    "c5": 0,
+    "buff_sticker": 130529
+  },
+  "Sticker | Astra Militarum 2": {
+    "buff": 1117693,
+    "uu": 112027,
+    "c5": 0,
+    "buff_sticker": 130530
+  },
+  "Sticker | Raven Guard": {
+    "buff": 1117694,
+    "uu": 112293,
+    "c5": 0,
+    "buff_sticker": 130531
+  },
+  "Sticker | isak (Gold) | Austin 2025": {
+    "buff": 1117696,
+    "uu": 112045,
+    "c5": 0,
+    "buff_sticker": 130532
+  },
+  "Sticker | Lake (Gold) | Austin 2025": {
+    "buff": 1117697,
+    "uu": 112104,
+    "c5": 0,
+    "buff_sticker": 130533
+  },
+  "Sticker | Chr1zN (Gold) | Austin 2025": {
+    "buff": 1117698,
+    "uu": 112280,
+    "c5": 0,
+    "buff_sticker": 130534
+  },
+  "Sticker | Mercury (Holo) | Austin 2025": {
+    "buff": 1117699,
+    "uu": 112209,
+    "c5": 0,
+    "buff_sticker": 130535
+  },
+  "Sticker | Grim (Holo) | Austin 2025": {
+    "buff": 1117700,
+    "uu": 112242,
+    "c5": 0,
+    "buff_sticker": 130536
+  },
+  "Sticker | Ex3rcice (Gold) | Austin 2025": {
+    "buff": 1117701,
+    "uu": 112269,
+    "c5": 0,
+    "buff_sticker": 130537
+  },
+  "Sticker | kye (Gold) | Austin 2025": {
+    "buff": 1117702,
+    "uu": 111985,
+    "c5": 0,
+    "buff_sticker": 130538
+  },
+  "Sticker | piriajr (Gold) | Austin 2025": {
+    "buff": 1117703,
+    "uu": 112249,
+    "c5": 0,
+    "buff_sticker": 130539
+  },
+  "Sticker | Magnojez (Gold) | Austin 2025": {
+    "buff": 1117704,
+    "uu": 112245,
+    "c5": 0,
+    "buff_sticker": 130540
+  },
+  "Sticker | slaxz- (Gold) | Austin 2025": {
+    "buff": 1117705,
+    "uu": 112268,
+    "c5": 0,
+    "buff_sticker": 130541
+  },
+  "Sticker | controlez (Gold) | Austin 2025": {
+    "buff": 1117707,
+    "uu": 111909,
+    "c5": 0,
+    "buff_sticker": 130542
+  },
+  "Sticker | exit (Gold) | Austin 2025": {
+    "buff": 1117708,
+    "uu": 112144,
+    "c5": 0,
+    "buff_sticker": 130543
+  },
+  "Sticker | vexite (Gold) | Austin 2025": {
+    "buff": 1117709,
+    "uu": 112317,
+    "c5": 0,
+    "buff_sticker": 130544
+  },
+  "Sticker | ICY (Gold) | Austin 2025": {
+    "buff": 1117710,
+    "uu": 112251,
+    "c5": 0,
+    "buff_sticker": 130545
+  },
+  "Sticker | frozen (Gold) | Austin 2025": {
+    "buff": 1117711,
+    "uu": 112127,
+    "c5": 0,
+    "buff_sticker": 130546
+  },
+  "Sticker | Mercury (Gold) | Austin 2025": {
+    "buff": 1117712,
+    "uu": 112205,
+    "c5": 0,
+    "buff_sticker": 130547
+  },
+  "Sticker | nitr0 (Gold) | Austin 2025": {
+    "buff": 1117713,
+    "uu": 111869,
+    "c5": 0,
+    "buff_sticker": 130548
+  },
+  "Warhammer 40,000 Xenos Sticker Capsule": {
+    "buff": 1117714,
+    "uu": 111659,
+    "c5": 0
+  },
+  "Warhammer 40,000 Traitor Astartes Sticker Capsule": {
+    "buff": 1117715,
+    "uu": 111664,
+    "c5": 0
+  },
+  "Sticker | nettik (Gold) | Austin 2025": {
+    "buff": 1117716,
+    "uu": 112151,
+    "c5": 0,
+    "buff_sticker": 130549
+  },
+  "Sticker | Catachan": {
+    "buff": 1117717,
+    "uu": 111967,
+    "c5": 0,
+    "buff_sticker": 130550
+  },
+  "Warhammer 40,000 Imperium Sticker Capsule": {
+    "buff": 1117718,
+    "uu": 111662,
+    "c5": 0
+  },
+  "Sticker | br0 (Gold) | Austin 2025": {
+    "buff": 1117720,
+    "uu": 112323,
+    "c5": 0,
+    "buff_sticker": 130551
+  },
+  "Sticker | insani (Gold) | Austin 2025": {
+    "buff": 1117721,
+    "uu": 112261,
+    "c5": 0,
+    "buff_sticker": 130552
+  },
+  "Warhammer 40,000 Adeptus Astartes Sticker Capsule": {
+    "buff": 1117722,
+    "uu": 111570,
+    "c5": 0
+  },
+  "Sticker | biguzera (Gold) | Austin 2025": {
+    "buff": 1117732,
+    "uu": 112281,
+    "c5": 0,
+    "buff_sticker": 130553
+  },
+  "Sticker | Moseyuh (Gold) | Austin 2025": {
+    "buff": 1117733,
+    "uu": 112326,
+    "c5": 0,
+    "buff_sticker": 130554
+  },
+  "Sticker | skullz (Gold) | Austin 2025": {
+    "buff": 1117734,
+    "uu": 112325,
+    "c5": 0,
+    "buff_sticker": 130555
+  },
+  "Sticker | FURIA (Gold) | Austin 2025": {
+    "buff": 1117736,
+    "uu": 112320,
+    "c5": 0,
+    "buff_sticker": 130556
+  },
+  "Sticker | Orks 2": {
+    "buff": 1117737,
+    "uu": 112302,
+    "c5": 0,
+    "buff_sticker": 130557
+  },
+  "Sticker | npl (Gold) | Austin 2025": {
+    "buff": 1117738,
+    "uu": 112330,
+    "c5": 0,
+    "buff_sticker": 130558
+  },
+  "Sticker | Astartes Skull": {
+    "buff": 1117739,
+    "uu": 112191,
+    "c5": 0,
+    "buff_sticker": 130559
+  },
+  "Sticker | mlhzin (Gold) | Austin 2025": {
+    "buff": 1117742,
+    "uu": 112297,
+    "c5": 0,
+    "buff_sticker": 130560
+  },
+  "Sticker | Xant3r (Gold) | Austin 2025": {
+    "buff": 1117743,
+    "uu": 112247,
+    "c5": 0,
+    "buff_sticker": 130561
+  },
+  "Sticker | n1ssim (Gold) | Austin 2025": {
+    "buff": 1117745,
+    "uu": 112319,
+    "c5": 0,
+    "buff_sticker": 130562
+  },
+  "Sticker | headtr1ck (Gold) | Austin 2025": {
+    "buff": 1117746,
+    "uu": 111645,
+    "c5": 0,
+    "buff_sticker": 130563
+  },
+  "Sticker | hallzerk (Gold) | Austin 2025": {
+    "buff": 1117747,
+    "uu": 112198,
+    "c5": 0,
+    "buff_sticker": 130564
+  },
+  "Sticker | fame (Gold) | Austin 2025": {
+    "buff": 1117748,
+    "uu": 112212,
+    "c5": 0,
+    "buff_sticker": 130565
+  },
+  "Sticker | ROUX (Gold) | Austin 2025": {
+    "buff": 1117749,
+    "uu": 112314,
+    "c5": 0,
+    "buff_sticker": 130566
+  },
+  "Sticker | M80 (Gold) | Austin 2025": {
+    "buff": 1117750,
+    "uu": 112332,
+    "c5": 0,
+    "buff_sticker": 130567
+  },
+  "Sticker | JT (Gold) | Austin 2025": {
+    "buff": 1117751,
+    "uu": 111603,
+    "c5": 0,
+    "buff_sticker": 130568
+  },
+  "Sticker | FalleN (Gold) | Austin 2025": {
+    "buff": 1117752,
+    "uu": 112295,
+    "c5": 0,
+    "buff_sticker": 130569
+  },
+  "Sticker | tN1R (Gold) | Austin 2025": {
+    "buff": 1117753,
+    "uu": 112312,
+    "c5": 0,
+    "buff_sticker": 130570
+  },
+  "Sticker | phzy (Gold) | Austin 2025": {
+    "buff": 1117754,
+    "uu": 112329,
+    "c5": 0,
+    "buff_sticker": 130571
+  },
+  "Sticker | alex666 (Gold) | Austin 2025": {
+    "buff": 1117755,
+    "uu": 112213,
+    "c5": 0,
+    "buff_sticker": 130572
+  },
+  "Sticker | S1ren (Gold) | Austin 2025": {
+    "buff": 1117756,
+    "uu": 112337,
+    "c5": 0,
+    "buff_sticker": 130573
+  },
+  "Sticker | 1eeR (Gold) | Austin 2025": {
+    "buff": 1117757,
+    "uu": 112216,
+    "c5": 0,
+    "buff_sticker": 130574
+  },
+  "Sticker | riskyb0b (Gold) | Austin 2025": {
+    "buff": 1117758,
+    "uu": 112309,
+    "c5": 0,
+    "buff_sticker": 130575
+  },
+  "Sticker | jeorge (Gold) | Austin 2025": {
+    "buff": 1117760,
+    "uu": 112166,
+    "c5": 0,
+    "buff_sticker": 130576
+  },
+  "Sticker | Boombl4 (Gold) | Austin 2025": {
+    "buff": 1117761,
+    "uu": 112327,
+    "c5": 0,
+    "buff_sticker": 130577
+  },
+  "Sticker | molodoy (Gold) | Austin 2025": {
+    "buff": 1117762,
+    "uu": 112272,
+    "c5": 0,
+    "buff_sticker": 130578
+  },
+  "Sticker | dgt (Gold) | Austin 2025": {
+    "buff": 1117763,
+    "uu": 112306,
+    "c5": 0,
+    "buff_sticker": 130579
+  },
+  "Sticker | Ariucle (Gold) | Austin 2025": {
+    "buff": 1117764,
+    "uu": 112016,
+    "c5": 0,
+    "buff_sticker": 130580
+  },
+  "Sticker | SunPayus (Gold) | Austin 2025": {
+    "buff": 1117765,
+    "uu": 112300,
+    "c5": 0,
+    "buff_sticker": 130581
+  },
+  "Sticker | lux (Gold) | Austin 2025": {
+    "buff": 1117766,
+    "uu": 112334,
+    "c5": 0,
+    "buff_sticker": 130582
+  },
+  "Sticker | Ax1Le (Gold) | Austin 2025": {
+    "buff": 1117768,
+    "uu": 112324,
+    "c5": 0,
+    "buff_sticker": 130583
+  },
+  "Sticker | cool4st (Gold) | Austin 2025": {
+    "buff": 1117769,
+    "uu": 112316,
+    "c5": 0,
+    "buff_sticker": 130584
+  },
+  "Sticker | hampus (Gold) | Austin 2025": {
+    "buff": 1117770,
+    "uu": 112321,
+    "c5": 0,
+    "buff_sticker": 130585
+  },
+  "Sticker | VINI (Gold) | Austin 2025": {
+    "buff": 1117771,
+    "uu": 112210,
+    "c5": 0,
+    "buff_sticker": 130586
+  },
+  "Sticker | xfl0ud (Gold) | Austin 2025": {
+    "buff": 1117772,
+    "uu": 112335,
+    "c5": 0,
+    "buff_sticker": 130587
+  },
+  "Sticker | zweih (Gold) | Austin 2025": {
+    "buff": 1117773,
+    "uu": 112258,
+    "c5": 0,
+    "buff_sticker": 130588
   }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-read --allow-write
+#!/usr/bin/env -S deno run --allow-read --allow-write scripts/updateIDs.ts
 
 /**
  * This script updates the marketids.json file with missing entries from cs2_marketplaceids.json

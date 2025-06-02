@@ -2,7 +2,7 @@ import '~style.css';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
-import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SKINBARON, ICON_SKINPORT, ICON_WAXPEER } from '~lib/util/globals';
+import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SHADOWPAY, ICON_SKINBARON, ICON_SKINPORT, ICON_WAXPEER } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
 import { SparklesCore } from '~popup/components/Sparkles';
@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
+import { ShadowpaySettings } from './tabs/Shadowpay';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
@@ -67,7 +68,9 @@ export default function IndexPopup() {
 							</TabsTrigger>
 						</div>
 						<Badge variant="purple" className="my-4">
-							Pro
+							<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+								Pro
+							</a>
 						</Badge>
 						<div className="grid grid-cols-2 gap-2">
 							<TabsTrigger value="buffmarket">
@@ -87,6 +90,9 @@ export default function IndexPopup() {
 							</TabsTrigger>
 							<TabsTrigger value="waxpeer">
 								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
+							</TabsTrigger>
+							<TabsTrigger value="shadowpay">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
 							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
@@ -116,6 +122,7 @@ export default function IndexPopup() {
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<WaxpeerSettings hasProPlan={hasProPlan} />
+					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

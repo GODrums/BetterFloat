@@ -140,15 +140,21 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 let lastProCheck = 0;
 
 /**
- * Checks if the user has a pro plan and validate the plan
+ * Checks if the user has a pro plan and validates the plan
  * Only synchronizes once every 5 minutes
  * @param user
  * @returns
  */
 export async function checkUserPlanPro(user: SettingsUser) {
-	if (isUserPro(user) && lastProCheck + 5 * 60 * 1000 < new Date().getTime()) {
-		user = await synchronizePlanWithStorage();
-		lastProCheck = new Date().getTime();
+	const isPro = isUserPro(user);
+	if ((isPro && lastProCheck + 10 * 60 * 1000 < new Date().getTime()) || (!isPro && lastProCheck > 0)) {
+		const expired = typeof user.plan.expiry === 'number' && user.plan.expiry < new Date().getTime();
+		user = await synchronizePlanWithStorage(expired);
+		if (isPro) {
+			lastProCheck = new Date().getTime();
+		} else {
+			lastProCheck = 0;
+		}
 	}
 
 	return isUserPro(user);
@@ -204,7 +210,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.DMarket:
 			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&ref=rqKYzZ36Bw&utm_source=betterfloat`;
 		case MarketSource.CSMoney:
-			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=market&utm_content=link`;
+			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=regular&utm_content=link`;
 		case MarketSource.Bitskins:
 			return `https://bitskins.com/market/csgo?search={%22order%22:[{%22field%22:%22price%22,%22order%22:%22ASC%22}],%22where%22:{%22skin_name%22:%22${encodeURIComponent(buff_name)}%22}}&ref_alias=betterfloat`;
 		case MarketSource.Lisskins:
@@ -262,7 +268,7 @@ export async function getBuffPrice(buff_name: string, itemStyle: ItemStyle, sour
 			values.count = new Decimal(priceMapping[queryName]['count'] ?? 0);
 		}
 	} else {
-		console.debug(`[BetterFloat] No price mapping found for ${buff_name}`);
+		console.debug(`[BetterFloat] No price mapping found for ${queryName}`);
 	}
 
 	return values;

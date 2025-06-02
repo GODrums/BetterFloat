@@ -5,6 +5,7 @@ import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
@@ -29,7 +30,8 @@ import {
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
 import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
-import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
+import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales } from './cache/dmarket_cache';
+import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
@@ -67,6 +69,8 @@ export async function activateHandler() {
 			processSkinbaronEvent(eventData);
 		} else if (location.host === 'bitskins.com') {
 			processBitskinsEvent(eventData);
+		} else if (location.host === 'shadowpay.com') {
+			processShadowpayEvent(eventData);
 		} else if (location.host === 'waxpeer.com') {
 			processWaxpeerEvent(eventData);
 		}
@@ -126,6 +130,15 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processShadowpayEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/get_items')) {
+		cacheShadowpayItems((eventData.data as Shadowpay.MarketGetItemsResponse).items);
+	} else if (eventData.url.includes('api/market/inventory')) {
+		cacheShadowpayInventory((eventData.data as Shadowpay.InventoryResponse).inv);
 	}
 }
 
@@ -331,7 +344,7 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('2.0/market/sell-orders')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
-	} else if (eventData.url.includes('2.0/market/user-inventory')) {
+	} else if (eventData.url.includes('market/user-inventory')) {
 		if (eventData.url.includes('user-inventory/')) {
 			cacheCSMoneyPopupItem((eventData.data as CSMoney.UserInventoryPopupResponse).item);
 		} else {
@@ -356,6 +369,8 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('currency-rate/v1/rates')) {
 		cacheDMarketExchangeRates((eventData.data as DMarket.ExchangeRates).Rates);
+	} else if (eventData.url.includes('trade-aggregator/v1/last-sales')) {
+		cacheDMarketLatestSales((eventData.data as DMarket.LatestSalesResponse).sales);
 	}
 }
 
