@@ -55,6 +55,8 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	replaceHistory();
 }
 
 function applyMutation() {
@@ -67,6 +69,14 @@ function applyMutation() {
 				// console.debug('[Plasmo] Mutation detected:', addedNode);
 
 				if (addedNode.tagName === 'A' && addedNode.getAttribute('href')?.includes('/item/')) {
+					// check if it's a cs item
+					if (
+						addedNode.parentElement?.classList.contains('item-buy-card_project_dota2') ||
+						addedNode.parentElement?.classList.contains('item-buy-card_project_rust') ||
+						addedNode.parentElement?.classList.contains('item-buy-card_project_fish_idle2')
+					) {
+						continue;
+					}
 					await adjustItem(addedNode, PageState.Market);
 				} else if (addedNode.tagName === 'DIV' && addedNode.className === SHADOWPAY_SELECTORS.classes.inventoryWrapper) {
 					const items = addedNode.querySelectorAll(SHADOWPAY_SELECTORS.inventory.itemCard);
@@ -78,6 +88,22 @@ function applyMutation() {
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
+}
+
+async function replaceHistory() {
+	// wait for the page to load
+	const loggedOut = await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			if (document.querySelector('img.avatar') || document.querySelector('.user-navigation__login-text')) {
+				clearInterval(interval);
+				resolve(!document.querySelector('img.avatar'));
+			}
+		}, 100);
+	});
+
+	if (loggedOut && !location.search.includes('utm_campaign')) {
+		location.search += `${location.search ? '&' : ''}utm_campaign=j8MVU4KVXS3Liun`;
+	}
 }
 
 function getItemID(container: Element, state: PageState) {
@@ -98,8 +124,8 @@ function getAPIItem(state: PageState, itemID: string) {
 
 async function adjustItem(container: Element, state: PageState) {
 	const itemID = getItemID(container, state);
-	console.log('[BetterFloat] Item ID:', itemID);
 	if (!itemID) return;
+
 	let item = getAPIItem(state, itemID);
 
 	let tries = 10;
