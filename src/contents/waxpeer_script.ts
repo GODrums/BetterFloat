@@ -7,6 +7,7 @@ import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import { getSpecificWaxpeerItem } from '~lib/handlers/cache/waxpeer_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { WAXPEER_SELECTORS } from '~lib/handlers/selectors/waxpeer_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -62,9 +63,9 @@ async function replaceHistory() {
 	// wait for the page to load
 	const loggedOut = await new Promise((resolve) => {
 		const interval = setInterval(() => {
-			if (document.querySelector('.login') || document.querySelector('.user-avatar')) {
+			if (document.querySelector(WAXPEER_SELECTORS.auth.login) || document.querySelector(WAXPEER_SELECTORS.auth.userAvatar)) {
 				clearInterval(interval);
-				resolve(!!document.querySelector('.login'));
+				resolve(!!document.querySelector(WAXPEER_SELECTORS.auth.login));
 			}
 		}, 100);
 	});
@@ -83,7 +84,7 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
-				if (addedNode.className === 'item_wrap') {
+				if (addedNode.className === WAXPEER_SELECTORS.item.wrapper.slice(1)) {
 					await adjustItem(addedNode, PageState.Market);
 				}
 			}
@@ -94,7 +95,7 @@ function applyMutation() {
 
 function getItemID(container: Element, state: PageState) {
 	if (state === PageState.Market) {
-		return container.querySelector('a.thumb')?.getAttribute('href')?.split('/')[3];
+		return container.querySelector(WAXPEER_SELECTORS.item.thumb)?.getAttribute('href')?.split('/')[3];
 	}
 }
 
@@ -120,7 +121,7 @@ async function adjustItem(container: Element, state: PageState) {
 async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer = container.querySelector<HTMLElement>('.item_body');
+	let footerContainer = container.querySelector<HTMLElement>(WAXPEER_SELECTORS.item.body);
 	if (state === PageState.ItemPage) {
 		const newContainer = document.createElement('div');
 		footerContainer?.before(newContainer);
@@ -154,7 +155,7 @@ async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageS
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	const discountContainer = footerContainer?.querySelector('span.price');
+	const discountContainer = footerContainer?.querySelector(WAXPEER_SELECTORS.item.price);
 
 	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['wp-buffdifference'] || extensionSettings['wp-buffdifferencepercent'])) {
 		discountContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
