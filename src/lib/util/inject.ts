@@ -42,7 +42,6 @@ export function addScript() {
 
 				// request finished loading
 				if (target.readyState === 4) {
-					console.log('[BetterFloat] Intercepted request:', target.responseURL);
 					document.dispatchEvent(
 						new CustomEvent('BetterFloat_INTERCEPTED_REQUEST', {
 							detail: {

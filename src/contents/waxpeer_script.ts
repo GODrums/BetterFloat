@@ -16,7 +16,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.waxpeer.com/*'],
 	run_at: 'document_end',
-	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/bitskins_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/waxpeer_styles.css'],
 };
 
 type PriceResult = {
@@ -84,7 +84,7 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
-				if (addedNode.className === WAXPEER_SELECTORS.item.wrapper.slice(1)) {
+				if (addedNode.className === WAXPEER_SELECTORS.item.wrapper) {
 					await adjustItem(addedNode, PageState.Market);
 				}
 			}
@@ -100,11 +100,18 @@ function getItemID(container: Element, state: PageState) {
 }
 
 async function adjustItem(container: Element, state: PageState) {
-	const itemID = getItemID(container, state);
+	let itemID = getItemID(container, state);
+	let tries = 10;
+	while (!itemID && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		itemID = getItemID(container, state);
+	}
 	if (!itemID) return;
+	console.log('[BetterFloat] Item ID:', itemID);
+
 	let item = getSpecificWaxpeerItem(itemID);
 
-	let tries = 10;
+	tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = getSpecificWaxpeerItem(itemID);
@@ -158,6 +165,8 @@ async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageS
 	const discountContainer = footerContainer?.querySelector(WAXPEER_SELECTORS.item.price);
 
 	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['wp-buffdifference'] || extensionSettings['wp-buffdifferencepercent'])) {
+		container.querySelector('.discount')?.setAttribute('style', 'display: none !important;');
+
 		discountContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
 	}
 
@@ -181,7 +190,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
-		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+		<div class="betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
 			${extensionSettings['bs-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
 			${extensionSettings['bs-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
