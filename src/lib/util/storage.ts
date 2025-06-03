@@ -184,6 +184,13 @@ export const DEFAULT_SETTINGS = {
 	'wp-buffdifferencepercent': true,
 	'wp-listingage': true,
 	'display-updatepopup': true,
+	'mcsgo-enable': true,
+	'mcsgo-pricingsource': 'buff',
+	'mcsgo-altmarket': 'none',
+	'mcsgo-pricereference': 0,
+	'mcsgo-buffdifference': true,
+	'mcsgo-buffdifferencepercent': true,
+	'mcsgo-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

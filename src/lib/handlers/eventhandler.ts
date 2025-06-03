@@ -73,6 +73,8 @@ export async function activateHandler() {
 			processShadowpayEvent(eventData);
 		} else if (location.host === 'waxpeer.com') {
 			processWaxpeerEvent(eventData);
+		} else if (location.host === 'market.csgo.com') {
+			processMarketCSGOEvent(eventData);
 		}
 	});
 
@@ -131,6 +133,10 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
 	}
+}
+
+function processMarketCSGOEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 }
 
 function processShadowpayEvent(eventData: EventData<unknown>) {

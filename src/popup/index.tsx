@@ -2,7 +2,19 @@ import '~style.css';
 import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
-import { ICON_BITSKINS, ICON_BUFFMARKET, ICON_CSFLOAT, ICON_CSMONEY, ICON_DMARKET, ICON_LISSKINS, ICON_SHADOWPAY, ICON_SKINBARON, ICON_SKINPORT, ICON_WAXPEER } from '~lib/util/globals';
+import {
+	ICON_BITSKINS,
+	ICON_BUFFMARKET,
+	ICON_CSFLOAT,
+	ICON_CSMONEY,
+	ICON_DMARKET,
+	ICON_LISSKINS,
+	ICON_MARKETCSGO,
+	ICON_SHADOWPAY,
+	ICON_SKINBARON,
+	ICON_SKINPORT,
+	ICON_WAXPEER,
+} from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
 import { SparklesCore } from '~popup/components/Sparkles';
@@ -19,6 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
+import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { UserProfile } from './tabs/user/UserProfile';
@@ -94,6 +107,9 @@ export default function IndexPopup() {
 							<TabsTrigger value="shadowpay">
 								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
 							</TabsTrigger>
+							<TabsTrigger value="marketcsgo">
+								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_MARKETCSGO} />
+							</TabsTrigger>
 						</div>
 						<div className="flex flex-1"></div>
 						<div className="w-full flex flex-col items-stretch justify-center">
@@ -123,6 +139,7 @@ export default function IndexPopup() {
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<WaxpeerSettings hasProPlan={hasProPlan} />
 					<ShadowpaySettings hasProPlan={hasProPlan} />
+					<MarketCSGOSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>
