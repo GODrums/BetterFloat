@@ -66,6 +66,8 @@ function applyMutation() {
 
 				if (addedNode.classList.contains('item-container')) {
 					await adjustItem(addedNode.closest('a[title]')!, PageState.Market);
+				} else if (addedNode.classList.contains('item-base-info')) {
+					await adjustItem(addedNode.closest('.item-info')!, PageState.ItemPage);
 				}
 			}
 		}
@@ -73,8 +75,16 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
+function getItemName(container: Element, state: PageState) {
+	if (state === PageState.Market) {
+		return container.getAttribute('title');
+	} else if (state === PageState.ItemPage) {
+		return container.querySelector('h1.name > span')?.getAttribute('data-hash');
+	}
+}
+
 async function adjustItem(container: Element, state: PageState) {
-	const itemName = container.getAttribute('title');
+	const itemName = getItemName(container, state);
 	if (!itemName) return;
 	console.log('[BetterFloat] Item Name:', itemName);
 
@@ -86,9 +96,14 @@ async function adjustItem(container: Element, state: PageState) {
 }
 
 async function addBuffPrice(itemName: string, container: Element, state: PageState): Promise<PriceResult> {
-	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(itemName, container);
+	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(itemName, container, state);
 
-	const footerContainer = container.querySelector<HTMLElement>('.price');
+	let footerContainer: HTMLElement | null = null;
+	if (state === PageState.ItemPage) {
+		footerContainer = container.querySelector<HTMLElement>('app-page-inventory-price .price');
+	} else if (state === PageState.Market) {
+		footerContainer = container.querySelector<HTMLElement>('.price');
+	}
 
 	const isItemPage = state === PageState.ItemPage;
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
@@ -114,11 +129,15 @@ async function addBuffPrice(itemName: string, container: Element, state: PageSta
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
 		});
-		footerContainer.insertAdjacentHTML('afterend', buffContainer);
+		if (state === PageState.Market) {
+			footerContainer.insertAdjacentHTML('afterend', buffContainer);
+		} else if (state === PageState.ItemPage) {
+			footerContainer.parentElement?.insertAdjacentHTML('afterend', buffContainer);
+		}
 	}
 
 	if (footerContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['mcsgo-buffdifference'] || extensionSettings['mcsgo-buffdifferencepercent'])) {
-		footerContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+		footerContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter, isItemPage));
 	}
 
 	return {
@@ -126,7 +145,7 @@ async function addBuffPrice(itemName: string, container: Element, state: PageSta
 	};
 }
 
-function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat) {
+function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat, isItemPage: boolean) {
 	const styling = {
 		profit: {
 			color: '#5bc27a',
@@ -141,17 +160,18 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
-		<div class="betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+		<div class="betterfloat-sale-tag ${isItemPage ? 'betterfloat-sale-tag-big' : ''}" style="background-color: ${background}; color: ${color};">
 			${extensionSettings['mcsgo-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
 			${extensionSettings['mcsgo-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
 	`;
 }
 
-async function getBuffItem(itemName: string, container: Element) {
+async function getBuffItem(itemName: string, container: Element, state: PageState) {
 	let source = (extensionSettings['mcsgo-pricingsource'] as MarketSource) ?? MarketSource.Buff;
-	const buff_name = handleSpecialStickerNames(itemName);
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, '', source);
+	const buff_item = createBuffItem(itemName, container, state);
+	const buff_name = handleSpecialStickerNames(buff_item.name);
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
 
 	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
 		priceListing = new Decimal(0);
@@ -160,7 +180,7 @@ async function getBuffItem(itemName: string, container: Element) {
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['mcsgo-altmarket'] && extensionSettings['mcsgo-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['mcsgo-altmarket'] as MarketSource;
-		const altPrices = await getBuffPrice(buff_name, '', source);
+		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
@@ -192,7 +212,7 @@ async function getBuffItem(itemName: string, container: Element) {
 		source,
 		buff_name,
 		itemPrice,
-		itemStyle: '',
+		itemStyle: buff_item.style,
 		market_id,
 		priceListing,
 		priceOrder,
@@ -214,21 +234,20 @@ function getItemPrice(container: Element) {
 	return new Decimal(container.querySelector('.price > span')?.textContent?.trim().slice(1)?.replace(',', '') ?? '0');
 }
 
-function createBuffItem(item: Waxpeer.Item): { name: string; style: ItemStyle } {
-	let name = item.name;
-	if (name.startsWith('★') && !name.startsWith('★ ')) {
-		name = name.replace('★', '★ ');
+function createBuffItem(itemName: string, container: Element, state: PageState): { name: string; style: ItemStyle } {
+	let phase: string | undefined;
+	if (state === PageState.Market) {
+		phase = container.querySelector('.phase > span')?.textContent?.trim();
+	} else if (state === PageState.ItemPage) {
+		phase = Array.from(container.querySelectorAll('h4.desc'))
+			.find((h4) => h4.textContent?.trim() === 'Phase')
+			?.nextElementSibling?.textContent?.trim();
 	}
+
 	const buff_item = {
-		name,
-		style: '' as ItemStyle,
+		name: itemName,
+		style: phase ? (`Phase ${phase.replace('phase', '')}` as ItemStyle) : '',
 	};
-	if (item.name.includes('Doppler')) {
-		// Get and remove the phase from name
-		const phase = item.name.split('Doppler')[1].split('(')[0].trim() as DopplerPhase;
-		buff_item.name = item.name.replace(` ${phase}`, '').trim();
-		buff_item.style = phase;
-	}
 	return buff_item;
 }
 
