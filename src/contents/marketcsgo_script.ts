@@ -3,7 +3,6 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
@@ -33,7 +32,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['mcsgo-enable']) return;
 
@@ -86,10 +84,7 @@ function getItemName(container: Element, state: PageState) {
 async function adjustItem(container: Element, state: PageState) {
 	const itemName = getItemName(container, state);
 	if (!itemName) return;
-	console.log('[BetterFloat] Item Name:', itemName);
-
-	// const name = item?.name ?? container.querySelector('a.hidden')?.textContent;
-	// if (!name) return;
+	// console.log('[BetterFloat] Item Name:', itemName);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const priceResult = await addBuffPrice(itemName, container, state);
@@ -232,7 +227,7 @@ async function getBuffItem(itemName: string, container: Element, state: PageStat
 }
 
 function getUserCurrency() {
-	return localStorage.getItem('currency') || 'USD';
+	return JSON.parse(localStorage.getItem('FiltersFILTERS-en') ?? '{}').currencies.current || 'USD';
 }
 
 function getItemPrice(container: Element) {
