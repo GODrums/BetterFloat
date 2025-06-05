@@ -36,6 +36,7 @@ import { ShadowpaySettings } from './tabs/Shadowpay';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
+import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 
 export default function IndexPopup() {
@@ -63,54 +64,60 @@ export default function IndexPopup() {
 				<Tabs defaultValue="csfloat" className="flex gap-2 my-2 h-full" orientation="vertical">
 					<TabsList className="w-[130px] flex justify-between bg-background/80 text-card-foreground z-50">
 						<p className="text-sm font-bold py-2 uppercase">Sites</p>
-						<Badge variant="secondary" className="mb-4">
-							Free
-						</Badge>
-						<div className="grid grid-cols-2 gap-2">
-							<TabsTrigger value="csfloat">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSFLOAT} />
-							</TabsTrigger>
-							<TabsTrigger value="skinport">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPORT} />
-							</TabsTrigger>
-							<TabsTrigger value="skinbid">
-								<SkinBidIcon height={40} width={40} />
-							</TabsTrigger>
-							<TabsTrigger value="csmoney">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
-							</TabsTrigger>
-						</div>
-						<Badge variant="purple" className="my-4">
-							<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-								Pro
-							</a>
-						</Badge>
-						<div className="grid grid-cols-2 gap-2">
-							<TabsTrigger value="buffmarket">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BUFFMARKET} />
-							</TabsTrigger>
-							<TabsTrigger value="dmarket">
-								<img className="h-10 w-10 rounded-lg" src={ICON_DMARKET} />
-							</TabsTrigger>
-							<TabsTrigger value="bitskins">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BITSKINS} />
-							</TabsTrigger>
-							<TabsTrigger value="lisskins">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_LISSKINS} />
-							</TabsTrigger>
-							<TabsTrigger value="skinbaron">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
-							</TabsTrigger>
-							<TabsTrigger value="waxpeer">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
-							</TabsTrigger>
-							<TabsTrigger value="shadowpay">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
-							</TabsTrigger>
-							<TabsTrigger value="marketcsgo">
-								<img className="h-10 w-10 rounded-lg object-contain" src={ICON_MARKETCSGO} />
-							</TabsTrigger>
-						</div>
+						<ScrollArea className="h-96" hideScrollbar>
+							<div className="flex justify-center">
+								<Badge variant="secondary" className="mb-4">
+									Free
+								</Badge>
+							</div>
+							<div className="grid grid-cols-2 gap-2">
+								<TabsTrigger value="csfloat">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSFLOAT} />
+								</TabsTrigger>
+								<TabsTrigger value="skinport">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPORT} />
+								</TabsTrigger>
+								<TabsTrigger value="skinbid">
+									<SkinBidIcon height={40} width={40} />
+								</TabsTrigger>
+								<TabsTrigger value="csmoney">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
+								</TabsTrigger>
+							</div>
+							<div className="flex justify-center">
+								<Badge variant="purple" className="my-4">
+									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+										Pro
+									</a>
+								</Badge>
+							</div>
+							<div className="grid grid-cols-2 gap-2">
+								<TabsTrigger value="buffmarket">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BUFFMARKET} />
+								</TabsTrigger>
+								<TabsTrigger value="dmarket">
+									<img className="h-10 w-10 rounded-lg" src={ICON_DMARKET} />
+								</TabsTrigger>
+								<TabsTrigger value="bitskins">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_BITSKINS} />
+								</TabsTrigger>
+								<TabsTrigger value="lisskins">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_LISSKINS} />
+								</TabsTrigger>
+								<TabsTrigger value="skinbaron">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
+								</TabsTrigger>
+								<TabsTrigger value="waxpeer">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
+								</TabsTrigger>
+								<TabsTrigger value="shadowpay">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
+								</TabsTrigger>
+								<TabsTrigger value="marketcsgo">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_MARKETCSGO} />
+								</TabsTrigger>
+							</div>
+						</ScrollArea>
 						<div className="flex flex-1"></div>
 						<div className="w-full flex flex-col items-stretch justify-center">
 							<TabsTrigger value="about">

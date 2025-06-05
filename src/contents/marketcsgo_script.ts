@@ -137,6 +137,11 @@ async function addBuffPrice(itemName: string, container: Element, state: PageSta
 	}
 
 	if (footerContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['mcsgo-buffdifference'] || extensionSettings['mcsgo-buffdifferencepercent'])) {
+		const spans = Array.from(footerContainer.querySelectorAll('span'));
+		if (spans.length === 2) {
+			// remove second span
+			spans[1].remove();
+		}
 		footerContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter, isItemPage));
 	}
 
