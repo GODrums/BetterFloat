@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { ICON_BITSKINS_FULL, ICON_CSBLUEGEM } from '~lib/util/globals';
+import { ICON_CSBLUEGEM, ICON_MARKETCSGO_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -19,7 +19,7 @@ export const MarketCSGOSettings = ({ hasProPlan }: MarketCSGOSettingsProps) => {
 	return (
 		<TabTemplate value="marketcsgo" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access MarketCSGO features" />}
-			<MarketLogoFull icon={ICON_BITSKINS_FULL} />
+			<MarketLogoFull icon={ICON_MARKETCSGO_FULL} />
 			<SettingsEnable id="mcsgo-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
