@@ -64,7 +64,7 @@ export default function IndexPopup() {
 				<Tabs defaultValue="csfloat" className="flex gap-2 my-2 h-full" orientation="vertical">
 					<TabsList className="w-[130px] flex justify-between bg-background/80 text-card-foreground z-50">
 						<p className="text-sm font-bold py-2 uppercase">Sites</p>
-						<ScrollArea className="h-96" hideScrollbar>
+						<ScrollArea className="h-96" hideScrollbar fadeOut>
 							<div className="flex justify-center">
 								<Badge variant="secondary" className="mb-4">
 									Free

@@ -8,16 +8,19 @@ type ScrollAreaProps = React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive
 	viewportClass?: string;
 	orientation?: 'vertical' | 'horizontal';
 	hideScrollbar?: boolean;
+	fadeOut?: boolean;
 };
 
-const ScrollArea = React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.Root>, ScrollAreaProps>(({ className, children, viewportClass, orientation, hideScrollbar = false, ...props }, ref) => (
-	<ScrollAreaPrimitive.Root ref={ref} className={cn('relative overflow-hidden', className)} {...props}>
-		<ScrollAreaPrimitive.Viewport className={cn('h-full w-full rounded-[inherit]', viewportClass)}>{children}</ScrollAreaPrimitive.Viewport>
-		<ScrollBar orientation={orientation} hideScrollbar={hideScrollbar} />
-		<ScrollAreaPrimitive.Corner />
-		<div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background/80 to-transparent pointer-events-none z-10" />
-	</ScrollAreaPrimitive.Root>
-));
+const ScrollArea = React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.Root>, ScrollAreaProps>(
+	({ className, children, viewportClass, orientation, hideScrollbar = false, fadeOut = false, ...props }, ref) => (
+		<ScrollAreaPrimitive.Root ref={ref} className={cn('relative overflow-hidden', className)} {...props}>
+			<ScrollAreaPrimitive.Viewport className={cn('h-full w-full rounded-[inherit]', viewportClass)}>{children}</ScrollAreaPrimitive.Viewport>
+			<ScrollBar orientation={orientation} hideScrollbar={hideScrollbar} />
+			<ScrollAreaPrimitive.Corner />
+			{fadeOut && <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background/80 to-transparent pointer-events-none z-10" />}
+		</ScrollAreaPrimitive.Root>
+	)
+);
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName;
 
 const ScrollBar = React.forwardRef<
