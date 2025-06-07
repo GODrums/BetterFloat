@@ -61,6 +61,8 @@ import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg'
 import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
 import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
 import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
+import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
+import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
 import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
@@ -94,6 +96,8 @@ export const ICON_SKINPORT_FULL = iconSkinportFull;
 export const ICON_SKINBID = iconSkinbid;
 export const ICON_SKINBID_FULL = iconSkinbidFull;
 export const ICON_WAXPEER = iconWaxpeer;
+export const ICON_SWAPGG = iconSwapgg;
+export const ICON_SWAPGG_FULL = iconSwapggFull;
 export const ICON_MARKETCSGO = iconMarketCSGO;
 export const ICON_MARKETCSGO_FULL = iconMarketCSGOFull;
 export const ICON_EXCLAMATION = iconExclamation;

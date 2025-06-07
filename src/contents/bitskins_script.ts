@@ -38,7 +38,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bs-enable']) return;
 

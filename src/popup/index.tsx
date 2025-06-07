@@ -13,6 +13,7 @@ import {
 	ICON_SHADOWPAY,
 	ICON_SKINBARON,
 	ICON_SKINPORT,
+	ICON_SWAPGG,
 	ICON_WAXPEER,
 } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
@@ -33,6 +34,7 @@ import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
+import { SwapggSettings } from './tabs/Swapgg';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
@@ -116,6 +118,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="marketcsgo">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_MARKETCSGO} />
 								</TabsTrigger>
+								<TabsTrigger value="swapgg">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SWAPGG} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -147,6 +152,7 @@ export default function IndexPopup() {
 					<WaxpeerSettings hasProPlan={hasProPlan} />
 					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<MarketCSGOSettings hasProPlan={hasProPlan} />
+					<SwapggSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>
