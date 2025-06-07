@@ -71,11 +71,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	console.log('[BetterFloat] Tab updated:', changeInfo, tab);
 
 	// Handle script injection for supported trading sites
-	if (INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
+	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
 		const hostname = new URL(tab.url).hostname;
 		// if within last 3 seconds, don't inject
 		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 3000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
+			executeInjection(tabId);
+		}
+		if (tab.url.includes('swap.gg')) {
 			executeInjection(tabId);
 		}
 	}

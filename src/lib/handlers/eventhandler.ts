@@ -35,6 +35,7 @@ import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
@@ -75,6 +76,8 @@ export async function activateHandler() {
 			processWaxpeerEvent(eventData);
 		} else if (location.host === 'market.csgo.com') {
 			processMarketCSGOEvent(eventData);
+		} else if (location.href.includes('swap.gg')) {
+			processSwapggEvent(eventData);
 		}
 	});
 
@@ -132,6 +135,13 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processSwapggEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('v2/currency')) {
+		cacheSwapggCurrencyRates((eventData.data as any).result);
 	}
 }
 

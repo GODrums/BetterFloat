@@ -191,6 +191,13 @@ export const DEFAULT_SETTINGS = {
 	'mcsgo-buffdifference': true,
 	'mcsgo-buffdifferencepercent': true,
 	'mcsgo-listingage': true,
+	'swp-enable': true,
+	'swp-pricingsource': 'buff',
+	'swp-altmarket': 'none',
+	'swp-pricereference': 0,
+	'swp-buffdifference': true,
+	'swp-buffdifferencepercent': true,
+	'swp-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 
