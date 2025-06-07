@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
-import { getSwapggCurrency } from '~lib/handlers/cache/swapgg_cache';
+import { getSwapggCurrencyRate } from '~lib/handlers/cache/swapgg_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
@@ -153,7 +153,6 @@ async function adjustItem(container: Element) {
 	};
 
 	const apiItem = await getItem();
-	console.log('[BetterFloat] API Item: ', apiItem);
 
 	if (!apiItem) {
 		return;
@@ -183,9 +182,9 @@ async function getBuffItem(item: Swapgg.Item) {
 	const market_id = getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(item);
-	const userCurrency = getSwapggCurrency() ?? 'USD';
+	const userCurrency = getCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = 1;
+	const currencyRate = userCurrency === 'USD' ? 1 : getSwapggCurrencyRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {
@@ -251,11 +250,11 @@ function createBuffItem(item: Swapgg.Item): { name: string; style: ItemStyle } {
 }
 
 async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<PriceResult> {
-	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source } = await getBuffItem(item);
+	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(item);
 
 	const tileSize = getTileSize();
 	const footerContainer = container.querySelector('div[title]')?.parentElement;
-	const currencyFormatter = CurrencyFormatter('USD');
+	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD');
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({
@@ -265,7 +264,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: '$',
+			userCurrency: currency.symbol ?? '$',
 			itemStyle: '' as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler: false,
@@ -324,6 +323,11 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 	return {
 		price_difference: difference.toNumber(),
 	};
+}
+
+function getCurrency() {
+	const currencySelectorText = document.querySelector('img[alt="Country Flag"]')?.nextElementSibling?.textContent?.split(' / ')[1];
+	return currencySelectorText?.trim() ?? 'USD';
 }
 
 function getTileSize(): 'Small' | 'Medium' | 'Large' | undefined {

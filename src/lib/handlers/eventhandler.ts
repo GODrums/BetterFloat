@@ -36,7 +36,7 @@ import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
-import { cacheSwapggCurrency, cacheSwapggInventoryBot, cacheSwapggInventoryUser } from './cache/swapgg_cache';
+import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
@@ -141,12 +141,8 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 
 function processSwapggEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	if (eventData.url.includes('v2/trade/inventory/bot/730')) {
-		cacheSwapggInventoryBot((eventData.data as Swapgg.InventoryResponse).result);
-	} else if (eventData.url.includes('v2/trade/inventory/user/730')) {
-		cacheSwapggInventoryUser((eventData.data as Swapgg.InventoryResponse).result);
-	} else if (eventData.url.includes('v2/user/me')) {
-		cacheSwapggCurrency((eventData.data as Swapgg.UserResponse).result.localization.currency);
+	if (eventData.url.includes('v2/currency')) {
+		cacheSwapggCurrencyRates((eventData.data as any).result);
 	}
 }
 
