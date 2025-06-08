@@ -87,7 +87,7 @@ async function fetchUserInventory() {
 
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
-		if (!location.href.includes(supportedSubPages[0])) {
+		if (!supportedSubPages.some((page) => location.href.includes(page))) {
 			console.debug('[BetterFloat] Current page is currently NOT supported');
 			return;
 		}
@@ -334,13 +334,14 @@ function getCurrency() {
 }
 
 function getTileSize(isOwn = false): 'Small' | 'Medium' | 'Large' | undefined {
-	const radioGroup = document.querySelector(isOwn ? SWAPGG_SELECTORS.tileSize.radioGroupOwn : SWAPGG_SELECTORS.tileSize.radioGroup);
+	const isSellPage = location.pathname === '/sell';
+	const radioGroup = document.querySelector(isSellPage ? SWAPGG_SELECTORS.tileSize.radioGroupSell : isOwn ? SWAPGG_SELECTORS.tileSize.radioGroupOwn : SWAPGG_SELECTORS.tileSize.radioGroup);
 	const selectedRadio = radioGroup?.querySelector(SWAPGG_SELECTORS.tileSize.checkedRadio);
 	const tileSize = selectedRadio?.firstElementChild?.getAttribute('title')?.split(' ')[0];
 	return tileSize as 'Small' | 'Medium' | 'Large' | undefined;
 }
 
-const supportedSubPages = ['/trade'];
+const supportedSubPages = ['/trade', '/sell'];
 
 // mutation observer active?
 let isObserverActive = false;
