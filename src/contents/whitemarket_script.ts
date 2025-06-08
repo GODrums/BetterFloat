@@ -149,7 +149,7 @@ async function adjustItem(container: Element, state: PageState) {
 }
 
 async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | null) {
-	let source = (extensionSettings['bs-pricingsource'] as MarketSource) ?? MarketSource.Buff;
+	let source = (extensionSettings['wm-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = {
 		name: item.description.nameHash,
 		style: '' as ItemStyle,
@@ -162,8 +162,8 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 		priceOrder = new Decimal(0);
 	}
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bs-altmarket'] && extensionSettings['bs-altmarket'] !== MarketSource.None) {
-		source = extensionSettings['bs-altmarket'] as MarketSource;
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['wm-altmarket'] && extensionSettings['wm-altmarket'] !== MarketSource.None) {
+		source = extensionSettings['wm-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
@@ -186,7 +186,7 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 	}
 
 	const referencePrice =
-		Number(extensionSettings['bs-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['wm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
