@@ -169,6 +169,12 @@ export const DEFAULT_SETTINGS = {
 	'bs-buffdifference': true,
 	'bs-buffdifferencepercent': true,
 	'bs-listingage': true,
+	'tradeit-enable': true,
+	'tradeit-pricingsource': 'buff',
+	'tradeit-altmarket': 'none',
+	'tradeit-pricereference': 0,
+	'tradeit-buffdifference': true,
+	'tradeit-buffdifferencepercent': true,
 	'display-updatepopup': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
