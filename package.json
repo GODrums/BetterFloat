@@ -59,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@parcel/packager-ts": "2.9.3",
 		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
 		"@types/react": "18.3.11",
@@ -96,11 +97,6 @@
 			"notifications"
 		],
 		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
-		"optional_host_permissions": [
 			"https://*/*",
 			"http://*/*"
 		],
@@ -111,7 +107,9 @@
 		},
 		"permissions": [
 			"unlimitedStorage",
-			"storage"
+			"storage",
+			"scripting",
+			"activeTab"
 		]
 	},
 	"pnpm": {
