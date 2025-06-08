@@ -161,6 +161,9 @@ function processWhiteMarketEvent(eventData: EventData<unknown>) {
 	} else if (responseData.market_my) {
 		const items = (responseData as WhiteMarket.MarketMyResponse).market_my.edges.map((edge) => edge.node);
 		cacheWhiteMarketItems(items);
+	} else if (responseData.instant_sell_list) {
+		const items = (responseData as WhiteMarket.InstantSellListResponse).instant_sell_list.items.edges.map((edge) => edge.node.item).filter((item) => item !== undefined);
+		cacheWhiteMarketInventory(items);
 	}
 }
 

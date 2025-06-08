@@ -16,6 +16,16 @@ export namespace WhiteMarket {
 		};
 	};
 
+	export type InstantSellListResponse = {
+		instant_sell_list: {
+			items: {
+				edges: {
+					node: Partial<Listing>;
+				}[];
+			};
+		};
+	};
+
 	export type MarketMyResponse = {
 		market_my: {
 			edges: { node: Listing }[];

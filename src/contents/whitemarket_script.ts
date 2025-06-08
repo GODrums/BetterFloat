@@ -64,7 +64,7 @@ function applyMutation() {
 					}
 					const itemList = addedNode.querySelector<HTMLElement>('div[class*="styles_list__"]');
 					if (itemList) {
-						const pageState = location.pathname.includes('inventory/my') ? PageState.Inventory : PageState.Market;
+						const pageState = location.pathname.includes('inventory/') || location.pathname.includes('inventory/') ? PageState.Inventory : PageState.Market;
 						for (const item of itemList.children) {
 							await adjustItem(item as Element, pageState);
 						}
@@ -86,7 +86,7 @@ async function inventoryListener() {
 	const intervalId = setInterval(async () => {
 		const itemList = document.querySelector<HTMLElement>('div[class*="styles_list__"]');
 		// Check if the inventory section is still part of the document
-		if (location.pathname !== '/inventory/my') {
+		if (location.pathname !== '/inventory/my' && location.pathname !== '/inventory/instant-sell') {
 			console.log('[BetterFloat] Inventory section removed from DOM, stopping polling.');
 			clearInterval(intervalId);
 			return;
@@ -172,7 +172,7 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 
 	let itemPrice = price ? new Decimal(price.value) : new Decimal(0);
 	const userCurrency = 'USD';
-	const currencySymbol = getSymbolFromCurrency(userCurrency);
+	const currencySymbol = '$';
 	const currencyRate = 1;
 
 	if (currencyRate && currencyRate !== 1) {
