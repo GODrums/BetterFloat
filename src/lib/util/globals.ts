@@ -66,6 +66,8 @@ import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
 import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
 import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
 import iconWaxpeerFull from 'data-base64:~/../assets/logos/waxpeer_full.svg';
+import iconWhitemarket from 'data-base64:~/../assets/logos/whitemarket.svg';
+import iconWhitemarketFull from 'data-base64:~/../assets/logos/whitemarket_full.svg';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
@@ -100,6 +102,8 @@ export const ICON_SKINBID = iconSkinbid;
 export const ICON_SKINBID_FULL = iconSkinbidFull;
 export const ICON_WAXPEER = iconWaxpeer;
 export const ICON_WAXPEER_FULL = iconWaxpeerFull;
+export const ICON_WHITEMARKET = iconWhitemarket;
+export const ICON_WHITEMARKET_FULL = iconWhitemarketFull;
 export const ICON_SWAPGG = iconSwapgg;
 export const ICON_SWAPGG_FULL = iconSwapggFull;
 export const ICON_MARKETCSGO = iconMarketCSGO;
