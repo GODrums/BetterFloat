@@ -104,8 +104,8 @@ function applyMutation() {
 					const itemList = addedNode.querySelector(SWAPGG_SELECTORS.inventory.grid)!;
 					for (let i = 0; i < itemList.childNodes.length; i++) {
 						const child = itemList.childNodes[i];
-						if (child instanceof HTMLElement && !isOwn) {
-							await adjustItem(child);
+						if (child instanceof HTMLElement) {
+							await adjustItem(child, isOwn);
 						}
 					}
 				} else if (addedNode.className.toString().includes('aspect-square')) {
@@ -130,12 +130,17 @@ async function adjustCartItem(container: Element) {
 	item.className += ' betterfloat-done';
 }
 
-async function adjustItem(container: Element) {
+async function adjustItem(container: Element, isOwn: boolean) {
+	const inventory = isOwn ? swapggInventoryUser : swapggInventoryBot;
+	while (Object.keys(inventory).length === 0) {
+		await new Promise((resolve) => setTimeout(resolve, 200));
+	}
+
 	const getItem = async () => {
 		const imageElement = container.querySelector(SWAPGG_SELECTORS.item.imageContainer);
 		if (imageElement instanceof HTMLElement) {
 			const imageLink = imageElement.style.backgroundImage.split('/')[5];
-			const cache = swapggInventoryBot[imageLink];
+			const cache = inventory[imageLink];
 			if (cache?.length > 1) {
 				const isStatTrak = container.querySelector(SWAPGG_SELECTORS.item.statTrakIndicator) !== null;
 				return cache.find((item) => {
@@ -158,7 +163,7 @@ async function adjustItem(container: Element) {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem!, container);
+	const priceResult = await addBuffPrice(apiItem!, container, isOwn);
 }
 
 async function getBuffItem(item: Swapgg.Item) {
@@ -248,11 +253,11 @@ function createBuffItem(item: Swapgg.Item): { name: string; style: ItemStyle } {
 	};
 }
 
-async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<PriceResult> {
+async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolean): Promise<PriceResult> {
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(item);
 
-	const tileSize = getTileSize();
-	const footerContainer = container.querySelector(SWAPGG_SELECTORS.item.titleContainer)?.parentElement;
+	const tileSize = getTileSize(isOwn);
+	const footerContainer = container.querySelector(SWAPGG_SELECTORS.item.footerContainer);
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD');
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
@@ -268,20 +273,19 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 			CurrencyFormatter: currencyFormatter,
 			isDoppler: false,
 			isPopout: false,
-			addSpaceBetweenPrices: true,
+			addSpaceBetweenPrices: tileSize !== 'Small',
 			showPrefix: false,
-			iconHeight: '20px',
+			iconHeight: tileSize === 'Small' ? '15px' : tileSize === 'Medium' ? '18px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
+			priceClass: tileSize ? `betterfloat-${tileSize?.toLowerCase() ?? ''}-price` : undefined,
 		});
 
 		if (!footerContainer.querySelector('.betterfloat-buffprice')) {
 			if (tileSize === 'Small') {
 				(footerContainer.parentElement as HTMLElement).style.translate = '0px -15px';
-				footerContainer.closest(SWAPGG_SELECTORS.item.insetX)?.previousElementSibling?.insertAdjacentHTML('beforeend', buffContainer);
-			} else {
-				footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 			}
+			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		}
 	}
 
@@ -306,7 +310,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 
 		const buffPriceHTML = html`
             <div 
-                class="sale-tag betterfloat-sale-tag" 
+                class="sale-tag betterfloat-sale-tag betterfloat-${tileSize?.toLowerCase() ?? ''}-sale-tag" 
                 style="background-color: ${background}; color: ${color}; ${tileSize === 'Large' ? 'flex-direction: row;' : 'flex-direction: column;'}" 
                 data-betterfloat="${difference}"
             >
@@ -329,8 +333,8 @@ function getCurrency() {
 	return currencySelectorText?.trim() ?? 'USD';
 }
 
-function getTileSize(): 'Small' | 'Medium' | 'Large' | undefined {
-	const radioGroup = document.querySelector(SWAPGG_SELECTORS.tileSize.radioGroup);
+function getTileSize(isOwn = false): 'Small' | 'Medium' | 'Large' | undefined {
+	const radioGroup = document.querySelector(isOwn ? SWAPGG_SELECTORS.tileSize.radioGroupOwn : SWAPGG_SELECTORS.tileSize.radioGroup);
 	const selectedRadio = radioGroup?.querySelector(SWAPGG_SELECTORS.tileSize.checkedRadio);
 	const tileSize = selectedRadio?.firstElementChild?.getAttribute('title')?.split(' ')[0];
 	return tileSize as 'Small' | 'Medium' | 'Large' | undefined;

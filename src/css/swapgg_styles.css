@@ -30,6 +30,16 @@ html {
 	line-height: 24px;
 }
 
+.betterfloat-small-price {
+	font-size: 10px;
+}
+.betterfloat-medium-price {
+	font-size: 13px;
+}
+.betterfloat-large-price {
+	font-size: 15px;
+}
+
 .betterfloat-sale-tag {
 	display: flex;
 	gap: 4px;
@@ -37,6 +47,16 @@ html {
 	border-radius: 4px !important;
 	font-size: 12px;
 	font-weight: 500;
+}
+
+.betterfloat-small-sale-tag {
+	font-size: 10px;
+}
+.betterfloat-medium-sale-tag {
+	font-size: 12px;
+}
+.betterfloat-large-sale-tag {
+	font-size: 14px;
 }
 
 .betterfloat-similar-tag {
