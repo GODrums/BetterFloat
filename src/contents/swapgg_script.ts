@@ -7,6 +7,7 @@ import type { Swapgg } from '~lib/@typings/SwapggTypes';
 import { getSwapggCurrencyRate } from '~lib/handlers/cache/swapgg_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
@@ -90,7 +91,7 @@ function applyMutation() {
 			console.debug('[BetterFloat] Current page is currently NOT supported');
 			return;
 		}
-		const inventoryContainer = Array.from(document.querySelectorAll('div.flex.flex-1.flex-col.overflow-hidden.rounded-lg.transition-transform.duration-300'));
+		const inventoryContainer = Array.from(document.querySelectorAll(SWAPGG_SELECTORS.inventory.container));
 		for (const mutation of mutations) {
 			for (let i = 0; i < mutation.addedNodes.length; i++) {
 				const addedNode = mutation.addedNodes[i];
@@ -99,9 +100,8 @@ function applyMutation() {
 				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				if (addedNode.className.toString().includes('vue-recycle-scroller__item-view')) {
-					const isOwn =
-						inventoryContainer.findIndex((element) => element === addedNode.closest('div.flex.flex-1.flex-col.overflow-hidden.rounded-lg.transition-transform.duration-300')!) === 0;
-					const itemList = addedNode.querySelector('.grid')!;
+					const isOwn = inventoryContainer.findIndex((element) => element === addedNode.closest(SWAPGG_SELECTORS.inventory.container)!) === 0;
+					const itemList = addedNode.querySelector(SWAPGG_SELECTORS.inventory.grid)!;
 					for (let i = 0; i < itemList.childNodes.length; i++) {
 						const child = itemList.childNodes[i];
 						if (child instanceof HTMLElement && !isOwn) {
@@ -109,7 +109,7 @@ function applyMutation() {
 						}
 					}
 				} else if (addedNode.className.toString().includes('aspect-square')) {
-					if (addedNode.closest('#headlessui-disclosure-panel-7') !== null) {
+					if (addedNode.closest(SWAPGG_SELECTORS.cart.panel) !== null) {
 						await adjustCartItem(addedNode);
 					}
 				}
@@ -120,25 +120,24 @@ function applyMutation() {
 }
 
 async function adjustCartItem(container: Element) {
-	const cartItems = Array.from(document.querySelectorAll('button[title=REMOVE]')).filter((element) => element.parentElement?.className.includes('opacity-100'));
+	const cartItems = Array.from(document.querySelectorAll(SWAPGG_SELECTORS.cart.removeButton)).filter((element) => element.parentElement?.className.includes('opacity-100'));
 	const item = cartItems.find((element) => !element.className.includes('betterfloat-done'))?.parentElement?.parentElement;
 
 	if (!item) return;
 
-	container.querySelector('div.relative.z-1.leading-none.mb-0')?.replaceWith(item.querySelector('div.relative.z-1.leading-none.mb-1')!.cloneNode(true));
+	container.querySelector(SWAPGG_SELECTORS.item.leadingNone.mb0)?.replaceWith(item.querySelector(SWAPGG_SELECTORS.item.leadingNone.mb1)!.cloneNode(true));
 
 	item.className += ' betterfloat-done';
 }
 
 async function adjustItem(container: Element) {
 	const getItem = async () => {
-		const imageElement = container.querySelector('.bg-contain.bg-center.bg-no-repeat');
+		const imageElement = container.querySelector(SWAPGG_SELECTORS.item.imageContainer);
 		if (imageElement instanceof HTMLElement) {
 			const imageLink = imageElement.style.backgroundImage.split('/')[5];
 			const cache = swapggInventoryBot[imageLink];
-			// console.log('[BetterFloat] Cache: ', cache);
 			if (cache?.length > 1) {
-				const isStatTrak = container.querySelector('div.text-yellow-400.text-xs') !== null;
+				const isStatTrak = container.querySelector(SWAPGG_SELECTORS.item.statTrakIndicator) !== null;
 				return cache.find((item) => {
 					if (isStatTrak) {
 						return item.n.includes('StatTrak™');
@@ -253,7 +252,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(item);
 
 	const tileSize = getTileSize();
-	const footerContainer = container.querySelector('div[title]')?.parentElement;
+	const footerContainer = container.querySelector(SWAPGG_SELECTORS.item.titleContainer)?.parentElement;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD');
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
@@ -279,14 +278,14 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 		if (!footerContainer.querySelector('.betterfloat-buffprice')) {
 			if (tileSize === 'Small') {
 				(footerContainer.parentElement as HTMLElement).style.translate = '0px -15px';
-				footerContainer.closest('div.inset-x-0')?.previousElementSibling?.insertAdjacentHTML('beforeend', buffContainer);
+				footerContainer.closest(SWAPGG_SELECTORS.item.insetX)?.previousElementSibling?.insertAdjacentHTML('beforeend', buffContainer);
 			} else {
 				footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 			}
 		}
 	}
 
-	const priceContainer = footerContainer?.querySelector('.text-color-100')?.parentElement;
+	const priceContainer = footerContainer?.querySelector(SWAPGG_SELECTORS.item.priceContainer)?.parentElement;
 	if (priceListing?.gt(0.06) && priceContainer) {
 		const styling = {
 			profit: {
@@ -326,13 +325,13 @@ async function addBuffPrice(item: Swapgg.Item, container: Element): Promise<Pric
 }
 
 function getCurrency() {
-	const currencySelectorText = document.querySelector('img[alt="Country Flag"]')?.nextElementSibling?.textContent?.split(' / ')[1];
+	const currencySelectorText = document.querySelector(SWAPGG_SELECTORS.currency.flag)?.nextElementSibling?.textContent?.split(' / ')[1];
 	return currencySelectorText?.trim() ?? 'USD';
 }
 
 function getTileSize(): 'Small' | 'Medium' | 'Large' | undefined {
-	const radioGroup = document.querySelector('#headlessui-radiogroup-v-0-0-33');
-	const selectedRadio = radioGroup?.querySelector('div[data-headlessui-state="checked"]');
+	const radioGroup = document.querySelector(SWAPGG_SELECTORS.tileSize.radioGroup);
+	const selectedRadio = radioGroup?.querySelector(SWAPGG_SELECTORS.tileSize.checkedRadio);
 	const tileSize = selectedRadio?.firstElementChild?.getAttribute('title')?.split(' ')[0];
 	return tileSize as 'Small' | 'Medium' | 'Large' | undefined;
 }
