@@ -1,4 +1,3 @@
-import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -6,7 +5,7 @@ import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handlers/cache/whitemarket_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { ICON_BUFF, MarketSource } from '~lib/util/globals';
+import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { type IStorage, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
