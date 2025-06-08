@@ -198,6 +198,13 @@ export const DEFAULT_SETTINGS = {
 	'swp-buffdifference': true,
 	'swp-buffdifferencepercent': true,
 	'swp-listingage': true,
+	'wm-enable': true,
+	'wm-pricingsource': 'buff',
+	'wm-altmarket': 'none',
+	'wm-pricereference': 0,
+	'wm-buffdifference': true,
+	'wm-buffdifferencepercent': true,
+	'wm-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

@@ -15,6 +15,7 @@ import {
 	ICON_SKINPORT,
 	ICON_SWAPGG,
 	ICON_WAXPEER,
+	ICON_WHITEMARKET,
 } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
@@ -36,6 +37,7 @@ import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
 import { SwapggSettings } from './tabs/Swapgg';
 import { WaxpeerSettings } from './tabs/Waxpeer';
+import { WhiteMarketSettings } from './tabs/Whitemarket';
 import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
@@ -112,6 +114,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="waxpeer">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
 								</TabsTrigger>
+								<TabsTrigger value="whitemarket">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WHITEMARKET} />
+								</TabsTrigger>
 								<TabsTrigger value="shadowpay">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
 								</TabsTrigger>
@@ -150,6 +155,7 @@ export default function IndexPopup() {
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<WaxpeerSettings hasProPlan={hasProPlan} />
+					<WhiteMarketSettings hasProPlan={hasProPlan} />
 					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<MarketCSGOSettings hasProPlan={hasProPlan} />
 					<SwapggSettings hasProPlan={hasProPlan} />

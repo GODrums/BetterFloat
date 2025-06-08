@@ -8,6 +8,7 @@ import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
+import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -37,6 +38,7 @@ import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinb
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
+import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache/whitemarket_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 
@@ -78,6 +80,8 @@ export async function activateHandler() {
 			processMarketCSGOEvent(eventData);
 		} else if (location.href.includes('swap.gg')) {
 			processSwapggEvent(eventData);
+		} else if (location.host === 'white.market') {
+			processWhiteMarketEvent(eventData);
 		}
 	});
 
@@ -135,6 +139,31 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+// whitemarket uses a graphql api, so we need to handle it differently
+function processWhiteMarketEvent(eventData: EventData<unknown>) {
+	console.debug(`[Plasmo] Received data from url: ${eventData.url}, data:`, eventData.data);
+
+	if (!eventData.url.includes('graphql/api')) {
+		return;
+	}
+
+	const responseData = (eventData.data as any).data as any;
+
+	if (responseData.market_list) {
+		const items = (responseData as WhiteMarket.MarketListResponse).market_list.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.inventory_my) {
+		const items = (responseData as WhiteMarket.InventoryMyResponse).inventory_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketInventory(items);
+	} else if (responseData.market_my) {
+		const items = (responseData as WhiteMarket.MarketMyResponse).market_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.instant_sell_list) {
+		const items = (responseData as WhiteMarket.InstantSellListResponse).instant_sell_list.items.edges.map((edge) => edge.node.item).filter((item) => item !== undefined);
+		cacheWhiteMarketInventory(items);
 	}
 }
 
