@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_CSBLUEGEM, ICON_DMARKET_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, MdiShoppingSearchOutline, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -35,8 +35,10 @@ export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
 							text="Blue Gem Enhancements"
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
 							tooltipText="Adds pattern details and past sales to case hardened skins."
-							isNew
 						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="dm-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="dm-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />

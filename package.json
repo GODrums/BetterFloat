@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.1.23",
+	"version": "3.1.33",
 	"description": "Enhance your website experience on 9+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -46,7 +46,7 @@
 		"framer-motion": "^11.18.2",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
-		"plasmo": "0.90.3",
+		"plasmo": "0.90.5",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",
@@ -59,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@parcel/packager-ts": "2.9.3",
 		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
 		"@types/react": "18.3.11",
@@ -84,6 +85,14 @@
 				"resources": [
 					"inject.ts"
 				]
+			},
+			{
+				"matches": [
+					"https://*.gamerpay.gg/*"
+				],
+				"resources": [
+					"src/lib/vendors/resq.js"
+				]
 			}
 		],
 		"key": "$CRX_PUBLIC_KEY",
@@ -97,11 +106,6 @@
 			"notifications"
 		],
 		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
-		"optional_host_permissions": [
 			"https://*/*",
 			"http://*/*"
 		],
@@ -112,7 +116,9 @@
 		},
 		"permissions": [
 			"unlimitedStorage",
-			"storage"
+			"storage",
+			"scripting",
+			"activeTab"
 		]
 	},
 	"pnpm": {

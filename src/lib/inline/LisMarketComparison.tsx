@@ -111,7 +111,7 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntry; currency
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" />
 						<span className="text-lg font-bold text-gray-200">{marketDetails.text}</span>
-						{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-400" />}
+						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-400" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />
@@ -156,21 +156,13 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntry; currency
 
 const LisMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
-	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [listing, setListing] = useState<LisSkinsItem | null>(null);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [currency, setCurrency] = useState('USD'); // Default, will be updated
 	const [currencyRates, setCurrencyRates] = useState<{ [key: string]: number }>({});
 
-	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
-		// Use lis- prefix for storage key
-		'lis-visible-markets',
-		AvailableMarketSources.map((m) => m.source)
-	);
 	const [user] = useStorage<SettingsUser>('user');
-
-	const ref = useRef(null);
 
 	const fetchMarketData = async () => {
 		if (!listing) {
@@ -279,19 +271,6 @@ const LisMarketComparison: React.FC = () => {
 		}
 	}, [listing, currencyRates]); // Depend on listing and currencyRates
 
-	const toggleMarket = (market: string) => {
-		setVisibleMarkets((prev) => {
-			if (!prev) return [market];
-			if (prev.includes(market)) {
-				return prev.filter((m) => m !== market);
-			}
-			return [...prev, market];
-		});
-	};
-
-	// Filter market data based on visibility settings
-	const filteredMarketData = marketData.filter((entry) => visibleMarkets?.includes(entry.market));
-
 	return (
 		<div className="max-h-[60vh] bg-[#21242a] rounded-md text-sm" style={{ fontFamily: 'inherit' }}>
 			{isLoading ? (
@@ -318,52 +297,12 @@ const LisMarketComparison: React.FC = () => {
 								</div>
 							)}
 						</div>
-						<div className="flex justify-center items-center gap-2">
-							<Button className="h-9 gap-2 bg-[#2d313b] hover:bg-gray-500 text-gray-200" onClick={() => setIsSettingsOpen(!isSettingsOpen)}>
-								<Settings className="h-6 w-6" />
-								<span className="text-sm">Settings</span>
-							</Button>
-						</div>
 					</div>
-					<AnimatePresence>
-						{isSettingsOpen && (
-							// Adapt settings panel styling
-							<div ref={ref} className="w-full bg-[#2d313b] border border-gray-500 rounded-md p-4 flex flex-col items-center gap-1 shadow-lg">
-								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-bold text-lg text-gray-200">Settings</div>
-									<Button variant="ghost" size="icon" className="w-8 h-8 text-gray-200 hover:bg-gray-300" onClick={() => setIsSettingsOpen(false)}>
-										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
-									</Button>
-								</div>
-								<div className="w-full space-y-3 text-gray-700">
-									{AvailableMarketSources.map((market) => (
-										<div key={market.source} className="flex justify-between items-center space-x-2">
-											<div className="flex items-center space-x-2">
-												<CSFCheckbox id={market.source} checked={visibleMarkets?.includes(market.source)} onCheckedChange={() => toggleMarket(market.source)} />
-												<div className="flex items-center gap-2">
-													<img src={market.logo} className="h-6 w-6" />
-													<label htmlFor={market.source} className="text-sm font-medium leading-none cursor-pointer">
-														{market.text}
-													</label>
-												</div>
-											</div>
-											{!FreeMarkets.includes(market.source) && (
-												<Badge variant="purple" className="text-white text-xs">
-													Pro
-												</Badge>
-											)}
-										</div>
-									))}
-								</div>
-							</div>
-						)}
-					</AnimatePresence>
-
 					{/* Adapt scroll area styling for horizontal scroll */}
 					<ScrollArea className="w-full" viewportClass="w-full whitespace-nowrap rounded-md" orientation="horizontal">
 						<div className="flex w-max space-x-4 p-4">
-							{listing && filteredMarketData && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
-							{(!filteredMarketData || filteredMarketData.length === 0) && (
+							{listing && marketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
+							{(!marketData || marketData.length === 0) && (
 								// Adapt no listings styling (keep it somewhat centered)
 								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
 									<div className="flex flex-col items-center justify-center gap-1 p-4 h-full min-w-[200px]">

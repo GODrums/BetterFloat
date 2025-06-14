@@ -35,7 +35,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csm-enable']) return;
 
@@ -177,9 +176,8 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 async function addPopupListener(container: Element, item: CSMoney.Item) {
 	container.addEventListener('click', async () => {
 		const selector = location.pathname === '/market/buy/' ? CSMONEY_SELECTORS.market : CSMONEY_SELECTORS.sell;
-		waitForElement(selector.popup).then(async (success) => {
+		waitForElement(selector.popup, { interval: 200, maxTries: 50 }).then(async (success) => {
 			if (success) {
-				console.log('[BetterFloat] Popup listener executed');
 				const bigCard = document.querySelector(selector.popup);
 				if (bigCard) {
 					await adjustItem(bigCard, true, item);
@@ -200,14 +198,19 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 	if (location.pathname === '/market/buy/') {
 		const selector = CSMONEY_SELECTORS.market.popup_similar;
 		const allSelectors = Array.from(container.querySelectorAll(selector));
-		parentElement = allSelectors.length === 3 ? allSelectors[1]?.parentElement : (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
-	} else if (location.pathname === '/market/sell/') {
+		parentElement =
+			allSelectors.length === 3
+				? allSelectors[1]?.parentElement
+				: allSelectors.length === 2
+					? allSelectors[0]?.parentElement
+					: (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
+	} else if (location.pathname === '/market/sell/' || location.pathname === '/market/instant-sell/') {
 		parentElement = container.querySelector(CSMONEY_SELECTORS.sell.popup_similar) as HTMLElement;
 	}
 	if (!parentElement) return;
 
 	const url = new URL('https://cs.money/market/buy/');
-	url.searchParams.append('utm_campaign', 'market');
+	url.searchParams.append('utm_campaign', 'regular');
 	url.searchParams.append('utm_source', 'mediabuy');
 	url.searchParams.append('utm_medium', 'betterfloat');
 	url.searchParams.append('utm_content', 'link');
@@ -255,8 +258,8 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	let itemPrice = getHTMLPrice(container, item);
-	if (currencyRate) {
+	let { itemPrice, converted } = getHTMLPrice(container, item);
+	if (!converted && currencyRate) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
 	const referencePrice =
@@ -282,22 +285,22 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 	};
 }
 
-function getHTMLPrice(container: Element, item: CSMoney.Item) {
+function getHTMLPrice(container: Element, item: CSMoney.Item): { itemPrice: Decimal; converted: boolean } {
 	const cardPrice = container.getAttribute('data-card-price');
 	if (cardPrice) {
-		return new Decimal(cardPrice);
+		return { itemPrice: new Decimal(cardPrice), converted: false };
 	}
 
 	if ((item as CSMoney.MarketItem)?.pricing?.computed) {
-		return new Decimal((item as CSMoney.MarketItem).pricing.computed);
+		return { itemPrice: new Decimal((item as CSMoney.MarketItem).pricing.computed), converted: true };
 	}
 
 	const priceText = container.querySelector(CSMONEY_SELECTORS.trade.price)?.textContent;
 	if (!priceText) {
-		return new Decimal(0);
+		return { itemPrice: new Decimal(0), converted: true };
 	}
 
-	return new Decimal(parsePrice(priceText).price);
+	return { itemPrice: new Decimal(parsePrice(priceText).price), converted: true };
 }
 
 function getItemName(item: CSMoney.Item) {
@@ -386,8 +389,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
 
 	const footerContainer = container.querySelector<HTMLElement>(selector.footer)?.parentElement;
-
-	console.log('[BetterFloat] Footer container:', footerContainer, selector.footer);
 
 	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);

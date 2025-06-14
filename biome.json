@@ -42,7 +42,7 @@
 				"useExhaustiveDependencies": "off"
 			}
 		},
-		"ignore": ["src/lib/utils.ts", "src/lib/components/Vortex.tsx"]
+		"ignore": ["src/lib/utils.ts", "src/lib/components/Vortex.tsx", "src/lib/vendors/resq.js"]
 	},
 	"javascript": {
 		"formatter": {

@@ -100,10 +100,12 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.log('Added node: ', addedNode);
+				// console.log('Added node: ', addedNode.tagName, addedNode);
 
 				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
 					await adjustInventoryItem(addedNode);
+				} else if (addedNode.tagName === 'APP-ITEM-CARD') {
+					await adjustItem(addedNode, SKINBID_SELECTORS.card);
 				} else if (addedNode.tagName === 'NGU-TILE') {
 					await adjustItem(addedNode.querySelector('app-item-card') as Element, SKINBID_SELECTORS.card);
 				} else if (addedNode.children.length === 1) {
