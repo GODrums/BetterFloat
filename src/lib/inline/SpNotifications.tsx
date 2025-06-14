@@ -55,8 +55,33 @@ const SpNotifications: React.FC = () => {
 		setOpen(false);
 	};
 
+	const requestNotificationPermission = async (): Promise<boolean> => {
+		if (!('Notification' in window)) {
+			console.warn('This browser does not support desktop notifications');
+			return false;
+		}
+
+		if (Notification.permission === 'granted') {
+			return true;
+		}
+
+		if (Notification.permission === 'denied') {
+			console.warn('Notification permission has been denied');
+			return false;
+		}
+
+		const permission = await Notification.requestPermission();
+		return permission === 'granted';
+	};
+
 	const testNotification = async () => {
 		if (useBrowser) {
+			const hasPermission = await requestNotificationPermission();
+			if (!hasPermission) {
+				alert('Notification permission is required to use browser notifications. Please enable notifications in your browser settings.');
+				return;
+			}
+
 			const notification = new Notification('BetterFloat Notification', {
 				body: 'This is a test notification',
 				icon: 'https://skinport.com/static/favicon.ico',
@@ -124,7 +149,17 @@ const SpNotifications: React.FC = () => {
 									className="w-4 h-4 rounded bg-[#2a2d2f]"
 									style={{ clipPath: 'circle(50%)', accentColor: '#ff5722' }}
 									checked={useBrowser}
-									onChange={(e) => setUseBrowser(e.target.checked)}
+									onChange={async (e) => {
+										if (e.target.checked) {
+											const hasPermission = await requestNotificationPermission();
+											if (!hasPermission) {
+												alert('Notification permission is required to use browser notifications. Please enable notifications in your browser settings.');
+												e.target.checked = false;
+												return;
+											}
+										}
+										setUseBrowser(e.target.checked);
+									}}
 									disabled={user?.plan.type !== 'pro'}
 								/>
 								<label htmlFor="notifications-use-browser" className="text-sm">
