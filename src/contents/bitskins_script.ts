@@ -38,7 +38,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bs-enable']) return;
 
@@ -328,7 +327,6 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 		},
 	};
 
-	const absDifference = difference.abs();
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`

@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
-import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import {
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
@@ -90,6 +90,13 @@ async function init() {
 	}
 
 	dynamicUIHandler();
+
+	const interval = setInterval(() => {
+		if (document.querySelector('.LiveBtn--isActive')) {
+			startSkinportSocket();
+			clearInterval(interval);
+		}
+	}, 10000);
 }
 
 async function firstLaunch() {
