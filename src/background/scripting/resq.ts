@@ -1,10 +1,6 @@
 declare global {
 	interface Window {
-		resq: {
-			resq$: (selector: string, element?: HTMLElement) => Resq.RESQNode;
-			waitToLoadReact: (timeInMs?: number, rootElSelector?: string) => Promise<null | string>;
-			resq$$: (selector: string, element?: HTMLElement) => Array<Resq.RESQNode>;
-		};
+		resq: ResqModule;
 	}
 }
 

@@ -26,19 +26,6 @@ export const INJECTION_DOMAINS = [
  * This function is called when the script is injected via chrome.scripting.executeScript
  */
 export function executeInjection(tabId: number, url: string) {
-	// Inject the main script immediately
-	chrome.scripting
-		.executeScript({
-			target: { tabId },
-			func: addScript,
-			injectImmediately: true,
-			world: 'MAIN', // Inject into the main world for better timing
-		})
-		.catch((error) => {
-			console.debug('[BetterFloat] Injection error (expected for some pages):', error);
-		});
-
-	console.log('[BetterFloat] Executing injection for:', url);
 	if (url.includes('gamerpay.gg')) {
 		console.log('[BetterFloat] Injecting Resq...');
 
@@ -47,6 +34,8 @@ export function executeInjection(tabId: number, url: string) {
 			.executeScript({
 				target: { tabId },
 				files: ['src/lib/vendors/resq.js'],
+				injectImmediately: true,
+				world: 'MAIN',
 			})
 			.catch((error) => {
 				console.debug('[BetterFloat] Injection error (expected for some pages):', error);
@@ -61,4 +50,16 @@ export function executeInjection(tabId: number, url: string) {
 				console.debug('[BetterFloat] Injection error (expected for some pages):', error);
 			});
 	}
+
+	// Inject the main script immediately
+	chrome.scripting
+		.executeScript({
+			target: { tabId },
+			func: addScript,
+			injectImmediately: true,
+			world: 'MAIN', // Inject into the main world for better timing
+		})
+		.catch((error) => {
+			console.debug('[BetterFloat] Injection error (expected for some pages):', error);
+		});
 }
