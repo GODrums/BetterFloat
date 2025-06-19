@@ -170,17 +170,7 @@ export function isUserPro(user: SettingsUser) {
  * @returns
  */
 export function isBuffBannedItem(name: string) {
-	const bannedItems = [
-		'2020 RMR Legends',
-		'2020 RMR Contenders',
-		'2020 RMR Challengers',
-		'EMS Katowice 2014 Legends',
-		'EMS Katowice 2014 Challengers',
-		'ESL One Cologne 2014 Legends',
-		'ESL One Cologne 2014 Challengers',
-		'ESL One Cologne 2015 Legends (Foil)',
-	];
-	return name.includes('Capsule') || name.includes('Patch Pack') || name.includes('Holo-Foil') || bannedItems.includes(name);
+	return false;
 }
 
 export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {
