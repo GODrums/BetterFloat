@@ -18,6 +18,7 @@ export const INJECTION_DOMAINS = [
 	'swap.gg',
 	'white.market',
 	'tradeit.gg',
+	'avan.market',
 ];
 
 /**
