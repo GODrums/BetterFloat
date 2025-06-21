@@ -2,6 +2,7 @@ name: QA / Lint (Biome)
 
 on:
   push:
+  pull_request:
 
 jobs:
   quality:
@@ -12,6 +13,6 @@ jobs:
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
         with:
-          version: latest
+          version: 2.0.0
       - name: Run Biome
         run: biome ci src/
