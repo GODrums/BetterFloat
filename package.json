@@ -58,7 +58,7 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.0.0",
 		"@parcel/packager-ts": "2.9.3",
 		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
