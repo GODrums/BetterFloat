@@ -14,6 +14,7 @@ import {
 	ICON_SKINBARON,
 	ICON_SKINPORT,
 	ICON_SWAPGG,
+	ICON_TRADEIT,
 	ICON_WAXPEER,
 	ICON_WHITEMARKET,
 } from '~lib/util/globals';
@@ -36,6 +37,7 @@ import { DmarketSettings } from './tabs/Dmarket';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
 import { SwapggSettings } from './tabs/Swapgg';
+import { TradeitSettings } from './tabs/Tradeit';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { WhiteMarketSettings } from './tabs/Whitemarket';
 import { UserProfile } from './tabs/user/UserProfile';
@@ -126,6 +128,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="swapgg">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SWAPGG} />
 								</TabsTrigger>
+								<TabsTrigger value="tradeit">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -159,6 +164,7 @@ export default function IndexPopup() {
 					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<MarketCSGOSettings hasProPlan={hasProPlan} />
 					<SwapggSettings hasProPlan={hasProPlan} />
+					<TradeitSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>
