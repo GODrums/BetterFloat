@@ -1,9 +1,7 @@
 import globalStyle from 'url:~/style.css';
-import { createIsolatedElement } from '@webext-core/isolated-element';
-
-import { createRoot } from 'react-dom/client';
-
 import { relayMessage } from '@plasmohq/messaging';
+import { createIsolatedElement } from '@webext-core/isolated-element';
+import { createRoot } from 'react-dom/client';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
@@ -319,7 +317,7 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 }
 
 export async function mountDMarketMarketComparison(container: HTMLElement) {
-	const { root } = await mountShadowRoot(<DMMarketComparison />, {
+	await mountShadowRoot(<DMMarketComparison />, {
 		tagName: 'betterfloat-dm-market-comparison',
 		parent: container,
 	});

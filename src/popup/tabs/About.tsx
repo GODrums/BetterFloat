@@ -1,5 +1,5 @@
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { ICON_CSBLUEGEM, ICON_CSMONEY_FULL, WEBSITE_URL } from '~lib/util/globals';
+import { ICON_CSMONEY_FULL, WEBSITE_URL } from '~lib/util/globals';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { Spotlight } from '~popup/components/Spotlight';
 import { Button } from '~popup/ui/button';

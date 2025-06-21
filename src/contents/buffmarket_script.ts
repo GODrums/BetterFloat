@@ -1,16 +1,15 @@
+import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-
-import { html } from 'common-tags';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { BigCurrency, SmallCurrency, getMarketID } from '~lib/handlers/mappinghandler';
+import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { ICON_CLOCK, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -34,7 +33,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bm-enable']) return;
 
@@ -127,7 +125,7 @@ async function adjustItem(container: Element, state: PageState) {
 
 	// console.log('[BetterFloat] Adjusting item: ', apiItem, container);
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem, container, state);
+	const _priceResult = await addBuffPrice(apiItem, container, state);
 
 	if (state === PageState.ItemPage && extensionSettings['bm-listingage']) {
 		addListingAge(container, apiItem);

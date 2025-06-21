@@ -11,7 +11,7 @@ import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selector
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -35,7 +35,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csm-enable']) return;
 
@@ -167,7 +166,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		return;
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem, container, isPopout);
+	const _priceResult = await addBuffPrice(apiItem, container, isPopout);
 
 	if (!isPopout) {
 		await addPopupListener(container, apiItem);
