@@ -8,6 +8,7 @@ import { getAvanmarketInventoryItem, getFirstAvanmarketInventoryItem, getFirstAv
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
@@ -62,10 +63,10 @@ async function replaceHistory() {
 	// wait for the page to load
 	const loggedOut = await new Promise((resolve) => {
 		const interval = setInterval(() => {
-			if (document.querySelector('img[src*="https://avatars.steamstatic.com"]')) {
+			if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_IN)) {
 				clearInterval(interval);
 				resolve(false);
-			} else if (document.querySelector('img[alt="steam logo"]')) {
+			} else if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_OUT)) {
 				clearInterval(interval);
 				resolve(true);
 			}
@@ -86,9 +87,9 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[Plasmo] Mutation detected:', addedNode);
 
-				if (addedNode.className.startsWith('marketProductCard_cardHovered__')) {
+				if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.MARKET_CARD)) {
 					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.className.startsWith('ItemCard_container__')) {
+				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.INVENTORY_CARD)) {
 					await adjustItem(addedNode, PageState.Inventory);
 				}
 			}
@@ -101,7 +102,7 @@ function getAPIItem(container: Element, state: PageState) {
 	if (state === PageState.Market) {
 		return getFirstAvanmarketItem();
 	} else if (state === PageState.Inventory) {
-		const itemName = container.querySelector<HTMLElement>('div[class*="ItemCard_itemContainerText__"]')?.textContent?.trim();
+		const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_NAME)?.textContent?.trim();
 		if (itemName) {
 			return getAvanmarketInventoryItem(itemName);
 		}
@@ -132,9 +133,9 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 
 	let footerContainer: HTMLElement | null = null;
 	if (state === PageState.Market) {
-		footerContainer = container.querySelector<HTMLElement>('div[class*="marketProductCard_marketGunCardPrice__"]');
+		footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.MARKET.FOOTER);
 	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector<HTMLElement>('div[class*="ItemCard_itemContainerFooter__"]');
+		footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.INVENTORY.FOOTER);
 		container.classList.add('inventory-item');
 	}
 
@@ -173,7 +174,7 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 		}
 	}
 
-	let discountContainer = container.querySelector('div[class*="marketProductCard_saleContainer__"]');
+	let discountContainer = container.querySelector(AVAN_SELECTORS.STATE.MARKET.DISCOUNT);
 	if (!discountContainer) {
 		const newContainer = document.createElement('div');
 		newContainer.classList.add('discount');
