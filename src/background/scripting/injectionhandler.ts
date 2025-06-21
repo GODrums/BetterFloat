@@ -19,6 +19,7 @@ export const INJECTION_DOMAINS = [
 	'white.market',
 	'tradeit.gg',
 	'avan.market',
+	'skinsmonkey.com',
 ];
 
 /**
