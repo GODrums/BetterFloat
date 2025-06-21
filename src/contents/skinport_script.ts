@@ -1,6 +1,11 @@
+import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-
+import type { PlasmoCSConfig } from 'plasmo';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
+import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import {
@@ -14,22 +19,15 @@ import {
 	ICON_PRICEMPIRE,
 	ICON_SKINPORT,
 	ICON_STEAMANALYST,
-	MarketSource,
 	isProduction,
+	MarketSource,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
-import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
-import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
-
-import { html } from 'common-tags';
-import type { PlasmoCSConfig } from 'plasmo';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
-import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
+import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
+import { generatePriceLine, generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
+import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
@@ -130,11 +128,6 @@ async function firstLaunch() {
 		if (location.search.includes('bf=live')) {
 			(<HTMLButtonElement>document.querySelector('.LiveBtn'))?.click();
 		}
-	} else if (path.startsWith('/cart')) {
-		const cartContainer = document.querySelector('.Cart-container');
-		if (cartContainer) {
-			await adjustCart(cartContainer);
-		}
 	} else if (path.startsWith('/item/') || path.startsWith('/i/') || path.startsWith('/myitems/i/')) {
 		const itemPage = document.querySelector('.ItemPage');
 		if (itemPage) {
@@ -227,8 +220,6 @@ async function applyMutation() {
 						className.includes('SellPage-item')
 					) {
 						await adjustItem(addedNode);
-					} else if (className.includes('Cart-container')) {
-						await adjustCart(addedNode);
 					} else if (className.includes('ItemPage')) {
 						// await adjustItemPage(addedNode);
 						await adjustItem(addedNode, itemSelectors.page);
@@ -289,10 +280,6 @@ async function handlePopularList(list: Element) {
 			await adjustItem(item);
 		}
 	}
-}
-
-async function adjustCart(container: Element) {
-	// adjust the cart with Buff prices?
 }
 
 async function addSoldPrice(container: Element, item: Skinport.Item) {

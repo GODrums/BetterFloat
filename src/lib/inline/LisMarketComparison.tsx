@@ -1,23 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-import type { DopplerPhase } from '~lib/@typings/FloatTypes';
-import { LoadingSpinner } from '~popup/components/LoadingSpinner';
-import { ScrollArea } from '~popup/ui/scroll-area';
-
 import betterfloatLogo from 'data-base64:/assets/icon.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
-import { AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
+import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getMarketURL, isBuffBannedItem } from '~lib/util/helperfunctions';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { ExtensionStorage } from '~lib/util/storage';
 import { cn } from '~lib/utils';
-import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
-import { Badge } from '~popup/ui/badge';
+import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Button } from '~popup/ui/button';
-import { CSFCheckbox } from '~popup/ui/checkbox';
+import { ScrollArea } from '~popup/ui/scroll-area';
 
 interface MarketEntry {
 	market: string;

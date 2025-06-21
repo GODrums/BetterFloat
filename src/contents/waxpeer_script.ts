@@ -10,7 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { WAXPEER_SELECTORS } from '~lib/handlers/selectors/waxpeer_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -121,7 +121,7 @@ async function adjustItem(container: Element, state: PageState) {
 	// if (!name) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container, state);
 }
 
 async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageState): Promise<PriceResult> {

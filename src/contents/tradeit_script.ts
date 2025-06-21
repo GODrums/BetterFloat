@@ -1,19 +1,16 @@
+import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-
-import { html } from 'common-tags';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
-import { getFirstTradeitBotItem } from '~lib/handlers/cache/tradeit_cache';
-import { getFirstTradeitOwnItem } from '~lib/handlers/cache/tradeit_cache';
+import { getFirstTradeitBotItem, getFirstTradeitOwnItem } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { handleSpecialStickerNames } from '~lib/util/helperfunctions';
-import { getAllSettings } from '~lib/util/storage';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
+import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 type PriceResult = {
@@ -199,7 +196,7 @@ async function adjustItem(container: Element, isOwn = false) {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem!, container);
+	const _priceResult = await addBuffPrice(apiItem!, container);
 
 	const discountContainer = container.querySelector(TRADEIT_SELECTORS.discount);
 	if (discountContainer) {

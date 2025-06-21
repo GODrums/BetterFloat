@@ -56,6 +56,10 @@
 			},
 			"correctness": {
 				"useExhaustiveDependencies": "off"
+			},
+			"nursery": {
+				"useUniqueElementIds": "off",
+				"noNestedComponentDefinitions": "off"
 			}
 		},
 		"includes": [

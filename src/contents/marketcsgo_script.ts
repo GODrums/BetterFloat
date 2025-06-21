@@ -7,7 +7,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -86,8 +86,7 @@ async function adjustItem(container: Element, state: PageState) {
 	if (!itemName) return;
 	// console.log('[BetterFloat] Item Name:', itemName);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(itemName, container, state);
+	const _priceResult = await addBuffPrice(itemName, container, state);
 }
 
 async function addBuffPrice(itemName: string, container: Element, state: PageState): Promise<PriceResult> {

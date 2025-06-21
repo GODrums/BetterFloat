@@ -1,10 +1,9 @@
-import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
-import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
-
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
-import { INJECTION_DOMAINS, executeInjection } from './scripting/injectionhandler';
+import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
+import { executeInjection, INJECTION_DOMAINS } from './scripting/injectionhandler';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -49,7 +48,7 @@ async function initializeSettings() {
 	console.debug('[BetterFloat] Loaded settings: ', storedSettings);
 
 	for (const key in DEFAULT_SETTINGS) {
-		if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
+		if (!Object.hasOwn(storedSettings, key)) {
 			// add missing settings
 			console.log('[BetterFloat] Adding missing setting: ', key);
 			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);

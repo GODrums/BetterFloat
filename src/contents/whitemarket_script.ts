@@ -7,7 +7,7 @@ import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -142,9 +142,7 @@ async function adjustItem(container: Element, state: PageState) {
 		return;
 	}
 
-	// console.log('[BetterFloat] Adjusting item: ', apiItem, container);
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem, price, container, state);
+	const _priceResult = await addBuffPrice(apiItem, price, container, state);
 }
 
 async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | null) {
