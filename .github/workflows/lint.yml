@@ -7,8 +7,11 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
       - name: Run Biome
-        run: bunx @biomejs/biome ci src/
+        run: biome ci src/
