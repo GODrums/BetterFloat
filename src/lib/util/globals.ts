@@ -47,6 +47,8 @@ import iconMarketCSGOFull from 'data-base64:/assets/logos/marketcsgo_full.png';
 import iconShadowpay from 'data-base64:/assets/logos/shadowpay.webp';
 import iconShadowpayFull from 'data-base64:/assets/logos/shadowpay_full.svg';
 import iconSkinport from 'data-base64:/assets/logos/skinport.ico';
+import iconSkinsmonkey from 'data-base64:/assets/logos/skinsmonkey.jpg';
+import iconSkinsmonkeyFull from 'data-base64:/assets/logos/skinsmonkey_full.svg';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
 import iconDiamondGem1 from 'data-base64:/assets/patterns/diamond-gem-1.png';
 import iconDiamondGem2 from 'data-base64:/assets/patterns/diamond-gem-2.png';
@@ -154,6 +156,8 @@ export const ICON_EMERALD_2 = iconEmerald2;
 export const ICON_EMERALD_3 = iconEmerald3;
 export const ICON_AVANMARKET = iconAvanmarket;
 export const ICON_AVANMARKET_FULL = iconAvanmarketFull;
+export const ICON_SKINSMONKEY = iconSkinsmonkey;
+export const ICON_SKINSMONKEY_FULL = iconSkinsmonkeyFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

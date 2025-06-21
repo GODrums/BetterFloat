@@ -14,6 +14,7 @@ import {
 	ICON_SHADOWPAY,
 	ICON_SKINBARON,
 	ICON_SKINPORT,
+	ICON_SKINSMONKEY,
 	ICON_SWAPGG,
 	ICON_TRADEIT,
 	ICON_WAXPEER,
@@ -46,6 +47,7 @@ import { WhiteMarketSettings } from './tabs/Whitemarket';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
+import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
@@ -136,6 +138,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="avan">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
 								</TabsTrigger>
+								<TabsTrigger value="skinsmonkey">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -171,6 +176,7 @@ export default function IndexPopup() {
 					<SwapggSettings hasProPlan={hasProPlan} />
 					<TradeitSettings hasProPlan={hasProPlan} />
 					<AvanSettings hasProPlan={hasProPlan} />
+					<SkinsmonkeySettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

@@ -2,22 +2,22 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
+import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
+import { getFirstSkinsmonkeyBotItem, getFirstSkinsmonkeyUserItem } from '~lib/handlers/cache/skinsmonkey_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
+import { SKINSMONKEY_SELECTORS } from '~lib/handlers/selectors/skinsmonkey_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
-	matches: ['*://*.avan.market/*'],
+	matches: ['*://*.skinsmonkey.com/*'],
 	run_at: 'document_end',
-	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/avan_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/skinsmonkey_styles.css'],
 };
 
 type PriceResult = {
@@ -25,13 +25,13 @@ type PriceResult = {
 };
 
 async function init() {
-	console.time('[BetterFloat] Avanmarket init timer');
+	console.time('[BetterFloat] Skinsmonkey init timer');
 
-	if (location.host !== 'avan.market') {
+	if (location.host !== 'skinsmonkey.com') {
 		return;
 	}
 
-	replaceHistory();
+	// replaceHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -39,17 +39,17 @@ async function init() {
 
 	extensionSettings = await getAllSettings();
 
-	if (!extensionSettings['av-enable']) return;
+	if (!extensionSettings['sm-enable']) return;
 
 	// check if user has the required plan
 	if (!(await checkUserPlanPro(extensionSettings['user']))) {
-		console.log('[BetterFloat] Pro plan required for Avanmarket features');
+		console.log('[BetterFloat] Pro plan required for Skinsmonkey features');
 		return;
 	}
 
-	await initPriceMapping(extensionSettings, 'av');
+	await initPriceMapping(extensionSettings, 'sm');
 
-	console.timeEnd('[BetterFloat] Avanmarket init timer');
+	console.timeEnd('[BetterFloat] Skinsmonkey init timer');
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {
@@ -57,19 +57,25 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+    await firstLaunch();
+}
+
+async function firstLaunch() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
+    for (const item of items) {
+        const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
+        await adjustItem(item, PageState.Market, isUser);
+    }
 }
 
 async function replaceHistory() {
 	// wait for the page to load
 	const loggedOut = await new Promise((resolve) => {
 		const interval = setInterval(() => {
-			if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_IN)) {
-				clearInterval(interval);
-				resolve(false);
-			} else if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_OUT)) {
-				clearInterval(interval);
-				resolve(true);
-			}
+			// TODO: Implement authentication detection for Skinsmonkey if needed
 		}, 100);
 	});
 
@@ -85,12 +91,12 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Avanmarket Mutation detected:', addedNode);
+				// console.debug('[BetterFloat] Skinsmonkey Mutation detected:', addedNode);
 
-				if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.MARKET_CARD)) {
-					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.INVENTORY_CARD)) {
-					await adjustItem(addedNode, PageState.Inventory);
+				if (addedNode.className === SKINSMONKEY_SELECTORS.item.card) {
+                    // options: USER, SITE
+                    const isUser = addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
+					await adjustItem(addedNode, PageState.Market, isUser);
 				}
 			}
 		}
@@ -98,27 +104,23 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(container: Element, state: PageState) {
-	if (state === PageState.Market) {
-		return getFirstAvanmarketItem();
-	} else if (state === PageState.Inventory) {
-		const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_NAME)?.textContent?.trim();
-		if (itemName) {
-			return getAvanmarketInventoryItem(itemName);
-		}
-		return null;
+function getAPIItem(isUser: boolean) {
+	if (isUser) {
+		return getFirstSkinsmonkeyUserItem();
+	} else {
+		return getFirstSkinsmonkeyBotItem();
 	}
 }
 
-async function adjustItem(container: Element, state: PageState) {
-	let item = getAPIItem(container, state);
+async function adjustItem(container: Element, state: PageState, isUser: boolean) {
+	let item = getAPIItem(isUser);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = getAPIItem(container, state);
+		item = getAPIItem(isUser);
 	}
-	console.log('[BetterFloat] Avanmarket item:', item);
+	// console.log('[BetterFloat] Skinsmonkey item:', item);
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -128,19 +130,12 @@ async function adjustItem(container: Element, state: PageState) {
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer: HTMLElement | null = null;
-	if (state === PageState.Market) {
-		footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.MARKET.FOOTER);
-	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.INVENTORY.FOOTER);
-		container.classList.add('inventory-item');
-	}
+	let footerContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.cardBottom);
 
-	const isInventoryItem = state === PageState.Inventory;
-	const isDoppler = isAvanmarketItem(item) && !!item.phase;
+	const isDoppler = item.item.details.skin.includes('Doppler');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
@@ -159,36 +154,24 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 			isPopout: false,
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
-			iconHeight: isInventoryItem ? '16px' : '20px',
+			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
 		});
-		if (state === PageState.Market) {
-			footerContainer.insertAdjacentHTML('afterend', buffContainer);
 
-			(footerContainer.firstElementChild as HTMLElement).style.whiteSpace = 'nowrap';
-
-			(container as HTMLElement).style.height = '350px';
-		} else if (state === PageState.Inventory) {
-			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
-		}
+		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	let discountContainer = container.querySelector(AVAN_SELECTORS.STATE.MARKET.DISCOUNT);
-	if (!discountContainer) {
-		const newContainer = document.createElement('div');
-		newContainer.classList.add('discount');
-		footerContainer?.appendChild(newContainer);
-		discountContainer = newContainer;
-	}
+	let priceContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.price);
 
 	if (
-		discountContainer &&
+		priceContainer &&
 		!container.querySelector('.betterfloat-sale-tag') &&
-		(extensionSettings['av-buffdifference'] || extensionSettings['av-buffdifferencepercent']) &&
-		state === PageState.Market
+		(extensionSettings['sm-buffdifference'] || extensionSettings['sm-buffdifferencepercent'])
 	) {
-		discountContainer.outerHTML = createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter);
+		priceContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+
+        (priceContainer.parentElement as HTMLElement).style.justifyContent = 'flex-start';
 	}
 
 	return {
@@ -218,7 +201,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	`;
 }
 
-async function getBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem) {
+async function getBuffItem(item: Skinsmonkey.Item) {
 	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -280,29 +263,19 @@ function getUserCurrency() {
 	return localStorage.getItem('currency') || 'USD';
 }
 
-function getItemPrice(item: Avanmarket.Item | Avanmarket.InventoryItem) {
-	if (isAvanmarketItem(item)) {
-		return new Decimal(item.sell_items[0].sell_price);
-	} else {
-		return new Decimal(item.price);
-	}
+function getItemPrice(item: Skinsmonkey.Item) {
+	return new Decimal(item.item.price).div(100);
 }
 
-function createBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem): { name: string; style: ItemStyle } {
+function createBuffItem(item: Skinsmonkey.Item): { name: string; style: ItemStyle } {
 	const buff_item = {
-		name: '',
+		name: item.item.marketName,
 		style: '' as ItemStyle,
 	};
-	if (isAvanmarketItem(item)) {
-		buff_item.name = item.full_name;
-	} else {
-		buff_item.name = item.name;
-		if (item.quality) {
-			buff_item.name += ` (${item.quality})`;
-		}
-	}
-	if (isAvanmarketItem(item) && item.phase) {
-		buff_item.style = item.phase as ItemStyle;
+	if (item.item.details.skin.includes('Doppler')) {
+		const phase = item.item.details.skin.split('Doppler ')[1];
+		buff_item.style = phase as ItemStyle;
+        buff_item.name = item.item.marketName.replace(` ${phase}`, '');
 	}
 	return {
 		name: buff_item.name,
@@ -313,15 +286,6 @@ function createBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem): { nam
 enum PageState {
 	Market = 0,
 	Inventory = 1,
-}
-
-// Type guard functions
-function isAvanmarketItem(item: Avanmarket.Item | Avanmarket.InventoryItem): item is Avanmarket.Item {
-	return 'full_name' in item && 'sell_items' in item;
-}
-
-function isAvanmarketInventoryItem(item: Avanmarket.Item | Avanmarket.InventoryItem): item is Avanmarket.InventoryItem {
-	return 'price' in item && 'iconUrl' in item && 'assetId' in item;
 }
 
 // mutation observer active?
