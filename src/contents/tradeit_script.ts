@@ -52,10 +52,7 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'tradeit');
 
-	//check if url is in supported subpages
-	if (location.pathname === '/csgo/trade') {
-		await firstLaunch();
-	}
+	await firstLaunch();
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {
@@ -67,7 +64,8 @@ async function init() {
 
 // required as mutation does not detect initial DOM
 async function firstLaunch() {
-	const supportedPaths = ['/csgo/trade', '/csgo/store', '/csgo/sell'];
+	// store items are detected by mutation observer
+	const supportedPaths = ['/csgo/trade', '/csgo/sell'];
 	if (!supportedPaths.includes(location.pathname)) {
 		return;
 	}
@@ -115,7 +113,7 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
-				if (addedNode.className.toString().includes(TRADEIT_SELECTORS.itemContainer)) {
+				if (addedNode.className.toString().includes(TRADEIT_SELECTORS.itemContainer.substring(1))) {
 					const inventoryContainer = Array.from(document.querySelectorAll(TRADEIT_SELECTORS.inventory.container));
 					const isOwn = inventoryContainer[0] === addedNode.closest(TRADEIT_SELECTORS.inventory.container);
 					await adjustItem(addedNode, isOwn);
@@ -134,6 +132,8 @@ function applyMutation() {
 					for (let i = 0; i < sellItems.length; i++) {
 						await adjustItem(sellItems[i], true);
 					}
+				} else if (addedNode.className === 'grid-col' && addedNode.firstElementChild?.className.includes('item-cell')) {
+					await adjustItem(addedNode.firstElementChild!, false);
 				}
 			}
 		}
