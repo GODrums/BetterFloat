@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getAvanmarketInventoryItem, getFirstAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
+import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';

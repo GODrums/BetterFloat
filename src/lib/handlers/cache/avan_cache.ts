@@ -15,10 +15,6 @@ export function cacheAvanmarketInventory(inventory: Avanmarket.InventoryItem[]) 
 	avInventory = inventory;
 }
 
-export function getFirstAvanmarketInventoryItem() {
-	return avInventory.shift();
-}
-
 export function getAvanmarketInventoryItem(name: string) {
 	return avInventory.find((item) => item.name === name);
 }
