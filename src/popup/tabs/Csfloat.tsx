@@ -11,7 +11,6 @@ import {
 	MdiSteam,
 	PhSticker,
 	StreamlineDiscountPercentCoupon,
-	TablerCircleChevronUp,
 } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -45,7 +44,7 @@ export const CSFloatSettings = () => {
 							id="csf-csbluegem"
 							text="Blue Gem Enhancements"
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} />}
-							tooltipText="Adds pattern details and past sales to case hardened skins."
+							tooltipText="Adds past sales to case hardened skins."
 						/>
 					</SettingsCard>
 					<SettingsCard>
@@ -132,17 +131,11 @@ export const CSFloatSettings = () => {
 						/>
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-topbutton" text="Show 'Back to Top'-Button" icon={<TablerCircleChevronUp className="h-6 w-6" />} />
-					</SettingsCard>
-					<SettingsCard>
 						<SettingsCheckbox
 							id="csf-quickmenu"
 							text="Show Quick Menu"
 							tooltipText="Shows a menu for quick access in the top toolbar. Contains similar elements to the menu accessible through a click on the user avatar."
 						/>
-					</SettingsCard>
-					<SettingsCard>
-						<SettingsCheckbox id="csf-themetoggle" text="Show Theme Toggle" />
 					</SettingsCard>
 					<SettingsColorPicker prefix="csf" />
 				</div>

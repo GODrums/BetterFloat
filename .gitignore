@@ -32,8 +32,9 @@ dist/
 # plasmo - https://www.plasmo.com
 .plasmo
 
-# bpp - http://bpp.browser.market/
+# bpp - https://github.com/PlasmoHQ/bpp
 keys.json
+key.json
 
 # typescript
 .tsbuildinfo

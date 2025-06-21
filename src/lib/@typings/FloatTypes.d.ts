@@ -119,6 +119,8 @@ export namespace CSFloat {
 		float: number;
 		condition: ItemCondition;
 		price: number;
+		isStatTrak: boolean;
+		isSouvenir: boolean;
 	};
 
 	export type ListingData = {

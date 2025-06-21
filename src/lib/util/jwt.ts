@@ -33,7 +33,7 @@ function checkJwtClaims(decodedJwt: CustomerClaims & JWTPayload, steamId: string
 	}
 }
 
-export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
+export async function synchronizePlanWithStorage(expired = false): Promise<IStorage['user']> {
 	const secureStorage = await getSecureStorage();
 	let decodedJwt = await secureStorage.getItem<CustomerClaims & JWTPayload>('decodedJwt');
 
@@ -42,8 +42,8 @@ export async function synchronizePlanWithStorage(): Promise<IStorage['user']> {
 	const user = await getSetting<IStorage['user']>('user');
 
 	if (decodedJwt && user.steam?.steamid) {
-		// check if token is expired and refresh
-		if (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime()) {
+		// check if token or plan is expired and refresh
+		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime())) {
 			const newToken = await refreshToken(user!.steam!.steamid!);
 			if (!newToken) {
 				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
@@ -95,12 +95,38 @@ interface TokenResponse {
 	token: string;
 }
 
-export async function refreshToken(steamid: string) {
-	const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/subscription/${steamid}`)
-		.then((res) => res.json() as Promise<TokenResponse>)
-		.catch((e) => {
-			console.error('Failed to refresh token', e);
-			return { token: null };
-		});
-	return response.token;
+export async function refreshToken(steamid: string, maxRetries = 3): Promise<string | null> {
+	let lastError: Error | null = null;
+
+	for (let attempt = 0; attempt < maxRetries; attempt++) {
+		try {
+			const response = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/subscription/${steamid}`);
+
+			if (!response.ok) {
+				const error = new Error(`HTTP ${response.status} ${response.statusText}`);
+				console.error(`Failed to refresh token (attempt ${attempt + 1}/${maxRetries}):`, error.message);
+				lastError = error;
+
+				// Wait before retrying (exponential backoff)
+				if (attempt < maxRetries - 1) {
+					await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
+				}
+				continue;
+			}
+
+			const data = (await response.json()) as TokenResponse;
+			return data.token;
+		} catch (error) {
+			console.error(`Failed to refresh token (attempt ${attempt + 1}/${maxRetries}):`, error);
+			lastError = error as Error;
+
+			// Wait before retrying (exponential backoff)
+			if (attempt < maxRetries - 1) {
+				await new Promise((resolve) => setTimeout(resolve, 2 ** attempt * 1000));
+			}
+		}
+	}
+
+	console.error(`Failed to refresh token after ${maxRetries} attempts. Last error:`, lastError);
+	return null;
 }

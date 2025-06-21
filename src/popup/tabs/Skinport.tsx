@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_CSBLUEGEM, ICON_SKINPORT_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, MdiShoppingSearchOutline, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { HugeiconsEuroCircle, IcOutlineDiscount, MdiShoppingSearchOutline, MdiSteam, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -64,6 +64,15 @@ export const SkinportSettings = () => {
 							text="Show Buff Price Percentage Difference"
 							tooltipText="Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
+						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox
+							id="sp-displayconvertedprice"
+							text="Display € Price"
+							tooltipText="Display the price users with € as currency pay. Helps pricing skins for € users due to Skinport's bad currency conversion."
+							icon={<HugeiconsEuroCircle className="h-6 w-6" />}
+							isPro
 						/>
 					</SettingsCard>
 				</div>

@@ -18,6 +18,12 @@ import {
 	ICON_DIAMOND_GEM_1,
 	ICON_DIAMOND_GEM_2,
 	ICON_DIAMOND_GEM_3,
+	ICON_EMERALD_1,
+	ICON_EMERALD_2,
+	ICON_EMERALD_3,
+	ICON_NOCTS_1,
+	ICON_NOCTS_2,
+	ICON_NOCTS_3,
 	ICON_OVERPRINT_ARROW,
 	ICON_OVERPRINT_FLOWER,
 	ICON_OVERPRINT_MIXED,
@@ -28,13 +34,20 @@ import {
 	ICON_PINK_GALAXY_3,
 	ICON_PRICEMPIRE,
 	ICON_PRICEMPIRE_APP,
+	ICON_RUBY_1,
+	ICON_RUBY_2,
+	ICON_RUBY_3,
+	ICON_SAPPHIRE_1,
+	ICON_SAPPHIRE_2,
+	ICON_SAPPHIRE_3,
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
 	MarketSource,
+	isProduction,
 } from '~lib/util/globals';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
+import { generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import {
@@ -45,17 +58,16 @@ import {
 	getBlueGemName,
 	getBuffPrice,
 	getCharmColoring,
-	getFadePercentage,
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
+	isBuffBannedItem,
 	isUserPro,
-	toTruncatedString,
 	waitForElement,
 } from '../lib/util/helperfunctions';
 
 import type { PlasmoCSConfig } from 'plasmo';
-import type { BlueGem, Extension } from '~lib/@typings/ExtensionTypes';
+import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
 	cacheCSFInventory,
@@ -68,8 +80,8 @@ import {
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
-import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
-import { DiamonGemMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
+import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
@@ -83,7 +95,7 @@ init();
 async function init() {
 	console.time('[BetterFloat] CSFloat init timer');
 
-	if (location.host !== 'csfloat.com') {
+	if (location.host !== 'csfloat.com' && !location.host.endsWith('.csfloat.com')) {
 		return;
 	}
 
@@ -92,7 +104,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['csf-enable']) return;
 
@@ -111,10 +122,6 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
-	}
-
-	if (extensionSettings['csf-topbutton']) {
-		CSFloatHelpers.createTopButton();
 	}
 }
 
@@ -231,9 +238,8 @@ function applyMutation() {
 						// await customStall(location.pathname.split('/').pop() ?? '');
 					} else if (addedNode.tagName === 'ITEM-CARD') {
 						await adjustItem(addedNode, addedNode.className.includes('flex-item') || location.pathname === '/' ? POPOUT_ITEM.NONE : POPOUT_ITEM.SIMILAR);
-					} else if (addedNode.className.toString().includes('mat-mdc-row')) {
-						// row of the latest sales table of an item popup
-						await adjustSalesTableRow(addedNode);
+					} else if (addedNode.tagName === 'ITEM-LATEST-SALES') {
+						await adjustLatestSales(addedNode);
 					} else if (addedNode.className.toString().includes('mat-mdc-header-row')) {
 						// header of the latest sales table of an item popup
 					} else if (addedNode.className.toString().includes('chart-container')) {
@@ -247,6 +253,10 @@ function applyMutation() {
 						offerItemClickListener(addedNode);
 					} else if (addedNode.tagName.toLowerCase() === 'app-markdown-dialog') {
 						CSFloatHelpers.adjustCurrencyChangeNotice(addedNode);
+					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
+							addedNode.remove();
+						}
 					}
 				}
 			}
@@ -404,6 +414,19 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 	}
 }
 
+async function adjustLatestSales(addedNode: Element) {
+	const rowSelector = 'tbody tr.mdc-data-table__row';
+	let rows = addedNode.querySelectorAll(rowSelector);
+	let tries = 20;
+	while (rows.length === 0 && tries-- > 0) {
+		await new Promise((r) => setTimeout(r, 100));
+		rows = addedNode.querySelectorAll(rowSelector);
+	}
+	for (const row of rows) {
+		await adjustSalesTableRow(row);
+	}
+}
+
 async function adjustSalesTableRow(container: Element) {
 	const cachedSale = getFirstHistorySale();
 	if (!cachedSale) {
@@ -447,7 +470,6 @@ async function adjustSalesTableRow(container: Element) {
 			const doChange = await changeSpContainer(stickerContainer, stickerData, priceDiff.toNumber());
 			if (doChange) {
 				appStickerView.appendChild(stickerContainer);
-				// (<HTMLElement>appStickerView.parentElement).style.paddingRight = '0';
 			}
 		}
 	}
@@ -466,29 +488,6 @@ async function adjustSalesTableRow(container: Element) {
 			</div>
 		`;
 		patternContainer.outerHTML = patternCell;
-	}
-
-	const seedContainer = container.querySelector('.cdk-column-seed')?.firstElementChild;
-	if (seedContainer) {
-		if (
-			(item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) &&
-			!item.item_name.includes('Gloves') &&
-			item.paint_seed !== undefined &&
-			extensionSettings['csf-csbluegem']
-		) {
-			const type = getBlueGemName(item.item_name);
-			const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
-
-			const gemText = `${patternElement.playside_blue?.toFixed(0) ?? 0}% ` + (patternElement.backside_blue ? `/ ${patternElement.backside_blue.toFixed(0)}%` : '');
-			const gemContainer = html`
-				<div style="color: deepskyblue;font-size: 13px;">
-					${gemText}
-				</div>
-			`;
-
-			seedContainer.insertAdjacentHTML('afterend', gemContainer);
-			seedContainer.parentElement!.style.lineHeight = '1.5';
-		}
 	}
 
 	// add float coloring
@@ -726,6 +725,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (isMainItem) {
 				addQuickLinks(container, apiItem);
 				CSFloatHelpers.copyNameOnClick(container, apiItem.item);
+				addCollectionLink(container);
 			}
 			CSFloatHelpers.storeApiItem(container, apiItem);
 			await showBargainPrice(container, apiItem, popout);
@@ -804,12 +804,24 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 	}
 }
 
+function addCollectionLink(container: Element) {
+	const collectionLink = container.querySelector('div.collection');
+	if (collectionLink) {
+		const link = html`
+			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.toLowerCase()}" target="_blank">
+			 	${collectionLink.textContent}
+			</a>
+		`;
+		collectionLink.innerHTML = link;
+	}
+}
+
 async function showBargainPrice(container: Element, listing: CSFloat.ListingData, popout: POPOUT_ITEM) {
 	const buttonLabel = container.querySelector('.bargain-btn > button > span.mdc-button__label');
 	if (listing.min_offer_price && buttonLabel && !buttonLabel.querySelector('.betterfloat-minbargain-label')) {
 		const { userCurrency, currencyRate } = await getCurrencyRate();
 		const minBargainLabel = html`
-			<span class="betterfloat-minbargain-label" style="color: slategrey;">
+			<span class="betterfloat-minbargain-label" style="color: var(--subtext-color);">
 				(${popout === POPOUT_ITEM.PAGE ? 'min. ' : ''}${Intl.NumberFormat(undefined, {
 					style: 'currency',
 					currency: userCurrency,
@@ -1002,11 +1014,11 @@ function getRankedFloatColoring(float: number, min: number, max: number, vanilla
 async function patternDetections(container: Element, listing: CSFloat.ListingData, isPopout: boolean) {
 	const item = listing.item;
 	if (item.item_name.includes('Case Hardened') || item.item_name.includes('Heat Treated')) {
-		if (extensionSettings['csf-csbluegem'] || isPopout) {
-			await caseHardenedDetection(container, item, isPopout);
+		if (extensionSettings['csf-csbluegem'] && isPopout) {
+			await addCaseHardenedSales(item);
 		}
 	} else if (item.item_name.includes('Fade')) {
-		addFadePercentages(container, item);
+		// csfloat supports fades natively now
 	} else if ((item.item_name.includes('Crimson Web') || item.item_name.includes('Emerald Web')) && item.item_name.startsWith('★')) {
 		await webDetection(container, item);
 	} else if (item.item_name.includes('Specialist Gloves | Crimson Kimono')) {
@@ -1015,13 +1027,74 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgePhoenix(container, item);
 	} else if (item.item_name.includes('Overprint')) {
 		await badgeOverprint(container, item);
-	} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
-		await badgePinkGalaxy(container, item);
-	} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
-		await badgeDiamondGem(container, item);
+	} else if (item.phase) {
+		if (item.phase === 'Ruby' || item.phase === 'Sapphire' || item.phase === 'Emerald') {
+			await badgeChromaGems(container, item);
+		} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
+			await badgePinkGalaxy(container, item);
+		} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
+			await badgeDiamondGem(container, item);
+		}
+	} else if (item.item_name.includes('Nocts')) {
+		await badgeNocts(container, item);
 	} else if (item.type === 'charm') {
 		badgeCharm(container, item);
 	}
+}
+
+async function badgeChromaGems(container: Element, item: CSFloat.Item) {
+	let gem_data: number | undefined;
+	if (item.item_name.includes('Karambit')) {
+		gem_data = KarambitGemMapping[item.paint_seed!];
+	} else if (item.item_name.includes('Butterfly Knife')) {
+		gem_data = ButterflyGemMapping[item.paint_seed!];
+	}
+	if (!gem_data) return;
+
+	const iconMapping = {
+		Sapphire: {
+			1: ICON_SAPPHIRE_1,
+			2: ICON_SAPPHIRE_2,
+			3: ICON_SAPPHIRE_3,
+		},
+		Ruby: {
+			1: ICON_RUBY_1,
+			2: ICON_RUBY_2,
+			3: ICON_RUBY_3,
+		},
+		Emerald: {
+			1: ICON_EMERALD_1,
+			2: ICON_EMERALD_2,
+			3: ICON_EMERALD_3,
+		},
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[item.phase as 'Sapphire' | 'Ruby' | 'Emerald'][gem_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Max ${item.phase}`, `Rank ${gem_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
+}
+
+async function badgeNocts(container: Element, item: CSFloat.Item) {
+	const nocts_data = NoctsMapping[item.paint_seed!];
+	if (!nocts_data) return;
+
+	const iconMapping = {
+		1: ICON_NOCTS_1,
+		2: ICON_NOCTS_2,
+		3: ICON_NOCTS_3,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[nocts_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Max Black', `Tier ${nocts_data}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
 }
 
 function badgeCharm(container: Element, item: CSFloat.Item) {
@@ -1182,83 +1255,12 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 	});
 }
 
-function addFadePercentages(container: Element, item: CSFloat.Item) {
-	const itemName = item.item_name;
-	const paintSeed = item.paint_seed;
-	if (!paintSeed || container.querySelector('.bf-fadecontainer')) return;
-	const fadePercentage = getFadePercentage(itemName.split(' | ')[0], itemName, paintSeed);
-	if (fadePercentage) {
-		const backgroundPositionX = ((fadePercentage.percentage - 79) * 5).toFixed(2);
-		const fadeContainer = html`
-			<div class="bf-tooltip bf-fadecontainer" style="display: flex; align-items: center; justify-content: center;">
-				<div class="bf-badge-text" style="background-position-x: ${backgroundPositionX}%; background-image: ${fadePercentage.background};">
-					<span style="color: #00000080;">${toTruncatedString(fadePercentage.percentage, 1)}</span>
-				</div>
-				<div class="bf-tooltip-inner" style="translate: 0 50px">
-					<span>Fade: ${toTruncatedString(fadePercentage.percentage, 5)}%</span>
-					<span>Rank #${fadePercentage.ranking}</span>
-				</div>
-			</div>
-		`;
-		let badgeContainer = container.querySelector('.badge-container');
-		if (!badgeContainer) {
-			badgeContainer = document.createElement('div');
-			badgeContainer.className = 'badge-container';
-			badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-			container.querySelector('.item-img')?.after(badgeContainer);
-		} else {
-			badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
-			badgeContainer.setAttribute('style', 'gap: 5px;');
-		}
-		badgeContainer.insertAdjacentHTML('beforeend', fadeContainer);
-	}
-}
-
-async function caseHardenedDetection(container: Element, item: CSFloat.Item, isPopout: boolean) {
+async function addCaseHardenedSales(item: CSFloat.Item) {
 	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || item.paint_seed === undefined) return;
 
-	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const userCurrency = CSFloatHelpers.userCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
 	const type = getBlueGemName(item.item_name);
-
-	// retrieve the stored data instead of fetching newly
-	if (isPopout) {
-		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
-		if (csbluegem && csbluegem.length > 0) {
-			patternElement = JSON.parse(csbluegem);
-		}
-	}
-	if (!patternElement) {
-		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed! });
-		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
-	}
-	if (!patternElement) {
-		console.warn('[BetterFloat] Could not fetch pattern data for ', item.item_name);
-		return false;
-	}
-
-	// add gem icon and blue gem percent badge
-	if ([4, 5, 6].includes(item.rarity)) {
-		let tierContainer = container.querySelector('.badge-container');
-		if (!tierContainer) {
-			tierContainer = document.createElement('div');
-			tierContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
-			container.querySelector('.item-img')?.after(tierContainer);
-		} else {
-			tierContainer = tierContainer.querySelector('.container') ?? tierContainer;
-			tierContainer.setAttribute('style', 'gap: 5px;');
-		}
-		const gemContainer = genGemContainer({ patternElement, site: 'CSF', large: isPopout });
-		if (!gemContainer) return;
-		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
-		tierContainer.appendChild(gemContainer);
-	}
-
-	if (!isPopout) {
-		return;
-	}
 
 	// past sales table
 	const pastSales = await fetchBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });
@@ -1342,7 +1344,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		for (let i = 0; i < headerValues.length; i++) {
 			const headerCell = document.createElement('th');
 			headerCell.setAttribute('role', 'columnheader');
-			const headerCellStyle = `text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
+			const headerCellStyle = `text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
 				i === 0 ? 'border-top-left-radius: 10px; border-bottom-left-radius: 10px' : ''
 			}`;
 			headerCell.setAttribute('style', headerCellStyle);
@@ -1354,7 +1356,7 @@ async function caseHardenedDetection(container: Element, item: CSFloat.Item, isP
 		linkHeaderCell.setAttribute('role', 'columnheader');
 		linkHeaderCell.setAttribute(
 			'style',
-			'text-align: center; color: #9EA7B1; letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
+			'text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); border-top-right-radius: 10px; border-bottom-right-radius: 10px'
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
@@ -1395,7 +1397,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 
 	const listingAge = html`
 		<div class="betterfloat-listing-age hint--bottom hint--rounded hint--no-arrow" style="display: flex; align-items: flex-end;" aria-label="${new Date(listing.created_at).toLocaleString()}">
-			<p style="margin: 0 5px 0 0; font-size: 13px; color: #9EA7B1;">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
+			<p style="margin: 0 5px 0 0; font-size: 13px; color: var(--subtext-color);">${calculateTime(calculateEpochFromDate(listing.created_at))}</p>
 			<img src="${ICON_CLOCK}" style="height: 16px; filter: brightness(0) saturate(100%) invert(59%) sepia(55%) saturate(3028%) hue-rotate(340deg) brightness(101%) contrast(101%);" />
 		</div>
 	`;
@@ -1577,13 +1579,22 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	let condition: ItemCondition = '';
 	let quality = '';
 	let style: ItemStyle = '';
+	let isStatTrak = false;
+	let isSouvenir = false;
 
 	if (header_details) {
 		header_details.childNodes.forEach((node) => {
 			switch (node.nodeType) {
 				case Node.ELEMENT_NODE: {
 					const text = node.textContent?.trim();
-					if (text && ['StatTrak', 'Souvenir', 'Container', 'Sticker', 'Agent', 'Patch', 'Charm'].some((x) => text.includes(x))) {
+					if (!text) {
+						break;
+					}
+					if (text.includes('StatTrak')) {
+						isStatTrak = true;
+					} else if (text.includes('Souvenir')) {
+						isSouvenir = true;
+					} else if (['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'].some((x) => text.includes(x))) {
 						// TODO: integrate the ItemQuality type
 						// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
 						quality = text;
@@ -1611,6 +1622,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		condition: condition,
 		float: float,
 		price: price,
+		isStatTrak,
+		isSouvenir,
 	};
 }
 
@@ -1624,10 +1637,6 @@ async function getCurrencyRate() {
 	return { userCurrency, currencyRate };
 }
 
-function isBannedOnBuff(item: CSFloat.FloatItem) {
-	return item.quality.includes('Case') || item.quality.includes('Container');
-}
-
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
@@ -1635,7 +1644,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
-	if (source === MarketSource.Buff && isBannedOnBuff(item)) {
+	if (source === MarketSource.Buff && isBuffBannedItem(item.name)) {
 		pricingData.priceListing = new Decimal(0);
 		pricingData.priceOrder = new Decimal(0);
 		market_id = undefined;
@@ -1741,7 +1750,7 @@ async function addBuffPrice(
 								class="betterfloat-steamlink"
 								href="https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}"
 								target="_blank"
-								style="display: flex; align-items: center; gap: 4px; background: rgba(255,255,255,.04); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
+								style="display: flex; align-items: center; gap: 4px; background: var(--highlight-background); border-radius: 20px; padding: 2px 6px; z-index: 10; translate: 0px 1px;"
 							>
 								<span style="color: cornflowerblue; margin-left: 2px; ${isPopout ? 'font-size: 15px; font-weight: 500;' : ' font-size: 13px;'}">${percentage.gt(300) ? '>300' : percentage.toFixed(percentage.gt(130) || percentage.lt(80) ? 0 : 1)}%</span>
 								<div>
@@ -1789,13 +1798,13 @@ async function addBuffPrice(
 		let backgroundColor: string;
 		let differenceSymbol: string;
 		if (difference.isNegative()) {
-			backgroundColor = extensionSettings['csf-color-profit'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
 			differenceSymbol = '-';
 		} else if (difference.isPos()) {
-			backgroundColor = extensionSettings['csf-color-loss'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
 			differenceSymbol = '+';
 		} else {
-			backgroundColor = extensionSettings['csf-color-neutral'];
+			backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
 			differenceSymbol = '-';
 		}
 
@@ -1856,9 +1865,16 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Patch | ' + full_name;
 	} else if (item.quality.includes('Charm')) {
 		full_name = 'Charm | ' + full_name;
-	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent')) {
-		if (item.quality.includes('StatTrak') || item.quality.includes('Souvenir')) {
-			full_name = full_name.includes('★') ? `★ StatTrak™ ${full_name.split('★ ')[1]}` : `${item.quality} ${full_name}`;
+	} else if (item.quality.includes('Music Kit')) {
+		full_name = 'Music Kit | ' + full_name;
+		if (item.isStatTrak) {
+			full_name = 'StatTrak™ ' + full_name;
+		}
+	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible')) {
+		if (item.isSouvenir) {
+			full_name = 'Souvenir ' + full_name;
+		} else if (item.isStatTrak) {
+			full_name = full_name.includes('★') ? full_name.replace('★', '★ StatTrak™') : `StatTrak™ ${full_name}`;
 		}
 		// fix name inconsistency
 		if (item.name.endsWith('| 027')) {

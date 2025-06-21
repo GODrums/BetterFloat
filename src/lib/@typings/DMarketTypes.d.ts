@@ -1,4 +1,7 @@
 export namespace DMarket {
+	export interface LatestSalesResponse {
+		sales: LatestSale[];
+	}
 	export interface ExchangeMarket {
 		cursor: string;
 		objects: Item[];
@@ -15,6 +18,17 @@ export namespace DMarket {
 		Rates: {
 			[currency: string]: number;
 		};
+	}
+
+	export interface LatestSale {
+		date: string;
+		offerAttributes: {
+			floatValue: number;
+			paintSeed: number;
+		};
+		orderAttributes: any;
+		price: string;
+		txOperationType: string;
 	}
 
 	export type Item = {

@@ -2,7 +2,7 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
-import { addPattern, createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
+import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import {
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
@@ -15,6 +15,7 @@ import {
 	ICON_SKINPORT,
 	ICON_STEAMANALYST,
 	MarketSource,
+	isProduction,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
@@ -57,6 +58,16 @@ async function init() {
 	// this has to be done as first thing to not miss timed events
 	await activateHandler();
 
+	if (isProduction && (location.pathname.startsWith('/item/') || location.pathname.startsWith('/i/') || location.pathname.startsWith('/myitems/i/'))) {
+		const interval = setInterval(() => {
+			const iconPath = document.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]');
+			if (iconPath) {
+				iconPath.closest('div')?.remove();
+				clearInterval(interval);
+			}
+		}, 100);
+	}
+
 	await initPriceMapping(extensionSettings, 'sp');
 
 	await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
@@ -79,6 +90,13 @@ async function init() {
 	}
 
 	dynamicUIHandler();
+
+	const interval = setInterval(() => {
+		if (document.querySelector('.LiveBtn--isActive')) {
+			startSkinportSocket();
+			clearInterval(interval);
+		}
+	}, 10000);
 }
 
 async function firstLaunch() {
@@ -118,10 +136,6 @@ async function firstLaunch() {
 			await adjustCart(cartContainer);
 		}
 	} else if (path.startsWith('/item/') || path.startsWith('/i/') || path.startsWith('/myitems/i/')) {
-		// const itemPage = Array.from(document.querySelectorAll('.ItemPage'));
-		// for (const item of itemPage) {
-		// 	await adjustItemPage(item);
-		// }
 		const itemPage = document.querySelector('.ItemPage');
 		if (itemPage) {
 			await adjustItem(itemPage, itemSelectors.page);
@@ -201,7 +215,8 @@ async function applyMutation() {
 				for (let i = 0; i < mutation.addedNodes.length; i++) {
 					const addedNode = mutation.addedNodes[i];
 					// some nodes are not elements, so we need to check
-					if (!(addedNode instanceof HTMLElement) || !addedNode.className) continue;
+					if (!(addedNode instanceof HTMLElement)) continue;
+					// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
 					const className = addedNode.className.toString();
 					if (
@@ -226,6 +241,10 @@ async function applyMutation() {
 						autoCloseTooltip(addedNode);
 					} else if (className.includes('Message')) {
 						// contains 'item has been sold' message
+					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
+						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
+							addedNode.remove();
+						}
 					}
 				}
 			}
@@ -401,6 +420,10 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].some((name) => cachedItem.name.includes(name)) && cachedItem.category !== 'Gloves') {
 			await addBlueBadge(container, cachedItem);
 		}
+
+		if (extensionSettings['sp-displayconvertedprice']) {
+			await displayAlternativePrice(container, cachedItem);
+		}
 	}
 
 	if (isItemPage) {
@@ -409,6 +432,23 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 			await adjustItem(item);
 		}
 	}
+}
+
+async function displayAlternativePrice(container: Element, item: Skinport.Item) {
+	const priceContainer = container.querySelector('.ItemPreview-priceValue');
+	if (!priceContainer) return;
+
+	const userData = JSON.parse(localStorage.getItem('userData') ?? '{}') as Skinport.UserData;
+	if (userData.currency === 'EUR') return;
+	const currencyRate = userData.rate;
+
+	const newPrice = html`
+		<div class="ItemPreview-oldPrice" style="font-size: 15px; color: lightgray; font-weight: 600; margin-top: 0; margin-bottom: -5px;">
+			Converted: ${CurrencyFormatter('EUR', 2, 2).format(new Decimal(item.salePrice).div(currencyRate).div(100).toNumber())}
+		</div>
+	`;
+
+	priceContainer.insertAdjacentHTML('afterend', newPrice);
 }
 
 function getAlternativeItemLink(item: Skinport.Item) {
@@ -686,17 +726,11 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 // true: remove item, false: display item
 function applyFilter(item: Skinport.Listing, container: Element) {
 	const spFilter: SPFilter = localStorage.getItem('spFilter') ? JSON.parse(localStorage.getItem('spFilter') ?? '') : DEFAULT_FILTER;
-	// since it's a new setting, we need to check if it exists
-	if (spFilter.types.charm === undefined) {
-		spFilter.types.charm = true;
-		// and store it back
-		localStorage.setItem('spFilter', JSON.stringify(spFilter));
-	}
 	const targetName = spFilter.name.toLowerCase();
 	// if true, item should be filtered
 	const nameCheck = targetName !== '' && !item.full_name.toLowerCase().includes(targetName);
 	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
-	const typeCheck = !spFilter.types[item.category.toLowerCase()];
+	const typeCheck = !spFilter.types[item.category.toLowerCase().replace(' ', '-')];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
 	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1]) : undefined;
@@ -932,7 +966,7 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 	return { buff_name, priceListing, priceOrder, priceAvg30, liquidity, source };
 }
 
-function convertCurrency(price: Decimal, currencyRate: number, settingRate: string) {
+function convertCurrency(price: Decimal, currencyRate: number, settingRate: 'real' | 'skinport') {
 	return settingRate === 'skinport' ? price.div(currencyRate) : price.mul(currencyRate);
 }
 

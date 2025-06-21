@@ -110,7 +110,7 @@ In some cases, Firefox does not grant extensions the necessary permissions autom
 <img align="center" src="./assets/plasmo.png" title="Plasmo" height="50">
 <img align="center" src="https://api.iconify.design/logos:react.svg?color=%23888888" title="React" height="50">
 <img align="center" src="https://avatars.githubusercontent.com/u/139895814?s=48&v=4" title="shadcn/ui" height="50">
-<img align="center" src="https://ui.aceternity.com/_next/image?url=%2Flogo.png&w=64&q=75" title="Aceternity UI" height="50">
+<img align="center" src="https://ui.aceternity.com/logo.png" title="Aceternity UI" height="50">
 <img align="center" src="https://icongr.am/devicon/typescript-original.svg?size=128&color=currentColor" title="Typescript" height="50">
 <img align="center" src="https://avatars.githubusercontent.com/u/140182603?s=48&v=4" title="Biome" height="50">
 </div>
@@ -185,6 +185,6 @@ Make sure to test your changes extensively on both browsers and include relevant
 
 ## ⚠️ Disclaimer
 
-BetterFloat is developed independently, and is not officially endorsed by or affiliated with CSFloat Inc., Skinport GmbH, or SkinBid ApS in any way. If you are a legal representative of the aforementioned companies and would like this project to be taken down, please contact me directly at legal@rums.dev or on Twitter @rumscsgo.
+BetterFloat is developed independently, and uses all trademarks is under the fair use policy. If you are a legal representative of an affected company and would like your site to be removed, please contact me directly at legal@rums.dev or on Twitter @rumscsgo.
 
 Built with 🖤 in Munich.

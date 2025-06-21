@@ -1,0 +1,52 @@
+html {
+	color-scheme: dark;
+}
+
+[class*="hint--"][aria-label]:after {
+	z-index: 1300;
+	transition: 0.3s opacity;
+	background: #2e343e;
+	color: #fff;
+	font-size: 13px;
+	line-height: 15px;
+	padding: 10px 15px;
+	box-shadow: 0 0 15px #121720;
+	border-radius: 5px;
+}
+
+.betterfloat-buff-a {
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	flex-direction: row;
+}
+
+.betterfloat-buffprice {
+	margin-left: 2px;
+	padding-top: 1px;
+	font-size: 13px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: 20px;
+	letter-spacing: .02em;
+}
+
+.betterfloat-big-price {
+	font-size: 20px;
+	line-height: 24px;
+}
+
+.betterfloat-sale-tag {
+	font-size: 11px;
+	font-style: normal;
+	font-weight: 525;
+	line-height: 17px;
+	letter-spacing: -.005em;
+	text-wrap: nowrap;
+}
+
+.betterfloat-similar-tag {
+	padding: 5px !important;
+	border-radius: 4px !important;
+	gap: 4px;
+}

@@ -2,13 +2,12 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { getItemPrice, getMarketID, loadMapping } from '~lib/handlers/mappinghandler';
+import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
 	calculateTime,
-	getBuffLink,
 	getBuffPrice,
 	getMarketURL,
 	getSPBackgroundColor,
@@ -22,7 +21,15 @@ import { html } from 'common-tags';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import { getFirstSkbItem, getSkbCurrency, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbInventoryItem, getSpecificSkbItem } from '~lib/handlers/cache/skinbid_cache';
+import {
+	getFirstSkbItem,
+	getSkbCurrency,
+	getSkbInventoryItemByHash,
+	getSkbInventoryItemByImage,
+	getSkbUserConversion,
+	getSkbUserCurrencyRate,
+	getSpecificSkbItem,
+} from '~lib/handlers/cache/skinbid_cache';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
@@ -39,6 +46,8 @@ async function init() {
 	if (location.host !== 'skinbid.com') {
 		return;
 	}
+
+	replaceHistory();
 
 	console.log('[BetterFloat] Starting BetterFloat');
 	console.time('[BetterFloat] Skinbid init timer');
@@ -74,6 +83,13 @@ async function firstLaunch() {
 	}
 }
 
+function replaceHistory() {
+	const settings = JSON.parse(localStorage.getItem('settings') ?? '{}');
+	if (!settings.userId && !location.href.includes('ref=')) {
+		location.search += `${location.search ? '&' : ''}ref=betterfloat`;
+	}
+}
+
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		if (!extensionSettings['skb-enable']) {
@@ -84,10 +100,12 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.log('Added node: ', addedNode);
+				// console.log('Added node: ', addedNode.tagName, addedNode);
 
 				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
 					await adjustInventoryItem(addedNode);
+				} else if (addedNode.tagName === 'APP-ITEM-CARD') {
+					await adjustItem(addedNode, SKINBID_SELECTORS.card);
 				} else if (addedNode.tagName === 'NGU-TILE') {
 					await adjustItem(addedNode.querySelector('app-item-card') as Element, SKINBID_SELECTORS.card);
 				} else if (addedNode.children.length === 1) {
@@ -135,18 +153,24 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 	if (selector.self === 'page') {
 		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
+	} else {
+		addPattern(container, cachedItem);
 	}
 }
 
 async function adjustInventoryItem(container: Element) {
-	// on the first item, wait for the api data
-	if (!document.querySelector('.betterfloat-buffprice')) {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-	}
 	let source = extensionSettings['skb-pricingsource'] as MarketSource;
-	const steamImage = container.querySelector('.item-image > img')?.getAttribute('src');
-	const listedItem = getSpecificSkbInventoryItem(steamImage ?? '');
-	// console.log('[BetterFloat] Inventory item: ', listedItem);
+	const imageURL = container.querySelector('.item-image > img')?.getAttribute('src');
+	if (!imageURL) return;
+	const getInventoryItem = (url: URL) => {
+		if (url.hostname === 'skinbid.ams3.digitaloceanspaces.com') {
+			return getSkbInventoryItemByHash(url.pathname.split('_')[0].substring(1));
+		} else {
+			return getSkbInventoryItemByImage(url.toString());
+		}
+	};
+
+	const listedItem = getInventoryItem(new URL(imageURL));
 	if (!listedItem) return;
 
 	const item = listedItem.item;
@@ -170,6 +194,24 @@ async function adjustInventoryItem(container: Element) {
 			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', marketUrl, source);
 		}
 	}
+}
+
+function addPattern(container: Element, item: Skinbid.Listing) {
+	const floatContainer = container.querySelector('app-quality-float-row');
+	if (!floatContainer) return;
+
+	const paintSeed = item.items?.at(0)?.item.paintSeed;
+
+	if (paintSeed === undefined) return;
+
+	const pattern = html`
+		<div class="betterfloat-paintseed-container"> 
+			Seed 
+			<span>/</span>
+			<span> ${paintSeed} </span>
+		</div>
+	`;
+	floatContainer.insertAdjacentHTML('afterend', pattern);
 }
 
 export function addBrowserInspect(container: Element, item: Skinbid.Listing) {
@@ -481,7 +523,7 @@ export async function addBuffPrice(
 			}
 		} else if (selector.self === 'page') {
 			const startingPriceDiv = container.querySelector('.item-bids-time-info .item-detail');
-			if (startingPriceDiv) {
+			if (startingPriceDiv && cachedItem.auction.sellType !== 'AUCTION') {
 				const startingDifference = new Decimal(listingPrice).minus(priceFromReference);
 				const startingPrice = document.createElement('div');
 				startingPrice.className = 'betterfloat-sale-tag';
@@ -496,10 +538,13 @@ export async function addBuffPrice(
 			}
 
 			const bids = container.querySelectorAll('.bids .bid-price');
+			const currencyRate = getSkbCurrency() !== 'EUR' ? await getSkbUserConversion() : null;
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
 				const bidData = cachedItem.bids[i];
-				const bidDifference = new Decimal(bidData.amount).minus(priceFromReference);
+
+				const bidAmount = currencyRate ? new Decimal(bidData.amount).mul(currencyRate) : new Decimal(bidData.amount);
+				const bidDifference = bidAmount.minus(priceFromReference);
 				const bidDiscountContainer = document.createElement('div');
 				bidDiscountContainer.className = 'betterfloat-bid-sale-tag';
 				bidDiscountContainer.setAttribute(
@@ -529,17 +574,22 @@ function getUserCurrency() {
 }
 
 async function getListingPrice(listing: Skinbid.Listing) {
+	const isEur = getSkbCurrency() === 'EUR';
 	if (listing.currentHighestBid > 0 && listing.auction?.sellType === 'AUCTION') {
-		if (listing.currentHighestBidEur === 0) {
-			return listing.currentHighestBid * (await getSkbUserConversion());
+		if (isEur) {
+			return listing.currentHighestBidEur ?? listing.currentHighestBid;
 		} else {
-			return listing.currentHighestBidEur;
+			return listing.currentHighestBid ?? listing.currentHighestBidEur;
 		}
 	} else {
-		if (listing.auction.startBidEur === 0) {
-			return listing.auction.startBid * (await getSkbUserConversion());
+		if (isEur) {
+			return listing.auction.startBidEur > 0 ? listing.auction.startBidEur : listing.auction.startBid;
 		} else {
-			return listing.auction.startBidEur;
+			if (listing.auction.startBidEur === 0) {
+				return listing.auction.startBid * (await getSkbUserConversion());
+			} else {
+				return listing.auction.startBid ?? listing.auction.startBidEur;
+			}
 		}
 	}
 }

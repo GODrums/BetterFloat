@@ -1,3 +1,7 @@
+html {
+	color-scheme: dark;
+}
+
 .betterfloat-buff-a {
 	width: 100%;
 	display: inline-flex;

@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.1.11",
+	"version": "3.1.33",
 	"description": "Enhance your website experience on 9+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -19,22 +19,22 @@
 	"dependencies": {
 		"@plasmohq/messaging": "^0.6.2",
 		"@plasmohq/storage": "^1.15.0",
-		"@radix-ui/react-accordion": "^1.2.3",
-		"@radix-ui/react-avatar": "^1.1.3",
-		"@radix-ui/react-checkbox": "^1.1.4",
-		"@radix-ui/react-dialog": "^1.1.6",
+		"@radix-ui/react-accordion": "^1.2.4",
+		"@radix-ui/react-avatar": "^1.1.4",
+		"@radix-ui/react-checkbox": "^1.1.5",
+		"@radix-ui/react-dialog": "^1.1.7",
 		"@radix-ui/react-icons": "^1.3.2",
-		"@radix-ui/react-label": "^2.1.2",
-		"@radix-ui/react-popover": "^1.1.6",
-		"@radix-ui/react-scroll-area": "^1.2.3",
-		"@radix-ui/react-select": "^2.1.6",
-		"@radix-ui/react-separator": "^1.1.2",
-		"@radix-ui/react-slider": "^1.2.3",
-		"@radix-ui/react-slot": "^1.1.2",
-		"@radix-ui/react-switch": "^1.1.3",
-		"@radix-ui/react-tabs": "^1.1.3",
-		"@radix-ui/react-toast": "^1.2.6",
-		"@radix-ui/react-tooltip": "^1.1.8",
+		"@radix-ui/react-label": "^2.1.3",
+		"@radix-ui/react-popover": "^1.1.7",
+		"@radix-ui/react-scroll-area": "^1.2.4",
+		"@radix-ui/react-select": "^2.1.7",
+		"@radix-ui/react-separator": "^1.1.3",
+		"@radix-ui/react-slider": "^1.2.4",
+		"@radix-ui/react-slot": "^1.2.0",
+		"@radix-ui/react-switch": "^1.1.4",
+		"@radix-ui/react-tabs": "^1.1.4",
+		"@radix-ui/react-toast": "^1.2.7",
+		"@radix-ui/react-tooltip": "^1.2.0",
 		"@tsparticles/engine": "^3.8.1",
 		"@tsparticles/react": "^3.0.0",
 		"@tsparticles/slim": "^3.8.1",
@@ -46,7 +46,7 @@
 		"framer-motion": "^11.18.2",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
-		"plasmo": "0.90.3",
+		"plasmo": "0.90.5",
 		"react": "18.3.1",
 		"react-colorful": "^5.6.1",
 		"react-dom": "18.3.1",
@@ -59,7 +59,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@types/chrome": "0.0.308",
+		"@parcel/packager-ts": "2.9.3",
+		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
 		"@types/react": "18.3.11",
 		"@types/react-dom": "18.3.1",
@@ -67,7 +68,7 @@
 		"csgo-fade-percentage-calculator": "^1.1.6",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.5.0",
-		"lefthook": "^1.11.3",
+		"lefthook": "^1.11.9",
 		"postcss": "8.4.49",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
@@ -96,11 +97,6 @@
 			"notifications"
 		],
 		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
-		"optional_host_permissions": [
 			"https://*/*",
 			"http://*/*"
 		],
@@ -111,7 +107,9 @@
 		},
 		"permissions": [
 			"unlimitedStorage",
-			"storage"
+			"storage",
+			"scripting",
+			"activeTab"
 		]
 	},
 	"pnpm": {

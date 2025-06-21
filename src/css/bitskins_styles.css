@@ -1,3 +1,7 @@
+html {
+	color-scheme: dark;
+}
+
 [class*="hint--"][aria-label]:after {
 	z-index: 1300;
 	transition: 0.3s opacity;
@@ -16,10 +20,6 @@
 	font-size: 13px;
 	line-height: 21px;
 }
-
-/* .betterfloat-big-a {
-
-} */
 
 .betterfloat-buffprice {
 	margin-left: 2px;

@@ -4,6 +4,7 @@ import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
+import { INJECTION_DOMAINS, executeInjection } from './scripting/injectionhandler';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -61,9 +62,29 @@ const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https:/
 // prevent spamming the same URL
 // url -> timestamp
 const lastSentMessage: Record<string, number> = {};
+const injectedTabs: Record<number, { hostname: string; time: number }> = {};
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-	if (tab.url && changeInfo.status === 'complete' && urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+	if (!tab.url) {
+		return;
+	}
+	console.log('[BetterFloat] Tab updated:', changeInfo, tab);
+
+	// Handle script injection for supported trading sites
+	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
+		const hostname = new URL(tab.url).hostname;
+		// if within last 3 seconds, don't inject
+		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 3000) {
+			injectedTabs[tabId] = { hostname, time: Date.now() };
+			executeInjection(tabId);
+		}
+		if (tab.url.includes('swap.gg')) {
+			executeInjection(tabId);
+		}
+	}
+
+	// Handle URL change messages for specific sites
+	if (urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
 		if (lastSentMessage[tab.url] && Date.now() - lastSentMessage[tab.url] < 200) {
 			console.debug('[BetterFloat] URL changed to: ', tab.url, ' but not sending message because it was sent less than 200ms ago');
 			return;
@@ -118,10 +139,18 @@ chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => 
 });
 
 async function checkUserPlan() {
-	const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
-	if (user?.plan.type === 'pro') {
-		await synchronizePlanWithStorage();
+	try {
+		const user = await ExtensionStorage.sync.getItem<SettingsUser>('user');
+		if (user?.steam?.steamid) {
+			await synchronizePlanWithStorage(true);
+		}
+	} catch (error) {
+		console.error('[BetterFloat] Failed to check/synchronize user plan:', error);
 	}
 }
 
 checkUserPlan();
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+	delete injectedTabs[tabId];
+});

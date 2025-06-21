@@ -92,7 +92,7 @@ const SPBuffContainer: React.FC = () => {
 						<Button variant="ghost" className="px-1 flex items-center gap-2 hover:bg-neutral-500/70">
 							<img src={marketIcon} className="h-6 w-6 rounded-md" />
 							<div className="flex gap-1.5 font-semibold text-lg">
-								{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(data.source) ? (
+								{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(data.source) ? (
 									<>
 										<span className="text-[#ffa500]">Bid: {formatCurrency(data.priceOrder)}</span>
 										<span className="text-[#808080]">|</span>
@@ -124,7 +124,7 @@ const SPBuffContainer: React.FC = () => {
 							</div>
 						)}
 						<div className="grid grid-cols-2 gap-4 px-2 pt-4">
-							{[MarketSource.Buff, MarketSource.YouPin, MarketSource.Steam].includes(data.source) && (
+							{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(data.source) && (
 								<>
 									<Badge variant="secondary" className="text-sm">
 										Highest Buy Order

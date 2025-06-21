@@ -28,7 +28,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="baron-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
+						<SettingsCheckbox id="baron-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>
@@ -62,7 +62,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="baron-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} />
+						<SettingsCheckbox id="baron-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>

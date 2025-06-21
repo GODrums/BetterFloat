@@ -1,3 +1,7 @@
+html {
+	color-scheme: dark;
+}
+
 [class*="hint--"][aria-label]:after {
 	font-family: Inter, -apple-system, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
 	color: #bbb9c7;

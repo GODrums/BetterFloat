@@ -2,13 +2,12 @@ import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 
 import { adjustOfferContainer } from '~contents/csfloat_script';
-import { ICON_BUFF, ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
+import { ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
 import { getSetting } from '~lib/util/storage';
 
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 
-import iconChevronUp from 'data-base64:/assets/icons/chevron-up-solid.svg';
 import { toTitleCase } from '~lib/util/helperfunctions';
 
 export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
@@ -32,6 +31,8 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 		console.warn('[BetterFloat] Bubbles and offers length mismatch');
 		return;
 	}
+
+	const marketIcon = buffA?.querySelector('img')?.src;
 
 	for (let i = 0; i < bubbles.length; i++) {
 		const bubble = bubbles[i];
@@ -61,7 +62,7 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 
 			const buffHTML = html`
 				<div class="betterfloat-bubble-buff" style="display: inline-flex; align-items: center; justify-content: ${isSeller ? 'flex-end' : 'flex-start'};">
-					<img src="${ICON_BUFF}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
+					<img src="${marketIcon}" style="height: 20px; margin-right: 5px; border: 1px solid dimgray; border-radius: 4px;" />
 					<span style="color: var(--primary-color); font-weight: 500;">
 						${difference.isPositive() ? '+' : ''}${Intl.NumberFormat('en-US', { style: 'currency', currency: CSFloatHelpers.userCurrency() }).format(difference.toNumber())}
 					</span>
@@ -221,32 +222,6 @@ export namespace CSFloatHelpers {
 			badgeContainer.setAttribute('style', 'gap: 5px;');
 		}
 		badgeContainer.appendChild(badge);
-	}
-
-	export function createTopButton() {
-		const topButton = document.createElement('button');
-		topButton.className = 'betterfloat-top-button';
-		topButton.setAttribute(
-			'style',
-			'position: fixed; right: 2rem; bottom: 2rem; z-index: 999; width: 40px; height: 40px; border-radius: 50%; background-color: rgba(193, 206, 255, .04); border: none; outline: none; cursor: pointer; display: none; backdrop-filter: blur(10px); transition: visibility 3s, opacity 2s linear;'
-		);
-		const topButtonIcon = document.createElement('img');
-		topButtonIcon.setAttribute('src', iconChevronUp);
-		topButtonIcon.style.marginTop = '5px';
-		topButtonIcon.style.filter = 'brightness(0) saturate(100%) invert(97%) sepia(0%) saturate(2009%) hue-rotate(196deg) brightness(113%) contrast(93%)';
-		topButton.addEventListener('click', () => {
-			window.scrollTo({ top: 0, behavior: 'smooth' });
-		});
-		topButton.appendChild(topButtonIcon);
-		document.body.appendChild(topButton);
-
-		document.addEventListener('scroll', () => {
-			if (document.body.scrollTop > 700 || document.documentElement.scrollTop > 700) {
-				topButton.style.display = 'block';
-			} else {
-				topButton.style.display = 'none';
-			}
-		});
 	}
 
 	export function addItemScreenshot(container: Element, item: CSFloat.Item) {

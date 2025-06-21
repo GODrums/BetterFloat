@@ -240,6 +240,17 @@ export function StreamlineDiscountPercentCoupon(props: SVGProps<SVGSVGElement>) 
 	);
 }
 
+export function HugeiconsEuroCircle(props: SVGProps<SVGSVGElement>) {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+			<g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor">
+				<path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"></path>
+				<path d="M15 14.492c-.478.904-1.349 1.508-2.343 1.508c-1.51 0-2.734-1.393-2.734-3.111V11.11c0-1.717 1.224-3.11 2.734-3.11c.994 0 1.865.604 2.343 1.508M9 12h3.923"></path>
+			</g>
+		</svg>
+	);
+}
+
 export function IcOutlineDiscount(props: SVGProps<SVGSVGElement>) {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>

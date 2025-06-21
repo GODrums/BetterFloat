@@ -12,6 +12,7 @@ import {
 	ICON_BUFFMARKET_FULL,
 	ICON_CSFLOAT,
 	ICON_CSFLOAT_FULL,
+	ICON_CSMONEY,
 	ICON_CSMONEY_FULL,
 	ICON_DMARKET,
 	ICON_DMARKET_FULL,
@@ -76,11 +77,6 @@ export default function OnboardingPage() {
 					Welcome to <Highlight className="text-neutral-100">BetterFloat</Highlight>!
 				</motion.h1>
 				<div className="container grid grid-cols-3 justify-items-center gap-4">
-					<div className="col-span-3 mx-auto flex items-center gap-8 px-4 py-2">
-						<div className="mt-2 p-3 bg-sky-500/10 border border-sky-500/30 rounded-lg">
-							<p className="text-sky-200 text-sm text-center">Not interested in Pro? No worries, all previous features will remain completely free to use forever 🚀</p>
-						</div>
-					</div>
 					<div className="col-span-3">
 						<Card className="shadow-md border-muted mx-1">
 							<CardContent className="h-full grid grid-cols-4 gap-4">
@@ -168,7 +164,7 @@ export default function OnboardingPage() {
 												auto refresh for
 											</p>
 											<div className="flex items-center justify-center gap-4">
-												{[ICON_DMARKET, ICON_LISSKINS].map((icon, index) => (
+												{[ICON_DMARKET, ICON_LISSKINS, ICON_CSMONEY].map((icon, index) => (
 													<img key={index + 10} src={icon} className="h-10" />
 												))}
 											</div>

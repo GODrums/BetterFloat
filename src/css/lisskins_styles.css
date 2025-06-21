@@ -1,3 +1,7 @@
+html {
+	color-scheme: dark;
+}
+
 .betterfloat-buff-a {
 	display: inline-flex !important;
 	align-items: center;

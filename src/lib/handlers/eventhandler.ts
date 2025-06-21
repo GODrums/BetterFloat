@@ -5,8 +5,11 @@ import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
+import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
+import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { MarketSource } from '~lib/util/globals';
@@ -29,12 +32,16 @@ import {
 	cacheCSFSimilarItems,
 } from './cache/csfloat_cache';
 import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
-import { cacheDMarketExchangeRates, cacheDMarketItems } from './cache/dmarket_cache';
+import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales } from './cache/dmarket_cache';
+import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheTradeitOwnItems } from './cache/tradeit_cache';
 import { cacheTradeitBotItems } from './cache/tradeit_cache';
+import { cacheWaxpeerItems } from './cache/waxpeer_cache';
+import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache/whitemarket_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 
@@ -68,6 +75,16 @@ export async function activateHandler() {
 			processSkinbaronEvent(eventData);
 		} else if (location.host === 'bitskins.com') {
 			processBitskinsEvent(eventData);
+		} else if (location.host === 'shadowpay.com') {
+			processShadowpayEvent(eventData);
+		} else if (location.host === 'waxpeer.com') {
+			processWaxpeerEvent(eventData);
+		} else if (location.host === 'market.csgo.com') {
+			processMarketCSGOEvent(eventData);
+		} else if (location.href.includes('swap.gg')) {
+			processSwapggEvent(eventData);
+		} else if (location.host === 'white.market') {
+			processWhiteMarketEvent(eventData);
 		} else if (location.host === 'tradeit.gg') {
 			processTradeitEvent(eventData);
 		}
@@ -127,6 +144,58 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+// whitemarket uses a graphql api, so we need to handle it differently
+function processWhiteMarketEvent(eventData: EventData<unknown>) {
+	console.debug(`[Plasmo] Received data from url: ${eventData.url}, data:`, eventData.data);
+
+	if (!eventData.url.includes('graphql/api')) {
+		return;
+	}
+
+	const responseData = (eventData.data as any).data as any;
+
+	if (responseData.market_list) {
+		const items = (responseData as WhiteMarket.MarketListResponse).market_list.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.inventory_my) {
+		const items = (responseData as WhiteMarket.InventoryMyResponse).inventory_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketInventory(items);
+	} else if (responseData.market_my) {
+		const items = (responseData as WhiteMarket.MarketMyResponse).market_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.instant_sell_list) {
+		const items = (responseData as WhiteMarket.InstantSellListResponse).instant_sell_list.items.edges.map((edge) => edge.node.item).filter((item) => item !== undefined);
+		cacheWhiteMarketInventory(items);
+	}
+}
+
+function processSwapggEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('v2/currency')) {
+		cacheSwapggCurrencyRates((eventData.data as any).result);
+	}
+}
+
+function processMarketCSGOEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+}
+
+function processShadowpayEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/get_items')) {
+		cacheShadowpayItems((eventData.data as Shadowpay.MarketGetItemsResponse).items);
+	} else if (eventData.url.includes('api/market/inventory')) {
+		cacheShadowpayInventory((eventData.data as Shadowpay.InventoryResponse).inv);
+	}
+}
+
+function processWaxpeerEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/data/index/')) {
+		cacheWaxpeerItems((eventData.data as Waxpeer.MarketData).items);
 	}
 }
 
@@ -326,12 +395,19 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 	// if (!eventData.url.includes('notifications')) {
 	// 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	// }
+	if (!eventData.data || (typeof eventData.data !== 'object' && !Object.hasOwn(eventData.data, 'error'))) {
+		console.error('[BetterFloat] Error:', eventData.data);
+		return;
+	}
+
 	if (eventData.url.includes('1.0/market/sell-orders/')) {
 		// item popup
 		cacheCSMoneyPopupItem((eventData.data as CSMoney.SingleSellOrderResponse).item);
 	} else if (eventData.url.includes('1.0/market/sell-orders')) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
-	} else if (eventData.url.includes('1.0/market/user-inventory')) {
+	} else if (eventData.url.includes('2.0/market/sell-orders')) {
+		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
+	} else if (eventData.url.includes('market/user-inventory')) {
 		if (eventData.url.includes('user-inventory/')) {
 			cacheCSMoneyPopupItem((eventData.data as CSMoney.UserInventoryPopupResponse).item);
 		} else {
@@ -356,6 +432,8 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('currency-rate/v1/rates')) {
 		cacheDMarketExchangeRates((eventData.data as DMarket.ExchangeRates).Rates);
+	} else if (eventData.url.includes('trade-aggregator/v1/last-sales')) {
+		cacheDMarketLatestSales((eventData.data as DMarket.LatestSalesResponse).sales);
 	}
 }
 
