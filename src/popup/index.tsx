@@ -13,6 +13,7 @@ import {
 	ICON_MARKETCSGO,
 	ICON_SHADOWPAY,
 	ICON_SKINBARON,
+	ICON_SKINOUT,
 	ICON_SKINPORT,
 	ICON_SKINSMONKEY,
 	ICON_SWAPGG,
@@ -48,6 +49,7 @@ import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
+import { SkinoutSettings } from './tabs/Skinout';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
@@ -141,6 +143,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="skinsmonkey">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
 								</TabsTrigger>
+								<TabsTrigger value="skinout">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINOUT} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -177,6 +182,7 @@ export default function IndexPopup() {
 					<TradeitSettings hasProPlan={hasProPlan} />
 					<AvanSettings hasProPlan={hasProPlan} />
 					<SkinsmonkeySettings hasProPlan={hasProPlan} />
+					<SkinoutSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

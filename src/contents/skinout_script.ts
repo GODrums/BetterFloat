@@ -3,19 +3,19 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
+import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getFirstSkinsmonkeyBotItem, getFirstSkinsmonkeyUserItem } from '~lib/handlers/cache/skinsmonkey_cache';
+import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { SKINSMONKEY_SELECTORS } from '~lib/handlers/selectors/skinsmonkey_selectors';
+import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
-	matches: ['*://*.skinsmonkey.com/*'],
+	matches: ['*://*.skinout.gg/*'],
 	run_at: 'document_end',
 	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/skinsmonkey_styles.css'],
 };
@@ -25,9 +25,9 @@ type PriceResult = {
 };
 
 async function init() {
-	console.time('[BetterFloat] Skinsmonkey init timer');
+	console.time('[BetterFloat] Skinout init timer');
 
-	if (location.host !== 'skinsmonkey.com') {
+	if (location.host !== 'skinout.gg') {
 		return;
 	}
 
@@ -37,17 +37,17 @@ async function init() {
 
 	extensionSettings = await getAllSettings();
 
-	if (!extensionSettings['sm-enable']) return;
+	if (!extensionSettings['so-enable']) return;
 
 	// check if user has the required plan
 	if (!(await checkUserPlanPro(extensionSettings['user']))) {
-		console.log('[BetterFloat] Pro plan required for Skinsmonkey features');
+		console.log('[BetterFloat] Pro plan required for Skinout features');
 		return;
 	}
 
-	await initPriceMapping(extensionSettings, 'sm');
+	await initPriceMapping(extensionSettings, 'so');
 
-	console.timeEnd('[BetterFloat] Skinsmonkey init timer');
+	console.timeEnd('[BetterFloat] Skinout init timer');
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {
@@ -56,17 +56,16 @@ async function init() {
 		console.log('[BetterFloat] Mutation observer started');
 	}
 
-    await firstLaunch();
+    firstLaunch();
 }
 
-async function firstLaunch() {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
-    for (const item of items) {
-        const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-        await adjustItem(item, PageState.Market, isUser);
-    }
+function firstLaunch() {
+    setTimeout(() => {
+        const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
+        if (refreshButton) {
+            refreshButton.click();
+        }
+    }, 2000);
 }
 
 function applyMutation() {
@@ -76,12 +75,12 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				console.debug('[BetterFloat] Skinsmonkey Mutation detected:', addedNode);
+				// console.debug('[BetterFloat] Skinout Mutation detected:', addedNode);
 
-				if (addedNode.className === SKINSMONKEY_SELECTORS.item.card) {
-                    // options: USER, SITE
-                    const isUser = addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-					await adjustItem(addedNode, PageState.Market, isUser);
+				if (addedNode.className === SKINOUT_SELECTORS.item.listItem) {
+					await adjustItem(addedNode, PageState.Market);
+				} else if (addedNode.className.includes('item--sell-page')) {
+					await adjustItem(addedNode, PageState.Inventory);
 				}
 			}
 		}
@@ -89,38 +88,37 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(isUser: boolean) {
-	if (isUser) {
-		return getFirstSkinsmonkeyUserItem();
-	} else {
-		return getFirstSkinsmonkeyBotItem();
+function getAPIItem(container: Element, state: PageState): Skinout.Item | Skinout.InventoryItem | null {
+	if (state === PageState.Market) {
+		return getFirstSkinoutItem() || null;
+	} else if (state === PageState.Inventory) {
+		const assetId = container.getAttribute('assetid');
+		if (!assetId) return null;
+		return getSpecificSkinoutUserItem(assetId) || null;
 	}
+	return null;
 }
 
-async function adjustItem(container: Element, state: PageState, isUser: boolean) {
-	let item = getAPIItem(isUser);
+async function adjustItem(container: Element, state: PageState) {
+	let item = getAPIItem(container, state);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = getAPIItem(isUser);
+		item = getAPIItem(container, state);
 	}
-	// console.log('[BetterFloat] Skinsmonkey item:', item);
+	// console.log('[BetterFloat] Skinout item:', item);
 	if (!item) return;
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const _priceResult = await addBuffPrice(item, container, state);
-
-	// store item in html
-	// container.setAttribute('data-betterfloat', JSON.stringify(item));
+	const _priceResult = await addBuffPrice(item, container);
 }
 
-async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, container: Element): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.cardBottom);
+	let footerContainer = container.querySelector(SKINOUT_SELECTORS.item.bottom);
 
-	const isDoppler = item.item.details.skin.includes('Doppler');
+	const isDoppler = item.market_hash_name.includes('Doppler');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
@@ -147,16 +145,14 @@ async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: P
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	let priceContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.price);
+	let priceContainer = container.querySelector(SKINOUT_SELECTORS.item.counters);
 
 	if (
 		priceContainer &&
 		!container.querySelector('.betterfloat-sale-tag') &&
-		(extensionSettings['sm-buffdifference'] || extensionSettings['sm-buffdifferencepercent'])
+		(extensionSettings['so-buffdifference'] || extensionSettings['so-buffdifferencepercent'])
 	) {
-		priceContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
-
-        (priceContainer.parentElement as HTMLElement).style.justifyContent = 'flex-start';
+		priceContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
 	}
 
 	return {
@@ -167,7 +163,7 @@ async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: P
 function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat) {
 	const styling = {
 		profit: {
-			color: 'var(--main-green)',
+			color: '#30d158',
 			background: '#30d15829',
 		},
 		loss: {
@@ -180,14 +176,14 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 
 	return html`
 		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
-			${extensionSettings['av-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
-			${extensionSettings['av-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
+			${extensionSettings['so-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
+			${extensionSettings['so-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
 	`;
 }
 
-async function getBuffItem(item: Skinsmonkey.Item) {
-	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
+async function getBuffItem(item: Skinout.Item | Skinout.InventoryItem) {
+	let source = (extensionSettings['so-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
@@ -197,8 +193,8 @@ async function getBuffItem(item: Skinsmonkey.Item) {
 		priceOrder = new Decimal(0);
 	}
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['av-altmarket'] && extensionSettings['av-altmarket'] !== MarketSource.None) {
-		source = extensionSettings['av-altmarket'] as MarketSource;
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['so-altmarket'] && extensionSettings['so-altmarket'] !== MarketSource.None) {
+		source = extensionSettings['so-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
@@ -221,7 +217,7 @@ async function getBuffItem(item: Skinsmonkey.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['av-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['so-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
@@ -248,19 +244,19 @@ function getUserCurrency() {
 	return localStorage.getItem('currency') || 'USD';
 }
 
-function getItemPrice(item: Skinsmonkey.Item) {
-	return new Decimal(item.item.price).div(100);
+function getItemPrice(item: Skinout.Item | Skinout.InventoryItem): Decimal {
+	return new Decimal(item.price);
 }
 
-function createBuffItem(item: Skinsmonkey.Item): { name: string; style: ItemStyle } {
+function createBuffItem(item: Skinout.Item | Skinout.InventoryItem): { name: string; style: ItemStyle } {
 	const buff_item = {
-		name: item.item.marketName,
+		name: item.market_hash_name,
 		style: '' as ItemStyle,
 	};
-	if (item.item.details.skin.includes('Doppler')) {
-		const phase = item.item.details.skin.split('Doppler ')[1];
+	if (item.market_hash_name.includes('Doppler')) {
+		const phase = item.market_hash_name.split(') ')[1];
 		buff_item.style = phase as ItemStyle;
-        buff_item.name = item.item.marketName.replace(` ${phase}`, '');
+        buff_item.name = item.market_hash_name.replace(` ${phase}`, '');
 	}
 	return {
 		name: buff_item.name,

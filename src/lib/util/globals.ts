@@ -12,6 +12,8 @@ import iconSkinbaron from 'data-base64:~/../assets/logos/skinbaron.svg';
 import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg';
 import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
 import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
+import iconSkinout from 'data-base64:~/../assets/logos/skinout.svg';
+import iconSkinoutFull from 'data-base64:~/../assets/logos/skinout_full.svg';
 import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
 import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
 import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
@@ -158,6 +160,8 @@ export const ICON_AVANMARKET = iconAvanmarket;
 export const ICON_AVANMARKET_FULL = iconAvanmarketFull;
 export const ICON_SKINSMONKEY = iconSkinsmonkey;
 export const ICON_SKINSMONKEY_FULL = iconSkinsmonkeyFull;
+export const ICON_SKINOUT = iconSkinout;
+export const ICON_SKINOUT_FULL = iconSkinoutFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

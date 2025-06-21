@@ -46,6 +46,8 @@ import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import { cacheSkinsmonkeyUserInventory, cacheSkinsmonkeyBotInventory } from './cache/skinsmonkey_cache';
+import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
+import type { Skinout } from '~lib/@typings/SkinoutTypes';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -93,7 +95,9 @@ export async function activateHandler() {
 			processAvanmarketEvent(eventData);
 		} else if (location.host === 'skinsmonkey.com') {
 			processSkinsmonkeyEvent(eventData);
-		}
+		} else if (location.host === 'skinout.gg') {
+			processSkinoutEvent(eventData);
+		} 
 	});
 
 	if (location.host === 'skinport.com') {
@@ -150,6 +154,15 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processSkinoutEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/items')) {
+		cacheSkinoutItems(eventData.data as Skinout.MarketItemsResponse);
+	} else if (eventData.url.includes('api/sell/inventory')) {
+		cacheSkinoutUserInventory(eventData.data as Skinout.InventoryResponse);
 	}
 }
 

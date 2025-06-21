@@ -225,6 +225,13 @@ export const DEFAULT_SETTINGS = {
 	'sm-buffdifference': true,
 	'sm-buffdifferencepercent': true,
 	'sm-listingage': true,
+	'so-enable': true,
+	'so-pricingsource': 'buff',
+	'so-altmarket': 'none',
+	'so-pricereference': 0,
+	'so-buffdifference': true,
+	'so-buffdifferencepercent': true,
+	'so-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 
