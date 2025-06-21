@@ -3,6 +3,7 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { CircleUserRound, Info } from 'lucide-react';
 import { useEffect } from 'react';
 import {
+	ICON_AVANMARKET,
 	ICON_BITSKINS,
 	ICON_BUFFMARKET,
 	ICON_CSFLOAT,
@@ -32,15 +33,16 @@ import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
 import Header from './layout/header';
+import { AvanSettings } from './tabs/Avan';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
 import { SwapggSettings } from './tabs/Swapgg';
 import { TradeitSettings } from './tabs/Tradeit';
+import { UserProfile } from './tabs/user/UserProfile';
 import { WaxpeerSettings } from './tabs/Waxpeer';
 import { WhiteMarketSettings } from './tabs/Whitemarket';
-import { UserProfile } from './tabs/user/UserProfile';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
@@ -131,6 +133,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="tradeit">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
 								</TabsTrigger>
+								<TabsTrigger value="avan">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -165,6 +170,7 @@ export default function IndexPopup() {
 					<MarketCSGOSettings hasProPlan={hasProPlan} />
 					<SwapggSettings hasProPlan={hasProPlan} />
 					<TradeitSettings hasProPlan={hasProPlan} />
+					<AvanSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

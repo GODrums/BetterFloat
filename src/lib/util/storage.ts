@@ -211,6 +211,13 @@ export const DEFAULT_SETTINGS = {
 	'wm-buffdifference': true,
 	'wm-buffdifferencepercent': true,
 	'wm-listingage': true,
+	'av-enable': true,
+	'av-pricingsource': 'buff',
+	'av-altmarket': 'none',
+	'av-pricereference': 0,
+	'av-buffdifference': true,
+	'av-buffdifferencepercent': true,
+	'av-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 
