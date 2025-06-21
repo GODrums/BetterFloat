@@ -270,6 +270,8 @@ export async function adjustOfferContainer(container: Element) {
 	const offerIndex = offers.findIndex((el) => el.className.includes('is-selected'));
 	const offer = getSpecificCSFOffer(offerIndex);
 
+	if (!offer) return;
+
 	const header = container.querySelector('.header');
 
 	const itemName = offer.contract.item.market_hash_name;
