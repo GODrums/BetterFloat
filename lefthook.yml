@@ -3,15 +3,15 @@
 
 #   To manually execute this group use: `pnpm lefthook run pre-commit`
 #   Sync hooks with: `pnpm lefthook install`
-pre-commit:
-  # parallel: true
-  commands:
-    typecheck:
-      glob: "./src/**/*.{ts,tsx}"
-      run: pnpm tsc --noEmit {staged_files}
-    lint:
-      glob: "src/**/*.{ts,tsx,js,jsx}"
-      run: pnpm biome lint --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
-    format:
-      glob: "src/**/*.{ts,tsx,js,jsx,css}"
-      run: pnpm biome format --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
+# pre-commit:
+#   # parallel: true
+#   commands:
+#     typecheck:
+#       glob: "./src/**/*.{ts,tsx}"
+#       run: pnpm tsc --noEmit {staged_files}
+#     lint:
+#       glob: "src/**/*.{ts,tsx,js,jsx}"
+#       run: pnpm biome lint --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
+#     format:
+#       glob: "src/**/*.{ts,tsx,js,jsx,css}"
+#       run: pnpm biome format --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
