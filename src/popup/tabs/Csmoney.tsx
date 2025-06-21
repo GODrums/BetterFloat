@@ -53,14 +53,6 @@ export const CSMoneySettings = () => {
 					</SettingsCard>
 				</div>
 			</div>
-			<div className="mb-2">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">MISC</p>
-				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsColorPicker prefix="csm" />
-				</div>
-			</div>
 		</TabTemplate>
 	);
 };
