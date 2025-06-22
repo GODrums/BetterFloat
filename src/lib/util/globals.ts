@@ -181,6 +181,7 @@ export enum MarketSource {
 	Lisskins = 'lisSkins',
 	Skinbid = 'skinbid',
 	Skinport = 'skinport',
+	Pricempire = 'pricempire',
 }
 
 export const AvailableMarketSources = [

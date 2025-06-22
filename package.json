@@ -44,6 +44,7 @@
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
 		"framer-motion": "^11.18.2",
+		"fuse.js": "^7.1.0",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
 		"plasmo": "0.90.5",
@@ -74,18 +75,6 @@
 		"typescript": "5.7.2"
 	},
 	"manifest": {
-		"web_accessible_resources": [
-			{
-				"matches": [
-					"https://*.csfloat.com/*",
-					"https://*.skinport.com/*",
-					"https://*.skinbid.com/*"
-				],
-				"resources": [
-					"inject.ts"
-				]
-			}
-		],
 		"key": "$CRX_PUBLIC_KEY",
 		"browser_specific_settings": {
 			"gecko": {
@@ -109,8 +98,12 @@
 			"unlimitedStorage",
 			"storage",
 			"scripting",
-			"activeTab"
-		]
+			"activeTab",
+			"omnibox"
+		],
+		"omnibox": {
+			"keyword": "bf"
+		}
 	},
 	"pnpm": {
 		"peerDependencyRules": {

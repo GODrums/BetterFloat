@@ -4,6 +4,7 @@ import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
 import { executeInjection, INJECTION_DOMAINS } from './scripting/injectionhandler';
+import './omnibox';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {

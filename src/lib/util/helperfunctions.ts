@@ -211,6 +211,8 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://skinbid.com/market?search=${encodeURIComponent(buff_name)}&sort=price%23asc&sellType=all&utm_source=betterfloat&ref=betterfloat`;
 		case MarketSource.Skinport:
 			return `https://skinport.com/market/730?search=${encodeURIComponent(buff_name)}&sort=price&order=asc&utm_source=betterfloat`;
+		case MarketSource.Pricempire:
+			return `https://pricempire.com/item/${encodeURIComponent(buff_name)}?utm_source=betterfloat`;
 	}
 	return '';
 }
