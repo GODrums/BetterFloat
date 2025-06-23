@@ -1,4 +1,4 @@
-import type { Skinsmonkey } from "~lib/@typings/Skinsmonkey";
+import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 
 let userInventory: Skinsmonkey.Item[] = [];
 let botInventory: Skinsmonkey.Item[] = [];
@@ -12,17 +12,17 @@ export function cacheSkinsmonkeyBotInventory(inventory: Skinsmonkey.InventoryRes
 }
 
 export function getSpecificSkinsmonkeyUserItem(itemName: string) {
-    return userInventory.find((item) => item.item.marketName === itemName);
+	return userInventory.find((item) => item.item.marketName === itemName);
 }
 
 export function getSpecificSkinsmonkeyBotItem(itemName: string) {
-    return botInventory.find((item) => item.item.marketName === itemName);
+	return botInventory.find((item) => item.item.marketName === itemName);
 }
 
 export function getFirstSkinsmonkeyUserItem() {
-    return userInventory.shift();
+	return userInventory.shift();
 }
 
 export function getFirstSkinsmonkeyBotItem() {
-    return botInventory.shift();
+	return botInventory.shift();
 }

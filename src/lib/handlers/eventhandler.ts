@@ -6,6 +6,8 @@ import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import type { Skinout } from '~lib/@typings/SkinoutTypes';
+import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
@@ -37,17 +39,15 @@ import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales }
 import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
+import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
 import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache/tradeit_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
 import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache/whitemarket_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
-import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
-import { cacheSkinsmonkeyUserInventory, cacheSkinsmonkeyBotInventory } from './cache/skinsmonkey_cache';
-import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
-import type { Skinout } from '~lib/@typings/SkinoutTypes';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -97,7 +97,7 @@ export async function activateHandler() {
 			processSkinsmonkeyEvent(eventData);
 		} else if (location.host === 'skinout.gg') {
 			processSkinoutEvent(eventData);
-		} 
+		}
 	});
 
 	if (location.host === 'skinport.com') {

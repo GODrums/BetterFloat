@@ -1,5 +1,5 @@
-import { type JWTPayload, decodeJwt } from 'jose';
-import { ExtensionStorage, type IStorage, getSecureStorage, getSetting } from './storage';
+import { decodeJwt, type JWTPayload } from 'jose';
+import { ExtensionStorage, getSecureStorage, getSetting, type IStorage } from './storage';
 
 interface CustomerClaims extends JWTPayload {
 	customerId: string;

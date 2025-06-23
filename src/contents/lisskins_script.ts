@@ -4,7 +4,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { BigCurrency, SmallCurrency, getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { BigCurrency, getAndFetchCurrencyRate, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';

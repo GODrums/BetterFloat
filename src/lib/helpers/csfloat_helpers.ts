@@ -2,13 +2,11 @@ import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 
 import { adjustOfferContainer } from '~contents/csfloat_script';
-import { ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
-import { getSetting } from '~lib/util/storage';
-
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-
+import { ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
+import { getSetting } from '~lib/util/storage';
 
 export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 	await new Promise((resolve) => setTimeout(resolve, 200));
