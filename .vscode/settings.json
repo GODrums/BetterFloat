@@ -7,6 +7,9 @@
 			"url": "http://json.schemastore.org/chrome-manifest"
 		}
 	],
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "explicit"
+	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"[jsonc]": {
 		"editor.defaultFormatter": "biomejs.biome"

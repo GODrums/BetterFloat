@@ -1,6 +1,5 @@
-import { ExtensionStorage } from '~lib/util/storage';
-
 import { sendToBackground } from '@plasmohq/messaging';
+import { ExtensionStorage } from '~lib/util/storage';
 import type { Extension } from '../@typings/ExtensionTypes';
 import { cacheRealCurrencyRates } from './mappinghandler';
 

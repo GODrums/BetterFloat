@@ -1,5 +1,5 @@
-import { type JWTPayload, decodeJwt } from 'jose';
-import { ExtensionStorage, type IStorage, getSecureStorage, getSetting } from './storage';
+import { decodeJwt, type JWTPayload } from 'jose';
+import { ExtensionStorage, getSecureStorage, getSetting, type IStorage } from './storage';
 
 interface CustomerClaims extends JWTPayload {
 	customerId: string;
@@ -43,7 +43,7 @@ export async function synchronizePlanWithStorage(expired = false): Promise<IStor
 
 	if (decodedJwt && user.steam?.steamid) {
 		// check if token or plan is expired and refresh
-		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime())) {
+		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < Date.now())) {
 			const newToken = await refreshToken(user!.steam!.steamid!);
 			if (!newToken) {
 				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
@@ -75,7 +75,7 @@ export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: 
 		return { type: 'free' };
 	}
 	const endDate = new Date(decodedJwt.plan.currentPeriodEnd);
-	if (endDate.getTime() < new Date().getTime()) {
+	if (endDate.getTime() < Date.now()) {
 		console.error('Subscription expired');
 		return { type: 'free' };
 	}

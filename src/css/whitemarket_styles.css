@@ -28,7 +28,7 @@ html {
 	font-style: normal;
 	font-weight: 500;
 	line-height: 20px;
-	letter-spacing: .02em;
+	letter-spacing: 0.02em;
 }
 
 .betterfloat-big-price {
@@ -41,7 +41,7 @@ html {
 	font-style: normal;
 	font-weight: 525;
 	line-height: 17px;
-	letter-spacing: -.005em;
+	letter-spacing: -0.005em;
 	text-wrap: nowrap;
 }
 

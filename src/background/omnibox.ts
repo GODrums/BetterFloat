@@ -1,9 +1,8 @@
-import marketIds from '@/assets/marketids.json';
-import { getMarketURL } from '~lib/util/helperfunctions';
-import { MarketSource } from '~lib/util/globals';
-
-import type { Extension } from '~lib/@typings/ExtensionTypes';
 import Fuse from 'fuse.js';
+import marketIds from '@/assets/marketids.json';
+import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { MarketSource } from '~lib/util/globals';
+import { getMarketURL } from '~lib/util/helperfunctions';
 
 // Keyword mapping => corresponding market source
 const KEYWORDS: Record<string, MarketSource> = {

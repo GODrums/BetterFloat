@@ -40,6 +40,8 @@ import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
+import { SkinoutSettings } from './tabs/Skinout';
+import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
 import { SwapggSettings } from './tabs/Swapgg';
 import { TradeitSettings } from './tabs/Tradeit';
 import { UserProfile } from './tabs/user/UserProfile';
@@ -48,8 +50,6 @@ import { WhiteMarketSettings } from './tabs/Whitemarket';
 import { Badge } from './ui/badge';
 import { ScrollArea } from './ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
-import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
-import { SkinoutSettings } from './tabs/Skinout';
 
 export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);

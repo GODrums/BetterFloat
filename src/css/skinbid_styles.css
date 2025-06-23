@@ -54,7 +54,9 @@ html {
 .betterfloat-buffprice:hover .betterfloat-buff-tooltip {
 	visibility: visible;
 	opacity: 1;
-	transition: visibility 0s, opacity 0.5s linear;
+	transition:
+		visibility 0s,
+		opacity 0.5s linear;
 }
 
 .betterfloat-listing-age {

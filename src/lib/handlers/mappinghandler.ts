@@ -1,10 +1,8 @@
-import marketIds from '@/assets/marketids.json';
 import Decimal from 'decimal.js';
-
-import { handleSpecialStickerNames } from '../util/helperfunctions';
-
+import marketIds from '@/assets/marketids.json';
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
+import { handleSpecialStickerNames } from '../util/helperfunctions';
 import { fetchCurrencyRates } from './networkhandler';
 
 // cached currency rates by exchangerate.host: USD -> X

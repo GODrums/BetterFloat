@@ -105,7 +105,9 @@ button.betterfloat-top-button:hover {
 .bf-tooltip:hover .bf-tooltip-inner {
 	visibility: visible;
 	opacity: 0.9;
-	transition: visibility 0s, opacity 0.2s linear;
+	transition:
+		visibility 0s,
+		opacity 0.2s linear;
 }
 
 .bf-tooltip:hover .bf-badge-text {

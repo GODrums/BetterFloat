@@ -1,5 +1,5 @@
-import type { SVGProps } from 'react';
 import type React from 'react';
+import type { SVGProps } from 'react';
 import { Button } from '~popup/ui/button';
 
 type QuickMenuButtonProps = {

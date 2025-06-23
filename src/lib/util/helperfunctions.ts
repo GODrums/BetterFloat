@@ -147,11 +147,11 @@ let lastProCheck = 0;
  */
 export async function checkUserPlanPro(user: SettingsUser) {
 	const isPro = isUserPro(user);
-	if ((isPro && lastProCheck + 10 * 60 * 1000 < new Date().getTime()) || (!isPro && lastProCheck > 0)) {
-		const expired = typeof user.plan.expiry === 'number' && user.plan.expiry < new Date().getTime();
+	if ((isPro && lastProCheck + 10 * 60 * 1000 < Date.now()) || (!isPro && lastProCheck > 0)) {
+		const expired = typeof user.plan.expiry === 'number' && user.plan.expiry < Date.now();
 		user = await synchronizePlanWithStorage(expired);
 		if (isPro) {
-			lastProCheck = new Date().getTime();
+			lastProCheck = Date.now();
 		} else {
 			lastProCheck = 0;
 		}
@@ -169,7 +169,7 @@ export function isUserPro(user: SettingsUser) {
  * @param name
  * @returns
  */
-export function isBuffBannedItem(name: string) {
+export function isBuffBannedItem(_: string) {
 	return false;
 }
 

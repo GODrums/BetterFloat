@@ -56,17 +56,17 @@ async function init() {
 		console.log('[BetterFloat] Mutation observer started');
 	}
 
-    await firstLaunch();
+	await firstLaunch();
 }
 
 async function firstLaunch() {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
-    for (const item of items) {
-        const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-        await adjustItem(item, PageState.Market, isUser);
-    }
+	const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
+	for (const item of items) {
+		const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
+		await adjustItem(item, isUser);
+	}
 }
 
 function applyMutation() {
@@ -79,9 +79,10 @@ function applyMutation() {
 				console.debug('[BetterFloat] Skinsmonkey Mutation detected:', addedNode);
 
 				if (addedNode.className === SKINSMONKEY_SELECTORS.item.card) {
-                    // options: USER, SITE
-                    const isUser = addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-					await adjustItem(addedNode, PageState.Market, isUser);
+					// options: USER, SITE
+					const isUser =
+						addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
+					await adjustItem(addedNode, isUser);
 				}
 			}
 		}
@@ -97,7 +98,7 @@ function getAPIItem(isUser: boolean) {
 	}
 }
 
-async function adjustItem(container: Element, state: PageState, isUser: boolean) {
+async function adjustItem(container: Element, isUser: boolean) {
 	let item = getAPIItem(isUser);
 
 	let tries = 10;
@@ -109,16 +110,16 @@ async function adjustItem(container: Element, state: PageState, isUser: boolean)
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const _priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container);
 
 	// store item in html
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinsmonkey.Item, container: Element): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.cardBottom);
+	const footerContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.cardBottom);
 
 	const isDoppler = item.item.details.skin.includes('Doppler');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
@@ -147,16 +148,12 @@ async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: P
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	let priceContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.price);
+	const priceContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.price);
 
-	if (
-		priceContainer &&
-		!container.querySelector('.betterfloat-sale-tag') &&
-		(extensionSettings['sm-buffdifference'] || extensionSettings['sm-buffdifferencepercent'])
-	) {
+	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['sm-buffdifference'] || extensionSettings['sm-buffdifferencepercent'])) {
 		priceContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
 
-        (priceContainer.parentElement as HTMLElement).style.justifyContent = 'flex-start';
+		(priceContainer.parentElement as HTMLElement).style.justifyContent = 'flex-start';
 	}
 
 	return {
@@ -260,17 +257,12 @@ function createBuffItem(item: Skinsmonkey.Item): { name: string; style: ItemStyl
 	if (item.item.details.skin.includes('Doppler')) {
 		const phase = item.item.details.skin.split('Doppler ')[1];
 		buff_item.style = phase as ItemStyle;
-        buff_item.name = item.item.marketName.replace(` ${phase}`, '');
+		buff_item.name = item.item.marketName.replace(` ${phase}`, '');
 	}
 	return {
 		name: buff_item.name,
 		style: buff_item.style,
 	};
-}
-
-enum PageState {
-	Market = 0,
-	Inventory = 1,
 }
 
 // mutation observer active?

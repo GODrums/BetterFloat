@@ -1,4 +1,4 @@
-import type { Skinout } from "~lib/@typings/SkinoutTypes";
+import type { Skinout } from '~lib/@typings/SkinoutTypes';
 
 let marketItems: Skinout.Item[] = [];
 let userInventory: Skinout.InventoryItem[] = [];
@@ -20,5 +20,5 @@ export function getFirstSkinoutItem() {
 }
 
 export function getSpecificSkinoutUserItem(assetId: string) {
-    return userInventory.find((item) => item.assetid === assetId);
+	return userInventory.find((item) => item.assetid === assetId);
 }

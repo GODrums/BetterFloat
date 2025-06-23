@@ -38,7 +38,8 @@
 				"useAltText": "off",
 				"useKeyWithClickEvents": "off",
 				"noSvgWithoutTitle": "off",
-				"useValidAnchor": "off"
+				"useValidAnchor": "off",
+				"noStaticElementInteractions": "off"
 			},
 			"style": {
 				"useNumberNamespace": "off",
