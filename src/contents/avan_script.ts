@@ -320,10 +320,6 @@ function isAvanmarketItem(item: Avanmarket.Item | Avanmarket.InventoryItem): ite
 	return 'full_name' in item && 'sell_items' in item;
 }
 
-function isAvanmarketInventoryItem(item: Avanmarket.Item | Avanmarket.InventoryItem): item is Avanmarket.InventoryItem {
-	return 'price' in item && 'iconUrl' in item && 'assetId' in item;
-}
-
 // mutation observer active?
 let isObserverActive = false;
 let extensionSettings: IStorage;

@@ -56,16 +56,16 @@ async function init() {
 		console.log('[BetterFloat] Mutation observer started');
 	}
 
-    firstLaunch();
+	firstLaunch();
 }
 
 function firstLaunch() {
-    setTimeout(() => {
-        const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
-        if (refreshButton) {
-            refreshButton.click();
-        }
-    }, 2000);
+	setTimeout(() => {
+		const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
+		if (refreshButton) {
+			refreshButton.click();
+		}
+	}, 2000);
 }
 
 function applyMutation() {
@@ -116,7 +116,7 @@ async function adjustItem(container: Element, state: PageState) {
 async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, container: Element): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer = container.querySelector(SKINOUT_SELECTORS.item.bottom);
+	const footerContainer = container.querySelector(SKINOUT_SELECTORS.item.bottom);
 
 	const isDoppler = item.market_hash_name.includes('Doppler');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
@@ -145,13 +145,9 @@ async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, containe
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	let priceContainer = container.querySelector(SKINOUT_SELECTORS.item.counters);
+	const priceContainer = container.querySelector(SKINOUT_SELECTORS.item.counters);
 
-	if (
-		priceContainer &&
-		!container.querySelector('.betterfloat-sale-tag') &&
-		(extensionSettings['rs-buffdifference'] || extensionSettings['rs-buffdifferencepercent'])
-	) {
+	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['rs-buffdifference'] || extensionSettings['rs-buffdifferencepercent'])) {
 		priceContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
 	}
 
@@ -256,7 +252,7 @@ function createBuffItem(item: Skinout.Item | Skinout.InventoryItem): { name: str
 	if (item.market_hash_name.includes('Doppler')) {
 		const phase = item.market_hash_name.split(') ')[1];
 		buff_item.style = phase as ItemStyle;
-        buff_item.name = item.market_hash_name.replace(` ${phase}`, '');
+		buff_item.name = item.market_hash_name.replace(` ${phase}`, '');
 	}
 	return {
 		name: buff_item.name,

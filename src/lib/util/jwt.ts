@@ -43,7 +43,7 @@ export async function synchronizePlanWithStorage(expired = false): Promise<IStor
 
 	if (decodedJwt && user.steam?.steamid) {
 		// check if token or plan is expired and refresh
-		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < new Date().getTime())) {
+		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < Date.now())) {
 			const newToken = await refreshToken(user!.steam!.steamid!);
 			if (!newToken) {
 				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });

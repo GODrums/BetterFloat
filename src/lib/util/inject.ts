@@ -116,7 +116,7 @@ export function addScript() {
 						},
 					})
 				);
-			} catch (e) {
+			} catch (_) {
 				console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
 			}
 
