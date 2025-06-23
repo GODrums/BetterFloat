@@ -17,6 +17,10 @@ async function init() {
 	extensionSettings = await getAllSettings();
 
 	if (!extensionSettings['uu-enable']) return;
+
+	console.timeEnd('[BetterFloat] Youpin init timer');
+
+	console.log('[BetterFloat] A Youpin integration is in the works...');
 }
 
 let extensionSettings: IStorage;
