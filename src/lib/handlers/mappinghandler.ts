@@ -5,21 +5,12 @@ import { handleSpecialStickerNames } from '../util/helperfunctions';
 
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
-import type { DopplerPhase } from '../@typings/FloatTypes';
 import { fetchCurrencyRates } from './networkhandler';
-
-type MarketIDEntry = {
-	buff: number;
-	uu: number;
-	c5: string | number;
-	buff_sticker: number;
-	buff_phase: Partial<Record<DopplerPhase, number | null>>;
-};
 
 // cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 // maps buff_name to buff_id
-const marketIdMapping: Record<string, Partial<MarketIDEntry>> = marketIds;
+const marketIdMapping: Record<string, Partial<Extension.MarketIDEntry>> = marketIds;
 // maps buff_name to prices and more - custom mapping
 const priceMapping: {
 	buff: Extension.PriceMappingBuff;

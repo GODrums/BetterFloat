@@ -1,19 +1,24 @@
-import { handleListed, handleSold } from '~lib/helpers/websockethandler';
-
 import { sendToBackground } from '@plasmohq/messaging';
+import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
+import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import type { Tradeit } from '~lib/@typings/TradeitTypes';
+import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
+import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
+import { handleListed, handleSold } from '~lib/helpers/websockethandler';
 import { MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
-import { type IStorage, getSetting } from '~lib/util/storage';
+import { getSetting, type IStorage } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
 import type { Skinbid } from '../@typings/SkinbidTypes';
 import type { Skinport } from '../@typings/SkinportTypes';
+import { cacheAvanmarketInventory, cacheAvanmarketItems } from './cache/avan_cache';
 import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from './cache/bitskins_cache';
 import { cacheBuffBuyOrders, cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffPopoutData, cacheBuffUserId } from './cache/buffmarket_cache';
 import {
@@ -29,11 +34,20 @@ import {
 } from './cache/csfloat_cache';
 import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache/csmoney_cache';
 import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales } from './cache/dmarket_cache';
+import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
+import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
+import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache/tradeit_cache';
+import { cacheWaxpeerItems } from './cache/waxpeer_cache';
+import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache/whitemarket_cache';
 import { loadMapping } from './mappinghandler';
 import { urlHandler } from './urlhandler';
+import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
+import { cacheSkinsmonkeyUserInventory, cacheSkinsmonkeyBotInventory } from './cache/skinsmonkey_cache';
+import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
+import type { Skinout } from '~lib/@typings/SkinoutTypes';
 
 type StallData = {
 	data: CSFloat.ListingData[];
@@ -65,7 +79,25 @@ export async function activateHandler() {
 			processSkinbaronEvent(eventData);
 		} else if (location.host === 'bitskins.com') {
 			processBitskinsEvent(eventData);
-		}
+		} else if (location.host === 'shadowpay.com') {
+			processShadowpayEvent(eventData);
+		} else if (location.host === 'waxpeer.com') {
+			processWaxpeerEvent(eventData);
+		} else if (location.host === 'market.csgo.com') {
+			processMarketCSGOEvent(eventData);
+		} else if (location.href.includes('swap.gg')) {
+			processSwapggEvent(eventData);
+		} else if (location.host === 'white.market') {
+			processWhiteMarketEvent(eventData);
+		} else if (location.host === 'tradeit.gg') {
+			processTradeitEvent(eventData);
+		} else if (location.host === 'avan.market') {
+			processAvanmarketEvent(eventData);
+		} else if (location.host === 'skinsmonkey.com') {
+			processSkinsmonkeyEvent(eventData);
+		} else if (location.host === 'skinout.gg') {
+			processSkinoutEvent(eventData);
+		} 
 	});
 
 	if (location.host === 'skinport.com') {
@@ -122,6 +154,98 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processSkinoutEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/items')) {
+		cacheSkinoutItems(eventData.data as Skinout.MarketItemsResponse);
+	} else if (eventData.url.includes('api/sell/inventory')) {
+		cacheSkinoutUserInventory(eventData.data as Skinout.InventoryResponse);
+	}
+}
+
+function processSkinsmonkeyEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/inventory/user')) {
+		cacheSkinsmonkeyUserInventory(eventData.data as Skinsmonkey.InventoryResponse);
+	} else if (eventData.url.includes('api/inventory?')) {
+		cacheSkinsmonkeyBotInventory(eventData.data as Skinsmonkey.InventoryResponse);
+	}
+}
+
+function processAvanmarketEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('v1/api/users/catalog')) {
+		cacheAvanmarketItems((eventData.data as Avanmarket.CatalogResponse).data);
+	} else if (eventData.url.includes('v1/api/users/inventory')) {
+		cacheAvanmarketInventory(eventData.data as Avanmarket.InventoryResponse);
+	}
+}
+
+// whitemarket uses a graphql api, so we need to handle it differently
+function processWhiteMarketEvent(eventData: EventData<unknown>) {
+	console.debug(`[Plasmo] Received data from url: ${eventData.url}, data:`, eventData.data);
+
+	if (!eventData.url.includes('graphql/api')) {
+		return;
+	}
+
+	const responseData = (eventData.data as any).data as any;
+
+	if (responseData.market_list) {
+		const items = (responseData as WhiteMarket.MarketListResponse).market_list.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.inventory_my) {
+		const items = (responseData as WhiteMarket.InventoryMyResponse).inventory_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketInventory(items);
+	} else if (responseData.market_my) {
+		const items = (responseData as WhiteMarket.MarketMyResponse).market_my.edges.map((edge) => edge.node);
+		cacheWhiteMarketItems(items);
+	} else if (responseData.instant_sell_list) {
+		const items = (responseData as WhiteMarket.InstantSellListResponse).instant_sell_list.items.edges.map((edge) => edge.node.item).filter((item) => item !== undefined);
+		cacheWhiteMarketInventory(items);
+	}
+}
+
+function processSwapggEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('v2/currency')) {
+		cacheSwapggCurrencyRates((eventData.data as any).result);
+	}
+}
+
+function processMarketCSGOEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+}
+
+function processShadowpayEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/get_items')) {
+		cacheShadowpayItems((eventData.data as Shadowpay.MarketGetItemsResponse).items);
+	} else if (eventData.url.includes('api/market/inventory')) {
+		cacheShadowpayInventory((eventData.data as Shadowpay.InventoryResponse).inv);
+	}
+}
+
+function processWaxpeerEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/data/index/')) {
+		cacheWaxpeerItems((eventData.data as Waxpeer.MarketData).items);
+	}
+}
+
+function processTradeitEvent(eventData: EventData<unknown>) {
+	// console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/v2/inventory/data')) {
+		// trade page. Bots inventory
+		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+		cacheTradeitBotItems([...(eventData.data as Tradeit.BotDataResponse).items]);
+	} else if (eventData.url.includes('api/v2/inventory/my/data')) {
+		// own inventory
+		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+		cacheTradeitOwnItems((eventData.data as Tradeit.OwnInventoryResponse).items);
 	}
 }
 

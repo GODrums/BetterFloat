@@ -23,8 +23,8 @@ import {
 	waitForElement,
 } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.dmarket.com/*'],
@@ -50,7 +50,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['bm-enable']) return;
 
@@ -121,8 +120,7 @@ async function adjustItem(container: Element, state: PageState) {
 		return;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container, state);
 
 	waitForElement(DMARKET_SELECTORS.market.infoButton).then((success) => {
 		if (success) {
@@ -146,7 +144,7 @@ function addPopupListener(container: Element, item: DMarket.Item) {
 			}
 			if (!popup) return;
 
-			const priceResult = await addBuffPrice(item, popup, PageState.Popup);
+			const _priceResult = await addBuffPrice(item, popup, PageState.Popup);
 
 			await patternDetections(popup, item, true);
 

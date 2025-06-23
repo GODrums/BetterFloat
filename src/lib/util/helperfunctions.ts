@@ -213,6 +213,8 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://skinport.com/market/730?search=${encodeURIComponent(buff_name)}&sort=price&order=asc&utm_source=betterfloat`;
 		case MarketSource.Marketcsgo:
 			return `https://market.csgo.com/en/?search=${encodeURIComponent(buff_name)}&utm_campaign=main&utm_source=BetterFloat&utm_medium=referral&cpid=caa655bb-8c34-4013-9427-1a5f842fc898&oid=4c69d079-ad2a-44b0-a9ac-d0afc2167ee7`;
+		case MarketSource.Pricempire:
+			return `https://pricempire.com/item/${encodeURIComponent(buff_name)}?utm_source=betterfloat`;
 	}
 	return '';
 }

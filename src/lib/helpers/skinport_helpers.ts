@@ -1,10 +1,76 @@
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { io } from 'socket.io-client/build/esm';
+import socketParser from 'socket.io-msgpack-parser';
 import { getBuffItem } from '~contents/skinport_script';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { getCharmColoring, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
+
+// get the user's currency. needed for the websocket connection init.
+const userCurrency = async (): Promise<string | null> => {
+	try {
+		const response = await fetch('https://skinport.com/api/data/');
+		if (!response.ok) {
+			console.warn('[BetterFloat] Failed to fetch user currency:', response.status);
+			return null;
+		}
+		const data = await response.json();
+		return data.currency || null;
+	} catch (error) {
+		console.error('[BetterFloat] Error fetching user currency:', error);
+		return null;
+	}
+};
+
+export function startSkinportSocket() {
+	console.log('[BetterFloat] Connecting to Skinport Socket...');
+
+	const socket = io('https://skinport.com', {
+		transports: ['websocket'],
+		autoConnect: true,
+		reconnection: true,
+		reconnectionAttempts: 5,
+		reconnectionDelay: 1000,
+		parser: socketParser,
+	});
+
+	//Types of events that can be received from the websocket:
+	// 1. saleFeed - Sale Feed
+	// 2. steamStatusUpdated - Steam Status
+	// 3. maintenanceUpdated - Maintenance status
+	// 4. sid - session ID
+	// 5. unreadNotificationCountUpdated - Unread Notification Count: [{count: 1}]
+
+	// Listen to the Sale Feed
+	socket.on('saleFeed', (data) => {
+		document.dispatchEvent(
+			new CustomEvent('BetterFloat_WEBSOCKET_EVENT', {
+				detail: {
+					eventType: data.eventType,
+					data: data.sales,
+				},
+			})
+		);
+	});
+
+	socket.on('connect', async () => {
+		console.debug('[BetterFloat] Successfully connected to Skinport websocket.');
+		// Join Sale Feed with parameters.
+		const currency = await userCurrency();
+		if (currency) {
+			socket.emit('saleFeedJoin', { appid: 730, currency: currency, locale: 'en' });
+		} else {
+			socket.emit('saleFeedJoin', { appid: 730, currency: 'USD', locale: 'en' });
+		}
+	});
+
+	// Socket should automatically reconnect, but if it doesn't, log the error.
+	socket.on('disconnect', () => {
+		console.warn('[BetterFloat] Disconnected from websocket.');
+	});
+}
 
 export function addPattern(container: Element, item: Skinport.Item) {
 	if (!item.pattern) return;

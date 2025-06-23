@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.1.36",
+	"version": "3.2.0",
 	"description": "Enhance your website experience on 9+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -44,6 +44,7 @@
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
 		"framer-motion": "^11.18.2",
+		"fuse.js": "^7.1.0",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
 		"plasmo": "0.90.5",
@@ -58,7 +59,8 @@
 		"zod": "^3.25.64"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.0.0",
+		"@parcel/packager-ts": "2.9.3",
 		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
 		"@types/react": "18.3.11",
@@ -73,18 +75,6 @@
 		"typescript": "5.7.2"
 	},
 	"manifest": {
-		"web_accessible_resources": [
-			{
-				"matches": [
-					"https://*.csfloat.com/*",
-					"https://*.skinport.com/*",
-					"https://*.skinbid.com/*"
-				],
-				"resources": [
-					"inject.ts"
-				]
-			}
-		],
 		"key": "$CRX_PUBLIC_KEY",
 		"browser_specific_settings": {
 			"gecko": {
@@ -96,11 +86,6 @@
 			"notifications"
 		],
 		"host_permissions": [
-			"https://*.csfloat.com/*",
-			"https://*.skinport.com/*",
-			"https://*.skinbid.com/*"
-		],
-		"optional_host_permissions": [
 			"https://*/*",
 			"http://*/*"
 		],
@@ -111,8 +96,14 @@
 		},
 		"permissions": [
 			"unlimitedStorage",
-			"storage"
-		]
+			"storage",
+			"scripting",
+			"activeTab",
+			"omnibox"
+		],
+		"omnibox": {
+			"keyword": "bf"
+		}
 	},
 	"pnpm": {
 		"peerDependencyRules": {

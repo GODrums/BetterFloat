@@ -2,13 +2,26 @@ import { html } from 'common-tags';
 import { CrimsonKimonoMapping, OverprintMapping, PhoenixMapping } from 'cs-tierlist';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-
+import type { PlasmoCSConfig } from 'plasmo';
+import type { Extension } from '~lib/@typings/ExtensionTypes';
+import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
+import {
+	cacheCSFInventory,
+	getCSFCurrencyRate,
+	getCSFHistoryGraph,
+	getCSFPopupItem,
+	getFirstCSFItem,
+	getFirstCSFSimilarItem,
+	getFirstHistorySale,
+	getSpecificCSFInventoryItem,
+	getSpecificCSFOffer,
+} from '~lib/handlers/cache/csfloat_cache';
 import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import {
 	ICON_ARROWDOWN,
-	ICON_ARROWUP2,
 	ICON_ARROWUP_SMALL,
+	ICON_ARROWUP2,
 	ICON_BUFF,
 	ICON_CAMERA_FLIPPED,
 	ICON_CLOCK,
@@ -43,9 +56,12 @@ import {
 	ICON_SPIDER_WEB,
 	ICON_STEAM,
 	ICON_STEAMANALYST,
-	MarketSource,
 	isProduction,
+	MarketSource,
 } from '~lib/util/globals';
+import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
+import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
@@ -65,24 +81,6 @@ import {
 	isUserPro,
 	waitForElement,
 } from '../lib/util/helperfunctions';
-
-import type { PlasmoCSConfig } from 'plasmo';
-import type { Extension } from '~lib/@typings/ExtensionTypes';
-import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
-import {
-	cacheCSFInventory,
-	getCSFCurrencyRate,
-	getCSFHistoryGraph,
-	getCSFPopupItem,
-	getFirstCSFItem,
-	getFirstCSFSimilarItem,
-	getFirstHistorySale,
-	getSpecificCSFInventoryItem,
-	getSpecificCSFOffer,
-} from '~lib/handlers/cache/csfloat_cache';
-import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
-import type { IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -1561,7 +1559,7 @@ const parsePrice = (textContent: string) => {
 				currency = pricingText.substring(0, firstDigit);
 				price = Number(pricingText.substring(firstDigit).replace(',', '').replace('.', '')) / 100;
 			}
-		} catch (e) {
+		} catch (_e) {
 			// happens when UI is not loaded yet so we can ignore it
 			price = 0;
 		}

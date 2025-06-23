@@ -1,9 +1,10 @@
-import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
-import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
-
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
+import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
+import { executeInjection, INJECTION_DOMAINS } from './scripting/injectionhandler';
+import './omnibox';
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(async (details) => {
@@ -48,7 +49,7 @@ async function initializeSettings() {
 	console.debug('[BetterFloat] Loaded settings: ', storedSettings);
 
 	for (const key in DEFAULT_SETTINGS) {
-		if (!Object.prototype.hasOwnProperty.call(storedSettings, key)) {
+		if (!Object.hasOwn(storedSettings, key)) {
 			// add missing settings
 			console.log('[BetterFloat] Adding missing setting: ', key);
 			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
@@ -61,9 +62,29 @@ const urlsToListenFor = ['https://csfloat.com', 'https://skinport.com', 'https:/
 // prevent spamming the same URL
 // url -> timestamp
 const lastSentMessage: Record<string, number> = {};
+const injectedTabs: Record<number, { hostname: string; time: number }> = {};
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-	if (tab.url && changeInfo.status === 'complete' && urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+	if (!tab.url) {
+		return;
+	}
+	console.log('[BetterFloat] Tab updated:', changeInfo, tab);
+
+	// Handle script injection for supported trading sites
+	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
+		const hostname = new URL(tab.url).hostname;
+		// if within last 3 seconds, don't inject
+		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 3000) {
+			injectedTabs[tabId] = { hostname, time: Date.now() };
+			executeInjection(tabId);
+		}
+		if (tab.url.includes('swap.gg')) {
+			executeInjection(tabId);
+		}
+	}
+
+	// Handle URL change messages for specific sites
+	if (urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
 		if (lastSentMessage[tab.url] && Date.now() - lastSentMessage[tab.url] < 200) {
 			console.debug('[BetterFloat] URL changed to: ', tab.url, ' but not sending message because it was sent less than 200ms ago');
 			return;
@@ -129,3 +150,7 @@ async function checkUserPlan() {
 }
 
 checkUserPlan();
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+	delete injectedTabs[tabId];
+});

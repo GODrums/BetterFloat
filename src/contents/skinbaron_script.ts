@@ -1,7 +1,6 @@
+import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-
-import { html } from 'common-tags';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/cache/skinbaron_cache';
@@ -10,7 +9,7 @@ import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandl
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, waitForElement } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -34,7 +33,6 @@ async function init() {
 	activateHandler();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['baron-enable']) return;
 
@@ -207,7 +205,7 @@ function getHTMLItemName(container: Element, name_class: string): string {
  * @param container
  * @returns
  */
-function getSkinbaronItem(container: Element): Skinbaron.HTMLItem {
+function _getSkinbaronItem(container: Element): Skinbaron.HTMLItem {
 	const isStatTrak = container.querySelector('.badge-danger')?.textContent?.includes('StatTrak') ?? false;
 	const type = container.querySelector('.badge-purple')?.textContent?.trim() ?? '';
 	const name = container.querySelector('.lName')?.textContent?.trim() ?? '';

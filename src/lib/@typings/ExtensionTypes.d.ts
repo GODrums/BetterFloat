@@ -14,6 +14,14 @@ export namespace Extension {
 		[name: string]: any;
 	}
 
+	export type MarketIDEntry = {
+		buff: number;
+		uu: number;
+		c5: string | number;
+		buff_sticker: number;
+		buff_phase: Partial<Record<DopplerPhase, number | null>>;
+	};
+
 	export interface PriceMappingBuff extends AbstractPriceMapping {
 		[name: string]: {
 			bid: number; // 105
