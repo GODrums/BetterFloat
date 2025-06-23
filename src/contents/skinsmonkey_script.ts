@@ -65,7 +65,7 @@ async function firstLaunch() {
 	const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
 	for (const item of items) {
 		const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-		await adjustItem(item, PageState.Market, isUser);
+		await adjustItem(item, isUser);
 	}
 }
 
@@ -82,7 +82,7 @@ function applyMutation() {
 					// options: USER, SITE
 					const isUser =
 						addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
-					await adjustItem(addedNode, PageState.Market, isUser);
+					await adjustItem(addedNode, isUser);
 				}
 			}
 		}
@@ -98,7 +98,7 @@ function getAPIItem(isUser: boolean) {
 	}
 }
 
-async function adjustItem(container: Element, state: PageState, isUser: boolean) {
+async function adjustItem(container: Element, isUser: boolean) {
 	let item = getAPIItem(isUser);
 
 	let tries = 10;
@@ -110,13 +110,13 @@ async function adjustItem(container: Element, state: PageState, isUser: boolean)
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const _priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container);
 
 	// store item in html
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));
 }
 
-async function addBuffPrice(item: Skinsmonkey.Item, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinsmonkey.Item, container: Element): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
 	const footerContainer = container.querySelector(SKINSMONKEY_SELECTORS.item.cardBottom);
@@ -263,11 +263,6 @@ function createBuffItem(item: Skinsmonkey.Item): { name: string; style: ItemStyl
 		name: buff_item.name,
 		style: buff_item.style,
 	};
-}
-
-enum PageState {
-	Market = 0,
-	Inventory = 1,
 }
 
 // mutation observer active?

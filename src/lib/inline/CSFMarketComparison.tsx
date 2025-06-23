@@ -98,7 +98,7 @@ const convertStylesStringToObject = (stringStyles: string) =>
 
 				const value = style.substring(colonPosition + 1).trim();
 
-				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+				// biome-ignore lint/performance/noAccumulatingSpread: makes sense here
 				return value ? { ...acc, [camelCaseProperty]: value } : acc;
 			}, {})
 		: {};

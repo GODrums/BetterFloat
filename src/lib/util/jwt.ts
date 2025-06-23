@@ -75,7 +75,7 @@ export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: 
 		return { type: 'free' };
 	}
 	const endDate = new Date(decodedJwt.plan.currentPeriodEnd);
-	if (endDate.getTime() < new Date().getTime()) {
+	if (endDate.getTime() < Date.now()) {
 		console.error('Subscription expired');
 		return { type: 'free' };
 	}

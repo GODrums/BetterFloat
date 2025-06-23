@@ -39,7 +39,7 @@ export async function getAllSettings() {
 			let result: string | number | boolean | null = null;
 			try {
 				result = JSON.parse(settings[key]);
-			} catch (e) {
+			} catch {
 				result = settings[key];
 			}
 			if (typeof result === 'string') {
