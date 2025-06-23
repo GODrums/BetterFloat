@@ -1,5 +1,3 @@
-import { ItemStyle } from './FloatTypes';
-
 export namespace Waxpeer {
 	// https://waxpeer.com/api/data/index/
 	export type MarketData = {

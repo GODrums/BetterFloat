@@ -122,8 +122,33 @@ const CSFAutorefresh: React.FC = () => {
 		setOpen(false);
 	};
 
+	const requestNotificationPermission = async (): Promise<boolean> => {
+		if (!('Notification' in window)) {
+			console.warn('This browser does not support desktop notifications');
+			return false;
+		}
+
+		if (Notification.permission === 'granted') {
+			return true;
+		}
+
+		if (Notification.permission === 'denied') {
+			console.warn('Notification permission has been denied');
+			return false;
+		}
+
+		const permission = await Notification.requestPermission();
+		return permission === 'granted';
+	};
+
 	const testNotification = async () => {
 		if (useBrowser) {
+			const hasPermission = await requestNotificationPermission();
+			if (!hasPermission) {
+				alert('Notification permission is required to use browser notifications. Please enable notifications in your browser settings.');
+				return;
+			}
+
 			const notification = new Notification('BetterFloat Notification', {
 				body: 'This is a test notification',
 				tag: 'betterfloat-notification-test',
@@ -234,7 +259,17 @@ const CSFAutorefresh: React.FC = () => {
 									<CSFCheckbox
 										id="notification-use-browser"
 										checked={useBrowser}
-										onCheckedChange={(state) => setUseBrowser(state === 'indeterminate' ? false : state)}
+										onCheckedChange={async (state) => {
+											const newState = state === 'indeterminate' ? false : state;
+											if (newState) {
+												const hasPermission = await requestNotificationPermission();
+												if (!hasPermission) {
+													alert('Notification permission is required to use browser notifications. Please enable notifications in your browser settings.');
+													return;
+												}
+											}
+											setUseBrowser(newState);
+										}}
 										disabled={user?.plan.type !== 'pro'}
 									/>
 									<label className="text-[--subtext-color] text-sm" htmlFor="notification-use-browser">

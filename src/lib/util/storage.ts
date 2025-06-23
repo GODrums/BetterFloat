@@ -39,7 +39,7 @@ export async function getAllSettings() {
 			let result: string | number | boolean | null = null;
 			try {
 				result = JSON.parse(settings[key]);
-			} catch (e) {
+			} catch {
 				result = settings[key];
 			}
 			if (typeof result === 'string') {
@@ -183,6 +183,12 @@ export const DEFAULT_SETTINGS = {
 	'wp-buffdifference': true,
 	'wp-buffdifferencepercent': true,
 	'wp-listingage': true,
+	'tradeit-enable': true,
+	'tradeit-pricingsource': 'buff',
+	'tradeit-altmarket': 'none',
+	'tradeit-pricereference': 0,
+	'tradeit-buffdifference': true,
+	'tradeit-buffdifferencepercent': true,
 	'display-updatepopup': true,
 	'mcsgo-enable': true,
 	'mcsgo-pricingsource': 'buff',
@@ -205,6 +211,27 @@ export const DEFAULT_SETTINGS = {
 	'wm-buffdifference': true,
 	'wm-buffdifferencepercent': true,
 	'wm-listingage': true,
+	'av-enable': true,
+	'av-pricingsource': 'buff',
+	'av-altmarket': 'none',
+	'av-pricereference': 0,
+	'av-buffdifference': true,
+	'av-buffdifferencepercent': true,
+	'av-listingage': true,
+	'sm-enable': true,
+	'sm-pricingsource': 'buff',
+	'sm-altmarket': 'none',
+	'sm-pricereference': 0,
+	'sm-buffdifference': true,
+	'sm-buffdifferencepercent': true,
+	'sm-listingage': true,
+	'so-enable': true,
+	'so-pricingsource': 'buff',
+	'so-altmarket': 'none',
+	'so-pricereference': 0,
+	'so-buffdifference': true,
+	'so-buffdifferencepercent': true,
+	'so-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

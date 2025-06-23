@@ -18,6 +18,10 @@ export const INJECTION_DOMAINS = [
 	'waxpeer.com',
 	'swap.gg',
 	'white.market',
+	'tradeit.gg',
+	'avan.market',
+	'skinsmonkey.com',
+	'skinout.gg',
 	'gamerpay.gg',
 ];
 

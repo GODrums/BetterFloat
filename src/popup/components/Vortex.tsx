@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { createNoise3D } from 'simplex-noise';
 import { cn } from '~lib/utils';
 
@@ -42,9 +42,7 @@ export const Vortex = (props: VortexProps) => {
 	let particleProps = new Float32Array(particlePropsLength);
 	const center: [number, number] = [0, 0];
 
-	const HALF_PI: number = 0.5 * Math.PI;
 	const TAU: number = 2 * Math.PI;
-	const TO_RAD: number = Math.PI / 180;
 	const rand = (n: number): number => n * Math.random();
 	const randRange = (n: number): number => n - rand(2 * n);
 	const fadeInOut = (t: number, m: number): number => {
@@ -60,7 +58,7 @@ export const Vortex = (props: VortexProps) => {
 			const ctx = canvas.getContext('2d');
 
 			if (ctx) {
-				resize(canvas, ctx);
+				resize(canvas);
 				initParticles();
 				draw(canvas, ctx);
 			}
@@ -81,9 +79,9 @@ export const Vortex = (props: VortexProps) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		// biome-ignore lint/style/useConst: <explanation>
-		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
+		// biome-ignore lint/style/useConst: makes sense here
+		// biome-ignore lint/suspicious/noImplicitAnyLet: makes sense here
+		// biome-ignore lint/style/useSingleVarDeclarator: makes sense here
 		let x, y, vx, vy, life, ttl, speed, radius, hue;
 
 		x = rand(canvas.width);
@@ -124,7 +122,7 @@ export const Vortex = (props: VortexProps) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 
-		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
+		// biome-ignore lint/style/useSingleVarDeclarator: makes sense here
 		const i2 = 1 + i,
 			i3 = 2 + i,
 			i4 = 3 + i,
@@ -133,8 +131,8 @@ export const Vortex = (props: VortexProps) => {
 			i7 = 6 + i,
 			i8 = 7 + i,
 			i9 = 8 + i;
-		// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
-		// biome-ignore lint/style/useSingleVarDeclarator: <explanation>
+		// biome-ignore lint/suspicious/noImplicitAnyLet: makes sense here
+		// biome-ignore lint/style/useSingleVarDeclarator: makes sense here
 		let n, x, y, vx, vy, life, ttl, speed, x2, y2, radius, hue;
 
 		x = particleProps[i];
@@ -180,7 +178,7 @@ export const Vortex = (props: VortexProps) => {
 		return x > canvas.width || x < 0 || y > canvas.height || y < 0;
 	};
 
-	const resize = (canvas: HTMLCanvasElement, ctx?: CanvasRenderingContext2D) => {
+	const resize = (canvas: HTMLCanvasElement) => {
 		const { innerWidth, innerHeight } = window;
 
 		canvas.width = innerWidth;
@@ -217,7 +215,7 @@ export const Vortex = (props: VortexProps) => {
 			const canvas = canvasRef.current;
 			const ctx = canvas?.getContext('2d');
 			if (canvas && ctx) {
-				resize(canvas, ctx);
+				resize(canvas);
 			}
 		});
 	}, []);

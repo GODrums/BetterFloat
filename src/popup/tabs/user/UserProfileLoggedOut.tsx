@@ -1,10 +1,9 @@
-import { Bell, Globe, Sparkles, Star, Zap } from 'lucide-react';
+import { Bell, Globe, Star, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { getSteamLogin } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 import { MdiSteamColored } from '~popup/components/Icons';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
-import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { WarningCallout } from '~popup/ui/callout';
 import { Card, CardContent } from '~popup/ui/card';

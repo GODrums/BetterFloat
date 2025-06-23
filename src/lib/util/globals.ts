@@ -1,13 +1,38 @@
+import iconAvanmarket from 'data-base64:~/../assets/logos/avanmarket.svg';
+import iconAvanmarketFull from 'data-base64:~/../assets/logos/avanmarket_full.svg';
+import iconBitskins from 'data-base64:~/../assets/logos/bitskins.svg';
+import iconBitskinsFull from 'data-base64:~/../assets/logos/bitskins_full.svg';
+import iconBuffmarket from 'data-base64:~/../assets/logos/buffmarket.ico';
+import iconBuffmarketFull from 'data-base64:~/../assets/logos/buffmarket_full.svg';
+import iconDmarket from 'data-base64:~/../assets/logos/dmarket.ico';
+import iconDmarketFull from 'data-base64:~/../assets/logos/dmarket_full.svg';
+import iconLisskins from 'data-base64:~/../assets/logos/lisskins.svg';
+import iconLisskinsFull from 'data-base64:~/../assets/logos/lisskins_full.svg';
+import iconSkinbaron from 'data-base64:~/../assets/logos/skinbaron.svg';
+import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg';
+import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
+import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
+import iconSkinout from 'data-base64:~/../assets/logos/skinout.svg';
+import iconSkinoutFull from 'data-base64:~/../assets/logos/skinout_full.svg';
+import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
+import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
+import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
+import iconTradeit from 'data-base64:~/../assets/logos/tradeit.png';
+import iconTradeitFull from 'data-base64:~/../assets/logos/tradeit_full.svg';
+import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
+import iconWaxpeerFull from 'data-base64:~/../assets/logos/waxpeer_full.svg';
+import iconWhitemarket from 'data-base64:~/../assets/logos/whitemarket.svg';
+import iconWhitemarketFull from 'data-base64:~/../assets/logos/whitemarket_full.svg';
 import iconArrowdown from 'data-base64:/assets/icons/arrow-down.svg';
-import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
 import iconArrowup2 from 'data-base64:/assets/icons/arrow-up.svg';
+import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
 import iconBan from 'data-base64:/assets/icons/ban-solid.svg';
 import iconCameraFlipped from 'data-base64:/assets/icons/camera-flipped.svg';
 import iconCamera from 'data-base64:/assets/icons/camera-solid.svg';
 import iconClock from 'data-base64:/assets/icons/clock-solid.svg';
 import iconC5Game from 'data-base64:/assets/icons/icon-c5game.png';
-import iconPricempireApp from 'data-base64:/assets/icons/icon-pricempire-app.png';
 import iconPricempire from 'data-base64:/assets/icons/icon-pricempire.png';
+import iconPricempireApp from 'data-base64:/assets/icons/icon-pricempire-app.png';
 import iconSteam from 'data-base64:/assets/icons/icon-steam.svg';
 import iconSteamAnalyst from 'data-base64:/assets/icons/icon-steamanalyst.png';
 import iconYouPin from 'data-base64:/assets/icons/icon-youpin.png';
@@ -24,6 +49,8 @@ import iconMarketCSGOFull from 'data-base64:/assets/logos/marketcsgo_full.png';
 import iconShadowpay from 'data-base64:/assets/logos/shadowpay.webp';
 import iconShadowpayFull from 'data-base64:/assets/logos/shadowpay_full.svg';
 import iconSkinport from 'data-base64:/assets/logos/skinport.ico';
+import iconSkinsmonkey from 'data-base64:/assets/logos/skinsmonkey.jpg';
+import iconSkinsmonkeyFull from 'data-base64:/assets/logos/skinsmonkey_full.svg';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
 import iconDiamondGem1 from 'data-base64:/assets/patterns/diamond-gem-1.png';
 import iconDiamondGem2 from 'data-base64:/assets/patterns/diamond-gem-2.png';
@@ -49,25 +76,6 @@ import iconSapphire1 from 'data-base64:/assets/patterns/sapphire-rank-1.png';
 import iconSapphire2 from 'data-base64:/assets/patterns/sapphire-rank-2.png';
 import iconSapphire3 from 'data-base64:/assets/patterns/sapphire-rank-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
-import iconBitskins from 'data-base64:~/../assets/logos/bitskins.svg';
-import iconBitskinsFull from 'data-base64:~/../assets/logos/bitskins_full.svg';
-import iconBuffmarket from 'data-base64:~/../assets/logos/buffmarket.ico';
-import iconBuffmarketFull from 'data-base64:~/../assets/logos/buffmarket_full.svg';
-import iconDmarket from 'data-base64:~/../assets/logos/dmarket.ico';
-import iconDmarketFull from 'data-base64:~/../assets/logos/dmarket_full.svg';
-import iconLisskins from 'data-base64:~/../assets/logos/lisskins.svg';
-import iconLisskinsFull from 'data-base64:~/../assets/logos/lisskins_full.svg';
-import iconSkinbaron from 'data-base64:~/../assets/logos/skinbaron.svg';
-import iconSkinbaronFull from 'data-base64:~/../assets/logos/skinbaron_full.svg';
-import iconSkinbid from 'data-base64:~/../assets/logos/skinbid.svg';
-import iconSkinbidFull from 'data-base64:~/../assets/logos/skinbid_full.png';
-import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
-import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
-import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
-import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
-import iconWaxpeerFull from 'data-base64:~/../assets/logos/waxpeer_full.svg';
-import iconWhitemarket from 'data-base64:~/../assets/logos/whitemarket.svg';
-import iconWhitemarketFull from 'data-base64:~/../assets/logos/whitemarket_full.svg';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
@@ -108,6 +116,8 @@ export const ICON_SWAPGG = iconSwapgg;
 export const ICON_SWAPGG_FULL = iconSwapggFull;
 export const ICON_MARKETCSGO = iconMarketCSGO;
 export const ICON_MARKETCSGO_FULL = iconMarketCSGOFull;
+export const ICON_TRADEIT = iconTradeit;
+export const ICON_TRADEIT_FULL = iconTradeitFull;
 export const ICON_EXCLAMATION = iconExclamation;
 export const ICON_CAMERA = iconCamera;
 export const ICON_CAMERA_FLIPPED = iconCameraFlipped;
@@ -146,6 +156,12 @@ export const ICON_RUBY_3 = iconRuby3;
 export const ICON_EMERALD_1 = iconEmerald1;
 export const ICON_EMERALD_2 = iconEmerald2;
 export const ICON_EMERALD_3 = iconEmerald3;
+export const ICON_AVANMARKET = iconAvanmarket;
+export const ICON_AVANMARKET_FULL = iconAvanmarketFull;
+export const ICON_SKINSMONKEY = iconSkinsmonkey;
+export const ICON_SKINSMONKEY_FULL = iconSkinsmonkeyFull;
+export const ICON_SKINOUT = iconSkinout;
+export const ICON_SKINOUT_FULL = iconSkinoutFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
@@ -165,6 +181,8 @@ export enum MarketSource {
 	Lisskins = 'lisSkins',
 	Skinbid = 'skinbid',
 	Skinport = 'skinport',
+	Marketcsgo = 'marketcsgo',
+	Pricempire = 'pricempire',
 }
 
 export const AvailableMarketSources = [

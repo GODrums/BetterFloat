@@ -1,13 +1,7 @@
 import { motion } from 'framer-motion';
 import { cn } from '~lib/utils';
 
-export const Highlight = ({
-	children,
-	className,
-}: {
-	children: React.ReactNode;
-	className?: string;
-}) => {
+export const Highlight = ({ children, className }: { children: React.ReactNode; className?: string }) => {
 	return (
 		<motion.span
 			initial={{

@@ -10,7 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -163,7 +163,7 @@ async function adjustItem(container: Element, isOwn: boolean) {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem!, container, isOwn);
+	const _priceResult = await addBuffPrice(apiItem!, container, isOwn);
 }
 
 async function getBuffItem(item: Swapgg.Item) {

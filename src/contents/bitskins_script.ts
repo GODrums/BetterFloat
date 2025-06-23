@@ -3,7 +3,6 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
-import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
@@ -11,8 +10,8 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
-import { genGemContainer, generatePriceLine } from '~lib/util/uigeneration';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.bitskins.com/*'],
@@ -180,7 +179,7 @@ async function adjustItem(container: Element, state: PageState) {
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container, state);
 
 	// store item in html
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));

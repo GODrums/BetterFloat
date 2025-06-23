@@ -1,17 +1,10 @@
-import React from 'react';
 import { cn } from '~lib/utils';
 
-export const Meteors = ({
-	number,
-	className,
-}: {
-	number?: number;
-	className?: string;
-}) => {
+export const Meteors = ({ number, className }: { number?: number; className?: string }) => {
 	const meteors = new Array(number || 20).fill(true);
 	return (
 		<>
-			{meteors.map((el, idx) => (
+			{meteors.map((_, idx) => (
 				<span
 					key={'meteor' + idx}
 					className={cn(

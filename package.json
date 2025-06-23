@@ -13,28 +13,28 @@
 		"build": "plasmo build",
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
-		"lint": "biome lint --write src/",
-		"format": "biome format --write src/ && biome check --write src/"
+		"lint": "biome ci src/",
+		"format": "biome format src/ --write && biome check src/ --fix"
 	},
 	"dependencies": {
-		"@plasmohq/messaging": "^0.6.2",
+		"@plasmohq/messaging": "^0.7.1",
 		"@plasmohq/storage": "^1.15.0",
-		"@radix-ui/react-accordion": "^1.2.4",
-		"@radix-ui/react-avatar": "^1.1.4",
-		"@radix-ui/react-checkbox": "^1.1.5",
-		"@radix-ui/react-dialog": "^1.1.7",
+		"@radix-ui/react-accordion": "^1.2.11",
+		"@radix-ui/react-avatar": "^1.1.10",
+		"@radix-ui/react-checkbox": "^1.3.2",
+		"@radix-ui/react-dialog": "^1.1.14",
 		"@radix-ui/react-icons": "^1.3.2",
-		"@radix-ui/react-label": "^2.1.3",
-		"@radix-ui/react-popover": "^1.1.7",
-		"@radix-ui/react-scroll-area": "^1.2.4",
-		"@radix-ui/react-select": "^2.1.7",
-		"@radix-ui/react-separator": "^1.1.3",
-		"@radix-ui/react-slider": "^1.2.4",
-		"@radix-ui/react-slot": "^1.2.0",
-		"@radix-ui/react-switch": "^1.1.4",
-		"@radix-ui/react-tabs": "^1.1.4",
-		"@radix-ui/react-toast": "^1.2.7",
-		"@radix-ui/react-tooltip": "^1.2.0",
+		"@radix-ui/react-label": "^2.1.7",
+		"@radix-ui/react-popover": "^1.1.14",
+		"@radix-ui/react-scroll-area": "^1.2.9",
+		"@radix-ui/react-select": "^2.2.5",
+		"@radix-ui/react-separator": "^1.1.7",
+		"@radix-ui/react-slider": "^1.3.5",
+		"@radix-ui/react-slot": "^1.2.3",
+		"@radix-ui/react-switch": "^1.2.5",
+		"@radix-ui/react-tabs": "^1.1.12",
+		"@radix-ui/react-toast": "^1.2.14",
+		"@radix-ui/react-tooltip": "^1.2.7",
 		"@tsparticles/engine": "^3.8.1",
 		"@tsparticles/react": "^3.0.0",
 		"@tsparticles/slim": "^3.8.1",
@@ -44,6 +44,7 @@
 		"clsx": "^2.1.1",
 		"common-tags": "^1.8.2",
 		"framer-motion": "^11.18.2",
+		"fuse.js": "^7.1.0",
 		"jose": "^5.10.0",
 		"lucide-react": "^0.469.0",
 		"plasmo": "0.90.5",
@@ -55,10 +56,10 @@
 		"socket.io-msgpack-parser": "^3.0.2",
 		"tailwind-merge": "^2.6.0",
 		"tailwindcss-animate": "^1.0.7",
-		"zod": "^3.24.2"
+		"zod": "^3.25.64"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.0.0",
 		"@parcel/packager-ts": "2.9.3",
 		"@types/chrome": "0.0.315",
 		"@types/node": "22.10.2",
@@ -68,33 +69,13 @@
 		"csgo-fade-percentage-calculator": "^1.1.6",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.5.0",
-		"lefthook": "^1.11.9",
+		"lefthook": "^1.11.13",
 		"postcss": "8.4.49",
 		"resq": "^1.11.0",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
 	},
 	"manifest": {
-		"web_accessible_resources": [
-			{
-				"matches": [
-					"https://*.csfloat.com/*",
-					"https://*.skinport.com/*",
-					"https://*.skinbid.com/*"
-				],
-				"resources": [
-					"inject.ts"
-				]
-			},
-			{
-				"matches": [
-					"https://*.gamerpay.gg/*"
-				],
-				"resources": [
-					"src/lib/vendors/resq.js"
-				]
-			}
-		],
 		"key": "$CRX_PUBLIC_KEY",
 		"browser_specific_settings": {
 			"gecko": {
@@ -118,8 +99,12 @@
 			"unlimitedStorage",
 			"storage",
 			"scripting",
-			"activeTab"
-		]
+			"activeTab",
+			"omnibox"
+		],
+		"omnibox": {
+			"keyword": "bf"
+		}
 	},
 	"pnpm": {
 		"peerDependencyRules": {

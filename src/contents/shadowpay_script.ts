@@ -11,7 +11,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SHADOWPAY_SELECTORS } from '~lib/handlers/selectors/shadowpay_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -137,7 +137,7 @@ async function adjustItem(container: Element, state: PageState) {
 	console.log('[BetterFloat] Item found:', item);
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(item, container, state);
+	const _priceResult = await addBuffPrice(item, container, state);
 
 	// store item in html
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));

@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import type { DMarket } from '~lib/@typings/DMarketTypes';
-import { LoadingSpinner } from '~popup/components/LoadingSpinner';
-import { ScrollArea } from '~popup/ui/scroll-area';
-
 import betterfloatLogo from 'data-base64:/assets/icon.png';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
 import { AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getDMarketCurrency } from '~lib/handlers/cache/dmarket_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
@@ -16,9 +13,11 @@ import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
+import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { CSFCheckbox } from '~popup/ui/checkbox';
+import { ScrollArea } from '~popup/ui/scroll-area';
 
 interface MarketEntry {
 	market: string;
@@ -96,7 +95,7 @@ const convertStylesStringToObject = (stringStyles: string) =>
 
 				const value = style.substring(colonPosition + 1).trim();
 
-				// biome-ignore lint/performance/noAccumulatingSpread: <explanation>
+				// biome-ignore lint/performance/noAccumulatingSpread: makes sense here
 				return value ? { ...acc, [camelCaseProperty]: value } : acc;
 			}, {})
 		: {};

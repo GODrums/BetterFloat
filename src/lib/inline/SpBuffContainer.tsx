@@ -79,10 +79,6 @@ const SPBuffContainer: React.FC = () => {
 		}
 	};
 
-	const openBuffPage = () => {
-		window.open(data.link, '_blank');
-	};
-
 	return (
 		<div className="bg-transparent dark" style={{ fontFamily: 'Montserrat, sans-serif' }}>
 			<Container child={portal} />

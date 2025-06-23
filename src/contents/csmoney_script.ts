@@ -11,7 +11,7 @@ import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selector
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -166,7 +166,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		return;
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(apiItem, container, isPopout);
+	const _priceResult = await addBuffPrice(apiItem, container, isPopout);
 
 	if (!isPopout) {
 		await addPopupListener(container, apiItem);
@@ -421,7 +421,12 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		}
 	}
 
-	if (priceListing?.gt(0.06) && location.pathname !== '/market/sell/') {
+	if (
+		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
+		priceListing?.gt(0.06) &&
+		location.pathname !== '/market/sell/' &&
+		!isBuffBannedItem(buff_name)
+	) {
 		let priceContainer: HTMLElement | null | undefined = null;
 		if (selector === CSMONEY_SELECTORS.market) {
 			priceContainer = container.querySelector<HTMLElement>('a.betterfloat-buff-a')?.previousElementSibling?.previousElementSibling?.firstElementChild?.firstElementChild as HTMLElement;
@@ -446,13 +451,21 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		const percentage = itemPrice.div(priceFromReference ?? 0).mul(100);
 		const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
+		let saleTagInner = '';
+		if (extensionSettings['csm-buffdifference']) {
+			saleTagInner += html`<span>${difference.isPos() ? '+' : '-'}${Formatter.format(absDifference.toNumber())}</span>`;
+		}
+		if (extensionSettings['csm-buffdifferencepercent']) {
+			const percentageText = percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2);
+			saleTagInner += extensionSettings['csm-buffdifference'] ? html`<span>(${percentageText}%)</span>` : html`<span>${percentageText}%</span>`;
+		}
+
 		const buffPriceHTML = html`
 			<div
 				class="sale-tag betterfloat-sale-tag ${isPopout ? 'betterfloat-big-tag' : ''}"
 				style="background-color: ${background}; color: ${color};"
 			>
-				<span>${difference.isPos() ? '+' : '-'}${Formatter.format(absDifference.toNumber())}</span>
-				<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+				${saleTagInner}
 			</div>
 		`;
 

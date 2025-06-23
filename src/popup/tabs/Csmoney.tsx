@@ -4,7 +4,6 @@ import { IcOutlineDiscount, MaterialSymbolsUpdate, PhSticker, StreamlineDiscount
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
-import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
@@ -51,14 +50,6 @@ export const CSMoneySettings = () => {
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 						/>
 					</SettingsCard>
-				</div>
-			</div>
-			<div className="mb-2">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">MISC</p>
-				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsColorPicker prefix="csm" />
 				</div>
 			</div>
 		</TabTemplate>
