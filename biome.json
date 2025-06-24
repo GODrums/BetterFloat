@@ -66,7 +66,8 @@
 		"includes": [
 			"**",
 			"!**/src/lib/utils.ts",
-			"!**/src/lib/components/Vortex.tsx"
+			"!**/src/lib/components/Vortex.tsx",
+			"!**/src/lib/vendors/resq.js"
 		]
 	},
 	"javascript": {

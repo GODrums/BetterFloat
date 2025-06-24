@@ -421,7 +421,7 @@ export function addListingAge(container: Element, cachedItem: Skinbid.Listing, p
 	}
 }
 
-export async function addBuffPrice(
+async function addBuffPrice(
 	cachedItem: Skinbid.Listing,
 	container: Element,
 	selector: SKINBID_SELECTOR

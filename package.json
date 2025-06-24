@@ -71,6 +71,7 @@
 		"decimal.js": "^10.5.0",
 		"lefthook": "^1.11.13",
 		"postcss": "8.4.49",
+		"resq": "^1.11.0",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
 	},
@@ -82,9 +83,6 @@
 				"strict_min_version": "128.0"
 			}
 		},
-		"optional_permissions": [
-			"notifications"
-		],
 		"host_permissions": [
 			"https://*/*",
 			"http://*/*"
@@ -99,7 +97,8 @@
 			"storage",
 			"scripting",
 			"activeTab",
-			"omnibox"
+			"omnibox",
+			"notifications"
 		],
 		"omnibox": {
 			"keyword": "bf"

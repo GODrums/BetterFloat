@@ -76,10 +76,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		// if within last 3 seconds, don't inject
 		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 3000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
-			executeInjection(tabId);
+			executeInjection(tabId, tab.url);
 		}
 		if (tab.url.includes('swap.gg')) {
-			executeInjection(tabId);
+			executeInjection(tabId, tab.url);
 		}
 	}
 
