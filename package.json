@@ -83,9 +83,6 @@
 				"strict_min_version": "128.0"
 			}
 		},
-		"optional_permissions": [
-			"notifications"
-		],
 		"host_permissions": [
 			"https://*/*",
 			"http://*/*"
@@ -100,7 +97,8 @@
 			"storage",
 			"scripting",
 			"activeTab",
-			"omnibox"
+			"omnibox",
+			"notifications"
 		],
 		"omnibox": {
 			"keyword": "bf"

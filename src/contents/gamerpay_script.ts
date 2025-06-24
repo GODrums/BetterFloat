@@ -7,10 +7,8 @@ import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
-import { getBuffPrice } from '~lib/util/helperfunctions';
-import { isBuffBannedItem } from '~lib/util/helperfunctions';
-import { type IStorage, getAllSettings } from '~lib/util/storage';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -37,71 +35,34 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'bs');
 
-	console.timeEnd('[BetterFloat] Gamerpay init timer');
-
-	// mutation observer is only needed once
-	if (!isObserverActive) {
-		isObserverActive = true;
-		applyMutation();
-		console.log('[BetterFloat] Mutation observer started');
-	}
-
-	firstLaunch();
-}
-
-async function firstLaunch() {
-	const items = document.querySelectorAll<HTMLElement>('div.ItemCard_wrapper__');
-	for (const item of items) {
-		await adjustItem(item);
-	}
-
-	const feeds = document.querySelector<HTMLElement>('div.ItemFeed_feed__');
-	if (feeds) {
-		for (const item of feeds.children) {
-			if (item instanceof HTMLElement && item.className.startsWith('ItemCard_wrapper')) {
-				await adjustItem(item);
-			}
-		}
-	}
-}
-function applyMutation() {
-	const observer = new MutationObserver(async (mutations) => {
-		for (const mutation of mutations) {
-			for (let i = 0; i < mutation.addedNodes.length; i++) {
-				const addedNode = mutation.addedNodes[i];
-				// some nodes are not elements, so we need to check
-				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[Plasmo] Mutation detected:', addedNode);
-
-				if (addedNode.className.startsWith('ItemCard_wrapper')) {
-					await adjustItem(addedNode);
-				} else if (addedNode.className.startsWith('ItemFeed_feed')) {
-					for (const item of addedNode.children) {
-						if (item instanceof HTMLElement && item.className.startsWith('ItemCard_wrapper')) {
-							await adjustItem(item);
-						}
-					}
-				}
-			}
+	// Set up event listener for React data ready events from the injected script
+	document.addEventListener('betterfloat-data-ready', async (event) => {
+		console.log('[BetterFloat] React data ready event received:', event);
+		const target = event.target as HTMLElement;
+		const props = (event as CustomEvent).detail.props;
+		if (target?.className?.includes('ItemCard_wrapper')) {
+			await adjustItem(target, props);
 		}
 	});
-	observer.observe(document, { childList: true, subtree: true });
+
+	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }
 
-async function adjustItem(container: Element) {
-	let item = container.getAttribute('data-betterfloat');
-
-	let tries = 10;
-	while ((!item || item.length < 1 || item === 'undefined') && tries-- > 0) {
-		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = container.getAttribute('data-betterfloat');
+async function adjustItem(container: Element, props: string) {
+	if (!props || props.length < 1 || props === '{}') {
+		console.warn('[BetterFloat] No React data available for item card');
+		return;
 	}
-	if (!item || item.length < 1 || item === 'undefined') return;
 
-	const itemData = JSON.parse(item) as Gamerpay.ReactItem;
+	let itemData: Gamerpay.ReactItem;
+	try {
+		itemData = JSON.parse(props) as Gamerpay.ReactItem;
+	} catch (error) {
+		console.error('[BetterFloat] Error parsing item data:', error);
+		return;
+	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const priceResult = await addBuffPrice(itemData, container);
+	await addBuffPrice(itemData, container);
 }
 
 async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
@@ -238,13 +199,17 @@ function getUserCurrency() {
 }
 
 function createBuffItem(item: Gamerpay.Item) {
+	const marketHashName = item.marketHashName ?? item.name;
+	let itemStyle = '' as ItemStyle;
+	if (item.wearName === 'Vanilla') {
+		itemStyle = 'Vanilla';
+	}
 	return {
-		name: item.marketHashName ?? `${item.name} (${item.wearName})`,
-		style: '' as ItemStyle,
+		name: marketHashName,
+		style: itemStyle,
 	};
 }
 
 let extensionSettings: IStorage;
-let isObserverActive = false;
 
 init();

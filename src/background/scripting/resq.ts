@@ -33,7 +33,7 @@ export function injectResq() {
 	console.log('[BetterFloat] Injecting Resq...');
 
 	// Helper function to wait for resq to be available
-	function waitForResq(maxAttempts = 50, interval = 100): Promise<void> {
+	function waitForResq(maxAttempts = 10, interval = 200): Promise<void> {
 		return new Promise((resolve, reject) => {
 			let attempts = 0;
 
@@ -41,11 +41,13 @@ export function injectResq() {
 				attempts++;
 
 				if (window.resq && typeof window.resq.resq$ === 'function') {
+					console.log('[BetterFloat] Resq found and ready!');
 					resolve();
 					return;
 				}
 
 				if (attempts >= maxAttempts) {
+					console.error(`[BetterFloat] Resq not available after ${maxAttempts} attempts`);
 					reject(new Error(`Resq not available after ${maxAttempts} attempts`));
 					return;
 				}
@@ -57,61 +59,99 @@ export function injectResq() {
 		});
 	}
 
-	async function observeGamerpay() {
-		const observer = new MutationObserver(async (mutations) => {
-			for (const mutation of mutations) {
-				for (const node of mutation.addedNodes) {
-					if (node instanceof HTMLElement) {
-						// console.log(node);
-						if (node.className.toString().startsWith('ItemCard_wrapper')) {
-							annotateReactNode(node as HTMLElement);
-						} else if (node.className.toString().startsWith('ItemFeed_feed')) {
-							for (const item of node.children) {
-								if (item instanceof HTMLElement && item.className.toString().startsWith('ItemCard_wrapper')) {
-									annotateReactNode(item as HTMLElement);
+	// Gamerpay-specific resq extraction
+	if (location.hostname === 'gamerpay.gg') {
+		// Add a fallback check to see if resq might already be available
+		if (window.resq && typeof window.resq.resq$ === 'function') {
+			setupGamerpayExtractor();
+		} else {
+			waitForResq().then(() => {
+				setupGamerpayExtractor();
+			});
+		}
+	}
+
+	function setupGamerpayExtractor() {
+		try {
+			// Extract React component data from an element
+			async function extractReactData(element: HTMLElement): Promise<any> {
+				try {
+					if (!window.resq || typeof window.resq.resq$ !== 'function') {
+						console.warn('[BetterFloat] Resq not available for extraction');
+						return null;
+					}
+
+					const reactComponent = window.resq.resq$('P', element);
+					if (reactComponent?.props) {
+						return reactComponent.props;
+					}
+				} catch (error) {
+					console.warn('[BetterFloat] Error extracting React data:', error);
+				}
+				return null;
+			}
+
+			async function processItemCard(element: HTMLElement) {
+				const reactData = await extractReactData(element);
+				if (reactData) {
+					// Dispatch custom event to notify content script
+					element.dispatchEvent(
+						new CustomEvent('betterfloat-data-ready', {
+							bubbles: true,
+							detail: { props: JSON.stringify(reactData) },
+						})
+					);
+				}
+			}
+
+			// Observer to watch for new item cards
+			const observer = new MutationObserver(async (mutations) => {
+				for (const mutation of mutations) {
+					for (const node of mutation.addedNodes) {
+						if (node.nodeType === Node.ELEMENT_NODE) {
+							const element = node as HTMLElement;
+							// Check if it's an item card
+							if (element.className?.includes('ItemCard_wrapper')) {
+								await processItemCard(element);
+							}
+
+							// Check for item cards within the added node
+							if (element.querySelectorAll) {
+								const itemCards = element.querySelectorAll('[class*="ItemCard_wrapper"]');
+								for (const card of itemCards) {
+									await processItemCard(card as HTMLElement);
 								}
 							}
-						} else if (node.className.toString().startsWith('Page_wrapper')) {
-							setTimeout(() => {
-								const items = document.querySelectorAll('div[class*="FeedPreview_itemWrapper"]');
-								for (const item of items) {
-									annotateReactNode(item as HTMLElement);
-								}
-							}, 1000);
 						}
 					}
 				}
-			}
-		});
-		observer.observe(document, { childList: true, subtree: true });
-	}
-
-	function annotateReactNode(node: HTMLElement) {
-		// Double-check that resq is available before using it
-		if (!window.resq || typeof window.resq.resq$ !== 'function') {
-			console.warn('[BetterFloat] Resq not available, skipping annotation');
-			return;
-		}
-
-		try {
-			const item = window.resq.resq$('P', node as HTMLElement);
-			node.setAttribute('data-betterfloat', JSON.stringify(item.props));
-		} catch (error) {
-			const item = window.resq.resq$('*', node as HTMLElement);
-			console.log(item);
-			console.error('[BetterFloat] Error annotating React node:', error);
-		}
-	}
-
-	waitForResq()
-		.then(() => {
-			console.log('[BetterFloat] Resq loaded');
-			window.resq.waitToLoadReact(100, '#__next').then(() => {
-				console.log('[BetterFloat] React loaded');
 			});
-			observeGamerpay();
-		})
-		.catch((error) => {
-			console.error('[BetterFloat] Error waiting for Resq:', error);
-		});
+
+			// Start observing
+			observer.observe(document.body, {
+				childList: true,
+				subtree: true,
+			});
+
+			// Process existing item cards
+			async function processExistingCards() {
+				const existingCards = document.querySelectorAll('[class*="ItemCard_wrapper"]');
+				console.log(`[BetterFloat] Found ${existingCards.length} existing item cards to process`);
+				for (const card of existingCards) {
+					await processItemCard(card as HTMLElement);
+				}
+			}
+
+			// Wait for DOM to be ready, then process existing cards
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', processExistingCards);
+			} else {
+				processExistingCards();
+			}
+
+			console.log('[BetterFloat] Gamerpay resq extractor setup complete');
+		} catch (error) {
+			console.error('[BetterFloat] Error in setupGamerpayExtractor:', error);
+		}
+	}
 }

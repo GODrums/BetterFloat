@@ -31,28 +31,7 @@ export const INJECTION_DOMAINS = [
  */
 export function executeInjection(tabId: number, url: string) {
 	if (url.includes('gamerpay.gg')) {
-		console.log('[BetterFloat] Injecting Resq...');
-
-		// inject the library itself
-		chrome.scripting
-			.executeScript({
-				target: { tabId },
-				files: ['src/lib/vendors/resq.js'],
-				injectImmediately: true,
-				world: 'MAIN',
-			})
-			.catch((error) => {
-				console.debug('[BetterFloat] Injection error (expected for some pages):', error);
-			});
-
-		chrome.scripting
-			.executeScript({
-				target: { tabId },
-				func: injectResq,
-			})
-			.catch((error) => {
-				console.debug('[BetterFloat] Injection error (expected for some pages):', error);
-			});
+		injectResqForGamerpay(tabId);
 	}
 
 	// Inject the main script immediately
@@ -66,4 +45,25 @@ export function executeInjection(tabId: number, url: string) {
 		.catch((error) => {
 			console.debug('[BetterFloat] Injection error (expected for some pages):', error);
 		});
+}
+
+async function injectResqForGamerpay(tabId: number) {
+	console.log('[BetterFloat] Injecting Resq for Gamerpay...');
+	try {
+		await chrome.scripting.executeScript({
+			target: { tabId },
+			files: ['src/lib/vendors/resq.js'],
+			injectImmediately: true,
+			world: 'MAIN',
+		});
+
+		// Inject the resq extractor after the library is loaded
+		await chrome.scripting.executeScript({
+			target: { tabId },
+			func: injectResq,
+			world: 'MAIN',
+		});
+	} catch (error) {
+		console.error('[BetterFloat] File injection failed:', error);
+	}
 }
