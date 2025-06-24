@@ -88,7 +88,16 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
 		});
-		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		footerContainer.firstElementChild?.insertAdjacentHTML('afterend', buffContainer);
+
+		const buffElement = footerContainer?.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			buffElement.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				window.open(buffElement.href, '_blank');
+			});
+		}
 	}
 
 	const discountContainer = container.querySelector('div[class*="ItemCardBody_pricePrimary__"]');
