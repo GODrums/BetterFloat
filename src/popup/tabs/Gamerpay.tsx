@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { ICON_AVANMARKET_FULL, ICON_CSBLUEGEM } from '~lib/util/globals';
+import { ICON_CSBLUEGEM, ICON_GAMERPAY_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
@@ -10,21 +10,21 @@ import { Badge } from '~popup/ui/badge';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-interface AvanSettingsProps {
+interface GamerpaySettingsProps {
 	hasProPlan: boolean;
 }
 
-export const AvanSettings = ({ hasProPlan }: AvanSettingsProps) => {
-	const [checked] = useStorage<boolean>('av-enable');
+export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
+	const [checked] = useStorage<boolean>('gp-enable');
 
 	return (
-		<TabTemplate value="avan" checked={checked}>
-			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Avanmarket features" />}
-			<MarketLogoFull icon={ICON_AVANMARKET_FULL} />
+		<TabTemplate value="gamerpay" checked={checked}>
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Gamerpay features" />}
+			<MarketLogoFull icon={ICON_GAMERPAY_FULL} />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>
-			<SettingsEnable id="av-enable" isPremiumFeature hasProPlan={hasProPlan} />
+			<SettingsEnable id="gp-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
-import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
@@ -24,16 +24,12 @@ async function init() {
 		return;
 	}
 
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	activateHandler();
-
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
-	// if (!extensionSettings['bs-enable']) return;
+	if (!extensionSettings['gp-enable']) return;
 
-	await initPriceMapping(extensionSettings, 'bs');
+	await initPriceMapping(extensionSettings, 'gp');
 
 	// Set up event listener for React data ready events from the injected script
 	document.addEventListener('betterfloat-data-ready', async (event) => {
@@ -149,7 +145,7 @@ async function getBuffItem(item: Gamerpay.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['bs-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['gp-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

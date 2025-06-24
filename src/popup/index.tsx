@@ -9,6 +9,7 @@ import {
 	ICON_CSFLOAT,
 	ICON_CSMONEY,
 	ICON_DMARKET,
+	ICON_GAMERPAY,
 	ICON_LISSKINS,
 	ICON_MARKETCSGO,
 	ICON_SHADOWPAY,
@@ -38,6 +39,7 @@ import Header from './layout/header';
 import { AvanSettings } from './tabs/Avan';
 import { BitskinsSettings } from './tabs/Bitskins';
 import { DmarketSettings } from './tabs/Dmarket';
+import { GamerpaySettings } from './tabs/Gamerpay';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
 import { SkinoutSettings } from './tabs/Skinout';
@@ -116,6 +118,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="lisskins">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_LISSKINS} />
 								</TabsTrigger>
+								<TabsTrigger value="gamerpay">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_GAMERPAY} />
+								</TabsTrigger>
 								<TabsTrigger value="skinbaron">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
 								</TabsTrigger>
@@ -173,6 +178,7 @@ export default function IndexPopup() {
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<BitskinsSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />
+					<GamerpaySettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<WaxpeerSettings hasProPlan={hasProPlan} />
 					<WhiteMarketSettings hasProPlan={hasProPlan} />

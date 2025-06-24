@@ -44,6 +44,8 @@ import iconCsfloatFull from 'data-base64:/assets/logos/csfloat_full.png';
 import iconCsgoskins from 'data-base64:/assets/logos/csgoskins.png';
 import iconCsmoney from 'data-base64:/assets/logos/csmoney.ico';
 import csmoneyFull from 'data-base64:/assets/logos/csmoney_full.svg';
+import iconGamerpay from 'data-base64:/assets/logos/gamerpay.webp';
+import iconGamerpayFull from 'data-base64:/assets/logos/gamerpay_full.png';
 import iconMarketCSGO from 'data-base64:/assets/logos/marketcsgo.webp';
 import iconMarketCSGOFull from 'data-base64:/assets/logos/marketcsgo_full.png';
 import iconShadowpay from 'data-base64:/assets/logos/shadowpay.webp';
@@ -162,6 +164,8 @@ export const ICON_SKINSMONKEY = iconSkinsmonkey;
 export const ICON_SKINSMONKEY_FULL = iconSkinsmonkeyFull;
 export const ICON_SKINOUT = iconSkinout;
 export const ICON_SKINOUT_FULL = iconSkinoutFull;
+export const ICON_GAMERPAY = iconGamerpay;
+export const ICON_GAMERPAY_FULL = iconGamerpayFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

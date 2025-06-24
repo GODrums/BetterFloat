@@ -232,6 +232,13 @@ export const DEFAULT_SETTINGS = {
 	'so-buffdifference': true,
 	'so-buffdifferencepercent': true,
 	'so-listingage': true,
+	'gp-enable': true,
+	'gp-pricingsource': 'buff',
+	'gp-altmarket': 'none',
+	'gp-pricereference': 0,
+	'gp-buffdifference': true,
+	'gp-buffdifferencepercent': true,
+	'gp-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

@@ -6,6 +6,7 @@ import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
+import { Badge } from '~popup/ui/badge';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
@@ -20,6 +21,9 @@ export const WhiteMarketSettings = ({ hasProPlan }: WhiteMarketSettingsProps) =>
 		<TabTemplate value="whitemarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access WhiteMarket features" />}
 			<MarketLogoFull icon={ICON_WHITEMARKET_FULL} />
+			<div className="flex items-center justify-center gap-2">
+				<Badge variant="outline">BETA</Badge>
+			</div>
 			<SettingsEnable id="wm-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
