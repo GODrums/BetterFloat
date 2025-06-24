@@ -14,7 +14,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.gamerpay.gg/*'],
 	run_at: 'document_end',
-	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/bitskins_styles.css'],
+	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/gamerpay_styles.css'],
 };
 
 async function init() {
@@ -33,7 +33,6 @@ async function init() {
 
 	// Set up event listener for React data ready events from the injected script
 	document.addEventListener('betterfloat-data-ready', async (event) => {
-		console.log('[BetterFloat] React data ready event received:', event);
 		const target = event.target as HTMLElement;
 		const props = (event as CustomEvent).detail.props;
 		if (target?.className?.includes('ItemCard_wrapper')) {
@@ -92,16 +91,19 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	let discountContainer = container.querySelector('div.price > div.discount');
-	if (!discountContainer) {
-		const newContainer = document.createElement('div');
-		newContainer.classList.add('discount');
-		container.querySelector('div.price > div.amount')?.before(newContainer);
-		discountContainer = newContainer;
-	}
+	const discountContainer = container.querySelector('div[class*="ItemCardBody_pricePrimary__"]');
 
 	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['gp-buffdifference'] || extensionSettings['gp-buffdifferencepercent'])) {
-		discountContainer.outerHTML = createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter);
+		discountContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+
+		(discountContainer.parentElement as HTMLElement).style.display = 'flex';
+		(discountContainer.parentElement as HTMLElement).style.alignItems = 'center';
+		(discountContainer.parentElement as HTMLElement).style.gap = '8px';
+
+		const oldDiscountContainer = container.querySelector('span[class*="ItemCardBody_savings__"]');
+		if (oldDiscountContainer) {
+			oldDiscountContainer.remove();
+		}
 	}
 
 	return {
@@ -183,7 +185,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
-		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+		<div class="betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
 			${extensionSettings['gp-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
 			${extensionSettings['gp-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
