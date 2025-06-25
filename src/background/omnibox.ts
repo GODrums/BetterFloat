@@ -24,6 +24,7 @@ const KEYWORDS: Record<string, MarketSource> = {
 	skinbid: MarketSource.Skinbid,
 	skinport: MarketSource.Skinport,
 	pricempire: MarketSource.Pricempire,
+	marketcsgo: MarketSource.Marketcsgo,
 };
 
 const SOURCE_TEXT: Record<MarketSource, string> = {
@@ -41,6 +42,7 @@ const SOURCE_TEXT: Record<MarketSource, string> = {
 	[MarketSource.Skinport]: 'Skinport',
 	[MarketSource.None]: 'None',
 	[MarketSource.Pricempire]: 'Pricempire',
+	[MarketSource.Marketcsgo]: 'MarketCSGO',
 };
 
 // Map MarketSource -> property key in marketIds.json
@@ -59,6 +61,7 @@ const MARKET_ID_PROP: Record<MarketSource, string | null> = {
 	[MarketSource.Skinbid]: null,
 	[MarketSource.Skinport]: null,
 	[MarketSource.Pricempire]: null,
+	[MarketSource.Marketcsgo]: null,
 };
 
 // Initialize Fuse.js for fuzzy searching
