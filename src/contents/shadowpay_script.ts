@@ -31,6 +31,8 @@ async function init() {
 		return;
 	}
 
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -55,8 +57,13 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+}
 
-	replaceHistory();
+function replaceHistory() {
+	const isLoggedOut = document.querySelector('div.user-navigation__login-text');
+	if (isLoggedOut && !location.search.includes('utm_campaign')) {
+		location.search += `${location.search ? '&' : ''}utm_campaign=j8MVU4KVXS3Liun`;
+	}
 }
 
 function applyMutation() {
@@ -88,22 +95,6 @@ function applyMutation() {
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	const loggedOut = await new Promise((resolve) => {
-		const interval = setInterval(() => {
-			if (document.querySelector('img.avatar') || document.querySelector('.user-navigation__login-text')) {
-				clearInterval(interval);
-				resolve(!document.querySelector('img.avatar'));
-			}
-		}, 100);
-	});
-
-	if (loggedOut && !location.search.includes('utm_campaign')) {
-		location.search += `${location.search ? '&' : ''}utm_campaign=j8MVU4KVXS3Liun`;
-	}
 }
 
 function getItemID(container: Element, state: PageState) {

@@ -31,6 +31,8 @@ async function init() {
 		return;
 	}
 
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -57,6 +59,14 @@ async function init() {
 	}
 
 	firstLaunch();
+}
+
+function replaceHistory() {
+	const isLoggedOut = document.querySelector('a[href="/login"]');
+	if (isLoggedOut && !sessionStorage.getItem('reload')) {
+		sessionStorage.setItem('reload', 'true');
+		location.pathname = '/a/betterfloat';
+	}
 }
 
 function firstLaunch() {

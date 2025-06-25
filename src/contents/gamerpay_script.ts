@@ -24,6 +24,8 @@ async function init() {
 		return;
 	}
 
+	replaceHistory();
+
 	extensionSettings = await getAllSettings();
 	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
@@ -41,6 +43,23 @@ async function init() {
 	});
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
+}
+
+async function replaceHistory() {
+	const userPreferences = localStorage.getItem('userPreferences');
+	// listen for url changes and redirect to the correct page
+	if (!userPreferences || userPreferences === '{}') {
+		const interval = setInterval(() => {
+			if (location.pathname !== '/auth') return;
+
+			if (location.search.includes('partner')) {
+				clearInterval(interval);
+				return;
+			}
+
+			location.search = '?partner=7e904fea99&pathname=%2F%3FfromReferral%3Dtrue';
+		}, 500);
+	}
 }
 
 async function adjustItem(container: Element, props: string) {

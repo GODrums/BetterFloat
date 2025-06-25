@@ -125,7 +125,6 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 		history.replaceState({}, '', url.href);
 	} else {
 		url.pathname = '/';
-		console.log('[BetterFloat] Forced history rewrite:', url.href);
 		sendToBackground({
 			name: 'openTab',
 			body: {

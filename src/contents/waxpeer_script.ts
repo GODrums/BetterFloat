@@ -69,8 +69,12 @@ async function replaceHistory() {
 		}, 100);
 	});
 
-	if (loggedOut && !location.search.includes('ref_alias')) {
-		location.search += `${location.search ? '&' : ''}ref_alias=betterfloat`;
+	if (!loggedOut) return;
+
+	if (location.pathname === '/') {
+		location.pathname = '/r/rums';
+	} else if (!location.search.includes('utm_source')) {
+		location.search += `${location.search ? '&' : ''}utm_source=betterfloat`;
 	}
 }
 

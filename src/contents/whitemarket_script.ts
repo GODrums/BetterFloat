@@ -26,6 +26,9 @@ async function init() {
 	if (!location.hostname.includes('white.market')) {
 		return;
 	}
+
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -42,6 +45,13 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
+	}
+}
+
+function replaceHistory() {
+	const referrer = localStorage.getItem('referrer');
+	if (!referrer) {
+		localStorage.setItem('referrer', '{"code":"8360ac91f29c3a6a","tag":""}');
 	}
 }
 

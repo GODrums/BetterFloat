@@ -202,6 +202,7 @@ export const AvailableMarketSources = [
 	{ text: 'Lisskins', logo: ICON_LISSKINS, source: MarketSource.Lisskins, style: '' },
 	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;' },
 	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '' },
+	{ text: 'Marketcsgo', logo: ICON_MARKETCSGO, source: MarketSource.Marketcsgo, style: '' },
 ];
 
 export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney];

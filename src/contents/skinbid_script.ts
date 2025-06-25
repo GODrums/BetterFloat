@@ -83,7 +83,7 @@ async function firstLaunch() {
 
 function replaceHistory() {
 	const settings = JSON.parse(localStorage.getItem('settings') ?? '{}');
-	if (!settings.userId && !location.href.includes('ref=')) {
+	if (!settings?.userId && !location.href.includes('ref=')) {
 		location.search += `${location.search ? '&' : ''}ref=betterfloat`;
 	}
 }
