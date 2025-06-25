@@ -1,3 +1,4 @@
+import { sendToBackground } from '@plasmohq/messaging';
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
@@ -31,6 +32,8 @@ async function init() {
 		return;
 	}
 
+	replaceHistory();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	// activateHandler();
@@ -57,6 +60,27 @@ async function init() {
 	}
 
 	firstLaunch();
+}
+
+async function replaceHistory() {
+	// wait for the page to load
+	const loggedOut = await new Promise((resolve) => {
+		const interval = setInterval(() => {
+			if (document.querySelector('a[href="https://api.skinswap.com/api/auth/login"]') || document.querySelector('img[alt="User profile image"]')) {
+				clearInterval(interval);
+				resolve(!!document.querySelector('a[href="https://api.skinswap.com/api/auth/login"]'));
+			}
+		}, 100);
+	});
+
+	if (loggedOut) {
+		sendToBackground({
+			name: 'openTab',
+			body: {
+				url: 'https://skinswap.com/r/betterfloat',
+			},
+		});
+	}
 }
 
 function firstLaunch() {

@@ -124,6 +124,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="skinbaron">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
 								</TabsTrigger>
+								<TabsTrigger value="skinsmonkey">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
+								</TabsTrigger>
 								<TabsTrigger value="waxpeer">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
 								</TabsTrigger>
@@ -144,9 +147,6 @@ export default function IndexPopup() {
 								</TabsTrigger>
 								<TabsTrigger value="avan">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
-								</TabsTrigger>
-								<TabsTrigger value="skinsmonkey">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
 								</TabsTrigger>
 								<TabsTrigger value="skinout">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINOUT} />
@@ -180,6 +180,7 @@ export default function IndexPopup() {
 					<LisSkinsSettings hasProPlan={hasProPlan} />
 					<GamerpaySettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
+					<SkinsmonkeySettings hasProPlan={hasProPlan} />
 					<WaxpeerSettings hasProPlan={hasProPlan} />
 					<WhiteMarketSettings hasProPlan={hasProPlan} />
 					<ShadowpaySettings hasProPlan={hasProPlan} />
@@ -187,7 +188,6 @@ export default function IndexPopup() {
 					<SwapggSettings hasProPlan={hasProPlan} />
 					<TradeitSettings hasProPlan={hasProPlan} />
 					<AvanSettings hasProPlan={hasProPlan} />
-					<SkinsmonkeySettings hasProPlan={hasProPlan} />
 					<SkinoutSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />

@@ -75,7 +75,7 @@ const fuse = new Fuse(Object.keys(marketIds), {
 });
 
 chrome.omnibox.setDefaultSuggestion({
-	description: 'Search CS2 skins on markets — Use: &lt;market&gt; &lt;skin name&gt; (markets: ' + Object.keys(KEYWORDS).join(', ') + ') or just &lt;skin name&gt; for all markets',
+	description: 'Search CS2 skins on markets — Use: &lt;market&gt; &lt;skin name&gt; or just &lt;skin name&gt; for Buff',
 });
 
 function getMarketId(buffName: string, source: MarketSource): number | string | undefined {

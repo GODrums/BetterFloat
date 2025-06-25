@@ -18,16 +18,16 @@ export default function UpdatePopup() {
 
 					<h1 className="flex items-center font-bold text-xl text-white mb-4 relative z-50">
 						<img src={betterfloatLogo} alt="BetterFloat" className="h-10 w-10 mr-2" />
-						<span>BetterFloat is diversifying!</span>
+						<span>New Search and Lots of Markets!</span>
 						<Badge variant="default" className="ml-2">
 							NEW
 						</Badge>
 					</h1>
 
 					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">
-						🚀 Prepare for a huge update with many new markets in the next few days!
+						🚀 Our Pro users can now access lots of new markets!
 						<br />
-						⚠️ Unfortunately, we have to request new permissions for the new markets.
+						⚠️ We've also added new markets to the extension.
 						<br />✅ Make sure to allow the permissions when prompted.
 					</p>
 					<div className="w-full flex items-center justify-end">
