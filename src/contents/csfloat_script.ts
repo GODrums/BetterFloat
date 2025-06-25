@@ -808,7 +808,7 @@ function addCollectionLink(container: Element) {
 	const collectionLink = container.querySelector('div.collection');
 	if (collectionLink) {
 		const link = html`
-			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.toLowerCase()}" target="_blank">
+			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.replaceAll('.', '')?.toLowerCase()}" target="_blank">
 			 	${collectionLink.textContent}
 			</a>
 		`;
