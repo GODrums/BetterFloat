@@ -959,7 +959,7 @@ function convertCurrency(price: Decimal, currencyRate: number, settingRate: 'rea
 
 async function addBuffPrice(item: Skinport.Listing, container: Element, selector: ItemSelectors) {
 	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	const priceParent = container.querySelector<HTMLElement>(selector.priceParent)!;
 	const priceDiv = container.querySelector<HTMLElement>(selector.oldPrice);

@@ -264,7 +264,7 @@ async function getBuffItem(item: HTMLItem) {
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	const currency = getUserCurrency();
 	const currencyRate = await getAndFetchCurrencyRate(currency);

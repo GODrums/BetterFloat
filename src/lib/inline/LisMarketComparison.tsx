@@ -22,6 +22,10 @@ interface MarketEntry {
 	updated: number;
 }
 
+interface MarketEntryWithHref extends MarketEntry {
+	href: string;
+}
+
 interface LisSkinsItem {
 	name: string;
 	phase?: DopplerPhase | string;
@@ -73,24 +77,18 @@ const ActivityPing: React.FC<{ activity: number }> = ({ activity }) => {
 	);
 };
 
-const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntry; currency: string }> = ({ listing, entry, currency }) => {
+const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntryWithHref; currency: string }> = ({ listing, entry, currency }) => {
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
 	// Price is already in local currency on lis-skins, comparison price needs conversion
 	const priceDifference = entry.ask ? new Decimal(listing.price).minus(entry.ask) : null;
 	const pricePercentage = entry.ask ? new Decimal(listing.price).div(entry.ask).mul(100).minus(100) : null;
 
-	if (!marketDetails) {
-		return <span className="text-red-500">Unknown market: {entry.market}</span>;
-	}
-
 	// Use local currency format for the market card
 	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(value);
 
-	const getHref = () => {
-		const market_id = getMarketID(listing.name, marketDetails.source);
-		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name: listing.name, phase: listing.phase as DopplerPhase });
-		return href;
-	};
+	if (!marketDetails) {
+		return <span className="text-red-500">Unknown market: {entry.market}</span>;
+	}
 
 	return (
 		// Adapt styling to match Lis-Skins (light theme, different colors)
@@ -109,7 +107,7 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntry; currency
 						</span>
 					</div>
 				</div>
-				<a className="border-t border-gray-500 hover:bg-gray-500" href={getHref()} target="_blank" rel="noreferrer">
+				<a className="border-t border-gray-500 hover:bg-gray-500" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between">
@@ -147,6 +145,7 @@ const LisMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [listing, setListing] = useState<LisSkinsItem | null>(null);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
+	const [marketDataWithHrefs, setMarketDataWithHrefs] = useState<MarketEntryWithHref[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [currency, setCurrency] = useState('USD'); // Default, will be updated
 	const [currencyRates, setCurrencyRates] = useState<{ [key: string]: number }>({});
@@ -260,6 +259,39 @@ const LisMarketComparison: React.FC = () => {
 		}
 	}, [listing, currencyRates]); // Depend on listing and currencyRates
 
+	// Generate hrefs for all market entries
+	useEffect(() => {
+		if (marketData.length === 0 || !listing) return;
+
+		const generateHrefs = async () => {
+			const dataWithHrefs = await Promise.all(
+				marketData.map(async (entry) => {
+					const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
+					if (!marketDetails) {
+						return { ...entry, href: '#' };
+					}
+
+					try {
+						const market_id = await getMarketID(listing.name, marketDetails.source);
+						const href = getMarketURL({
+							source: marketDetails.source,
+							market_id,
+							buff_name: listing.name,
+							phase: listing.phase as DopplerPhase,
+						});
+						return { ...entry, href };
+					} catch (error) {
+						console.error(`Error generating href for ${entry.market}:`, error);
+						return { ...entry, href: '#' };
+					}
+				})
+			);
+			setMarketDataWithHrefs(dataWithHrefs);
+		};
+
+		generateHrefs();
+	}, [marketData, listing]);
+
 	return (
 		<div className="max-h-[60vh] bg-[#21242a] rounded-md text-sm" style={{ fontFamily: 'inherit' }}>
 			{isLoading ? (
@@ -290,8 +322,8 @@ const LisMarketComparison: React.FC = () => {
 					{/* Adapt scroll area styling for horizontal scroll */}
 					<ScrollArea className="w-full" viewportClass="w-full whitespace-nowrap rounded-md" orientation="horizontal">
 						<div className="flex w-max space-x-4 p-4">
-							{listing && marketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
-							{(!marketData || marketData.length === 0) && (
+							{listing && marketDataWithHrefs.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
+							{(!marketDataWithHrefs || marketDataWithHrefs.length === 0) && (
 								// Adapt no listings styling (keep it somewhat centered)
 								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
 									<div className="flex flex-col items-center justify-center gap-1 p-4 h-full min-w-[200px]">

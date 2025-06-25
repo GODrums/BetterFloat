@@ -223,7 +223,7 @@ async function getBuffItem(item: Tradeit.Item) {
 		priceOrder = new Decimal(0);
 	}
 
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	// const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
 	const priceFromReference = priceListing ?? new Decimal(0);

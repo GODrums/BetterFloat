@@ -280,7 +280,7 @@ export async function adjustOfferContainer(container: Element) {
 		itemStyle = 'Vanilla';
 	}
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
-	const buff_id = getMarketID(itemName, source);
+	const buff_id = await getMarketID(itemName, source);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
 	const priceFromReference = extensionSettings['csf-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
 
@@ -1640,7 +1640,7 @@ async function getCurrencyRate() {
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let market_id: number | string | undefined = getMarketID(buff_name, source);
+	let market_id: number | string | undefined = await getMarketID(buff_name, source);
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 

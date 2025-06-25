@@ -183,7 +183,7 @@ async function adjustInventoryItem(container: Element) {
 		}
 	}
 
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 	const marketUrl = getMarketURL({ source, buff_name, market_id, phase: item.dopplerPhase as DopplerPhase });
 	if (priceListing || priceOrder) {
 		const currencyText = getUserCurrency().text;
@@ -449,7 +449,7 @@ async function addBuffPrice(
 
 	const priceDiv = container.querySelector(selector.priceDiv);
 	const currency = getUserCurrency();
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 	const href = getMarketURL({ source, buff_name, market_id, phase: listingItem.dopplerPhase ?? undefined });
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		generateBuffContainer(priceDiv as HTMLElement, priceListing, priceOrder, currency.text ?? 'USD', href, source, selector.self === 'page');

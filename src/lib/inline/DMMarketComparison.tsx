@@ -27,6 +27,10 @@ interface MarketEntry {
 	updated: number;
 }
 
+interface MarketEntryWithHref extends MarketEntry {
+	href: string;
+}
+
 const CirclePlus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="none" width="19" height="19" {...props}>
 		<circle cx="7" cy="7.5" r="7" fill="#FD484A" fillOpacity="0.25"></circle>
@@ -100,53 +104,17 @@ const convertStylesStringToObject = (stringStyles: string) =>
 			}, {})
 		: {};
 
-const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntry; currency: string }> = ({ item, entry, currency }) => {
+const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; currency: string }> = ({ item, entry, currency }) => {
 	const itemPrice = new Decimal(item.price.USD).div(100);
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
 	const priceDifference = entry.ask ? itemPrice.minus(entry.ask) : null;
 	const pricePercentage = entry.ask ? itemPrice.div(entry.ask).mul(100).minus(100) : null;
 
+	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).toNumber());
+
 	if (!marketDetails) {
 		return <span className="text-red-500">Unknown market: {entry.market}</span>;
 	}
-
-	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).toNumber());
-
-	const getHref = () => {
-		const buff_name = handleSpecialStickerNames(item.title);
-		const market_id = getMarketID(buff_name, marketDetails.source);
-		let phase: DopplerPhase | undefined;
-		if (item.extra.phase) {
-			switch (item.extra.phase) {
-				case 'phase-1':
-					phase = 'Phase 1';
-					break;
-				case 'phase-2':
-					phase = 'Phase 2';
-					break;
-				case 'phase-3':
-					phase = 'Phase 3';
-					break;
-				case 'phase-4':
-					phase = 'Phase 4';
-					break;
-				case 'ruby':
-					phase = 'Ruby';
-					break;
-				case 'sapphire':
-					phase = 'Sapphire';
-					break;
-				case 'emerald':
-					phase = 'Emerald';
-					break;
-				case 'black-pearl':
-					phase = 'Black Pearl';
-					break;
-			}
-		}
-		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name, phase });
-		return href;
-	};
 
 	return (
 		<div className="w-[210px] text-[--ex-color-primary] my-2 bg-[--ex-mat-button-background] rounded-md">
@@ -164,7 +132,7 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntry; currency: s
 						</span>
 					</div>
 				</div>
-				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={getHref()} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between text-sm">
@@ -200,6 +168,7 @@ const DMMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
+	const [marketDataWithHrefs, setMarketDataWithHrefs] = useState<MarketEntryWithHref[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [buffData, setBuffData] = useState<any>(null);
 	const [item, setItemData] = useState<any>(null);
@@ -265,6 +234,66 @@ const DMMarketComparison: React.FC = () => {
 		}
 	}, [user, buffData, item]);
 
+	// Generate hrefs for all market entries
+	useEffect(() => {
+		if (marketData.length === 0 || !item) return;
+
+		const generateHrefs = async () => {
+			const dataWithHrefs = await Promise.all(
+				marketData.map(async (entry) => {
+					const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
+					if (!marketDetails) {
+						return { ...entry, href: '#' };
+					}
+
+					try {
+						const buff_name = handleSpecialStickerNames(item.title);
+						const market_id = await getMarketID(buff_name, marketDetails.source);
+
+						let phase: DopplerPhase | undefined;
+						if (item.extra.phase) {
+							switch (item.extra.phase) {
+								case 'phase-1':
+									phase = 'Phase 1';
+									break;
+								case 'phase-2':
+									phase = 'Phase 2';
+									break;
+								case 'phase-3':
+									phase = 'Phase 3';
+									break;
+								case 'phase-4':
+									phase = 'Phase 4';
+									break;
+								case 'ruby':
+									phase = 'Ruby';
+									break;
+								case 'sapphire':
+									phase = 'Sapphire';
+									break;
+								case 'emerald':
+									phase = 'Emerald';
+									break;
+								case 'black-pearl':
+									phase = 'Black Pearl';
+									break;
+							}
+						}
+
+						const href = getMarketURL({ source: marketDetails.source, market_id, buff_name, phase });
+						return { ...entry, href };
+					} catch (error) {
+						console.error(`Error generating href for ${entry.market}:`, error);
+						return { ...entry, href: '#' };
+					}
+				})
+			);
+			setMarketDataWithHrefs(dataWithHrefs);
+		};
+
+		generateHrefs();
+	}, [marketData, item]);
+
 	useEffect(() => {
 		if (document.querySelector('.betterfloat-big-a')) {
 			setBuffData(JSON.parse(document.querySelector('.betterfloat-big-a')?.getAttribute('data-betterfloat') ?? '{}'));
@@ -287,7 +316,7 @@ const DMMarketComparison: React.FC = () => {
 	};
 
 	// Filter market data based on visibility settings
-	const filteredMarketData = marketData.filter((entry) => visibleMarkets.includes(entry.market));
+	const filteredMarketData = marketDataWithHrefs.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
 		<div className="bg-[--ex-bg-color--400] w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>

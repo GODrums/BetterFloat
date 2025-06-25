@@ -244,7 +244,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	const currencyItem = getUserCurrency();
 	if (!currencyItem?.text) {

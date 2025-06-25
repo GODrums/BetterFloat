@@ -165,7 +165,7 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	let itemPrice = price ? new Decimal(price.value) : new Decimal(0);
 	const userCurrency = 'USD';

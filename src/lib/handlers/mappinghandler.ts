@@ -1,5 +1,5 @@
+import marketIds from 'raw:@/assets/marketids.json';
 import Decimal from 'decimal.js';
-import marketIds from '@/assets/marketids.json';
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -8,7 +8,7 @@ import { fetchCurrencyRates } from './networkhandler';
 // cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 // maps buff_name to buff_id
-const marketIdMapping: Record<string, Partial<Extension.MarketIDEntry>> = marketIds;
+let marketIdMapping: Record<string, Partial<Extension.MarketIDEntry>> = {};
 // maps buff_name to prices and more - custom mapping
 const priceMapping: {
 	buff: Extension.PriceMappingBuff;
@@ -80,10 +80,15 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 	return null;
 }
 
-export function getMarketID(name: string, source: MarketSource) {
+export async function getMarketID(name: string, source: MarketSource) {
 	if (Object.keys(marketIdMapping).length === 0) {
-		console.error('[BetterFloat] ID mapping not loaded yet');
-		return undefined;
+		// console.error('[BetterFloat] ID mapping not loaded yet');
+		// return undefined;
+		await fetch(marketIds)
+			.then((response) => response.json())
+			.then((data) => {
+				marketIdMapping = data;
+			});
 	}
 	const getSourceKey = (source: MarketSource) => {
 		switch (source) {

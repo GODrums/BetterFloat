@@ -183,7 +183,7 @@ async function getBuffItem(itemName: string, container: Element, state: PageStat
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(container);
 	const userCurrency = getUserCurrency();

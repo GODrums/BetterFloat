@@ -200,7 +200,7 @@ async function getBuffItem(item: Skinsmonkey.Item) {
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
-	const market_id = getMarketID(buff_name, source);
+	const market_id = await getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();

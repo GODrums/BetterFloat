@@ -25,6 +25,10 @@ interface MarketEntry {
 	updated: number;
 }
 
+interface MarketEntryWithHref extends MarketEntry {
+	href: string;
+}
+
 const CirclePlus: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 15" fill="none" width="19" height="19" {...props}>
 		<circle cx="7" cy="7.5" r="7" fill="#FD484A" fillOpacity="0.25"></circle>
@@ -98,22 +102,16 @@ const convertStylesStringToObject = (stringStyles: string) =>
 			}, {})
 		: {};
 
-const MarketCard: React.FC<{ listing: Skinport.Listing; entry: MarketEntry; currency: string }> = ({ listing, entry, currency }) => {
+const MarketCard: React.FC<{ listing: Skinport.Listing; entry: MarketEntryWithHref; currency: string }> = ({ listing, entry, currency }) => {
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
 	const priceDifference = entry.ask ? new Decimal(listing.price).mul(100).minus(entry.ask) : null;
 	const pricePercentage = entry.ask ? new Decimal(listing.price).mul(100).div(entry.ask).mul(100).minus(100) : null;
 
+	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).div(100).toNumber());
+
 	if (!marketDetails) {
 		return <span className="text-red-500">Unknown market: {entry.market}</span>;
 	}
-
-	const formatCurrency = (value: number) => CurrencyFormatter(currency, 2).format(new Decimal(value).div(100).toNumber());
-
-	const getHref = () => {
-		const market_id = getMarketID(listing.full_name, marketDetails.source);
-		const href = getMarketURL({ source: marketDetails.source, market_id, buff_name: listing.full_name, phase: listing.style as DopplerPhase });
-		return href;
-	};
 
 	return (
 		<div className="w-[210px] text-[#747778] my-2 border border-[#43484a] rounded-md">
@@ -132,7 +130,7 @@ const MarketCard: React.FC<{ listing: Skinport.Listing; entry: MarketEntry; curr
 						{/* <span className="text-sm">{entry.updated}</span> */}
 					</div>
 				</div>
-				<a className="border-t border-[#43484a] hover:bg-[#f6f6f6]/20" href={getHref()} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#43484a] hover:bg-[#f6f6f6]/20" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between">
@@ -169,6 +167,7 @@ const SpMarketComparison: React.FC = () => {
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [listing, setListing] = useState<Skinport.Listing | null>(null);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
+	const [marketDataWithHrefs, setMarketDataWithHrefs] = useState<MarketEntryWithHref[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [currency, setCurrency] = useState('USD');
 	const [currencyRate, setCurrencyRate] = useState<number>(1);
@@ -280,6 +279,39 @@ const SpMarketComparison: React.FC = () => {
 		}
 	}, [listing]);
 
+	// Generate hrefs for all market entries
+	useEffect(() => {
+		if (marketData.length === 0 || !listing) return;
+
+		const generateHrefs = async () => {
+			const dataWithHrefs = await Promise.all(
+				marketData.map(async (entry) => {
+					const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
+					if (!marketDetails) {
+						return { ...entry, href: '#' };
+					}
+
+					try {
+						const market_id = await getMarketID(listing.full_name, marketDetails.source);
+						const href = getMarketURL({
+							source: marketDetails.source,
+							market_id,
+							buff_name: listing.full_name,
+							phase: listing.style as DopplerPhase,
+						});
+						return { ...entry, href };
+					} catch (error) {
+						console.error(`Error generating href for ${entry.market}:`, error);
+						return { ...entry, href: '#' };
+					}
+				})
+			);
+			setMarketDataWithHrefs(dataWithHrefs);
+		};
+
+		generateHrefs();
+	}, [marketData, listing]);
+
 	const toggleMarket = (market: string) => {
 		setVisibleMarkets((prev) => {
 			if (!prev) return [market];
@@ -291,7 +323,7 @@ const SpMarketComparison: React.FC = () => {
 	};
 
 	// Filter market data based on visibility settings
-	const filteredMarketData = marketData.filter((entry) => visibleMarkets.includes(entry.market));
+	const filteredMarketData = marketDataWithHrefs.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
 		<div className="dark w-[240px] max-h-[60vh] pl-[30px]" style={{ fontFamily: 'Montserrat, sans-serif' }}>
