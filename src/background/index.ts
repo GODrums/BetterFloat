@@ -74,12 +74,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
 		const hostname = new URL(tab.url).hostname;
 		// if within last 3 seconds, don't inject
-		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 3000) {
+		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || (Date.now() - injectedTabs[tabId].time > 3000 && tab.status !== 'loading')) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
-			executeInjection(tabId, tab.url);
-		}
-		if (tab.url.includes('swap.gg')) {
-			executeInjection(tabId, tab.url);
+			const delay = hostname === 'bitskins.com' ? 1000 : 0;
+			setTimeout(() => {
+				executeInjection(tabId, tab.url!);
+			}, delay);
 		}
 	}
 

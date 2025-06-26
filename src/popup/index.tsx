@@ -57,7 +57,7 @@ export default function IndexPopup() {
 	const [user, setUser] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
 
 	useEffect(() => {
-		chrome.storage.sync.get((data) => {
+		chrome.storage.sync.get((data: Record<string, unknown>) => {
 			if (!data) {
 				console.log('[BetterFloat] No settings found, setting default settings.');
 				chrome.storage.sync.set(DEFAULT_SETTINGS);
