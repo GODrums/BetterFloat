@@ -59,6 +59,9 @@ export async function getAllSettings() {
 			settings[key] = result;
 		}
 	}
+	if (!settings['user']) {
+		settings['user'] = { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser;
+	}
 	return settings;
 }
 

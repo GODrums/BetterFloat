@@ -660,7 +660,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 
 		// notification check
-		if (extensionSettings['user'].plan.type === 'pro') {
+		if (extensionSettings['user']?.plan?.type === 'pro') {
 			const autoRefreshLabel = document.querySelector('.refresh > button');
 			if (autoRefreshLabel?.getAttribute('data-betterfloat-auto-refresh') === 'true') {
 				await liveNotifications(apiItem, priceResult.percentage);
