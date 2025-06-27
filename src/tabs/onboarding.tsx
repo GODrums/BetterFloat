@@ -13,9 +13,9 @@ import {
 	ICON_CSFLOAT,
 	ICON_CSFLOAT_FULL,
 	ICON_CSMONEY,
-	ICON_CSMONEY_FULL,
 	ICON_DMARKET,
 	ICON_DMARKET_FULL,
+	ICON_GAMERPAY_FULL,
 	ICON_LISSKINS,
 	ICON_LISSKINS_FULL,
 	ICON_SKINBARON_FULL,
@@ -86,14 +86,14 @@ export default function OnboardingPage() {
 								<div className="col-span-1">
 									<Card className="h-full shadow-md border-muted p-4">
 										<CardHeader className="text-center">
-											<CardTitle>5+ Exclusive Markets</CardTitle>
+											<CardTitle>15+ Exclusive Markets</CardTitle>
 											<CardDescription>More opportunities to find great deals.</CardDescription>
 										</CardHeader>
 										<CardContent className="flex flex-col justify-center gap-4">
-											{[ICON_CSMONEY_FULL, ICON_BUFFMARKET_FULL, ICON_DMARKET_FULL, ICON_BITSKINS_FULL, ICON_LISSKINS_FULL, ICON_SKINBARON_FULL].map((icon, index) => (
-												<img key={index} src={icon} className="h-10" />
+											{[ICON_BUFFMARKET_FULL, ICON_DMARKET_FULL, ICON_BITSKINS_FULL, ICON_LISSKINS_FULL, ICON_GAMERPAY_FULL, ICON_SKINBARON_FULL].map((icon, index) => (
+												<img key={index} src={icon} className="h-10 object-contain" />
 											))}
-											<p className="text-sm text-muted-foreground text-center">+ more markets soon!</p>
+											<p className="text-sm text-muted-foreground text-center">+ 9 other markets!</p>
 										</CardContent>
 									</Card>
 								</div>
