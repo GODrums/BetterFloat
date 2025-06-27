@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.2.1",
+	"version": "3.2.2",
 	"description": "Enhance your website experience on 9+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -83,7 +83,7 @@
 				"strict_min_version": "128.0"
 			}
 		},
-		"host_permissions": [
+		"optional_host_permissions": [
 			"https://*/*",
 			"http://*/*"
 		],
@@ -99,6 +99,34 @@
 			"activeTab",
 			"omnibox",
 			"notifications"
+		],
+		"host_permissions": [
+			"*://*.csfloat.com/*",
+			"*://*.skinport.com/*",
+			"*://*.skinbid.com/*",
+			"*://*.avan.market/*",
+			"*://*.bitskins.com/*",
+			"*://*.cs.money/*",
+			"*://*.dmarket.com/*",
+			"*://*.steamcommunity.com/*",
+			"*://*.steampowered.com/*",
+			"*://*.gamerpay.gg/*",
+			"*://*.haloskins.com/*",
+			"*://*.lis-skins.com/*",
+			"*://*.market.csgo.com/*",
+			"*://*.rapidskins.com/*",
+			"*://*.shadowpay.com/*",
+			"*://*.skinbaron.de/*",
+			"*://*.skinflow.gg/*",
+			"*://*.skinout.com/*",
+			"*://*.skin.place/*",
+			"*://*.skinsmonkey.com/*",
+			"*://*.skinswap.com/*",
+			"*://*.swap.gg/*",
+			"*://*.tradeit.gg/*",
+			"*://*.waxpeer.com/*",
+			"*://*.whitemarket.com/*",
+			"*://*.youpin898.com/*"
 		],
 		"omnibox": {
 			"keyword": "bf"
