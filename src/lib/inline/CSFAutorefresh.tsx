@@ -223,11 +223,13 @@ const CSFAutorefresh: React.FC = () => {
 									value={rInterval}
 									onChange={(e) => setRInterval(e.target.value)}
 								>
-									{intervalOptions.map((option, index) => (
-										<option key={index} value={index.toString()} className="bg-[--module-background-color]" disabled={index === 0 && user?.plan.type !== 'pro'}>
-											{option}
-										</option>
-									))}
+									{intervalOptions
+										.filter((_, index) => index !== 0 || user?.plan.type === 'pro')
+										.map((option, index) => (
+											<option key={index} value={index.toString()} className="bg-[--module-background-color]">
+												{option}
+											</option>
+										))}
 								</select>
 							</div>
 							<Separator className="my-4 bg-[#c1ceff0a]" />
