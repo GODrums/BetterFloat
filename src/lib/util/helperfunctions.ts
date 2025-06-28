@@ -197,7 +197,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.CSFloat:
 			return `https://csfloat.com/search?sort_by=lowest_price&type=buy_now&market_hash_name=${encodeURIComponent(buff_name)}`;
 		case MarketSource.DMarket:
-			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&utm_source=betterfloat`;
+			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&ref=rqKYzZ36Bw&utm_source=betterfloat`;
 		case MarketSource.CSMoney:
 			return `https://cs.money/market/buy/?sort=price&order=asc&search=${encodeURIComponent(buff_name)}&utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=regular&utm_content=link`;
 		case MarketSource.Bitskins:
