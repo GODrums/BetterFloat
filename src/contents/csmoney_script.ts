@@ -64,25 +64,27 @@ async function firstLaunch() {
 
 	// these reloads are required to get the API data,
 	// as the injected script is too slow for the initial load
-	if (location.pathname === '/market/buy/') {
+	if (location.pathname.includes('/market/buy/')) {
 		// reload market page
 		let reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
 		if (reloadButton) {
+			console.log('[BetterFloat] Reloading market page...');
 			reloadButton.click();
 		} else {
+			console.log('[BetterFloat] Waiting for market page to reload...');
 			await waitForElement(CSMONEY_SELECTORS.market.reloadButton);
 			reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
 			if (reloadButton) {
 				reloadButton.click();
 			}
 		}
-	} else if (location.pathname === '/market/instant-sell/' || location.pathname === '/market/sell/') {
+	} else if (location.pathname.includes('/market/instant-sell/') || location.pathname.includes('/market/sell/')) {
 		// reload instant sell page
 		const reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.sell.reloadButton);
 		if (reloadButton) {
 			reloadButton.click();
 		}
-	} else if (location.pathname === '/csgo/trade/') {
+	} else if (location.pathname.includes('/csgo/trade/')) {
 		// reload bot inventory
 		const buttonSelector = CSMONEY_SELECTORS.trade.reloadButton;
 		waitForElement(buttonSelector).then(async (success) => {
@@ -91,7 +93,7 @@ async function firstLaunch() {
 				Array.from(reloadButtons).pop()?.click();
 			}
 		});
-	} else if (location.pathname === '/profile/offers') {
+	} else if (location.pathname.includes('/profile/offers')) {
 		//
 	}
 }
@@ -130,7 +132,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		if (isPopout) {
 			return getCSMoneyPopupItem() ?? eventDataItem;
 		}
-		if (location.pathname === '/csgo/trade/') {
+		if (location.pathname.includes('/csgo/trade/')) {
 			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
 		} else {
@@ -175,7 +177,7 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 
 async function addPopupListener(container: Element, item: CSMoney.Item) {
 	container.addEventListener('click', async () => {
-		const selector = location.pathname === '/market/buy/' ? CSMONEY_SELECTORS.market : CSMONEY_SELECTORS.sell;
+		const selector = location.pathname.includes('/market/buy/') ? CSMONEY_SELECTORS.market : CSMONEY_SELECTORS.sell;
 		waitForElement(selector.popup, { interval: 200, maxTries: 50 }).then(async (success) => {
 			if (success) {
 				const bigCard = document.querySelector(selector.popup);
@@ -195,7 +197,7 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
  */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
 	let parentElement: HTMLElement | null = null;
-	if (location.pathname === '/market/buy/') {
+	if (location.pathname.includes('/market/buy/')) {
 		const selector = CSMONEY_SELECTORS.market.popup_similar;
 		const allSelectors = Array.from(container.querySelectorAll(selector));
 		parentElement =
@@ -204,7 +206,7 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 				: allSelectors.length === 2
 					? allSelectors[0]?.parentElement
 					: (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
-	} else if (location.pathname === '/market/sell/' || location.pathname === '/market/instant-sell/') {
+	} else if (location.pathname.includes('/market/sell/') || location.pathname.includes('/market/instant-sell/')) {
 		parentElement = container.querySelector(CSMONEY_SELECTORS.sell.popup_similar) as HTMLElement;
 	}
 	if (!parentElement) return;
@@ -337,7 +339,7 @@ export function getUserCurrency(forceRefresh = false): { symbol: string; text: s
 			return JSON.parse(userCurrency);
 		}
 	}
-	if (location.pathname === '/csgo/trade/') {
+	if (location.pathname.includes('/csgo/trade/')) {
 		const oldCurrency = (document.querySelector(CSMONEY_SELECTORS.trade.currencyContainer) ?? document.querySelector(CSMONEY_SELECTORS.trade.currencyDropdown))?.textContent?.split(' ');
 		if (oldCurrency) {
 			const currency = {
@@ -367,19 +369,19 @@ export function getUserCurrency(forceRefresh = false): { symbol: string; text: s
 }
 
 function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
-	if (location.pathname === '/market/buy/') {
+	if (location.pathname.includes('/market/buy/')) {
 		if (isPopout) {
 			return CSMONEY_SELECTORS.market_popout;
 		}
 		return CSMONEY_SELECTORS.market;
-	} else if (location.pathname === '/market/instant-sell/') {
+	} else if (location.pathname.includes('/market/instant-sell/')) {
 		return CSMONEY_SELECTORS.instant_sell;
-	} else if (location.pathname === '/market/sell/') {
+	} else if (location.pathname.includes('/market/sell/')) {
 		if (isPopout) {
 			return CSMONEY_SELECTORS.sell_popout;
 		}
 		return CSMONEY_SELECTORS.sell;
-	} else if (location.pathname === '/csgo/trade/') {
+	} else if (location.pathname.includes('/csgo/trade/')) {
 		return CSMONEY_SELECTORS.trade;
 	}
 	return CSMONEY_SELECTORS.market;
@@ -426,7 +428,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	if (
 		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
 		priceListing?.gt(0.06) &&
-		location.pathname !== '/market/sell/' &&
+		!location.pathname.includes('/market/sell/') &&
 		!isBuffBannedItem(buff_name)
 	) {
 		let priceContainer: HTMLElement | null | undefined = null;
