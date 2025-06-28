@@ -316,8 +316,10 @@ function createBuffItem(item: CSMoney.Item): { name: string; style: ItemStyle } 
 	if (name.includes('Doppler')) {
 		const parts = name.split(' Doppler ');
 		const secondParts = parts[1].split(' (');
-		name = parts[0] + ' Doppler (' + secondParts[1];
-		style = secondParts[0] as ItemStyle;
+		if (secondParts.length > 1) {
+			name = parts[0] + ' Doppler (' + secondParts[1];
+			style = secondParts[0] as ItemStyle;
+		}
 	} else if (name.includes('★') && !name.includes('(')) {
 		// vanilla
 		style = 'Vanilla';

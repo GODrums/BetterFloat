@@ -23,7 +23,7 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 		setIsLoading(true);
 
 		try {
-			const granted = await chrome.permissions.request({ origins: ['https://*/*', 'http://*/*'], permissions: ['notifications'] });
+			const granted = await chrome.permissions.request({ origins: ['https://*/*', 'http://*/*'] });
 			if (!granted) {
 				setPermissionDenied(true);
 				console.warn('Permission denied');

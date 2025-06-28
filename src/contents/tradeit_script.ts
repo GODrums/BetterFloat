@@ -260,6 +260,7 @@ function createBuffItem(item: Tradeit.Item): { name: string; style: ItemStyle } 
 	let style: ItemStyle = '';
 	if (name.includes('Doppler')) {
 		style = item.phase ?? 'Phase 3';
+		name = name.replace(` ${style}`, '');
 	} else if (name.includes('★') && !name.includes('(')) {
 		// vanilla
 		style = 'Vanilla';
