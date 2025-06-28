@@ -18,6 +18,7 @@ import {
 } from '~lib/handlers/cache/csfloat_cache';
 import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
+import { injectScript } from '~lib/helpers/inject_helper';
 import {
 	ICON_ARROWDOWN,
 	ICON_ARROWUP_SMALL,
@@ -88,6 +89,9 @@ export const config: PlasmoCSConfig = {
 	css: ['../css/hint.min.css', '../css/common_styles.css', '../css/csfloat_styles.css'],
 };
 
+if (navigator.userAgent.indexOf('Firefox') > -1) {
+	injectScript();
+}
 init();
 
 async function init() {
