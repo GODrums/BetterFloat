@@ -139,7 +139,7 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 	const updateSetting = `${source}-update`;
 	const storageData = await chrome.storage.local.get(updateSetting);
 	const lastUpdate = storageData[updateSetting] ?? 0;
-	const hasProPlan = (await getSetting<IStorage['user']>('user')).plan.type === 'pro';
+	const hasProPlan = (await getSetting<IStorage['user']>('user'))?.plan?.type === 'pro';
 	const refreshIntervalPlan = hasProPlan ? 1 : 2;
 	// refresh only if prices are older than 1 hour
 	if (lastUpdate < Date.now() - 1000 * 60 * 60 * refreshIntervalPlan) {

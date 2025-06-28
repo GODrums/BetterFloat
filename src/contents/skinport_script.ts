@@ -340,7 +340,7 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 	storeItem(container, item);
 	const priceResult = await addBuffPrice(item, container, selector);
 
-	if (isLiveActive && extensionSettings['user'].plan.type === 'pro') {
+	if (isLiveActive && extensionSettings['user']?.plan?.type === 'pro') {
 		if (liveBuffFilter(priceResult)) {
 			(<HTMLElement>container).style.display = 'none';
 			return;
