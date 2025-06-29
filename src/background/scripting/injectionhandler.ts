@@ -1,4 +1,5 @@
 import { addScript } from '~lib/util/inject';
+import resqOriginal from '~lib/vendors/resq';
 import { injectResq } from './resq';
 
 /**
@@ -50,12 +51,14 @@ export function executeInjection(tabId: number, url: string) {
 async function injectResqForGamerpay(tabId: number) {
 	console.log('[BetterFloat] Injecting Resq for Gamerpay...');
 	try {
-		await chrome.scripting.executeScript({
+		// NEVER USE FILE INJECTION, IT DOESN'T WORK IN PROD AND FIREFOX
+		const injectionResult = await chrome.scripting.executeScript({
 			target: { tabId },
-			files: ['src/lib/vendors/resq.js'],
+			func: resqOriginal,
 			injectImmediately: true,
 			world: 'MAIN',
 		});
+		console.log('[BetterFloat] Resq injection result:', injectionResult.pop()?.result);
 
 		// Inject the resq extractor after the library is loaded
 		await chrome.scripting.executeScript({
@@ -64,6 +67,6 @@ async function injectResqForGamerpay(tabId: number) {
 			world: 'MAIN',
 		});
 	} catch (error) {
-		console.error('[BetterFloat] File injection failed:', error);
+		console.error('[BetterFloat] Function injection failed:', error);
 	}
 }

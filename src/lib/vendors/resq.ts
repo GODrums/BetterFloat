@@ -1,13 +1,7 @@
-!(function (t, e) {
-	'object' == typeof exports && 'object' == typeof module
-		? (module.exports = e())
-		: 'function' == typeof define && define.amd
-			? define([], e)
-			: 'object' == typeof exports
-				? (exports.resq = e())
-				: ((t.window = t.window || {}), (t.window.resq = e()));
-})(window, function () {
-	return (function (t) {
+// @ts-nocheck
+export default function resqOriginal() {
+	// Direct assignment to window.resq without module.exports
+	const resqLib = (function (t) {
 		var e = {};
 		function r(n) {
 			if (e[n]) return e[n].exports;
@@ -747,4 +741,9 @@
 				(t.exports.__esModule = !0);
 		},
 	]);
-});
+
+	// Assign directly to window.resq
+	if (typeof window !== 'undefined' && window.resq === undefined) {
+		window.resq = resqLib;
+	}
+}

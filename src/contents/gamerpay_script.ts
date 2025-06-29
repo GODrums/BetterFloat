@@ -7,7 +7,7 @@ import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -27,9 +27,14 @@ async function init() {
 	replaceHistory();
 
 	extensionSettings = await getAllSettings();
-	console.log('[BetterFloat] Extension settings:', extensionSettings);
 
 	if (!extensionSettings['gp-enable']) return;
+
+	// check if user has the required plan
+	if (!checkUserPlanPro(extensionSettings['user'])) {
+		console.log('[BetterFloat] Pro plan required for Gamerpay features');
+		return;
+	}
 
 	await initPriceMapping(extensionSettings, 'gp');
 
@@ -83,7 +88,7 @@ async function adjustItem(container: Element, props: string) {
 		return;
 	}
 
-	console.log('[BetterFloat] Item data:', itemData);
+	// console.log('[BetterFloat] Item data:', itemData);
 
 	await addBuffPrice(itemData, container);
 }
@@ -173,7 +178,12 @@ async function getBuffItem(item: Gamerpay.Item) {
 	const currencyRate = currencyRates?.find((rate) => rate.code.toLowerCase() === userCurrency.toLowerCase())?.rate ?? 1;
 
 	if (currencyRate && currencyRate !== 1) {
-		itemPrice = itemPrice.mul(currencyRate);
+		if (userCurrency !== 'USD') {
+			priceListing = priceListing?.div(currencyRate);
+			priceOrder = priceOrder?.div(currencyRate);
+		} else {
+			itemPrice = itemPrice.mul(currencyRate);
+		}
 	}
 
 	const referencePrice =
@@ -223,7 +233,8 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 }
 
 function getUserCurrency() {
-	return 'USD';
+	const topCurrency = document.querySelector<HTMLSpanElement>('span[class*="TopBar_balanceAmount"]')?.textContent?.trim();
+	return topCurrency?.includes('US$') ? 'USD' : 'EUR';
 }
 
 async function getCurrencyRates(): Promise<Gamerpay.CurrencyRates> {

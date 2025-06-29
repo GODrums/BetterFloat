@@ -10,7 +10,8 @@
 		"includes": [
 			"**",
 			"!**/dist",
-			"!**/node_modules"
+			"!**/node_modules",
+			"!**/src/lib/vendors/resq.ts"
 		]
 	},
 	"assist": {
@@ -67,7 +68,7 @@
 			"**",
 			"!**/src/lib/utils.ts",
 			"!**/src/lib/components/Vortex.tsx",
-			"!**/src/lib/vendors/resq.js"
+			"!**/src/lib/vendors/resq.ts"
 		]
 	},
 	"javascript": {

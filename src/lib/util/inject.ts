@@ -127,6 +127,10 @@ export function addScript() {
 		(window as any).__BetterFloat_Fetch_Intercepted = true;
 	}
 
+	if (location.hostname === 'gamerpay.gg') {
+		return;
+	}
+
 	xmlHttpRequestIntercept();
 	fetchIntercept();
 }

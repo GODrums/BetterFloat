@@ -68,7 +68,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		// make sure we got the required permissions
 
 		if (permissionDenied) {
-			const newlyGranted = await chrome.permissions.request({ origins: ['https://*/*', 'http://*/*'], permissions: ['notifications'] });
+			const newlyGranted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'], permissions: ['notifications'] });
 			if (!newlyGranted) {
 				console.warn('Permission denied');
 				return;
