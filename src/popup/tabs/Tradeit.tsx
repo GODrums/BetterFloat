@@ -20,7 +20,7 @@ export const TradeitSettings = ({ hasProPlan }: TradeitSettingsProps) => {
 	return (
 		<TabTemplate value="tradeit" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access TradeIt features" />}
-			<MarketLogoFull icon={ICON_TRADEIT_FULL} />
+			<MarketLogoFull icon={ICON_TRADEIT_FULL} link="https://tradeit.gg?aff=betterfloat" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

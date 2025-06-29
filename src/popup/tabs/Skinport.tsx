@@ -15,7 +15,7 @@ export const SkinportSettings = () => {
 
 	return (
 		<TabTemplate value="skinport" checked={checked}>
-			<MarketLogoFull icon={ICON_SKINPORT_FULL} />
+			<MarketLogoFull icon={ICON_SKINPORT_FULL} link="https://skinport.com" />
 			<SettingsEnable id="sp-enable" />
 			<div>
 				<div className="pt-4 pb-2">

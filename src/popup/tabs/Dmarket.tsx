@@ -19,7 +19,7 @@ export const DmarketSettings = ({ hasProPlan }: DmarketSettingsProps) => {
 	return (
 		<TabTemplate value="dmarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access DMarket features" />}
-			<MarketLogoFull icon={ICON_DMARKET_FULL} />
+			<MarketLogoFull icon={ICON_DMARKET_FULL} link="https://dmarket.com?ref=rqKYzZ36Bw" />
 			<SettingsEnable id="dm-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">

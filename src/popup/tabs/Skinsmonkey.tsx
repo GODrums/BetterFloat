@@ -20,7 +20,7 @@ export const SkinsmonkeySettings = ({ hasProPlan }: SkinsmonkeySettingsProps) =>
 	return (
 		<TabTemplate value="skinsmonkey" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinsmonkey features" />}
-			<MarketLogoFull icon={ICON_SKINSMONKEY_FULL} />
+			<MarketLogoFull icon={ICON_SKINSMONKEY_FULL} link="https://skinsmonkey.com" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

@@ -20,7 +20,7 @@ export const ShadowpaySettings = ({ hasProPlan }: ShadowpaySettingsProps) => {
 	return (
 		<TabTemplate value="shadowpay" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Shadowpay features" />}
-			<MarketLogoFull icon={ICON_SHADOWPAY_FULL} />
+			<MarketLogoFull icon={ICON_SHADOWPAY_FULL} link="https://shadowpay.com?utm_campaign=j8MVU4KVXS3Liun" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

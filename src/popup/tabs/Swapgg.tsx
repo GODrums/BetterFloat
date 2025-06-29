@@ -20,7 +20,7 @@ export const SwapggSettings = ({ hasProPlan }: SwapggSettingsProps) => {
 	return (
 		<TabTemplate value="swapgg" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Swap.gg features" />}
-			<MarketLogoFull icon={ICON_SWAPGG_FULL} />
+			<MarketLogoFull icon={ICON_SWAPGG_FULL} link="https://swap.gg?r=X4nFTDBbek" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

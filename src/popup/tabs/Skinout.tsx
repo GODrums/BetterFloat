@@ -20,7 +20,7 @@ export const SkinoutSettings = ({ hasProPlan }: SkinoutSettingsProps) => {
 	return (
 		<TabTemplate value="skinout" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinout features" />}
-			<MarketLogoFull icon={ICON_SKINOUT_FULL} />
+			<MarketLogoFull icon={ICON_SKINOUT_FULL} link="https://skinout.gg" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

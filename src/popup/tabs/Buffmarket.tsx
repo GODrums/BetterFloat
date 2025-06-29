@@ -19,7 +19,7 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 	return (
 		<TabTemplate value="buffmarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access BuffMarket features" />}
-			<MarketLogoFull icon={ICON_BUFFMARKET_FULL} />
+			<MarketLogoFull icon={ICON_BUFFMARKET_FULL} link="https://buff.market" />
 			<SettingsEnable id="bm-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">

@@ -20,7 +20,7 @@ export const WaxpeerSettings = ({ hasProPlan }: WaxpeerSettingsProps) => {
 	return (
 		<TabTemplate value="waxpeer" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Waxpeer features" />}
-			<MarketLogoFull icon={ICON_WAXPEER_FULL} />
+			<MarketLogoFull icon={ICON_WAXPEER_FULL} link="https://waxpeer.com/r/rums" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

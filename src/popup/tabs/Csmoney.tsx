@@ -13,7 +13,7 @@ export const CSMoneySettings = () => {
 
 	return (
 		<TabTemplate value="csmoney" checked={checked}>
-			<MarketLogoFull icon={ICON_CSMONEY_FULL} />
+			<MarketLogoFull icon={ICON_CSMONEY_FULL} link="https://cs.money/market/buy/?utm_source=mediabuy&utm_medium=betterfloat&utm_campaign=regular&utm_content=link" />
 			<SettingsEnable id="csm-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">

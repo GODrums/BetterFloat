@@ -26,7 +26,7 @@ export const CSFloatSettings = () => {
 
 	return (
 		<TabTemplate value="csfloat" checked={checked}>
-			<MarketLogoFull icon={ICON_CSFLOAT_FULL} />
+			<MarketLogoFull icon={ICON_CSFLOAT_FULL} link="https://csfloat.com" />
 			<SettingsEnable id="csf-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">

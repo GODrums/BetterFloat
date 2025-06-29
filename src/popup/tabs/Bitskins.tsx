@@ -19,7 +19,7 @@ export const BitskinsSettings = ({ hasProPlan }: BitskinsSettingsProps) => {
 	return (
 		<TabTemplate value="bitskins" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Bitskins features" />}
-			<MarketLogoFull icon={ICON_BITSKINS_FULL} />
+			<MarketLogoFull icon={ICON_BITSKINS_FULL} link="https://bitskins.com?ref_alias=betterfloat" />
 			<SettingsEnable id="bs-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">

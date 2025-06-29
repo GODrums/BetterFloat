@@ -20,7 +20,7 @@ export const WhiteMarketSettings = ({ hasProPlan }: WhiteMarketSettingsProps) =>
 	return (
 		<TabTemplate value="whitemarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access WhiteMarket features" />}
-			<MarketLogoFull icon={ICON_WHITEMARKET_FULL} />
+			<MarketLogoFull icon={ICON_WHITEMARKET_FULL} link="https://white.market/invite/8360ac91f29c3a6a" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

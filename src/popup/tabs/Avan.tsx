@@ -20,7 +20,7 @@ export const AvanSettings = ({ hasProPlan }: AvanSettingsProps) => {
 	return (
 		<TabTemplate value="avan" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Avanmarket features" />}
-			<MarketLogoFull icon={ICON_AVANMARKET_FULL} />
+			<MarketLogoFull icon={ICON_AVANMARKET_FULL} link="https://avanmarket.com?r=a0NNFQvBTf4s" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

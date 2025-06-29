@@ -1,7 +1,7 @@
-export const MarketLogoFull = ({ icon }: { icon: string }) => {
+export const MarketLogoFull = ({ icon, link }: { icon: string; link?: string }) => {
 	return (
-		<div className="flex justify-center w-full">
+		<a className="flex justify-center w-full" href={link} target="_blank">
 			<img src={icon} className="h-10 w-1/2 object-contain" />
-		</div>
+		</a>
 	);
 };

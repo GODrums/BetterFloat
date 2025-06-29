@@ -20,7 +20,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 	return (
 		<TabTemplate value="gamerpay" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Gamerpay features" />}
-			<MarketLogoFull icon={ICON_GAMERPAY_FULL} />
+			<MarketLogoFull icon={ICON_GAMERPAY_FULL} link="https://gamerpay.gg/partner/7e904fea99" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

@@ -20,7 +20,10 @@ export const MarketCSGOSettings = ({ hasProPlan }: MarketCSGOSettingsProps) => {
 	return (
 		<TabTemplate value="marketcsgo" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access MarketCSGO features" />}
-			<MarketLogoFull icon={ICON_MARKETCSGO_FULL} />
+			<MarketLogoFull
+				icon={ICON_MARKETCSGO_FULL}
+				link="https://market.csgo.com?utm_campaign=main&utm_source=BetterFloat&utm_medium=referral&cpid=caa655bb-8c34-4013-9427-1a5f842fc898&oid=4c69d079-ad2a-44b0-a9ac-d0afc2167ee7"
+			/>
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

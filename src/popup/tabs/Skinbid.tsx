@@ -14,7 +14,7 @@ export const SkinbidSettings = () => {
 
 	return (
 		<TabTemplate value="skinbid" checked={checked}>
-			<MarketLogoFull icon={ICON_SKINBID_FULL} />
+			<MarketLogoFull icon={ICON_SKINBID_FULL} link="https://skinbid.com?utm_source=betterfloat&ref=betterfloat" />
 			<SettingsEnable id="skb-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">
