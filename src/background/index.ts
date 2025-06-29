@@ -70,16 +70,25 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	}
 	console.log('[BetterFloat] Tab updated:', changeInfo, tab);
 
+	// if (tab.status === 'loading' || !tab.title) {
+	// 	return;
+	// }
+
 	// Handle script injection for supported trading sites
 	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
 		const hostname = new URL(tab.url).hostname;
-		// if within last 3 seconds, don't inject
-		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || (Date.now() - injectedTabs[tabId].time > 3000 && tab.status !== 'loading')) {
+		// if within last 1 second, don't inject
+		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 1000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
 			const delay = hostname === 'bitskins.com' ? 1000 : 0;
 			setTimeout(() => {
 				executeInjection(tabId, tab.url!);
 			}, delay);
+			if (hostname === 'csfloat.com') {
+				setTimeout(() => {
+					executeInjection(tabId, tab.url!);
+				}, 200);
+			}
 		}
 	}
 

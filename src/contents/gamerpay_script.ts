@@ -42,6 +42,9 @@ async function init() {
 		}
 	});
 
+	// may lead to currency rate changes not being loaded in time, but it's fine...
+	currencyRates = await getCurrencyRates();
+
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }
 
@@ -68,6 +71,10 @@ async function adjustItem(container: Element, props: string) {
 		return;
 	}
 
+	if (container.querySelector('.betterfloat-buffprice')) {
+		return;
+	}
+
 	let itemData: Gamerpay.ReactItem;
 	try {
 		itemData = JSON.parse(props) as Gamerpay.ReactItem;
@@ -75,6 +82,8 @@ async function adjustItem(container: Element, props: string) {
 		console.error('[BetterFloat] Error parsing item data:', error);
 		return;
 	}
+
+	console.log('[BetterFloat] Item data:', itemData);
 
 	await addBuffPrice(itemData, container);
 }
@@ -161,17 +170,10 @@ async function getBuffItem(item: Gamerpay.Item) {
 	let itemPrice = new Decimal(item.price).div(100);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	// const currencyRate = getGamerpayCurrencyRate(userCurrency);
-	const currencyRate = 1;
+	const currencyRate = currencyRates?.find((rate) => rate.code.toLowerCase() === userCurrency.toLowerCase())?.rate ?? 1;
 
 	if (currencyRate && currencyRate !== 1) {
-		if (priceListing) {
-			priceListing = priceListing.div(currencyRate);
-		}
-		if (priceOrder) {
-			priceOrder = priceOrder.div(currencyRate);
-		}
-		itemPrice = itemPrice.div(currencyRate);
+		itemPrice = itemPrice.mul(currencyRate);
 	}
 
 	const referencePrice =
@@ -224,18 +226,38 @@ function getUserCurrency() {
 	return 'USD';
 }
 
+async function getCurrencyRates(): Promise<Gamerpay.CurrencyRates> {
+	const date = localStorage.getItem('betterfloat-currency-rates-date');
+	// if older than 2 hours, fetch new rates
+	if (!date || Date.now() - Number(date) > 2 * 60 * 60 * 1000) {
+		const response = await fetch('https://api.gamerpay.gg/currencies');
+		const data = await response.json();
+		localStorage.setItem('betterfloat-currency-rates-date', Date.now().toString());
+		localStorage.setItem('betterfloat-currency-rates', JSON.stringify(data));
+		return data;
+	} else {
+		return JSON.parse(localStorage.getItem('betterfloat-currency-rates') ?? '{}');
+	}
+}
+
 function createBuffItem(item: Gamerpay.Item) {
-	const marketHashName = item.marketHashName ?? item.name;
+	let name = item.marketHashName ?? item.name;
 	let itemStyle = '' as ItemStyle;
 	if (item.wearName === 'Vanilla') {
 		itemStyle = 'Vanilla';
 	}
+
+	if (name.indexOf('(') === -1 && item.wearName) {
+		name = `${name} (${item.wearName})`;
+	}
+
 	return {
-		name: marketHashName,
+		name,
 		style: itemStyle,
 	};
 }
 
 let extensionSettings: IStorage;
+let currencyRates: Gamerpay.CurrencyRates;
 
 init();

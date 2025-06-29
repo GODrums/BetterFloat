@@ -1,4 +1,9 @@
 export namespace Gamerpay {
+	export type CurrencyRates = {
+		code: string;
+		rate: number;
+	}[];
+
 	export type Item = {
 		id: number;
 		createdAt: number;
