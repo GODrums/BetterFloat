@@ -75,6 +75,7 @@ import {
 	getBlueGemName,
 	getBuffPrice,
 	getCharmColoring,
+	getCollectionLink,
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
@@ -810,9 +811,9 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 
 function addCollectionLink(container: Element) {
 	const collectionLink = container.querySelector('div.collection');
-	if (collectionLink) {
+	if (collectionLink?.textContent) {
 		const link = html`
-			<a href="https://csgoskins.gg/collections/${collectionLink.textContent?.replaceAll(' ', '-')?.replaceAll('.', '')?.toLowerCase()}" target="_blank">
+			<a href="${getCollectionLink(collectionLink.textContent)}" target="_blank">
 			 	${collectionLink.textContent}
 			</a>
 		`;
