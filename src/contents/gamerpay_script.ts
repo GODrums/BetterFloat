@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
-import { getMarketID } from '~lib/handlers/mappinghandler';
+import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
@@ -38,6 +38,11 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'gp');
 
+	// may lead to currency rate changes not being loaded in time, but it's fine...
+	currencyRates = await getCurrencyRates();
+
+	await initMarketIdMapping();
+
 	// Set up event listener for React data ready events from the injected script
 	document.addEventListener('betterfloat-data-ready', async (event) => {
 		const target = event.target as HTMLElement;
@@ -46,9 +51,6 @@ async function init() {
 			await adjustItem(target, props);
 		}
 	});
-
-	// may lead to currency rate changes not being loaded in time, but it's fine...
-	currencyRates = await getCurrencyRates();
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }
@@ -91,6 +93,22 @@ async function adjustItem(container: Element, props: string) {
 	// console.log('[BetterFloat] Item data:', itemData);
 
 	await addBuffPrice(itemData, container);
+
+	moveTradelock(container);
+}
+
+function moveTradelock(container: Element) {
+	const tradeLockContainer = container.querySelector<HTMLElement>('div[class*="DelayedDeliveryCardFeed_card__"]');
+	if (!tradeLockContainer) {
+		return;
+	}
+	const stickerContainer = container.querySelector<HTMLElement>('div[class*="ItemCardBody_stickers__"]');
+	if (!stickerContainer) {
+		return;
+	}
+
+	stickerContainer.after(tradeLockContainer);
+	tradeLockContainer.style.flex = 'none';
 }
 
 async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
@@ -130,6 +148,13 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
 				e.stopPropagation();
 				window.open(buffElement.href, '_blank');
 			});
+		}
+
+		if (extensionSettings['gp-removereferenceprice'] && buffElement) {
+			const referencePriceContainer = buffElement.nextElementSibling;
+			if (referencePriceContainer) {
+				referencePriceContainer.remove();
+			}
 		}
 	}
 
@@ -175,7 +200,8 @@ async function getBuffItem(item: Gamerpay.Item) {
 	let itemPrice = new Decimal(item.price).div(100);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = currencyRates?.find((rate) => rate.code.toLowerCase() === userCurrency.toLowerCase())?.rate ?? 1;
+	const currencyToSearch = userCurrency === 'EUR' ? 'USD' : userCurrency;
+	const currencyRate = currencyRates?.find((rate) => rate.code.toLowerCase() === currencyToSearch.toLowerCase())?.rate ?? 1;
 
 	if (currencyRate && currencyRate !== 1) {
 		if (userCurrency !== 'USD') {

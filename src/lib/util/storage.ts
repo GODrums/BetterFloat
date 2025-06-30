@@ -241,6 +241,7 @@ export const DEFAULT_SETTINGS = {
 	'gp-pricereference': 0,
 	'gp-buffdifference': true,
 	'gp-buffdifferencepercent': true,
+	'gp-removereferenceprice': true,
 	'gp-listingage': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };

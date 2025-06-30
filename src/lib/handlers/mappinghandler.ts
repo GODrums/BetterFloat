@@ -80,15 +80,19 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 	return null;
 }
 
-export async function getMarketID(name: string, source: MarketSource) {
+export async function initMarketIdMapping() {
 	if (Object.keys(marketIdMapping).length === 0) {
-		// console.error('[BetterFloat] ID mapping not loaded yet');
-		// return undefined;
 		await fetch(marketIds)
 			.then((response) => response.json())
 			.then((data) => {
 				marketIdMapping = data;
 			});
+	}
+}
+
+export async function getMarketID(name: string, source: MarketSource) {
+	if (Object.keys(marketIdMapping).length === 0) {
+		await initMarketIdMapping();
 	}
 	const getSourceKey = (source: MarketSource) => {
 		switch (source) {

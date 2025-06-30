@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_CSBLUEGEM, ICON_GAMERPAY_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsTravelExplore, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -32,7 +32,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
 						<SettingsCheckbox
-							id="av-csbluegem"
+							id="gp-csbluegem"
 							text="Blue Gem Enhancements"
 							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
 							tooltipText="Adds pattern details and past sales to case hardened skins."
@@ -40,7 +40,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 						/>
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="av-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
+						<SettingsCheckbox id="gp-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>
@@ -52,7 +52,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 					<SettingsSource prefix="av" />
 					<SettingsCard>
 						<SettingsCheckbox
-							id="av-buffdifference"
+							id="gp-buffdifference"
 							text="Show Buff Price Difference"
 							tooltipText="Recalculates and replaces the original discount tag according to the item's Buff price in absolute units."
 							icon={<IcOutlineDiscount className="h-6 w-6" />}
@@ -60,11 +60,14 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox
-							id="av-buffdifferencepercent"
+							id="gp-buffdifferencepercent"
 							text="Show Buff Price Percentage Difference"
 							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="gp-removereferenceprice" text="Remove Original Reference Price" icon={<MaterialSymbolsTravelExplore className="h-6 w-6" />} />
 					</SettingsCard>
 				</div>
 			</div>
@@ -74,7 +77,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="av-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
+						<SettingsCheckbox id="gp-listingage" text="Show Listing Age" icon={<IcRoundAccessTime className="h-6 w-6" />} disabled />
 					</SettingsCard>
 				</div>
 			</div>
