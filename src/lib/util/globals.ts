@@ -185,8 +185,18 @@ export enum MarketSource {
 	Lisskins = 'lisSkins',
 	Skinbid = 'skinbid',
 	Skinport = 'skinport',
-	Marketcsgo = 'marketcsgo',
+	Marketcsgo = 'marketCsgo',
 	Pricempire = 'pricempire',
+	Gamerpay = 'gamerpay',
+	Waxpeer = 'waxpeer',
+	Skinbaron = 'skinbaron',
+	Skinflow = 'skinflow',
+	Tradeit = 'tradeit',
+	Whitemarket = 'whitemarket',
+	Swapgg = 'swapgg',
+	Avamarket = 'avanmarket',
+	Skinsmonkey = 'skinsmonkey',
+	Avanmarket = 'avanmarket',
 }
 
 export const AvailableMarketSources = [
@@ -203,6 +213,14 @@ export const AvailableMarketSources = [
 	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;' },
 	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '' },
 	{ text: 'Marketcsgo', logo: ICON_MARKETCSGO, source: MarketSource.Marketcsgo, style: '' },
+	{ text: 'Gamerpay', logo: ICON_GAMERPAY, source: MarketSource.Gamerpay, style: '' },
+	{ text: 'Waxpeer', logo: ICON_WAXPEER, source: MarketSource.Waxpeer, style: '' },
+	{ text: 'Skinbaron', logo: ICON_SKINBARON, source: MarketSource.Skinbaron, style: '' },
+	{ text: 'Tradeit', logo: ICON_TRADEIT, source: MarketSource.Tradeit, style: '' },
+	{ text: 'Whitemarket', logo: ICON_WHITEMARKET, source: MarketSource.Whitemarket, style: '' },
+	{ text: 'Swapgg', logo: ICON_SWAPGG, source: MarketSource.Swapgg, style: '' },
+	{ text: 'Avanmarket', logo: ICON_AVANMARKET, source: MarketSource.Avamarket, style: '' },
+	{ text: 'Skinsmonkey', logo: ICON_SKINSMONKEY, source: MarketSource.Skinsmonkey, style: '' },
 ];
 
 export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney];

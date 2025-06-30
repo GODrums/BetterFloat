@@ -218,6 +218,22 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://market.csgo.com/en/?search=${encodeURIComponent(buff_name)}&utm_campaign=main&utm_source=BetterFloat&utm_medium=referral&cpid=caa655bb-8c34-4013-9427-1a5f842fc898&oid=4c69d079-ad2a-44b0-a9ac-d0afc2167ee7`;
 		case MarketSource.Pricempire:
 			return `https://pricempire.com/item/${encodeURIComponent(buff_name)}?utm_source=betterfloat`;
+		case MarketSource.Gamerpay:
+			return `https://gamerpay.gg/?sortBy=price&ascending=true&query=${encodeURIComponent(buff_name)}&page=1&utm_source=betterfloat`;
+		case MarketSource.Waxpeer:
+			return `https://waxpeer.com/?sort=ASC&order=price&all=0&exact=0&search=${encodeURIComponent(buff_name)}&utm_source=betterfloat`;
+		case MarketSource.Skinbaron:
+			return `https://skinbaron.de/en/csgo?str=${encodeURIComponent(buff_name)}&sort=CF&utm_source=betterfloat`;
+		case MarketSource.Tradeit:
+			return `https://tradeit.gg/csgo/store?aff=betterfloat&search=${encodeURIComponent(buff_name)}`;
+		case MarketSource.Whitemarket:
+			return `https://white.market/market?name=${encodeURIComponent(buff_name)}&sort=pr_a&utm_source=betterfloat`;
+		case MarketSource.Swapgg:
+			return 'https://swap.gg/?r=X4nFTDBbek';
+		case MarketSource.Avanmarket:
+			return `https://avan.market/en/market/cs?name=${encodeURIComponent(buff_name)}&utm_source=betterfloat&r=betterfloat&sort=1`;
+		case MarketSource.Skinsmonkey:
+			return `https://skinsmonkey.com/market/csgo?search=${encodeURIComponent(buff_name)}&sort=price&order=asc&utm_source=betterfloat&r=a0NNFQvBTf4s`;
 	}
 	return '';
 }

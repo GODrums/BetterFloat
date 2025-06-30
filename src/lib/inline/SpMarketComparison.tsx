@@ -416,7 +416,7 @@ const SpMarketComparison: React.FC = () => {
 							<div className="text-[#747778] mt-2 border border-[#43484a] rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-white" />
-									<span className="text-base text-center text-white">Unlock 10+ more markets</span>
+									<span className="text-base text-center text-white">Unlock 15+ more markets and a liquidity tracker</span>
 									<Button variant="purple" size="sm" asChild>
 										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
 											Upgrade to Pro
