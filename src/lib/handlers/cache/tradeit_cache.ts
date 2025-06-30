@@ -14,12 +14,15 @@ export function cacheTradeitBotItems(data: Tradeit.Item[]) {
 }
 
 export function cacheTradeitOwnItems(data: { [assetId: number]: Tradeit.Item[] }) {
-	// tradeitOwnItems = Object.assign(tradeitOwnItems, data);
 	for (const [_key, value] of Object.entries(data)) {
 		for (const item of value) {
 			tradeitOwnItems[item.imgURL] = [item];
 		}
 	}
+}
+
+export function getTradeitOwnItemByGridImg(name: string) {
+	return Object.values(tradeitOwnItems).find((items) => items[0].imgUrls?.gridImgUrl === name)?.[0];
 }
 
 export function getFirstTradeitOwnItem(steamImg: string) {

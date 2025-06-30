@@ -1,14 +1,15 @@
 import { html } from 'common-tags';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
-import { getFirstTradeitBotItem, getFirstTradeitOwnItem } from '~lib/handlers/cache/tradeit_cache';
+import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByGridImg } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { getMarketID } from '~lib/handlers/mappinghandler';
+import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -40,11 +41,12 @@ async function init() {
 
 	if (!extensionSettings['tradeit-enable']) return;
 
+	// TODO: TEMPORARILY FREE FOR TESTING, RE-ENABLE BACK AFTERWARDS
 	// check if user has the required plan
-	if (!checkUserPlanPro(extensionSettings['user'])) {
-		console.log('[BetterFloat] Pro plan required for TradeIt features');
-		return;
-	}
+	// if (!checkUserPlanPro(extensionSettings['user'])) {
+	// 	console.log('[BetterFloat] Pro plan required for TradeIt features');
+	// 	return;
+	// }
 
 	await initPriceMapping(extensionSettings, 'tradeit');
 
@@ -79,7 +81,7 @@ async function firstLaunch() {
 	if (location.pathname === '/csgo/sell') {
 		const sellItems = document.querySelectorAll(TRADEIT_SELECTORS.firstLaunch.sellItems);
 		for (let i = 0; i < sellItems.length; i++) {
-			await adjustItem(sellItems[i], false);
+			await adjustItem(sellItems[i], true);
 		}
 	}
 }
@@ -123,13 +125,15 @@ function applyMutation() {
 					addedNode.className += ' betterfloat-await';
 				} else if (addedNode.className.toString().includes('cart-box')) {
 					await adjustCartItem(addedNode);
-				} else if (addedNode.id === TRADEIT_SELECTORS.inventory.container) {
+				} else if (addedNode.id === TRADEIT_SELECTORS.inventory.container.substring(1)) {
 					const sellItems = addedNode.querySelectorAll(TRADEIT_SELECTORS.itemContainer);
 					for (let i = 0; i < sellItems.length; i++) {
 						await adjustItem(sellItems[i], true);
 					}
 				} else if (addedNode.className === 'grid-col' && addedNode.firstElementChild?.className.includes('item-cell')) {
-					await adjustItem(addedNode.firstElementChild!, false);
+					const inventoryContainer = Array.from(document.querySelectorAll(TRADEIT_SELECTORS.inventory.container));
+					const isOwn = location.pathname === '/csgo/sell' || inventoryContainer[0] === addedNode.closest(TRADEIT_SELECTORS.inventory.container);
+					await adjustItem(addedNode.firstElementChild!, isOwn);
 				}
 			}
 		}
@@ -169,19 +173,23 @@ async function adjustCartItem(container: Element) {
 async function adjustItem(container: Element, isOwn = false) {
 	const getItem = () => {
 		if (isOwn) {
-			const steamImg = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
-			return getFirstTradeitOwnItem(steamImg)?.[0];
+			const imgSrc = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
+			if (imgSrc.includes('https://cdn.tradeit.gg/')) {
+				return getTradeitOwnItemByGridImg(imgSrc);
+			} else {
+				return getFirstTradeitOwnItem(imgSrc)?.[0];
+			}
 		}
 		return getFirstTradeitBotItem();
 	};
 	let apiItem = getItem();
-	let attempts = 0;
-	while (!apiItem && attempts++ < 5) {
-		// wait for 1s and try again
-		console.log(`[BetterFloat] No ${isOwn} item found, waiting 1s and trying again...`);
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		apiItem = getItem();
-	}
+	// let attempts = 0;
+	// while (!apiItem && attempts++ < 5) {
+	// 	// wait for 1s and try again
+	// 	console.log(`[BetterFloat] No ${isOwn} item found, waiting 1s and trying again...`);
+	// 	await new Promise((resolve) => setTimeout(resolve, 1000));
+	// 	apiItem = getItem();
+	// }
 	// console.log('[BetterFloat] Adjusting item: ', apiItem);
 	if (!apiItem) {
 		console.log('[BetterFloat] No item found, cancelling...', container);
@@ -210,7 +218,7 @@ async function adjustItem(container: Element, isOwn = false) {
 	}
 }
 
-async function getBuffItem(item: Tradeit.Item) {
+async function getBuffItem(container: Element, item: Tradeit.Item) {
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	const source = MarketSource.Buff;
@@ -224,11 +232,22 @@ async function getBuffItem(item: Tradeit.Item) {
 
 	const market_id = await getMarketID(buff_name, source);
 
-	// const priceFromReference = extensionSettings.priceReference == 1 ? priceListing : priceOrder;
-	const priceFromReference = priceListing ?? new Decimal(0);
-	const itemPrice = getItemPrice(item);
+	const currency = getUserCurrency() ?? 'USD';
+	const currencySymbol = getSymbolFromCurrency(currency) ?? '$';
+	const currencyRate = currency === 'USD' ? 1 : await getAndFetchCurrencyRate(currency);
+	if (priceListing && currencyRate && currencyRate !== 1) {
+		priceListing = priceListing.mul(currencyRate);
+	}
+	if (priceOrder && currencyRate && currencyRate !== 1) {
+		priceOrder = priceOrder.mul(currencyRate);
+	}
 
-	const priceDifference = itemPrice.minus(priceFromReference);
+	const priceFromReference = extensionSettings['tradeit-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	console.log('[BetterFloat] Price from reference: ', extensionSettings['tradeit-pricereference'], priceFromReference?.toNumber());
+	const itemPrice = getItemPrice(container, item);
+	console.log('[BetterFloat] Item price: ', itemPrice.toNumber());
+
+	const priceDifference = itemPrice.minus(priceFromReference ?? new Decimal(0));
 	return {
 		buff_name,
 		market_id,
@@ -238,11 +257,42 @@ async function getBuffItem(item: Tradeit.Item) {
 		difference: priceDifference,
 		itemPrice,
 		source,
+		currency: {
+			symbol: currencySymbol,
+			rate: currencyRate,
+			currency,
+		},
 	};
 }
 
-function getItemPrice(item: Tradeit.Item) {
-	if (item.price) {
+function getItemPrice(container: Element, item: Tradeit.Item) {
+	let priceText = container.querySelector('.price > div')?.textContent?.trim() ?? '';
+	let currency = '';
+	// regex also detects &nbsp as whitespace!
+	if (priceText.split(/\s/).length > 1) {
+		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
+		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
+		currency = parts.filter((x) => Number.isNaN(+x))[0];
+	} else {
+		// format: "€1,696.00"
+		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
+		currency = priceText.substring(0, firstDigit);
+		priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+	}
+	let price = Number(priceText);
+
+	if (Number.isNaN(price) || !Number.isNaN(Number(currency))) {
+		price = 0;
+		currency = '';
+	}
+	if (price > 0) {
+		return new Decimal(price);
+	}
+
+	if (location.pathname === '/csgo/store') {
+		return new Decimal(item.storePrice!).div(100);
+	} else if (item.price) {
 		return new Decimal(item.price).div(100);
 	} else {
 		console.error('[BetterFloat] Unknown item type: ', item);
@@ -271,9 +321,7 @@ function createBuffItem(item: Tradeit.Item): { name: string; style: ItemStyle } 
 }
 
 async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<PriceResult> {
-	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, itemPrice, source } = await getBuffItem(item);
-
-	const referencePrice = location.pathname !== '/csgo/store' ? difference : itemPrice.minus((Number(extensionSettings['tradeit-altmarket']) === 0 ? priceOrder : priceListing) ?? new Decimal(0));
+	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, itemPrice, source, currency } = await getBuffItem(container, item);
 
 	const elementContainer = container.querySelector('.item-details');
 
@@ -285,9 +333,9 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: '$',
+			userCurrency: currency.symbol,
 			itemStyle: '' as DopplerPhase,
-			CurrencyFormatter: CurrencyFormatter('USD'),
+			CurrencyFormatter: CurrencyFormatter(currency.currency),
 			isDoppler: false,
 			isPopout: false,
 			priceClass: 'suggested-price',
@@ -321,8 +369,8 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 			},
 		};
 
-		const absDifference = referencePrice.abs();
-		const percentage = itemPrice.div(priceFromReference).mul(100);
+		const absDifference = difference.abs();
+		const percentage = itemPrice.div(priceFromReference ?? new Decimal(0)).mul(100);
 		const colorPercentage = 100;
 		const { color, background } = percentage.gt(colorPercentage) ? styling.loss : styling.profit;
 
@@ -330,7 +378,7 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
             <div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color};" data-betterfloat="${difference}">
                 <span>
                     ${difference.isPos() ? '+' : '-'}
-                    ${absDifference.gt(1000) ? CurrencyFormatter('USD').format(absDifference.toNumber()) : CurrencyFormatter('USD').format(absDifference.toNumber())}
+                    ${absDifference.gt(1000) ? CurrencyFormatter(currency.currency).format(absDifference.toNumber()) : CurrencyFormatter(currency.currency).format(absDifference.toNumber())}
                 </span>
                 <span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
             </div>
@@ -343,6 +391,10 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 	return {
 		price_difference: difference.toNumber(),
 	};
+}
+
+function getUserCurrency() {
+	return document.querySelector('.price-language-wrapper .inner-text')?.textContent?.trim();
 }
 
 // mutation observer active?

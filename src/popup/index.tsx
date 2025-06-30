@@ -97,6 +97,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="csmoney">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
 								</TabsTrigger>
+								<TabsTrigger value="tradeit">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
+								</TabsTrigger>
 							</div>
 							<div className="flex justify-center">
 								<Badge variant="purple" className="my-4">
@@ -141,9 +144,6 @@ export default function IndexPopup() {
 								</TabsTrigger>
 								<TabsTrigger value="swapgg">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SWAPGG} />
-								</TabsTrigger>
-								<TabsTrigger value="tradeit">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
 								</TabsTrigger>
 								<TabsTrigger value="avan">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />

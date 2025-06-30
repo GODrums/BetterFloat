@@ -18,22 +18,20 @@ export default function UpdatePopup() {
 
 					<h1 className="flex items-center font-bold text-xl text-white mb-4 relative z-50">
 						<img src={betterfloatLogo} alt="BetterFloat" className="h-10 w-10 mr-2" />
-						<span>New Search and Lots of Markets!</span>
+						<span>Test our new TradeIt features!</span>
 						<Badge variant="default" className="ml-2">
-							NEW
+							Limited Time
 						</Badge>
 					</h1>
 
 					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">
-						👑 Our Pro users can now access lots of new markets!
-						<br />🚀 We've also added a competely new search experience!
+						Our TradeIt integration is free for a limited time!
+						<br />
+						Try it out and join our Discord to give us feedback!
 					</p>
 					<div className="w-full flex items-center justify-end gap-4">
-						<Button variant="secondary" className="font-semibold" onClick={() => window.open('https://docs.betterfloat.com/changelog/overview')}>
-							View Changelog
-						</Button>
-						<Button variant="purple" className="font-semibold" onClick={() => window.open('https://docs.betterfloat.com/tutorials/using-omnibox')}>
-							View Search Tutorial
+						<Button variant="purple" className="font-semibold" onClick={() => window.open('https://tradeit.gg?aff=betterfloat')}>
+							Go to TradeIt
 						</Button>
 					</div>
 				</div>

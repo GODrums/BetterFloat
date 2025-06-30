@@ -287,7 +287,11 @@ export async function adjustOfferContainer(container: Element) {
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_id = await getMarketID(itemName, source);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
-	const priceFromReference = extensionSettings['csf-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const useOrderPrice =
+		priceOrder &&
+		extensionSettings['csf-pricereference'] === 0 &&
+		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
+	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
 
 	const userCurrency = CSFloatHelpers.userCurrency();
 

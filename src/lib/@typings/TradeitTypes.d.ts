@@ -34,6 +34,9 @@ export namespace Tradeit {
 		hasStattrak?: boolean;
 		hasStickers?: boolean;
 		id: number | string;
+		imgUrls?: {
+			gridImgUrl?: string;
+		};
 		imgURL: string;
 		metaMappings: {
 			rarity: number;
@@ -56,6 +59,8 @@ export namespace Tradeit {
 		steamInventoryLink?: string;
 		steamMarketLink?: string;
 		stickers: any[] | null;
+		storeBasePrice?: number;
+		storePrice?: number;
 		tradeLockDay: any[] | null;
 		tradedAt: string;
 		urlSlug?: string;

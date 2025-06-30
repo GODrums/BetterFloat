@@ -85,7 +85,8 @@ export function dynamicUIHandler() {
 
 async function showUpdatePopup() {
 	// minor updates don't receive a new popup
-	const version = chrome.runtime.getManifest().version.split('.').slice(0, 2).join('.') + '.0';
+	// const version = chrome.runtime.getManifest().version.split('.').slice(0, 2).join('.') + '.0';
+	const version = '3.2.6';
 	const storageKey = `show-update-popup-${version}`;
 	const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
 	// show update popup
