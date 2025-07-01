@@ -357,7 +357,7 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 	}
 
 	const priceContainer = container.querySelector(TRADEIT_SELECTORS.price);
-	if (priceListing?.gt(0.06) && priceContainer) {
+	if (priceListing?.gt(0.06) && priceContainer && (extensionSettings['tradeit-buffdifference'] || extensionSettings['tradeit-buffdifferencepercent'])) {
 		const styling = {
 			profit: {
 				color: '#5bc27a',
@@ -374,13 +374,19 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 		const colorPercentage = 100;
 		const { color, background } = percentage.gt(colorPercentage) ? styling.loss : styling.profit;
 
+		const differenceText = html`
+			<span>
+				${difference.isPos() ? '+' : '-'}
+				${absDifference.gt(1000) ? CurrencyFormatter(currency.currency).format(absDifference.toNumber()) : CurrencyFormatter(currency.currency).format(absDifference.toNumber())}
+			</span>
+		`;
+		const percentageText = html`
+			<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+		`;
 		const buffPriceHTML = html`
             <div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color};" data-betterfloat="${difference}">
-                <span>
-                    ${difference.isPos() ? '+' : '-'}
-                    ${absDifference.gt(1000) ? CurrencyFormatter(currency.currency).format(absDifference.toNumber()) : CurrencyFormatter(currency.currency).format(absDifference.toNumber())}
-                </span>
-                <span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>
+                ${extensionSettings['tradeit-buffdifference'] ? differenceText : ''}
+                ${extensionSettings['tradeit-buffdifferencepercent'] ? percentageText : ''}
             </div>
         `;
 		priceContainer.setAttribute('style', 'display: flex; gap: 5px; align-items: center;');
