@@ -6,7 +6,7 @@ import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handl
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -163,11 +163,6 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 	};
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['wm-altmarket'] && extensionSettings['wm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['wm-altmarket'] as MarketSource;

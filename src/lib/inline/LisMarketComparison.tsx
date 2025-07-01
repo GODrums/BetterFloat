@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getMarketURL } from '~lib/util/helperfunctions';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { ExtensionStorage } from '~lib/util/storage';
@@ -179,11 +179,6 @@ const LisMarketComparison: React.FC = () => {
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
-
-			if (isBuffBannedItem(listing.name)) {
-				// Check based on name
-				convertedData = convertedData.filter((entry) => entry.market !== MarketSource.Buff);
-			}
 
 			if (convertedData.length === 0) {
 				console.warn('No market data available');

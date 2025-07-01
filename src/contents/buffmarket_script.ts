@@ -8,7 +8,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { ICON_CLOCK, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -157,11 +157,6 @@ async function getBuffItem(item: ExtendedBuffItem) {
 	const buff_name = handleSpecialStickerNames(item.name);
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bm-altmarket'] && extensionSettings['bm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['bm-altmarket'] as MarketSource;

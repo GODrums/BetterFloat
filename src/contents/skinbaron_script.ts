@@ -8,7 +8,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -366,11 +366,6 @@ async function getBuffItem(item: Skinbaron.Item) {
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['baron-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['baron-altmarket'] as MarketSource;

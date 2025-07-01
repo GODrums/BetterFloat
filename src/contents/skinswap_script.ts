@@ -11,7 +11,7 @@ import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -207,11 +207,6 @@ async function getBuffItem(item: Skinout.Item | Skinout.InventoryItem) {
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['ss-altmarket'] && extensionSettings['ss-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['ss-altmarket'] as MarketSource;

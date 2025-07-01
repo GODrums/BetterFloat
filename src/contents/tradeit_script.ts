@@ -9,7 +9,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -224,11 +224,6 @@ async function getBuffItem(container: Element, item: Tradeit.Item) {
 	const source = MarketSource.Buff;
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	const market_id = await getMarketID(buff_name, source);
 

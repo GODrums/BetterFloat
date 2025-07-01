@@ -163,15 +163,6 @@ export function isUserPro(user: SettingsUser) {
 	return user?.plan?.type === 'pro';
 }
 
-/**
- * Buff regulated items are not allowed to be sold on Buff. This function checks if an item is banned.
- * @param name
- * @returns
- */
-export function isBuffBannedItem(_: string) {
-	return false;
-}
-
 export function getCollectionLink(collectionName: string) {
 	return `https://csgoskins.gg/collections/${collectionName.replaceAll('& ', '').replaceAll(' ', '-').replaceAll('.', '').toLowerCase()}`;
 }

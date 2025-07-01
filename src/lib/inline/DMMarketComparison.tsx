@@ -8,7 +8,7 @@ import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getDMarketCurrency } from '~lib/handlers/cache/dmarket_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL, handleSpecialStickerNames, isBuffBannedItem } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getMarketURL, handleSpecialStickerNames } from '~lib/util/helperfunctions';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -202,10 +202,6 @@ const DMMarketComparison: React.FC = () => {
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
-
-			if (isBuffBannedItem(buff_name)) {
-				convertedData = convertedData.filter((entry) => entry.market !== MarketSource.Buff);
-			}
 
 			if (convertedData.length === 0) {
 				console.warn('No market data available');

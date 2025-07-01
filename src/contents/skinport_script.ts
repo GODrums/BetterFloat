@@ -22,7 +22,7 @@ import {
 	isProduction,
 	MarketSource,
 } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isBuffBannedItem, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
 import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
@@ -920,11 +920,6 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 	let source = extensionSettings['sp-pricingsource'] as MarketSource;
 	let { priceListing, priceOrder, priceAvg30, liquidity } = await getBuffPrice(buff_name, itemStyle, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if ((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) {
 		source = extensionSettings['sp-altmarket'] as MarketSource;

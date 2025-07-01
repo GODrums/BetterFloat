@@ -10,7 +10,7 @@ import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandl
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -235,11 +235,6 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
 
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
-
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['csm-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['csm-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
@@ -425,12 +420,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		}
 	}
 
-	if (
-		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
-		priceListing?.gt(0.06) &&
-		!location.pathname.includes('/market/sell/') &&
-		!isBuffBannedItem(buff_name)
-	) {
+	if ((extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) && priceListing?.gt(0.06) && !location.pathname.includes('/market/sell/')) {
 		let priceContainer: HTMLElement | null | undefined = null;
 		if (selector === CSMONEY_SELECTORS.market) {
 			priceContainer = container.querySelector<HTMLElement>('a.betterfloat-buff-a')?.previousElementSibling?.previousElementSibling?.firstElementChild?.firstElementChild as HTMLElement;

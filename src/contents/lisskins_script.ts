@@ -7,7 +7,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, getAndFetchCurrencyRate, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -252,11 +252,6 @@ async function getBuffItem(item: HTMLItem) {
 	const buff_name = handleSpecialStickerNames(item.name);
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['lis-altmarket'] && extensionSettings['lis-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['lis-altmarket'] as MarketSource;

@@ -79,7 +79,6 @@ import {
 	getFloatColoring,
 	getSPBackgroundColor,
 	handleSpecialStickerNames,
-	isBuffBannedItem,
 	isUserPro,
 	waitForElement,
 } from '../lib/util/helperfunctions';
@@ -1652,12 +1651,6 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 	let market_id: number | string | undefined = await getMarketID(buff_name, source);
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(item.name)) {
-		pricingData.priceListing = new Decimal(0);
-		pricingData.priceOrder = new Decimal(0);
-		market_id = undefined;
-	}
 
 	if (Object.keys(pricingData).length === 0 || (pricingData.priceListing?.isZero() && pricingData.priceOrder?.isZero())) {
 		source = extensionSettings['csf-altmarket'] as MarketSource;

@@ -11,17 +11,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import {
-	CurrencyFormatter,
-	checkUserPlanPro,
-	createHistoryRewrite,
-	getBlueGemName,
-	getBuffPrice,
-	handleSpecialStickerNames,
-	isBuffBannedItem,
-	isUserPro,
-	waitForElement,
-} from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -378,11 +368,6 @@ async function getBuffItem(item: DMarket.Item) {
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['csm-altmarket'] && extensionSettings['csm-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['csm-altmarket'] as MarketSource;

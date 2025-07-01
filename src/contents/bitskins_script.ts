@@ -8,7 +8,7 @@ import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -341,11 +341,6 @@ async function getBuffItem(item: Bitskins.Item) {
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
-
-	if (source === MarketSource.Buff && isBuffBannedItem(buff_name)) {
-		priceListing = new Decimal(0);
-		priceOrder = new Decimal(0);
-	}
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['bs-altmarket'] && extensionSettings['bs-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['bs-altmarket'] as MarketSource;
