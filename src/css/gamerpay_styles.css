@@ -47,3 +47,13 @@ html {
 	border-radius: 4px !important;
 	gap: 4px;
 }
+
+.betterfloat-sticker-price {
+	font-style: normal;
+	font-weight: 600;
+	font-size: 11px;
+	line-height: 18px;
+	color: var(--color-neutral-400);
+	border-radius: 4px;
+	padding: 2.5px 4px;
+}

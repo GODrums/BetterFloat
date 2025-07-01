@@ -31,7 +31,7 @@ export namespace Gamerpay {
 		images: any | null;
 		tradable: boolean;
 		type: string;
-		stickers: any[];
+		stickers: Sticker[];
 		inspectLink: string | null;
 		floatValue: number | null;
 		wearName: string | null;
@@ -75,5 +75,16 @@ export namespace Gamerpay {
 		item: Item;
 		from: string; // e.g., "shop"
 		price: number; // e.g. 4930
+	};
+
+	export type Sticker = {
+		codename: string | null;
+		imageURL: string | null;
+		material: string | null;
+		name: string | null;
+		slot: string | null;
+		stickerId: number;
+		stickerPrice: number | null;
+		wear: number;
 	};
 }

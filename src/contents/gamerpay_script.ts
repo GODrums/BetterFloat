@@ -7,7 +7,7 @@ import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -72,6 +72,10 @@ async function replaceHistory() {
 	}
 }
 
+type PriceData = {
+	price_difference: Decimal;
+};
+
 async function adjustItem(container: Element, props: string) {
 	if (!props || props.length < 1 || props === '{}') {
 		console.warn('[BetterFloat] No React data available for item card');
@@ -92,9 +96,54 @@ async function adjustItem(container: Element, props: string) {
 
 	// console.log('[BetterFloat] Item data:', itemData);
 
-	await addBuffPrice(itemData, container);
+	const priceData = await addBuffPrice(itemData, container);
 
 	moveTradelock(container);
+
+	if (extensionSettings['gp-stickerprices']) {
+		addStickerPrices(itemData, container, priceData);
+	}
+}
+
+async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element, priceData: { price_difference: Decimal }) {
+	if (!itemData.item.stickers || itemData.item.stickers.length === 0) {
+		return;
+	}
+	if (container.querySelector('.betterfloat-sticker-price')) {
+		return;
+	}
+
+	const stickerContainer = container.querySelector<HTMLElement>('div[class*="ItemCardBody_stickers__"]');
+	if (!stickerContainer) {
+		return;
+	}
+
+	const source = (extensionSettings['gp-pricingsource'] as MarketSource) ?? MarketSource.Buff;
+
+	const stickerPrices = await Promise.all(
+		itemData.item.stickers.map(async (sticker) => {
+			const stickerName = `Sticker | ${sticker.name}`;
+			const stickerPrice = await getBuffPrice(stickerName, '', source);
+			return stickerPrice.priceListing ?? new Decimal(0);
+		})
+	);
+
+	const stickerPrice = stickerPrices.reduce((acc, price) => acc.plus(price), new Decimal(0));
+	const stickerPercentage = priceData.price_difference.div(stickerPrice).mul(100);
+
+	const spContainer = html`
+		<div class="betterfloat-sticker-price" style="background-color: ${getSPBackgroundColor(stickerPercentage.div(100).toNumber())}">
+			<span>${stickerPercentage.gt(200) ? '>200' : stickerPercentage.toFixed(2)}% SP</span>
+		</div>
+	`;
+
+	stickerContainer.style.flexDirection = 'column';
+	stickerContainer.style.alignItems = 'flex-start';
+	stickerContainer.style.gap = '5px';
+	stickerContainer.style.marginBottom = '15px';
+	if (!container.querySelector('.betterfloat-sticker-price')) {
+		stickerContainer.insertAdjacentHTML('afterbegin', spContainer);
+	}
 }
 
 function moveTradelock(container: Element) {
@@ -111,7 +160,7 @@ function moveTradelock(container: Element) {
 	tradeLockContainer.style.flex = 'none';
 }
 
-async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element) {
+async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element): Promise<PriceData> {
 	const item = reactItem.item;
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 

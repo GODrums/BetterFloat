@@ -40,7 +40,7 @@ export const GamerpaySettings = ({ hasProPlan }: GamerpaySettingsProps) => {
 						/>
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="gp-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
+						<SettingsCheckbox id="gp-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
 					</SettingsCard>
 				</div>
 			</div>
