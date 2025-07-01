@@ -71,6 +71,11 @@ export namespace Gamerpay {
 		floatApplicable: boolean;
 	};
 
+	export type ReactItemPage = {
+		item: Item;
+		seller: any;
+	};
+
 	export type ReactItem = {
 		item: Item;
 		from: string; // e.g., "shop"

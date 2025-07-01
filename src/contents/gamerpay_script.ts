@@ -6,6 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
+import { GAMERPAY_SELECTORS } from '~lib/handlers/selectors/gamerpay_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isBuffBannedItem, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
@@ -38,19 +39,22 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'gp');
 
-	// may lead to currency rate changes not being loaded in time, but it's fine...
-	currencyRates = await getCurrencyRates();
-
 	await initMarketIdMapping();
 
 	// Set up event listener for React data ready events from the injected script
 	document.addEventListener('betterfloat-data-ready', async (event) => {
 		const target = event.target as HTMLElement;
+		const type = (event as CustomEvent).detail.type;
 		const props = (event as CustomEvent).detail.props;
-		if (target?.className?.includes('ItemCard_wrapper')) {
+		if (type === 'card') {
 			await adjustItem(target, props);
+		} else if (type === 'page') {
+			await adjustItemPage(target, props);
 		}
 	});
+
+	// may lead to currency rate changes not being loaded in time, but it's fine...
+	currencyRates = await getCurrencyRates();
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }
@@ -94,15 +98,32 @@ async function adjustItem(container: Element, props: string) {
 		return;
 	}
 
-	// console.log('[BetterFloat] Item data:', itemData);
-
-	const priceData = await addBuffPrice(itemData, container);
+	const priceData = await addBuffPrice(itemData.item, container, 'page');
 
 	moveTradelock(container);
 
 	if (extensionSettings['gp-stickerprices']) {
 		addStickerPrices(itemData, container, priceData);
 	}
+}
+
+async function adjustItemPage(container: Element, props: string) {
+	if (!props || props.length < 1 || props === '{}') {
+		console.warn('[BetterFloat] No React data available for item page');
+		return;
+	}
+
+	let itemData: Gamerpay.ReactItemPage;
+	try {
+		itemData = JSON.parse(props) as Gamerpay.ReactItemPage;
+	} catch (error) {
+		console.error('[BetterFloat] Error parsing item data:', error);
+		return;
+	}
+
+	// console.log('[BetterFloat] Item page data:', itemData);
+
+	const priceData = await addBuffPrice(itemData.item, container, 'shop');
 }
 
 async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element, priceData: { price_difference: Decimal }) {
@@ -113,7 +134,7 @@ async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element
 		return;
 	}
 
-	const stickerContainer = container.querySelector<HTMLElement>('div[class*="ItemCardBody_stickers__"]');
+	const stickerContainer = container.querySelector<HTMLElement>(GAMERPAY_SELECTORS.card.stickers);
 	if (!stickerContainer) {
 		return;
 	}
@@ -122,6 +143,8 @@ async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element
 
 	const stickerPrices = await Promise.all(
 		itemData.item.stickers.map(async (sticker) => {
+			if (!sticker.name) return new Decimal(0);
+
 			const stickerName = `Sticker | ${sticker.name}`;
 			const stickerPrice = await getBuffPrice(stickerName, '', source);
 			return stickerPrice.priceListing ?? new Decimal(0);
@@ -147,11 +170,11 @@ async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element
 }
 
 function moveTradelock(container: Element) {
-	const tradeLockContainer = container.querySelector<HTMLElement>('div[class*="DelayedDeliveryCardFeed_card__"]');
+	const tradeLockContainer = container.querySelector<HTMLElement>(GAMERPAY_SELECTORS.common.tradeLock);
 	if (!tradeLockContainer) {
 		return;
 	}
-	const stickerContainer = container.querySelector<HTMLElement>('div[class*="ItemCardBody_stickers__"]');
+	const stickerContainer = container.querySelector<HTMLElement>(GAMERPAY_SELECTORS.card.stickers);
 	if (!stickerContainer) {
 		return;
 	}
@@ -160,15 +183,22 @@ function moveTradelock(container: Element) {
 	tradeLockContainer.style.flex = 'none';
 }
 
-async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element): Promise<PriceData> {
-	const item = reactItem.item;
+async function addBuffPrice(item: Gamerpay.Item, container: Element, state: PageState): Promise<PriceData> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
+	const isItemPage = state === 'shop';
 
-	const footerContainer = container.querySelector<HTMLElement>('div[class*="ItemCardBody_priceContainer__"]');
+	const footerContainer = container.querySelector<HTMLElement>(isItemPage ? GAMERPAY_SELECTORS.itempage.priceContainer : GAMERPAY_SELECTORS.card.priceContainer);
 
-	const isItemPage = false;
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD');
+
+	// move to the correct position because Gamerpay inits the container multiple times
+	if (isItemPage && container.querySelector('.betterfloat-buffprice')) {
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement && footerContainer) {
+			footerContainer.after(buffElement);
+		}
+	}
 
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({
@@ -185,12 +215,18 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element): 
 			isPopout: isItemPage,
 			addSpaceBetweenPrices: true,
 			showPrefix: isItemPage,
+			iconHeight: isItemPage ? '24px' : '16px',
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
 		});
-		footerContainer.firstElementChild?.insertAdjacentHTML('afterend', buffContainer);
 
-		const buffElement = footerContainer?.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		footerContainer.insertAdjacentHTML('afterend', buffContainer);
+		if (isItemPage) {
+			footerContainer.parentElement!.style.flexDirection = 'column';
+			footerContainer.style.alignItems = 'center';
+		}
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
 			buffElement.addEventListener('click', (e) => {
 				e.preventDefault();
@@ -199,7 +235,7 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element): 
 			});
 		}
 
-		if (extensionSettings['gp-removereferenceprice'] && buffElement) {
+		if (extensionSettings['gp-removereferenceprice'] && buffElement && !isItemPage) {
 			const referencePriceContainer = buffElement.nextElementSibling;
 			if (referencePriceContainer) {
 				referencePriceContainer.remove();
@@ -207,17 +243,17 @@ async function addBuffPrice(reactItem: Gamerpay.ReactItem, container: Element): 
 		}
 	}
 
-	const discountContainer = container.querySelector('div[class*="ItemCardBody_pricePrimary__"]');
+	const discountContainer = container.querySelector(isItemPage ? GAMERPAY_SELECTORS.itempage.pricePrimary : GAMERPAY_SELECTORS.card.pricePrimary);
 
 	if (discountContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['gp-buffdifference'] || extensionSettings['gp-buffdifferencepercent'])) {
-		discountContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+		discountContainer.insertAdjacentHTML(isItemPage ? 'beforebegin' : 'afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
 
 		(discountContainer.parentElement as HTMLElement).style.display = 'flex';
 		(discountContainer.parentElement as HTMLElement).style.alignItems = 'center';
 		(discountContainer.parentElement as HTMLElement).style.gap = '8px';
 
-		const oldDiscountContainer = container.querySelector('span[class*="ItemCardBody_savings__"]');
-		if (oldDiscountContainer) {
+		const oldDiscountContainer = container.querySelector(GAMERPAY_SELECTORS.card.savings);
+		if (oldDiscountContainer && !isItemPage) {
 			oldDiscountContainer.remove();
 		}
 	}
@@ -308,7 +344,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 }
 
 function getUserCurrency() {
-	const topCurrency = document.querySelector<HTMLSpanElement>('span[class*="TopBar_balanceAmount"]')?.textContent?.trim();
+	const topCurrency = document.querySelector<HTMLSpanElement>(GAMERPAY_SELECTORS.common.balanceAmount)?.textContent?.trim();
 	return topCurrency?.includes('US$') ? 'USD' : 'EUR';
 }
 
@@ -342,6 +378,8 @@ function createBuffItem(item: Gamerpay.Item) {
 		style: itemStyle,
 	};
 }
+
+type PageState = 'page' | 'shop';
 
 let extensionSettings: IStorage;
 let currencyRates: Gamerpay.CurrencyRates;

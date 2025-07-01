@@ -22,13 +22,18 @@ html {
 	text-decoration: none;
 }
 
+.betterfloat-big-a {
+	margin-top: 10px;
+	justify-content: center;
+}
+
 .betterfloat-buffprice {
 	margin-left: 2px;
 }
 
 .betterfloat-big-price {
-	font-size: 20px;
-	line-height: 24px;
+	font-size: 18px;
+	line-height: 20px;
 }
 
 .betterfloat-sale-tag {

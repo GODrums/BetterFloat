@@ -74,14 +74,14 @@ export function injectResq() {
 	function setupGamerpayExtractor() {
 		try {
 			// Extract React component data from an element
-			async function extractReactData(element: HTMLElement): Promise<any> {
+			async function extractReactData(selector: string, element?: HTMLElement): Promise<any> {
 				try {
 					if (!window.resq || typeof window.resq.resq$ !== 'function') {
 						console.warn('[BetterFloat] Resq not available for extraction');
 						return null;
 					}
 
-					const reactComponent = window.resq.resq$('P', element);
+					const reactComponent = window.resq.resq$(selector, element);
 					if (reactComponent?.props) {
 						return reactComponent.props;
 					}
@@ -92,15 +92,22 @@ export function injectResq() {
 			}
 
 			async function processItemCard(element: HTMLElement) {
-				const reactData = await extractReactData(element);
+				const reactData = await extractReactData('P', element);
 				if (reactData) {
 					// Dispatch custom event to notify content script
 					element.dispatchEvent(
 						new CustomEvent('betterfloat-data-ready', {
 							bubbles: true,
-							detail: { props: JSON.stringify(reactData) },
+							detail: { props: JSON.stringify(reactData), type: 'card' },
 						})
 					);
+				}
+			}
+
+			async function processItemPage(element: HTMLElement) {
+				const reactData = await extractReactData('J', element);
+				if (reactData) {
+					element.dispatchEvent(new CustomEvent('betterfloat-data-ready', { bubbles: true, detail: { props: JSON.stringify(reactData), type: 'page' } }));
 				}
 			}
 
@@ -110,9 +117,13 @@ export function injectResq() {
 					for (const node of mutation.addedNodes) {
 						if (node.nodeType === Node.ELEMENT_NODE) {
 							const element = node as HTMLElement;
+							// console.log('[BetterFloat] Mutation:', element);
+
 							// Check if it's an item card
 							if (element.className?.includes('ItemCard_wrapper')) {
 								await processItemCard(element);
+							} else if (element.className?.includes('Item_sellerDesktop__')) {
+								await processItemPage(element.parentElement!);
 							}
 
 							// Check for item cards within the added node
