@@ -7,6 +7,7 @@ import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
 import { GAMERPAY_SELECTORS } from '~lib/handlers/selectors/gamerpay_selectors';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
@@ -55,6 +56,8 @@ async function init() {
 
 	// may lead to currency rate changes not being loaded in time, but it's fine...
 	currencyRates = await getCurrencyRates();
+
+	dynamicUIHandler();
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }
@@ -235,8 +238,8 @@ async function addBuffPrice(item: Gamerpay.Item, container: Element, state: Page
 			});
 		}
 
-		if (extensionSettings['gp-removereferenceprice'] && buffElement && !isItemPage) {
-			const referencePriceContainer = buffElement.nextElementSibling;
+		if (extensionSettings['gp-removereferenceprice'] && !isItemPage) {
+			const referencePriceContainer = footerContainer.querySelector<HTMLElement>(GAMERPAY_SELECTORS.card.referencePrice);
 			if (referencePriceContainer) {
 				referencePriceContainer.remove();
 			}

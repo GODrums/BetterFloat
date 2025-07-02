@@ -13,6 +13,7 @@ import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
+import GPAutorefresh from '~lib/inline/GPAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
@@ -112,6 +113,8 @@ async function handleChange(state: Extension.URLState) {
 		await handleLisSkinsChange(state);
 	} else if (state.site === 'cs.money') {
 		await handleCSMoneyChange(state);
+	} else if (state.site === 'gamerpay.gg') {
+		await handleGamerpayChange(state);
 	}
 }
 
@@ -314,6 +317,31 @@ async function handleLisSkinsChange(state: Extension.URLState) {
 
 	if (isItemPage && document.querySelector('div.skins-market-view')) {
 		await mountLisMarketComparison();
+	}
+}
+
+async function handleGamerpayChange(state: Extension.URLState) {
+	if (!state.path.includes('/item/')) {
+		const gpAutorefresh = await getSetting('gp-autorefresh');
+		if (gpAutorefresh) {
+			const success = await waitForElement('div[class*="Index_typeBar__"]');
+			if (success && !document.querySelector('betterfloat-gp-autorefresh')) {
+				const parent = document.querySelector<HTMLElement>('div[class*="Index_typeBar__"]')!;
+				const { root } = await mountShadowRoot(<GPAutorefresh />, {
+					tagName: 'betterfloat-gp-autorefresh',
+					parent: parent,
+				});
+				parent.style.alignItems = 'center';
+				// unmount on url change
+				const interval = createUrlListener((url) => {
+					if (url.pathname.includes('/item/')) {
+						root.unmount();
+						document.querySelector('betterfloat-gp-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		}
 	}
 }
 

@@ -236,6 +236,8 @@ export const DEFAULT_SETTINGS = {
 	'so-buffdifferencepercent': true,
 	'so-listingage': true,
 	'gp-enable': true,
+	'gp-autorefresh': true,
+	'gp-refreshinterval': 0,
 	'gp-stickerprices': true,
 	'gp-pricingsource': 'buff',
 	'gp-altmarket': 'none',
