@@ -80,10 +80,6 @@ const ActivityPing: React.FC<{ activity: number }> = ({ activity }) => {
 	);
 };
 
-function isBannedOnBuff(item: CSFloat.Item) {
-	return item.type === 'container';
-}
-
 const convertStylesStringToObject = (stringStyles: string) =>
 	typeof stringStyles === 'string'
 		? stringStyles.split(';').reduce((acc, style) => {
@@ -197,7 +193,7 @@ const CSFMarketComparison: React.FC = () => {
 		}
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
-			let convertedData = Object.entries(data)
+			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
 					ask: entry.ask ? entry.ask * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
@@ -207,10 +203,6 @@ const CSFMarketComparison: React.FC = () => {
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
-
-			if (isBannedOnBuff(listing?.item)) {
-				convertedData = convertedData.filter((entry) => entry.market !== MarketSource.Buff);
-			}
 
 			if (convertedData.length === 0) {
 				console.warn('No market data available');

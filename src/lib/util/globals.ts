@@ -223,6 +223,6 @@ export const AvailableMarketSources = [
 	{ text: 'Skinsmonkey', logo: ICON_SKINSMONKEY, source: MarketSource.Skinsmonkey, style: '' },
 ];
 
-export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney];
+export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney, MarketSource.Marketcsgo];
 
 export const isProduction = process.env.NODE_ENV === 'production';
