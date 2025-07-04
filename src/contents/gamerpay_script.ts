@@ -83,7 +83,7 @@ type PriceData = {
 	price_difference: Decimal;
 };
 
-async function adjustItem(container: Element, props: string) {
+async function adjustItem(container: HTMLElement, props: string) {
 	if (!props || props.length < 1 || props === '{}') {
 		console.warn('[BetterFloat] No React data available for item card');
 		return;
@@ -110,7 +110,7 @@ async function adjustItem(container: Element, props: string) {
 	}
 }
 
-async function adjustItemPage(container: Element, props: string) {
+async function adjustItemPage(container: HTMLElement, props: string) {
 	if (!props || props.length < 1 || props === '{}') {
 		console.warn('[BetterFloat] No React data available for item page');
 		return;
@@ -186,7 +186,7 @@ function moveTradelock(container: Element) {
 	tradeLockContainer.style.flex = 'none';
 }
 
-async function addBuffPrice(item: Gamerpay.Item, container: Element, state: PageState): Promise<PriceData> {
+async function addBuffPrice(item: Gamerpay.Item, container: HTMLElement, state: PageState): Promise<PriceData> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 	const isItemPage = state === 'shop';
 
@@ -242,6 +242,13 @@ async function addBuffPrice(item: Gamerpay.Item, container: Element, state: Page
 			const referencePriceContainer = footerContainer.querySelector<HTMLElement>(GAMERPAY_SELECTORS.card.referencePrice);
 			if (referencePriceContainer) {
 				referencePriceContainer.remove();
+			}
+		}
+
+		if (!isItemPage) {
+			const cardContainer = container.querySelector<HTMLElement>(GAMERPAY_SELECTORS.card.cardContainer);
+			if (cardContainer) {
+				cardContainer.style.overflow = 'visible';
 			}
 		}
 	}
