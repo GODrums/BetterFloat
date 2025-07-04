@@ -15,7 +15,7 @@ interface LoggedInViewProps {
 	setUser: (user: IStorage['user']) => void;
 }
 
-const features = ['Access to 9+ Markets', 'Most Accurate Prices (1 hour refreshes)', 'Exclusive Instant Notifications for New Listings', 'Auto-Refresh on 3+ Markets', 'Early Access to New Features'];
+const features = ['Access to 15+ Markets', 'Most Accurate Prices (1 hour refreshes)', 'Exclusive Instant Notifications for New Listings', 'Auto-Refresh on 4+ Markets', 'Early Access to New Features'];
 
 export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [permissionDenied, setPermissionDenied] = useState(false);

@@ -122,7 +122,7 @@ const GpAutorefresh: React.FC = () => {
 					<div ref={ref}>
 						<motion.div
 							className="absolute z-[9999] w-[200px] bg-[#1a1d21] border border-[#374151] flex flex-col gap-4 p-4 shadow-2xl rounded-lg"
-							style={{ translate: '-60px 10px', borderRadius: '12px' }}
+							style={{ translate: '-50px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0, scale: 0.95, y: -10 }}
 							animate={{ opacity: 1, scale: 1, y: 0 }}
 							exit={{ opacity: 0, scale: 0.95, y: -10 }}
