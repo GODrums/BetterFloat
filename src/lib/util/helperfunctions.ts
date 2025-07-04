@@ -164,7 +164,7 @@ export function isUserPro(user: SettingsUser) {
 }
 
 export function getCollectionLink(collectionName: string) {
-	return `https://csgoskins.gg/collections/${collectionName.replaceAll('& ', '').replaceAll(' ', '-').replaceAll('.', '').toLowerCase()}`;
+	return `https://csgoskins.gg/collections/${collectionName.replaceAll('& ', '').replaceAll(' ', '-').replaceAll('.', '').replaceAll(':', '').toLowerCase()}`;
 }
 
 export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {

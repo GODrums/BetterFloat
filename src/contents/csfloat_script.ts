@@ -869,7 +869,7 @@ function addBargainListener(container: Element | null) {
 }
 
 function getAlternativeItemLink(item: CSFloat.Item) {
-	const namePart = item.item_name.toLowerCase().replace('★ ', '').replace(' | ', '-').replaceAll(' ', '-');
+	const namePart = item.item_name.toLowerCase().replace('★ ', '').replace(' | ', '-').replaceAll(' ', '-').replaceAll(':', '');
 	const wearPart = item.wear_name ? `/${item.is_stattrak ? 'stattrak-' : ''}${item.wear_name.toLowerCase().replaceAll(' ', '-')}` : '';
 	return namePart + wearPart;
 }
