@@ -126,7 +126,7 @@ async function adjustItemPage(container: HTMLElement, props: string) {
 
 	// console.log('[BetterFloat] Item page data:', itemData);
 
-	const priceData = await addBuffPrice(itemData.item, container, 'shop');
+	await addBuffPrice(itemData.item, container, 'shop');
 }
 
 async function addStickerPrices(itemData: Gamerpay.ReactItem, container: Element, priceData: { price_difference: Decimal }) {

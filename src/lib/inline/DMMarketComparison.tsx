@@ -192,7 +192,7 @@ const DMMarketComparison: React.FC = () => {
 
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
-			let convertedData = Object.entries(data)
+			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
 					ask: entry.ask ? new Decimal(entry.ask).div(100).toNumber() : undefined,

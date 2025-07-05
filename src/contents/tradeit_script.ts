@@ -181,7 +181,7 @@ async function adjustItem(container: Element, isOwn = false) {
 		}
 		return getFirstTradeitBotItem();
 	};
-	let apiItem = getItem();
+	const apiItem = getItem();
 	// let attempts = 0;
 	// while (!apiItem && attempts++ < 5) {
 	// 	// wait for 1s and try again

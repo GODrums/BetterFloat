@@ -115,7 +115,7 @@ function fetchIntercept() {
 					},
 				})
 			);
-		} catch (e) {
+		} catch {
 			console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
 		}
 

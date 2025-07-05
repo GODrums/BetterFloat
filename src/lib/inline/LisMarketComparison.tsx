@@ -168,7 +168,7 @@ const LisMarketComparison: React.FC = () => {
 
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
-			let convertedData = Object.entries(data)
+			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
 					// Convert fetched USD prices to local currency

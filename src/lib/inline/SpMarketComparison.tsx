@@ -202,7 +202,7 @@ const SpMarketComparison: React.FC = () => {
 
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
-			let convertedData = Object.entries(data)
+			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
 					ask: entry.ask ? convertCurrency(entry.ask).toDP(2).toNumber() : undefined,

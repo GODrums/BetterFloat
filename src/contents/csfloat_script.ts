@@ -1685,7 +1685,7 @@ async function getCurrencyRate() {
 async function getBuffItem(item: CSFloat.FloatItem) {
 	let source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_name = handleSpecialStickerNames(createBuffName(item));
-	let market_id: number | string | undefined = await getMarketID(buff_name, source);
+	const market_id: number | string | undefined = await getMarketID(buff_name, source);
 
 	let pricingData = await getBuffPrice(buff_name, item.style, source);
 
