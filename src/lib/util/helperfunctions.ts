@@ -225,6 +225,12 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://avan.market/en/market/cs?name=${encodeURIComponent(buff_name)}&utm_source=betterfloat&r=betterfloat&sort=1`;
 		case MarketSource.Skinsmonkey:
 			return `https://skinsmonkey.com/market/csgo?search=${encodeURIComponent(buff_name)}&sort=price&order=asc&utm_source=betterfloat&r=a0NNFQvBTf4s`;
+		case MarketSource.Skinout:
+			return `https://skinout.gg/en/market?search=${encodeURIComponent(buff_name)}&utm_source=betterfloat`;
+		case MarketSource.Skinflow:
+			return 'https://skinflow.gg/';
+		case MarketSource.Shadowpay:
+			return `https://shadowpay.com/csgo-items?search=${encodeURIComponent(buff_name)}&utm_campaign=j8MVU4KVXS3Liun`;
 	}
 	return '';
 }

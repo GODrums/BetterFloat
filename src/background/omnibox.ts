@@ -43,6 +43,17 @@ const SOURCE_TEXT: Record<MarketSource, string> = {
 	[MarketSource.None]: 'None',
 	[MarketSource.Pricempire]: 'Pricempire',
 	[MarketSource.Marketcsgo]: 'MarketCSGO',
+	[MarketSource.Gamerpay]: 'Gamerpay',
+	[MarketSource.Waxpeer]: 'Waxpeer',
+	[MarketSource.Skinbaron]: 'Skinbaron',
+	[MarketSource.Skinflow]: 'Skinflow',
+	[MarketSource.Tradeit]: 'Tradeit',
+	[MarketSource.Whitemarket]: 'Whitemarket',
+	[MarketSource.Swapgg]: 'Swapgg',
+	[MarketSource.Avanmarket]: 'Avanmarket',
+	[MarketSource.Skinsmonkey]: 'Skinsmonkey',
+	[MarketSource.Shadowpay]: 'Shadowpay',
+	[MarketSource.Skinout]: 'Skinout',
 };
 
 // Map MarketSource -> property key in marketIds.json
@@ -62,6 +73,17 @@ const MARKET_ID_PROP: Record<MarketSource, string | null> = {
 	[MarketSource.Skinport]: null,
 	[MarketSource.Pricempire]: null,
 	[MarketSource.Marketcsgo]: null,
+	[MarketSource.Gamerpay]: null,
+	[MarketSource.Waxpeer]: null,
+	[MarketSource.Skinbaron]: null,
+	[MarketSource.Skinflow]: null,
+	[MarketSource.Tradeit]: null,
+	[MarketSource.Whitemarket]: null,
+	[MarketSource.Swapgg]: null,
+	[MarketSource.Avanmarket]: null,
+	[MarketSource.Skinsmonkey]: null,
+	[MarketSource.Shadowpay]: null,
+	[MarketSource.Skinout]: null,
 };
 
 // Initialize Fuse.js for fuzzy searching

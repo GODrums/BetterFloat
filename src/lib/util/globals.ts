@@ -50,6 +50,8 @@ import iconMarketCSGO from 'data-base64:/assets/logos/marketcsgo.webp';
 import iconMarketCSGOFull from 'data-base64:/assets/logos/marketcsgo_full.png';
 import iconShadowpay from 'data-base64:/assets/logos/shadowpay.webp';
 import iconShadowpayFull from 'data-base64:/assets/logos/shadowpay_full.svg';
+import iconSkinflow from 'data-base64:/assets/logos/skinflow.png';
+import iconSkinflowFull from 'data-base64:/assets/logos/skinflow_full.webp';
 import iconSkinport from 'data-base64:/assets/logos/skinport.ico';
 import iconSkinsmonkey from 'data-base64:/assets/logos/skinsmonkey.jpg';
 import iconSkinsmonkeyFull from 'data-base64:/assets/logos/skinsmonkey_full.svg';
@@ -166,6 +168,8 @@ export const ICON_SKINOUT = iconSkinout;
 export const ICON_SKINOUT_FULL = iconSkinoutFull;
 export const ICON_GAMERPAY = iconGamerpay;
 export const ICON_GAMERPAY_FULL = iconGamerpayFull;
+export const ICON_SKINFLOW = iconSkinflow;
+export const ICON_SKINFLOW_FULL = iconSkinflowFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
@@ -194,9 +198,10 @@ export enum MarketSource {
 	Tradeit = 'tradeit',
 	Whitemarket = 'whitemarket',
 	Swapgg = 'swapgg',
-	Avamarket = 'avanmarket',
 	Skinsmonkey = 'skinsmonkey',
 	Avanmarket = 'avanmarket',
+	Shadowpay = 'shadowpay',
+	Skinout = 'skinout',
 }
 
 export const AvailableMarketSources = [
@@ -219,8 +224,11 @@ export const AvailableMarketSources = [
 	{ text: 'Tradeit', logo: ICON_TRADEIT, source: MarketSource.Tradeit, style: '' },
 	{ text: 'Whitemarket', logo: ICON_WHITEMARKET, source: MarketSource.Whitemarket, style: '' },
 	{ text: 'Swapgg', logo: ICON_SWAPGG, source: MarketSource.Swapgg, style: '' },
-	{ text: 'Avanmarket', logo: ICON_AVANMARKET, source: MarketSource.Avamarket, style: '' },
+	{ text: 'Avanmarket', logo: ICON_AVANMARKET, source: MarketSource.Avanmarket, style: '' },
 	{ text: 'Skinsmonkey', logo: ICON_SKINSMONKEY, source: MarketSource.Skinsmonkey, style: '' },
+	{ text: 'Shadowpay', logo: ICON_SHADOWPAY, source: MarketSource.Shadowpay, style: '' },
+	{ text: 'Skinout', logo: ICON_SKINOUT, source: MarketSource.Skinout, style: '' },
+	{ text: 'Skinflow', logo: ICON_SKINFLOW, source: MarketSource.Skinflow, style: '' },
 ];
 
 export const FreeMarkets = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSMoney, MarketSource.Marketcsgo];
