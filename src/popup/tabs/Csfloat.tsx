@@ -80,6 +80,14 @@ export const CSFloatSettings = () => {
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 						/>
 					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox
+							id="csf-buyorderpercentage"
+							text="Show Buy Order Percentage"
+							tooltipText="Same as 'Show Price Percentage Difference' but for buy orders."
+							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
+						/>
+					</SettingsCard>
 				</div>
 			</div>
 			<div className="mb-2">

@@ -24,6 +24,7 @@ import { cacheAvanmarketInventory, cacheAvanmarketItems } from './cache/avan_cac
 import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from './cache/bitskins_cache';
 import { cacheBuffBuyOrders, cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffPopoutData, cacheBuffUserId } from './cache/buffmarket_cache';
 import {
+	cacheCSFBuyOrders,
 	cacheCSFExchangeRates,
 	cacheCSFHistoryGraph,
 	cacheCSFHistorySales,
@@ -373,12 +374,15 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('v1/me')) {
 		// user data, repeats often
 	} else if (eventData.url.includes('v1/listings/')) {
-		if (eventData.url.split('/').length === 7) {
-			// item popup
-			cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
-		} else if (eventData.url.includes('/similar')) {
+		if (eventData.url.includes('/similar')) {
 			// item page
 			cacheCSFSimilarItems(eventData.data as CSFloat.ListingData[]);
+		} else if (eventData.url.includes('/buy-orders')) {
+			// buy orders
+			cacheCSFBuyOrders(eventData.data as CSFloat.BuyOrderData[]);
+		} else if (eventData.url.split('/').length === 7) {
+			// item popup
+			cacheCSFPopupItem(eventData.data as CSFloat.ListingData);
 		}
 	}
 }

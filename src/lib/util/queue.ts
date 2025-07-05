@@ -108,6 +108,10 @@ export class Queue<T> {
 	peek(): T | undefined {
 		return this.items[0];
 	}
+
+	toArray(): T[] {
+		return this.items;
+	}
 }
 
 export default { Queue, AltQueue };

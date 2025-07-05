@@ -44,7 +44,7 @@ export function generatePriceLine({
 	tooltipArrow?: boolean;
 }) {
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
-	const { logo: icon, style: iconStyle } = AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
+	const { logo: icon, style: iconStyle } = getSourceIcon(source);
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const extendedDisplay = showPrefix && (isPopout || (priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning));
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
@@ -85,6 +85,10 @@ export function generatePriceLine({
 		</a>
 	`;
 	return buffContainer;
+}
+
+export function getSourceIcon(source: MarketSource) {
+	return AvailableMarketSources.find((s) => s.source === source) ?? { logo: '', style: '' };
 }
 
 export function genGemContainer({ patternElement, site, large = false }: { patternElement: Partial<BlueGem.PatternData> | null; site: 'CSF' | 'SP' | 'DM' | 'BS'; large?: boolean }) {

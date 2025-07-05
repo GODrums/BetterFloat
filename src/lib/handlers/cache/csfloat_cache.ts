@@ -9,6 +9,7 @@ type CSFloatAPIStorage = {
 	inventory: CSFloat.Item[];
 	historyGraph: CSFloat.HistoryGraphData[];
 	historySales: Queue<CSFloat.HistorySalesData>;
+	buyOrders: Queue<CSFloat.BuyOrderData>;
 	offers: CSFloat.Offer[];
 	rates: { [key: string]: number };
 	location: CSFloat.Location | null;
@@ -28,12 +29,18 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 	historyGraph: [],
 	// latest sales of item popup
 	historySales: new Queue<CSFloat.HistorySalesData>(),
+	// buy orders
+	buyOrders: new Queue<CSFloat.BuyOrderData>(),
 	// p2p offers timeline
 	offers: [],
 	// currency exchange rates
 	rates: {},
 	location: null,
 };
+
+export function cacheCSFBuyOrders(data: CSFloat.BuyOrderData[]) {
+	CSFLOAT_API_DATA.buyOrders.reset(data);
+}
 
 export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
 	if (CSFLOAT_API_DATA.historyGraph.length > 0) {
@@ -80,6 +87,10 @@ export function cacheCSFLocation(data: CSFloat.Location) {
 
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
 	CSFLOAT_API_DATA.popupItem = data;
+}
+
+export function getCSFAllBuyOrders() {
+	return CSFLOAT_API_DATA.buyOrders.toArray();
 }
 
 // USD / rate = target currency

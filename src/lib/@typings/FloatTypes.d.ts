@@ -273,6 +273,13 @@ export namespace CSFloat {
 		watchers: number;
 	};
 
+	export type BuyOrderData = {
+		market_hash_name?: string;
+		expression?: string;
+		price: number;
+		qty: number;
+	};
+
 	export type OffersTimeline = {
 		count: number;
 		offers: Offer[];

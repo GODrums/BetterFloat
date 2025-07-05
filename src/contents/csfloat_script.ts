@@ -7,6 +7,7 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
 	cacheCSFInventory,
+	getCSFAllBuyOrders,
 	getCSFCurrencyRate,
 	getCSFHistoryGraph,
 	getCSFPopupItem,
@@ -64,7 +65,7 @@ import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/mess
 import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
-import { generatePriceLine } from '~lib/util/uigeneration';
+import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import {
@@ -259,6 +260,8 @@ function applyMutation() {
 						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
 							addedNode.remove();
 						}
+					} else if (addedNode.tagName.toLowerCase() === 'tbody' && extensionSettings['csf-buyorderpercentage'] && addedNode.closest('app-order-table')) {
+						addBuyOrderPercentage(addedNode);
 					}
 				}
 			}
@@ -526,7 +529,6 @@ async function adjustChartContainer(container: Element) {
 		await new Promise((r) => setTimeout(r, 200));
 		chartData = getCSFHistoryGraph();
 	}
-	console.log('[BetterFloat] Chart data:', chartData);
 
 	if (!chartData) return;
 
@@ -744,6 +746,41 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 		addBargainListener(container);
 	}
+}
+
+async function addBuyOrderPercentage(container: Element) {
+	const sourceIcon = getSourceIcon(extensionSettings['csf-pricingsource'] as MarketSource);
+	const bigPriceElement = document.querySelector<HTMLElement>('div.betterfloat-big-price');
+	const referencePrice = Number(JSON.parse(bigPriceElement?.getAttribute('data-betterfloat') ?? '{}').priceFromReference ?? 0);
+	if (!referencePrice) {
+		return;
+	}
+
+	let buyOrderEntries = container.querySelectorAll('tr');
+	let tries = 10;
+	while (buyOrderEntries.length === 0 && tries-- > 0) {
+		await new Promise((r) => setTimeout(r, 100));
+		buyOrderEntries = container.querySelectorAll('tr');
+	}
+	if (buyOrderEntries.length === 0) {
+		return;
+	}
+	const buyOrders = getCSFAllBuyOrders();
+
+	buyOrderEntries.forEach((entry, index) => {
+		const data = buyOrders[index];
+		if (!data) {
+			return;
+		}
+		const percentage = new Decimal(data.price).div(100).div(referencePrice).mul(100).toDP(2);
+		const percentageText = html`
+			<div class="betterfloat-buyorder-percentage">
+				<img src="${sourceIcon.logo}" style="${sourceIcon.style}" />
+				<span>${percentage.toFixed(2)}%</span>
+			</div>
+		`;
+		entry.querySelector('td.mat-column-price')?.insertAdjacentHTML('beforeend', percentageText);
+	});
 }
 
 async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decimal) {
