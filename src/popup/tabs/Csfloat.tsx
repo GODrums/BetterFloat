@@ -86,6 +86,7 @@ export const CSFloatSettings = () => {
 							text="Show Buy Order Percentage"
 							tooltipText="Same as 'Show Price Percentage Difference' but for buy orders."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
+							isNew
 						/>
 					</SettingsCard>
 				</div>

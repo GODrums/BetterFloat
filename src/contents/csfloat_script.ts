@@ -780,6 +780,7 @@ async function addBuyOrderPercentage(container: Element) {
 			</div>
 		`;
 		entry.querySelector('td.mat-column-price')?.insertAdjacentHTML('beforeend', percentageText);
+		(entry.firstElementChild as HTMLElement).style.paddingRight = '0';
 	});
 }
 
