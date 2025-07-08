@@ -225,7 +225,9 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 	button.textContent = 'View Similar';
 	button.href = url.toString();
 	button.target = '_blank';
-	parentElement.appendChild(button);
+	if (!parentElement.querySelector('.betterfloat-similar-a')) {
+		parentElement.appendChild(button);
+	}
 }
 
 export async function getBuffItem(container: Element, item: CSMoney.Item) {

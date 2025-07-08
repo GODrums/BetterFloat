@@ -70,14 +70,10 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const getInterval = () => {
-		switch (rInterval) {
-			case '0': {
-				if (user?.plan.type !== 'pro') {
-					setRInterval('1');
-					return 30000;
-				}
+		const tempInterval = rInterval + (user?.plan.type !== 'pro' ? 1 : 0);
+		switch (tempInterval) {
+			case '0':
 				return 20000;
-			}
 			case '1':
 				return 30000;
 			case '2':
