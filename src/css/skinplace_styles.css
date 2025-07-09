@@ -32,6 +32,10 @@ html {
 }
 
 .betterfloat-sale-tag {
+	display: flex;
+	flex-direction: column;
+	font-size: 13px;
+	line-height: 120%;
 	padding: 5px !important;
 	border-radius: 4px !important;
 	gap: 4px;

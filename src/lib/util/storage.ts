@@ -247,6 +247,12 @@ export const DEFAULT_SETTINGS = {
 	'gp-buffdifferencepercent': true,
 	'gp-removereferenceprice': true,
 	'gp-listingage': true,
+	'splace-enable': true,
+	'splace-pricingsource': 'buff',
+	'splace-altmarket': 'none',
+	'splace-pricereference': 0,
+	'splace-buffdifference': true,
+	'splace-buffdifferencepercent': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

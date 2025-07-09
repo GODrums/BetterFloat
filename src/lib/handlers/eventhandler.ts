@@ -7,6 +7,7 @@ import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
+import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
@@ -41,6 +42,7 @@ import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
+import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
 import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
@@ -98,6 +100,8 @@ export async function activateHandler() {
 			processSkinsmonkeyEvent(eventData);
 		} else if (location.host === 'skinout.gg') {
 			processSkinoutEvent(eventData);
+		} else if (location.host === 'skin.place') {
+			processSkinplaceEvent(eventData);
 		}
 	});
 
@@ -164,6 +168,15 @@ function processSkinoutEvent(eventData: EventData<unknown>) {
 		cacheSkinoutItems(eventData.data as Skinout.MarketItemsResponse);
 	} else if (eventData.url.includes('api/sell/inventory')) {
 		cacheSkinoutUserInventory(eventData.data as Skinout.InventoryResponse);
+	}
+}
+
+function processSkinplaceEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/market/instant/inventory')) {
+		cacheSkinplaceUserInventory(eventData.data as Skinplace.InventoryResponse);
+	} else if (eventData.url.includes('api/marketplace/offers')) {
+		cacheSkinplaceOffers(eventData.data as Skinplace.OffersResponse);
 	}
 }
 
