@@ -49,7 +49,7 @@ const CSFAutorefresh: React.FC = () => {
 	const [isActive, setIsActive] = useState(false);
 	// notifications
 	const [nActive, setNActive] = useState(false);
-	const [rInterval, setRInterval] = useStorage('csf-refreshinterval');
+	const [rInterval, setRInterval] = useStorage<number>('csf-refreshinterval');
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 	const [name, setName] = useState('');
 	const [percentage, setPercentage] = useState(0);
@@ -70,17 +70,17 @@ const CSFAutorefresh: React.FC = () => {
 	};
 
 	const getInterval = () => {
-		const tempInterval = rInterval + (user?.plan.type !== 'pro' ? 1 : 0);
+		const tempInterval = Number(rInterval) + (user?.plan.type !== 'pro' ? 1 : 0);
 		switch (tempInterval) {
-			case '0':
+			case 0:
 				return 20000;
-			case '1':
+			case 1:
 				return 30000;
-			case '2':
+			case 2:
 				return 60000;
-			case '3':
+			case 3:
 				return 120000;
-			case '4':
+			case 4:
 				return 300000;
 			default:
 				return 30000;
@@ -217,7 +217,7 @@ const CSFAutorefresh: React.FC = () => {
 								<select
 									className="appearance-none bg-transparent text-[--primary-text-color] border border-[--highlight-background] rounded-lg py-1 px-2 cursor-pointer"
 									value={rInterval}
-									onChange={(e) => setRInterval(e.target.value)}
+									onChange={(e) => setRInterval(Number(e.target.value))}
 								>
 									{intervalOptions
 										.filter((_, index) => index !== 0 || user?.plan.type === 'pro')
