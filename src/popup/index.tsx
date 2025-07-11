@@ -18,6 +18,7 @@ import {
 	ICON_SKINPLACE,
 	ICON_SKINPORT,
 	ICON_SKINSMONKEY,
+	ICON_SKINSWAP,
 	ICON_SWAPGG,
 	ICON_TRADEIT,
 	ICON_WAXPEER,
@@ -46,6 +47,7 @@ import { ShadowpaySettings } from './tabs/Shadowpay';
 import { SkinoutSettings } from './tabs/Skinout';
 import { SkinplaceSettings } from './tabs/Skinplace';
 import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
+import { SkinswapSettings } from './tabs/Skinswap';
 import { SwapggSettings } from './tabs/Swapgg';
 import { TradeitSettings } from './tabs/Tradeit';
 import { UserProfile } from './tabs/user/UserProfile';
@@ -156,6 +158,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="splace">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPLACE} />
 								</TabsTrigger>
+								<TabsTrigger value="ss">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSWAP} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -195,6 +200,7 @@ export default function IndexPopup() {
 					<AvanSettings hasProPlan={hasProPlan} />
 					<SkinoutSettings hasProPlan={hasProPlan} />
 					<SkinplaceSettings hasProPlan={hasProPlan} />
+					<SkinswapSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

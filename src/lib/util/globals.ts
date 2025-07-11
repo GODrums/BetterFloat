@@ -17,6 +17,8 @@ import iconSkinoutFull from 'data-base64:~/../assets/logos/skinout_full.svg';
 import iconSkinplace from 'data-base64:~/../assets/logos/skinplace.svg';
 import iconSkinplaceFull from 'data-base64:~/../assets/logos/skinplace_full.svg';
 import iconSkinportFull from 'data-base64:~/../assets/logos/skinport_full.png';
+import iconSkinswap from 'data-base64:~/../assets/logos/skinswap.webp';
+import iconSkinswapFull from 'data-base64:~/../assets/logos/skinswap_full.webp';
 import iconSwapgg from 'data-base64:~/../assets/logos/swapgg.webp';
 import iconSwapggFull from 'data-base64:~/../assets/logos/swapgg_full.png';
 import iconTradeit from 'data-base64:~/../assets/logos/tradeit.png';
@@ -174,6 +176,8 @@ export const ICON_GAMERPAY = iconGamerpay;
 export const ICON_GAMERPAY_FULL = iconGamerpayFull;
 export const ICON_SKINFLOW = iconSkinflow;
 export const ICON_SKINFLOW_FULL = iconSkinflowFull;
+export const ICON_SKINSWAP = iconSkinswap;
+export const ICON_SKINSWAP_FULL = iconSkinswapFull;
 
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 

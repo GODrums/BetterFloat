@@ -9,6 +9,7 @@ import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
+import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
@@ -45,6 +46,7 @@ import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_ca
 import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
+import { cacheSkinswapItems, cacheSkinswapUserInventory } from './cache/skinswap_cache';
 import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
 import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache/tradeit_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
@@ -102,6 +104,8 @@ export async function activateHandler() {
 			processSkinoutEvent(eventData);
 		} else if (location.host === 'skin.place') {
 			processSkinplaceEvent(eventData);
+		} else if (location.host === 'skinswap.com') {
+			processSkinswapEvent(eventData);
 		}
 	});
 
@@ -159,6 +163,15 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processSkinswapEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('api/user/inventory/')) {
+		cacheSkinswapUserInventory(eventData.data as Skinswap.InventoryResponse);
+	} else if (eventData.url.includes('api/site/inventory/')) {
+		cacheSkinswapItems(eventData.data as Skinswap.MarketItemsResponse);
 	}
 }
 

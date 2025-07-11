@@ -4,10 +4,10 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinout } from '~lib/@typings/SkinoutTypes';
+import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
-import { initPriceMapping } from '~lib/handlers/eventhandler';
+import { getFirstSkinswapItem, getFirstSkinswapUserItem } from '~lib/handlers/cache/skinswap_cache';
+import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -36,7 +36,7 @@ async function init() {
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
-	// activateHandler();
+	activateHandler();
 
 	extensionSettings = await getAllSettings();
 
@@ -84,12 +84,12 @@ async function replaceHistory() {
 }
 
 function firstLaunch() {
-	setTimeout(() => {
-		const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
-		if (refreshButton) {
-			refreshButton.click();
-		}
-	}, 2000);
+	// setTimeout(() => {
+	// 	const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
+	// 	if (refreshButton) {
+	// 		refreshButton.click();
+	// 	}
+	// }, 2000);
 }
 
 function applyMutation() {
@@ -99,12 +99,15 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Skinout Mutation detected:', addedNode);
+				// console.debug('[BetterFloat] Skinswap Mutation detected:', addedNode);
 
-				if (addedNode.className === SKINOUT_SELECTORS.item.listItem) {
-					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.className.includes('item--sell-page')) {
-					await adjustItem(addedNode, PageState.Inventory);
+				if (addedNode.parentElement?.classList.contains('gridBox')) {
+					const items = addedNode.querySelectorAll('.item-card');
+					console.log('[BetterFloat] Skinswap Mutation detected:', items);
+					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
+					for (const item of items) {
+						await adjustItem(item, PageState.Market, isSiteItem);
+					}
 				}
 			}
 		}
@@ -112,24 +115,20 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(container: Element, state: PageState): Skinout.Item | Skinout.InventoryItem | null {
+function getAPIItem(container: Element, state: PageState, isSiteItem: boolean): Skinswap.Item | null {
 	if (state === PageState.Market) {
-		return getFirstSkinoutItem() || null;
-	} else if (state === PageState.Inventory) {
-		const assetId = container.getAttribute('assetid');
-		if (!assetId) return null;
-		return getSpecificSkinoutUserItem(assetId) || null;
+		return (isSiteItem ? getFirstSkinswapItem() : getFirstSkinswapUserItem()) || null;
 	}
 	return null;
 }
 
-async function adjustItem(container: Element, state: PageState) {
-	let item = getAPIItem(container, state);
+async function adjustItem(container: Element, state: PageState, isSiteItem: boolean) {
+	let item = getAPIItem(container, state, isSiteItem);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = getAPIItem(container, state);
+		item = getAPIItem(container, state, isSiteItem);
 	}
 	// console.log('[BetterFloat] Skinout item:', item);
 	if (!item) return;
@@ -137,12 +136,12 @@ async function adjustItem(container: Element, state: PageState) {
 	const _priceResult = await addBuffPrice(item, container);
 }
 
-async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, container: Element): Promise<PriceResult> {
+async function addBuffPrice(item: Skinswap.Item, container: Element): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	const footerContainer = container.querySelector(SKINOUT_SELECTORS.item.bottom);
+	const footerContainer = container.querySelector('.hover-translatey-40');
 
-	const isDoppler = item.market_hash_name.includes('Doppler');
+	const isDoppler = !!item.qualities.doppler_phase;
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
@@ -169,10 +168,10 @@ async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, containe
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 	}
 
-	const priceContainer = container.querySelector(SKINOUT_SELECTORS.item.counters);
+	const priceContainer = footerContainer?.querySelector('.font-header');
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['ss-buffdifference'] || extensionSettings['ss-buffdifferencepercent'])) {
-		priceContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+		priceContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter, itemPrice.lt(100)));
 	}
 
 	return {
@@ -180,7 +179,7 @@ async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, containe
 	};
 }
 
-function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat) {
+function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat, isLowPrice: boolean) {
 	const styling = {
 		profit: {
 			color: '#30d158',
@@ -195,14 +194,14 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
-		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+		<div class="betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; ${isLowPrice ? 'flex-direction: row;' : ''}">
 			${extensionSettings['ss-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
 			${extensionSettings['ss-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
 	`;
 }
 
-async function getBuffItem(item: Skinout.Item | Skinout.InventoryItem) {
+async function getBuffItem(item: Skinswap.Item) {
 	let source = (extensionSettings['ss-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -259,17 +258,17 @@ function getUserCurrency() {
 	return localStorage.getItem('currency') || 'USD';
 }
 
-function getItemPrice(item: Skinout.Item | Skinout.InventoryItem): Decimal {
-	return new Decimal(item.price);
+function getItemPrice(item: Skinswap.Item): Decimal {
+	return new Decimal(item.price.trade).div(100);
 }
 
-function createBuffItem(item: Skinout.Item | Skinout.InventoryItem): { name: string; style: ItemStyle } {
+function createBuffItem(item: Skinswap.Item): { name: string; style: ItemStyle } {
 	const buff_item = {
 		name: item.market_hash_name,
 		style: '' as ItemStyle,
 	};
-	if (item.market_hash_name.includes('Doppler')) {
-		const phase = item.market_hash_name.split(') ')[1];
+	if (item.qualities.doppler_phase) {
+		const phase = item.qualities.doppler_phase;
 		buff_item.style = phase as ItemStyle;
 		buff_item.name = item.market_hash_name.replace(` ${phase}`, '');
 	}
