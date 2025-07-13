@@ -196,10 +196,10 @@ const CSFMarketComparison: React.FC = () => {
 			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
-					ask: entry.ask ? entry.ask * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
-					bid: entry.bid ? entry.bid * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
-					count: entry.count || 0,
-					updated: entry.updated || 0,
+					ask: entry?.ask ? entry.ask * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
+					bid: entry?.bid ? entry.bid * (currencyRates[currency.toLowerCase()] ?? 1) : undefined,
+					count: entry?.count || 0,
+					updated: entry?.updated || 0,
 				}))
 				.filter((entry) => entry.market !== 'liquidity')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
@@ -212,7 +212,7 @@ const CSFMarketComparison: React.FC = () => {
 				setLiquidity(Number(data.liquidity));
 			}
 
-			const sortedData = convertedData.sort((a, b) => (!b.ask ? -1 : !a.ask ? 1 : a.ask - b.ask));
+			const sortedData = convertedData.sort((a, b) => (!b?.ask ? -1 : !a?.ask ? 1 : a.ask - b.ask));
 			setMarketData(sortedData || []);
 		} catch (error) {
 			console.error('Error fetching market data:', error);

@@ -350,7 +350,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 
 function getUserCurrency() {
 	const topCurrency = document.querySelector<HTMLSpanElement>(GAMERPAY_SELECTORS.common.balanceAmount)?.textContent?.trim();
-	return topCurrency?.includes('US$') ? 'USD' : 'EUR';
+	return topCurrency?.includes('$') ? 'USD' : 'EUR';
 }
 
 async function getCurrencyRates(): Promise<Gamerpay.CurrencyRates> {
