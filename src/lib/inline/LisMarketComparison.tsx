@@ -159,7 +159,7 @@ const LisMarketComparison: React.FC = () => {
 		}
 
 		let buff_name = listing.name;
-		if (listing.phase) {
+		if (listing.phase && listing.phase !== 'Vanilla') {
 			buff_name += ` - ${listing.phase}`;
 		}
 
