@@ -677,7 +677,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			}
 		}
 
-		if (extensionSettings['csf-stickerprices'] && item.price > 0) {
+		if (extensionSettings['csf-stickerprices'] && apiItem.price > 0) {
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
 		} else {
 			adjustExistingSP(container);
@@ -1503,7 +1503,11 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 		csfSP = container.querySelector('.sticker-percentage');
 	}
 	if (csfSP) {
-		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, price_difference);
+		let difference = price_difference;
+		if (apiItem.price === apiItem.auction_details?.reserve_price) {
+			difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
+		}
+		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
 		if (!didChange) {
 			csfSP.remove();
 		}

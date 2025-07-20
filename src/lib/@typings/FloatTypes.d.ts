@@ -127,7 +127,7 @@ export namespace CSFloat {
 		auction_details?: {
 			expires_at: string;
 			min_next_bid: number;
-			reserver_price: number;
+			reserve_price: number;
 			top_bid: {
 				contract_id: string;
 				created_at: string;
