@@ -1504,9 +1504,11 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 	}
 	if (csfSP) {
 		let difference = price_difference;
-		if (apiItem.price === apiItem.auction_details?.reserve_price) {
+		// auctions without a bid
+		if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
 			difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
 		}
+		console.log('difference', difference, apiItem);
 		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
 		if (!didChange) {
 			csfSP.remove();
