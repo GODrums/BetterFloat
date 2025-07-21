@@ -1508,7 +1508,6 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 		if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
 			difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
 		}
-		console.log('difference', difference, apiItem);
 		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
 		if (!didChange) {
 			csfSP.remove();
@@ -1628,45 +1627,53 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	// replace potential spaces between currency characters and price
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
 	const float = Number(container.querySelector('item-float-bar .wear')?.textContent);
-	let condition: ItemCondition = '';
+	let condition: ItemCondition | undefined;
 	let quality = '';
 	let style: ItemStyle = '';
 	let isStatTrak = false;
 	let isSouvenir = false;
 
 	if (header_details) {
-		header_details.childNodes.forEach((node) => {
-			switch (node.nodeType) {
-				case Node.ELEMENT_NODE: {
-					const text = node.textContent?.trim();
-					if (!text) {
-						break;
-					}
-					if (text.includes('StatTrak')) {
-						isStatTrak = true;
-					} else if (text.includes('Souvenir')) {
-						isSouvenir = true;
-					} else if (['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'].some((x) => text.includes(x))) {
-						// TODO: integrate the ItemQuality type
-						// https://stackoverflow.com/questions/51528780/typescript-check-typeof-against-custom-type
-						quality = text;
-					} else {
-						style = text?.substring(1, text.length - 1) as ItemStyle;
-					}
-					break;
-				}
-				case Node.TEXT_NODE:
-					condition = (node.textContent?.trim() ?? '') as ItemCondition;
-					break;
-				default:
-					break;
+		let headerText = header_details.textContent?.trim() ?? '';
+
+		// Check for StatTrak and Souvenir
+		if (headerText.startsWith('StatTrak™')) {
+			isStatTrak = true;
+			headerText = headerText.replace('StatTrak™ ', '');
+		}
+		if (headerText.startsWith('Souvenir') && !headerText.startsWith('Souvenir Charm')) {
+			isSouvenir = true;
+			headerText = headerText.replace('Souvenir ', '');
+		}
+
+		const conditions: ItemCondition[] = ['Factory New', 'Minimal Wear', 'Field-Tested', 'Well-Worn', 'Battle-Scarred'];
+		for (const cond of conditions) {
+			if (headerText.includes(cond)) {
+				condition = cond;
+				headerText = headerText.replace(cond, '').trim();
+				break;
 			}
-		});
+		}
+
+		if (headerText.includes('(')) {
+			style = headerText.substring(headerText.indexOf('(') + 1, headerText.lastIndexOf(')')) as DopplerPhase;
+			headerText = headerText.replace(`(${style})`, '').trim();
+		}
+
+		// Remaining text is quality
+		const qualityTypes = ['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'];
+		for (const qualityType of qualityTypes) {
+			if (headerText.includes(qualityType)) {
+				quality = headerText;
+				break;
+			}
+		}
 	}
 
 	if (name?.includes('★') && !name?.includes('|')) {
 		style = 'Vanilla';
 	}
+
 	return {
 		name: name ?? '',
 		quality: quality,

@@ -10,7 +10,8 @@ export type ItemStyle = '' | 'Vanilla' | DopplerPhase;
 
 export type DopplerPhase = 'Sapphire' | 'Ruby' | 'Black Pearl' | 'Emerald' | 'Phase 1' | 'Phase 2' | 'Phase 3' | 'Phase 4';
 
-export type ItemCondition = '' | 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
+export type ItemCondition = 'Factory New' | 'Minimal Wear' | 'Field-Tested' | 'Well-Worn' | 'Battle-Scarred';
+
 export interface EventData<T> {
 	status: number;
 	url: string;
@@ -117,7 +118,7 @@ export namespace CSFloat {
 		quality: string;
 		style: ItemStyle;
 		float: number;
-		condition: ItemCondition;
+		condition: ItemCondition | undefined;
 		price: number;
 		isStatTrak: boolean;
 		isSouvenir: boolean;
