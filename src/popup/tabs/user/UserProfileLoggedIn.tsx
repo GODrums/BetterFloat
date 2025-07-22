@@ -23,6 +23,8 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [syncCooldown, setSyncCooldown] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	const [refreshCooldown, setRefreshCooldown] = useState(false);
+	const [grantingPermissions, setGrantingPermissions] = useState(false);
+	const [allPermissionsGranted, setAllPermissionsGranted] = useState(false);
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
 
 	const steamLogout = () => {
@@ -68,12 +70,16 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		// make sure we got the required permissions
 
 		if (permissionDenied) {
-			const newlyGranted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'], permissions: ['notifications'] });
-			if (!newlyGranted) {
-				console.warn('Permission denied');
-				return;
+			try {
+				const newlyGranted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*', '*://*.buff.market/*'], permissions: ['notifications'] });
+				if (newlyGranted) {
+					setPermissionDenied(false);
+				} else {
+					console.warn('Permission denied');
+				}
+			} catch (error) {
+				console.error('Permission request failed:', error);
 			}
-			setPermissionDenied(false);
 		}
 
 		setSyncing(true);
@@ -106,13 +112,45 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		}
 	};
 
-	useEffect(() => {
-		// check for permissions
-		chrome.permissions.contains({ origins: ['https://*/*', 'http://*/*'], permissions: ['notifications'] }, (result) => {
-			if (!result) {
-				setPermissionDenied(true);
+	const grantAllHostPermissions = async () => {
+		if (grantingPermissions || allPermissionsGranted) return;
+
+		setGrantingPermissions(true);
+
+		try {
+			const granted = await chrome.permissions.request({
+				origins: ['https://*/*', 'http://*/*'],
+			});
+
+			if (granted) {
+				console.log('All host permissions granted');
+				setAllPermissionsGranted(true);
+			} else {
+				console.warn('Host permissions denied');
 			}
-		});
+		} catch (error) {
+			console.error('Permission request failed:', error);
+		} finally {
+			setGrantingPermissions(false);
+		}
+	};
+
+	useEffect(() => {
+		try {
+			// check for permissions
+			chrome.permissions.contains({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*', '*://buff.market/*'], permissions: ['notifications'] }, (result) => {
+				if (!result) {
+					setPermissionDenied(true);
+				}
+			});
+
+			// check for all host permissions
+			chrome.permissions.contains({ origins: ['https://*/*', 'http://*/*'] }, (result) => {
+				setAllPermissionsGranted(result);
+			});
+		} catch (error) {
+			console.error('Permission request failed:', error);
+		}
 	}, []);
 
 	const PlanFeatureIcon = user.plan.type === 'pro' ? <Check className="w-5 h-5 text-green-500" /> : <X className="w-5 h-5 text-red-500" />;
@@ -160,9 +198,14 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 							<Button variant="outline" onClick={refreshPrices} disabled={refreshing || refreshCooldown}>
 								{refreshing ? <LoadingSpinner /> : 'Refresh prices manually'}
 							</Button>
+							{!allPermissionsGranted && (
+								<Button variant="secondary" onClick={grantAllHostPermissions} disabled={grantingPermissions || allPermissionsGranted}>
+									{grantingPermissions ? <LoadingSpinner /> : 'Grant all permissions'}
+								</Button>
+							)}
 						</>
 					)}
-					{permissionDenied && <WarningCallout text="Please grant the required permissions to sync your account!" className="text-center" />}
+					{permissionDenied && <WarningCallout text="Please grant all permissions to avoid potential issues!" className="text-center" />}
 
 					{features.map((feature, index) => (
 						<div key={index} className="flex items-center gap-2 text-xs">

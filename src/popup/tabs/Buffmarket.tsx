@@ -1,4 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { useEffect, useState } from 'react';
 import { ICON_BUFFMARKET_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
@@ -6,6 +7,7 @@ import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
+import { Button } from '~popup/ui/button';
 import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
@@ -16,11 +18,43 @@ interface BuffMarketSettingsProps {
 export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 	const [checked] = useStorage<boolean>('bm-enable');
 
+	const [granted, setGranted] = useState(false);
+
+	const grantPermissions = async () => {
+		const granted = await chrome.permissions.request({
+			origins: ['*://buff.market/*'],
+		});
+		setGranted(granted);
+	};
+
+	useEffect(() => {
+		const checkPermissions = async () => {
+			try {
+				const granted = await chrome.permissions.contains({
+					origins: ['*://buff.market/*'],
+				});
+				setGranted(granted);
+			} catch (error) {
+				console.error('Error checking permissions:', error);
+				setGranted(false);
+			}
+		};
+
+		checkPermissions();
+	}, []);
+
 	return (
 		<TabTemplate value="buffmarket" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access BuffMarket features" />}
 			<MarketLogoFull icon={ICON_BUFFMARKET_FULL} link="https://buff.market" />
 			<SettingsEnable id="bm-enable" isPremiumFeature hasProPlan={hasProPlan} />
+			{!granted && (
+				<div className="flex justify-center items-center mt-2">
+					<Button variant="outline" size="sm" onClick={grantPermissions} className="text-red-500">
+						Grant Permissions
+					</Button>
+				</div>
+			)}
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
