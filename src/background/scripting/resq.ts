@@ -92,7 +92,7 @@ export function injectResq() {
 			}
 
 			async function processItemCard(element: HTMLElement) {
-				const reactData = await extractReactData('P', element);
+				const reactData = await extractReactData('D', element);
 				if (reactData) {
 					// Dispatch custom event to notify content script
 					element.dispatchEvent(
@@ -105,7 +105,7 @@ export function injectResq() {
 			}
 
 			async function processItemPage(element: HTMLElement) {
-				const reactData = await extractReactData('J', element);
+				const reactData = await extractReactData('Q', element);
 				if (reactData) {
 					element.dispatchEvent(new CustomEvent('betterfloat-data-ready', { bubbles: true, detail: { props: JSON.stringify(reactData), type: 'page' } }));
 				}
