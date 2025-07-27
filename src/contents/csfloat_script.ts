@@ -270,6 +270,14 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
+type DOMBuffData = {
+	priceOrder: number;
+	priceListing: number;
+	userCurrency: string;
+	itemName: string;
+	priceFromReference: number;
+};
+
 export async function adjustOfferContainer(container: Element) {
 	const offers = Array.from(document.querySelectorAll('.offers .offer'));
 	const offerIndex = offers.findIndex((el) => el.className.includes('is-selected'));
@@ -707,6 +715,8 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			if (extensionSettings['csf-showingamess']) {
 				CSFloatHelpers.addItemScreenshot(container, apiItem.item);
 			}
+		} else {
+			addSaleListListener(container);
 		}
 	} else if (popout > 0) {
 		const isMainItem = popout === POPOUT_ITEM.PAGE;
@@ -745,6 +755,60 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			addScreenshotListener(container, apiItem.item);
 		}
 		addBargainListener(container);
+	}
+}
+
+function addSaleListListener(container: Element) {
+	if (!isUserPro(extensionSettings['user'])) return;
+
+	const sellSettings = localStorage.getItem('betterfloat-sell-settings');
+	if (!sellSettings) return;
+	const { active, displayBuff, percentage } = JSON.parse(sellSettings) as CSFloat.SellSettings;
+
+	const saleButton = container.querySelector('div.action > button');
+	if (saleButton) {
+		saleButton.addEventListener('click', () => {
+			adjustSaleListItem(container, active, displayBuff, percentage);
+		});
+	}
+}
+
+async function adjustSaleListItem(container: Element, active: boolean, displayBuff: boolean, percentage: number) {
+	console.log('[BetterFloat] Adjusting sale list item:', active, displayBuff, percentage);
+	const listItem = Array.from(document.querySelectorAll('app-sell-queue-item')).pop();
+	if (!listItem) return;
+
+	const buffA = container.querySelector('a.betterfloat-buff-a')?.cloneNode(true) as HTMLElement;
+	const buffData = JSON.parse(buffA?.getAttribute('data-betterfloat') ?? '{}') as DOMBuffData;
+	console.log('[BetterFloat] Buff data:', buffData);
+	if (!buffA || !buffData) return;
+
+	if (displayBuff) {
+		const sliderWrapper = listItem.querySelector('div.slider-wrapper');
+		if (!sliderWrapper) return;
+
+		buffA.style.justifyContent = 'center';
+		sliderWrapper.before(buffA);
+	}
+
+	const priceInput = listItem.querySelector<HTMLInputElement>('input[formcontrolname="price"]');
+	const priceLabel = listItem.querySelector<HTMLElement>('.price .name');
+	if (!priceInput) return;
+
+	priceInput.addEventListener('input', (e) => {
+		if (!(e.target instanceof HTMLInputElement) || !priceLabel) return;
+		const price = new Decimal(e.target.value).toDP(2);
+		const percentage = new Decimal(price).div(buffData.priceFromReference).mul(100).toDP(2);
+
+		priceLabel.textContent = `Price (${percentage.toFixed(2)}%)`;
+	});
+
+	if (active && !Number.isNaN(percentage) && percentage > 0 && buffData.priceFromReference) {
+		const targetPrice = new Decimal(Number(buffData.priceFromReference)).mul(percentage).div(100).toDP(2);
+		priceInput.value = targetPrice.toString();
+		priceInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+		priceInput.closest('div.mat-mdc-text-field-wrapper')?.setAttribute('style', 'border: 1px solid rgb(107 33 168);');
 	}
 }
 
@@ -1549,6 +1613,8 @@ async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[]
 	const { userCurrency, currencyRate } = await getCurrencyRate();
 	const stickerPrices = await Promise.all(
 		stickers.map(async (s) => {
+			if (!s.name) return { csf: 0, buff: 0 };
+
 			const buffPrice = await getItemPrice(s.name, source);
 			return {
 				csf: (s.reference?.price ?? 0) / 100,
@@ -1906,7 +1972,7 @@ async function addBuffPrice(
 
 	return {
 		price_difference: difference.toNumber(),
-		percentage: percentage,
+		percentage,
 	};
 }
 

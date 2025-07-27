@@ -20,6 +20,12 @@ export interface EventData<T> {
 }
 
 export namespace CSFloat {
+	export interface SellSettings {
+		active: boolean;
+		displayBuff: boolean;
+		percentage: number;
+	}
+
 	export interface BFNotification {
 		name: string;
 		percentage: number;

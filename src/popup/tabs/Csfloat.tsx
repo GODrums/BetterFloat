@@ -1,6 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_CSBLUEGEM, ICON_CSFLOAT_FULL } from '~lib/util/globals';
 import {
+	CSFloatSellSymbol,
 	IcOutlineDiscount,
 	IcRoundAccessTime,
 	MaterialSymbolsAvgTimeOutlineRounded,
@@ -48,7 +49,10 @@ export const CSFloatSettings = () => {
 						/>
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
+						<SettingsCheckbox id="csf-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} />
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox id="csf-sellpricing" text="Sell Pricing" icon={<CSFloatSellSymbol className="h-6 w-6" />} isNew />
 					</SettingsCard>
 				</div>
 			</div>

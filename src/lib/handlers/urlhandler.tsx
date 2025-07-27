@@ -10,6 +10,7 @@ import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
+import CSFSellSettings from '~lib/inline/CSFSellSettings';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
@@ -158,7 +159,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		const csfAutorefresh = await getSetting('csf-autorefresh');
 		if (csfAutorefresh) {
 			const success = await waitForElement('.refresh > button');
-			if (success && !document.querySelector('betterfloat-autorefresh')) {
+			if (success && document.querySelector('betterfloat-autorefresh')) {
 				const { root } = await mountShadowRoot(<CSFAutorefresh />, {
 					tagName: 'betterfloat-autorefresh',
 					parent: document.querySelector('.refresh'),
@@ -174,12 +175,10 @@ async function handleCSFloatChange(state: Extension.URLState) {
 				}, 1000);
 			}
 		}
-	}
-
-	if (state.path.includes('/item/')) {
+	} else if (state.path.includes('/item/')) {
 		const showMarketComparison = await ExtensionStorage.sync.get<boolean>('csf-marketcomparison');
 		if (showMarketComparison) {
-			if (showMarketComparison && document.querySelector('betterfloat-market-comparison')) {
+			if (document.querySelector('betterfloat-market-comparison')) {
 				// wait for the new dialog to replace the old one
 				await new Promise((resolve) => setTimeout(resolve, 500));
 			}
@@ -205,6 +204,18 @@ async function handleCSFloatChange(state: Extension.URLState) {
 						clearInterval(interval);
 					}
 				}, 1000);
+			}
+		}
+	} else if (state.path === '/sell') {
+		const showSellPricing = await ExtensionStorage.sync.get<boolean>('csf-sellpricing');
+		if (showSellPricing) {
+			const success = await waitForElement('app-sell-home .actions');
+			if (success && !document.querySelector('betterfloat-sell-settings')) {
+				await mountShadowRoot(<CSFSellSettings />, {
+					tagName: 'betterfloat-sell-settings',
+					parent: document.querySelector('app-sell-home .actions')?.firstElementChild,
+					position: 'before',
+				});
 			}
 		}
 	}
