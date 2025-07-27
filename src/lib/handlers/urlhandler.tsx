@@ -88,7 +88,7 @@ export function dynamicUIHandler() {
 async function showUpdatePopup() {
 	// minor updates don't receive a new popup
 	const extensionVersion = chrome.runtime.getManifest().version;
-	const updateVersion = '3.2.6';
+	const updateVersion = '3.3.0';
 	if (extensionVersion !== updateVersion) {
 		return;
 	}

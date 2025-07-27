@@ -18,20 +18,18 @@ export default function UpdatePopup() {
 
 					<h1 className="flex items-center font-bold text-xl text-white mb-4 relative z-50">
 						<img src={betterfloatLogo} alt="BetterFloat" className="h-10 w-10 mr-2" />
-						<span>Test our new TradeIt features!</span>
+						<span>Automate pricing for your sales!</span>
 						<Badge variant="default" className="ml-2">
-							Limited Time
+							NEW
 						</Badge>
 					</h1>
 
 					<p className="font-normal text-base text-slate-500 mb-4 relative z-50">
-						Our TradeIt integration is free for a limited time!
-						<br />
-						Try it out and join our Discord to give us feedback!
+						Our Pro users can now automate their pricing strategy for sales on CSFloat. Set your target percentage and let BetterFloat automatically price your items!
 					</p>
 					<div className="w-full flex items-center justify-end gap-4">
-						<Button variant="purple" className="font-semibold" onClick={() => window.open('https://tradeit.gg?aff=betterfloat')}>
-							Go to TradeIt
+						<Button variant="purple" className="font-semibold" onClick={() => window.open('https://docs.betterfloat.com/tutorials/csfloat-sell-pricing')}>
+							Learn more
 						</Button>
 					</div>
 				</div>
