@@ -788,6 +788,7 @@ async function adjustSaleListItem(container: Element, active: boolean, displayBu
 		if (!sliderWrapper) return;
 
 		buffA.style.justifyContent = 'center';
+		buffA.style.marginTop = '5px';
 		sliderWrapper.before(buffA);
 	}
 

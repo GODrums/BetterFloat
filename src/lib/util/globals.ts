@@ -205,7 +205,7 @@ export enum MarketSource {
 	Skinflow = 'skinflow',
 	Tradeit = 'tradeit',
 	Whitemarket = 'whitemarket',
-	Swapgg = 'swapgg',
+	Swapgg = 'swap.gg',
 	Skinsmonkey = 'skinsmonkey',
 	Avanmarket = 'avanmarket',
 	Shadowpay = 'shadowpay',
