@@ -1708,7 +1708,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 			isStatTrak = true;
 			headerText = headerText.replace('StatTrak™ ', '');
 		}
-		if (headerText.startsWith('Souvenir') && !headerText.startsWith('Souvenir Charm')) {
+		if (headerText.startsWith('Souvenir')) {
 			isSouvenir = true;
 			headerText = headerText.replace('Souvenir ', '');
 		}
@@ -1731,6 +1731,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		const qualityTypes = ['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'];
 		for (const qualityType of qualityTypes) {
 			if (headerText.includes(qualityType)) {
+				console.log(headerText);
 				quality = headerText;
 				break;
 			}
@@ -1987,15 +1988,7 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Charm | ' + full_name;
 	} else if (item.quality.includes('Music Kit')) {
 		full_name = 'Music Kit | ' + full_name;
-		if (item.isStatTrak) {
-			full_name = 'StatTrak™ ' + full_name;
-		}
 	} else if (!item.quality.includes('Container') && !item.quality.includes('Agent') && !item.quality.includes('Collectible')) {
-		if (item.isSouvenir) {
-			full_name = 'Souvenir ' + full_name;
-		} else if (item.isStatTrak) {
-			full_name = full_name.includes('★') ? full_name.replace('★', '★ StatTrak™') : `StatTrak™ ${full_name}`;
-		}
 		// fix name inconsistency
 		if (item.name.endsWith('| 027')) {
 			full_name = full_name.replace('027', '27');
@@ -2003,6 +1996,11 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		if (item.style !== 'Vanilla') {
 			full_name += ` (${item.condition})`;
 		}
+	}
+	if (item.isSouvenir) {
+		full_name = 'Souvenir ' + full_name;
+	} else if (item.isStatTrak) {
+		full_name = full_name.includes('★') ? full_name.replace('★', '★ StatTrak™') : `StatTrak™ ${full_name}`;
 	}
 	return full_name
 		.replace(/ +(?= )/g, '')
