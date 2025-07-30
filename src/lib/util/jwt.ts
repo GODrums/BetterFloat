@@ -41,7 +41,7 @@ export async function synchronizePlanWithStorage(expired = false): Promise<IStor
 
 	const user = await getSetting<IStorage['user']>('user');
 
-	if (decodedJwt && user.steam?.steamid) {
+	if (decodedJwt && user?.steam?.steamid) {
 		// check if token or plan is expired and refresh
 		if (expired || (decodedJwt.exp && decodedJwt.exp * 1000 < Date.now())) {
 			const newToken = await refreshToken(user!.steam!.steamid!);
@@ -49,10 +49,17 @@ export async function synchronizePlanWithStorage(expired = false): Promise<IStor
 				await ExtensionStorage.sync.setItem('user', { ...user, plan: { type: 'free' } });
 				throw new Error('Failed to refresh token');
 			}
-			decodedJwt = decodeJWT(newToken);
+
+			if (newToken.token) {
+				decodedJwt = decodeJWT(newToken.token);
+			} else if (newToken.message === 'No subscription found') {
+				newPlan = { type: 'free' };
+			}
 		}
 		// verify token contents
-		newPlan = await verifyPlan(decodedJwt, user);
+		if (decodedJwt) {
+			newPlan = await verifyPlan(decodedJwt, user);
+		}
 	}
 
 	const newUser = { ...user, plan: newPlan };
@@ -92,10 +99,11 @@ export async function verifyPlan(decodedJwt: CustomerClaims & JWTPayload, user: 
 }
 
 interface TokenResponse {
+	message?: string;
 	token: string;
 }
 
-export async function refreshToken(steamid: string, maxRetries = 3): Promise<string | null> {
+export async function refreshToken(steamid: string, maxRetries = 3): Promise<TokenResponse | null> {
 	let lastError: Error | null = null;
 
 	for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -114,8 +122,7 @@ export async function refreshToken(steamid: string, maxRetries = 3): Promise<str
 				continue;
 			}
 
-			const data = (await response.json()) as TokenResponse;
-			return data.token;
+			return (await response.json()) as TokenResponse;
 		} catch (error) {
 			console.error(`Failed to refresh token (attempt ${attempt + 1}/${maxRetries}):`, error);
 			lastError = error as Error;

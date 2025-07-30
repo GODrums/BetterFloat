@@ -148,7 +148,12 @@ export async function checkUserPlanPro(user: SettingsUser) {
 	const isPro = isUserPro(user);
 	if ((isPro && lastProCheck + 10 * 60 * 1000 < Date.now()) || (!isPro && lastProCheck > 0)) {
 		const expired = typeof user?.plan?.expiry === 'number' && user?.plan?.expiry < Date.now();
-		user = await synchronizePlanWithStorage(expired);
+		try {
+			user = await synchronizePlanWithStorage(expired);
+		} catch (error) {
+			console.error('[BetterFloat] Error synchronizing plan:', error);
+			user = { ...user, plan: { type: 'free' } };
+		}
 		if (isPro) {
 			lastProCheck = Date.now();
 		} else {
