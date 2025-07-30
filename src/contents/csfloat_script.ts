@@ -1731,7 +1731,6 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		const qualityTypes = ['Container', 'Sticker', 'Agent', 'Patch', 'Charm', 'Collectible', 'Music Kit'];
 		for (const qualityType of qualityTypes) {
 			if (headerText.includes(qualityType)) {
-				console.log(headerText);
 				quality = headerText;
 				break;
 			}
