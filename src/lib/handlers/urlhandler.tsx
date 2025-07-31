@@ -159,7 +159,7 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		const csfAutorefresh = await getSetting('csf-autorefresh');
 		if (csfAutorefresh) {
 			const success = await waitForElement('.refresh > button');
-			if (success && document.querySelector('betterfloat-autorefresh')) {
+			if (success && !document.querySelector('betterfloat-autorefresh')) {
 				const { root } = await mountShadowRoot(<CSFAutorefresh />, {
 					tagName: 'betterfloat-autorefresh',
 					parent: document.querySelector('.refresh'),
