@@ -97,7 +97,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			if (!token) {
 				return;
 			}
-			const verifiedPlan = await verifyPlan(decodeJWT(token), user);
+			const verifiedPlan = await verifyPlan(decodeJWT(token.token), user);
 			setUser({ ...user, plan: verifiedPlan });
 
 			ExtensionStorage.sync.setItem('bm-enable', true);
