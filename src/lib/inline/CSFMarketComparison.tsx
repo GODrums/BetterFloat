@@ -376,8 +376,8 @@ const CSFMarketComparison: React.FC = () => {
 						</div>
 						<div className="flex items-center justify-between">
 							<span>Liquidity:</span>
-							{liquidity !== null ? (
-								<span>{liquidity.toFixed(2)}%</span>
+							{user?.plan.type === 'pro' ? (
+								<span>{liquidity !== null ? `${liquidity.toFixed(2)}%` : 'N/A'}</span>
 							) : (
 								<Badge variant="purple" className="text-[--primary-text-color]">
 									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
