@@ -1600,8 +1600,11 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 		if (!stickerData) continue;
 
 		stickerContainer.addEventListener('click', async () => {
+			const isSouvenirCharm = stickerData.name.includes('Souvenir Charm |');
+			const isKeychain = stickerData.name.includes('Charm |');
+
 			const stickerURL = new URL('https://csfloat.com/search');
-			stickerURL.searchParams.set(stickerData.pattern ? 'keychain_index' : 'sticker_index', String(stickerData.stickerId));
+			stickerURL.searchParams.set(isSouvenirCharm ? 'keychain_highlight_reel' : isKeychain ? 'keychain_index' : 'sticker_index', String(stickerData.stickerId));
 
 			window.open(stickerURL.href, '_blank');
 		});
