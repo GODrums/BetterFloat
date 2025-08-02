@@ -55,8 +55,7 @@
 		"socket.io-client": "^4.8.1",
 		"socket.io-msgpack-parser": "^3.0.2",
 		"tailwind-merge": "^2.6.0",
-		"tailwindcss-animate": "^1.0.7",
-		"zod": "^3.25.64"
+		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.0.0",
@@ -71,7 +70,6 @@
 		"decimal.js": "^10.5.0",
 		"lefthook": "^1.11.13",
 		"postcss": "8.4.49",
-		"resq": "^1.11.0",
 		"tailwindcss": "3.4.17",
 		"typescript": "5.7.2"
 	},
