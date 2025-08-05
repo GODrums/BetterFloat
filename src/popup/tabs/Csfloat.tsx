@@ -66,7 +66,7 @@ export const CSFloatSettings = () => {
 						<SettingsCheckbox id="csf-steamlink" text="Link to Steam Market Page" icon={<MdiSteam className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-floatappraiser" text="Show FloatAppraiser" icon={<MaterialSymbolsTravelExplore className="h-6 w-6" />} disabled={true} />
+						<SettingsCheckbox id="csf-floatappraiser" text="Show FloatAppraiser" icon={<MaterialSymbolsTravelExplore className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox

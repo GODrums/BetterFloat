@@ -20,6 +20,7 @@ html {
 	font-size: 13px;
 	line-height: 21px;
 	text-decoration: none;
+	z-index: 10;
 }
 
 .inventory-item .betterfloat-buff-a {

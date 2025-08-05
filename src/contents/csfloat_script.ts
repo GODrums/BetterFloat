@@ -1846,7 +1846,11 @@ async function addBuffPrice(
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
 			if (isSellTab) {
-				priceContainer.outerHTML = buffContainer;
+				if (extensionSettings['csf-floatappraiser']) {
+					priceContainer.insertAdjacentHTML('beforebegin', buffContainer);
+				} else {
+					priceContainer.outerHTML = buffContainer;
+				}
 			} else {
 				priceContainer.insertAdjacentHTML('afterend', buffContainer);
 			}
@@ -1914,7 +1918,7 @@ async function addBuffPrice(
 		if (priceIcon) {
 			priceContainer?.removeChild(priceIcon);
 		}
-		if (floatAppraiser && !isPopout) {
+		if (Boolean(extensionSettings['csf-floatappraiser']) === false && !isPopout && floatAppraiser) {
 			priceContainer?.removeChild(floatAppraiser);
 		}
 
@@ -1949,7 +1953,9 @@ async function addBuffPrice(
 		}
 		saleTag.innerHTML = saleTagInner;
 
-		if (isPopout && floatAppraiser) {
+		if (isPopout) {
+			priceContainer?.insertBefore(saleTag, floatAppraiser ?? priceContainer.firstChild);
+		} else if (floatAppraiser && extensionSettings['csf-floatappraiser']) {
 			priceContainer?.insertBefore(saleTag, floatAppraiser);
 		} else {
 			priceContainer?.appendChild(saleTag);
