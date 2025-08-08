@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
-import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByGridImg } from '~lib/handlers/cache/tradeit_cache';
+import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
@@ -174,7 +174,8 @@ async function adjustItem(container: Element, isOwn = false) {
 		if (isOwn) {
 			const imgSrc = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
 			if (imgSrc.includes('https://cdn.tradeit.gg/')) {
-				return getTradeitOwnItemByGridImg(imgSrc);
+				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replace(' - ', ' | ');
+				return getTradeitOwnItemByName(decodedName);
 			} else {
 				return getFirstTradeitOwnItem(imgSrc)?.[0];
 			}
@@ -237,9 +238,7 @@ async function getBuffItem(container: Element, item: Tradeit.Item) {
 	}
 
 	const priceFromReference = extensionSettings['tradeit-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
-	console.log('[BetterFloat] Price from reference: ', extensionSettings['tradeit-pricereference'], priceFromReference?.toNumber());
 	const itemPrice = getItemPrice(container, item);
-	console.log('[BetterFloat] Item price: ', itemPrice.toNumber());
 
 	const priceDifference = itemPrice.minus(priceFromReference ?? new Decimal(0));
 	return {

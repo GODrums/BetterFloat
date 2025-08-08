@@ -4,6 +4,7 @@ import type { Tradeit } from '~lib/@typings/TradeitTypes';
 let tradeitBotItems: Tradeit.Item[] = [];
 // tradeit: cached items from own inventory
 const tradeitOwnItems: { [steamImg: string]: Tradeit.Item[] } = {};
+const tradeitOwnItemsByName: { [name: string]: Tradeit.Item } = {};
 
 export function cacheTradeitBotItems(data: Tradeit.Item[]) {
 	if (tradeitBotItems.length > 0) {
@@ -17,8 +18,13 @@ export function cacheTradeitOwnItems(data: { [assetId: number]: Tradeit.Item[] }
 	for (const [_key, value] of Object.entries(data)) {
 		for (const item of value) {
 			tradeitOwnItems[item.imgURL] = [item];
+			tradeitOwnItemsByName[item.name] = item;
 		}
 	}
+}
+
+export function getTradeitOwnItemByName(name: string) {
+	return tradeitOwnItemsByName[name];
 }
 
 export function getTradeitOwnItemByGridImg(name: string) {
