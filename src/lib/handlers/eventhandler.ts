@@ -273,6 +273,9 @@ function processTradeitEvent(eventData: EventData<unknown>) {
 		// own inventory
 		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 		cacheTradeitOwnItems((eventData.data as Tradeit.OwnInventoryResponse).items);
+	} else if (eventData.url.includes('api/v2/inventory/stickers')) {
+		// no idea which stickers these are
+		// uses Tradeit.StickersInventoryResponse
 	}
 }
 

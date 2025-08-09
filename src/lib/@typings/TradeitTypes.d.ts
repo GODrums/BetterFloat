@@ -18,6 +18,24 @@ export namespace Tradeit {
 		timestamp: number;
 	};
 
+	export type StickersInventoryResponse = {
+		data: {
+			imgUrls: {
+				cartStickerImgUrl: string;
+				extendedInfoStickerImgUrl: string;
+				filterStickerImgUrl: string;
+				infoStickerImgUrl: string;
+				insightsSearchImgUrl: string;
+				insightsStickerImgUrl: string;
+				itemStickerImgUrl: string;
+				mobileCartStickerImgUrl: string;
+				mobileExtendedInfoStickerImgUrl: string;
+			};
+			name: string;
+			price: number;
+		}[];
+	};
+
 	export type Item = {
 		assetId?: string;
 		assetLength: number;

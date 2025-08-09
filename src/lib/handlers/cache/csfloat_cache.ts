@@ -43,6 +43,9 @@ export function cacheCSFBuyOrders(data: CSFloat.BuyOrderData[]) {
 }
 
 export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
+	if (!data || data.length === 0) {
+		return;
+	}
 	if (CSFLOAT_API_DATA.historyGraph.length > 0) {
 		console.debug('[BetterFloat] History graph already cached, deleting history: ', CSFLOAT_API_DATA.historyGraph);
 		CSFLOAT_API_DATA.historyGraph = [];

@@ -174,7 +174,7 @@ async function adjustItem(container: Element, isOwn = false) {
 		if (isOwn) {
 			const imgSrc = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
 			if (imgSrc.includes('https://cdn.tradeit.gg/')) {
-				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replace(' - ', ' | ');
+				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replaceAll(' - ', ' | ');
 				return getTradeitOwnItemByName(decodedName);
 			} else {
 				return getFirstTradeitOwnItem(imgSrc)?.[0];
@@ -183,13 +183,7 @@ async function adjustItem(container: Element, isOwn = false) {
 		return getFirstTradeitBotItem();
 	};
 	const apiItem = getItem();
-	// let attempts = 0;
-	// while (!apiItem && attempts++ < 5) {
-	// 	// wait for 1s and try again
-	// 	console.log(`[BetterFloat] No ${isOwn} item found, waiting 1s and trying again...`);
-	// 	await new Promise((resolve) => setTimeout(resolve, 1000));
-	// 	apiItem = getItem();
-	// }
+
 	// console.log('[BetterFloat] Adjusting item: ', apiItem);
 	if (!apiItem) {
 		console.log('[BetterFloat] No item found, cancelling...', container);
@@ -221,7 +215,7 @@ async function adjustItem(container: Element, isOwn = false) {
 async function getBuffItem(container: Element, item: Tradeit.Item) {
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
-	const source = MarketSource.Buff;
+	const source = (extensionSettings['tradeit-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
 
