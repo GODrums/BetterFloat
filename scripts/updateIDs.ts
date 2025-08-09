@@ -25,12 +25,15 @@ type MarketIDMapping = {
 	};
 };
 
+type DopplerPhase = 'Phase 1' | 'Phase 2' | 'Phase 3' | 'Phase 4' | 'Sapphire' | 'Ruby' | 'Black Pearl' | 'Emerald';
 type CSMarketIDMapping = {
 	items: {
 		[item: string]: {
 			buff163_goods_id: number;
 			youpin_id: number;
 			buff163_sticker_id?: number;
+			buffmarket_goods_id?: number;
+			buff163_phase_ids?: Record<DopplerPhase, number>;
 		};
 	};
 };
@@ -82,7 +85,7 @@ async function main() {
 					const typedCs2PropName = cs2PropName as keyof typeof cs2ItemData;
 					const typedMarketPropName = marketPropName as keyof (typeof marketIDs)[typeof itemName];
 
-					if (cs2ItemData[typedCs2PropName] && !marketIDs[itemName][typedMarketPropName]) {
+					if (cs2ItemData[typedCs2PropName] && !marketIDs[itemName][typedMarketPropName] && typeof cs2ItemData[typedCs2PropName] === 'number') {
 						// Add missing property
 						marketIDs[itemName][typedMarketPropName] = cs2ItemData[typedCs2PropName];
 						updated = true;
