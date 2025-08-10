@@ -1,20 +1,24 @@
 import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 
-let skinswapUserInventory: Skinswap.Item[] = [];
-let skinswapItems: Skinswap.Item[] = [];
+const skinswapUserInventory: Record<string, Skinswap.Item> = {};
+const skinswapItems: Record<string, Skinswap.Item> = {};
 
 export function cacheSkinswapUserInventory(inventory: Skinswap.InventoryResponse) {
-	skinswapUserInventory = inventory.data;
+	for (const item of inventory.data) {
+		skinswapUserInventory[item.market_hash_name] = item;
+	}
 }
 
 export function cacheSkinswapItems(items: Skinswap.MarketItemsResponse) {
-	skinswapItems = items.data;
+	for (const item of items.data) {
+		skinswapItems[item.market_hash_name] = item;
+	}
 }
 
-export function getFirstSkinswapUserItem() {
-	return skinswapUserInventory.shift();
+export function getSkinswapUserItem(name: string) {
+	return skinswapUserInventory[name];
 }
 
-export function getFirstSkinswapItem() {
-	return skinswapItems.shift();
+export function getSkinswapItem(name: string) {
+	return skinswapItems[name];
 }
