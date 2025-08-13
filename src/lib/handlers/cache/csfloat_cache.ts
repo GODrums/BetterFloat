@@ -43,7 +43,7 @@ export function cacheCSFBuyOrders(data: CSFloat.BuyOrderData[]) {
 }
 
 export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
-	if (!data || data.length === 0) {
+	if (!data || data.length === undefined || data.length === 0) {
 		return;
 	}
 	if (CSFLOAT_API_DATA.historyGraph.length > 0) {
@@ -51,13 +51,11 @@ export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
 		CSFLOAT_API_DATA.historyGraph = [];
 	}
 	// original price is in cents, convert to dollars
-	CSFLOAT_API_DATA.historyGraph = data.map((history) => {
-		return {
-			avg_price: history.avg_price / 100,
-			count: history.count,
-			day: history.day,
-		};
-	});
+	CSFLOAT_API_DATA.historyGraph = data.map((history) => ({
+		avg_price: history.avg_price / 100,
+		count: history.count,
+		day: history.day,
+	}));
 }
 
 export function cacheCSFOffers(data: CSFloat.Offer[]) {

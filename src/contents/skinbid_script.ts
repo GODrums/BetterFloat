@@ -16,6 +16,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
+import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
@@ -62,6 +63,8 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Observer started');
 	}
+
+	dynamicUIHandler();
 }
 
 async function firstLaunch() {

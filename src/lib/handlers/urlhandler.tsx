@@ -17,6 +17,7 @@ import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import GPAutorefresh from '~lib/inline/GPAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
+import SkbAutorefresh from '~lib/inline/SkbAutorefresh';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
@@ -120,6 +121,8 @@ async function handleChange(state: Extension.URLState) {
 		await handleCSMoneyChange(state);
 	} else if (state.site === 'gamerpay.gg') {
 		await handleGamerpayChange(state);
+	} else if (state.site === 'skinbid.com') {
+		await handleSkinbidChange(state);
 	}
 }
 
@@ -352,6 +355,34 @@ async function handleGamerpayChange(state: Extension.URLState) {
 					if (url.pathname.includes('/item/')) {
 						root.unmount();
 						document.querySelector('betterfloat-gp-autorefresh')?.remove();
+						clearInterval(interval);
+					}
+				}, 1000);
+			}
+		}
+	}
+}
+
+async function handleSkinbidChange(state: Extension.URLState) {
+	if (state.path.startsWith('/market')) {
+		const skbAutorefresh = await getSetting('skb-autorefresh');
+		if (skbAutorefresh) {
+			const success = await waitForElement('.items-header > app-sort-single-select');
+			if (success && !document.querySelector('betterfloat-skb-autorefresh')) {
+				const parent = document.querySelector<HTMLElement>('.items-header > app-sort-single-select')!;
+				const { root, parentElement } = await mountShadowRoot(<SkbAutorefresh />, {
+					tagName: 'betterfloat-skb-autorefresh',
+					parent,
+					position: 'before',
+				});
+				if (parentElement.previousElementSibling?.tagName === 'BETTERFLOAT-SKB-AUTOREFRESH') {
+					parentElement.previousElementSibling.remove();
+				}
+				// unmount on url change
+				const interval = createUrlListener((url) => {
+					if (!url.pathname.startsWith('/market')) {
+						root.unmount();
+						document.querySelector('betterfloat-skb-autorefresh')?.remove();
 						clearInterval(interval);
 					}
 				}, 1000);

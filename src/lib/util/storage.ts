@@ -105,6 +105,7 @@ export const DEFAULT_SETTINGS = {
 	'sp-autoclosepopup': true,
 	'sp-floatcoloring': true,
 	'skb-enable': true,
+	'skb-autorefresh': true,
 	'skb-pricingsource': 'buff',
 	'skb-altmarket': 'none',
 	'skb-pricereference': 0,

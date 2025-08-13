@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_SKINBID_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, IcRoundAccessTime, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
@@ -21,6 +21,9 @@ export const SkinbidSettings = () => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
 				</div>
 				<div className="flex flex-col gap-1">
+					<SettingsCard>
+						<SettingsCheckbox id="skb-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} />
+					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="skb-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
 					</SettingsCard>
