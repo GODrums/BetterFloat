@@ -16,7 +16,7 @@ import {
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { dynamicUIHandler, mountSkbBargainButtons } from '~lib/handlers/urlhandler';
 import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
@@ -144,6 +144,7 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 	if (selector.self === 'page') {
 		addBrowserInspect(container, cachedItem);
 		await caseHardenedDetection(container, cachedItem);
+		addBargainListener(container);
 	} else {
 		addPattern(container, cachedItem);
 	}
@@ -185,6 +186,75 @@ async function adjustInventoryItem(container: Element) {
 			generateBuffContainer(cardFooter, priceListing, priceOrder, currencyText ?? 'USD', marketUrl, source);
 		}
 	}
+}
+
+function addBargainListener(container: Element | null) {
+	if (!container) return;
+	const bargainBtn = container.querySelector('.details-actions-section .buyer-actions svg.fa-coins')?.closest('button');
+	if (bargainBtn) {
+		bargainBtn.addEventListener('click', () => {
+			const interval = setTimeout(async () => {
+				const bargainPopup = document.querySelector('app-make-offer-modal');
+				if (bargainPopup) {
+					clearInterval(interval);
+					await adjustBargainPopup();
+				}
+			}, 500);
+		});
+	}
+}
+
+async function adjustBargainPopup() {
+	let pricingData: any = null;
+	const bfPricingDiv = document.querySelector<HTMLDivElement>('.details-actions-section .betterfloat-buff-container');
+	if (!bfPricingDiv) return;
+
+	pricingData = JSON.parse(bfPricingDiv.dataset.betterfloat || '{}');
+	if (!pricingData) return;
+
+	let inputElement = document.querySelector('.offer input');
+	while (!inputElement) {
+		await new Promise((resolve) => setTimeout(resolve, 100));
+		inputElement = document.querySelector('.offer input');
+	}
+	if (inputElement) {
+		inputElement.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
+		inputElement.insertAdjacentHTML(
+			'afterend',
+			html`
+				<div style="position: relative; font-size: 16px; white-space: nowrap; margin-left: 8px;">
+					<span class="betterfloat-bargain-text betterfloat-bargain-diff" style="cursor: pointer; border-radius: 4px; padding: 4px 8px; color: white;"></span>
+				</div>
+			`
+		);
+
+		const diffElement = document.querySelector<HTMLElement>('.betterfloat-bargain-diff');
+
+		const calculateDiff = () => {
+			const currentValue = Number((<HTMLInputElement>inputElement).value);
+			const difference = currentValue - pricingData.priceFromReference;
+			const percentage = (currentValue / pricingData.priceFromReference) * 100;
+			if (diffElement) {
+				diffElement.textContent = `${difference > 0 ? '+' : ''}${difference.toFixed(2)} (${percentage.toFixed(2)}%)`;
+				diffElement.style.backgroundColor = difference < 0 ? 'green' : 'red';
+			}
+		};
+
+		inputElement.addEventListener('input', () => {
+			calculateDiff();
+		});
+
+		calculateDiff();
+	}
+
+	const buffClone = bfPricingDiv.cloneNode(true);
+	const currentPrice = document.querySelector('.current-price-section');
+	console.log('currentPrice', currentPrice);
+	if (currentPrice) {
+		currentPrice.before(buffClone);
+	}
+
+	await mountSkbBargainButtons();
 }
 
 function addPattern(container: Element, item: Skinbid.Listing) {
@@ -357,6 +427,7 @@ export async function addStickerInfo(container: Element, item: Skinbid.Listing, 
 
 	if (priceSum >= 2) {
 		const overlayContainer = container.querySelector(selector.stickerDiv);
+		if (!overlayContainer) return;
 		if (selector === SKINBID_SELECTORS.page) {
 			(<HTMLElement>overlayContainer).style.display = 'flex';
 		}
@@ -548,6 +619,14 @@ async function addBuffPrice(
 				bidPrice.setAttribute('style', 'display: flex; align-items: center; gap: 5px;');
 				bidPrice.insertAdjacentElement('afterbegin', bidDiscountContainer);
 			}
+		}
+
+		if (selector.self === 'page') {
+			const jsonData = {
+				priceFromReference: priceFromReference?.toDP(2).toNumber(),
+				listingPrice,
+			};
+			container.querySelector('.betterfloat-buff-container')?.setAttribute('data-betterfloat', JSON.stringify(jsonData));
 		}
 	}
 

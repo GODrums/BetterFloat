@@ -18,6 +18,7 @@ import GPAutorefresh from '~lib/inline/GPAutorefresh';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import SkbAutorefresh from '~lib/inline/SkbAutorefresh';
+import SkbBargainButtons from '~lib/inline/SkbBargainButtons';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
@@ -485,6 +486,14 @@ async function mountSpMarketComparison() {
 			console.error('[BetterFloat] mountSpMarketComparison: Could not find required page elements (columns or info container).');
 		}
 	}
+}
+
+export async function mountSkbBargainButtons() {
+	console.log('mounting skb bargain buttons');
+	await mountShadowRoot(<SkbBargainButtons />, {
+		tagName: 'betterfloat-skb-bargain-buttons',
+		parent: document.querySelector('app-make-offer-modal .offer'),
+	});
 }
 
 export async function mountCSFBargainButtons() {
