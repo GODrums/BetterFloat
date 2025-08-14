@@ -68,7 +68,7 @@ async function init() {
 }
 
 async function firstLaunch() {
-	const items = document.getElementsByTagName('APP-ITEM-CARD');
+	const items = document.getElementsByTagName('APP-MARKET-CARD');
 	for (let i = 0; i < items.length; i++) {
 		await adjustItem(items[i], SKINBID_SELECTORS.card);
 	}
@@ -93,15 +93,15 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.log('Added node: ', addedNode.tagName, addedNode);
 
-				if (addedNode.tagName === 'APP-INVENTORY-CARD-ITEM') {
+				if (addedNode.tagName === 'APP-INVENTORY-CARD') {
 					await adjustInventoryItem(addedNode);
-				} else if (addedNode.tagName === 'APP-ITEM-CARD') {
+				} else if (addedNode.tagName === 'APP-MARKET-CARD') {
 					await adjustItem(addedNode, SKINBID_SELECTORS.card);
 				} else if (addedNode.tagName === 'NGU-TILE') {
-					await adjustItem(addedNode.querySelector('app-item-card') as Element, SKINBID_SELECTORS.card);
+					await adjustItem(addedNode.querySelector('app-market-card') as Element, SKINBID_SELECTORS.card);
 				} else if (addedNode.children.length === 1) {
 					const firstChild = addedNode.children[0];
-					if (firstChild.tagName === 'APP-ITEM-CARD') {
+					if (firstChild.tagName === 'APP-MARKET-CARD') {
 						await adjustItem(firstChild, SKINBID_SELECTORS.card);
 					}
 				}
