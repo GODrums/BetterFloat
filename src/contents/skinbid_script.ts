@@ -212,6 +212,8 @@ async function adjustBargainPopup() {
 	pricingData = JSON.parse(bfPricingDiv.dataset.betterfloat || '{}');
 	if (!pricingData) return;
 
+	const currencyRate = await getSkbUserConversion();
+
 	let inputElement = document.querySelector('.offer input');
 	while (!inputElement) {
 		await new Promise((resolve) => setTimeout(resolve, 100));
@@ -231,7 +233,7 @@ async function adjustBargainPopup() {
 		const diffElement = document.querySelector<HTMLElement>('.betterfloat-bargain-diff');
 
 		const calculateDiff = () => {
-			const currentValue = Number((<HTMLInputElement>inputElement).value);
+			const currentValue = Number((<HTMLInputElement>inputElement).value) * currencyRate;
 			const difference = currentValue - pricingData.priceFromReference;
 			const percentage = (currentValue / pricingData.priceFromReference) * 100;
 			if (diffElement) {
