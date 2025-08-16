@@ -1169,7 +1169,7 @@ function getWeaponSchemaIndex(item: CSFloat.Item): string | undefined {
 		names[1] += ` (${item.phase})`;
 	}
 
-	return Object.entries((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find(([key, value]) => value.name === names[0])?.[0];
+	return Object.entries((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find(([_, value]) => value.name === names[0])?.[0];
 }
 
 function getSkinSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
