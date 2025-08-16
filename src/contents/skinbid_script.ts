@@ -225,7 +225,7 @@ async function adjustBargainPopup() {
 			'afterend',
 			html`
 				<div style="position: relative; font-size: 16px; white-space: nowrap; margin-left: 8px;">
-					<span class="betterfloat-bargain-text betterfloat-bargain-diff" style="cursor: pointer; border-radius: 4px; padding: 4px 8px; color: white;"></span>
+					<span class="betterfloat-bargain-diff" style="cursor: pointer; border-radius: 4px; padding: 4px 8px; color: white;"></span>
 				</div>
 			`
 		);

@@ -262,6 +262,8 @@ function applyMutation() {
 						}
 					} else if (addedNode.tagName.toLowerCase() === 'tbody' && extensionSettings['csf-buyorderpercentage'] && addedNode.closest('app-order-table')) {
 						addBuyOrderPercentage(addedNode);
+					} else if (addedNode.tagName === 'APP-SELL-DIALOG') {
+						await adjustSellDialog(addedNode);
 					}
 				}
 			}
@@ -277,6 +279,19 @@ type DOMBuffData = {
 	itemName: string;
 	priceFromReference: number;
 };
+
+async function adjustSellDialog(addedNode: Element) {
+	const marketLink = addedNode.querySelector<HTMLAnchorElement>('a[href^="/search"]');
+	if (!marketLink) return;
+
+	const marketURL = new URL(marketLink.href);
+	marketURL.searchParams.set('sort_by', 'lowest_price');
+	marketLink.addEventListener('click', (e) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.open(marketURL.toString(), '_blank');
+	});
+}
 
 export async function adjustOfferContainer(container: Element) {
 	const offers = Array.from(document.querySelectorAll('.offers .offer'));
