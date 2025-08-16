@@ -489,7 +489,6 @@ async function mountSpMarketComparison() {
 }
 
 export async function mountSkbBargainButtons() {
-	console.log('mounting skb bargain buttons');
 	await mountShadowRoot(<SkbBargainButtons />, {
 		tagName: 'betterfloat-skb-bargain-buttons',
 		parent: document.querySelector('app-make-offer-modal .offer'),

@@ -251,7 +251,6 @@ async function adjustBargainPopup() {
 
 	const buffClone = bfPricingDiv.cloneNode(true);
 	const currentPrice = document.querySelector('.current-price-section');
-	console.log('currentPrice', currentPrice);
 	if (currentPrice) {
 		currentPrice.before(buffClone);
 	}

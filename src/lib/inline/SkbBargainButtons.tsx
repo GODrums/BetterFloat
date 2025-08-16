@@ -22,6 +22,8 @@ const SkbBargainButtons: React.FC = () => {
 	const inputElement = document.querySelector<HTMLInputElement>('app-make-offer-modal .offer input');
 
 	let pricingData: PricingData | null = null;
+	let currency: string | null = null;
+	let currencyRate = 1;
 
 	const getPricingData = () => {
 		const bfPricingDiv = document.querySelector<HTMLDivElement>('.details-actions-section .betterfloat-buff-container');
@@ -32,12 +34,28 @@ const SkbBargainButtons: React.FC = () => {
 		return false;
 	};
 
+	const getCurrencyRate = () => {
+		if (!currency) {
+			const localSettings = localStorage.getItem('settings');
+			if (localSettings) {
+				const settings = JSON.parse(localSettings);
+				currency = settings.currency;
+			}
+		}
+
+		const exchangeRates = JSON.parse(localStorage.getItem('exchangeRates') ?? '[]');
+		currencyRate = exchangeRates.find((rate: any) => rate.currencyCode === currency)?.rate ?? 1;
+	};
+
 	const applyPercentage = (percentage: number) => {
 		if (!pricingData) {
 			getPricingData();
 		}
-		const targetPrice = pricingData?.priceFromReference ? ((pricingData.priceFromReference * percentage) / 100).toFixed(2) : null;
-		console.log('targetPrice', targetPrice, pricingData);
+		if (!currency) {
+			getCurrencyRate();
+		}
+
+		const targetPrice = pricingData?.priceFromReference ? ((pricingData.priceFromReference * percentage) / 100 / currencyRate).toFixed(2) : null;
 		if (inputElement && targetPrice) {
 			inputElement.value = targetPrice;
 			inputElement.dispatchEvent(new Event('input', { bubbles: true }));

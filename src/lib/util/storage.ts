@@ -65,6 +65,16 @@ export async function getAllSettings() {
 	return settings;
 }
 
+export const CSF_DEFAULT_ACTIONS = {
+	'inspect-in-game': true,
+	description: true,
+	'in-game-screenshot': true,
+	'test-in-server': true,
+	'gen-code': true,
+};
+
+export type CSFActionType = keyof typeof CSF_DEFAULT_ACTIONS;
+
 export const DEFAULT_SETTINGS = {
 	'csf-enable': true,
 	'csf-altmarket': 'none',
@@ -89,6 +99,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-removeclustering': false,
 	'csf-showbargainprice': true,
 	'csf-buyorderpercentage': true,
+	'csf-actions': CSF_DEFAULT_ACTIONS,
 	'sp-enable': true,
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,
