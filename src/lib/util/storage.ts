@@ -70,7 +70,7 @@ export const CSF_DEFAULT_ACTIONS = {
 	description: true,
 	'in-game-screenshot': true,
 	'test-in-server': true,
-	'gen-code': true,
+	'gen-code': false,
 };
 
 export type CSFActionType = keyof typeof CSF_DEFAULT_ACTIONS;

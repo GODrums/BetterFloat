@@ -14,6 +14,7 @@ import {
 	StreamlineDiscountPercentCoupon,
 } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
+import { SettingsActionButtons } from '~popup/components/SettingsActionButtons';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
@@ -22,7 +23,11 @@ import { SettingsSelect } from '~popup/components/SettingsSelect';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
 
-export const CSFloatSettings = () => {
+interface CSFloatSettingsProps {
+	hasProPlan: boolean;
+}
+
+export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 	const [checked] = useStorage<boolean>('csf-enable');
 
 	return (
@@ -100,6 +105,7 @@ export const CSFloatSettings = () => {
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Listings</p>
 				</div>
 				<div className="flex flex-col gap-1">
+					<SettingsActionButtons id="csf-actions" isPro={hasProPlan} />
 					<SettingsCard>
 						<SettingsCheckbox
 							id="csf-showingamess"

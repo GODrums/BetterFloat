@@ -148,3 +148,22 @@ button.betterfloat-top-button:hover {
 		grid-template-columns: 1fr 210px;
 	}
 }
+
+.betterfloat-gen-code-button {
+	color: var(--subtext-color);
+	padding: 4px 8px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+	border-radius: 20px;
+	background-color: var(--item-actions-background-color);
+	transition: background-color 0.3s ease;
+	-webkit-backdrop-filter: blur(5px);
+	backdrop-filter: blur(5px);
+}
+
+.betterfloat-gen-code-button:hover {
+	background-color: var(--item-actions-background-color-selected);
+}

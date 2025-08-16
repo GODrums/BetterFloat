@@ -180,7 +180,7 @@ export default function IndexPopup() {
 							</TabsTrigger>
 						</div>
 					</TabsList>
-					<CSFloatSettings />
+					<CSFloatSettings hasProPlan={hasProPlan} />
 					<SkinportSettings />
 					<SkinbidSettings />
 					<CSMoneySettings />

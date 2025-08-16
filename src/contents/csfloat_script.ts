@@ -525,7 +525,7 @@ async function adjustSalesTableRow(container: Element) {
 	}
 
 	// add float coloring
-	const itemSchema = getItemSchema(cachedSale.item);
+	const itemSchema = getSkinSchema(cachedSale.item);
 	if (itemSchema && cachedSale.item.float_value && extensionSettings['csf-floatcoloring']) {
 		const floatContainer = container.querySelector('td.mat-column-wear')?.firstElementChild;
 		if (floatContainer) {
@@ -711,6 +711,8 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		}
 		await patternDetections(container, apiItem, false);
 
+		adjustActionButtons(container, apiItem.item);
+
 		if (location.pathname !== '/sell') {
 			if (extensionSettings['csf-listingage']) {
 				addListingAge(container, apiItem, false);
@@ -770,6 +772,71 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			addScreenshotListener(container, apiItem.item);
 		}
 		addBargainListener(container);
+	}
+}
+
+function adjustActionButtons(container: Element, item: CSFloat.Item) {
+	if (!isUserPro(extensionSettings['user'])) return;
+
+	const actionSettings = extensionSettings['csf-actions'];
+	const actionContainer = container.querySelector('.detail-buttons');
+	if (!actionContainer || !actionSettings) return;
+
+	const inspectLink = actionContainer.querySelector<HTMLAnchorElement>('a.inspect-link');
+	if (inspectLink && !actionSettings['inspect-in-game']) {
+		inspectLink.style.display = 'none';
+	}
+
+	const screenshotDiv = actionContainer.querySelector<HTMLDivElement>('mat-icon[data-mat-icon-type="font"]')?.parentElement;
+	if (screenshotDiv && !actionSettings['in-game-screenshot']) {
+		screenshotDiv.style.display = 'none';
+	}
+
+	const testServerDiv = actionContainer.querySelector<HTMLDivElement>('mat-icon[data-mat-icon-name="gs-inspect"]')?.parentElement;
+	if (testServerDiv && !actionSettings['test-in-server']) {
+		testServerDiv.style.display = 'none';
+	}
+
+	const descriptionDiv = actionContainer.querySelector<HTMLDivElement>('div.description-button');
+	if (descriptionDiv && !actionSettings['description']) {
+		descriptionDiv.style.display = 'none';
+	}
+
+	if (actionSettings['gen-code'] && item.type === 'skin') {
+		initItemSchema();
+		const weaponSchemaIndex = getWeaponSchemaIndex(item);
+		const skinSchema = getSkinSchema(item);
+
+		const genCodeIcon = html`
+			<svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#9EA7B1">
+				<path d="M0 0h24v24H0z" fill="none"/>
+				<path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+			</svg>
+		`;
+		if (weaponSchemaIndex && skinSchema) {
+			const genCodeButton = document.createElement('div');
+			genCodeButton.className = 'betterfloat-gen-code-button';
+			genCodeButton.innerHTML = genCodeIcon;
+			genCodeButton.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				const genCode = `!gen ${weaponSchemaIndex} ${skinSchema.index} ${item.paint_seed} ${item.float_value}`;
+				navigator.clipboard.writeText(genCode);
+
+				// replace the button with checkmark
+				genCodeButton.innerHTML = html`
+					<svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24">
+						<path fill="green" d="M9 16.17L4.83 12l-1.42 1.41L9 19L21 7l-1.41-1.41L9 16.17z"></path>
+					</svg>
+				`;
+
+				setTimeout(() => {
+					genCodeButton.innerHTML = genCodeIcon;
+				}, 1500);
+			});
+			actionContainer.firstElementChild?.before(genCodeButton);
+		}
 	}
 }
 
@@ -1078,14 +1145,39 @@ function createPricempireItemLink(container: Element, item: CSFloat.Item) {
 	return `${itemType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''}`;
 }
 
-function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
+function initItemSchema() {
+	if (!ITEM_SCHEMA) {
+		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA_V2 || '{}').schema ?? {};
+	}
+}
+
+function getWeaponSchemaIndex(item: CSFloat.Item): string | undefined {
+	if (item.type !== 'skin') {
+		return undefined;
+	}
+
+	initItemSchema();
+
+	const names = item.item_name.split(' | ');
+	if (names[0].includes('★')) {
+		names[0] = names[0].replace('★ ', '');
+	}
+	if (item.paint_index === 0) {
+		names[1] = 'Vanilla';
+	}
+	if (item.phase) {
+		names[1] += ` (${item.phase})`;
+	}
+
+	return Object.entries((<CSFloat.ItemSchema.TypeSchema>ITEM_SCHEMA).weapons).find(([key, value]) => value.name === names[0])?.[0];
+}
+
+function getSkinSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
 	if (item.type !== 'skin') {
 		return null;
 	}
 
-	if (!ITEM_SCHEMA) {
-		ITEM_SCHEMA = JSON.parse(window.sessionStorage.ITEM_SCHEMA_V2 || '{}').schema ?? {};
-	}
+	initItemSchema();
 
 	if (Object.keys(ITEM_SCHEMA ?? {}).length === 0) {
 		return null;
@@ -1110,7 +1202,7 @@ function getItemSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | nu
 
 function addFloatColoring(container: Element, listing: CSFloat.ListingData) {
 	if (!listing.item.float_value) return;
-	const itemSchema = getItemSchema(listing.item);
+	const itemSchema = getSkinSchema(listing.item);
 
 	const element = container.querySelector<HTMLElement>('div.wear');
 	if (element) {
