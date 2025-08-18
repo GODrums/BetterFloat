@@ -147,9 +147,6 @@ importers:
       cs-tierlist:
         specifier: ^1.2.2
         version: 1.2.2
-      csgo-fade-percentage-calculator:
-        specifier: ^1.1.6
-        version: 1.1.6
       currency-symbol-map:
         specifier: ^5.1.0
         version: 5.1.0
@@ -2613,9 +2610,6 @@ packages:
   cs-tierlist@1.2.2:
     resolution: {integrity: sha512-WMWkYOglhSokY1KDSO2erEMiA0UPZ8M0RSUfSlWuhQw8GxN5FFAd4j+li0Q/g5BFifB4QlNSC9ktYSt2BK8MJw==}
     engines: {node: '>=18'}
-
-  csgo-fade-percentage-calculator@1.1.6:
-    resolution: {integrity: sha512-Kyv+kZQSLta7pak5xZrOHOci0XTqdwuW+Uhd33xF+WB9+6D0z9ztEyYYzMgiW3Wa+bc/mcRnfAzizvClApc3EQ==}
 
   css-select@4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
@@ -6958,8 +6952,6 @@ snapshots:
       type-fest: 1.4.0
 
   cs-tierlist@1.2.2: {}
-
-  csgo-fade-percentage-calculator@1.1.6: {}
 
   css-select@4.3.0:
     dependencies:

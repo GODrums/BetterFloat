@@ -1,5 +1,4 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import { AcidFadeCalculator, AmberFadeCalculator } from 'csgo-fade-percentage-calculator';
 import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
@@ -39,16 +38,6 @@ export function parsePrice(priceText: string) {
 		currency = '';
 	}
 	return { price, currency };
-}
-
-export function getFadePercentage(weapon: string, skin: string, paintSeed: number) {
-	if (skin.includes('Amber Fade')) {
-		return { ...AmberFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#627d66,#896944,#3b2814)' };
-	}
-	if (skin.includes('Acid Fade')) {
-		return { ...AcidFadeCalculator.getFadePercentage(weapon, paintSeed), background: 'linear-gradient(to right,#6d5f55,#76c788, #574828)' };
-	}
-	return null;
 }
 
 export function getBuffLink(buff_id: number, phase?: DopplerPhase | null) {
