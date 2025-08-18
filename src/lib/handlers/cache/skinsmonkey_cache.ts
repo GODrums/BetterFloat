@@ -1,28 +1,24 @@
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 
-let userInventory: Skinsmonkey.Item[] = [];
-let botInventory: Skinsmonkey.Item[] = [];
+const userInventory: { [name: string]: Skinsmonkey.Item } = {};
+const botInventory: { [name: string]: Skinsmonkey.Item } = {};
 
 export function cacheSkinsmonkeyUserInventory(inventory: Skinsmonkey.InventoryResponse) {
-	userInventory = inventory.assets;
+	for (const item of inventory.assets) {
+		userInventory[item.item.marketName] = { ...item };
+	}
 }
 
 export function cacheSkinsmonkeyBotInventory(inventory: Skinsmonkey.InventoryResponse) {
-	botInventory = inventory.assets;
+	for (const item of inventory.assets) {
+		botInventory[item.item.marketName] = { ...item };
+	}
 }
 
 export function getSpecificSkinsmonkeyUserItem(itemName: string) {
-	return userInventory.find((item) => item.item.marketName === itemName);
+	return userInventory[itemName];
 }
 
 export function getSpecificSkinsmonkeyBotItem(itemName: string) {
-	return botInventory.find((item) => item.item.marketName === itemName);
-}
-
-export function getFirstSkinsmonkeyUserItem() {
-	return userInventory.shift();
-}
-
-export function getFirstSkinsmonkeyBotItem() {
-	return botInventory.shift();
+	return botInventory[itemName];
 }

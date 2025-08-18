@@ -290,6 +290,15 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			tooltipArrow: true,
 		});
 		footerContainer.outerHTML = buffContainer;
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			buffElement.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				window.open(buffElement.href, '_blank');
+			});
+		}
 	}
 
 	let discountContainer = container.querySelector('div.price > div.discount');

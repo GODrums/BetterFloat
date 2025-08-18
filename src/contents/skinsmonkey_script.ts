@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getFirstSkinsmonkeyBotItem, getFirstSkinsmonkeyUserItem } from '~lib/handlers/cache/skinsmonkey_cache';
+import { getSpecificSkinsmonkeyBotItem, getSpecificSkinsmonkeyUserItem } from '~lib/handlers/cache/skinsmonkey_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINSMONKEY_SELECTORS } from '~lib/handlers/selectors/skinsmonkey_selectors';
@@ -76,13 +76,20 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				console.debug('[BetterFloat] Skinsmonkey Mutation detected:', addedNode);
+				// console.debug('[BetterFloat] Skinsmonkey Mutation detected:', addedNode);
 
 				if (addedNode.className === SKINSMONKEY_SELECTORS.item.card) {
 					// options: USER, SITE
 					const isUser =
 						addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
 					await adjustItem(addedNode, isUser);
+				} else if (addedNode.className === SKINSMONKEY_SELECTORS.market.scrollContainer) {
+					const items = addedNode.querySelectorAll(SKINSMONKEY_SELECTORS.item.cardSelector);
+					const isUser =
+						addedNode.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
+					for (const item of items) {
+						await adjustItem(item, isUser);
+					}
 				}
 			}
 		}
@@ -90,21 +97,24 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(isUser: boolean) {
+function getAPIItem(container: Element, isUser: boolean) {
+	const itemName = container.querySelector(SKINSMONKEY_SELECTORS.item.image)?.getAttribute('alt');
+	if (!itemName) return null;
+
 	if (isUser) {
-		return getFirstSkinsmonkeyUserItem();
+		return getSpecificSkinsmonkeyUserItem(itemName);
 	} else {
-		return getFirstSkinsmonkeyBotItem();
+		return getSpecificSkinsmonkeyBotItem(itemName);
 	}
 }
 
 async function adjustItem(container: Element, isUser: boolean) {
-	let item = getAPIItem(isUser);
+	let item = getAPIItem(container, isUser);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = getAPIItem(isUser);
+		item = getAPIItem(container, isUser);
 	}
 	// console.log('[BetterFloat] Skinsmonkey item:', item);
 	if (!item) return;
