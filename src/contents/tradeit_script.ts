@@ -174,7 +174,7 @@ async function adjustItem(container: Element, isOwn = false) {
 		if (isOwn) {
 			const imgSrc = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
 			if (imgSrc.includes('https://cdn.tradeit.gg/')) {
-				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replaceAll(' - ', ' | ');
+				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replaceAll(' - ', ' | ').replace('StatTrak-', 'StatTrak™').replace('CS-GO', 'CS:GO');
 				return getTradeitOwnItemByName(decodedName);
 			} else {
 				return getFirstTradeitOwnItem(imgSrc)?.[0];
