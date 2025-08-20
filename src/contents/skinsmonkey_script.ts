@@ -187,20 +187,20 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 
 	return html`
 		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
-			${extensionSettings['av-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
-			${extensionSettings['av-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
+			${extensionSettings['sm-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
+			${extensionSettings['sm-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
 	`;
 }
 
 async function getBuffItem(item: Skinsmonkey.Item) {
-	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
+	let source = (extensionSettings['sm-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
 
-	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['av-altmarket'] && extensionSettings['av-altmarket'] !== MarketSource.None) {
-		source = extensionSettings['av-altmarket'] as MarketSource;
+	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['sm-altmarket'] && extensionSettings['sm-altmarket'] !== MarketSource.None) {
+		source = extensionSettings['sm-altmarket'] as MarketSource;
 		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
@@ -223,7 +223,7 @@ async function getBuffItem(item: Skinsmonkey.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['av-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['sm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
