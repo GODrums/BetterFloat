@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.3.12",
+	"version": "3.3.13",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -17,7 +17,7 @@
 		"format": "biome format src/ --write && biome check src/ --fix"
 	},
 	"dependencies": {
-		"@plasmohq/messaging": "^0.7.2",
+		"@plasmohq/messaging": "^0.7.1",
 		"@plasmohq/storage": "^1.15.0",
 		"@radix-ui/react-accordion": "^1.2.11",
 		"@radix-ui/react-avatar": "^1.1.10",
