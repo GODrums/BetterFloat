@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.3.11",
+	"version": "3.3.12",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -17,7 +17,7 @@
 		"format": "biome format src/ --write && biome check src/ --fix"
 	},
 	"dependencies": {
-		"@plasmohq/messaging": "^0.7.1",
+		"@plasmohq/messaging": "^0.7.2",
 		"@plasmohq/storage": "^1.15.0",
 		"@radix-ui/react-accordion": "^1.2.11",
 		"@radix-ui/react-avatar": "^1.1.10",
@@ -60,17 +60,17 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.0.0",
 		"@parcel/packager-ts": "2.9.3",
-		"@types/chrome": "0.0.315",
-		"@types/node": "22.10.2",
+		"@types/chrome": "0.1.4",
+		"@types/node": "24.3.0",
 		"@types/react": "18.3.11",
 		"@types/react-dom": "18.3.1",
 		"cs-tierlist": "^1.2.2",
 		"currency-symbol-map": "^5.1.0",
-		"decimal.js": "^10.5.0",
+		"decimal.js": "^10.6.0",
 		"lefthook": "^1.11.13",
 		"postcss": "8.4.49",
 		"tailwindcss": "3.4.17",
-		"typescript": "5.7.2"
+		"typescript": "5.9.2"
 	},
 	"manifest": {
 		"key": "$CRX_PUBLIC_KEY",

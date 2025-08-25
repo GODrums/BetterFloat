@@ -700,7 +700,7 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 			}
 		}
 
-		if (extensionSettings['csf-stickerprices'] && apiItem.price > 0) {
+		if (extensionSettings['csf-stickerprices']) {
 			await addStickerInfo(container, apiItem, priceResult.price_difference);
 		} else {
 			adjustExistingSP(container);
