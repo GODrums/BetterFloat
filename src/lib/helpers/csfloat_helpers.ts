@@ -228,7 +228,7 @@ export namespace CSFloatHelpers {
 		const imgContainer = container.querySelector<HTMLImageElement>('app-item-image-actions img.item-img');
 		if (!imgContainer) return;
 
-		imgContainer.src = `https://csfloat.pics/m/${item.cs2_screenshot_id}/playside.png?v=2`;
+		imgContainer.src = `https://csfloat.pics/m/${item.cs2_screenshot_id}/playside.png?v=3`;
 		imgContainer.style.objectFit = 'contain';
 	}
 

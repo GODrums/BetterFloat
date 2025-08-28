@@ -81,10 +81,7 @@ export function injectResq() {
 						return null;
 					}
 
-					const reactComponent = window.resq.resq$(selector, element);
-					if (reactComponent?.props) {
-						return reactComponent.props;
-					}
+					return window.resq.resq$(selector, element);
 				} catch (error) {
 					console.warn('[BetterFloat] Error extracting React data:', error);
 				}
@@ -92,22 +89,23 @@ export function injectResq() {
 			}
 
 			async function processItemCard(element: HTMLElement) {
-				const reactData = await extractReactData('D', element);
-				if (reactData) {
+				const reactData = await extractReactData('*', element);
+				const props = reactData?.children?.[0]?.props ?? reactData?.props;
+				if (props) {
 					// Dispatch custom event to notify content script
 					element.dispatchEvent(
 						new CustomEvent('betterfloat-data-ready', {
 							bubbles: true,
-							detail: { props: JSON.stringify(reactData), type: 'card' },
+							detail: { props: JSON.stringify(props), type: 'card' },
 						})
 					);
 				}
 			}
 
 			async function processItemPage(element: HTMLElement) {
-				const reactData = await extractReactData('Q', element);
+				const reactData = await extractReactData('z', element);
 				if (reactData) {
-					element.dispatchEvent(new CustomEvent('betterfloat-data-ready', { bubbles: true, detail: { props: JSON.stringify(reactData), type: 'page' } }));
+					element.dispatchEvent(new CustomEvent('betterfloat-data-ready', { bubbles: true, detail: { props: JSON.stringify(reactData.props), type: 'page' } }));
 				}
 			}
 
