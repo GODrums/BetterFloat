@@ -99,6 +99,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-removeclustering': false,
 	'csf-showbargainprice': true,
 	'csf-buyorderpercentage': true,
+	'csf-profitpercentage': 100,
 	'csf-actions': CSF_DEFAULT_ACTIONS,
 	'sp-enable': true,
 	'sp-stickerprices': true,

@@ -19,6 +19,7 @@ import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
+import { SettingsInputNumber } from '~popup/components/SettingsInput';
 import { SettingsSelect } from '~popup/components/SettingsSelect';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
@@ -154,6 +155,15 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 							id="csf-quickmenu"
 							text="Show Quick Menu"
 							tooltipText="Shows a menu for quick access in the top toolbar. Contains similar elements to the menu accessible through a click on the user avatar."
+						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsInputNumber
+							id="csf-profitpercentage"
+							text="Profit Percentage"
+							tooltipText="Adjust the percentage which determines the color of the price difference tag (default: 100%)."
+							defaultValue="100"
+							isPro
 						/>
 					</SettingsCard>
 					<SettingsColorPicker prefix="csf" />

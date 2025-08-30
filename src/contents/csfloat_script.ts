@@ -870,6 +870,7 @@ async function adjustSaleListItem(container: Element, active: boolean, displayBu
 		if (!sliderWrapper) return;
 
 		buffA.style.justifyContent = 'center';
+		buffA.style.width = '100%';
 		buffA.style.marginTop = '5px';
 		sliderWrapper.before(buffA);
 	}
@@ -2029,17 +2030,15 @@ async function addBuffPrice(
 			priceContainer?.removeChild(floatAppraiser);
 		}
 
+		const differenceSymbol = difference.isPositive() ? '+' : '-';
 		let backgroundColor: string;
-		let differenceSymbol: string;
-		if (difference.isNegative()) {
+		const profitPercentage = Number(extensionSettings['csf-profitpercentage']) ?? 100;
+		if (percentage.lt(profitPercentage)) {
 			backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
-			differenceSymbol = '-';
-		} else if (difference.isPos()) {
+		} else if (percentage.gt(profitPercentage)) {
 			backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
-			differenceSymbol = '+';
 		} else {
 			backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
-			differenceSymbol = '-';
 		}
 
 		const saleTag = document.createElement('span');

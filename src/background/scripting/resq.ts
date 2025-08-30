@@ -103,7 +103,7 @@ export function injectResq() {
 			}
 
 			async function processItemPage(element: HTMLElement) {
-				const reactData = await extractReactData('z', element);
+				const reactData = await extractReactData('*', element);
 				if (reactData) {
 					element.dispatchEvent(new CustomEvent('betterfloat-data-ready', { bubbles: true, detail: { props: JSON.stringify(reactData.props), type: 'page' } }));
 				}
