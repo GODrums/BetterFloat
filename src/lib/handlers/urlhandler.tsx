@@ -280,8 +280,13 @@ async function handleSkinportChange(state: Extension.URLState) {
 			}
 		});
 	}
+
 	if (state.path.startsWith('/item/')) {
 		await mountSpMarketComparison();
+	}
+
+	if (state.path === '/sell/steam') {
+		removeSkinportExtensionWarning();
 	}
 }
 
@@ -397,6 +402,13 @@ export async function mountDMarketMarketComparison(container: HTMLElement) {
 		tagName: 'betterfloat-dm-market-comparison',
 		parent: container,
 	});
+}
+
+function removeSkinportExtensionWarning() {
+	const warning = document.querySelector<HTMLElement>('div.Warning.SellPage-extension');
+	if (warning) {
+		warning.style.display = 'none';
+	}
 }
 
 async function mountLisMarketComparison() {
