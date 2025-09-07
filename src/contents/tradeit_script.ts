@@ -9,7 +9,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -40,12 +40,6 @@ async function init() {
 	extensionSettings = await getAllSettings();
 
 	if (!extensionSettings['tradeit-enable']) return;
-
-	// check if user has the required plan
-	if (!(await checkUserPlanPro(extensionSettings['user']))) {
-		console.log('[BetterFloat] Pro plan required for TradeIt features');
-		return;
-	}
 
 	await initPriceMapping(extensionSettings, 'tradeit');
 

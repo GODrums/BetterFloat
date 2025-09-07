@@ -6,38 +6,15 @@ import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
-import { Badge } from '~popup/ui/badge';
-import { WarningCallout } from '~popup/ui/callout';
 import { TabTemplate } from './TabTemplate';
 
-interface TradeitSettingsProps {
-	hasProPlan: boolean;
-}
-
-export const TradeitSettings = ({ hasProPlan }: TradeitSettingsProps) => {
+export const TradeitSettings = () => {
 	const [checked] = useStorage<boolean>('tradeit-enable');
 
 	return (
 		<TabTemplate value="tradeit" checked={checked}>
-			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access TradeIt features" />}
 			<MarketLogoFull icon={ICON_TRADEIT_FULL} link="https://tradeit.gg?aff=betterfloat" />
-			<div className="flex items-center justify-center gap-2 mt-1">
-				<Badge variant="outline">BETA</Badge>
-			</div>
-			<SettingsEnable id="tradeit-enable" hasProPlan={hasProPlan} isPremiumFeature />
-			<div className="">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
-				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsCard>
-						<SettingsCheckbox id="tradeit-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} disabled />
-					</SettingsCard>
-					<SettingsCard>
-						<SettingsCheckbox id="tradeit-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
-					</SettingsCard>
-				</div>
-			</div>
+			<SettingsEnable id="tradeit-enable" />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>

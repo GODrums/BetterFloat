@@ -101,6 +101,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="csmoney">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
 								</TabsTrigger>
+								<TabsTrigger value="tradeit">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
+								</TabsTrigger>
 							</div>
 							<div className="flex justify-center">
 								<Badge variant="purple" className="my-4">
@@ -127,9 +130,6 @@ export default function IndexPopup() {
 								</TabsTrigger>
 								<TabsTrigger value="skinbaron">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
-								</TabsTrigger>
-								<TabsTrigger value="tradeit">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
 								</TabsTrigger>
 								<TabsTrigger value="skinsmonkey">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
@@ -184,6 +184,7 @@ export default function IndexPopup() {
 					<SkinportSettings />
 					<SkinbidSettings />
 					<CSMoneySettings />
+					<TradeitSettings />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<BitskinsSettings hasProPlan={hasProPlan} />
@@ -196,7 +197,6 @@ export default function IndexPopup() {
 					<ShadowpaySettings hasProPlan={hasProPlan} />
 					<MarketCSGOSettings hasProPlan={hasProPlan} />
 					<SwapggSettings hasProPlan={hasProPlan} />
-					<TradeitSettings hasProPlan={hasProPlan} />
 					<AvanSettings hasProPlan={hasProPlan} />
 					<SkinoutSettings hasProPlan={hasProPlan} />
 					<SkinplaceSettings hasProPlan={hasProPlan} />
