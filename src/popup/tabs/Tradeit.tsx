@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { ICON_TRADEIT_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, MaterialSymbolsUpdate, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { IcOutlineDiscount, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
