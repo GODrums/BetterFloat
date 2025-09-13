@@ -120,7 +120,7 @@ const MarketCard: React.FC<{ listing: Skinport.Listing; entry: MarketEntryWithHr
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-6 w-6" style={convertStylesStringToObject(marketDetails.style)} />
 						<span className="text-lg font-semibold text-white">{marketDetails.text}</span>
-						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Steam].includes(marketDetails.source) && <ShieldCheck className="h-5 w-5 text-green-500" />}
+						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Tradeit].includes(marketDetails.source) && <ShieldCheck className="h-5 w-5 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
 						<ActivityPing activity={entry.count} />
