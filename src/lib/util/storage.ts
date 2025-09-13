@@ -273,6 +273,12 @@ export const DEFAULT_SETTINGS = {
 	'ss-pricereference': 0,
 	'ss-buffdifference': true,
 	'ss-buffdifferencepercent': true,
+	'sf-enable': true,
+	'sf-pricingsource': 'buff',
+	'sf-altmarket': 'none',
+	'sf-pricereference': 0,
+	'sf-buffdifference': true,
+	'sf-buffdifferencepercent': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

@@ -14,6 +14,7 @@ import {
 	ICON_MARKETCSGO,
 	ICON_SHADOWPAY,
 	ICON_SKINBARON,
+	ICON_SKINFLOW,
 	ICON_SKINOUT,
 	ICON_SKINPLACE,
 	ICON_SKINPORT,
@@ -44,6 +45,7 @@ import { DmarketSettings } from './tabs/Dmarket';
 import { GamerpaySettings } from './tabs/Gamerpay';
 import { MarketCSGOSettings } from './tabs/Marketcsgo';
 import { ShadowpaySettings } from './tabs/Shadowpay';
+import { SkinflowSettings } from './tabs/Skinflow';
 import { SkinoutSettings } from './tabs/Skinout';
 import { SkinplaceSettings } from './tabs/Skinplace';
 import { SkinsmonkeySettings } from './tabs/Skinsmonkey';
@@ -161,6 +163,9 @@ export default function IndexPopup() {
 								<TabsTrigger value="ss">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSWAP} />
 								</TabsTrigger>
+								<TabsTrigger value="skinflow">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINFLOW} />
+								</TabsTrigger>
 							</div>
 						</ScrollArea>
 						<div className="flex flex-1"></div>
@@ -201,6 +206,7 @@ export default function IndexPopup() {
 					<SkinoutSettings hasProPlan={hasProPlan} />
 					<SkinplaceSettings hasProPlan={hasProPlan} />
 					<SkinswapSettings hasProPlan={hasProPlan} />
+					<SkinflowSettings hasProPlan={hasProPlan} />
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>

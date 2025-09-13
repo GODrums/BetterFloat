@@ -3,14 +3,13 @@ import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import type { Skinout } from '~lib/@typings/SkinoutTypes';
+import type { Skinflow } from '~lib/@typings/SkinflowTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
+import { cacheSkinflowInventoryItems, getSkinflowBotsItem, getSkinflowInventoryItem, isSkinflowInventoryEmpty } from '~lib/handlers/cache/skinflow_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getDopplerPhase, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -31,6 +30,8 @@ async function init() {
 		return;
 	}
 
+	checkLocalStorage();
+
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
@@ -49,106 +50,134 @@ async function init() {
 
 	console.timeEnd('[BetterFloat] Skinflow init timer');
 
-	// mutation observer is only needed once
-	if (!isObserverActive) {
-		isObserverActive = true;
-		applyMutation();
-		console.log('[BetterFloat] Mutation observer started');
-	}
-
 	firstLaunch();
 }
 
 function firstLaunch() {
-	setTimeout(() => {
-		const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINOUT_SELECTORS.filters.refreshButton : '#skins_refresh_btn');
-		if (refreshButton) {
-			refreshButton.click();
-		}
-	}, 2000);
-}
-
-function applyMutation() {
-	const observer = new MutationObserver(async (mutations) => {
-		for (const mutation of mutations) {
-			for (let i = 0; i < mutation.addedNodes.length; i++) {
-				const addedNode = mutation.addedNodes[i];
-				// some nodes are not elements, so we need to check
-				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Skinout Mutation detected:', addedNode);
-
-				if (addedNode.className === SKINOUT_SELECTORS.item.listItem) {
-					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.className.includes('item--sell-page')) {
-					await adjustItem(addedNode, PageState.Inventory);
-				}
+	setInterval(async () => {
+		if (location.pathname === '/buy') {
+			const items = document.querySelectorAll('div.tradeItem');
+			for (const item of items) {
+				await adjustItem(item, PageState.Market).catch((e) => console.error('[BetterFloat] Error adjusting item:', e));
+			}
+		} else if (location.pathname === '/sell') {
+			const items = document.querySelectorAll('div.itemBox');
+			for (const item of items) {
+				await adjustItem(item, PageState.Inventory).catch((e) => console.error('[BetterFloat] Error adjusting item:', e));
 			}
 		}
-	});
-	observer.observe(document, { childList: true, subtree: true });
+	}, 1000);
 }
 
-function getAPIItem(container: Element, state: PageState): Skinout.Item | Skinout.InventoryItem | null {
+function checkLocalStorage() {
+	const value = localStorage.getItem('skinflow_referral');
+	if (!value) {
+		localStorage.setItem('skinflow_referral', 'betterfloat');
+	}
+}
+
+function getAPIItem(container: Element, state: PageState): Skinflow.Item | null {
 	if (state === PageState.Market) {
-		return getFirstSkinoutItem() || null;
-	} else if (state === PageState.Inventory) {
-		const assetId = container.getAttribute('assetid');
-		if (!assetId) return null;
-		return getSpecificSkinoutUserItem(assetId) || null;
+		const id = container.getAttribute('id');
+		return id ? getSkinflowBotsItem(id) : null;
+	}
+	if (state === PageState.Inventory) {
+		const mhn = container.querySelector('img')?.getAttribute('alt')?.replace(' icon', '');
+		return mhn ? getSkinflowInventoryItem(mhn) : null;
 	}
 	return null;
 }
 
+let fetchInventoryOnNextRequest = false;
+
 async function adjustItem(container: Element, state: PageState) {
+	if (state === PageState.Market && container.classList.contains(container.id)) return;
+	if (state === PageState.Inventory && container.classList.contains(container.querySelector('img')?.getAttribute('alt')?.replaceAll(' ', '_') ?? '')) return;
+
 	let item = getAPIItem(container, state);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
+		if (state === PageState.Inventory && isSkinflowInventoryEmpty() && !fetchInventoryOnNextRequest) {
+			fetchInventoryOnNextRequest = true;
+			await fetch('https://api.skinflow.gg/me/inv', { credentials: 'include' })
+				.then((res) => res.json())
+				.then((data: Skinflow.InventoryResponse) => {
+					cacheSkinflowInventoryItems(data.inventory);
+				});
+		}
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = getAPIItem(container, state);
 	}
-	// console.log('[BetterFloat] Skinout item:', item);
+	// console.log('[BetterFloat] Skinflow item:', item);
 	if (!item) return;
 
-	const _priceResult = await addBuffPrice(item, container);
+	const _priceResult = await addBuffPrice(item, container, state);
+
+	if (state === PageState.Market) {
+		container.classList.add(container.id);
+	} else if (state === PageState.Inventory) {
+		container.classList.add(container.querySelector('img')?.getAttribute('alt')?.replaceAll(' ', '_') ?? '');
+	}
 }
 
-async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, container: Element): Promise<PriceResult> {
+async function addBuffPrice(item: Skinflow.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
-
-	const footerContainer = container.querySelector(SKINOUT_SELECTORS.item.bottom);
 
 	const isDoppler = item.market_hash_name.includes('Doppler');
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
-	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
-		const buffContainer = generatePriceLine({
-			source,
-			market_id,
-			buff_name,
-			priceOrder,
-			priceListing,
-			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
-			itemStyle: itemStyle as DopplerPhase,
-			CurrencyFormatter: currencyFormatter,
-			isDoppler,
-			isPopout: false,
-			addSpaceBetweenPrices: true,
-			showPrefix: false,
-			iconHeight: '16px',
-			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
-		});
-
-		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+	if (container.querySelector('.betterfloat-buff-a')) {
+		container.querySelector('.betterfloat-buff-a')?.remove();
 	}
 
-	const priceContainer = container.querySelector(SKINOUT_SELECTORS.item.counters);
+	const buffContainer = generatePriceLine({
+		source,
+		market_id,
+		buff_name,
+		priceOrder,
+		priceListing,
+		priceFromReference,
+		userCurrency: currency.symbol ?? '$',
+		itemStyle: itemStyle as DopplerPhase,
+		CurrencyFormatter: currencyFormatter,
+		isDoppler,
+		isPopout: false,
+		addSpaceBetweenPrices: true,
+		showPrefix: false,
+		iconHeight: '16px',
+		hasPro: isUserPro(extensionSettings['user']),
+		tooltipArrow: true,
+	});
 
-	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['sf-buffdifference'] || extensionSettings['sf-buffdifferencepercent'])) {
-		priceContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter));
+	container.insertAdjacentHTML('beforeend', buffContainer);
+
+	const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+	if (buffElement) {
+		if (state === PageState.Inventory) {
+			buffElement.setAttribute('style', 'padding: 0;');
+		}
+		buffElement.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			window.open(buffElement.href, '_blank');
+		});
+	}
+
+	if (container.querySelector('.sale-wrapper')) {
+		container.querySelector('.sale-wrapper')?.remove();
+	}
+
+	const priceContainer = container.querySelector('p.font-normal.text-md');
+
+	if (priceContainer && (extensionSettings['sf-buffdifference'] || extensionSettings['sf-buffdifferencepercent'])) {
+		const priceWrapper = html`
+			<div class="sale-wrapper absolute right-0" style="bottom: 26px;">
+				${createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter)}
+			</div>
+		`;
+		priceContainer.insertAdjacentHTML('afterend', priceWrapper);
 	}
 
 	return {
@@ -171,14 +200,14 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 	return html`
-		<div class="discount flex betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
+		<div class="flex flex-col text-xs betterfloat-sale-tag" style="background-color: ${background}; color: ${color};">
 			${extensionSettings['sf-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>` : ''}
 			${extensionSettings['sf-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
 		</div>
 	`;
 }
 
-async function getBuffItem(item: Skinout.Item | Skinout.InventoryItem) {
+async function getBuffItem(item: Skinflow.Item) {
 	let source = (extensionSettings['sf-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -235,19 +264,17 @@ function getUserCurrency() {
 	return localStorage.getItem('currency') || 'USD';
 }
 
-function getItemPrice(item: Skinout.Item | Skinout.InventoryItem): Decimal {
-	return new Decimal(item.price);
+function getItemPrice(item: Skinflow.Item): Decimal {
+	return new Decimal(item.offered).div(100);
 }
 
-function createBuffItem(item: Skinout.Item | Skinout.InventoryItem): { name: string; style: ItemStyle } {
+function createBuffItem(item: Skinflow.Item): { name: string; style: ItemStyle } {
 	const buff_item = {
 		name: item.market_hash_name,
 		style: '' as ItemStyle,
 	};
 	if (item.market_hash_name.includes('Doppler')) {
-		const phase = item.market_hash_name.split(') ')[1];
-		buff_item.style = phase as ItemStyle;
-		buff_item.name = item.market_hash_name.replace(` ${phase}`, '');
+		buff_item.style = getDopplerPhase(item.phase) ?? '';
 	}
 	return {
 		name: buff_item.name,
@@ -260,8 +287,6 @@ enum PageState {
 	Inventory = 1,
 }
 
-// mutation observer active?
-let isObserverActive = false;
 let extensionSettings: IStorage;
 
 init();

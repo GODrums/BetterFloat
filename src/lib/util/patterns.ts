@@ -1,10 +1,10 @@
-type DopplerMapping = {
+type DopplerPhases = CommonPhases & {
 	Ruby: number;
 	Sapphire: number;
 	'Black Pearl': number;
 };
 
-type GammeDopplerMapping = {
+type GammaDopplerPhases = CommonPhases & {
 	Emerald: number;
 };
 
@@ -16,7 +16,7 @@ type CommonPhases = {
 };
 
 type PhaseMapping = {
-	[buffId: number]: (DopplerMapping | GammeDopplerMapping) & CommonPhases;
+	[buffId: number]: DopplerPhases | GammaDopplerPhases;
 };
 
 export const phaseMapping: PhaseMapping = {

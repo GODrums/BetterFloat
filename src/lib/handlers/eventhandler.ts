@@ -6,6 +6,7 @@ import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
+import type { Skinflow } from '~lib/@typings/SkinflowTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
@@ -42,6 +43,7 @@ import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales }
 import { cacheShadowpayInventory, cacheShadowpayItems } from './cache/shadowpay_cache';
 import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cache';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
+import { cacheSkinflowBotsItems, cacheSkinflowInventoryItems } from './cache/skinflow_cache';
 import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
 import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
@@ -106,6 +108,8 @@ export async function activateHandler() {
 			processSkinplaceEvent(eventData);
 		} else if (location.host === 'skinswap.com') {
 			processSkinswapEvent(eventData);
+		} else if (location.host === 'skinflow.gg' || location.host === 'api.skinflow.gg') {
+			processSkinflowEvent(eventData);
 		}
 	});
 
@@ -163,6 +167,15 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);
+	}
+}
+
+function processSkinflowEvent(eventData: EventData<unknown>) {
+	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	if (eventData.url.includes('bots/items/trade')) {
+		cacheSkinflowBotsItems(eventData.data as Skinflow.BotsItemsTradeResponse);
+	} else if (eventData.url.includes('me/inv/')) {
+		cacheSkinflowInventoryItems((eventData.data as Skinflow.InventoryResponse).inventory);
 	}
 }
 

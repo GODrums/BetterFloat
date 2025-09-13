@@ -222,7 +222,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.Skinout:
 			return `https://skinout.gg/en/market?search=${encodeURIComponent(buff_name)}&utm_source=betterfloat`;
 		case MarketSource.Skinflow:
-			return 'https://skinflow.gg/';
+			return 'https://skinflow.gg/buy?referral=betterfloat';
 		case MarketSource.Shadowpay:
 			return `https://shadowpay.com/csgo-items?search=${encodeURIComponent(buff_name)}&utm_campaign=j8MVU4KVXS3Liun`;
 	}
@@ -416,6 +416,37 @@ export function getFloatColoring(w: number, l = 0, h = 1, isVanilla = false): st
 		return colors.bad;
 	}
 	return colors.normal;
+}
+
+/**
+ * Get the phase of a Doppler item by the paint index
+ * @param paintIndex paint index of the item
+ * @returns phase of the item
+ */
+export function getDopplerPhase(paintIndex: number): DopplerPhase | null {
+	switch (paintIndex) {
+		case 418:
+		case 569:
+			return 'Phase 1';
+		case 419:
+		case 570:
+			return 'Phase 2';
+		case 420:
+		case 571:
+			return 'Phase 3';
+		case 421:
+		case 572:
+			return 'Phase 4';
+		case 415:
+			return 'Ruby';
+		case 416:
+			return 'Sapphire';
+		case 417:
+			return 'Black Pearl';
+		case 568:
+			return 'Emerald';
+	}
+	return null;
 }
 
 /**

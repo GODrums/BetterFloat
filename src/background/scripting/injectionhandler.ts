@@ -26,6 +26,7 @@ export const INJECTION_DOMAINS = [
 	'gamerpay.gg',
 	'skin.place',
 	'skinswap.com',
+	'skinflow.gg',
 ];
 
 /**

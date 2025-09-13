@@ -3,7 +3,7 @@ html {
 }
 
 [class*="hint--"][aria-label]:after {
-	z-index: 1300;
+	z-index: 9999;
 	transition: 0.3s opacity;
 	background: #2e343e;
 	color: #fff;
@@ -20,6 +20,9 @@ html {
 	font-size: 13px;
 	line-height: 21px;
 	text-decoration: none;
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
+	z-index: 1000;
 }
 
 .betterfloat-buffprice {
@@ -35,6 +38,7 @@ html {
 	padding: 5px !important;
 	border-radius: 4px !important;
 	gap: 4px;
+	line-height: 0.8 !important;
 }
 
 .betterfloat-similar-tag {
