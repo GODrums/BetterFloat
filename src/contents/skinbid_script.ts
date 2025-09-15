@@ -134,19 +134,23 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 
 	if (!cachedItem) return;
 
-	const priceResult = await addBuffPrice(cachedItem, container, selector);
-	if (extensionSettings['skb-listingage'] || selector.self === 'page') {
-		addListingAge(container, cachedItem, selector.self);
-	}
-	if ((extensionSettings['skb-stickerprices'] || selector.self === 'page') && priceResult && priceResult?.price_difference) {
-		await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
-	}
-	if (selector.self === 'page') {
-		addBrowserInspect(container, cachedItem);
-		await caseHardenedDetection(container, cachedItem);
-		addBargainListener(container);
-	} else {
-		addPattern(container, cachedItem);
+	try {
+		const priceResult = await addBuffPrice(cachedItem, container, selector);
+		if (extensionSettings['skb-listingage'] || selector.self === 'page') {
+			addListingAge(container, cachedItem, selector.self);
+		}
+		if ((extensionSettings['skb-stickerprices'] || selector.self === 'page') && priceResult && priceResult?.price_difference) {
+			await addStickerInfo(container, cachedItem, selector, priceResult.price_difference);
+		}
+		if (selector.self === 'page') {
+			addBrowserInspect(container, cachedItem);
+			await caseHardenedDetection(container, cachedItem);
+			addBargainListener(container);
+		} else {
+			addPattern(container, cachedItem);
+		}
+	} catch (error) {
+		console.error('[BetterFloat] Error adjusting item: ', error);
 	}
 }
 
@@ -420,7 +424,7 @@ export async function addStickerInfo(container: Element, item: Skinbid.Listing, 
 	if (!item.items || item.items[0].item.category === 'Sticker') return;
 	let stickers = item.items[0].item.stickers;
 	if (item.items[0].item.isSouvenir) {
-		stickers = stickers.filter((s) => !s.name.includes('(Gold)'));
+		stickers = stickers.filter((s) => s?.name && !s.name.includes('(Gold)'));
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(`Sticker | ${s.name}`, extensionSettings['skb-pricingsource'] as MarketSource)));
 	const priceSum = stickerPrices.reduce((a, b) => a + b.starting_at, 0);
