@@ -193,6 +193,7 @@ const CSFMarketComparison: React.FC = () => {
 		}
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
+			console.log(data);
 			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,
@@ -201,15 +202,15 @@ const CSFMarketComparison: React.FC = () => {
 					count: entry?.count || 0,
 					updated: entry?.updated || 0,
 				}))
-				.filter((entry) => entry.market !== 'liquidity')
+				.filter((entry) => entry.market !== 'meta')
 				.filter((entry) => entry.ask !== undefined || entry.bid !== undefined);
 
 			if (convertedData.length === 0) {
 				console.warn('No market data available');
 			}
 
-			if (data.liquidity) {
-				setLiquidity(Number(data.liquidity));
+			if (data.meta) {
+				setLiquidity(Number((data.meta as any).liquidity));
 			}
 
 			const sortedData = convertedData.sort((a, b) => (!b?.ask ? -1 : !a?.ask ? 1 : a.ask - b.ask));

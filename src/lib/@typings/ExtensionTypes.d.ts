@@ -7,7 +7,15 @@ export namespace Extension {
 	};
 
 	export interface APIMarketResponse {
-		[market: string]: Partial<MarketEntry>;
+		[market: string]: Partial<APIMarketEntry>;
+	}
+
+	export interface APIMarketEntry {
+		ask: number;
+		bid: number;
+		avg30: number;
+		count: number;
+		updated: number;
 	}
 
 	export interface AbstractPriceMapping {

@@ -58,7 +58,12 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 						<SettingsCheckbox id="csf-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-sellpricing" text="Sell Pricing" icon={<CSFloatSellSymbol className="h-6 w-6" />} isNew />
+						<SettingsCheckbox
+							id="csf-sellpricing"
+							text="Sell Pricing"
+							icon={<CSFloatSellSymbol className="h-6 w-6" />}
+							tooltipText="https://docs.betterfloat.com/tutorials/csfloat-sell-pricing"
+						/>
 					</SettingsCard>
 				</div>
 			</div>
