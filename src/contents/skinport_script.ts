@@ -379,8 +379,8 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 		}
 	}
 	if (cachedItem) {
-		if (cachedItem.name !== item.name) {
-			console.log('[BetterFloat] Item name mismatch:', item.name, cachedItem.name);
+		if (cachedItem.marketHashName !== item.full_name) {
+			console.log('[BetterFloat] Item name mismatch:', item.full_name, cachedItem.marketHashName);
 			return;
 		}
 
@@ -782,7 +782,7 @@ function addFloatColoring(container: Element, item: Skinport.Listing | Skinport.
 	if (!floatContainer || item.wear === null) return;
 
 	// Could be improved with l, h values
-	const floatColor = getFloatColoring(item.wear, 0, 1, item.name.includes('Vanilla'));
+	const floatColor = getFloatColoring(item.wear, 0, 1, 'style' in item ? item.style === 'Vanilla' : item.name.includes('Vanilla'));
 	if (floatColor !== '') {
 		(<HTMLElement>floatContainer).style.color = floatColor;
 	}
@@ -816,8 +816,8 @@ const itemSelectors = {
 type ItemSelectors = (typeof itemSelectors)[keyof typeof itemSelectors];
 
 function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.Listing | null {
-	const name = container.querySelector(selector.name)?.textContent?.trim() ?? '';
-	if (name === '') {
+	const full_name = container.querySelector(selector.alt)?.getAttribute('alt') ?? '';
+	if (full_name === '') {
 		return null;
 	}
 
@@ -856,9 +856,14 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	}
 
 	let style: ItemStyle = '';
-	if (name.includes('Doppler') && (category === 'Knife' || category === 'Weapon')) {
-		style = name.split('(')[1].split(')')[0] as ItemStyle;
-	} else if (name.includes('Vanilla')) {
+	if (full_name.includes('Doppler') && (category === 'Knife' || category === 'Weapon')) {
+		const phase = container.querySelector('.ItemVersionBadge-value')?.textContent?.trim() ?? '';
+		if (Number.isNaN(parseInt(phase))) {
+			style = phase as ItemStyle;
+		} else {
+			style = `Phase ${phase}` as ItemStyle;
+		}
+	} else if (full_name.includes('★') && !full_name.includes('|')) {
 		style = 'Vanilla';
 	}
 
@@ -893,26 +898,23 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 		}
 		return wear;
 	};
-	const wearDiv = container.querySelector('.WearBar-value');
-	const wear = wearDiv ? getWear(wearDiv as HTMLElement) : '';
-
-	const full_name = selector === itemSelectors.page ? document.title.split(' - ').slice(0, -2).join(' - ') : (container.querySelector(selector.alt)?.getAttribute('alt') ?? '');
+	const wearDiv = container.querySelector<HTMLDivElement>('.WearBar-value');
+	const wear = wearDiv ? getWear(wearDiv) : '';
 
 	const url = selector === itemSelectors.page ? location.pathname : (container.querySelector('.ItemPreview-link')?.getAttribute('href') ?? '');
 	const saleId = Number(url?.split('/').pop() ?? 0);
 	return {
-		name: name,
 		price: Number.isNaN(price) ? 0 : price,
-		type: type,
-		category: category,
-		text: text,
-		stickers: stickers,
-		style: style,
+		type,
+		category,
+		text,
+		stickers,
+		style,
 		wear: Number(wearDiv?.innerHTML),
 		wear_name: wear,
-		currency: currency,
-		saleId: saleId,
-		full_name: full_name,
+		currency,
+		saleId,
+		full_name,
 		url,
 	};
 }
@@ -959,7 +961,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 	const priceParent = container.querySelector<HTMLElement>(selector.priceParent)!;
 	const priceDiv = container.querySelector<HTMLElement>(selector.oldPrice);
 	const currencyRate = await getSpUserCurrency();
-	const isDoppler = item.name.includes('Doppler') && item.category === 'Knife';
+	const isDoppler = item.full_name.includes('Doppler') && item.category === 'Knife';
 	if (!container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({
 			source,

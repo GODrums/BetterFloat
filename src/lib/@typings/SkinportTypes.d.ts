@@ -319,7 +319,6 @@ export namespace Skinport {
 	};
 
 	export type Listing = {
-		name: string;
 		full_name: string;
 		type: string;
 		text: string;
