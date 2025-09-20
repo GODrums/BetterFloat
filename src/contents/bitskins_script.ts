@@ -56,6 +56,22 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	firstLaunch();
+}
+
+async function firstLaunch() {
+	if (location.search.includes('search=')) {
+		setTimeout(() => {
+			if (document.querySelector('.betterfloat-buff-a')) {
+				return;
+			}
+			const findIcon = document.querySelector<HTMLElement>('div.find-item img[alt="Search"]');
+			if (findIcon) {
+				findIcon.click();
+			}
+		}, 1500);
+	}
 }
 
 async function replaceHistory() {
