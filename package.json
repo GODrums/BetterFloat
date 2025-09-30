@@ -137,8 +137,14 @@
 			}
 		},
 		"onlyBuiltDependencies": [
+			"@parcel/watcher",
 			"@swc/core",
-			"lefthook"
+			"@tsparticles/engine",
+			"esbuild",
+			"lefthook",
+			"lmdb",
+			"msgpackr-extract",
+			"sharp"
 		]
 	}
 }
