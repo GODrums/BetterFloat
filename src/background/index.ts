@@ -12,9 +12,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		console.log('[BetterFloat] First install of BetterFloat, enjoy the extension!');
 
 		// set default settings
-		for (const key in DEFAULT_SETTINGS) {
-			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
-		}
+		ExtensionStorage.sync.setItems(DEFAULT_SETTINGS);
 
 		if (!chrome.runtime.getManifest().name.includes('DEV')) {
 			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
@@ -26,12 +24,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 
 		// set default settings
 		await initializeSettings();
-
-		// make sure we're not in dev mode
-		if (details.previousVersion && !details.previousVersion.startsWith('3.') && !chrome.runtime.getManifest().name.includes('DEV')) {
-			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
-			await chrome.tabs.create({ url: onboardingUrl });
-		}
 	}
 });
 
