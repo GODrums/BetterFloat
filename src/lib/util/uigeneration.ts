@@ -185,7 +185,7 @@ export function generateSpStickerContainer(priceSum: number, spPercentage: numbe
 	} else {
 		spContainer.style.padding = '2px 5px';
 		outerContainer.style.position = 'absolute';
-		outerContainer.style.top = '135px';
+		outerContainer.style.top = '120px';
 		outerContainer.style.left = '10px';
 		outerContainer.style.margin = '0 0 10px 10px';
 	}
