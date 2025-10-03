@@ -98,19 +98,16 @@ function applyMutation() {
 				} else if (addedNode.tagName === 'APP-MARKET-CARD') {
 					await adjustItem(addedNode, SKINBID_SELECTORS.card);
 				} else if (addedNode.tagName === 'NGU-TILE') {
-					await adjustItem(addedNode.querySelector('app-market-card') as Element, SKINBID_SELECTORS.card);
+					await adjustItem(addedNode.querySelector('app-market-card')!, SKINBID_SELECTORS.card);
 				} else if (addedNode.children.length === 1) {
 					const firstChild = addedNode.children[0];
 					if (firstChild.tagName === 'APP-MARKET-CARD') {
 						await adjustItem(firstChild, SKINBID_SELECTORS.card);
 					}
 				}
-				if (addedNode.className.includes('item-category')) {
+				if (addedNode.className.includes('image-section')) {
 					// big item page
-					const item = document.querySelector('.item');
-					if (item) {
-						await adjustItem(item, SKINBID_SELECTORS.page);
-					}
+					await adjustItem(addedNode.parentElement!, SKINBID_SELECTORS.page);
 				}
 			}
 		}
