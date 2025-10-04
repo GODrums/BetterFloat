@@ -276,11 +276,10 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 		priceDiv.insertAdjacentHTML('afterend', buffContainer);
 
 		priceDiv.parentElement
-			?.querySelector('.betterfloat-buffprice')
-			?.querySelector('.betterfloat-buffprice')
+			?.querySelector('.betterfloat-buff-a')
 			?.addEventListener('click', (e) => {
 				e.stopPropagation();
-				window.open((e.currentTarget as HTMLElement).parentElement?.getAttribute('href') ?? '', '_blank');
+				window.open((e.currentTarget as HTMLElement).getAttribute('href') ?? '', '_blank');
 			});
 	}
 
