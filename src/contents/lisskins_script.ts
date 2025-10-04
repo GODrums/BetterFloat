@@ -137,37 +137,37 @@ enum PageType {
 
 async function adjustItem(container: Element, page = PageType.Market) {
 	const getItem: () => HTMLItem = () => {
+		let elementText = '';
 		if (page === PageType.Inventory) {
-			const itemName = container.getAttribute('data-name') ?? '';
-			const itemStyle = itemName.includes('Doppler') ? (itemName.split('Doppler ')[1].split(' (')[0] as DopplerPhase) : '';
-			const itemPrice = container.getAttribute('data-price') ?? '0';
-			return {
-				name: itemName,
-				style: itemStyle,
-				price: new Decimal(itemPrice),
-			};
+			elementText = container.getAttribute('data-name') ?? '';
+		} else {
+			elementText = container.querySelector('img.image')?.getAttribute('alt') ?? '';
 		}
-		const imgAlt = container.querySelector('img.image')?.getAttribute('alt') ?? '';
 		let itemName = '';
 		let itemStyle: ItemStyle = '';
-		if (imgAlt.includes('Doppler')) {
-			itemStyle = imgAlt.split('Doppler ')[1].split(' (')[0] as DopplerPhase;
-			itemName = imgAlt.replace(` ${itemStyle}`, '');
+		if (elementText.includes('Doppler')) {
+			itemStyle = elementText.split('Doppler ')[1].split(' (')[0] as DopplerPhase;
+			itemName = elementText.replace(` ${itemStyle}`, '');
 		} else {
-			itemName = imgAlt;
-			if (imgAlt.includes('★') && !imgAlt.includes('|')) {
+			itemName = elementText;
+			if (elementText.includes('★') && !elementText.includes('|')) {
 				itemStyle = 'Vanilla';
 			}
 		}
 		// cut last digit
-		const itemPrice = container.querySelector('div.price')?.textContent;
-		const price = new Decimal(
-			itemPrice
-				?.substring(0, itemPrice.length - 1)
-				.replace(',', '')
-				.replace('.', '')
-				.replaceAll(' ', '') ?? '0'
-		).div(100);
+		let price = new Decimal('0');
+		if (page === PageType.Inventory) {
+			price = new Decimal(container.getAttribute('data-price') ?? '0');
+		} else {
+			const itemPrice = container.querySelector('div.price')?.textContent ?? '0';
+			price = new Decimal(
+				itemPrice
+					?.substring(0, itemPrice.length - 1)
+					.replace(',', '')
+					.replace('.', '')
+					.replaceAll(' ', '') ?? '0'
+			).div(100);
+		}
 		// console.log('[BetterFloat] Adjusting item: ', itemName, itemStyle, price.toNumber());
 		return {
 			name: itemName,

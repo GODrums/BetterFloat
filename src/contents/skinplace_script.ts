@@ -62,10 +62,10 @@ async function init() {
 }
 
 function firstLaunch() {
-	setTimeout(() => {
-		const refreshButton = document.querySelector<HTMLButtonElement>(location.pathname.includes('market') ? SKINPLACE_SELECTORS.filters.refreshButton : SKINPLACE_SELECTORS.inventory.refreshButton);
-		if (refreshButton) {
-			refreshButton.click();
+	setInterval(async () => {
+		const items = document.querySelectorAll<HTMLElement>('.item-buy-card:not(.betterfloat-buff-a)');
+		for (const item of items) {
+			await adjustItem(item, PageState.Market);
 		}
 	}, 2000);
 }
@@ -99,16 +99,17 @@ function applyMutation() {
 				// console.debug('[BetterFloat] Skinplace Mutation detected:', addedNode);
 
 				if (addedNode.className.startsWith('user-inventory')) {
-					console.log('[BetterFloat] Skinplace Inventory Mutation detected:', addedNode);
 					const items = addedNode.querySelectorAll(SKINPLACE_SELECTORS.inventory.itemCard);
 					for (const item of items) {
 						await adjustItem(item, PageState.Inventory);
 					}
 				} else if (addedNode.className === 'item-sell-card') {
 					await adjustItem(addedNode, PageState.Inventory);
-				} else if (addedNode.className === 'item-buy-card') {
-					console.log('[BetterFloat] Skinplace Market Mutation detected:', addedNode);
-					await adjustItem(addedNode, PageState.Market);
+				} else if (addedNode.className === 'base-tooltip') {
+					const item = addedNode.querySelector('.item-buy-card');
+					if (item) {
+						await adjustItem(item, PageState.Market);
+					}
 				}
 			}
 		}
@@ -131,7 +132,7 @@ async function adjustItem(container: Element, state: PageState) {
 	let item = getAPIItem(container, state);
 
 	let tries = 10;
-	while (!item && tries-- > 0) {
+	while (state !== PageState.Market && !item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = getAPIItem(container, state);
 	}

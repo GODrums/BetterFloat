@@ -136,7 +136,7 @@ async function adjustItem(container: Element, selector: SKINBARON_SELECTOR) {
 	container.querySelector('.click-wrapper')?.addEventListener('click', () => {
 		setTimeout(async () => {
 			const popout = document.querySelector('sb-extended-offer-info');
-			console.log('Popout: ', popout);
+			// console.log('[BetterFloat] Popout: ', popout);
 			if (popout) {
 				await addBuffPrice(item, popout, SKINBARON_SELECTORS.modal);
 			}
@@ -275,12 +275,10 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 		}
 		priceDiv.insertAdjacentHTML('afterend', buffContainer);
 
-		priceDiv.parentElement
-			?.querySelector('.betterfloat-buff-a')
-			?.addEventListener('click', (e) => {
-				e.stopPropagation();
-				window.open((e.currentTarget as HTMLElement).getAttribute('href') ?? '', '_blank');
-			});
+		priceDiv.parentElement?.querySelector('.betterfloat-buff-a')?.addEventListener('click', (e) => {
+			e.stopPropagation();
+			window.open((e.currentTarget as HTMLElement).getAttribute('href') ?? '', '_blank');
+		});
 	}
 
 	const saleWrapper = container.querySelector<HTMLElement>(selector.saleWrapper);
