@@ -222,7 +222,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.Skinout:
 			return `https://skinout.gg/en/market?search=${encodeURIComponent(buff_name)}&utm_source=betterfloat`;
 		case MarketSource.Skinflow:
-			return `https://skinflow.gg/buy?referral=betterfloat&search=${encodeURIComponent(buff_name)}`;
+			return `https://skinflow.gg/buy?referral=BETTERFLOAT&search=${encodeURIComponent(buff_name)}`;
 		case MarketSource.Shadowpay:
 			return `https://shadowpay.com/csgo-items?search=${encodeURIComponent(buff_name)}&utm_campaign=j8MVU4KVXS3Liun`;
 	}

@@ -23,3 +23,7 @@ export function getSpecificSkinplaceUserItem(imgSrc: string) {
 export function getSpecificSkinplaceOffer(imgSrc: string) {
 	return offers[imgSrc];
 }
+
+export function isSkinplaceOffersCacheEmpty() {
+	return Object.keys(offers).length === 0;
+}

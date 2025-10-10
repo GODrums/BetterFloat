@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem } from '~lib/handlers/cache/skinplace_cache';
+import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem, isSkinplaceOffersCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
@@ -62,7 +62,15 @@ async function init() {
 }
 
 function firstLaunch() {
+	let firstLaunch = true;
 	setInterval(async () => {
+		if (firstLaunch) {
+			firstLaunch = false;
+			if (location.pathname === '/buy-cs2-skins' && isSkinplaceOffersCacheEmpty()) {
+				console.log('[BetterFloat] Skinplace offers cache is empty, refreshing...');
+				document.querySelector<HTMLElement>('button.refresh-button_type_primary')?.click();
+			}
+		}
 		const items = document.querySelectorAll<HTMLElement>('.item-buy-card:not(.betterfloat-buff-a)');
 		for (const item of items) {
 			await adjustItem(item, PageState.Market);
@@ -119,8 +127,9 @@ function applyMutation() {
 
 function getAPIItem(container: Element, state: PageState): Skinplace.InventoryItem | Skinplace.Offer | null {
 	if (state === PageState.Market) {
-		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.market.image)?.getAttribute('src')?.split('image/')[1]?.split('/')[0] ?? '';
-		return getSpecificSkinplaceOffer(imgSrc) || null;
+		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.market.image)?.getAttribute('src');
+		const iconUrl = imgSrc?.includes('steamcommunity') ? imgSrc?.split('image/')[1]?.split('/')[0] : imgSrc;
+		return iconUrl ? getSpecificSkinplaceOffer(iconUrl) : null;
 	} else if (state === PageState.Inventory) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.inventory.image)?.getAttribute('src')?.split('image/')[1]?.split('/')[0] ?? '';
 		return getSpecificSkinplaceUserItem(imgSrc) || null;
@@ -186,6 +195,13 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, con
 			footerContainer.querySelector(SKINPLACE_SELECTORS.market.priceValue)?.setAttribute('style', 'display: flex; align-items: center;');
 			footerContainer.closest<HTMLDivElement>(SKINPLACE_SELECTORS.market.info)!.style.height = '120px';
 		}
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		buffElement?.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			window.open(buffElement.href, '_blank');
+		});
 	}
 
 	let priceContainer: Element | null = null;

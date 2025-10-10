@@ -72,7 +72,11 @@ function firstLaunch() {
 function checkLocalStorage() {
 	const value = localStorage.getItem('skinflow_referral');
 	if (!value) {
-		localStorage.setItem('skinflow_referral', 'betterfloat');
+		localStorage.setItem('skinflow_referral', 'BETTERFLOAT');
+	}
+
+	if (!location.search.includes('referral')) {
+		location.search += `${location.search ? '&' : ''}referral=BETTERFLOAT`;
 	}
 }
 

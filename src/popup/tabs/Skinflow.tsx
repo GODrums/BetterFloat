@@ -20,7 +20,7 @@ export const SkinflowSettings = ({ hasProPlan }: SkinflowSettingsProps) => {
 	return (
 		<TabTemplate value="skinflow" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinflow features" />}
-			<MarketLogoFull icon={ICON_SKINFLOW_FULL} link="https://skinflow.gg/buy?referral=betterfloat" />
+			<MarketLogoFull icon={ICON_SKINFLOW_FULL} link="https://skinflow.gg/buy?referral=BETTERFLOAT" />
 			<div className="flex items-center justify-center gap-2">
 				<Badge variant="outline">BETA</Badge>
 			</div>

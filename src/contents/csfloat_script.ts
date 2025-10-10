@@ -1055,9 +1055,26 @@ function addBargainListener(container: Element | null) {
 }
 
 function getAlternativeItemLink(item: CSFloat.Item) {
-	const namePart = item.item_name.toLowerCase().replace('★ ', '').replace(' | ', '-').replaceAll(' ', '-').replaceAll(':', '');
-	const wearPart = item.wear_name ? `/${item.is_stattrak ? 'stattrak-' : ''}${item.wear_name.toLowerCase().replaceAll(' ', '-')}` : '';
-	return namePart + wearPart;
+	const replaceMap = {
+		'★ ': '',
+		' | ': '-',
+		' ': '-',
+		':': '',
+		'(': '',
+		')': '',
+		'$': '',
+	};
+	let link = item.item_name.toLowerCase();
+	for (const [key, value] of Object.entries(replaceMap)) {
+		link = link.replaceAll(key, value);
+	}
+	if (item.wear_name) {
+		link += `/${item.is_stattrak ? 'stattrak-' : ''}${item.wear_name.toLowerCase().replaceAll(' ', '-')}`;
+	}
+	if (item.sticker_index) {
+		link = `sticker-${link}`;
+	}
+	return link;
 }
 
 type QuickLink = {
