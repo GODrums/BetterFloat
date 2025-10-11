@@ -24,16 +24,16 @@ export const TradeitSettings = () => {
 					<SettingsCard>
 						<SettingsCheckbox
 							id="tradeit-buffdifference"
-							text="Show Buff Price Difference"
-							tooltipText="Recalculates and replaces the original discount tag according to the item's Buff price in absolute units."
+							text="Show Price Difference"
+							tooltipText="Recalculates and replaces the original discount tag according to the item's reference price in absolute units."
 							icon={<IcOutlineDiscount className="h-6 w-6" />}
 						/>
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox
 							id="tradeit-buffdifferencepercent"
-							text="Show Buff Price Percentage Difference"
-							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the Buff price in percentage. Price equality equates to 100%."
+							text="Show Price Percentage Difference"
+							tooltipText="Requires 'Show Price Difference' to be activated. Display the ratio of an item's price to the reference price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 						/>
 					</SettingsCard>

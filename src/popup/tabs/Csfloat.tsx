@@ -83,7 +83,7 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 						<SettingsCheckbox
 							id="csf-buffdifference"
 							text="Show Price Difference"
-							tooltipText="Recalculates and replaces the original discount tag according to the item's market price in absolute units."
+							tooltipText="Recalculates and replaces the original discount tag according to the item's reference price in absolute units."
 							icon={<IcOutlineDiscount className="h-6 w-6" />}
 						/>
 					</SettingsCard>
@@ -91,7 +91,7 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 						<SettingsCheckbox
 							id="csf-buffdifferencepercent"
 							text="Show Price Percentage Difference"
-							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the market price in percentage. Price equality equates to 100%."
+							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's reference price to the market price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
 						/>
 					</SettingsCard>
