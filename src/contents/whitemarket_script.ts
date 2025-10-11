@@ -110,8 +110,7 @@ async function inventoryListener() {
 		for (const item of itemList.children) {
 			if (item instanceof HTMLElement && item.className.startsWith('styles_item__')) {
 				// Check if the Buff price container has already been added
-				// Using '.skincomparison-buff-a' as the indicator
-				const hasBuffContainer = item.querySelector('.skincomparison-buff-a');
+				const hasBuffContainer = item.querySelector('.betterfloat-buff-a');
 				if (hasBuffContainer) {
 					break;
 				}
@@ -280,7 +279,7 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 		const percentage = itemPrice.div(priceFromReference ?? 0).mul(100);
 		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px;" data-skincomparison="${difference}"><span>${difference.gt(0) ? '+' : '-'}${convertCurrency(
+		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px;" data-betterfloat="${difference}"><span>${difference.gt(0) ? '+' : '-'}${convertCurrency(
 			difference.abs().toDP(2).toNumber(),
 			'USD'
 		)} </span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;

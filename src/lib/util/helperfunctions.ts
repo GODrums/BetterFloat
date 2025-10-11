@@ -183,8 +183,10 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 				return `https://www.c5game.com/en/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
 			}
 		}
-		case MarketSource.CSFloat:
-			return `https://csfloat.com/search?sort_by=lowest_price&type=buy_now&market_hash_name=${encodeURIComponent(buff_name)}`;
+		case MarketSource.CSFloat: {
+			const extendedName = buff_name + (phase ? ` [${phase}]` : '');
+			return `https://csfloat.com/search?sort_by=lowest_price&type=buy_now&market_hash_name=${encodeURIComponent(extendedName)}`;
+		}
 		case MarketSource.DMarket:
 			return `https://dmarket.com/ingame-items/item-list/csgo-skins?title=${encodeURIComponent(buff_name)}&sort-type=5&ref=rqKYzZ36Bw&utm_source=betterfloat`;
 		case MarketSource.CSMoney:

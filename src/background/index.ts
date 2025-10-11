@@ -67,7 +67,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	// }
 
 	// Handle script injection for supported trading sites
-	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url!.includes(domain))) {
+	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url?.includes(domain))) {
 		const hostname = new URL(tab.url).hostname;
 		// if within last 1 second, don't inject
 		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 1000) {

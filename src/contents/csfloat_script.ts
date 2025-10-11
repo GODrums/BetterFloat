@@ -1062,7 +1062,7 @@ function getAlternativeItemLink(item: CSFloat.Item) {
 		':': '',
 		'(': '',
 		')': '',
-		'$': '',
+		$: '',
 	};
 	let link = item.item_name.toLowerCase();
 	for (const [key, value] of Object.entries(replaceMap)) {

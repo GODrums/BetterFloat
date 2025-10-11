@@ -178,7 +178,6 @@ async function adjustItem(container: Element, isOwn = false) {
 	};
 	const apiItem = getItem();
 
-	// console.log('[BetterFloat] Adjusting item: ', apiItem);
 	if (!apiItem) {
 		console.log('[BetterFloat] No item found, cancelling...', container);
 		return;
@@ -272,7 +271,7 @@ function getItemPrice(container: Element, item: Tradeit.Item) {
 	}
 
 	if (location.pathname === '/csgo/store') {
-		return new Decimal(item.storePrice!).div(100);
+		return new Decimal(item.storePrice ?? 0).div(100);
 	} else if (item.price) {
 		return new Decimal(item.price).div(100);
 	} else {
