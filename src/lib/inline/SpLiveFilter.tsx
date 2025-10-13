@@ -132,7 +132,7 @@ const SpLiveFilter: React.FC = () => {
 						</Button>
 						<div className="flex flex-col items-start w-4/5 mx-5 mt-2.5">
 							<label className="font-semibold my-1 mx-0" htmlFor="filter-name">
-								NAME
+								ITEM NAME
 							</label>
 							<input type="text" id="filter-name" className="w-full h-9 pl-3.5 text-white bg-[#2a2d2f] rounded-[20px] text-base" value={name} onChange={(e) => setName(e.target.value)} />
 						</div>

@@ -1073,6 +1073,8 @@ function getAlternativeItemLink(item: CSFloat.Item) {
 	}
 	if (item.sticker_index) {
 		link = `sticker-${link}`;
+	} else if (item.keychain_index) {
+		link = `charm-${link}`;
 	}
 	return link;
 }
