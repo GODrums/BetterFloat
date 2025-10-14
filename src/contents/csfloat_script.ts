@@ -1829,6 +1829,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	let style: ItemStyle = '';
 	let isStatTrak = false;
 	let isSouvenir = false;
+	let isHighlight = false;
 
 	if (header_details) {
 		let headerText = header_details.textContent?.trim() ?? '';
@@ -1837,10 +1838,12 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		if (headerText.startsWith('StatTrak™')) {
 			isStatTrak = true;
 			headerText = headerText.replace('StatTrak™ ', '');
-		}
-		if (headerText.startsWith('Souvenir')) {
+		} else if (headerText.startsWith('Souvenir')) {
 			isSouvenir = true;
 			headerText = headerText.replace('Souvenir ', '');
+		} else if (headerText.startsWith('Highlight')) {
+			isHighlight = true;
+			headerText = headerText.replace('Highlight ', '');
 		}
 
 		const conditions: ItemCondition[] = ['Factory New', 'Minimal Wear', 'Field-Tested', 'Well-Worn', 'Battle-Scarred'];
@@ -1880,6 +1883,7 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		price: price,
 		isStatTrak,
 		isSouvenir,
+		isHighlight,
 	};
 }
 
@@ -2134,6 +2138,8 @@ function createBuffName(item: CSFloat.FloatItem): string {
 		full_name = 'Souvenir ' + full_name;
 	} else if (item.isStatTrak) {
 		full_name = full_name.includes('★') ? full_name.replace('★', '★ StatTrak™') : `StatTrak™ ${full_name}`;
+	} else if (item.isHighlight) {
+		full_name = full_name.replace('Package', 'Highlight Package');
 	}
 	return full_name
 		.replace(/ +(?= )/g, '')
