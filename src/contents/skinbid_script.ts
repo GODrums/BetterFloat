@@ -14,6 +14,7 @@ import {
 	getSpecificSkbItem,
 } from '~lib/handlers/cache/skinbid_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initSkinbidHistory } from '~lib/handlers/historyhandler';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { dynamicUIHandler, mountSkbBargainButtons } from '~lib/handlers/urlhandler';
@@ -36,7 +37,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initSkinbidHistory();
 
 	console.log('[BetterFloat] Starting BetterFloat');
 	console.time('[BetterFloat] Skinbid init timer');
@@ -71,13 +72,6 @@ async function firstLaunch() {
 	const items = document.getElementsByTagName('APP-MARKET-CARD');
 	for (let i = 0; i < items.length; i++) {
 		await adjustItem(items[i], SKINBID_SELECTORS.card);
-	}
-}
-
-function replaceHistory() {
-	const settings = JSON.parse(localStorage.getItem('settings') ?? '{}');
-	if (!settings?.userId && !location.href.includes('ref=')) {
-		location.search += `${location.search ? '&' : ''}ref=betterfloat`;
 	}
 }
 

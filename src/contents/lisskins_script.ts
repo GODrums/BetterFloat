@@ -4,6 +4,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initLisskinsHistory } from '~lib/handlers/historyhandler';
 import { BigCurrency, getAndFetchCurrencyRate, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
@@ -30,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initLisskinsHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -82,13 +83,6 @@ async function firstLaunch() {
 		for (let i = 0; i < items.length; i++) {
 			await adjustItem(items[i], PageType.Market);
 		}
-	}
-}
-
-function replaceHistory() {
-	const isLoggedOut = document.querySelector('div.not-loggined');
-	if (isLoggedOut && !location.href.includes('rf=')) {
-		location.search += `${location.search ? '&' : ''}rf=130498354`;
 	}
 }
 

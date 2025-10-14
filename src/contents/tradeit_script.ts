@@ -6,6 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initTradeitHistory } from '~lib/handlers/historyhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initTradeitHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -76,22 +77,6 @@ async function firstLaunch() {
 		for (let i = 0; i < sellItems.length; i++) {
 			await adjustItem(sellItems[i], true);
 		}
-	}
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	const loggedOut = await new Promise((resolve) => {
-		const interval = setInterval(() => {
-			if (document.querySelector('button.login-btn') || document.querySelector('div.user-section')) {
-				clearInterval(interval);
-				resolve(!!document.querySelector('button.login-btn'));
-			}
-		}, 100);
-	});
-
-	if (loggedOut && !location.search.includes('aff')) {
-		location.search += `${location.search ? '&' : ''}aff=betterfloat`;
 	}
 }
 

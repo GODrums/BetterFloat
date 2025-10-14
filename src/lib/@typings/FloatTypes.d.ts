@@ -128,6 +128,7 @@ export namespace CSFloat {
 		price: number;
 		isStatTrak: boolean;
 		isSouvenir: boolean;
+		isHighlight: boolean;
 	};
 
 	export type ListingData = {

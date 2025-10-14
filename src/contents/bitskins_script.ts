@@ -6,6 +6,7 @@ import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initBitskinsHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -30,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initBitskinsHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -71,22 +72,6 @@ async function firstLaunch() {
 				findIcon.click();
 			}
 		}, 1500);
-	}
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	const loggedOut = await new Promise((resolve) => {
-		const interval = setInterval(() => {
-			if (document.querySelector('.login') || document.querySelector('.user-avatar')) {
-				clearInterval(interval);
-				resolve(!!document.querySelector('.login'));
-			}
-		}, 100);
-	});
-
-	if (loggedOut && !location.search.includes('ref_alias')) {
-		location.search += `${location.search ? '&' : ''}ref_alias=betterfloat`;
 	}
 }
 

@@ -5,6 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
 import { initPriceMapping } from '~lib/handlers/eventhandler';
+import { initGamerpayHistory } from '~lib/handlers/historyhandler';
 import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
 import { GAMERPAY_SELECTORS } from '~lib/handlers/selectors/gamerpay_selectors';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
@@ -26,7 +27,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initGamerpayHistory();
 
 	extensionSettings = await getAllSettings();
 
@@ -60,23 +61,6 @@ async function init() {
 	dynamicUIHandler();
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
-}
-
-async function replaceHistory() {
-	const userPreferences = localStorage.getItem('userPreferences');
-	// listen for url changes and redirect to the correct page
-	if (!userPreferences || userPreferences === '{}') {
-		const interval = setInterval(() => {
-			if (location.pathname !== '/auth') return;
-
-			if (location.search.includes('partner')) {
-				clearInterval(interval);
-				return;
-			}
-
-			location.search = '?partner=7e904fea99&pathname=%2F%3FfromReferral%3Dtrue';
-		}, 500);
-	}
 }
 
 type PriceData = {

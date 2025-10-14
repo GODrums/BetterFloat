@@ -7,6 +7,7 @@ import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initRapidHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initRapidHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -59,14 +60,6 @@ async function init() {
 	}
 
 	firstLaunch();
-}
-
-function replaceHistory() {
-	const isLoggedOut = document.querySelector('a[href="/login"]');
-	if (isLoggedOut && !sessionStorage.getItem('reload')) {
-		sessionStorage.setItem('reload', 'true');
-		location.pathname = '/a/betterfloat';
-	}
 }
 
 function firstLaunch() {

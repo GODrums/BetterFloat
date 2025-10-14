@@ -7,11 +7,12 @@ import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initDmarketHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, createHistoryRewrite, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -33,7 +34,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initDmarketHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -63,22 +64,6 @@ async function init() {
 	dynamicUIHandler();
 
 	console.log('[BetterFloat] DMarket script initialized', location.pathname);
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	await new Promise((resolve) => {
-		if (document.readyState === 'complete') {
-			resolve(true);
-		} else {
-			window.addEventListener('load', resolve);
-		}
-	});
-
-	const isLoggedOut = document.querySelector(DMARKET_SELECTORS.other.authBtn);
-	if (isLoggedOut && !location.search.includes('ref=')) {
-		createHistoryRewrite({ ref: 'rqKYzZ36Bw' }, true);
-	}
 }
 
 function applyMutation() {

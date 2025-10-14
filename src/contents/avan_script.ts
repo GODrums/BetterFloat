@@ -7,6 +7,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initAvanHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initAvanHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -56,25 +57,6 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
-	}
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	const loggedOut = await new Promise((resolve) => {
-		const interval = setInterval(() => {
-			if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_IN)) {
-				clearInterval(interval);
-				resolve(false);
-			} else if (document.querySelector(AVAN_SELECTORS.AUTH.LOGGED_OUT)) {
-				clearInterval(interval);
-				resolve(true);
-			}
-		}, 100);
-	});
-
-	if (loggedOut && !location.search.includes('r=')) {
-		location.search += `${location.search ? '&' : ''}r=a0NNFQvBTf4s`;
 	}
 }
 

@@ -6,6 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import { getSpecificWaxpeerItem } from '~lib/handlers/cache/waxpeer_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initWaxpeerHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { WAXPEER_SELECTORS } from '~lib/handlers/selectors/waxpeer_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -30,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initWaxpeerHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -55,26 +56,6 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
-	}
-}
-
-async function replaceHistory() {
-	// wait for the page to load
-	const loggedOut = await new Promise((resolve) => {
-		const interval = setInterval(() => {
-			if (document.querySelector(WAXPEER_SELECTORS.auth.login) || document.querySelector(WAXPEER_SELECTORS.auth.userAvatar)) {
-				clearInterval(interval);
-				resolve(!!document.querySelector(WAXPEER_SELECTORS.auth.login));
-			}
-		}, 100);
-	});
-
-	if (!loggedOut) return;
-
-	if (location.pathname === '/') {
-		location.pathname = '/r/rums';
-	} else if (!location.search.includes('utm_source')) {
-		location.search += `${location.search ? '&' : ''}utm_source=betterfloat`;
 	}
 }
 

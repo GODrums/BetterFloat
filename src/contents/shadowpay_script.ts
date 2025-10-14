@@ -7,6 +7,7 @@ import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getShadowpayInventoryItem, getSpecificShadowpayItem } from '~lib/handlers/cache/shadowpay_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initShadowpayHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SHADOWPAY_SELECTORS } from '~lib/handlers/selectors/shadowpay_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initShadowpayHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -56,13 +57,6 @@ async function init() {
 		isObserverActive = true;
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
-	}
-}
-
-function replaceHistory() {
-	const isLoggedOut = document.querySelector('div.user-navigation__login-text');
-	if (isLoggedOut && !location.search.includes('utm_campaign')) {
-		location.search += `${location.search ? '&' : ''}utm_campaign=j8MVU4KVXS3Liun`;
 	}
 }
 

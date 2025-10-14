@@ -7,6 +7,7 @@ import type { Skinflow } from '~lib/@typings/SkinflowTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { cacheSkinflowInventoryItems, getSkinflowBotsItem, getSkinflowInventoryItem, isSkinflowInventoryEmpty } from '~lib/handlers/cache/skinflow_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initSkinflowHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getDopplerPhase, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -30,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	checkLocalStorage();
+	initSkinflowHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -67,17 +68,6 @@ function firstLaunch() {
 			}
 		}
 	}, 1000);
-}
-
-function checkLocalStorage() {
-	const value = localStorage.getItem('skinflow_referral');
-	if (!value) {
-		localStorage.setItem('skinflow_referral', 'BETTERFLOAT');
-	}
-
-	if (!location.search.includes('referral')) {
-		location.search += `${location.search ? '&' : ''}referral=BETTERFLOAT`;
-	}
 }
 
 function getAPIItem(container: Element, state: PageState): Skinflow.Item | null {

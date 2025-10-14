@@ -7,6 +7,7 @@ import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem, isSkinplaceOffersCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { initSkinplaceHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initSkinplaceHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -76,25 +77,6 @@ function firstLaunch() {
 			await adjustItem(item, PageState.Market);
 		}
 	}, 2000);
-}
-
-async function replaceHistory() {
-	// Check if we have a stored login status
-	const storedLoginStatus = localStorage.getItem('betterfloat-has-registered');
-	const isLoggedIn = storedLoginStatus === 'true';
-
-	if (storedLoginStatus === null) {
-		setTimeout(() => {
-			const userAvatar = document.querySelector(SKINPLACE_SELECTORS.common.userAvatar);
-			if (userAvatar) {
-				localStorage.setItem('betterfloat-has-registered', 'true');
-			}
-		}, 10000);
-	}
-
-	if (!isLoggedIn && !location.search.includes('utm_campaign')) {
-		location.search += `${location.search ? '&' : ''}utm_campaign=IiV5cv0kjHjDlFR`;
-	}
 }
 
 function applyMutation() {

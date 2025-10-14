@@ -6,6 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
 import { getSwapggCurrencyRate } from '~lib/handlers/cache/swapgg_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
+import { initSwapggHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -30,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	replaceHistory();
+	initSwapggHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -86,21 +87,6 @@ async function fetchUserInventory() {
 				swapggInventoryUser[item.i].push(item);
 			});
 		});
-}
-
-function replaceHistory() {
-	// span with text Sign in via Steam
-	const loginButton = Array.from(document.querySelectorAll('span.hidden')).find((element) => element.textContent === 'Sign in via Steam');
-	if (loginButton && !location.search.includes('r=')) {
-		// fetch('https://api.swap.gg/v2/user/referral', {
-		// 	credentials: 'include',
-		// 	method: 'POST',
-		// 	body: JSON.stringify({
-		// 		code: 'X4nFTDBbek',
-		// 	}),
-		// });
-		location.search += `${location.search ? '&' : ''}r=X4nFTDBbek`;
-	}
 }
 
 function applyMutation() {

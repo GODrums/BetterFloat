@@ -39,5 +39,6 @@ key.json
 # typescript
 .tsbuildinfo
 
-# page selectors
+# page specific data
 src/lib/handlers/selectors/*.ts
+src/lib/handlers/historyhandler.ts
