@@ -32,6 +32,7 @@ async function init() {
 		return;
 	}
 
+	console.time('[BetterFloat] Skinplace init timer');
 	initSkinplaceHistory();
 
 	// catch the events thrown by the script
@@ -50,7 +51,7 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'splace');
 
-	console.timeEnd('[BetterFloat] SkinPlace init timer');
+	console.timeEnd('[BetterFloat] Skinplace init timer');
 
 	// mutation observer is only needed once
 	if (!isObserverActive) {

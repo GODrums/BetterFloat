@@ -15,6 +15,6 @@ export function cacheAvanmarketInventory(inventory: Avanmarket.InventoryItem[]) 
 	avInventory = inventory;
 }
 
-export function getAvanmarketInventoryItem(name: string) {
-	return avInventory.find((item) => item.name === name);
+export function getAvanmarketInventoryItem(iconPath: string) {
+	return avInventory.find((item) => item.iconUrl === iconPath);
 }

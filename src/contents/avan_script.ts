@@ -32,6 +32,7 @@ async function init() {
 		return;
 	}
 
+	console.time('[BetterFloat] Avanmarket init timer');
 	initAvanHistory();
 
 	// catch the events thrown by the script
@@ -84,9 +85,12 @@ function getAPIItem(container: Element, state: PageState) {
 	if (state === PageState.Market) {
 		return getFirstAvanmarketItem();
 	} else if (state === PageState.Inventory) {
-		const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_NAME)?.textContent?.trim();
-		if (itemName) {
-			return getAvanmarketInventoryItem(itemName);
+		const iconUrl = container.querySelector<HTMLImageElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_ICON)?.getAttribute('src');
+		// full steam url
+		const srcUrlParam = new URL(`https://avan.market${iconUrl ?? ''}`).searchParams.get('url');
+		const iconPath = decodeURIComponent(new URL(srcUrlParam ?? '').pathname.split('/image/').pop() ?? '');
+		if (iconPath) {
+			return getAvanmarketInventoryItem(iconPath);
 		}
 		return null;
 	}
@@ -274,8 +278,16 @@ function createBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem): { nam
 		buff_item.name = item.full_name;
 	} else {
 		buff_item.name = item.name;
-		if (item.quality) {
-			buff_item.name += ` (${item.quality})`;
+		if (item.quality?.trim()) {
+			if (!item.name.includes(' | ') && item.name.includes('★')) {
+				buff_item.style = 'Vanilla';
+			} else if (item.name.startsWith('Sticker | ') && item.name.split(' | ').length > 2) {
+				const nameParts = item.name.split(' | ');
+				const newName = nameParts[0] + ' | ' + nameParts[1] + ' (' + item.quality.trim() + ')' + ' | ' + nameParts[2];
+				buff_item.name = newName;
+			} else {
+				buff_item.name += ` (${item.quality.trim()})`;
+			}
 		}
 	}
 	if (isAvanmarketItem(item) && item.phase) {
