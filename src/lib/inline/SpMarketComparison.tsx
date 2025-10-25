@@ -188,7 +188,7 @@ const SpMarketComparison: React.FC = () => {
 		}
 
 		let buff_name = listing.full_name;
-		const isDoppler = listing.name.includes('Doppler') && listing.category === 'Knife';
+		const isDoppler = listing.full_name.includes('Doppler') && listing.category === 'Knife';
 		if (isDoppler) {
 			buff_name += ` - ${listing.style}`;
 		}

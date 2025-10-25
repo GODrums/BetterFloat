@@ -50,7 +50,7 @@
 }
 
 .betterfloat-buff-a {
-	width: 100%;
+	width: fit-content;
 	display: inline-flex;
 	align-items: center;
 	flex-direction: row;

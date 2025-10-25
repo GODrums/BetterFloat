@@ -77,7 +77,7 @@ export namespace Skinplace {
 		steam_itemtype: string;
 		exterior: string;
 		shorten_exterior: string;
-		phase: null;
+		phase: string | null;
 		price: number;
 		price_original: number;
 		price_real: number;

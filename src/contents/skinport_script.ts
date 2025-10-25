@@ -767,11 +767,12 @@ function addAdditionalStickerInfo(container: Element, item: Skinport.Item) {
 		return;
 	}
 
-	const stickersDiv = Array.from(container.querySelectorAll<HTMLImageElement>('.ItemPreview-stickers img'));
+	const stickersDiv = Array.from(container.querySelectorAll<HTMLImageElement>('.ItemIncludes-item img'));
 
 	for (const sticker of stickers) {
 		if (sticker.wear && sticker.wear > 0) {
-			const stickerDiv = stickersDiv.at(stickers.indexOf(sticker))!;
+			const stickerDiv = stickersDiv.at(stickers.indexOf(sticker));
+			if (!stickerDiv) continue;
 			stickerDiv.style.filter = `brightness(${0.8 - sticker.wear * 0.6}) contrast(${0.8 - sticker.wear * 0.6})`;
 		}
 	}

@@ -193,7 +193,6 @@ const CSFMarketComparison: React.FC = () => {
 		}
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);
-			console.log(data);
 			const convertedData = Object.entries(data)
 				.map(([market, entry]) => ({
 					market,

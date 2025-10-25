@@ -446,6 +446,8 @@ async function mountLisMarketComparison() {
 	}
 }
 
+let mountingSpMarketComparison: string | null = null;
+
 async function mountSpMarketComparison() {
 	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('sp-marketcomparison');
 	if (!showMarketComparison) {
@@ -453,7 +455,7 @@ async function mountSpMarketComparison() {
 	}
 
 	let suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
-	while (!suggestedPrice || !suggestedPrice.textContent?.startsWith('Suggested price')) {
+	while (!suggestedPrice || !suggestedPrice.textContent) {
 		await new Promise((resolve) => setTimeout(resolve, 100));
 		suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
 		if (!suggestedPrice) {
@@ -465,6 +467,11 @@ async function mountSpMarketComparison() {
 			return;
 		}
 	}
+
+	if (mountingSpMarketComparison === location.href) {
+		return;
+	}
+	mountingSpMarketComparison = location.href;
 
 	if (suggestedPrice && !document.querySelector('betterfloat-market-comparison')) {
 		const leftColumn = document.querySelector<HTMLElement>('.ItemPage-column--left');

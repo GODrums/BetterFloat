@@ -5,6 +5,7 @@ import type { Extension } from '../@typings/ExtensionTypes';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
 import { fetchCurrencyRates } from './networkhandler';
 
+let fetchIDPromise: Promise<void> | null = null;
 // cached currency rates by exchangerate.host: USD -> X
 let realRatesFromUSD: { [currency: string]: number } = {};
 // maps buff_name to buff_id
@@ -82,11 +83,15 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 
 export async function initMarketIdMapping() {
 	if (Object.keys(marketIdMapping).length === 0) {
-		await fetch(marketIds)
+		if (!fetchIDPromise) {
+			fetchIDPromise = fetch(marketIds)
 			.then((response) => response.json())
 			.then((data) => {
 				marketIdMapping = data;
 			});
+		}
+		await fetchIDPromise;
+		fetchIDPromise = null;
 	}
 }
 
