@@ -42,3 +42,4 @@ key.json
 # page specific data
 src/lib/handlers/selectors/*.ts
 src/lib/handlers/historyhandler.ts
+src/lib/handlers/history/*.ts

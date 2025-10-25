@@ -85,10 +85,10 @@ export async function initMarketIdMapping() {
 	if (Object.keys(marketIdMapping).length === 0) {
 		if (!fetchIDPromise) {
 			fetchIDPromise = fetch(marketIds)
-			.then((response) => response.json())
-			.then((data) => {
-				marketIdMapping = data;
-			});
+				.then((response) => response.json())
+				.then((data) => {
+					marketIdMapping = data;
+				});
 		}
 		await fetchIDPromise;
 		fetchIDPromise = null;
