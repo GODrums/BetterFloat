@@ -2181,9 +2181,9 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	const differenceSymbol = difference.isPositive() ? '+' : '-';
 	let backgroundColor: string;
 	const profitPercentage = Number(extensionSettings['csf-profitpercentage']) ?? 100;
-	if (percentage.lt(profitPercentage)) {
+	if (percentage.isFinite() && percentage.lt(profitPercentage)) {
 		backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
-	} else if (percentage.gt(profitPercentage)) {
+	} else if (percentage.isFinite() && percentage.gt(profitPercentage)) {
 		backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
 	} else {
 		backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
