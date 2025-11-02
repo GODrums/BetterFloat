@@ -4,7 +4,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initLisskinsHistory } from '~lib/handlers/historyhandler';
+import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getAndFetchCurrencyRate, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
@@ -31,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	initLisskinsHistory();
+	initLisskins();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

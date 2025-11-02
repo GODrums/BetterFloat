@@ -7,7 +7,7 @@ import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initDmarketHistory } from '~lib/handlers/historyhandler';
+import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
@@ -34,7 +34,7 @@ async function init() {
 		return;
 	}
 
-	initDmarketHistory();
+	initDmarket();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

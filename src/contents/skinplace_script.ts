@@ -7,7 +7,7 @@ import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem, isSkinplaceOffersCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initSkinplaceHistory } from '~lib/handlers/historyhandler';
+import { initSkinplace } from '~lib/handlers/history/skinplace_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -33,7 +33,7 @@ async function init() {
 	}
 
 	console.time('[BetterFloat] Skinplace init timer');
-	initSkinplaceHistory();
+	initSkinplace();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -297,9 +297,8 @@ function createBuffItem(item: Skinplace.InventoryItem | Skinplace.Offer): { name
 		style: '' as ItemStyle,
 	};
 	if (isInventoryItem(item) ? item.market_hash_name.includes('Doppler') : !!item.skin.phase) {
-		const phase = isInventoryItem(item) ? item.market_hash_name.split(') ')[1] : item.skin.phase;
-		buff_item.style = phase as ItemStyle;
-		buff_item.name = isInventoryItem(item) ? item.market_hash_name.replace(` ${phase}`, '') : item.skin.name.replace(` ${phase}`, '');
+		buff_item.style = (isInventoryItem(item) ? item.phase : item.skin.phase) as ItemStyle;
+		buff_item.name = isInventoryItem(item) ? item.market_hash_name : item.skin.fullName;
 	}
 	return {
 		name: buff_item.name,

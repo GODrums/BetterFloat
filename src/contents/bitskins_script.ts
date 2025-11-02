@@ -6,7 +6,7 @@ import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initBitskinsHistory } from '~lib/handlers/historyhandler';
+import { initBitskins } from '~lib/handlers/history/bitskins_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -31,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	initBitskinsHistory();
+	initBitskins();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

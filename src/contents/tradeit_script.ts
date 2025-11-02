@@ -6,7 +6,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initTradeitHistory } from '~lib/handlers/historyhandler';
+import { initTradeit } from '~lib/handlers/history/tradeit_history';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -32,7 +32,7 @@ async function init() {
 		return;
 	}
 
-	initTradeitHistory();
+	initTradeit();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

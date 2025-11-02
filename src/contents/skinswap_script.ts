@@ -7,7 +7,7 @@ import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getSkinswapItem, getSkinswapUserItem } from '~lib/handlers/cache/skinswap_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initSkinswapHistory } from '~lib/handlers/historyhandler';
+import { initSkinswap } from '~lib/handlers/history/skinswap_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -31,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	initSkinswapHistory();
+	initSkinswap();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

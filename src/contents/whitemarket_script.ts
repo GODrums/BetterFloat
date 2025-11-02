@@ -4,7 +4,6 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handlers/cache/whitemarket_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
-import { initWhiteMarketHistory } from '~lib/handlers/historyhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -27,8 +26,6 @@ async function init() {
 	if (!location.hostname.includes('white.market')) {
 		return;
 	}
-
-	initWhiteMarketHistory();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events

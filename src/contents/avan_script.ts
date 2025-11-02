@@ -7,7 +7,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initAvanHistory } from '~lib/handlers/historyhandler';
+import { initAvan } from '~lib/handlers/history/avan_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { MarketSource } from '~lib/util/globals';
@@ -33,7 +33,7 @@ async function init() {
 	}
 
 	console.time('[BetterFloat] Avanmarket init timer');
-	initAvanHistory();
+	initAvan();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
