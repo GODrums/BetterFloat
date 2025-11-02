@@ -827,14 +827,14 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	// regex also detects &nbsp as whitespace!
 	if (priceText.split(/\s/).length > 1) {
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
-		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
+		const parts = priceText.replace(',', '').replace('.', '').replace('’', '').split(/\s/);
 		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
 		currency = parts.filter((x) => Number.isNaN(+x))[0];
 	} else {
 		// format: "€1,696.00"
 		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
 		currency = priceText.substring(0, firstDigit);
-		priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '')) / 100);
+		priceText = String(Number(priceText.substring(firstDigit).replace(',', '').replace('.', '').replace('’', '')) / 100);
 	}
 	let price = Number(priceText);
 
