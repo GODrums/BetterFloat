@@ -5,6 +5,7 @@ import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 
 export type GetMarketComparisonBody = {
 	buff_name: string;
+	isVIP?: boolean;
 };
 
 export type GetMarketComparisonResponse = {
@@ -25,17 +26,19 @@ const handler: PlasmoMessaging.MessageHandler<GetMarketComparisonBody, GetMarket
 		throw new Error('Request body is missing');
 	}
 
-	const { buff_name: buffName } = req.body;
+	const { buff_name: buffName, isVIP } = req.body;
 
 	// check user subscription and steamid
 	const user = await ExtensionStorage.sync.getItem<IStorage['user']>('user');
 
-	const data = await fetchMarketComparisonData(buffName, user);
+	const steamId = isVIP ? '76561198112185660' : user?.plan?.type === 'pro' ? user?.steam?.steamid : undefined;
+
+	const data = await fetchMarketComparisonData(buffName, steamId);
 	console.debug('[BetterFloat] Fetched fresh market comparison data for ' + buffName);
 	res.send(data);
 };
 
-const fetchMarketComparisonData = async (buffName: string, user: IStorage['user'] | undefined) => {
+const fetchMarketComparisonData = async (buffName: string, steamId: IStorage['user']['steam']['steamid']) => {
 	// Check in-memory cache first
 	if (marketComparisonCache[buffName] && Date.now() - marketComparisonCache[buffName].timestamp < CACHE_TTL) {
 		console.debug('[BetterFloat] Returning cached market comparison data for ' + buffName);
@@ -51,7 +54,7 @@ const fetchMarketComparisonData = async (buffName: string, user: IStorage['user'
 			headers: {
 				'Content-Type': 'application/json',
 				'x-via': `BetterFloat/${manifestVersion}`,
-				'x-steamid': user?.steam?.steamid || '',
+				'x-steamid': steamId || '',
 			},
 		});
 
@@ -62,12 +65,12 @@ const fetchMarketComparisonData = async (buffName: string, user: IStorage['user'
 
 		let data = (await response.json()) as Extension.APIMarketResponse;
 
-		if (user?.plan.type !== 'pro') {
+		if (!steamId) {
 			const newData: Partial<Extension.APIMarketResponse> = {};
 			for (const market of FreeMarkets) {
 				newData[market] = data[market];
 			}
-			data = newData;
+			data = newData as Extension.APIMarketResponse;
 		}
 
 		// Update both caches

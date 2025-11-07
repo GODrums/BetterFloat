@@ -69,13 +69,14 @@ async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): P
 }
 
 // to be used in page scripts
-export async function fetchMarketComparisonData(buff_name: string) {
+export async function fetchMarketComparisonData(buff_name: string, isVIP?: boolean) {
 	return await withRetry(
 		() =>
 			sendToBackgroundViaRelay<GetMarketComparisonBody, GetMarketComparisonResponse>({
 				name: 'getMarketComparison',
 				body: {
 					buff_name,
+					isVIP,
 				},
 			}),
 		{
