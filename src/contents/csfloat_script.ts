@@ -723,8 +723,13 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 
 	if (popout === POPOUT_ITEM.NONE) {
 		// check if we got the right item
-		while (apiItem && (item.name !== apiItem.item.item_name || (apiItem.item.float_value && !new Decimal(apiItem.item.float_value).toDP(12).equals(item.float)))) {
+		while (
+			apiItem &&
+			(item.name !== apiItem.item.item_name ||
+				(item.quality !== 'Vanilla' && item.float !== undefined && apiItem.item.float_value && !new Decimal(apiItem.item.float_value ?? 0).toDP(12).equals(item.float)))
+		) {
 			console.log('[BetterFloat] Item name mismatch:', item, apiItem);
+			await new Promise((resolve) => setTimeout(resolve, 200));
 			apiItem = getApiItem();
 		}
 
@@ -795,7 +800,11 @@ async function adjustItem(container: Element, popout = POPOUT_ITEM.NONE) {
 		while (
 			(!apiItem ||
 				(isMainItem && location.pathname.split('/').pop() !== apiItem.id) ||
-				(popout === POPOUT_ITEM.BARGAIN && apiItem.item.float_value && !new Decimal(apiItem.item.float_value).toDP(12).equals(item.float))) &&
+				(popout === POPOUT_ITEM.BARGAIN &&
+					apiItem.item.float_value &&
+					item.quality !== 'Vanilla' &&
+					item.float !== undefined &&
+					!new Decimal(apiItem.item.float_value).toDP(12).equals(item.float))) &&
 			tries-- > 0
 		) {
 			await new Promise((r) => setTimeout(r, 200));
@@ -1896,7 +1905,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	// replace potential spaces between currency characters and price
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
-	const float = Number(container.querySelector('item-float-bar .wear')?.textContent);
+	const wearContainer = container.querySelector('item-float-bar .wear');
+	const float = wearContainer ? Number(wearContainer.textContent) : undefined;
 	let condition: ItemCondition | undefined;
 	let quality = '';
 	let style: ItemStyle = '';
@@ -1952,8 +1962,8 @@ function getFloatItem(container: Element): CSFloat.FloatItem {
 		quality: quality,
 		style: style,
 		condition: condition,
-		float: float,
-		price: price,
+		float,
+		price,
 		isStatTrak,
 		isSouvenir,
 		isHighlight,

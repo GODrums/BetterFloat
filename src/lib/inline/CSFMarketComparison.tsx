@@ -186,7 +186,6 @@ const CSFMarketComparison: React.FC = () => {
 		const csfUser = localStorage.getItem('user');
 		if (csfUser) {
 			const csfUserObject = JSON.parse(csfUser);
-			console.log(csfUserObject);
 			if (['76561198112185660'].includes(csfUserObject?.steam_id)) {
 				return true;
 			}

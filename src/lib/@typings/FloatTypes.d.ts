@@ -123,7 +123,7 @@ export namespace CSFloat {
 		name: string;
 		quality: string;
 		style: ItemStyle;
-		float: number;
+		float: number | undefined;
 		condition: ItemCondition | undefined;
 		price: number;
 		isStatTrak: boolean;
