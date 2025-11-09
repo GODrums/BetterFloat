@@ -164,11 +164,15 @@ async function handleCSFloatChange(state: Extension.URLState) {
 		if (csfAutorefresh) {
 			const success = await waitForElement('.refresh > button');
 			if (success && !document.querySelector('betterfloat-autorefresh')) {
+				const parent = document.querySelector('.refresh');
 				const { root } = await mountShadowRoot(<CSFAutorefresh />, {
 					tagName: 'betterfloat-autorefresh',
-					parent: document.querySelector('.refresh'),
+					parent,
 					position: 'before',
 				});
+				if (parent?.previousElementSibling?.previousElementSibling?.tagName === 'BETTERFLOAT-AUTOREFRESH') {
+					document.querySelector('betterfloat-autorefresh')?.remove();
+				}
 				// unmount on url change
 				const interval = createUrlListener((newUrl) => {
 					if (newUrl.pathname !== '/search' && !newUrl.pathname.startsWith('/item/')) {

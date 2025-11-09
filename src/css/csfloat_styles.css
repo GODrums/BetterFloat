@@ -6,6 +6,12 @@
 	border: 2px solid var(--highlight-background);
 }
 
+app-user-orders {
+	[class*="hint--"][aria-label]:after {
+		display: none;
+	}
+}
+
 .betterfloat-buff-a {
 	display: inline-flex;
 	align-items: center;

@@ -34,6 +34,7 @@ import {
 	cacheCSFInventory,
 	cacheCSFItems,
 	cacheCSFLocation,
+	cacheCSFMeBuyOrders,
 	cacheCSFOffers,
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
@@ -413,6 +414,9 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('v1/me/inventory')) {
 		// user inventory
 		cacheCSFInventory(eventData.data as CSFloat.InventoryReponse);
+	} else if (eventData.url.includes('v1/me/buy-orders')) {
+		// user buy orders
+		cacheCSFMeBuyOrders(eventData.data as CSFloat.MeBuyOrderData);
 	} else if (eventData.url.includes('v1/me')) {
 		// user data, repeats often
 	} else if (eventData.url.includes('v1/listings/')) {

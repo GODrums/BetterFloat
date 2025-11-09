@@ -10,6 +10,7 @@ type CSFloatAPIStorage = {
 	historyGraph: CSFloat.HistoryGraphData[];
 	historySales: Queue<CSFloat.HistorySalesData>;
 	buyOrders: Queue<CSFloat.BuyOrderData>;
+	meBuyOrders: Queue<CSFloat.BuyOrderData>;
 	offers: CSFloat.Offer[];
 	rates: { [key: string]: number };
 	location: CSFloat.Location | null;
@@ -29,8 +30,10 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 	historyGraph: [],
 	// latest sales of item popup
 	historySales: new Queue<CSFloat.HistorySalesData>(),
-	// buy orders
+	// item buy orders
 	buyOrders: new Queue<CSFloat.BuyOrderData>(),
+	// user buy orders
+	meBuyOrders: new Queue<CSFloat.BuyOrderData>(),
 	// p2p offers timeline
 	offers: [],
 	// currency exchange rates
@@ -40,6 +43,10 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 
 export function cacheCSFBuyOrders(data: CSFloat.BuyOrderData[]) {
 	CSFLOAT_API_DATA.buyOrders.reset(data);
+}
+
+export function cacheCSFMeBuyOrders(data: CSFloat.MeBuyOrderData) {
+	CSFLOAT_API_DATA.meBuyOrders.reset(data.orders.slice());
 }
 
 export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
@@ -88,6 +95,10 @@ export function cacheCSFLocation(data: CSFloat.Location) {
 
 export function cacheCSFPopupItem(data: CSFloat.ListingData) {
 	CSFLOAT_API_DATA.popupItem = data;
+}
+
+export function getNextCSFMeBuyOrder() {
+	return CSFLOAT_API_DATA.meBuyOrders.dequeue();
 }
 
 export function getCSFAllBuyOrders() {
