@@ -258,7 +258,14 @@ async function getBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem) {
 }
 
 function getUserCurrency() {
-	return localStorage.getItem('currency') || 'USD';
+	const currency = localStorage.getItem('currency');
+	if (!currency) return 'USD';
+
+	// previously it was only a string, now it's an object
+	if (!currency.includes('{')) return currency;
+
+	// new format: $ USD, € EUR, etc.
+	return JSON.parse(currency)?.name?.split(' ')[1];
 }
 
 function getItemPrice(item: Avanmarket.Item | Avanmarket.InventoryItem) {
