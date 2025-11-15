@@ -1398,7 +1398,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 	} else if (item.phase) {
 		if (item.phase === 'Ruby' || item.phase === 'Sapphire' || item.phase === 'Emerald') {
 			await badgeChromaGems(container, item);
-		} else if (item.item_name.includes('Karambit | Doppler') && item.phase === 'Phase 2') {
+		} else if ((item.item_name.includes('Karambit | Doppler') || item.item_name.includes('Butterfly Knife | Doppler')) && item.phase === 'Phase 2') {
 			await badgePinkGalaxy(container, item);
 		} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
 			await badgeDiamondGem(container, item);
@@ -1498,7 +1498,7 @@ async function badgeDiamondGem(container: Element, item: CSFloat.Item) {
 }
 
 async function badgePinkGalaxy(container: Element, item: CSFloat.Item) {
-	const pinkGalaxy_data = PinkGalaxyMapping[item.paint_seed!];
+	const pinkGalaxy_data = PinkGalaxyMapping[item.def_index]?.[item.paint_seed!];
 	if (!pinkGalaxy_data) return;
 
 	const iconMapping = {
