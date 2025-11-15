@@ -246,7 +246,7 @@ function applyMutation() {
 					const addedNode = mutation.addedNodes[i];
 					// some nodes are not elements, so we need to check
 					if (!(addedNode instanceof HTMLElement)) continue;
-					console.debug('[BetterFloat] Mutation detected:', addedNode);
+					// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
 					// item popout
 					if (addedNode.tagName.toLowerCase() === 'item-detail') {
@@ -304,6 +304,8 @@ async function adjustUserBuyOrderRow(buyOrder: Element) {
 	const buyOrderData = getNextCSFMeBuyOrder();
 	if (!expressionColumn || !buyOrderData || !buyOrderData.market_hash_name) return;
 
+	if (expressionColumn.querySelector('a')) return;
+
 	const itemName = buyOrderData.market_hash_name;
 	let itemStyle: ItemStyle = '';
 	if (itemName.includes('★') && !itemName.includes('|')) {
@@ -335,7 +337,8 @@ async function adjustUserBuyOrderRow(buyOrder: Element) {
 		iconHeight: '20px',
 		hasPro: isUserPro(extensionSettings['user']),
 	});
-	expressionColumn.insertAdjacentHTML('beforeend', buffContainer);
+
+	expressionColumn.innerHTML = `<a class="betterfloat-buyorder-link" href="/search?market_hash_name=${itemName}&sort_by=lowest_price" target="_blank">${expressionColumn.innerHTML}</a>${buffContainer}`;
 
 	expressionColumn.setAttribute('style', 'height: 52px; display: flex; align-items: center; gap: 8px;');
 }

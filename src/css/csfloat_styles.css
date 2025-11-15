@@ -175,3 +175,12 @@ button.betterfloat-top-button:hover {
 .betterfloat-gen-code-button:hover {
 	background-color: var(--item-actions-background-color-selected);
 }
+
+.betterfloat-buyorder-link {
+	text-decoration: none;
+	color: inherit;
+}
+
+.betterfloat-buyorder-link:hover {
+	color: var(--primary-color);
+}
