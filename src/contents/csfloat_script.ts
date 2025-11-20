@@ -1398,7 +1398,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 	} else if (item.phase) {
 		if (item.phase === 'Ruby' || item.phase === 'Sapphire' || item.phase === 'Emerald') {
 			await badgeChromaGems(container, item);
-		} else if ((item.item_name.includes('Karambit | Doppler') || item.item_name.includes('Butterfly Knife | Doppler')) && item.phase === 'Phase 2') {
+		} else if (item.def_index in PinkGalaxyMapping && [419, 618].includes(item.paint_index!)) {
 			await badgePinkGalaxy(container, item);
 		} else if (item.item_name.includes('Karambit | Gamma Doppler') && item.phase === 'Phase 1') {
 			await badgeDiamondGem(container, item);
