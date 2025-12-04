@@ -1859,9 +1859,18 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 		stickerContainer.addEventListener('click', async () => {
 			const isSouvenirCharm = stickerData.name.includes('Souvenir Charm |');
 			const isKeychain = stickerData.name.includes('Charm |');
+			const isStickerSlab = stickerData.name.includes('Sticker Slab');
 
 			const stickerURL = new URL('https://csfloat.com/search');
-			stickerURL.searchParams.set(isSouvenirCharm ? 'keychain_highlight_reel' : isKeychain ? 'keychain_index' : 'sticker_index', String(stickerData.stickerId));
+			if (isStickerSlab) {
+				stickerURL.searchParams.set('sticker_index', String(stickerData.wrapped_sticker));
+			} else if (isSouvenirCharm) {
+				stickerURL.searchParams.set('keychain_highlight_reel', String(stickerData.stickerId));
+			} else if (isKeychain) {
+				stickerURL.searchParams.set('keychain_index', String(stickerData.stickerId));
+			} else {
+				stickerURL.searchParams.set('sticker_index', String(stickerData.stickerId));
+			}
 
 			window.open(stickerURL.href, '_blank');
 		});
