@@ -239,6 +239,7 @@ export namespace CSFloat {
 		};
 		slot: number;
 		stickerId: number;
+		wrapped_sticker?: number;
 		wear?: number;
 	};
 

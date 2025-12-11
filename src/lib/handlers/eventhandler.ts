@@ -233,7 +233,7 @@ function processWhiteMarketEvent(eventData: EventData<unknown>) {
 		return;
 	}
 
-	const responseData = (eventData.data as any).data as any;
+	const responseData = (eventData.data as any).data;
 
 	if (responseData.market_list) {
 		const items = (responseData as WhiteMarket.MarketListResponse).market_list.edges.map((edge) => edge.node);

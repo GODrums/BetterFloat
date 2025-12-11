@@ -42,8 +42,25 @@ async function init() {
 	if (!isObserverActive) {
 		isObserverActive = true;
 		applyMutation();
+		changeListener();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+}
+
+function changeListener() {
+	setInterval(async () => {
+		if (location.pathname.includes('inventory')) return;
+		const stylesList = document.querySelector('div[class*="styles_list__"]');
+		if (!stylesList) return;
+
+		const items = stylesList.querySelectorAll('div[class*="styles_item__"]');
+		for (const item of items) {
+			const result = await adjustItem(item as Element, PageState.Market);
+			if (result === null) {
+				return;
+			}
+		}
+	}, 1000);
 }
 
 function applyMutation() {
@@ -53,11 +70,11 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
+				// console.debug('[BetterFloat] Mutation detected:', addedNode);
 
 				if (addedNode.className.startsWith('styles_item__')) {
 					// item in market
-					await adjustItem(addedNode, PageState.Market);
+					// await adjustItem(addedNode, PageState.Market);
 				} else if (addedNode.tagName === 'SECTION' && location.pathname.includes('inventory')) {
 					while (addedNode.querySelector('div[class*="styles_skeleton-card__"]')) {
 						await new Promise((resolve) => setTimeout(resolve, 200));
@@ -72,6 +89,11 @@ function applyMutation() {
 							inventoryListener();
 						}
 					}
+				} else if (addedNode.className === 'flex flex-1') {
+					// const items = addedNode.querySelectorAll('div[class*="styles_item__"]');
+					// for (const item of items) {
+					// 	await adjustItem(item as Element, PageState.Market);
+					// }
 				}
 			}
 		}
@@ -129,18 +151,15 @@ async function adjustItem(container: Element, state: PageState) {
 		}
 		return null;
 	};
-	let apiItem = getApiItem();
-	let attempts = 0;
-	while (!apiItem && attempts++ < 5) {
-		// wait for 1s and try again
-		console.log('[BetterFloat] No item found, waiting 1s and trying again...');
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		apiItem = getApiItem();
-	}
+	const apiItem = getApiItem();
 	if (!apiItem) {
 		console.error('[BetterFloat] No item found after 5 attempts');
-		return;
+		return null;
 	}
+
+	if (container.classList.contains(apiItem.id)) return null;
+
+	container.classList.add(apiItem.id);
 
 	const _priceResult = await addBuffPrice(apiItem, price, container, state);
 }
@@ -248,6 +267,12 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 				footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 			}
 		}
+
+		container.querySelector('.betterfloat-buff-a')?.addEventListener('click', (e) => {
+			e.preventDefault();
+			e.stopPropagation();
+			window.open((e.currentTarget as HTMLAnchorElement).href, '_blank');
+		});
 	}
 
 	let priceContainer: HTMLElement | null = null;
