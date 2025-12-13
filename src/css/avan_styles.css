@@ -56,3 +56,19 @@ html {
 	border-radius: 4px !important;
 	gap: 4px;
 }
+
+.pricempire-button {
+	background-color: var(--main-color);
+	color: var(--black-text-color);
+	padding: 8px 12px;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+
+	&:hover {
+		background-color: var(--button-main-hover) !important;
+	}
+}

@@ -59,6 +59,14 @@ async function init() {
 		applyMutation();
 		console.log('[BetterFloat] Mutation observer started');
 	}
+
+	firstLaunch();
+}
+
+function firstLaunch() {
+	if (location.pathname.includes('/market/cs/')) {
+		adjustItemPage(document.querySelector<HTMLElement>(`div[class*="${AVAN_SELECTORS.MUTATION.ITEM_PAGE}"]`)!);
+	}
 }
 
 function applyMutation() {
@@ -74,6 +82,8 @@ function applyMutation() {
 					await adjustItem(addedNode, PageState.Market);
 				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.INVENTORY_CARD)) {
 					await adjustItem(addedNode, PageState.Inventory);
+				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.ITEM_PAGE)) {
+					await adjustItemPage(addedNode);
 				}
 			}
 		}
@@ -112,6 +122,70 @@ async function adjustItem(container: Element, state: PageState) {
 
 	// store item in html
 	// container.setAttribute('data-betterfloat', JSON.stringify(item));
+}
+
+async function adjustItemPage(container: Element) {
+	const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.ITEM_NAME)?.getAttribute('alt');
+	if (!itemName) return;
+
+	const buff_item = { name: itemName, style: '' as ItemStyle };
+	if (itemName.includes('★') && !itemName.includes('|')) {
+		buff_item.style = 'Vanilla';
+	}
+	const buff_name = handleSpecialStickerNames(buff_item.name);
+	const itemPrice = new Decimal(0);
+
+	const priceData = await getPriceData(buff_name, buff_item.style, itemPrice);
+
+	const currencyFormatter = CurrencyFormatter(priceData.currency.text ?? 'USD', 0, 2);
+	const footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.PRICE_CONTAINER);
+
+	if (footerContainer && !footerContainer.querySelector('.betterfloat-buffprice')) {
+		const buffContainer = generatePriceLine({
+			source: priceData.source,
+			market_id: priceData.market_id,
+			buff_name: priceData.buff_name,
+			priceOrder: priceData.priceOrder,
+			priceListing: priceData.priceListing,
+			priceFromReference: priceData.priceFromReference,
+			userCurrency: priceData.currency.symbol ?? '$',
+			itemStyle: priceData.itemStyle as DopplerPhase,
+			CurrencyFormatter: currencyFormatter,
+			isDoppler: false,
+			isPopout: true,
+			addSpaceBetweenPrices: true,
+			showPrefix: true,
+			iconHeight: '20px',
+			hasPro: isUserPro(extensionSettings['user']),
+			tooltipArrow: true,
+		});
+		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		footerContainer.setAttribute('style', 'width: max-content;');
+	}
+
+	// add Pricempire button
+	const descriptionContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.DESCRIPTION_CONTAINER);
+	if (descriptionContainer) {
+		const pricempireButton = html`<a class="pricempire-button" href="https://pricempire.com/item/${buff_name}" target="_blank">View on Pricempire</a>`;
+		descriptionContainer.insertAdjacentHTML('beforeend', pricempireButton);
+	}
+
+	const listItems = container.querySelectorAll<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.OFFER_CONTAINER);
+	for (const listItem of listItems) {
+		const priceContainer = listItem.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.OFFER_PRICE);
+		if (!priceContainer) continue;
+
+		const parsedPrice =
+			priceContainer.textContent
+				?.split(' ')[0]
+				.replace(/,/g, '')
+				.replace(/[^0-9.]/g, '') ?? 0;
+		const itemPrice = new Decimal(parsedPrice).div(100);
+		const saleTag = createSaleTag(itemPrice.minus(priceData.priceFromReference ?? 0), itemPrice.div(priceData.priceFromReference ?? 0).mul(100), CurrencyFormatter(getUserCurrency(), 0, 2));
+		priceContainer?.insertAdjacentHTML('beforeend', saleTag);
+
+		priceContainer.setAttribute('style', 'width: max-content; gap: 8px;');
+	}
 }
 
 async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, container: Element, state: PageState): Promise<PriceResult> {
@@ -205,20 +279,24 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 }
 
 async function getBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem) {
-	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
-	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_item.style, source);
+
+	return getPriceData(buff_name, buff_item.style, getItemPrice(item));
+}
+
+async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice: Decimal) {
+	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
+	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_style, source);
 
 	if (((!priceListing && !priceOrder) || (priceListing?.isZero() && priceOrder?.isZero())) && extensionSettings['av-altmarket'] && extensionSettings['av-altmarket'] !== MarketSource.None) {
 		source = extensionSettings['av-altmarket'] as MarketSource;
-		const altPrices = await getBuffPrice(buff_name, buff_item.style, source);
+		const altPrices = await getBuffPrice(buff_name, buff_style, source);
 		priceListing = altPrices.priceListing;
 		priceOrder = altPrices.priceOrder;
 	}
 	const market_id = await getMarketID(buff_name, source);
 
-	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
 	const currencyRate = getBitskinsCurrencyRate(userCurrency);
@@ -243,7 +321,7 @@ async function getBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem) {
 		source,
 		buff_name,
 		itemPrice,
-		itemStyle: buff_item.style,
+		itemStyle: buff_style,
 		market_id,
 		priceListing,
 		priceOrder,
