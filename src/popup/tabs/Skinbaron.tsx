@@ -20,7 +20,7 @@ export const SkinbaronSettings = ({ hasProPlan }: SkinbaronSettingsProps) => {
 	return (
 		<TabTemplate value="skinbaron" checked={checked}>
 			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinbaron features" />}
-			<MarketLogoFull icon={ICON_SKINBARON_FULL} />
+			<MarketLogoFull icon={ICON_SKINBARON_FULL} link="https://skinbaron.com" />
 			<SettingsEnable id="baron-enable" hasProPlan={hasProPlan} isPremiumFeature />
 			<div className="">
 				<div className="pt-4 pb-2">

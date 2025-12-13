@@ -73,13 +73,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 1000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
 			const delay = hostname === 'bitskins.com' ? 1000 : 0;
-			setTimeout(() => {
-				executeInjection(tabId, tab.url!);
-			}, delay);
+			setTimeout(() => executeInjection(tabId, tab.url!), delay);
 			if (hostname === 'csfloat.com') {
-				setTimeout(() => {
-					executeInjection(tabId, tab.url!);
-				}, 200);
+				setTimeout(() => executeInjection(tabId, tab.url!), 200);
 			}
 		}
 	}
