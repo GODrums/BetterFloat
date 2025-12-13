@@ -85,7 +85,13 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Skinswap Mutation detected:', addedNode);
 
-				if (addedNode.parentElement?.classList.contains('gridBox')) {
+				if (addedNode.className === 'px-0 md:px-[12px]') {
+					const items = addedNode.querySelectorAll('.item-card');
+					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
+					for (const item of items) {
+						await adjustItem(item, PageState.Market, isSiteItem);
+					}
+				} else if (addedNode.parentElement?.classList.contains('gridBox')) {
 					const items = addedNode.querySelectorAll('.item-card');
 					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
 					for (const item of items) {
@@ -106,12 +112,13 @@ function applyMutation() {
 
 function getAPIItem(container: Element, state: PageState, isSiteItem: boolean): Skinswap.Item | undefined {
 	if (state === PageState.Market) {
-		const itemName = container.querySelector('div.transform-gpu > img')?.getAttribute('alt');
-		if (!itemName) return undefined;
+		const itemId = container.getAttribute('data-item-id');
+		if (!itemId) return undefined;
+
 		if (isSiteItem) {
-			return getSkinswapItem(itemName);
+			return getSkinswapItem(itemId);
 		} else {
-			return getSkinswapUserItem(itemName);
+			return getSkinswapUserItem(itemId);
 		}
 	}
 	return undefined;
@@ -125,7 +132,7 @@ async function adjustItem(container: Element, state: PageState, isSiteItem: bool
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = getAPIItem(container, state, isSiteItem);
 	}
-	// console.log('[BetterFloat] Skinout item:', item);
+	// console.log('[BetterFloat] Skinswap item:', item);
 	if (!item) return;
 
 	const _priceResult = await addBuffPrice(item, container);

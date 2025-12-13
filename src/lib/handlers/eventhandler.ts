@@ -182,9 +182,9 @@ function processSkinflowEvent(eventData: EventData<unknown>) {
 
 function processSkinswapEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	if (eventData.url.includes('api/user/inventory/')) {
+	if (eventData.url.includes('api/user/inventory')) {
 		cacheSkinswapUserInventory(eventData.data as Skinswap.InventoryResponse);
-	} else if (eventData.url.includes('api/site/inventory/')) {
+	} else if (eventData.url.includes('api/site/inventory')) {
 		cacheSkinswapItems(eventData.data as Skinswap.MarketItemsResponse);
 	}
 }

@@ -28,6 +28,7 @@ export namespace Skinswap {
 		qualities: Qualities;
 		reason: null;
 		stackId: string;
+		stackIdWithHold: string;
 		steamid: string;
 		tradable: boolean;
 		tradehold_days: number;
