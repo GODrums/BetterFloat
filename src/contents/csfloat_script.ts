@@ -1638,7 +1638,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 	salesHeader.setAttribute('role', 'presentation');
 	salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
 	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales?.length})</span></button>`;
-	gridHistory.querySelector('mat-button-toggle-group.sort')?.appendChild(salesHeader);
+	gridHistory.querySelector('mat-button-toggle-group')?.appendChild(salesHeader);
 	salesHeader.addEventListener('click', () => {
 		Array.from(gridHistory.querySelectorAll('mat-button-toggle') ?? []).forEach((element) => {
 			element.className = element.className.replace('mat-button-toggle-checked', '');
