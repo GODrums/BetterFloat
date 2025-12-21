@@ -30,7 +30,7 @@ export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 						<SettingsCheckbox id="lis-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} isNew />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="lis-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
+						<SettingsCheckbox id="lis-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox id="lis-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />

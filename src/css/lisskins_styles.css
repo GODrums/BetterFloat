@@ -74,3 +74,21 @@ html {
 		visibility 0s,
 		opacity 0.2s linear;
 }
+
+.betterfloat-sticker-percentage {
+	border-radius: 5px;
+	white-space: nowrap;
+	font-size: 12px;
+	font-weight: 400;
+
+	&.page {
+		padding: 8px 5px;
+	}
+
+	&.market {
+		position: absolute;
+		bottom: 80px;
+		right: 30px;
+		padding: 3px 5px;
+	}
+}

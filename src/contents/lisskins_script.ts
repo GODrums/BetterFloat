@@ -5,10 +5,10 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
-import { BigCurrency, getAndFetchCurrencyRate, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
+import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -90,6 +90,7 @@ interface HTMLItem {
 	name: string;
 	style: ItemStyle;
 	price: Decimal;
+	stickers?: string[];
 }
 
 function applyMutation() {
@@ -130,60 +131,100 @@ enum PageType {
 }
 
 async function adjustItem(container: Element, page = PageType.Market) {
-	const getItem: () => HTMLItem = () => {
-		let elementText = '';
-		if (page === PageType.Inventory) {
-			elementText = container.getAttribute('data-name') ?? '';
-		} else {
-			elementText = container.querySelector('img.image')?.getAttribute('alt') ?? '';
-		}
-		let itemName = '';
-		let itemStyle: ItemStyle = '';
-		if (elementText.includes('Doppler')) {
-			itemStyle = elementText.split('Doppler ')[1].split(' (')[0] as DopplerPhase;
-			itemName = elementText.replace(` ${itemStyle}`, '');
-		} else {
-			itemName = elementText;
-			if (elementText.includes('★') && !elementText.includes('|')) {
-				itemStyle = 'Vanilla';
-			}
-		}
-		// cut last digit
-		let price = new Decimal('0');
-		if (page === PageType.Inventory) {
-			price = new Decimal(container.getAttribute('data-price') ?? '0');
-		} else {
-			const itemPrice = container.querySelector('div.price')?.textContent ?? '0';
-			price = new Decimal(
-				itemPrice
-					?.substring(0, itemPrice.length - 1)
-					.replace(',', '')
-					.replace('.', '')
-					.replaceAll(' ', '') ?? '0'
-			).div(100);
-		}
-		// console.log('[BetterFloat] Adjusting item: ', itemName, itemStyle, price.toNumber());
-		return {
-			name: itemName,
-			style: itemStyle,
-			price,
-		};
-	};
-
-	const item = getItem();
+	const item = getItemFromHTML(container, page);
 
 	const priceResult = await addBuffPrice(item, container, page);
 
 	if (page === PageType.ItemPage) {
 		const rows = document.querySelectorAll('div.row.market_item');
 		for (let i = 0; i < rows.length; i++) {
-			addSaleTag(rows[i], priceResult);
+			const saleData = addSaleTag(rows[i], priceResult);
+			if (!saleData) continue;
+
+			const stickers = getStickersFromHTML(rows[i], page);
+			addStickerPercentage(rows[i], saleData.price, stickers, priceResult.priceFromReference, page);
 		}
 
 		// Add data-betterfloat attribute to the main container for the market comparison component
 		container.setAttribute('data-betterfloat', JSON.stringify({ name: item.name, phase: item.style, price: item.price.toNumber() }));
 
 		addQuickLinks(container, item);
+	} else if (page === PageType.Market) {
+		addStickerPercentage(container, item.price, item.stickers, priceResult.priceFromReference, page);
+	}
+}
+
+function getItemFromHTML(container: Element, page: PageType): HTMLItem {
+	const item: HTMLItem = {
+		name: '',
+		style: '',
+		price: new Decimal(0),
+	};
+	let elementText = '';
+	if (page === PageType.Inventory) {
+		elementText = container.getAttribute('data-name') ?? '';
+	} else {
+		elementText = container.querySelector('img.image')?.getAttribute('alt') ?? '';
+	}
+	if (elementText.includes('Doppler')) {
+		item.style = elementText.split('Doppler ')[1].split(' (')[0] as DopplerPhase;
+		item.name = elementText.replace(` ${item.style}`, '');
+	} else {
+		item.name = elementText;
+		if (elementText.includes('★') && !elementText.includes('|')) {
+			item.style = 'Vanilla';
+		}
+	}
+	// cut last digit
+	if (page === PageType.Inventory) {
+		item.price = new Decimal(container.getAttribute('data-price') ?? '0');
+	} else {
+		const itemPrice = container.querySelector('div.price')?.textContent ?? '0';
+		item.price = new Decimal(
+			itemPrice
+				?.substring(0, itemPrice.length - 1)
+				.replace(',', '')
+				.replace('.', '')
+				.replaceAll(' ', '') ?? '0'
+		).div(100);
+	}
+
+	item.stickers = getStickersFromHTML(container, page);
+	return item;
+}
+
+function getStickersFromHTML(container: Element, page: PageType): string[] | undefined {
+	const stickers: string[] = [];
+	const stickerElements = page === PageType.ItemPage ? container.querySelectorAll('div.sticker') : container.querySelectorAll('img.sticker');
+	if (stickerElements.length === 0) return undefined;
+
+	for (const stickerElement of stickerElements) {
+		const stickerName = stickerElement.getAttribute('data-href')?.split('/730/').pop();
+		if (stickerName) {
+			stickers.push(decodeURIComponent(stickerName));
+		}
+	}
+	return stickers;
+}
+
+async function addStickerPercentage(container: Element, itemPrice: Decimal, stickers: string[] | undefined, referencePrice: number, page: PageType) {
+	if (!stickers || stickers.length === 0) return;
+	if (!extensionSettings['lis-stickerprices']) return;
+
+	const stickerPrices = await Promise.all(stickers.map(async (sticker) => await getItemPrice(sticker, extensionSettings['lis-pricingsource'] as MarketSource)));
+	const stickerSum = stickerPrices.reduce((acc, price) => acc.plus(price.starting_at), new Decimal(0));
+	const priceDifference = itemPrice.minus(referencePrice);
+	const stickerPercentage = priceDifference.gt(0) ? priceDifference.div(stickerSum) : new Decimal(0);
+
+	const stickerPercentageHTML = html`
+		<div class="betterfloat-sticker-percentage ${page === PageType.ItemPage ? 'page' : 'market'}" style="background-color: ${getSPBackgroundColor(stickerPercentage.toNumber())}">
+			<span>${stickerPercentage.gt(1.5) ? '>150' : stickerPercentage.mul(100).toFixed(1)}% SP</span>
+		</div>
+	`;
+	if (page === PageType.Market) {
+		container.insertAdjacentHTML('beforeend', stickerPercentageHTML);
+	} else if (page === PageType.ItemPage) {
+		container.querySelector('div.sticker-list')?.insertAdjacentHTML('beforeend', stickerPercentageHTML);
 	}
 }
 
@@ -239,6 +280,12 @@ function addSaleTag(container: Element, priceResult: PriceResult) {
 
 	priceContainer.insertAdjacentHTML('beforebegin', buffPriceHTML);
 	priceContainer.parentElement?.setAttribute('style', 'display: flex; align-items: center; gap: 4px; height: 64px;');
+
+	return {
+		price: itemPrice,
+		difference: difference,
+		percentage: itemPrice.div(priceResult.priceFromReference).mul(100),
+	};
 }
 
 async function getBuffItem(item: HTMLItem) {
