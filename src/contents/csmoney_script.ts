@@ -4,7 +4,14 @@ import type { PlasmoCSConfig } from 'plasmo';
 
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getCSMoneyPopupItem, getFirstCSMoneyBotInventoryItem, getFirstCSMoneyItem, getFirstCSMoneyUserInventoryItem, getSpecificCSMoneyItem } from '~lib/handlers/cache/csmoney_cache';
+import {
+	getCSMoneyItemByImg,
+	getCSMoneyPopupItem,
+	getFirstCSMoneyBotInventoryItem,
+	getFirstCSMoneyItem,
+	getFirstCSMoneyUserInventoryItem,
+	getSpecificCSMoneyItem,
+} from '~lib/handlers/cache/csmoney_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
@@ -80,9 +87,17 @@ async function firstLaunch() {
 		}
 	} else if (location.pathname.includes('/market/instant-sell/') || location.pathname.includes('/market/sell/')) {
 		// reload instant sell page
-		const reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.sell.reloadButton);
-		if (reloadButton) {
-			reloadButton.click();
+		const detectItems = async () => {
+			const items = document.querySelectorAll<HTMLElement>('div[class*="UserSkin_user_skin__"]');
+			if (items.length === 0) return false;
+
+			for (const item of items) {
+				await adjustItem(item);
+			}
+			return true;
+		};
+		while (!(await detectItems())) {
+			await new Promise((resolve) => setTimeout(resolve, 500));
 		}
 	} else if (location.pathname.includes('/csgo/trade/')) {
 		// reload bot inventory
@@ -136,6 +151,10 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
 		} else {
+			const itemImg = container.querySelector<HTMLImageElement>('img[class*="CSGOImage_image__"]')?.src?.split('/plain/')[1];
+			if (itemImg) {
+				return getCSMoneyItemByImg(itemImg);
+			}
 			let newItem = getFirstCSMoneyItem();
 			if (!newItem) {
 				newItem = getSpecificCSMoneyItem(itemId ? Number(itemId) : 0);
@@ -144,6 +163,12 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		}
 	};
 	let apiItem = getApiItem();
+	let tries = 10;
+	while (!apiItem && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 500));
+		apiItem = getApiItem();
+	}
+
 	if (!apiItem) {
 		console.error('[BetterFloat] No item found, skipping...');
 		return;

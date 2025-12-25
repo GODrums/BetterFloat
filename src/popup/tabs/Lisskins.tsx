@@ -27,13 +27,13 @@ export const LisSkinsSettings = ({ hasProPlan }: LisSkinsSettingsProps) => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsCheckbox id="lis-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} isNew />
+						<SettingsCheckbox id="lis-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="lis-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
+						<SettingsCheckbox id="lis-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} isNew />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="lis-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} isNew />
+						<SettingsCheckbox id="lis-marketcomparison" text="Market Comparison" icon={<MdiShoppingSearchOutline className="h-6 w-6 text-[#888888]" />} />
 					</SettingsCard>
 				</div>
 			</div>
