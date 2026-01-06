@@ -1865,7 +1865,7 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 			if (isStickerSlab) {
 				stickerURL.searchParams.set('sticker_index', String(stickerData.wrapped_sticker));
 			} else if (isSouvenirCharm) {
-				stickerURL.searchParams.set('keychain_highlight_reel', String(stickerData.stickerId));
+				stickerURL.searchParams.set('keychain_highlight_reel', String(stickerData.highlight_reel));
 			} else if (isKeychain) {
 				stickerURL.searchParams.set('keychain_index', String(stickerData.stickerId));
 			} else {
