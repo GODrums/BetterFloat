@@ -145,8 +145,8 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       cs-tierlist:
-        specifier: ^1.2.2
-        version: 1.2.2
+        specifier: ^1.2.4
+        version: 1.2.4
       currency-symbol-map:
         specifier: ^5.1.0
         version: 5.1.0
@@ -2607,8 +2607,8 @@ packages:
     resolution: {integrity: sha512-x8dy3RnvYdlUcPOjkEHqozhiwzKNSq7GcPuXFbnyMOCHxX8V3OgIg/pYuabl2sbUPfIJaeAQB7PMOK8DFIdoRA==}
     engines: {node: '>=12'}
 
-  cs-tierlist@1.2.2:
-    resolution: {integrity: sha512-WMWkYOglhSokY1KDSO2erEMiA0UPZ8M0RSUfSlWuhQw8GxN5FFAd4j+li0Q/g5BFifB4QlNSC9ktYSt2BK8MJw==}
+  cs-tierlist@1.2.4:
+    resolution: {integrity: sha512-SvTEwOGRJkGJ2OGrFURk/0GhRpAjpI4U14bHPtW7qBdQBQOs88EBg23aSYBVxm/8vP9vpFhNETpnuiWylTmINg==}
     engines: {node: '>=18'}
 
   css-select@4.3.0:
@@ -6951,7 +6951,7 @@ snapshots:
     dependencies:
       type-fest: 1.4.0
 
-  cs-tierlist@1.2.2: {}
+  cs-tierlist@1.2.4: {}
 
   css-select@4.3.0:
     dependencies:

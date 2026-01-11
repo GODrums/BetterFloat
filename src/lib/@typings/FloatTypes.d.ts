@@ -226,6 +226,7 @@ export namespace CSFloat {
 	};
 
 	export type StickerData = {
+		highlight_reel?: number;
 		icon_url: string;
 		name: string;
 		offset_x?: number;
