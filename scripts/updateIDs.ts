@@ -1,19 +1,17 @@
-#!/usr/bin/env -S deno run --allow-read --allow-write scripts/updateIDs.ts
+#!/usr/bin/env -S deno run --allow-read --allow-write --allow-net scripts/updateIDs.ts
 
 /**
  * This script updates the marketids.json file with missing entries from cs2_marketplaceids.json
- * It reads both files, compares them, and adds missing entries to marketids.json
+ * It fetches the latest IDs from GitHub, compares them with the local marketids.json,
+ * and adds missing entries to marketids.json
  */
 
 // Add Deno namespace reference
 /// <reference lib="deno.ns" />
 
-// Import required modules - fix the import to use the correct Deno API
-import { exists } from 'https://deno.land/std@0.224.0/fs/exists.ts';
-
 // Define the paths to the JSON files
 const MARKET_IDS_PATH = './assets/marketids.json';
-const CS2_MARKET_IDS_PATH = './scripts/cs2_marketplaceids.json'; // File is in scripts folder based on search results
+const CS2_MARKET_IDS_URL = 'https://github.com/ModestSerhat/cs2-marketplace-ids/raw/refs/heads/main/cs2_marketplaceids.json';
 const OUTPUT_PATH = './assets/marketids.json';
 
 type MarketIDMapping = {
@@ -49,22 +47,25 @@ async function main() {
 	console.log('Starting update process...');
 
 	try {
-		// Check if files exist
-		if (!(await exists(MARKET_IDS_PATH))) {
+		// Check if local marketids.json exists
+		try {
+			await Deno.stat(MARKET_IDS_PATH);
+		} catch {
 			throw new Error(`File not found: ${MARKET_IDS_PATH}`);
 		}
 
-		if (!(await exists(CS2_MARKET_IDS_PATH))) {
-			throw new Error(`File not found: ${CS2_MARKET_IDS_PATH}`);
-		}
-
-		// Read both JSON files using Deno.readTextFile instead of the imported function
+		// Read local marketids.json file
 		console.log(`Reading ${MARKET_IDS_PATH}...`);
 		const marketIDsText = await Deno.readTextFile(MARKET_IDS_PATH);
 		const marketIDs = JSON.parse(marketIDsText) as MarketIDMapping;
 
-		console.log(`Reading ${CS2_MARKET_IDS_PATH}...`);
-		const cs2MarketIDsText = await Deno.readTextFile(CS2_MARKET_IDS_PATH);
+		// Fetch the latest CS2 marketplace IDs from GitHub
+		console.log(`Fetching CS2 marketplace IDs from ${CS2_MARKET_IDS_URL}...`);
+		const response = await fetch(CS2_MARKET_IDS_URL);
+		if (!response.ok) {
+			throw new Error(`Failed to fetch CS2 marketplace IDs: ${response.status} ${response.statusText}`);
+		}
+		const cs2MarketIDsText = await response.text();
 		const cs2MarketIDs = JSON.parse(cs2MarketIDsText) as CSMarketIDMapping;
 
 		// Track the number of items added and updated
