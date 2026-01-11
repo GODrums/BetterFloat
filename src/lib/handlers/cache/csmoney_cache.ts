@@ -3,7 +3,8 @@ import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 // csmoney: cached items from api
 let csmoneyItems: CSMoney.Item[] = [];
 const csmoneyItemMapping: { [itemId: number]: CSMoney.Item } = {};
-const csmoneyItemImgMapping: { [itemImg: string]: CSMoney.Item } = {};
+// uses img and quality (fallback: "0") as keys
+const csmoneyItemImgMapping: { [itemImg: string]: Record<string, CSMoney.Item> } = {};
 let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
 let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
 let csmoneyPopupItem: CSMoney.MarketItem | null = null;
@@ -22,7 +23,11 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	data.forEach((item) => {
 		csmoneyItemMapping[item.id] = item;
 		if ('img' in item) {
-			csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img] = item;
+			const quality = (item as CSMoney.InventoryItem).quality || '0';
+			if (!csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img]) {
+				csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img] = {};
+			}
+			csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img][quality] = item;
 		}
 	});
 	csmoneyItems.push(...data);
@@ -73,6 +78,9 @@ export function getSpecificCSMoneyItem(itemId: number) {
 	return csmoneyItemMapping[itemId];
 }
 
-export function getCSMoneyItemByImg(img: string) {
-	return csmoneyItemImgMapping[img];
+export function getCSMoneyItemByImg(img: string, quality = '0') {
+	if (!csmoneyItemImgMapping[img]) {
+		return null;
+	}
+	return csmoneyItemImgMapping[img][quality] ?? Object.values(csmoneyItemImgMapping[img])[0];
 }

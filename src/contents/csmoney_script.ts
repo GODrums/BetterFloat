@@ -141,6 +141,13 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
+function getItemQuality(container: Element) {
+	const qualityText = container.querySelector('div[class*="BaseCard_description__"]')?.textContent?.split(' / ')[0]?.toLowerCase();
+	if (!qualityText) return undefined;
+
+	return ['fn', 'mw', 'ft', 'ww', 'bs'].includes(qualityText) ? qualityText : undefined;
+}
+
 async function adjustItem(container: Element, isPopout = false, eventDataItem: CSMoney.Item | null = null) {
 	const itemId = container?.getAttribute('data-card-item-id');
 	const getApiItem = () => {
@@ -151,9 +158,9 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
 		} else {
-			const itemImg = container.querySelector<HTMLImageElement>('img[class*="CSGOImage_image__"]')?.src?.split('/plain/')[1];
+			const itemImg = container.querySelector<HTMLImageElement>(CSMONEY_SELECTORS.sell.itemImg)?.src?.split('/plain/')[1];
 			if (itemImg) {
-				return getCSMoneyItemByImg(itemImg);
+				return getCSMoneyItemByImg(itemImg, getItemQuality(container));
 			}
 			let newItem = getFirstCSMoneyItem();
 			if (!newItem) {
