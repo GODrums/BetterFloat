@@ -501,8 +501,10 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 			cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
 		}
 	} else if (eventData.url.includes('/load_user_inventory/730')) {
+		// user inventory in trade mode
 		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
 	} else if (eventData.url.includes('/load_bots_inventory/730')) {
+		// bot inventory in trade mode
 		cacheCSMoneyBotInventory((eventData.data as CSMoney.UserInventoryResponse).items);
 	}
 }

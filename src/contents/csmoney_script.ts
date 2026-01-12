@@ -142,10 +142,18 @@ function applyMutation() {
 }
 
 function getItemQuality(container: Element) {
-	const qualityText = container.querySelector('div[class*="BaseCard_description__"]')?.textContent?.split(' / ')[0]?.toLowerCase();
+	const qualityText = container.querySelector(CSMONEY_SELECTORS.sell.itemQuality)?.textContent?.toLowerCase().split(' / ');
 	if (!qualityText) return undefined;
 
-	return ['fn', 'mw', 'ft', 'ww', 'bs'].includes(qualityText) ? qualityText : undefined;
+	const WEAR_OPTIONS = ['fn', 'mw', 'ft', 'ww', 'bs'];
+	const SPECIAL_OPTIONS = ['st', 'sv'];
+	const [special, quality] = qualityText;
+	if (special && SPECIAL_OPTIONS.includes(special) && WEAR_OPTIONS.includes(quality)) {
+		return `${special}-${quality}`;
+	} else if (WEAR_OPTIONS.includes(special)) {
+		return special;
+	}
+	return undefined;
 }
 
 async function adjustItem(container: Element, isPopout = false, eventDataItem: CSMoney.Item | null = null) {

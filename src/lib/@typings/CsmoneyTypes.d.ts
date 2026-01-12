@@ -23,11 +23,18 @@ export namespace CSMoney {
 	};
 
 	export interface InventoryItem extends Item {
-		'3d'?: string;
+		appId: number;
 		assetId: number;
 		botPrice: number;
-		buyOrder: any | null;
-		collection: any | null;
+		buyOrder: {
+			creationTime: number;
+			id: number;
+			maxPrice: number;
+			nameId: number;
+			quantity: number;
+			quantityLeft: number;
+		} | null;
+		collection: string | null;
 		comission: number;
 		createdAt?: number;
 		defaultPrice: number;
@@ -35,15 +42,18 @@ export namespace CSMoney {
 		fullName: string; //"★ Sport Gloves | Nocts (Minimal Wear)"
 		hasHighDemand: boolean;
 		hasTradeLock: boolean;
+		id: number;
 		img: string;
 		inspect: string;
 		isAClass: boolean;
 		isUnavailable: boolean;
+		isStatTrak?: boolean;
+		isSouvenir?: boolean;
 		nameId: number;
 		onSale: boolean;
 		overpay?: {
-			// prob more here that I don't know about
 			float: number;
+			stickers: number;
 		};
 		overprice: number;
 		overstockDiff: number;
@@ -60,6 +70,15 @@ export namespace CSMoney {
 		sellPrice?: number; // if on sale, this is the price
 		steamId: string;
 		steamImg: string;
+		stickers?: {
+			img: string;
+			name: string;
+			overprice: number;
+			position: number;
+			price: number;
+			wear: number;
+			wikiLink: string;
+		}[];
 		type: number;
 		wiki: string; // url to wiki
 	}

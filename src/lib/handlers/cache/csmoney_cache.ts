@@ -9,6 +9,10 @@ let csmoneyUserInventory: CSMoney.InventoryItem[] = [];
 let csmoneyBotInventory: CSMoney.InventoryItem[] = [];
 let csmoneyPopupItem: CSMoney.MarketItem | null = null;
 
+export function isCSMoneyInventoryItem(item: CSMoney.Item): item is CSMoney.InventoryItem {
+	return 'img' in item;
+}
+
 export function cacheCSMoneyPopupItem(data: CSMoney.MarketItem) {
 	csmoneyPopupItem = data;
 }
@@ -22,12 +26,19 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	}
 	data.forEach((item) => {
 		csmoneyItemMapping[item.id] = item;
-		if ('img' in item) {
-			const quality = (item as CSMoney.InventoryItem).quality || '0';
-			if (!csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img]) {
-				csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img] = {};
+		if (isCSMoneyInventoryItem(item)) {
+			let qualityKey = item.quality || '0';
+			if (!csmoneyItemImgMapping[item.img]) {
+				csmoneyItemImgMapping[item.img] = {};
 			}
-			csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img][quality] = item;
+			if (qualityKey !== '0') {
+				if (item.isStatTrak) {
+					qualityKey = 'st-' + qualityKey;
+				} else if (item.isSouvenir) {
+					qualityKey = 'sv-' + qualityKey;
+				}
+			}
+			csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img][qualityKey] = { ...item };
 		}
 	});
 	csmoneyItems.push(...data);
@@ -79,8 +90,7 @@ export function getSpecificCSMoneyItem(itemId: number) {
 }
 
 export function getCSMoneyItemByImg(img: string, quality = '0') {
-	if (!csmoneyItemImgMapping[img]) {
-		return null;
-	}
-	return csmoneyItemImgMapping[img][quality] ?? Object.values(csmoneyItemImgMapping[img])[0];
+	if (!csmoneyItemImgMapping[img]) return null;
+
+	return csmoneyItemImgMapping[img][quality];
 }
