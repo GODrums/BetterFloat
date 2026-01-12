@@ -4,7 +4,7 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
-import { getSwapggCurrencyRate } from '~lib/handlers/cache/swapgg_cache';
+import { getSwapggInventorySite, getSwapggInventoryUser } from '~lib/handlers/cache/swapgg_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
@@ -47,43 +47,24 @@ async function init() {
 		console.log('[BetterFloat] Mutation observer started');
 	}
 
-	await initInventories();
-}
-async function initInventories() {
-	await fetchBotInventory();
-	await fetchUserInventory();
+	initItemListener();
 }
 
-async function fetchBotInventory() {
-	await fetch('https://api.swap.gg/v2/trade/inventory/bot/730', {
-		credentials: 'include',
-	})
-		.then((response) => response.json())
-		.then((data: Swapgg.InventoryResponse) => {
-			const result = data.result;
-			result.forEach((item) => {
-				if (!swapggInventoryBot[item.i]) {
-					swapggInventoryBot[item.i] = [];
-				}
-				swapggInventoryBot[item.i].push(item);
-			});
-		});
-}
+function initItemListener() {
+	setInterval(async () => {
+		const vueList = document.querySelectorAll('div.vue-recycle-scroller__item-view')!;
+		for (const vueItem of vueList) {
+			const isOwn = location.pathname === '/sell' || !!vueItem.closest('div.absolute.inset-0')?.nextElementSibling;
+			const items = vueItem.querySelectorAll('div > div.group.aspect-square')!;
 
-async function fetchUserInventory() {
-	await fetch('https://api.swap.gg/v2/trade/inventory/user/730', {
-		credentials: 'include',
-	})
-		.then((response) => response.json())
-		.then((data: Swapgg.InventoryResponse) => {
-			const result = data.result;
-			result.forEach((item) => {
-				if (!swapggInventoryUser[item.i]) {
-					swapggInventoryUser[item.i] = [];
+			for (let i = 0; i < items.length; i++) {
+				const item = items[i];
+				if (item instanceof HTMLElement) {
+					await adjustItem(item, isOwn);
 				}
-				swapggInventoryUser[item.i].push(item);
-			});
-		});
+			}
+		}
+	}, 1000);
 }
 
 function applyMutation() {
@@ -92,7 +73,6 @@ function applyMutation() {
 			console.debug('[BetterFloat] Current page is currently NOT supported');
 			return;
 		}
-		const inventoryContainer = Array.from(document.querySelectorAll(SWAPGG_SELECTORS.inventory.container));
 		for (const mutation of mutations) {
 			for (let i = 0; i < mutation.addedNodes.length; i++) {
 				const addedNode = mutation.addedNodes[i];
@@ -100,16 +80,7 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
-				if (addedNode.className.toString().includes('vue-recycle-scroller__item-view')) {
-					const isOwn = inventoryContainer.findIndex((element) => element === addedNode.closest(SWAPGG_SELECTORS.inventory.container)!) === 0;
-					const itemList = addedNode.querySelector(SWAPGG_SELECTORS.inventory.grid)!;
-					for (let i = 0; i < itemList.childNodes.length; i++) {
-						const child = itemList.childNodes[i];
-						if (child instanceof HTMLElement) {
-							await adjustItem(child, isOwn);
-						}
-					}
-				} else if (addedNode.className.toString().includes('aspect-square')) {
+				if (addedNode.className.toString().includes('aspect-square')) {
 					if (addedNode.closest(SWAPGG_SELECTORS.cart.panel) !== null) {
 						await adjustCartItem(addedNode);
 					}
@@ -132,32 +103,25 @@ async function adjustCartItem(container: Element) {
 }
 
 async function adjustItem(container: Element, isOwn: boolean) {
-	const inventory = isOwn ? swapggInventoryUser : swapggInventoryBot;
-	while (Object.keys(inventory).length === 0) {
-		await new Promise((resolve) => setTimeout(resolve, 200));
-	}
+	if (container.querySelector('.betterfloat-buff-a')) return;
 
-	const getItem = async () => {
-		const imageElement = container.querySelector(SWAPGG_SELECTORS.item.imageContainer);
-		if (imageElement instanceof HTMLElement) {
-			const imageLink = imageElement.style.backgroundImage.split('/')[5];
-			const cache = inventory[imageLink];
-			if (cache?.length > 1) {
-				const isStatTrak = container.querySelector(SWAPGG_SELECTORS.item.statTrakIndicator) !== null;
-				return cache.find((item) => {
-					if (isStatTrak) {
-						return item.n.includes('StatTrak™');
-					} else {
-						return !item.n.includes('StatTrak™');
-					}
-				});
-			} else {
-				return cache?.[0];
-			}
+	const getItem = () => {
+		const imageElement = container.querySelector<HTMLElement>(SWAPGG_SELECTORS.item.imageContainer);
+		if (!imageElement) {
+			return;
+		}
+
+		const imageLink = imageElement.style.backgroundImage?.substring(5, imageElement.style.backgroundImage.length - 2);
+		if (isOwn) {
+			return getSwapggInventoryUser(imageLink);
+		} else {
+			return getSwapggInventorySite(imageLink);
 		}
 	};
 
-	const apiItem = await getItem();
+	const apiItem = getItem();
+
+	console.debug('[BetterFloat] API item detected:', apiItem);
 
 	if (!apiItem) {
 		return;
@@ -182,9 +146,9 @@ async function getBuffItem(item: Swapgg.Item) {
 	const market_id = await getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(item);
-	const userCurrency = getCurrency();
+	const { currency: userCurrency, rates } = getCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = userCurrency === 'USD' ? 1 : getSwapggCurrencyRate(userCurrency);
+	const currencyRate = rates[userCurrency];
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {
@@ -221,8 +185,8 @@ async function getBuffItem(item: Swapgg.Item) {
 }
 
 function getItemPrice(item: Swapgg.Item) {
-	if (item.p) {
-		return new Decimal(item.p).div(100);
+	if (item.price !== undefined) {
+		return new Decimal(item.price).div(100);
 	} else {
 		console.error('[BetterFloat] Unknown item type: ', item);
 		return new Decimal(0);
@@ -232,8 +196,8 @@ function getItemPrice(item: Swapgg.Item) {
 function createBuffItem(item: Swapgg.Item): { name: string; style: ItemStyle } {
 	let name = '';
 	// check if item is InventoryItem or MarketItem
-	if (item.n) {
-		name = item.n;
+	if (item.product.name) {
+		name = item.product.name;
 	}
 
 	let style: ItemStyle = '';
@@ -253,6 +217,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(item);
 
 	const tileSize = getTileSize(isOwn);
+	console.debug('[BetterFloat] Tile size detected:', tileSize);
 	const footerContainer = container.querySelector(SWAPGG_SELECTORS.item.footerContainer);
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD');
 
@@ -324,16 +289,20 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 	};
 }
 
-function getCurrency() {
-	const currencySelectorText = document.querySelector(SWAPGG_SELECTORS.currency.flag)?.nextElementSibling?.textContent?.split(' / ')[1];
-	return currencySelectorText?.trim() ?? 'USD';
+function getCurrency(): { currency: string; rates: { [currency: string]: number } } {
+	return JSON.parse(localStorage.getItem('localization') ?? '{}');
 }
 
 function getTileSize(isOwn = false): 'Small' | 'Medium' | 'Large' | undefined {
 	const isSellPage = location.pathname === '/sell';
-	const radioGroup = document.querySelector(isSellPage ? SWAPGG_SELECTORS.tileSize.radioGroupSell : isOwn ? SWAPGG_SELECTORS.tileSize.radioGroupOwn : SWAPGG_SELECTORS.tileSize.radioGroup);
+	let radioGroup: HTMLElement | null = null;
+	if (isSellPage || isOwn) {
+		radioGroup = document.querySelector(SWAPGG_SELECTORS.tileSize.radioGroup);
+	} else {
+		radioGroup = document.querySelectorAll(SWAPGG_SELECTORS.tileSize.radioGroup)[1] as HTMLElement;
+	}
 	const selectedRadio = radioGroup?.querySelector(SWAPGG_SELECTORS.tileSize.checkedRadio);
-	const tileSize = selectedRadio?.firstElementChild?.getAttribute('title')?.split(' ')[0];
+	const tileSize = selectedRadio?.firstElementChild?.getAttribute('title')?.split(' ')[0]?.trim();
 	return tileSize as 'Small' | 'Medium' | 'Large' | undefined;
 }
 
@@ -342,7 +311,5 @@ const supportedSubPages = ['/trade', '/sell'];
 // mutation observer active?
 let isObserverActive = false;
 let extensionSettings: IStorage;
-const swapggInventoryBot: { [image: string]: Swapgg.Item[] } = {};
-const swapggInventoryUser: { [image: string]: Swapgg.Item[] } = {};
 
 init();

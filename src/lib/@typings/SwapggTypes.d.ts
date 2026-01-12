@@ -1,9 +1,18 @@
 export namespace Swapgg {
-	// https://api.swap.gg/v2/trade/inventory/bot/730
-	// https://api.swap.gg/v2/trade/inventory/user/730
+	// https://swap.gg/api/inventory/user
+	// https://swap.gg/api/inventory/site
 	export type InventoryResponse = {
-		status: string; // "OK"
-		result: Item[];
+		data: {
+			items: Item[];
+		};
+	};
+
+	export type CurrencyResponse = {
+		data: {
+			rates: {
+				[currency: string]: number; // e.g. "USD": 1.0
+			};
+		};
 	};
 
 	// https://api.swap.gg/v2/user/me
@@ -34,24 +43,37 @@ export namespace Swapgg {
 	};
 
 	export type Item = {
-		a: string[];
-		e?: string; // e.g. "NON_TRADABLE"
-		g: '730';
-		i: string; // image link
-		l: number;
-		m: {
-			0: string; // condition, e.g. "Field-Tested"
-			1: number; // collection, e.g. "The Vanguard Collection"
-			4?: string[]; // sticker image url array
-			6: string; // type, e.g. "Sticker", "Rifle"
-			7?: string; // weapon name, e.g. "M4A1-S"
-			13: string; // steam inspect link
-			17: string; // quality, e.g. "Remarkable"
-			21: number[];
-			24: string; // sticker tournament, e.g. "2020 RMR"
-			26: string[]; // sticker names, e.g. ['Nemiga']
+		stack: string;
+		product: {
+			_id: string;
+			name: string;
+			category: string;
+			subCategory: string;
+			platform: string;
+			conditions: string[];
+			stock: number;
+			maxStock: number;
+			image: string;
+			colors: string[];
+			commodity: boolean;
+			metadata: {
+				itemName: string;
+				CS_CATEGORY: string;
+				exterior: string;
+				CS_RARITY: string;
+				skinName: string;
+				exteriorShort: string;
+			};
 		};
-		n: string; // full name, e.g. "Sticker | Nemiga | 2020 RMR"
-		p: number; // price in cents, e.g. 16. 0 if not tradable
+		count: number;
+		itemIds: string[];
+		price: number;
+		metadata: {
+			CS_INSPECT_LINK: string;
+			CS_FLOAT: number;
+			CS_PAINT_INDEX: number;
+			CS_PAINT_SEED: number;
+		};
+		available: boolean;
 	};
 }

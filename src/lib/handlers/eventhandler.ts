@@ -11,6 +11,7 @@ import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
 import type { Skinswap } from '~lib/@typings/SkinswapTypes';
+import type { Swapgg } from '~lib/@typings/SwapggTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
@@ -50,7 +51,7 @@ import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinp
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
 import { cacheSkinswapItems, cacheSkinswapUserInventory } from './cache/skinswap_cache';
-import { cacheSwapggCurrencyRates } from './cache/swapgg_cache';
+import { cacheSwapggInventorySite, cacheSwapggInventoryUser } from './cache/swapgg_cache';
 import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache/tradeit_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
 import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache/whitemarket_cache';
@@ -93,7 +94,7 @@ export async function activateHandler() {
 			processWaxpeerEvent(eventData);
 		} else if (location.host === 'market.csgo.com') {
 			processMarketCSGOEvent(eventData);
-		} else if (location.href.includes('swap.gg')) {
+		} else if (location.host === 'swap.gg') {
 			processSwapggEvent(eventData);
 		} else if (location.host === 'white.market') {
 			processWhiteMarketEvent(eventData);
@@ -252,8 +253,10 @@ function processWhiteMarketEvent(eventData: EventData<unknown>) {
 
 function processSwapggEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	if (eventData.url.includes('v2/currency')) {
-		cacheSwapggCurrencyRates((eventData.data as any).result);
+	if (eventData.url.includes('api/inventory/user')) {
+		cacheSwapggInventoryUser(eventData.data as Swapgg.InventoryResponse);
+	} else if (eventData.url.includes('api/inventory/site')) {
+		cacheSwapggInventorySite(eventData.data as Swapgg.InventoryResponse);
 	}
 }
 
