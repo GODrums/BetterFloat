@@ -528,7 +528,7 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 		}
 
 		const title = 'Item Found | BetterFloat Pro';
-		const body = `${percentage.toFixed(2)}% Buff (${priceText}): ${item.full_name}`;
+		const body = `${percentage.toFixed(2)}% Market (${priceText}): ${item.full_name}`;
 		if (notificationSettings.browser) {
 			// show notification
 			const notification = new Notification(title, {

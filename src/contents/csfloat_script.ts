@@ -1083,7 +1083,7 @@ async function liveNotifications(apiItem: CSFloat.ListingData, percentage: Decim
 
 		// show notification
 		const title = 'Item Found | BetterFloat Pro';
-		const body = `${percentage.toFixed(2)}% Buff (${priceText}): ${item.market_hash_name}`;
+		const body = `${percentage.toFixed(2)}% Market (${priceText}): ${item.market_hash_name}`;
 		if (notificationSettings.browser) {
 			// create new notification
 			const notification = new Notification(title, {
