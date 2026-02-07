@@ -7,7 +7,7 @@ import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/c
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
-import { ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -386,7 +386,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 
 	const priceFromReference =
 		Number(extensionSettings['baron-pricereference']) === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = getItemPrice(item).minus(priceFromReference ?? 0);

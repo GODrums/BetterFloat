@@ -10,7 +10,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { initSkinplace } from '~lib/handlers/history/skinplace_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -260,7 +260,7 @@ async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.Offer) {
 
 	const referencePrice =
 		Number(extensionSettings['splace-pricereference']) === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

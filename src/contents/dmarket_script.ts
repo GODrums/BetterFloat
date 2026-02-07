@@ -11,8 +11,8 @@ import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
-import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -219,7 +219,7 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 	if (item.title.includes('Gloves') || !item.extra.paintSeed || container.querySelector('.betterfloat-gem-container')) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
-	const type = getBlueGemName(item.title.replace('StatTrak™ ', ''));
+	const type = getOldBlueGemName(item.title.replace('StatTrak™ ', ''));
 
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {
@@ -378,7 +378,8 @@ async function getBuffItem(item: DMarket.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['dm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['dm-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

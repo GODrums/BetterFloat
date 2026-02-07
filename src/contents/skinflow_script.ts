@@ -8,7 +8,7 @@ import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { cacheSkinflowInventoryItems, getSkinflowBotsItem, getSkinflowInventoryItem, isSkinflowInventoryEmpty } from '~lib/handlers/cache/skinflow_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getDopplerPhase, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -228,7 +228,8 @@ async function getBuffItem(item: Skinflow.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['sf-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['sf-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

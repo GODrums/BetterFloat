@@ -8,7 +8,7 @@ import { getSwapggInventorySite, getSwapggInventoryUser } from '~lib/handlers/ca
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -161,7 +161,8 @@ async function getBuffItem(item: Swapgg.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['swp-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['swp-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

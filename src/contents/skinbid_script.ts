@@ -17,7 +17,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { dynamicUIHandler, mountSkbBargainButtons } from '~lib/handlers/urlhandler';
-import { AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
@@ -132,7 +132,7 @@ async function adjustItem(container: Element, selector: SKINBID_SELECTOR) {
 		}
 		if (selector.self === 'page') {
 			addBrowserInspect(container, cachedItem);
-			await caseHardenedDetection(container, cachedItem);
+			// await caseHardenedDetection(container, cachedItem);
 			addBargainListener(container);
 		} else {
 			addPattern(container, cachedItem);
@@ -293,20 +293,18 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 		currency = 'USD';
 	}
 	const currencySymbol = getSymbolFromCurrency(currency);
-	const pastSales = await fetchBlueGemPastSales({ type: item.subCategory, paint_seed: item.paintSeed, currency });
+	const currencyRate = await getSkbUserConversion();
+	const type = item.subCategory === 'Case Hardened' ? 'ch' : 'ht';
+	const weapon = item.subCategory.toLowerCase().replaceAll('-', '').split(' ')[0];
+	const pastSales = await fetchBlueGemPastSales({ weapon, type, pattern: item.paintSeed });
 
 	const newTab = document.createElement('div');
 	newTab.className = 'tab betterfloat-tab-bluegem';
-	newTab.innerHTML = `<div>Buff Pattern Sales (${pastSales?.length ?? 0})</div><a href="https://csbluegem.com/search?skin=${item.subCategory}&pattern=${
-		item.paintSeed
-	}" target="_blank" style="margin-left: 8px; translate: 0 2px;">${ICON_ARROWUP_SMALL}</a>`;
+	newTab.innerHTML = `<div>Buff Pattern Sales (${pastSales?.length ?? 0})</div><a href="https://bluegemlab.com/w/${weapon}/${type}?pattern=${item.paintSeed}" target="_blank" style="margin-left: 8px; translate: 0 2px;">${ICON_ARROWUP_SMALL}</a>`;
 	newTab.addEventListener('click', () => {
 		chartContainer.querySelector('.tab.active')?.classList.remove('active');
 		newTab.classList.add('active');
 		newTab.style.borderBottom = '2px solid #a3a3cb';
-
-		// chartContainer.querySelector('app-price-chart')?.replaceWith(document.createComment(''));
-		// chartContainer.querySelector('app-previous-sales')?.replaceWith(document.createComment(''));
 
 		chartContainer.querySelector('app-price-chart')?.setAttribute('style', 'display: none;');
 		chartContainer.querySelector('app-previous-sales')?.setAttribute('style', 'display: none;');
@@ -346,32 +344,32 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 							(sale) => `
                         <tr class="has-wear" style="vertical-align: top;">
                             <td class="main-td img" style="${tdStyle}">
-                                <img style="height: 24px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+                                <img style="height: 24px;" src="${sale.source === 'csfloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
                             </td>
                             <td class="main-td wear" style="${tdStyle}">
-                                <div>${getWear(sale.wear)}</div>
-                                <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.wear.toFixed(6)}</div>
+                                <div>${getWear(sale.float)}</div>
+                                <div class="text-purple200" style="color: #a3a3cb; font-size: 12px;">${sale.float.toFixed(6)}</div>
                             </td>
                             <td class="main-td pattern-id from-sm-table-cell" style="${tdStyle}"> ${sale.pattern} </td>
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
-                                ${sale.type === 'stattrak' ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
+                                ${sale.statTrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
 								${
-									sale.screenshots.inspect
+									sale.screenshots.combined
 										? html`
-												<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
+												<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot">
 													<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 												</a>
 										  `
 										: ''
 								}
 								${
-									sale.screenshots.inspect_playside
+									sale.screenshots.playside
 										? html`
 												<div style="display: flex; align-items: center; gap: 8px;">
-													<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+													<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
-													<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+													<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
 												</div>
@@ -380,9 +378,9 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 								}
                             </td>
                             <td class="main-td time-ago text-purple200 from-sm-table-cell" style="${tdStyle}">
-                                ${sale.date}
+                                ${new Date(sale.date).toISOString().slice(0, 10)}
                             </td>
-                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${sale.price}`}</td>
+                            <td class="main-td price from-sm-table-cell" style="${tdStyle}">${`${currencySymbol}${new Decimal(sale.price).div(100).mul(currencyRate).toDP(2).toString()}`}</td>
                         </tr>
                     `
 						)
@@ -521,7 +519,7 @@ async function addBuffPrice(
 		buffContainer.style.margin = '20px 0 0 0';
 	}
 
-	const priceFromReference = [MarketSource.Buff, MarketSource.Steam].includes(source) && extensionSettings['skb-pricereference'] === 0 ? priceOrder : priceListing;
+	const priceFromReference = AskBidMarkets.map((market) => market.source).includes(source) && extensionSettings['skb-pricereference'] === 0 ? priceOrder : priceListing;
 	const listingPrice = await getListingPrice(cachedItem);
 	const difference = new Decimal(listingPrice).minus(priceFromReference ?? 0);
 
@@ -683,7 +681,7 @@ function generateBuffContainer(
 			}
 			<div class="suggested-price betterfloat-buffprice" style="height: 100%; margin: 0; line-height: 1; align-items: center; ${isItemPage ? 'width: 50%;' : ''}${containerStyle}">
 				${
-					[MarketSource.Buff, MarketSource.Steam].includes(source)
+					AskBidMarkets.map((market) => market.source).includes(source)
 						? html`
 							<span style="color: orange;">Bid ${formatter.format(priceOrder?.toDP(2).toNumber() ?? 0)}</span>
 							<span style="color: #323c47; margin: 0 3px 0 3px;">|</span>

@@ -9,7 +9,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { initTradeit } from '~lib/handlers/history/tradeit_history';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
@@ -209,7 +209,7 @@ async function getBuffItem(container: Element, item: Tradeit.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	const priceFromReference = extensionSettings['tradeit-pricereference'] === 0 && [MarketSource.Buff, MarketSource.Steam].includes(source) ? priceOrder : priceListing;
+	const priceFromReference = extensionSettings['tradeit-pricereference'] === 0 && AskBidMarkets.map((market) => market.source).includes(source) ? priceOrder : priceListing;
 	const itemPrice = getItemPrice(container, item);
 
 	const priceDifference = itemPrice.minus(priceFromReference ?? new Decimal(0));

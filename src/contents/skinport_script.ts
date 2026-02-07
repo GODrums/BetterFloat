@@ -9,6 +9,7 @@ import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import {
+	AskBidMarkets,
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
 	ICON_CAMERA,
@@ -23,10 +24,10 @@ import {
 	MarketSource,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
-import { createNotificationMessage, fetchBlueGemPastSales, fetchBlueGemPatternData } from '~lib/util/messaging';
+import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { generatePriceLine, generateSpStickerContainer, genGemContainer } from '~lib/util/uigeneration';
+import { generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 
 export const config: PlasmoCSConfig = {
@@ -404,10 +405,6 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 
 		addAdditionalStickerInfo(container, cachedItem);
 
-		if (extensionSettings['sp-csbluegem'] && ['Case Hardened', 'Heat Treated'].some((name) => cachedItem.name.includes(name)) && cachedItem.category !== 'Gloves') {
-			await addBlueBadge(container, cachedItem);
-		}
-
 		if (extensionSettings['sp-displayconvertedprice']) {
 			await displayAlternativePrice(container, cachedItem);
 		}
@@ -574,52 +571,33 @@ export async function patternDetections(container: Element, item: Skinport.Item)
 	}
 }
 
-export async function addBlueBadge(container: Element, item: Skinport.Item) {
-	const itemHeader = container.querySelector('.TradeLock-lock')?.firstChild;
-	if (!itemHeader || container.querySelector('.betterfloat-gem-container')) return;
-
-	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory!;
-	const patternElement = await fetchBlueGemPatternData({
-		type: blueType.replaceAll(' ', '_'),
-		pattern: item.pattern,
-	});
-	if (!patternElement) {
-		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
-		return;
-	}
-	const gemContainer = genGemContainer({ patternElement, site: 'SP' });
-	if (!gemContainer) return;
-	gemContainer.style.fontSize = '11px';
-	(<HTMLElement>itemHeader.parentElement).style.justifyContent = 'space-between';
-	itemHeader.after(gemContainer);
-}
-
 async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	if (!['Case Hardened', 'Heat Treated'].some((name) => item.name.includes(name)) || item.category === 'Gloves') return;
 
-	// sanitized for CSBlueGem's supported currencies, otherwise use USD
 	const sanitizedCurrency = (currency: string) => {
 		return ['CNY', 'USD', 'EUR', 'JPY', 'GBP', 'AUD', 'CAD'].includes(currency) ? currency : 'CNY';
 	};
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
-	const blueType = item.name === 'Heat Treated' && item.subCategory === 'Five-SeveN' ? 'Five-SeveN Heat Treated' : item.subCategory!;
-	const patternElement = await fetchBlueGemPatternData({ type: blueType.replaceAll(' ', '_'), pattern: item.pattern });
-	const pastSales = await fetchBlueGemPastSales({ type: blueType, paint_seed: item.pattern, currency: usedCurrency });
+	const settingRate = Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport';
+	const currencyRate = await getSpUserCurrencyRate(settingRate);
+
+	const type = item.family === 'Case Hardened' ? 'ch' : 'ht';
+	let weapon = item.subCategory!.toLowerCase().replaceAll('-', '').split(' ')[0];
+	if (weapon.startsWith('five')) {
+		weapon = 'five_seven';
+	}
+	const pastSales = await fetchBlueGemPastSales({ weapon, type, pattern: item.pattern });
 
 	const itemHeader = container.querySelector('.ItemPage-itemHeader');
-	if (!itemHeader || !patternElement) return;
-	const gemContainer = genGemContainer({ patternElement, site: 'SP', large: true });
-	if (gemContainer) {
-		itemHeader.appendChild(gemContainer);
-	}
+	if (!itemHeader) return;
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
 	if (!linksContainer || !linksContainer.lastElementChild) return;
 	const patternLink = <HTMLElement>linksContainer.lastElementChild.cloneNode(true);
 	patternLink.id = 'react-tabs-6';
 	patternLink.setAttribute('aria-controls', 'react-tabs-7');
-	patternLink.textContent = `Buff Pattern Sales (${pastSales?.length ?? 0})`;
+	patternLink.textContent = `Pattern Sales (${pastSales?.length ?? 0})`;
 	patternLink.style.color = 'deepskyblue';
 
 	const itemHistory = container.querySelector('.ItemHistory');
@@ -634,7 +612,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 			<div>Float Value</div>
 			<div>Price</div>
 			<div>
-				<a href="https://csbluegem.com/search?skin=${blueType}&pattern=${item.pattern}" target="_blank" style="margin-right: 15px;"
+				<a href="https://bluegemlab.com/w/${item.subCategory}/${type}?pattern=${item.pattern}" target="_blank" style="margin-right: 15px;"
 					>${ICON_ARROWUP_SMALL}</a
 				>
 			</div>
@@ -642,34 +620,35 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	`;
 	let tableBody = '';
 	for (const sale of pastSales ?? []) {
+		const price = new Decimal(sale.price).div(100).mul(currencyRate).toDP(2).toString();
 		tableBody += html`
-			<div class="ItemHistoryList-row"${Math.abs(item.wear! - sale.wear) < 0.00001 ? ' style="background-color: darkslategray;"' : ''}>
+			<div class="ItemHistoryList-row"${Math.abs(item.wear! - sale.float) < 0.00001 ? ' style="background-color: darkslategray;"' : ''}>
 				<div class="ItemHistoryList-col" style="width: 25%;">
-					<img style="height: 24px; margin-left: 5px;" src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
+					<img style="height: 24px; margin-left: 5px;" src="${sale.source === 'csfloat' ? ICON_CSFLOAT : ICON_BUFF}"></img>
 				</div>
-				<div class="ItemHistoryList-col" style="width: 24%;">${sale.date}</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${new Date(sale.date).toISOString().slice(0, 10)}</div>
 				<div class="ItemHistoryList-col" style="width: 27%;">
-					${sale.type === 'stattrak' ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''}
-					${sale.wear}
+					${sale.statTrak ? '<span class="ItemPage-title" style="color: rgb(134, 80, 172);">★ StatTrak™</span>' : ''}
+					${sale.float}
 				</div>
-				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${sale.price}</div>
+				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${price}</div>
 				<div style="width: 60px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
 					${
-						sale.screenshots.inspect
+						sale.screenshots.combined
 							? html`
-								<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
+								<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot">
 									<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 								</a>
 							  `
 							: ''
 					}
 					${
-						sale.screenshots.inspect_playside
+						sale.screenshots.playside
 							? html`
-						<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+						<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot">
 							<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 						</a>
-						<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+						<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot">
 							<img src="${ICON_CAMERA_FLIPPED}" style="filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%); margin-right: 5px; height: 20px;"></img>
 						</a>
 					`
@@ -1027,7 +1006,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 	}
 
 	const priceFromReference =
-		extensionSettings['sp-pricereference'] === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		extensionSettings['sp-pricereference'] === 0 && (AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);

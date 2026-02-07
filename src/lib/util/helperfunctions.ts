@@ -8,7 +8,7 @@ import { synchronizePlanWithStorage } from './jwt';
 import { phaseMapping } from './patterns';
 import type { SettingsUser } from './storage';
 
-export function getBlueGemName(name: string) {
+export function getOldBlueGemName(name: string) {
 	if (name.startsWith('★')) {
 		return name.split(' | ')[0].split('★ ')[1];
 	} else if (name === 'Five-SeveN | Heat Treated') {
@@ -16,6 +16,15 @@ export function getBlueGemName(name: string) {
 	} else {
 		return name.split(' | ')[0];
 	}
+}
+
+export function getBlueGemName(name: string): { weapon: string; type: 'ch' | 'ht' } {
+	const [weaponRaw, typeRaw] = name.split(' | ');
+
+	const type = typeRaw === 'Case Hardened' ? 'ch' : 'ht';
+
+	const weapon = weaponRaw.replace('★ ', '').replace('StatTrak™ ', '').replace('-', '').split(' ')[0].toLowerCase();
+	return { weapon, type };
 }
 
 export function parsePrice(priceText: string) {

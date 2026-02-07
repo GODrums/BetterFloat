@@ -7,7 +7,7 @@ import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopout
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
-import { ICON_CLOCK, MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, ICON_CLOCK, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -178,7 +178,8 @@ async function getBuffItem(item: ExtendedBuffItem) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['bm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['bm-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 

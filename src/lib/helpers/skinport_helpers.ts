@@ -4,7 +4,7 @@ import socketParser from 'socket.io-msgpack-parser';
 import { getBuffItem } from '~contents/skinport_script';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { getCharmColoring, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
@@ -133,7 +133,7 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 
 	for (const item of data.items) {
 		const buffData = await getBuffItem(item.marketHashName, getStyle(item.name));
-		total += ([MarketSource.Buff, MarketSource.Steam].includes(source) && reference === 0 ? buffData.priceOrder?.toNumber() : buffData.priceListing?.toNumber()) ?? 0;
+		total += (AskBidMarkets.map((market) => market.source).includes(source) && reference === 0 ? buffData.priceOrder?.toNumber() : buffData.priceListing?.toNumber()) ?? 0;
 	}
 
 	if (countContainer.querySelector('.betterfloat-totalbuffprice')) {

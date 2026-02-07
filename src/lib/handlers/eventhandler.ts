@@ -18,7 +18,7 @@ import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { handleListed, handleSold } from '~lib/helpers/websockethandler';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
 import { getSetting, type IStorage } from '~lib/util/storage';
 import type { CSFloat, EventData } from '../@typings/FloatTypes';
@@ -136,7 +136,7 @@ export async function initPriceMapping(extensionSettings: IStorage, prefix: stri
 	if (
 		extensionSettings[`${prefix}-altmarket`] &&
 		extensionSettings[`${prefix}-altmarket`] !== 'none' &&
-		[MarketSource.Buff, MarketSource.Steam].includes(extensionSettings[`${prefix}-pricingsource`])
+		AskBidMarkets.map((market) => market.source).includes(extensionSettings[`${prefix}-pricingsource`])
 	) {
 		sources.add(extensionSettings[`${prefix}-altmarket`] as MarketSource);
 	}

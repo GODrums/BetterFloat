@@ -6,8 +6,6 @@ export type GetBlueBody = {
 	pattern: number;
 };
 
-const BLUEGEM_CDN_URL = 'https://cdn.bluegem.app';
-
 const jsonCache: {
 	[type: string]: {
 		[pattern: string]: BlueGem.PatternData;
@@ -36,7 +34,7 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueBody, Partial<BlueGem.Patte
 	}
 
 	// fetch from API
-	const responseData = await fetch(`${BLUEGEM_CDN_URL}/patterns/${type}.json`)
+	const responseData = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATCDN}/bluegem-patterns/${type}.json`)
 		.then((res) => res.json())
 		.catch(() => null);
 	if (responseData) {

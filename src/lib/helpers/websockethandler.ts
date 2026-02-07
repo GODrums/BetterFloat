@@ -1,6 +1,4 @@
 import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
-import { getSetting } from '~lib/util/storage';
-import { addBlueBadge } from '../../contents/skinport_script';
 import type { Skinport } from '../@typings/SkinportTypes';
 import { addPattern } from './skinport_helpers';
 
@@ -12,10 +10,6 @@ export async function handleListed(data: Skinport.Item[]) {
 				// console.debug('[BetterFloat] Found listed item:', item);
 				if (item.pattern) {
 					addPattern(element, item);
-				}
-
-				if (['Case Hardened', 'Heat Treated'].includes(item.name) && item.category !== 'Gloves' && (await getSetting('sp-csbluegem'))) {
-					await addBlueBadge(element, item);
 				}
 			}
 		}

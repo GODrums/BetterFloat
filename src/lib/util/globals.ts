@@ -213,32 +213,34 @@ export enum MarketSource {
 }
 
 export const AvailableMarketSources = [
-	{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff, style: 'border: 1px solid dimgray; border-radius: 4px;' },
-	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam, style: '' },
-	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin, style: 'border: 1px solid black; border-radius: 4px;' },
-	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game, style: 'border: 1px solid black; border-radius: 4px;' },
-	{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat, style: 'border: 1px solid black; border-radius: 4px;' },
-	{ text: 'CSMoney', logo: ICON_CSMONEY, source: MarketSource.CSMoney, style: '' },
-	{ text: 'DMarket', logo: ICON_DMARKET, source: MarketSource.DMarket, style: '' },
-	{ text: 'Bitskins', logo: ICON_BITSKINS, source: MarketSource.Bitskins, style: '' },
-	{ text: 'BuffMarket', logo: ICON_BUFFMARKET, source: MarketSource.BuffMarket, style: 'border: 1px solid black; border-radius: 4px;' },
-	{ text: 'Lisskins', logo: ICON_LISSKINS, source: MarketSource.Lisskins, style: '' },
-	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;' },
-	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '' },
-	{ text: 'Marketcsgo', logo: ICON_MARKETCSGO, source: MarketSource.Marketcsgo, style: '' },
-	{ text: 'Gamerpay', logo: ICON_GAMERPAY, source: MarketSource.Gamerpay, style: '' },
-	{ text: 'Waxpeer', logo: ICON_WAXPEER, source: MarketSource.Waxpeer, style: '' },
-	{ text: 'Skinbaron', logo: ICON_SKINBARON, source: MarketSource.Skinbaron, style: '' },
-	{ text: 'Tradeit', logo: ICON_TRADEIT, source: MarketSource.Tradeit, style: '' },
-	{ text: 'Whitemarket', logo: ICON_WHITEMARKET, source: MarketSource.Whitemarket, style: '' },
-	{ text: 'Swapgg', logo: ICON_SWAPGG, source: MarketSource.Swapgg, style: '' },
-	{ text: 'Avanmarket', logo: ICON_AVANMARKET, source: MarketSource.Avanmarket, style: '' },
-	{ text: 'Skinsmonkey', logo: ICON_SKINSMONKEY, source: MarketSource.Skinsmonkey, style: '' },
-	{ text: 'Shadowpay', logo: ICON_SHADOWPAY, source: MarketSource.Shadowpay, style: '' },
-	{ text: 'Skinout', logo: ICON_SKINOUT, source: MarketSource.Skinout, style: '' },
-	{ text: 'Skinflow', logo: ICON_SKINFLOW, source: MarketSource.Skinflow, style: '' },
+	{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff, style: 'border: 1px solid dimgray; border-radius: 4px;', hasBid: true },
+	{ text: 'Steam', logo: ICON_STEAM, source: MarketSource.Steam, style: '', hasBid: true },
+	{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin, style: 'border: 1px solid black; border-radius: 4px;', hasBid: false },
+	{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game, style: 'border: 1px solid black; border-radius: 4px;', hasBid: false },
+	{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat, style: 'border: 1px solid #12141899; border-radius: 4px;', hasBid: true },
+	{ text: 'CSMoney', logo: ICON_CSMONEY, source: MarketSource.CSMoney, style: '', hasBid: false },
+	{ text: 'DMarket', logo: ICON_DMARKET, source: MarketSource.DMarket, style: '', hasBid: false },
+	{ text: 'Bitskins', logo: ICON_BITSKINS, source: MarketSource.Bitskins, style: '', hasBid: false },
+	{ text: 'BuffMarket', logo: ICON_BUFFMARKET, source: MarketSource.BuffMarket, style: 'border: 1px solid black; border-radius: 4px;', hasBid: false },
+	{ text: 'Lisskins', logo: ICON_LISSKINS, source: MarketSource.Lisskins, style: '', hasBid: false },
+	{ text: 'Skinbid', logo: ICON_SKINBID, source: MarketSource.Skinbid, style: 'border: 1px solid black; border-radius: 4px;', hasBid: false },
+	{ text: 'Skinport', logo: ICON_SKINPORT, source: MarketSource.Skinport, style: '', hasBid: false },
+	{ text: 'Marketcsgo', logo: ICON_MARKETCSGO, source: MarketSource.Marketcsgo, style: '', hasBid: true },
+	{ text: 'Gamerpay', logo: ICON_GAMERPAY, source: MarketSource.Gamerpay, style: '', hasBid: false },
+	{ text: 'Waxpeer', logo: ICON_WAXPEER, source: MarketSource.Waxpeer, style: '', hasBid: false },
+	{ text: 'Skinbaron', logo: ICON_SKINBARON, source: MarketSource.Skinbaron, style: '', hasBid: false },
+	{ text: 'Tradeit', logo: ICON_TRADEIT, source: MarketSource.Tradeit, style: '', hasBid: false },
+	{ text: 'Whitemarket', logo: ICON_WHITEMARKET, source: MarketSource.Whitemarket, style: '', hasBid: false },
+	{ text: 'Swapgg', logo: ICON_SWAPGG, source: MarketSource.Swapgg, style: '', hasBid: false },
+	{ text: 'Avanmarket', logo: ICON_AVANMARKET, source: MarketSource.Avanmarket, style: '', hasBid: false },
+	{ text: 'Skinsmonkey', logo: ICON_SKINSMONKEY, source: MarketSource.Skinsmonkey, style: '', hasBid: false },
+	{ text: 'Shadowpay', logo: ICON_SHADOWPAY, source: MarketSource.Shadowpay, style: '', hasBid: false },
+	{ text: 'Skinout', logo: ICON_SKINOUT, source: MarketSource.Skinout, style: '', hasBid: false },
+	{ text: 'Skinflow', logo: ICON_SKINFLOW, source: MarketSource.Skinflow, style: '', hasBid: false },
 ];
 
 export const FreeMarkets = [MarketSource.CSMoney, MarketSource.Marketcsgo, MarketSource.Tradeit];
+
+export const AskBidMarkets = AvailableMarketSources.filter((market) => market.hasBid);
 
 export const isProduction = process.env.NODE_ENV === 'production';

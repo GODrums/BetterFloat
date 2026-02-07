@@ -8,7 +8,7 @@ import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -117,6 +117,8 @@ function applyMutation() {
 							addSaleTag(items[i], metaData);
 						}
 					}
+				} else if (addedNode.className.startsWith('small-item')) {
+					await adjustItem(addedNode, PageType.Cart);
 				}
 			}
 		}
@@ -128,6 +130,7 @@ enum PageType {
 	Market = 1,
 	ItemPage = 2,
 	Inventory = 3,
+	Cart = 4,
 }
 
 async function adjustItem(container: Element, page = PageType.Market) {
@@ -151,7 +154,24 @@ async function adjustItem(container: Element, page = PageType.Market) {
 		addQuickLinks(container, item);
 	} else if (page === PageType.Market) {
 		addStickerPercentage(container, item.price, item.stickers, priceResult.priceFromReference, page);
+	} else if (page === PageType.Cart) {
+		addItemPageLink(container, item);
 	}
+}
+
+async function addItemPageLink(container: Element, item: HTMLItem) {
+	if (container.querySelector('a.betterfloat-item-page-link')) return;
+
+	const { buff_name } = await getBuffItem(item);
+
+	const href = getMarketURL({ source: MarketSource.Lisskins, buff_name, market_id: 0, phase: item.style as DopplerPhase });
+
+	const itemPageLink = html`
+		<a class="betterfloat-item-page-link" target="_blank" href="${href}"></a>
+	`;
+	container.lastElementChild?.insertAdjacentHTML('beforebegin', itemPageLink);
+
+	container.setAttribute('style', 'grid-template-columns: 100px 1fr auto 35px 35px;');
 }
 
 function getItemFromHTML(container: Element, page: PageType): HTMLItem {
@@ -163,6 +183,8 @@ function getItemFromHTML(container: Element, page: PageType): HTMLItem {
 	let elementText = '';
 	if (page === PageType.Inventory) {
 		elementText = container.getAttribute('data-name') ?? '';
+	} else if (page === PageType.Cart) {
+		elementText = container.querySelector('div.item-image')?.getAttribute('alt') ?? '';
 	} else {
 		elementText = container.querySelector('img.image')?.getAttribute('alt') ?? '';
 	}
@@ -178,6 +200,15 @@ function getItemFromHTML(container: Element, page: PageType): HTMLItem {
 	// cut last digit
 	if (page === PageType.Inventory) {
 		item.price = new Decimal(container.getAttribute('data-price') ?? '0');
+	} else if (page === PageType.Cart) {
+		const itemPrice = container.querySelector('span.item-price-value')?.textContent?.trim() ?? '0';
+		item.price = new Decimal(
+			itemPrice
+				?.substring(0, itemPrice.length - 1)
+				.replace(',', '')
+				.replace('.', '')
+				.replaceAll(' ', '') ?? '0'
+		).div(100);
 	} else {
 		const itemPrice = container.querySelector('div.price')?.textContent ?? '0';
 		item.price = new Decimal(
@@ -310,7 +341,7 @@ async function getBuffItem(item: HTMLItem) {
 	}
 	const priceFromReference =
 		Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		([MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 
@@ -329,6 +360,8 @@ async function getBuffItem(item: HTMLItem) {
 function getBuffParent(container: Element, page: PageType) {
 	if (page === PageType.ItemPage) {
 		return container.querySelector('div.min-price-block');
+	} else if (page === PageType.Cart) {
+		return container.querySelector('div.item-price_mobile');
 	} else {
 		return container.querySelector('div.skin-info');
 	}
@@ -370,6 +403,8 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 		if (page === PageType.Inventory) {
 			container.querySelector('.betterfloat-buff-a')?.setAttribute('style', 'top: 22px;');
 			container.querySelector('.skin-info-exterior')?.setAttribute('style', 'display: block;');
+		} else if (page === PageType.Cart) {
+			container.querySelector('.betterfloat-buff-a')?.setAttribute('style', 'position: relative; margin-top: 5px; margin-left: -8px;');
 		}
 	}
 

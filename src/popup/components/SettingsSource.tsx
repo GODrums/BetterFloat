@@ -5,7 +5,7 @@ import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_YOUPIN, Market
 import { cn } from '~lib/utils';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
-import { InfoCallout, WarningCallout } from '~popup/ui/callout';
+import { InfoCallout } from '~popup/ui/callout';
 import { Card, CardContent } from '~popup/ui/card';
 import { Label } from '~popup/ui/label';
 import { MaterialSymbolsHelpOutline } from './Icons';
@@ -83,12 +83,16 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 				)}
 				{source === MarketSource.YouPin && (
 					<>
-						<WarningCallout text="Please note that YouPin/UU prices may be inaccurate or completely broken at times." className="text-center my-2" />
 						<InfoCallout text="YouPin/UU bid prices only available on the Pro plan!" className="text-center my-2" />
 						<div className="px-4">
 							<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
 						</div>
 					</>
+				)}
+				{source === MarketSource.CSFloat && (
+					<div className="pt-1 px-4">
+						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+					</div>
 				)}
 				{prefix === 'csf' && source !== MarketSource.Steam && (
 					<div className="pt-1 px-4">

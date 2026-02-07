@@ -312,7 +312,8 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 	}
 
 	const referencePrice =
-		Number(extensionSettings['av-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['av-pricereference']) === 0 &&
+		([MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

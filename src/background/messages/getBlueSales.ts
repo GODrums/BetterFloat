@@ -2,12 +2,10 @@ import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 
 export type GetBlueSalesBody = {
-	type: string;
+	weapon: string;
+	type: 'ch' | 'ht';
 	pattern: number;
-	currency: string;
 };
-
-const BLUEGEM_API_URL = 'https://api.bluegem.app';
 
 const handler: PlasmoMessaging.MessageHandler<GetBlueSalesBody, BlueGem.PastSale[]> = async (req, res) => {
 	const body = req.body;
@@ -15,14 +13,14 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueSalesBody, BlueGem.PastSale
 		res.send([]);
 		return;
 	}
-	const { type, pattern, currency } = body;
+	const { weapon, type, pattern } = body;
 
-	const responseData = await fetch(`${BLUEGEM_API_URL}/v1/sales?skin=${type}&pattern=${pattern}&currency=${currency}`)
+	const responseData = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/bluegem/sales?weapon=${weapon}&type=${type}&pattern=${pattern}`)
 		.then((res) => res.json() as Promise<BlueGem.SearchResponse>)
 		.catch(() => null);
 
-	if (responseData?.data) {
-		return res.send(responseData.data);
+	if (responseData) {
+		return res.send(responseData);
 	}
 
 	// data unavailable

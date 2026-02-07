@@ -22,6 +22,7 @@ import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandl
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { injectScript } from '~lib/helpers/inject_helper';
 import {
+	AskBidMarkets,
 	ICON_ARROWDOWN,
 	ICON_ARROWUP_SMALL,
 	ICON_ARROWUP2,
@@ -317,7 +318,7 @@ async function adjustUserBuyOrderRow(buyOrder: Element) {
 	const useOrderPrice =
 		priceOrder &&
 		extensionSettings['csf-pricereference'] === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
 	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
 
 	const userCurrency = CSFloatHelpers.userCurrency();
@@ -414,7 +415,7 @@ export async function adjustOfferContainer(container: Element) {
 	const useOrderPrice =
 		priceOrder &&
 		extensionSettings['csf-pricereference'] === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
 	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
 
 	const userCurrency = CSFloatHelpers.userCurrency();
@@ -1626,18 +1627,18 @@ async function webDetection(container: Element, item: CSFloat.Item) {
 async function addCaseHardenedSales(item: CSFloat.Item) {
 	if ((!item.item_name.includes('Case Hardened') && !item.item_name.includes('Heat Treated')) || item.item_name.includes('Gloves') || item.paint_seed === undefined) return;
 
-	const userCurrency = CSFloatHelpers.userCurrency();
+	const { userCurrency, currencyRate } = await getCurrencyRate();
 	const currencySymbol = getSymbolFromCurrency(userCurrency) ?? '$';
-	const type = getBlueGemName(item.item_name);
+	const { weapon, type } = getBlueGemName(item.item_name);
 
 	// past sales table
-	const pastSales = await fetchBlueGemPastSales({ type, paint_seed: item.paint_seed!, currency: userCurrency });
+	const pastSales = await fetchBlueGemPastSales({ weapon, type, pattern: item.paint_seed! });
 	const gridHistory = document.querySelector('.grid-history');
 	if (!gridHistory || !pastSales) return;
 	const salesHeader = document.createElement('mat-button-toggle');
 	salesHeader.setAttribute('role', 'presentation');
 	salesHeader.className = 'mat-button-toggle mat-button-toggle-appearance-standard';
-	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Buff Pattern Sales (${pastSales?.length})</span></button>`;
+	salesHeader.innerHTML = `<button type="button" class="mat-button-toggle-button mat-focus-indicator" aria-pressed="false"><span class="mat-button-toggle-label-content" style="color: deepskyblue;">Pattern Sales (${pastSales?.length})</span></button>`;
 	gridHistory.querySelector('mat-button-toggle-group')?.appendChild(salesHeader);
 	salesHeader.addEventListener('click', () => {
 		Array.from(gridHistory.querySelectorAll('mat-button-toggle') ?? []).forEach((element) => {
@@ -1647,40 +1648,56 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 
 		const tableBody = document.createElement('tbody');
 		pastSales.forEach((sale) => {
+			const price = new Decimal(sale.price).div(100).mul(currencyRate).toDP(2).toString();
 			const saleHtml = html`
-				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row" style="${item.float_value && new Decimal(sale.wear).toDP(10).equals(item.float_value.toFixed(10)) ? 'background-color: #0b255d;' : ''}">
+				<tr role="row" class="mat-mdc-row mdc-data-table__row cdk-row" style="${item.float_value && new Decimal(sale.float).toDP(10).equals(item.float_value.toFixed(10)) ? 'background-color: #0b255d;' : ''}">
 					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
-						<img src="${sale.origin === 'CSFloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
+						<img src="${sale.source === 'csfloat' ? ICON_CSFLOAT : ICON_BUFF}" style="height: 28px; border: 1px solid dimgray; border-radius: 4px;" />
 					</td>
-					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${sale.date}</td>
-					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${currencySymbol}${sale.price}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${new Date(sale.date).toISOString().slice(0, 10)}</td>
+					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">${currencySymbol}${price}</td>
 					<td role="cell" class="mat-mdc-cell mdc-data-table__cell cdk-cell">
-						${sale.type === 'stattrak' ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™</span>' : ''}
-						<span>${sale.wear}</span>
+						${sale.statTrak ? '<span style="color: rgb(255, 120, 44); margin-right: 5px;">StatTrak™</span>' : ''}
+						<span>${sale.float}</span>
 					</td>
 					<td role="cell" class="mat-mdc-cell">
 						${
-							sale.screenshots.inspect
+							sale.screenshots.combined
 								? html`
-									<a href="${sale.screenshots.inspect}" target="_blank" title="Show Buff screenshot">
+									<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot">
 										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 									</a>
 							  `
 								: ''
 						}
 						${
-							sale.screenshots.inspect_playside
+							sale.screenshots.playside
 								? html`
-									<a href="${sale.screenshots.inspect_playside}" target="_blank" title="Show CSFloat font screenshot">
+									<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot">
 										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 									</a>
 							  	`
 								: ''
 						}
 						${
-							sale.screenshots.inspect_backside
+							sale.screenshots.backside
 								? html`
-									<a href="${sale.screenshots.inspect_backside}" target="_blank" title="Show CSFloat back screenshot">
+									<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot">
+										<img
+											src="${ICON_CAMERA_FLIPPED}"
+											style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);"
+										/>
+									</a>
+								`
+								: ''
+						}
+						${
+							sale.screenshots.id
+								? html`
+									<a href="https://csfloat.pics/m/${sale.screenshots.id}/playside.png" target="_blank" title="Show CSFloat font screenshot">
+										<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
+									</a>
+									<a href="https://csfloat.pics/m/${sale.screenshots.id}/backside.png" target="_blank" title="Show CSFloat back screenshot">
 										<img
 											src="${ICON_CAMERA_FLIPPED}"
 											style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);"
@@ -1728,7 +1745,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		);
 		linkHeaderCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
 		const linkHeader = document.createElement('a');
-		linkHeader.setAttribute('href', `https://csbluegem.com/search?skin=${type}&pattern=${item.paint_seed}`);
+		linkHeader.setAttribute('href', `https://bluegemlab.com/${item.def_index}/${item.paint_index}?pattern=${item.paint_seed}`);
 		linkHeader.setAttribute('target', '_blank');
 		linkHeader.innerHTML = ICON_ARROWUP_SMALL;
 		linkHeaderCell.appendChild(linkHeader);
@@ -2056,7 +2073,7 @@ async function getBuffItem(item: CSFloat.FloatItem) {
 	const useOrderPrice =
 		pricingData.priceOrder &&
 		extensionSettings['csf-pricereference'] === 0 &&
-		([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
 
 	let priceFromReference = useOrderPrice ? pricingData.priceOrder : (pricingData.priceListing ?? new Decimal(0));
 

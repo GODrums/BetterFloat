@@ -13,20 +13,10 @@ export async function createNotificationMessage(body: CreateNotificationBody) {
 	return response;
 }
 
-type CSBlueGemOptions = {
-	type: string;
-	paint_seed: number;
-	currency?: string;
-};
-
-export async function fetchBlueGemPastSales({ type, paint_seed: pattern, currency = 'USD' }: CSBlueGemOptions) {
+export async function fetchBlueGemPastSales(body: GetBlueSalesBody) {
 	return await sendToBackground<GetBlueSalesBody, BlueGem.PastSale[]>({
 		name: 'getBlueSales',
-		body: {
-			type,
-			pattern,
-			currency,
-		},
+		body: body,
 	});
 }
 

@@ -49,7 +49,7 @@ export function generatePriceLine({
 	const extendedDisplay = showPrefix && (isPopout || (priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning));
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
 
-	const showBothPrices = [MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && hasPro);
+	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
 			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom  hint--rounded ${tooltipArrow ? '' : 'hint--no-arrow'}" 

@@ -8,8 +8,8 @@ import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { initBitskins } from '~lib/handlers/history/bitskins_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBlueGemName, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
+import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -200,7 +200,7 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, st
 	if (item.name.includes('Gloves') || !item.paint_seed || container.querySelector('.betterfloat-gem-container')) return;
 	const isPopout = state === PageState.ItemPage;
 
-	const type = getBlueGemName(item.name.replace('StatTrak™ ', ''));
+	const type = getOldBlueGemName(item.name.replace('StatTrak™ ', ''));
 	// const userCurrency = getUserCurrency();
 	// const currencySymbol = getSymbolFromCurrency(userCurrency);
 	// const currencyRate = getBitskinsCurrencyRate(userCurrency);
@@ -376,7 +376,8 @@ async function getBuffItem(item: Bitskins.Item) {
 	}
 
 	const referencePrice =
-		Number(extensionSettings['bs-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['bs-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

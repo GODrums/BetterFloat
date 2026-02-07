@@ -221,9 +221,8 @@ export namespace BlueGem {
 			size: number;
 		};
 	};
-	export type SearchResponse = {
-		data: PastSale[];
-	};
+	export type SearchResponse = PastSale[];
+
 	export type PatternData = {
 		backside_blue: number;
 		backside_contour_blue: number;
@@ -238,22 +237,21 @@ export namespace BlueGem {
 	};
 
 	export type PastSale = {
-		buff_id: number;
-		csfloat: string; //floatdb link
-		date: string;
-		epoch: number;
-		origin: 'CSFloat' | 'BroSkins' | 'Buff' | 'c5game' | 'SkinBid' | 'Skinport';
+		id: number;
 		pattern: number;
+		source: 'csfloat' | 'broskins' | 'buff' | 'c5game' | 'skinbid' | 'skinport';
+		marketLink: string;
+		inspectLink: number;
 		price: number;
-		sale_id: 'string';
+		date: string;
 		screenshots: {
-			inspect?: string; // only for Buff
-			inspect_backside?: string | null; // only for CSFloat
-			inspect_playside?: string | null; // only for CSFloat
+			combined?: string; // buff
+			id?: string; // csfloat new
+			playside?: string | null; // csfloat old
+			backside?: string | null; // csfloat old
 		};
-		steam_inspect_link: string;
-		type: 'normal' | 'stattrak';
-		wear: number;
+		statTrak: boolean;
+		float: number;
 	};
 }
 

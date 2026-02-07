@@ -5,7 +5,7 @@ import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handlers/cache/whitemarket_cache';
 import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -197,7 +197,8 @@ async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | nu
 	}
 
 	const referencePrice =
-		Number(extensionSettings['wm-pricereference']) === 0 && ([MarketSource.Buff, MarketSource.Steam].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		Number(extensionSettings['wm-pricereference']) === 0 &&
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);
