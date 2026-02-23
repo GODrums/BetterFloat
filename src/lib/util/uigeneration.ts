@@ -46,7 +46,6 @@ export function generatePriceLine({
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	const { logo: icon, style: iconStyle } = getSourceIcon(source);
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const extendedDisplay = showPrefix && (isPopout || (priceOrder?.lt(100) && priceListing?.lt(100) && !isWarning));
 	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
 
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && hasPro);
@@ -55,7 +54,7 @@ export function generatePriceLine({
 			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom  hint--rounded ${tooltipArrow ? '' : 'hint--no-arrow'}" 
 			href="${href}" 
 			target="_blank"
-			aria-label="Bid: Highest buy order price\nAsk: Lowest listing price"
+			aria-label="Highest buy order | Lowest listing"
 			data-betterfloat='${bfDataAttribute}'
 		>
 			<img src="${icon}" style="height: ${iconHeight ?? '15px'}; margin-right: 5px; ${iconStyle}" />
@@ -65,9 +64,9 @@ export function generatePriceLine({
 				${
 					showBothPrices
 						? html`
-							<span style="color: light-dark(darkorange, orange);"> ${extendedDisplay ? 'Bid ' : ''}${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
+							<span style="color: light-dark(darkorange, orange);"> ${CurrencyFormatter.format(priceOrder?.toNumber() ?? 0)} </span>
 							<span style="color: gray;${addSpaceBetweenPrices ? 'margin: 0 3px 0 3px;' : ''}">|</span>
-							<span style="color: light-dark(forestgreen, greenyellow);"> ${extendedDisplay ? 'Ask ' : ''}${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
+							<span style="color: light-dark(forestgreen, greenyellow);"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span>
 					  `
 						: html` <span style="color: var(--primary-text-color, white);"> ${CurrencyFormatter.format(priceListing?.toNumber() ?? 0)} </span> `
 				}
