@@ -13,6 +13,35 @@ export namespace Skinswap {
 		success: boolean;
 	}
 
+	export interface ChinaMarketItemsResponse {
+		data: {
+			appid: number;
+			available: number;
+			listingsCount: number;
+			listings: ChinaItem[];
+			market_hash_name: string;
+			name: string;
+			qualities: Qualities;
+			skinSlug: string;
+			slug: string;
+			source: string;
+			stackId: string;
+			stackIdWithHold: string;
+		};
+		fresh: boolean;
+		success: boolean;
+	}
+
+	export interface ChinaItem {
+		appid: number;
+		id: string;
+		inspect: Inspect;
+		market_hash_name: string;
+		name: string;
+		price: Price;
+		source: string;
+	}
+
 	export interface Item {
 		accepted: boolean;
 		appid: number;
@@ -52,7 +81,10 @@ export namespace Skinswap {
 	export interface Price {
 		buy: number;
 		sell: number;
-		trade: number;
+		trade?: number;
+		rmb?: number;
+		lowest?: number;
+		china_direct?: number;
 	}
 
 	export interface Overstock {

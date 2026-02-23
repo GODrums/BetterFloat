@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getSkinswapItem, getSkinswapUserItem } from '~lib/handlers/cache/skinswap_cache';
+import { getSkinswapChinaItem, getSkinswapItem, getSkinswapUserItem } from '~lib/handlers/cache/skinswap_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { initSkinswap } from '~lib/handlers/history/skinswap_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
@@ -92,10 +92,17 @@ function applyMutation() {
 						await adjustItem(item, PageState.Market, isSiteItem);
 					}
 				} else if (addedNode.parentElement?.classList.contains('gridBox')) {
-					const items = addedNode.querySelectorAll('.item-card');
-					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
-					for (const item of items) {
-						await adjustItem(item, PageState.Market, isSiteItem);
+					if (location.pathname.startsWith('/china')) {
+						const items = addedNode.querySelectorAll('.grow.center');
+						for (const item of items) {
+							await adjustItem(item.parentElement?.parentElement!, PageState.China, true);
+						}
+					} else {
+						const items = addedNode.querySelectorAll('.item-card');
+						const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
+						for (const item of items) {
+							await adjustItem(item, PageState.Market, isSiteItem);
+						}
 					}
 				} else if (addedNode.classList.contains('item-card')) {
 					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
@@ -103,6 +110,11 @@ function applyMutation() {
 				} else if (addedNode.firstElementChild?.classList.contains('item-card')) {
 					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
 					await adjustItem(addedNode.firstElementChild, PageState.Market, isSiteItem);
+				} else if (
+					addedNode.getAttribute('style')?.includes('position: absolute;') &&
+					addedNode.firstElementChild?.className === 'flex flex-col p-2.5 h-53 relative rounded-4 transition-colors duration-300 bg-bg-800'
+				) {
+					await adjustItem(addedNode, PageState.China, true);
 				}
 			}
 		}
@@ -120,6 +132,11 @@ function getAPIItem(container: Element, state: PageState, isSiteItem: boolean): 
 		} else {
 			return getSkinswapUserItem(itemId);
 		}
+	} else if (state === PageState.China) {
+		const mhn = container.querySelector('img.w-full')?.getAttribute('alt');
+		if (!mhn) return undefined;
+
+		return getSkinswapChinaItem(mhn);
 	}
 	return undefined;
 }
@@ -135,13 +152,13 @@ async function adjustItem(container: Element, state: PageState, isSiteItem: bool
 	// console.log('[BetterFloat] Skinswap item:', item);
 	if (!item) return;
 
-	const _priceResult = await addBuffPrice(item, container);
+	const _priceResult = await addBuffPrice(item, container, state);
 }
 
-async function addBuffPrice(item: Skinswap.Item, container: Element): Promise<PriceResult> {
+async function addBuffPrice(item: Skinswap.Item, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	const footerContainer = container.querySelector('.hover-translatey-40');
+	const footerContainer = container.querySelector('.hover-translatey-40') ?? container.firstElementChild;
 
 	const isDoppler = !!item.qualities.doppler_phase;
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
@@ -167,13 +184,33 @@ async function addBuffPrice(item: Skinswap.Item, container: Element): Promise<Pr
 			tooltipArrow: true,
 		});
 
-		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		if (state === PageState.China) {
+			footerContainer.lastElementChild?.insertAdjacentHTML('beforebegin', buffContainer);
+
+			container.querySelector('img.w-full')?.setAttribute('style', 'max-height: calc(var(--spacing) * 32.5 - 35px);');
+			// restore hover effect to the container
+			container.addEventListener('mouseenter', () => {
+				container.querySelector('.grow.center')?.setAttribute('style', 'max-height: 50px;');
+			});
+			container.addEventListener('mouseleave', () => {
+				container.querySelector('.grow.center')?.setAttribute('style', 'max-height: 100%;');
+			});
+		} else {
+			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		}
 	}
 
 	const priceContainer = footerContainer?.querySelector('.font-header');
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['ss-buffdifference'] || extensionSettings['ss-buffdifferencepercent'])) {
 		priceContainer.insertAdjacentHTML('afterend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter, itemPrice.lt(100)));
+		if (state === PageState.China) {
+			const saleTag = container.querySelector<HTMLDivElement>('div.betterfloat-sale-tag');
+			if (saleTag) {
+				saleTag.style.flexDirection = 'column';
+				saleTag.style.translate = 'none';
+			}
+		}
 	}
 
 	return {
@@ -262,7 +299,7 @@ function getUserCurrency() {
 }
 
 function getItemPrice(item: Skinswap.Item): Decimal {
-	return new Decimal(item.price.trade).div(100);
+	return new Decimal(item.price.trade ?? item.price.lowest ?? item.price.buy).div(100);
 }
 
 function createBuffItem(item: Skinswap.Item): { name: string; style: ItemStyle } {
@@ -284,6 +321,7 @@ function createBuffItem(item: Skinswap.Item): { name: string; style: ItemStyle }
 enum PageState {
 	Market = 0,
 	Inventory = 1,
+	China = 2,
 }
 
 // mutation observer active?
