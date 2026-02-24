@@ -13,7 +13,11 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueSalesBody, BlueGem.PastSale
 		res.send([]);
 		return;
 	}
-	const { weapon, type, pattern } = body;
+	let { weapon, type, pattern } = body;
+
+	if (weapon === 'desert') {
+		weapon = 'deagle';
+	}
 
 	const responseData = await fetch(`${process.env.PLASMO_PUBLIC_BETTERFLOATAPI}/v1/bluegem/sales?weapon=${weapon}&type=${type}&pattern=${pattern}`)
 		.then((res) => res.json() as Promise<BlueGem.SearchResponse>)

@@ -34,14 +34,12 @@ const handler: PlasmoMessaging.MessageHandler<GetMarketComparisonBody, GetMarket
 	const steamId = isVIP ? '76561198112185660' : user?.plan?.type === 'pro' ? user?.steam?.steamid : undefined;
 
 	const data = await fetchMarketComparisonData(buffName, steamId);
-	console.debug('[BetterFloat] Fetched fresh market comparison data for ' + buffName);
 	res.send(data);
 };
 
 const fetchMarketComparisonData = async (buffName: string, steamId: IStorage['user']['steam']['steamid']) => {
 	// Check in-memory cache first
 	if (marketComparisonCache[buffName] && Date.now() - marketComparisonCache[buffName].timestamp < CACHE_TTL) {
-		console.debug('[BetterFloat] Returning cached market comparison data for ' + buffName);
 		return {
 			data: marketComparisonCache[buffName].data,
 			fromCache: true,
