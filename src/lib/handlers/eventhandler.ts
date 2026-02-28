@@ -50,7 +50,7 @@ import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_ca
 import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
-import { cacheSkinswapItems, cacheSkinswapUserInventory } from './cache/skinswap_cache';
+import { cacheSkinswapChinaItems, cacheSkinswapItems, cacheSkinswapUserInventory } from './cache/skinswap_cache';
 import { cacheSwapggInventorySite, cacheSwapggInventoryUser } from './cache/swapgg_cache';
 import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache/tradeit_cache';
 import { cacheWaxpeerItems } from './cache/waxpeer_cache';
@@ -185,8 +185,10 @@ function processSkinswapEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	if (eventData.url.includes('api/user/inventory')) {
 		cacheSkinswapUserInventory(eventData.data as Skinswap.InventoryResponse);
+	} else if (eventData.url.includes('api/site/inventory/china/listings')) {
+		cacheSkinswapChinaItems(eventData.data as Skinswap.ChinaMarketItemsResponse);
 	} else if (eventData.url.includes('api/site/inventory')) {
-		cacheSkinswapItems(eventData.data as Skinswap.MarketItemsResponse);
+		cacheSkinswapItems(eventData.data as Skinswap.MarketItemsResponse, eventData.url.includes('priceType=china'));
 	}
 }
 
@@ -228,7 +230,7 @@ function processAvanmarketEvent(eventData: EventData<unknown>) {
 
 // whitemarket uses a graphql api, so we need to handle it differently
 function processWhiteMarketEvent(eventData: EventData<unknown>) {
-	console.debug(`[Plasmo] Received data from url: ${eventData.url}, data:`, eventData.data);
+	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);
 
 	if (!eventData.url.includes('graphql/api')) {
 		return;

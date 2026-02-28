@@ -30,7 +30,10 @@ type ResqModule = {
 };
 
 export function injectResq() {
-	console.log('[BetterFloat] Injecting Resq...');
+	const isDev = process.env.NODE_ENV !== 'production';
+	if (isDev) {
+		console.log('[BetterFloat] Injecting Resq...');
+	}
 
 	// Helper function to wait for resq to be available
 	function waitForResq(maxAttempts = 10, interval = 200): Promise<void> {
@@ -41,7 +44,9 @@ export function injectResq() {
 				attempts++;
 
 				if (window.resq && typeof window.resq.resq$ === 'function') {
-					console.log('[BetterFloat] Resq found and ready!');
+					if (isDev) {
+						console.log('[BetterFloat] Resq found and ready!');
+					}
 					resolve();
 					return;
 				}
@@ -145,7 +150,6 @@ export function injectResq() {
 			// Process existing item cards
 			async function processExistingCards() {
 				const existingCards = document.querySelectorAll('[class*="ItemCard_wrapper"]');
-				console.log(`[BetterFloat] Found ${existingCards.length} existing item cards to process`);
 				for (const card of existingCards) {
 					await processItemCard(card as HTMLElement);
 				}

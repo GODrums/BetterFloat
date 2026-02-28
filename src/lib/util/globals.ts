@@ -244,3 +244,23 @@ export const FreeMarkets = [MarketSource.CSMoney, MarketSource.Marketcsgo, Marke
 export const AskBidMarkets = AvailableMarketSources.filter((market) => market.hasBid);
 
 export const isProduction = process.env.NODE_ENV === 'production';
+
+function silenceVerboseConsoleInProduction() {
+	if (!isProduction) {
+		return;
+	}
+
+	const consoleState = globalThis as typeof globalThis & { __BF_CONSOLE_PATCHED__?: boolean };
+	if (consoleState.__BF_CONSOLE_PATCHED__) {
+		return;
+	}
+
+	const noop = (..._args: unknown[]) => undefined;
+	// allow warn and error to be logged
+	console.log = noop;
+	console.debug = noop;
+	console.info = noop;
+	consoleState.__BF_CONSOLE_PATCHED__ = true;
+}
+
+silenceVerboseConsoleInProduction();

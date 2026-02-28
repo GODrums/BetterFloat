@@ -1,6 +1,8 @@
 import { io } from 'socket.io-client/build/esm';
 import socketParser from 'socket.io-msgpack-parser';
 
+const isDev = process.env.NODE_ENV !== 'production';
+
 /**
  * This script runs in the MAIN world (page context) to establish
  * the Skinport websocket connection. This is necessary because
@@ -32,7 +34,9 @@ const userCurrency = async (): Promise<string | null> => {
 };
 
 function startSkinportSocket() {
-	console.log('[BetterFloat - MAIN world] Connecting to Skinport Socket...');
+	if (isDev) {
+		console.log('[BetterFloat - MAIN world] Connecting to Skinport Socket...');
+	}
 
 	const socket = io('https://skinport.com', {
 		transports: ['websocket'],
@@ -67,7 +71,9 @@ function startSkinportSocket() {
 	});
 
 	socket.on('connect', async () => {
-		console.debug('[BetterFloat - MAIN world] Successfully connected to Skinport websocket.');
+		if (isDev) {
+			console.debug('[BetterFloat - MAIN world] Successfully connected to Skinport websocket.');
+		}
 		await joinSaleFeed();
 	});
 

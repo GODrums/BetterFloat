@@ -1,4 +1,5 @@
 let loadNumber = 0;
+const isDev = process.env.NODE_ENV !== 'production';
 xmlHttpRequestIntercept();
 fetchIntercept();
 
@@ -12,7 +13,9 @@ function xmlHttpRequestIntercept() {
 		return;
 	}
 	const open = window.XMLHttpRequest.prototype.open;
-	console.log('[BetterFloat] Activating HttpRequest Intercept...');
+	if (isDev) {
+		console.log('[BetterFloat] Activating HttpRequest Intercept...');
+	}
 
 	window.XMLHttpRequest.prototype.open = function () {
 		(<XMLHttpRequest>this).addEventListener('load', (e) => {
@@ -33,7 +36,9 @@ function xmlHttpRequestIntercept() {
 				try {
 					return JSON.parse(text);
 				} catch (_) {
-					console.debug(`[BetterFloat] Failed to parse JSON for ${target.responseURL} : ${text}`);
+					if (isDev) {
+						console.debug(`[BetterFloat] Failed to parse JSON for ${target.responseURL} : ${text}`);
+					}
 					return {
 						text: text,
 					};
@@ -87,7 +92,9 @@ function fetchIntercept() {
 	}
 
 	const originalFetch = window.fetch;
-	console.log('[BetterFloat] Activating Fetch Intercept...');
+	if (isDev) {
+		console.log('[BetterFloat] Activating Fetch Intercept...');
+	}
 
 	window.fetch = async function (...args) {
 		const response = await originalFetch.apply(this, args);
@@ -116,7 +123,9 @@ function fetchIntercept() {
 				})
 			);
 		} catch {
-			console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
+			if (isDev) {
+				console.debug(`[BetterFloat] Failed to parse JSON for ${url}`);
+			}
 		}
 
 		return response;
