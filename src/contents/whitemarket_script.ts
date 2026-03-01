@@ -49,15 +49,26 @@ async function init() {
 
 function changeListener() {
 	setInterval(async () => {
-		if (location.pathname.includes('inventory')) return;
-		const stylesList = document.querySelector('div[class*="styles_list__"]');
-		if (!stylesList) return;
+		// Check if the inventory section is still part of the document
+		if (location.pathname === '/inventory/my' || location.pathname === '/inventory/instant-sell') {
+			// Check each item in the list
+			const items = document.querySelectorAll('div[id]:has(> button[title])');
+			for (const item of items) {
+				if (item instanceof HTMLElement && item.className.includes('__item')) {
+					// Check if the Buff price container has already been added
+					const hasBuffContainer = item.querySelector('.betterfloat-buff-a');
+					if (hasBuffContainer) break;
 
-		const items = stylesList.querySelectorAll('div[class*="styles_item__"]');
-		for (const item of items) {
-			const result = await adjustItem(item as Element, PageState.Market);
-			if (result === null) {
-				return;
+					await adjustItem(item, PageState.Inventory);
+				}
+			}
+		} else {
+			const items = document.querySelectorAll('a[href*="/item/"]:not(:has(.betterfloat-buff-a))');
+			for (const item of items) {
+				const result = await adjustItem(item as Element, PageState.Market);
+				if (result === null) {
+					return;
+				}
 			}
 		}
 	}, 1000);
@@ -75,20 +86,6 @@ function applyMutation() {
 				if (addedNode.className.startsWith('styles_item__')) {
 					// item in market
 					// await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.tagName === 'SECTION' && location.pathname.includes('inventory')) {
-					while (addedNode.querySelector('div[class*="styles_skeleton-card__"]')) {
-						await new Promise((resolve) => setTimeout(resolve, 200));
-					}
-					const itemList = addedNode.querySelector<HTMLElement>('div[class*="styles_list__"]');
-					if (itemList) {
-						const pageState = location.pathname.includes('inventory/') || location.pathname.includes('inventory/') ? PageState.Inventory : PageState.Market;
-						for (const item of itemList.children) {
-							await adjustItem(item as Element, pageState);
-						}
-						if (pageState === PageState.Inventory) {
-							inventoryListener();
-						}
-					}
 				} else if (addedNode.className === 'flex flex-1') {
 					// const items = addedNode.querySelectorAll('div[class*="styles_item__"]');
 					// for (const item of items) {
@@ -101,38 +98,6 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-async function inventoryListener() {
-	console.log('[BetterFloat] Starting inventory polling for list.');
-
-	// Use setInterval to periodically check items
-	const intervalId = setInterval(async () => {
-		const itemList = document.querySelector<HTMLElement>('div[class*="styles_list__"]');
-		// Check if the inventory section is still part of the document
-		if (location.pathname !== '/inventory/my' && location.pathname !== '/inventory/instant-sell') {
-			console.log('[BetterFloat] Inventory section removed from DOM, stopping polling.');
-			clearInterval(intervalId);
-			return;
-		}
-
-		if (!itemList) {
-			console.error('[BetterFloat] No item list found');
-			return;
-		}
-
-		// Check each item in the list
-		for (const item of itemList.children) {
-			if (item instanceof HTMLElement && item.className.startsWith('styles_item__')) {
-				// Check if the Buff price container has already been added
-				const hasBuffContainer = item.querySelector('.betterfloat-buff-a');
-				if (hasBuffContainer) {
-					break;
-				}
-				await adjustItem(item, PageState.Inventory);
-			}
-		}
-	}, 1000); // Check every 1 second
-}
-
 async function adjustItem(container: Element, state: PageState) {
 	let price: WhiteMarket.Price | null = null;
 	const getApiItem = () => {
@@ -140,7 +105,7 @@ async function adjustItem(container: Element, state: PageState) {
 			return getFirstWhiteMarketInventoryItem();
 		}
 		if (state === PageState.Market) {
-			const slug = container.querySelector('a')?.getAttribute('href')?.split('/').at(-1);
+			const slug = container.getAttribute('href')?.split('/').at(-1);
 			if (!slug) {
 				console.error('[BetterFloat] No slug found: ', container, state);
 				return null;
@@ -230,11 +195,9 @@ enum PageState {
 async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | null, container: Element, state: PageState): Promise<PriceResult> {
 	const { buff_name, market_id, source, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item, price);
 
-	let footerContainer: HTMLElement | null = null;
-	if (state === PageState.Market) {
-		footerContainer = container.querySelector('div[class*="styles_steam-price__"]')?.parentElement as HTMLElement;
-	} else if (state === PageState.Inventory) {
-		footerContainer = container.querySelector('div[title]')?.parentElement?.parentElement as HTMLElement;
+	let footerContainer = container.querySelector('div.price')?.parentElement as HTMLElement;
+	if (state === PageState.Inventory) {
+		footerContainer = footerContainer.parentElement as HTMLElement;
 	}
 
 	const isItemPage = state === PageState.ItemPage;

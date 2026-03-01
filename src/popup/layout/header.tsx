@@ -41,7 +41,7 @@ export default function Header() {
 					warning.classList.remove('hidden');
 				}
 			});
-	});
+	}, [hostpermissions]);
 
 	return (
 		<header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">

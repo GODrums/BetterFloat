@@ -463,7 +463,12 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		}
 	}
 
-	if ((extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) && priceListing?.gt(0.06) && !location.pathname.includes('/market/sell/')) {
+	if (
+		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
+		priceListing?.gt(0.06) &&
+		!location.pathname.includes('/market/sell/') &&
+		!container.querySelector('.betterfloat-sale-tag')
+	) {
 		let priceContainer: HTMLElement | null | undefined = null;
 		if (selector === CSMONEY_SELECTORS.market) {
 			priceContainer = container.querySelector<HTMLElement>('a.betterfloat-buff-a')?.previousElementSibling?.previousElementSibling?.firstElementChild?.firstElementChild as HTMLElement;
