@@ -93,7 +93,7 @@ const fuse = new Fuse(Object.keys(marketIds), {
 	minMatchCharLength: 2, // Minimum character length to match
 	ignoreLocation: true, // Don't give preference to matches at the beginning
 	includeScore: true, // Include match score for sorting
-	findAllMatches: false, // Stop after finding enough matches
+	findAllMatches: true, // Needs to be true to show suggestions for long names
 });
 
 chrome.omnibox.setDefaultSuggestion({
@@ -138,10 +138,7 @@ chrome.omnibox.onInputChanged.addListener((text, addSuggestions) => {
 		const marketId = getMarketId(name, targetSource);
 		const url = getMarketURL({ source: targetSource, buff_name: name, market_id: marketId ?? 0 });
 
-		// capitalize first letter
 		const targetSourceText = SOURCE_TEXT[targetSource];
-
-		// Format the description with match highlighting potential
 		const description = `[${targetSourceText}] ${name}`;
 
 		return {
