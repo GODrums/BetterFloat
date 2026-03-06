@@ -12,8 +12,8 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
-import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { attachMarketPopover } from '~lib/util/market_popover';
+import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {

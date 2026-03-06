@@ -24,10 +24,10 @@ import {
 	MarketSource,
 } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { attachMarketPopover } from '~lib/util/market_popover';
 import { generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
 
@@ -986,7 +986,10 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
-			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: await getSpUserCurrencyRate(extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport') });
+			attachMarketPopover(buffElement, {
+				isPro: isUserPro(extensionSettings['user']),
+				currencyRate: await getSpUserCurrencyRate(extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport'),
+			});
 		}
 	}
 
