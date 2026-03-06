@@ -51,6 +51,8 @@ export function urlHandler() {
 			}
 		}
 	});
+
+	addMessageRelays();
 }
 
 export function dynamicUIHandler() {
@@ -78,10 +80,6 @@ export function dynamicUIHandler() {
 		createUrlListener(callHandleChange, 1500);
 	} else {
 		callHandleChange(new URL(location.href));
-	}
-
-	if (['skinport.com', 'csfloat.com', 'lis-skins.com', 'dmarket.com'].includes(location.hostname)) {
-		addMessageRelays();
 	}
 
 	setTimeout(showUpdatePopup, 3000);
@@ -127,7 +125,7 @@ async function handleChange(state: Extension.URLState) {
 	}
 }
 
-function addMessageRelays() {
+export function addMessageRelays() {
 	relayMessage({
 		name: 'createNotification',
 	});

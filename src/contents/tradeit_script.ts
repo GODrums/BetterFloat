@@ -6,11 +6,11 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initTradeit } from '~lib/handlers/history/tradeit_history';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -31,8 +31,6 @@ async function init() {
 	if (location.host !== 'tradeit.gg') {
 		return;
 	}
-
-	initTradeit();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -298,7 +296,7 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol,
+			userCurrency: currency.currency ?? 'USD',
 			itemStyle: '' as DopplerPhase,
 			CurrencyFormatter: CurrencyFormatter(currency.currency),
 			isDoppler: false,
@@ -311,6 +309,12 @@ async function addBuffPrice(item: Tradeit.Item, container: Element): Promise<Pri
 		});
 
 		elementContainer.insertAdjacentHTML('beforeend', buffContainer);
+
+		const buffElement = elementContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
+
 		elementContainer.querySelector('.count')?.setAttribute('style', 'top: 27px;');
 
 		elementContainer.setAttribute('style', 'overflow: visible !important;');

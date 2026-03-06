@@ -10,6 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { WAXPEER_SELECTORS } from '~lib/handlers/selectors/waxpeer_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -129,7 +130,7 @@ async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageS
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -141,6 +142,11 @@ async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageS
 			tooltipArrow: true,
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 	}
 
 	const discountContainer = footerContainer?.querySelector(WAXPEER_SELECTORS.item.price);

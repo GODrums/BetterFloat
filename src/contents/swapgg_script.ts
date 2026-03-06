@@ -10,6 +10,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -230,7 +231,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: '' as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler: false,
@@ -248,6 +249,11 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 				(footerContainer.parentElement as HTMLElement).style.translate = '0px -15px';
 			}
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+
+			const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+			if (buffElement) {
+				attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+			}
 		}
 	}
 

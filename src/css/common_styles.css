@@ -9,3 +9,185 @@
 	border-radius: 4px;
 	padding: 10px;
 }
+
+/* Market Popover */
+.bf-market-popover {
+	position: fixed;
+	margin: 0;
+	padding: 0;
+	background: none;
+	z-index: 99999;
+	background-color: var(--dropdown-color, rgba(30, 30, 30, 0.95));
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	border: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.12));
+	border-radius: 10px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.45),
+		0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+	max-height: 360px;
+	overflow-y: auto;
+	font-size: 12px;
+	color: var(--primary-text-color, white);
+	transform-origin: top center;
+}
+
+.bf-market-popover::-webkit-scrollbar {
+	width: 4px;
+}
+
+.bf-market-popover::-webkit-scrollbar-thumb {
+	background: var(--highlight-background, rgba(255, 255, 255, 0.15));
+	border-radius: 2px;
+}
+
+.bf-popover-header {
+	position: sticky;
+	top: 0;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	font-size: 13px;
+	font-weight: 600;
+	border-bottom: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.08));
+	background-color: var(--dropdown-color, rgba(30, 30, 30, 0.95));
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	z-index: 1;
+}
+
+.bf-popover-header-logo {
+	width: 16px;
+	height: 16px;
+	border-radius: 3px;
+}
+
+.bf-popover-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.bf-popover-table th {
+	padding: 4px 10px;
+	font-size: 10px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--subtext-color, rgba(255, 255, 255, 0.4));
+	white-space: nowrap;
+}
+
+.bf-popover-table th:first-child {
+	text-align: left;
+}
+
+.bf-popover-table td {
+	padding: 5px 10px;
+	white-space: nowrap;
+}
+
+.bf-popover-separator td {
+	padding: 0;
+	height: 2px;
+	background: var(--highlight-background, rgba(255, 255, 255, 0.08));
+}
+
+.bf-popover-table tbody tr[data-href] {
+	cursor: pointer;
+	transition: background-color 0.1s ease;
+}
+
+.bf-popover-table tbody tr[data-href]:hover {
+	background-color: var(--highlight-background, rgba(255, 255, 255, 0.05));
+}
+
+.bf-popover-market-cell {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.bf-popover-market-cell img {
+	width: 14px;
+	height: 14px;
+	flex-shrink: 0;
+}
+
+.bf-popover-bid {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: light-dark(darkorange, orange);
+}
+
+.bf-popover-ask {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	color: light-dark(forestgreen, greenyellow);
+}
+
+.bf-popover-upsell {
+	padding: 7px 12px;
+	text-align: center;
+	border-top: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.08));
+	font-size: 11px;
+	background: linear-gradient(to right, transparent, rgba(167, 139, 250, 0.06), transparent);
+}
+
+.bf-popover-upsell a {
+	color: #a78bfa;
+	text-decoration: none;
+	transition: color 0.15s ease;
+}
+
+.bf-popover-upsell a:hover {
+	color: #c4b5fd;
+	text-decoration: underline;
+}
+
+.bf-popover-loading {
+	padding: 16px 24px;
+	text-align: center;
+	color: var(--subtext-color, rgba(255, 255, 255, 0.5));
+}
+
+@keyframes bf-pulse {
+	0%,
+	100% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+.bf-popover-loading-dots {
+	width: 100%;
+	display: inline-flex;
+	gap: 4px;
+	justify-content: center;
+	padding: 14px 24px;
+}
+
+.bf-popover-loading-dots span {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: var(--subtext-color, rgba(255, 255, 255, 0.4));
+	animation: bf-pulse 1.2s ease-in-out infinite;
+}
+
+.bf-popover-loading-dots span:nth-child(2) {
+	animation-delay: 0.15s;
+}
+
+.bf-popover-loading-dots span:nth-child(3) {
+	animation-delay: 0.3s;
+}
+
+.bf-popover-error {
+	padding: 12px 16px;
+	text-align: center;
+	color: #f87171;
+	font-size: 11px;
+}

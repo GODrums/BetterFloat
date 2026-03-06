@@ -13,6 +13,7 @@ import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { dynamicUIHandler, mountDMarketMarketComparison } from '~lib/handlers/urlhandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -224,14 +225,14 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {
 		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-		const csbluegem = itemPreview?.getAttribute('data-csbluegem');
+		const csbluegem = itemPreview?.getAttribute('data-bluegemlab');
 		if (csbluegem && csbluegem.length > 0) {
 			patternElement = JSON.parse(csbluegem);
 		}
 	}
 	if (!patternElement) {
 		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.extra.paintSeed });
-		container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
+		container.setAttribute('data-bluegemlab', JSON.stringify(patternElement));
 	}
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.title);
@@ -287,7 +288,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -299,6 +300,11 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 			hasPro: isUserPro(extensionSettings['user']),
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 	}
 
 	let priceContainer: Element | null = null;

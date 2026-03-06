@@ -6,10 +6,10 @@ import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initBitskins } from '~lib/handlers/history/bitskins_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
@@ -30,8 +30,6 @@ async function init() {
 	if (location.host !== 'bitskins.com') {
 		return;
 	}
-
-	initBitskins();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -113,7 +111,7 @@ function addSimilarItemsSaleTags(container: Element) {
 	const priceData = JSON.parse(document.querySelector('.betterfloat-big-a')?.getAttribute('data-betterfloat') ?? '{}') as {
 		buff_name: string;
 		priceFromReference: number;
-		userCurrency: string; // $
+		userCurrency: string; // USD
 		source: MarketSource;
 	};
 	if (Object.keys(priceData).length === 0) return;
@@ -201,11 +199,7 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, st
 	const isPopout = state === PageState.ItemPage;
 
 	const type = getOldBlueGemName(item.name.replace('StatTrak™ ', ''));
-	// const userCurrency = getUserCurrency();
-	// const currencySymbol = getSymbolFromCurrency(userCurrency);
-	// const currencyRate = getBitskinsCurrencyRate(userCurrency);
 	const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed });
-	container.setAttribute('data-csbluegem', JSON.stringify(patternElement));
 
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.name);
@@ -220,11 +214,6 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, st
 				? container.querySelector('.item-details')
 				: container.querySelector('.item-float');
 		if (!exteriorContainer) return;
-
-		// if (!isPopout) {
-		// 	exteriorContainer.setAttribute('style', 'display: flex; align-items: center; gap: 8px;');
-		// 	exteriorContainer.closest('.c-asset__footerLeft')?.setAttribute('style', 'max-width: 100%');
-		// }
 
 		const gemContainer = genGemContainer({ patternElement, site: 'BS', large: isPopout });
 		if (!gemContainer) return;
@@ -279,7 +268,7 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -299,6 +288,7 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 				e.stopPropagation();
 				window.open(buffElement.href, '_blank');
 			});
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 		}
 	}
 

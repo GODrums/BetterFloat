@@ -13,6 +13,7 @@ import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
 export const config: PlasmoCSConfig = {
@@ -161,6 +162,11 @@ async function adjustItemPage(container: Element) {
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		footerContainer.setAttribute('style', 'width: max-content;');
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: priceData.currency.rate ?? 1 });
+		}
 	}
 
 	// add Pricempire button
@@ -231,6 +237,11 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 			(container as HTMLElement).style.height = '350px';
 		} else if (state === PageState.Inventory) {
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		}
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 		}
 	}
 

@@ -7,6 +7,7 @@ import { activateHandler } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -212,7 +213,7 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: '' as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -237,6 +238,11 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 			e.stopPropagation();
 			window.open((e.currentTarget as HTMLAnchorElement).href, '_blank');
 		});
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 	}
 
 	let priceContainer: HTMLElement | null = null;

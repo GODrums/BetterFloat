@@ -63,6 +63,7 @@ import {
 	isProduction,
 	MarketSource,
 } from '~lib/util/globals';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
@@ -274,7 +275,7 @@ function applyMutation() {
 					} else if (addedNode.tagName.toLowerCase() === 'app-markdown-dialog') {
 						CSFloatHelpers.adjustCurrencyChangeNotice(addedNode);
 					} else if (location.pathname.includes('/item/') && addedNode.id?.length > 0) {
-						if (addedNode.querySelector('path[d="M6.26953 12.8371H10.5998V14.9125H6.26953V17.3723H12.8674V10.736H8.48589V8.78871H12.8674V6.48267H6.26953V12.8371Z"]') && isProduction) {
+						if (addedNode.hasAttribute('title') && addedNode.hasAttribute('id') && addedNode.hasAttribute('style') && isProduction) {
 							addedNode.remove();
 						}
 					} else if (addedNode.tagName.toLowerCase() === 'tbody' && extensionSettings['csf-buyorderpercentage'] && addedNode.closest('app-order-table')) {
@@ -342,6 +343,12 @@ async function adjustUserBuyOrderRow(buyOrder: Element) {
 	expressionColumn.innerHTML = `<a class="betterfloat-buyorder-link" href="/search?market_hash_name=${itemName}&sort_by=lowest_price" target="_blank">${expressionColumn.innerHTML}</a>${buffContainer}`;
 
 	expressionColumn.setAttribute('style', 'height: 52px; display: flex; align-items: center; gap: 8px;');
+
+	const buffAnchor = expressionColumn.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+	if (buffAnchor) {
+		const { currencyRate } = await getCurrencyRate();
+		attachMarketPopover(buffAnchor, { isPro: isUserPro(extensionSettings['user']), currencyRate });
+	}
 }
 
 async function adjustCart() {
@@ -438,7 +445,12 @@ export async function adjustOfferContainer(container: Element) {
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
 	const buffA = container.querySelector('.betterfloat-buff-a');
-	buffA?.setAttribute('data-betterfloat', JSON.stringify({ priceOrder, priceListing, userCurrency, itemName, priceFromReference }));
+	buffA?.setAttribute('data-betterfloat', JSON.stringify({ buff_name: itemName, priceOrder, priceListing, userCurrency, itemName, priceFromReference, source }));
+
+	if (buffA instanceof HTMLElement) {
+		const { currencyRate } = await getCurrencyRate();
+		attachMarketPopover(buffA, { isPro: isUserPro(extensionSettings['user']), currencyRate });
+	}
 }
 
 function getJSONAttribute<T = any>(data: string | null | undefined): T | null {
@@ -2150,6 +2162,12 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, insertT
 		}
 		if (isPopout) {
 			container.querySelector('.betterfloat-big-price')?.setAttribute('data-betterfloat', JSON.stringify({ priceFromReference: priceFromReference?.toFixed(2) ?? 0, userCurrency }));
+		}
+
+		const buffAnchor = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffAnchor) {
+			const { currencyRate } = await getCurrencyRate();
+			attachMarketPopover(buffAnchor, { isPro: isUserPro(extensionSettings['user']), currencyRate });
 		}
 	}
 

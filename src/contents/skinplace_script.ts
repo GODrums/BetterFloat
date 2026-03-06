@@ -7,11 +7,11 @@ import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem, isSkinplaceOffersCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initSkinplace } from '~lib/handlers/history/skinplace_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -33,7 +33,6 @@ async function init() {
 	}
 
 	console.time('[BetterFloat] Skinplace init timer');
-	initSkinplace();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -160,7 +159,7 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, con
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -180,11 +179,14 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, con
 		}
 
 		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
-		buffElement?.addEventListener('click', (e) => {
-			e.preventDefault();
-			e.stopPropagation();
-			window.open(buffElement.href, '_blank');
-		});
+		if (buffElement) {
+			buffElement.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				window.open(buffElement.href, '_blank');
+			});
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 	}
 
 	let priceContainer: Element | null = null;

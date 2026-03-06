@@ -11,6 +11,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SHADOWPAY_SELECTORS } from '~lib/handlers/selectors/shadowpay_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -148,7 +149,7 @@ async function addBuffPrice(item: Shadowpay.Item, container: Element, state: Pag
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -160,6 +161,11 @@ async function addBuffPrice(item: Shadowpay.Item, container: Element, state: Pag
 			tooltipArrow: true,
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+
+		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 
 		if (state === PageState.Market) {
 			footerContainer.querySelector(SHADOWPAY_SELECTORS.market.steamPrice)?.remove();

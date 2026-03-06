@@ -7,10 +7,10 @@ import type { Skinswap } from '~lib/@typings/SkinswapTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getSkinswapChinaItem, getSkinswapItem, getSkinswapUserItem } from '~lib/handlers/cache/skinswap_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
-import { initSkinswap } from '~lib/handlers/history/skinswap_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -31,7 +31,7 @@ async function init() {
 		return;
 	}
 
-	initSkinswap();
+	// initSkinswap();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -172,7 +172,7 @@ async function addBuffPrice(item: Skinswap.Item, container: Element, state: Page
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
@@ -197,6 +197,11 @@ async function addBuffPrice(item: Skinswap.Item, container: Element, state: Page
 			});
 		} else {
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		}
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 		}
 	}
 

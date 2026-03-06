@@ -9,6 +9,7 @@ import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallC
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -354,6 +355,7 @@ async function getBuffItem(item: HTMLItem) {
 		priceFromReference,
 		difference: priceDifference,
 		currency,
+		currencyRate,
 	};
 }
 
@@ -368,7 +370,7 @@ function getBuffParent(container: Element, page: PageType) {
 }
 
 async function addBuffPrice(item: HTMLItem, container: Element, page: PageType): Promise<PriceResult> {
-	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
+	const { buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency, currencyRate } = await getBuffItem(item);
 
 	const isItemPage = page === PageType.ItemPage;
 	const elementContainer = getBuffParent(container, page);
@@ -381,7 +383,7 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency,
+			userCurrency: currency ?? 'USD',
 			itemStyle: item.style as DopplerPhase,
 			CurrencyFormatter: CurrencyFormatter(currency, 0, priceListing?.gt(1000) ? 0 : 2),
 			isDoppler: isDoppler,
@@ -405,6 +407,11 @@ async function addBuffPrice(item: HTMLItem, container: Element, page: PageType):
 			container.querySelector('.skin-info-exterior')?.setAttribute('style', 'display: block;');
 		} else if (page === PageType.Cart) {
 			container.querySelector('.betterfloat-buff-a')?.setAttribute('style', 'position: relative; margin-top: 5px; margin-left: -8px;');
+		}
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currencyRate ?? 1 });
 		}
 	}
 

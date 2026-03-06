@@ -9,6 +9,7 @@ import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandl
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { AskBidMarkets, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -258,7 +259,7 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: CurrencyFormatter(currency.text ?? 'USD'),
 			isDoppler,
@@ -279,6 +280,11 @@ async function addBuffPrice(item: Skinbaron.Item, container: Element, selector: 
 			e.stopPropagation();
 			window.open((e.currentTarget as HTMLElement).getAttribute('href') ?? '', '_blank');
 		});
+
+		const buffElement = priceDiv.parentElement?.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+		}
 	}
 
 	const saleWrapper = container.querySelector<HTMLElement>(selector.saleWrapper);
@@ -399,7 +405,7 @@ async function getBuffItem(item: Skinbaron.Item) {
 		priceOrder: priceOrder,
 		priceFromReference,
 		difference: priceDifference,
-		currency: currencyItem,
+		currency: { ...currencyItem, rate: currencyRate },
 		itemStyle: buff_item.style,
 	};
 }

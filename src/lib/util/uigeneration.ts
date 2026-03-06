@@ -46,7 +46,7 @@ export function generatePriceLine({
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	const { logo: icon, style: iconStyle } = getSourceIcon(source);
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, userCurrency, source }).replace(/'/g, '&#39;');
+	const bfDataAttribute = JSON.stringify({ buff_name, priceFromReference, priceListing, priceOrder, userCurrency, source }).replace(/'/g, '&#39;');
 
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`

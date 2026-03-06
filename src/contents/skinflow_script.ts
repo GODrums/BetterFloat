@@ -10,6 +10,7 @@ import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getDopplerPhase, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -130,7 +131,7 @@ async function addBuffPrice(item: Skinflow.Item, container: Element, state: Page
 		priceOrder,
 		priceListing,
 		priceFromReference,
-		userCurrency: currency.symbol ?? '$',
+		userCurrency: currency.text ?? 'USD',
 		itemStyle: itemStyle as DopplerPhase,
 		CurrencyFormatter: currencyFormatter,
 		isDoppler,
@@ -154,6 +155,7 @@ async function addBuffPrice(item: Skinflow.Item, container: Element, state: Page
 			e.stopPropagation();
 			window.open(buffElement.href, '_blank');
 		});
+		attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 	}
 
 	if (container.querySelector('.sale-wrapper')) {

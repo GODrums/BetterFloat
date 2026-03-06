@@ -18,6 +18,7 @@ import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selector
 import { dynamicUIHandler } from '~lib/handlers/urlhandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -444,7 +445,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 			priceOrder,
 			priceListing,
 			priceFromReference,
-			userCurrency: currency.symbol ?? '$',
+			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: Formatter,
 			isDoppler,
@@ -460,6 +461,11 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		} else {
 			footerContainer.insertAdjacentHTML('afterend', buffContainer);
 			(container.firstElementChild as HTMLElement).style.setProperty('overflow', 'visible');
+		}
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 		}
 	}
 

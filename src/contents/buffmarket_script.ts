@@ -9,6 +9,7 @@ import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappingha
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { AskBidMarkets, ICON_CLOCK, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 
@@ -298,7 +299,7 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 		priceOrder,
 		priceListing,
 		priceFromReference,
-		userCurrency: currencyItem?.symbol ?? '$',
+		userCurrency: currencyItem?.value ?? 'USD',
 		itemStyle: buff_item.style as DopplerPhase,
 		CurrencyFormatter: CurrencyFormatter(currencyRate.value),
 		isDoppler,
@@ -315,6 +316,11 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 			}
 		} else if (!container.querySelector('.betterfloat-buffprice')) {
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		}
+
+		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		if (buffElement) {
+			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currencyRate.rate ?? 1 });
 		}
 	}
 
