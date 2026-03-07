@@ -13,6 +13,7 @@
 /* Market Popover */
 .bf-market-popover {
 	position: fixed;
+	inset: auto;
 	margin: 0;
 	padding: 0;
 	background: none;

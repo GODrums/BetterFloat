@@ -13,6 +13,9 @@ type CacheEntry = {
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
 const SHOW_DELAY = 200;
 const HIDE_GRACE = 150;
+const DEFAULT_POPOVER_MAX_HEIGHT = 360;
+// Keep the popover readable below the trigger before we give up and flip it above.
+const MIN_POPOVER_HEIGHT_BEFORE_FLIP = 240;
 
 const cache = new Map<string, CacheEntry>();
 
@@ -84,23 +87,43 @@ function animateOut(el: HTMLElement): Promise<void> {
 	});
 }
 
-function animateHeight(el: HTMLElement, updateFn: () => void) {
+function animateHeight(el: HTMLElement, updateFn: () => void): Promise<void> {
 	const startHeight = el.offsetHeight;
 	updateFn();
 	const endHeight = el.offsetHeight;
 
-	if (startHeight === endHeight || startHeight === 0) return;
+	if (startHeight === endHeight || startHeight === 0) return Promise.resolve();
 
-	el.animate(
-		[
-			{ height: `${startHeight}px`, overflow: 'clip' },
-			{ height: `${endHeight}px`, overflow: 'clip' },
-		],
-		{
-			duration: 250,
-			easing: ENTER_EASING,
-		}
-	);
+	return new Promise((resolve) => {
+		const animation = el.animate(
+			[
+				{ height: `${startHeight}px`, overflow: 'clip' },
+				{ height: `${endHeight}px`, overflow: 'clip' },
+			],
+			{
+				duration: 250,
+				easing: ENTER_EASING,
+			}
+		);
+		animation.onfinish = () => resolve();
+		animation.oncancel = () => resolve();
+	});
+}
+
+function getPopoverSize(el: HTMLElement) {
+	const rect = el.getBoundingClientRect();
+	const computed = window.getComputedStyle(el);
+	const maxHeight = Number.parseFloat(computed.maxHeight);
+	const effectiveHeight = Number.isFinite(maxHeight) ? Math.min(el.scrollHeight, maxHeight) : el.scrollHeight;
+
+	return {
+		width: Math.max(rect.width, el.scrollWidth),
+		height: Math.max(rect.height, effectiveHeight),
+	};
+}
+
+function setPopoverMaxHeight(el: HTMLElement, maxHeight: number) {
+	el.style.maxHeight = `${Math.max(0, maxHeight)}px`;
 }
 
 function cancelHide() {
@@ -144,21 +167,57 @@ async function hide() {
 function positionPopover(trigger: HTMLElement) {
 	const el = getPopover();
 	const rect = trigger.getBoundingClientRect();
-	const popoverRect = el.getBoundingClientRect();
+	const viewport = window.visualViewport;
+	const viewportTop = viewport?.offsetTop ?? 0;
+	const viewportLeft = viewport?.offsetLeft ?? 0;
+	const viewportHeight = viewport?.height ?? window.innerHeight;
+	const viewportWidth = viewport?.width ?? window.innerWidth;
+	const inset = 8;
+	const gap = 4;
 
-	let top = rect.bottom + 4;
-	let left = rect.left + rect.width / 2 - popoverRect.width / 2;
+	const spaceBelow = viewportTop + viewportHeight - rect.bottom - inset;
+	const spaceAbove = rect.top - viewportTop - inset;
+	const availableBelow = Math.max(0, spaceBelow - gap);
+	const availableAbove = Math.max(0, spaceAbove - gap);
 
-	// Flip above if overflowing bottom
-	if (top + popoverRect.height > window.innerHeight - 8) {
-		top = rect.top - popoverRect.height - 4;
+	// Start from the default size so we can decide whether shrinking below is enough.
+	setPopoverMaxHeight(el, DEFAULT_POPOVER_MAX_HEIGHT);
+	const fullSize = getPopoverSize(el);
+
+	let shouldFlip = false;
+	let nextMaxHeight = DEFAULT_POPOVER_MAX_HEIGHT;
+	// Prefer staying below by shrinking into the available space first.
+	// Only flip once the below space would push the popover under the minimum readable height.
+	if (fullSize.height > availableBelow) {
+		if (availableBelow >= MIN_POPOVER_HEIGHT_BEFORE_FLIP) {
+			nextMaxHeight = availableBelow;
+		} else if (fullSize.height <= availableAbove) {
+			shouldFlip = true;
+		} else if (availableAbove >= MIN_POPOVER_HEIGHT_BEFORE_FLIP) {
+			shouldFlip = true;
+			nextMaxHeight = availableAbove;
+		} else {
+			shouldFlip = availableAbove > availableBelow;
+			nextMaxHeight = shouldFlip ? availableAbove : availableBelow;
+		}
 	}
+
+	setPopoverMaxHeight(el, Math.min(DEFAULT_POPOVER_MAX_HEIGHT, nextMaxHeight));
+	const popoverSize = getPopoverSize(el);
+
+	let top = shouldFlip ? rect.top - popoverSize.height - gap : rect.bottom + gap;
+	let left = rect.left + rect.width / 2 - popoverSize.width / 2;
+
+	const minTop = viewportTop + inset;
+	const maxTop = Math.max(minTop, viewportTop + viewportHeight - popoverSize.height - inset);
+	top = Math.min(Math.max(top, minTop), maxTop);
 
 	// Clamp horizontal
-	if (left < 8) left = 8;
-	if (left + popoverRect.width > window.innerWidth - 8) {
-		left = window.innerWidth - popoverRect.width - 8;
-	}
+	const minLeft = viewportLeft + inset;
+	const maxLeft = Math.max(minLeft, viewportLeft + viewportWidth - popoverSize.width - inset);
+	left = Math.min(Math.max(left, minLeft), maxLeft);
+
+	el.style.transformOrigin = shouldFlip ? 'bottom center' : 'top center';
 
 	el.style.top = `${top}px`;
 	el.style.left = `${left}px`;
@@ -358,24 +417,39 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 			data = response.data;
 			cache.set(buffName, { data: response.data, timestamp: Date.now() });
 		} else {
-			animateHeight(el, () => renderError());
+			const resizeAnimation = animateHeight(el, () => {
+				renderError();
+				positionPopover(trigger);
+			});
+			await resizeAnimation;
+			if (currentTrigger === trigger) positionPopover(trigger);
 			return;
 		}
 	}
 
 	if (!data) {
-		animateHeight(el, () => renderError());
+		await animateHeight(el, () => {
+			renderError();
+			positionPopover(trigger);
+		});
+		if (currentTrigger === trigger) positionPopover(trigger);
 		return;
 	}
 
 	try {
 		const newHtml = buildDataHtml(data, buffName, userCurrency, currencyRate, isPro);
-		animateHeight(el, () => {
+		await animateHeight(el, () => {
 			el.innerHTML = newHtml;
+			// The loaded table is often taller than the loading state, so re-evaluate placement immediately.
+			positionPopover(trigger);
 		});
-		positionPopover(trigger);
+		if (currentTrigger === trigger) positionPopover(trigger);
 	} catch {
-		animateHeight(el, () => renderError());
+		await animateHeight(el, () => {
+			renderError();
+			positionPopover(trigger);
+		});
+		if (currentTrigger === trigger) positionPopover(trigger);
 	}
 }
 
