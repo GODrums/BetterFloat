@@ -374,7 +374,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 			el.innerHTML = newHtml;
 		});
 		positionPopover(trigger);
-	} catch (e) {
+	} catch {
 		animateHeight(el, () => renderError());
 	}
 }

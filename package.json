@@ -14,7 +14,8 @@
 		"build:firefox": "plasmo build --target=firefox-mv3",
 		"package": "plasmo package",
 		"lint": "biome ci src/",
-		"format": "biome format src/ --write && biome check src/ --fix"
+		"format": "biome format src/ --write && biome check src/ --fix",
+		"zip": "bash ./scripts/create-source-archive.sh"
 	},
 	"dependencies": {
 		"@plasmohq/messaging": "^0.7.1",

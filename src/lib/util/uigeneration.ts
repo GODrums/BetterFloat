@@ -21,7 +21,6 @@ export function generatePriceLine({
 	iconHeight,
 	priceClass: containerClass,
 	addSpaceBetweenPrices = true,
-	showPrefix = true,
 	hasPro = false,
 	tooltipArrow = false,
 }: {
