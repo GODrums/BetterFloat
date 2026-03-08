@@ -47,9 +47,10 @@
 	top: 0;
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	padding: 8px 12px;
-	font-size: 13px;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 4px 12px;
+	font-size: 14px;
 	font-weight: 600;
 	border-bottom: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.08));
 	background-color: var(--dropdown-color, rgba(30, 30, 30, 0.95));
@@ -58,10 +59,45 @@
 	z-index: 1;
 }
 
+.bf-popover-header-brand {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
 .bf-popover-header-logo {
 	width: 16px;
 	height: 16px;
 	border-radius: 3px;
+}
+
+.bf-popover-header-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	border: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.12));
+	border-radius: 6px;
+	background-color: rgba(255, 255, 255, 0.02);
+	transition:
+		border-color 0.15s ease,
+		background-color 0.15s ease,
+		transform 0.15s ease;
+}
+
+.bf-popover-header-link:hover {
+	border-color: rgba(255, 255, 255, 0.18);
+	background-color: var(--highlight-background, rgba(255, 255, 255, 0.08));
+}
+
+.bf-popover-header-link img {
+	width: 18px;
+	height: 18px;
+	border-radius: 4px;
 }
 
 .bf-popover-table {

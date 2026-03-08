@@ -1,7 +1,7 @@
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { html } from 'common-tags';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { AvailableMarketSources, MarketSource, WEBSITE_URL } from './globals';
+import { AvailableMarketSources, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
 import { CurrencyFormatter, getMarketURL } from './helperfunctions';
 import { fetchMarketComparisonData } from './messaging';
 
@@ -15,7 +15,7 @@ const SHOW_DELAY = 200;
 const HIDE_GRACE = 150;
 const DEFAULT_POPOVER_MAX_HEIGHT = 360;
 // Keep the popover readable below the trigger before we give up and flip it above.
-const MIN_POPOVER_HEIGHT_BEFORE_FLIP = 240;
+const MIN_POPOVER_HEIGHT_BEFORE_FLIP = 200;
 
 const cache = new Map<string, CacheEntry>();
 
@@ -223,17 +223,39 @@ function positionPopover(trigger: HTMLElement) {
 	el.style.left = `${left}px`;
 }
 
-const POPOVER_HEADER = html`
-	<div class="bf-popover-header">
-		<img src="${betterfloatLogo}" class="bf-popover-header-logo" />
-		<span>Market Comparison</span>
-	</div>
-`;
+function buildPopoverHeader(buffName: string, isPro: boolean) {
+	const pricempireUrl = isPro ? getMarketURL({ source: MarketSource.Pricempire, buff_name: buffName }) : '';
 
-function renderLoading() {
+	return html`
+		<div class="bf-popover-header">
+			<div class="bf-popover-header-brand">
+				<img src="${betterfloatLogo}" class="bf-popover-header-logo" />
+				<span>Market Comparison</span>
+			</div>
+			${
+				pricempireUrl
+					? html`
+							<a
+								class="bf-popover-header-link"
+								href="${pricempireUrl}"
+								target="_blank"
+								rel="noopener noreferrer"
+								aria-label="View on Pricempire"
+								title="View on Pricempire"
+							>
+								<img src="${ICON_PRICEMPIRE}" alt="Pricempire" />
+							</a>
+						`
+					: ''
+			}
+		</div>
+	`;
+}
+
+function renderLoading(buffName: string, isPro: boolean) {
 	const el = getPopover();
 	el.innerHTML = html`
-		${POPOVER_HEADER}
+		${buildPopoverHeader(buffName, isPro)}
 		<div class="bf-popover-loading-dots">
 			<span></span>
 			<span></span>
@@ -242,10 +264,10 @@ function renderLoading() {
 	`;
 }
 
-function renderError() {
+function renderError(buffName: string, isPro: boolean) {
 	const el = getPopover();
 	el.innerHTML = html`
-		${POPOVER_HEADER}
+		${buildPopoverHeader(buffName, isPro)}
 		<div class="bf-popover-error">Failed to load prices</div>
 	`;
 }
@@ -282,7 +304,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 	const allRows = [...primaryRows, ...otherRows];
 	if (allRows.length === 0) {
 		return html`
-			${POPOVER_HEADER}
+			${buildPopoverHeader(buffName, isPro)}
 			<div class="bf-popover-loading">No prices available</div>
 		`;
 	}
@@ -310,7 +332,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 	const hasBothSections = primaryRows.length > 0 && otherRows.length > 0;
 
 	return html`
-		${POPOVER_HEADER}
+		${buildPopoverHeader(buffName, isPro)}
 		<table class="bf-popover-table">
 			<thead>
 				<tr>
@@ -332,7 +354,7 @@ function buildFreeHtml(source: MarketSource, buffName: string, priceListing: num
 	const marketInfo = AvailableMarketSources.find((m) => m.source === source);
 	if (!marketInfo || (!priceListing && !priceOrder)) {
 		return html`
-			${POPOVER_HEADER}
+			${buildPopoverHeader(buffName, false)}
 			<div class="bf-popover-loading">No prices available</div>
 		`;
 	}
@@ -341,7 +363,7 @@ function buildFreeHtml(source: MarketSource, buffName: string, priceListing: num
 	const showBidColumn = marketInfo.hasBid && priceOrder !== undefined;
 
 	return html`
-		${POPOVER_HEADER}
+		${buildPopoverHeader(buffName, false)}
 		<table class="bf-popover-table">
 			<thead>
 				<tr>
@@ -394,7 +416,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 		return;
 	}
 
-	renderLoading();
+	renderLoading(buffName, isPro);
 
 	try {
 		el.showPopover();
@@ -418,7 +440,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 			cache.set(buffName, { data: response.data, timestamp: Date.now() });
 		} else {
 			const resizeAnimation = animateHeight(el, () => {
-				renderError();
+				renderError(buffName, isPro);
 				positionPopover(trigger);
 			});
 			await resizeAnimation;
@@ -429,7 +451,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 
 	if (!data) {
 		await animateHeight(el, () => {
-			renderError();
+			renderError(buffName, isPro);
 			positionPopover(trigger);
 		});
 		if (currentTrigger === trigger) positionPopover(trigger);
@@ -446,7 +468,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 		if (currentTrigger === trigger) positionPopover(trigger);
 	} catch {
 		await animateHeight(el, () => {
-			renderError();
+			renderError(buffName, isPro);
 			positionPopover(trigger);
 		});
 		if (currentTrigger === trigger) positionPopover(trigger);
