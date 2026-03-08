@@ -1,6 +1,7 @@
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { html } from 'common-tags';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import { AvailableMarketSources, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
 import { CurrencyFormatter, getMarketURL } from './helperfunctions';
 import { fetchMarketComparisonData } from './messaging';
@@ -223,8 +224,9 @@ function positionPopover(trigger: HTMLElement) {
 	el.style.left = `${left}px`;
 }
 
-function buildPopoverHeader(buffName: string, isPro: boolean) {
-	const pricempireUrl = isPro ? getMarketURL({ source: MarketSource.Pricempire, buff_name: buffName }) : '';
+function buildPopoverHeader(buffName: string, { itemStyle, isPro }: { itemStyle?: ItemStyle | undefined; isPro: boolean }) {
+	const phase = itemStyle !== '' && itemStyle !== 'Vanilla' ? itemStyle : undefined;
+	const pricempireUrl = isPro ? getMarketURL({ source: MarketSource.Pricempire, buff_name: buffName, phase }) : '';
 
 	return html`
 		<div class="bf-popover-header">
@@ -255,7 +257,7 @@ function buildPopoverHeader(buffName: string, isPro: boolean) {
 function renderLoading(buffName: string, isPro: boolean) {
 	const el = getPopover();
 	el.innerHTML = html`
-		${buildPopoverHeader(buffName, isPro)}
+		${buildPopoverHeader(buffName, { isPro })}
 		<div class="bf-popover-loading-dots">
 			<span></span>
 			<span></span>
@@ -267,12 +269,12 @@ function renderLoading(buffName: string, isPro: boolean) {
 function renderError(buffName: string, isPro: boolean) {
 	const el = getPopover();
 	el.innerHTML = html`
-		${buildPopoverHeader(buffName, isPro)}
+		${buildPopoverHeader(buffName, { isPro })}
 		<div class="bf-popover-error">Failed to load prices</div>
 	`;
 }
 
-function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, userCurrency: string, currencyRate: number, isPro: boolean): string {
+function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, userCurrency: string, currencyRate: number, isPro: boolean, itemStyle?: ItemStyle | undefined): string {
 	const formatter = CurrencyFormatter(userCurrency, 2, 2);
 
 	type MarketRow = { text: string; logo: string; style: string; source: MarketSource; ask: number; bid: number | undefined };
@@ -304,7 +306,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 	const allRows = [...primaryRows, ...otherRows];
 	if (allRows.length === 0) {
 		return html`
-			${buildPopoverHeader(buffName, isPro)}
+			${buildPopoverHeader(buffName, { itemStyle, isPro })}
 			<div class="bf-popover-loading">No prices available</div>
 		`;
 	}
@@ -322,8 +324,8 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 								<span>${row.text}</span>
 							</div>
 						</td>
-						${showBidColumn ? html`<td class="bf-popover-bid">${row.bid ? formatter.format(row.bid / currencyRate / 100) : '-'}</td>` : ''}
-						<td class="bf-popover-ask">${formatter.format(row.ask / currencyRate / 100)}</td>
+						${showBidColumn ? html`<td class="bf-popover-bid">${row.bid ? formatter.format((row.bid * currencyRate) / 100) : '-'}</td>` : ''}
+						<td class="bf-popover-ask">${formatter.format((row.ask * currencyRate) / 100)}</td>
 					</tr>
 				`
 			)
@@ -332,7 +334,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 	const hasBothSections = primaryRows.length > 0 && otherRows.length > 0;
 
 	return html`
-		${buildPopoverHeader(buffName, isPro)}
+		${buildPopoverHeader(buffName, { itemStyle, isPro })}
 		<table class="bf-popover-table">
 			<thead>
 				<tr>
@@ -351,10 +353,12 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 }
 
 function buildFreeHtml(source: MarketSource, buffName: string, priceListing: number | undefined, priceOrder: number | undefined, userCurrency: string): string {
+	const popoverHeader = buildPopoverHeader(buffName, { isPro: false });
+
 	const marketInfo = AvailableMarketSources.find((m) => m.source === source);
 	if (!marketInfo || (!priceListing && !priceOrder)) {
 		return html`
-			${buildPopoverHeader(buffName, false)}
+			${popoverHeader}
 			<div class="bf-popover-loading">No prices available</div>
 		`;
 	}
@@ -363,7 +367,7 @@ function buildFreeHtml(source: MarketSource, buffName: string, priceListing: num
 	const showBidColumn = marketInfo.hasBid && priceOrder !== undefined;
 
 	return html`
-		${buildPopoverHeader(buffName, false)}
+		${popoverHeader}
 		<table class="bf-popover-table">
 			<thead>
 				<tr>
@@ -392,6 +396,7 @@ function buildFreeHtml(source: MarketSource, buffName: string, priceListing: num
 type ShowPopoverOptions = {
 	trigger: HTMLElement;
 	buffName: string;
+	itemStyle?: ItemStyle | undefined;
 	userCurrency: string;
 	currencyRate: number;
 	isPro: boolean;
@@ -400,7 +405,7 @@ type ShowPopoverOptions = {
 	priceOrder?: number;
 };
 
-async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPro, source, priceListing, priceOrder }: ShowPopoverOptions) {
+async function showPopover({ trigger, buffName, itemStyle, userCurrency, currencyRate, isPro, source, priceListing, priceOrder }: ShowPopoverOptions) {
 	const el = getPopover();
 	currentTrigger = trigger;
 
@@ -459,7 +464,7 @@ async function showPopover({ trigger, buffName, userCurrency, currencyRate, isPr
 	}
 
 	try {
-		const newHtml = buildDataHtml(data, buffName, userCurrency, currencyRate, isPro);
+		const newHtml = buildDataHtml(data, buffName, userCurrency, currencyRate, isPro, itemStyle);
 		await animateHeight(el, () => {
 			el.innerHTML = newHtml;
 			// The loaded table is often taller than the loading state, so re-evaluate placement immediately.
@@ -500,6 +505,7 @@ export function attachMarketPopover(el: HTMLElement, options: { isPro: boolean; 
 				showPopover({
 					trigger: el,
 					buffName,
+					itemStyle: parsed.itemStyle,
 					userCurrency,
 					currencyRate: options.currencyRate,
 					isPro: options.isPro,

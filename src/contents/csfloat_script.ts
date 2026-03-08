@@ -445,7 +445,7 @@ export async function adjustOfferContainer(container: Element) {
 	header?.insertAdjacentHTML('beforeend', buffContainer);
 
 	const buffA = container.querySelector('.betterfloat-buff-a');
-	buffA?.setAttribute('data-betterfloat', JSON.stringify({ buff_name: itemName, priceOrder, priceListing, userCurrency, itemName, priceFromReference, source }));
+	buffA?.setAttribute('data-betterfloat', JSON.stringify({ buff_name: itemName, phase: itemStyle, priceOrder, priceListing, userCurrency, itemName, priceFromReference, source }));
 
 	if (buffA instanceof HTMLElement) {
 		const { currencyRate } = await getCurrencyRate();
