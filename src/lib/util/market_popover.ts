@@ -2,6 +2,7 @@ import betterfloatLogo from 'data-base64:~/../assets/icon.png';
 import { html } from 'common-tags';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
+import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
 import { CurrencyFormatter, getMarketURL } from './helperfunctions';
 import { fetchMarketComparisonData } from './messaging';
@@ -274,10 +275,10 @@ function renderError(buffName: string, isPro: boolean) {
 	`;
 }
 
-function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, userCurrency: string, currencyRate: number, isPro: boolean, itemStyle?: ItemStyle | undefined): string {
+async function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, userCurrency: string, currencyRate: number, isPro: boolean, itemStyle?: ItemStyle | undefined): Promise<string> {
 	const formatter = CurrencyFormatter(userCurrency, 2, 2);
 
-	type MarketRow = { text: string; logo: string; style: string; source: MarketSource; ask: number; bid: number | undefined };
+	type MarketRow = { text: string; logo: string; style: string; source: MarketSource; ask: number; bid: number | undefined; id: string | number | undefined };
 
 	const PRIMARY_MARKETS = new Set([MarketSource.Buff, MarketSource.YouPin, MarketSource.CSFloat]);
 
@@ -285,6 +286,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 	const otherRows: MarketRow[] = [];
 	for (const marketInfo of AvailableMarketSources) {
 		const entry = data[marketInfo.source];
+		const id = await getMarketID(buffName, marketInfo.source);
 		if (!entry || !entry.ask) continue;
 		const row: MarketRow = {
 			text: marketInfo.text,
@@ -293,6 +295,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 			source: marketInfo.source,
 			ask: entry.ask,
 			bid: entry.bid ? entry.bid : undefined,
+			id,
 		};
 		if (PRIMARY_MARKETS.has(marketInfo.source)) {
 			primaryRows.push(row);
@@ -317,7 +320,7 @@ function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, user
 		rows
 			.map(
 				(row) => html`
-					<tr data-href="${getMarketURL({ source: row.source, buff_name: buffName })}">
+					<tr data-href="${getMarketURL({ source: row.source, buff_name: buffName, market_id: row.id })}">
 						<td>
 							<div class="bf-popover-market-cell">
 								<img src="${row.logo}" style="${row.style}" />
@@ -464,7 +467,7 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 	}
 
 	try {
-		const newHtml = buildDataHtml(data, buffName, userCurrency, currencyRate, isPro, itemStyle);
+		const newHtml = await buildDataHtml(data, buffName, userCurrency, currencyRate, isPro, itemStyle);
 		await animateHeight(el, () => {
 			el.innerHTML = newHtml;
 			// The loaded table is often taller than the loading state, so re-evaluate placement immediately.

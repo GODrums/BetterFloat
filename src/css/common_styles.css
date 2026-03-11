@@ -27,7 +27,7 @@
 		0 8px 32px rgba(0, 0, 0, 0.45),
 		0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 	max-height: 360px;
-	overflow-y: auto;
+	overflow: hidden auto;
 	font-size: 12px;
 	color: var(--primary-text-color, white);
 	transform-origin: top center;
@@ -199,8 +199,7 @@
 }
 
 .bf-popover-loading-dots {
-	width: 100%;
-	display: inline-flex;
+	display: flex;
 	gap: 4px;
 	justify-content: center;
 	padding: 14px 24px;
