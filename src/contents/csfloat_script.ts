@@ -1828,7 +1828,7 @@ function addListingAge(container: Element, listing: CSFloat.ListingData, isPopou
 }
 
 async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
-	if (!apiItem.item?.stickers) return;
+	if (!apiItem.item?.stickers && !apiItem.item?.keychains) return;
 
 	// quality 12 is souvenir
 	if (apiItem.item?.quality === 12) {
@@ -1837,9 +1837,10 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 		return;
 	}
 
-	let csfSP = container.querySelector('.sticker-percentage');
-	if (!csfSP) {
-		const newContainer = html`
+	if (apiItem.item?.stickers) {
+		let csfSP = container.querySelector('.sticker-percentage');
+		if (!csfSP) {
+			const newContainer = html`
 			<div class="mat-mdc-tooltip-trigger sticker-percentage" style="padding: 5px;
 				background-color: #0003;
 				border-radius: 5px;
@@ -1850,18 +1851,20 @@ async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, 
 				margin-bottom: 4px;">
 			</div>
 		`;
-		container.querySelector('.sticker-container')?.insertAdjacentHTML('afterbegin', newContainer);
-		csfSP = container.querySelector('.sticker-percentage');
-	}
-	if (csfSP) {
-		let difference = price_difference;
-		// auctions without a bid
-		if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
-			difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
+			container.querySelector('.sticker-container')?.insertAdjacentHTML('afterbegin', newContainer);
+			csfSP = container.querySelector('.sticker-percentage');
 		}
-		const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
-		if (!didChange) {
-			csfSP.remove();
+
+		if (csfSP) {
+			let difference = price_difference;
+			// auctions without a bid
+			if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
+				difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
+			}
+			const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
+			if (!didChange) {
+				csfSP.remove();
+			}
 		}
 	}
 
@@ -1883,6 +1886,7 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 	for (let i = 0; i < stickerContainers.length; i++) {
 		const stickerContainer = stickerContainers[i];
 		const stickerData = data[i];
+		console.log(stickerContainer, stickerData);
 		if (!stickerData) continue;
 
 		stickerContainer.addEventListener('click', async () => {
