@@ -412,8 +412,14 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 	const el = getPopover();
 	currentTrigger = trigger;
 
+	let buff_name = buffName;
+
+	if (itemStyle && itemStyle !== 'Vanilla') {
+		buff_name += ` - ${itemStyle}`;
+	}
+
 	if (!isPro && source && (priceListing || priceOrder)) {
-		el.innerHTML = buildFreeHtml(source, buffName, priceListing, priceOrder, userCurrency);
+		el.innerHTML = buildFreeHtml(source, buff_name, priceListing, priceOrder, userCurrency);
 		try {
 			el.showPopover();
 		} catch {
@@ -424,7 +430,7 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 		return;
 	}
 
-	renderLoading(buffName, isPro);
+	renderLoading(buff_name, isPro);
 
 	try {
 		el.showPopover();
@@ -438,17 +444,17 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 
 	let data: Extension.APIMarketResponse | undefined;
 	// Check cache
-	const cached = cache.get(buffName);
+	const cached = cache.get(buff_name);
 	if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
 		data = cached.data;
 	} else {
-		const response = await fetchMarketComparisonData(buffName, false);
+		const response = await fetchMarketComparisonData(buff_name, false);
 		if (response?.data) {
 			data = response.data;
-			cache.set(buffName, { data: response.data, timestamp: Date.now() });
+			cache.set(buff_name, { data: response.data, timestamp: Date.now() });
 		} else {
 			const resizeAnimation = animateHeight(el, () => {
-				renderError(buffName, isPro);
+				renderError(buff_name, isPro);
 				positionPopover(trigger);
 			});
 			await resizeAnimation;
