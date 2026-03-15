@@ -20,7 +20,6 @@ import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import SkbAutorefresh from '~lib/inline/SkbAutorefresh';
 import SkbBargainButtons from '~lib/inline/SkbBargainButtons';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
-import SpMarketComparison from '~lib/inline/SpMarketComparison';
 import SpNotifications from '~lib/inline/SpNotifications';
 import UpdatePopup from '~lib/inline/UpdatePopup';
 import { EVENT_URL_CHANGED } from '~lib/util/globals';
@@ -41,8 +40,6 @@ export function urlHandler() {
 				createLiveLink();
 				if (state.path === '/market' && state.search.includes('sort=date&order=desc')) {
 					filterDisplay();
-				} else if (state.path.startsWith('/item/')) {
-					mountSpMarketComparison();
 				}
 			} else if (state.site === 'lis-skins.com') {
 				if (state.path.includes('/market/csgo/')) {
@@ -283,10 +280,6 @@ async function handleSkinportChange(state: Extension.URLState) {
 		});
 	}
 
-	if (state.path.startsWith('/item/')) {
-		await mountSpMarketComparison();
-	}
-
 	if (state.path === '/sell/steam') {
 		removeSkinportExtensionWarning();
 	}
@@ -445,67 +438,6 @@ async function mountLisMarketComparison() {
 				clearInterval(interval);
 			}
 		}, 1000);
-	}
-}
-
-let mountingSpMarketComparison: string | null = null;
-
-async function mountSpMarketComparison() {
-	const showMarketComparison = await ExtensionStorage.sync.get<boolean>('sp-marketcomparison');
-	if (!showMarketComparison) {
-		return;
-	}
-
-	let suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
-	while (!suggestedPrice || !suggestedPrice.textContent) {
-		await new Promise((resolve) => setTimeout(resolve, 100));
-		suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-row .ItemPage-suggested');
-		if (!suggestedPrice) {
-			suggestedPrice = document.querySelector<HTMLElement>('.ItemPage-suggestedPrice');
-		}
-		let waitCounter = 0;
-		if (waitCounter++ > 50) {
-			console.warn('[BetterFloat] mountSpMarketComparison: Timeout waiting for suggested price element.');
-			return;
-		}
-	}
-
-	if (mountingSpMarketComparison === location.href) {
-		return;
-	}
-	mountingSpMarketComparison = location.href;
-
-	if (suggestedPrice && !document.querySelector('betterfloat-market-comparison')) {
-		const leftColumn = document.querySelector<HTMLElement>('.ItemPage-column--left');
-		const rightColumn = document.querySelector<HTMLElement>('.ItemPage-column--right');
-		const itemPageInfo = suggestedPrice.closest<HTMLElement>('.ItemPage-info');
-
-		if (leftColumn && rightColumn && itemPageInfo) {
-			leftColumn.style.width = '55%';
-			rightColumn.style.width = '45%';
-			itemPageInfo.classList.add('betterfloat-itempage-info');
-
-			const { root } = await mountShadowRoot(<SpMarketComparison />, {
-				tagName: 'betterfloat-market-comparison',
-				parent: itemPageInfo,
-				position: 'after',
-			});
-			const rootContainer = document.querySelector<HTMLElement>('betterfloat-market-comparison');
-			if (rootContainer) {
-				rootContainer.style.backgroundColor = '#2b2f30';
-				const interval = createUrlListener((url) => {
-					if (!url.pathname.startsWith('/item/')) {
-						root.unmount();
-						rootContainer.remove();
-						leftColumn.style.width = '';
-						rightColumn.style.width = '';
-						clearInterval(interval);
-					}
-				}, 1000);
-			}
-		} else {
-			console.error('[BetterFloat] mountSpMarketComparison: Could not find required page elements (columns or info container).');
-		}
 	}
 }
 

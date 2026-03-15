@@ -218,6 +218,7 @@ html {
 }
 
 .betterfloat-big-a {
+	width: fit-content;
 	gap: 0.375rem;
 }
 

@@ -104,16 +104,16 @@ export namespace CSFloat {
 		};
 
 		export type SingleSchema = {
-			collection: string;
+			collections?: string[];
 			image: string;
 			index: number;
 			max: number;
 			min: number;
 			rarity: number;
 			name: string;
-			normal_prices: number[];
-			normal_volume: number[];
-			souvenir: boolean;
+			normal_prices?: number[];
+			normal_volume?: number[];
+			souvenir?: boolean;
 		};
 	}
 

@@ -1886,7 +1886,6 @@ function addStickerLinks(container: Element, item: CSFloat.Item) {
 	for (let i = 0; i < stickerContainers.length; i++) {
 		const stickerContainer = stickerContainers[i];
 		const stickerData = data[i];
-		console.log(stickerContainer, stickerData);
 		if (!stickerData) continue;
 
 		stickerContainer.addEventListener('click', async () => {
