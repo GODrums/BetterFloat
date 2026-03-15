@@ -222,8 +222,7 @@ async function applyMutation() {
 						className.includes('SellPage-item')
 					) {
 						await adjustItem(addedNode);
-					} else if (className.includes('ItemPage')) {
-						// await adjustItemPage(addedNode);
+					} else if (className === 'ItemPage') {
 						await adjustItem(addedNode, itemSelectors.page);
 					} else if (className.includes('PopularList')) {
 						await handlePopularList(addedNode);
@@ -308,8 +307,8 @@ async function adjustItem(container: Element, selector: ItemSelectors = itemSele
 			itemRating.remove();
 		}
 
-		// wait until document title has loaded, which we use to get the item name
-		while (document.title.startsWith('Skinport')) {
+		// wait until the page has actually loaded
+		while (!document.querySelector(selector.alt)) {
 			await delay(100);
 		}
 	}
