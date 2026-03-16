@@ -987,7 +987,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 		if (buffElement) {
 			attachMarketPopover(buffElement, {
 				isPro: isUserPro(extensionSettings['user']),
-				currencyRate: await getSpUserCurrencyRate(extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport'),
+				currencyRate: await getSpUserCurrencyRate(Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport'),
 			});
 		}
 	}

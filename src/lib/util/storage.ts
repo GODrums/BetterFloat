@@ -104,7 +104,6 @@ export const DEFAULT_SETTINGS = {
 	'sp-enable': true,
 	'sp-stickerprices': true,
 	'sp-csbluegem': true,
-	'sp-marketcomparison': true,
 	'sp-pricingsource': 'buff',
 	'sp-altmarket': 'none',
 	'sp-pricereference': 0,
