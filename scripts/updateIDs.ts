@@ -1,13 +1,10 @@
-#!/usr/bin/env -S deno run --allow-read --allow-write --allow-net scripts/updateIDs.ts
-
 /**
  * This script updates the marketids.json file with missing entries from cs2_marketplaceids.json
  * It fetches the latest IDs from GitHub, compares them with the local marketids.json,
  * and adds missing entries to marketids.json
+ *
+ * Run with: bun run scripts/updateIDs.ts
  */
-
-// Add Deno namespace reference
-/// <reference lib="deno.ns" />
 
 // Define the paths to the JSON files
 const MARKET_IDS_PATH = './assets/marketids.json';
@@ -48,15 +45,14 @@ async function main() {
 
 	try {
 		// Check if local marketids.json exists
-		try {
-			await Deno.stat(MARKET_IDS_PATH);
-		} catch {
+		const file = Bun.file(MARKET_IDS_PATH);
+		if (!(await file.exists())) {
 			throw new Error(`File not found: ${MARKET_IDS_PATH}`);
 		}
 
 		// Read local marketids.json file
 		console.log(`Reading ${MARKET_IDS_PATH}...`);
-		const marketIDsText = await Deno.readTextFile(MARKET_IDS_PATH);
+		const marketIDsText = await file.text();
 		const marketIDs = JSON.parse(marketIDsText) as MarketIDMapping;
 
 		// Fetch the latest CS2 marketplace IDs from GitHub
@@ -122,9 +118,9 @@ async function main() {
 		console.log(`Added ${addedCount} new entries`);
 		console.log(`Updated ${updatedCount} existing entries`);
 
-		// Write the updated data back to the file using Deno.writeTextFile
+		// Write the updated data back to the file
 		console.log(`Writing updated data to ${OUTPUT_PATH}...`);
-		await Deno.writeTextFile(OUTPUT_PATH, JSON.stringify(marketIDs, null, 2));
+		await Bun.write(OUTPUT_PATH, JSON.stringify(marketIDs, null, 2));
 
 		console.log('Update completed successfully!');
 	} catch (error) {
