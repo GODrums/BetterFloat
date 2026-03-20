@@ -115,7 +115,7 @@ async function adjustItem(container: Element, state: PageState) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
 		item = getAPIItem(container, state);
 	}
-	console.log('[BetterFloat] Avanmarket item:', item);
+	// console.log('[BetterFloat] Avanmarket item:', item);
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -234,7 +234,7 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 
 			(footerContainer.firstElementChild as HTMLElement).style.whiteSpace = 'nowrap';
 
-			(container as HTMLElement).style.height = '350px';
+			(container as HTMLElement).style.height = '270px';
 		} else if (state === PageState.Inventory) {
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		}
