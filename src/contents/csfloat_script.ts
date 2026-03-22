@@ -838,6 +838,8 @@ async function adjustItem(container: Element, insertType = INSERT_TYPE.NONE) {
 
 			if (extensionSettings['csf-removeclustering']) {
 				CSFloatHelpers.removeClustering(container);
+			} else if (extensionSettings['csf-sellerstatistics']) {
+				addSellerDetails(container, apiItem);
 			}
 
 			addBargainListener(container);
@@ -896,6 +898,36 @@ async function adjustItem(container: Element, insertType = INSERT_TYPE.NONE) {
 		addBargainListener(container);
 		addCartListener(container, item);
 	}
+}
+
+function addSellerDetails(container: Element, apiItem: CSFloat.ListingData) {
+	const sellerDetails = container.querySelector('div.seller-details');
+	const seller = apiItem.seller;
+	if (!sellerDetails || !seller) return;
+
+	const sellerStatusText = sellerDetails.querySelector<HTMLElement>('.text');
+	if (!sellerStatusText) return;
+
+	sellerStatusText.classList.add('hint--bottom', 'hint--rounded', 'hint--no-arrow');
+
+	if (seller.statistics.total_trades === 0) {
+		sellerStatusText.textContent = '0 (0%)';
+		sellerStatusText.style.color = 'var(--subtext-color)';
+		sellerStatusText.setAttribute('aria-label', 'No trades yet');
+		return;
+	}
+
+	const percentage = new Decimal(seller.statistics.total_verified_trades).div(seller.statistics.total_trades).mul(100).toDP(0);
+	sellerStatusText.textContent = `${seller.statistics.total_verified_trades} (${percentage.toFixed(0)}%)`;
+
+	const getColoring = (percentage: number) => {
+		if (percentage > 85) return 'rgb(100, 236, 66)';
+		if (percentage > 60) return '#ff8100';
+		return 'rgb(255, 66, 66)';
+	};
+
+	sellerStatusText.style.color = getColoring(percentage.toNumber());
+	sellerStatusText.setAttribute('aria-label', `Total verified trades: ${seller.statistics.total_verified_trades} \n Success rate: ${percentage.toFixed(0)}%`);
 }
 
 function adjustActionButtons(container: Element, item: CSFloat.Item) {

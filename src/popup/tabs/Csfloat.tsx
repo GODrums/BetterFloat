@@ -4,6 +4,7 @@ import {
 	CSFloatSellSymbol,
 	IcOutlineDiscount,
 	IcRoundAccessTime,
+	MaterialSymbolsAreaChartOutlineRounded,
 	MaterialSymbolsAvgTimeOutlineRounded,
 	MaterialSymbolsImageOutlineRounded,
 	MaterialSymbolsTravelExplore,
@@ -97,11 +98,19 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox
+							id="csf-sellerstatistics"
+							text="Show Seller Statistics"
+							tooltipText="Display the total number of trades and the success rate of a seller in the item card. Mutually exclusive with 'Remove Preview Clustering'."
+							icon={<MaterialSymbolsAreaChartOutlineRounded className="h-6 w-6 text-[#888888]" />}
+							isNew
+						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsCheckbox
 							id="csf-buyorderpercentage"
 							text="Show Buy Order Percentage"
 							tooltipText="Same as 'Show Price Percentage Difference' but for buy orders."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
-							isNew
 						/>
 					</SettingsCard>
 				</div>

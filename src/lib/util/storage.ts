@@ -98,6 +98,7 @@ export const DEFAULT_SETTINGS = {
 	'csf-floatcoloring': true,
 	'csf-removeclustering': false,
 	'csf-showbargainprice': true,
+	'csf-sellerstatistics': true,
 	'csf-buyorderpercentage': true,
 	'csf-profitpercentage': 100,
 	'csf-actions': CSF_DEFAULT_ACTIONS,
