@@ -6,7 +6,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
-	cacheCSFInventory,
+	fetchAndStoreCSFInventory,
 	getCSFAllBuyOrders,
 	getCSFCurrencyRate,
 	getCSFHistoryGraph,
@@ -795,8 +795,7 @@ async function adjustItem(container: Element, insertType = INSERT_TYPE.NONE) {
 		}
 
 		if (!apiItem && location.pathname === '/sell') {
-			const csfInventory = (await fetch('https://csfloat.com/api/v1/me/inventory', { method: 'GET' }).then((r) => r.json())) as CSFloat.InventoryReponse;
-			cacheCSFInventory(csfInventory);
+			await fetchAndStoreCSFInventory();
 			apiItem = getApiItem();
 		}
 

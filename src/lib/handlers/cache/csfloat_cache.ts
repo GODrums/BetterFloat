@@ -6,7 +6,7 @@ type CSFloatAPIStorage = {
 	items: Queue<CSFloat.ListingData>;
 	popupItem: CSFloat.ListingData | null;
 	similarItems: Queue<CSFloat.ListingData>;
-	inventory: CSFloat.Item[];
+	inventory: Record<string, CSFloat.Item[]>;
 	historyGraph: CSFloat.HistoryGraphData[];
 	historySales: Queue<CSFloat.HistorySalesData>;
 	buyOrders: Queue<CSFloat.BuyOrderData>;
@@ -25,7 +25,7 @@ const CSFLOAT_API_DATA: CSFloatAPIStorage = {
 	// similar item section of item popup
 	similarItems: new Queue<CSFloat.ListingData>(),
 	// user inventory
-	inventory: [],
+	inventory: {},
 	// sales graph of item popup
 	historyGraph: [],
 	// latest sales of item popup
@@ -82,7 +82,12 @@ export function cacheCSFSimilarItems(data: CSFloat.ListingData[]) {
 }
 
 export function cacheCSFInventory(data: CSFloat.Item[]) {
-	CSFLOAT_API_DATA.inventory = data;
+	for (const item of data) {
+		if (!CSFLOAT_API_DATA.inventory[item.item_name]) {
+			CSFLOAT_API_DATA.inventory[item.item_name] = [];
+		}
+		CSFLOAT_API_DATA.inventory[item.item_name].push(item);
+	}
 }
 
 export function cacheCSFExchangeRates(data: CSFloat.ExchangeRates) {
@@ -144,7 +149,7 @@ export function getSpecificCSFOffer(index: number) {
 }
 
 export function getSpecificCSFInventoryItem(item_name: string, float?: number) {
-	return CSFLOAT_API_DATA.inventory.find((item) => item.item_name === item_name && (!float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float)));
+	return CSFLOAT_API_DATA.inventory[item_name].find((item) => !float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float));
 }
 
 async function fetchCSFCurrencyRates() {
@@ -155,4 +160,18 @@ async function fetchCSFCurrencyRates() {
 			localStorage.setItem('currency_rates', JSON.stringify(data.data));
 			cacheCSFExchangeRates(data);
 		});
+}
+
+let csfInventoryFetchPromise: Promise<boolean> | null = null;
+
+export async function fetchAndStoreCSFInventory(): Promise<boolean> {
+	if (Object.keys(CSFLOAT_API_DATA.inventory).length > 0) return true;
+	if (csfInventoryFetchPromise) return await csfInventoryFetchPromise;
+	csfInventoryFetchPromise = fetch('https://csfloat.com/api/v1/me/inventory', { method: 'GET' })
+		.then((response) => response.json() as Promise<CSFloat.InventoryReponse>)
+		.then((data) => {
+			cacheCSFInventory(data);
+			return true;
+		});
+	return await csfInventoryFetchPromise;
 }
