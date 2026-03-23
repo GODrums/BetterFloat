@@ -29,7 +29,7 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 	}
 	lastRequest[source] = Date.now();
 	console.log('[BetterFloat] Refreshing prices from source:', source);
-	const pricesURL = `prices${source !== 'buff' ? `_${source}` : ''}`;
+	const pricesURL = `prices${source !== 'buff' ? `_${source.toLowerCase()}` : ''}`;
 
 	// for self builds, make sure to use your own API
 	const response = await fetch(`${process.env.PLASMO_PUBLIC_PRICINGAPI}${pricesURL}.json`, {

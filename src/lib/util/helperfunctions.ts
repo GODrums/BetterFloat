@@ -58,14 +58,6 @@ export function getBuffLink(buff_id: number, phase?: DopplerPhase | null) {
 	return baseUrl;
 }
 
-export async function formFetch<T>(url: string, body: string): Promise<T> {
-	return fetch(url, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: encodeURI(body),
-	}).then((response) => response.json() as Promise<T>);
-}
-
 export async function delay(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }

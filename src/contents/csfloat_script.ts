@@ -2162,7 +2162,8 @@ async function addBuffPrice(item: CSFloat.FloatItem, container: Element, insertT
 		(source === MarketSource.C5Game && priceListing) ||
 		(source === MarketSource.YouPin && priceListing) ||
 		(source === MarketSource.CSFloat && priceListing) ||
-		(source === MarketSource.CSMoney && priceListing);
+		(source === MarketSource.CSMoney && priceListing) ||
+		(source === MarketSource.Marketcsgo && priceListing);
 
 	if (priceContainer && !container.querySelector('.betterfloat-buffprice') && insertType !== INSERT_TYPE.SIMILAR && itemExists) {
 		const buffContainer = generatePriceLine({

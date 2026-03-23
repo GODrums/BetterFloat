@@ -1,7 +1,8 @@
 import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
 import { useStorage } from '@plasmohq/storage/hook';
-import type { SVGProps } from 'react';
-import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
+import { AnimatePresence, motion } from 'framer-motion';
+import { type SVGProps, useState } from 'react';
+import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_MARKETCSGO, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
@@ -35,23 +36,44 @@ const SingleMarket = ({ text, logo, onClick, active = false }: { text: string; l
 	);
 };
 
+function ExpandIcon(props: SVGProps<SVGSVGElement>) {
+	return (
+		<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" {...props}>
+			<path
+				fill="currentColor"
+				d="M12 16q-.15 0-.288-.05t-.262-.15l-4.8-4.8q-.275-.275-.275-.7t.275-.7t.7-.275t.7.275L12 13.55l3.95-3.95q.275-.275.7-.275t.7.275t.275.7t-.275.7l-4.8 4.8q-.125.1-.263.15T12 16"
+			/>
+		</svg>
+	);
+}
+
 export type SourceInfo = {
 	text: string;
 	logo: string;
 	source: MarketSource;
 };
 
+const VISIBLE_COUNT = 5;
+
 export const SettingsSource = ({ prefix }: { prefix: string }) => {
 	const [source, setSource] = useStorage(`${prefix}-pricingsource`, (s) => (s === undefined ? MarketSource.Buff : s));
+	const [expanded, setExpanded] = useState(false);
 
 	const sources: SourceInfo[] = [
 		{ text: 'Buff163', logo: ICON_BUFF, source: MarketSource.Buff },
 		{ text: 'Steam', logo: steamLogo, source: MarketSource.Steam },
 		{ text: 'YouPin / UU', logo: ICON_YOUPIN, source: MarketSource.YouPin },
-		{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
 		{ text: 'CSFloat', logo: ICON_CSFLOAT, source: MarketSource.CSFloat },
 		{ text: 'CSMoney', logo: ICON_CSMONEY, source: MarketSource.CSMoney },
+		{ text: 'C5Game', logo: ICON_C5GAME, source: MarketSource.C5Game },
+		{ text: 'MarketCSGO', logo: ICON_MARKETCSGO, source: MarketSource.Marketcsgo },
 	];
+
+	const visibleSources = sources.slice(0, VISIBLE_COUNT);
+	const overflowSources = sources.slice(VISIBLE_COUNT);
+	// If the active source is in the overflow, always show expanded
+	const hasActiveInOverflow = overflowSources.some((s) => s.source === source);
+	const showOverflow = expanded || hasActiveInOverflow;
 
 	return (
 		<Card className="shadow-md border-muted mx-1">
@@ -70,12 +92,34 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 						</Button>
 					</SettingsTooltip>
 				</div>
-				<div className="w-full flex justify-evenly items-center align-middle">
-					{sources.map(({ text, logo, source: singleSource }) => (
+				<div className="w-full flex justify-start items-center">
+					{visibleSources.map(({ text, logo, source: singleSource }) => (
 						<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(singleSource)} active={source === singleSource} />
 					))}
+					<SettingsTooltip text={showOverflow ? 'Show less' : 'Show more'} side="bottom" asChild>
+						<Button variant="ghost" size="icon" className="size-10 p-0 m-0.5 ml-2" onClick={() => setExpanded(!showOverflow)}>
+							<ExpandIcon className={cn('size-8 text-sky-400 transition-transform', showOverflow && 'rotate-180')} />
+						</Button>
+					</SettingsTooltip>
 				</div>
-				{[MarketSource.Buff, MarketSource.Steam].includes(source) && (
+				<AnimatePresence>
+					{showOverflow && (
+						<motion.div
+							initial={{ height: 0, opacity: 0 }}
+							animate={{ height: 'auto', opacity: 1 }}
+							exit={{ height: 0, opacity: 0 }}
+							transition={{ duration: 0.2, ease: 'easeInOut' }}
+							className="overflow-hidden"
+						>
+							<div className="w-full flex justify-start items-center">
+								{overflowSources.map(({ text, logo, source: singleSource }) => (
+									<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(singleSource)} active={source === singleSource} />
+								))}
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+				{[MarketSource.Buff, MarketSource.Steam, MarketSource.Marketcsgo].includes(source) && (
 					<div className="pt-1 px-4">
 						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
 						<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />

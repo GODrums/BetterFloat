@@ -18,7 +18,8 @@ const priceMapping: {
 	steam: Extension.PriceMappingSteam;
 	csfloat: Extension.PriceMappingMisc;
 	csmoney: Extension.PriceMappingMisc;
-} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {}, csmoney: {} };
+	marketCsgo: Extension.PriceMappingMisc;
+} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {}, csmoney: {}, marketCsgo: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 
@@ -127,7 +128,7 @@ export async function loadMapping(source: MarketSource) {
 	if (Object.keys(priceMapping[source]).length === 0) {
 		console.debug(`[BetterFloat] Attempting to load ${source} price mapping from local storage`);
 
-		const sourceName = source !== MarketSource.Buff ? `prices_${source}` : 'prices';
+		const sourceName = source !== MarketSource.Buff ? `prices_${source.toLowerCase()}` : 'prices';
 		const data = await chrome.storage.local.get(sourceName);
 		if (data?.[sourceName]) {
 			priceMapping[source] = JSON.parse(data[sourceName]);

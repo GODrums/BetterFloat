@@ -47,7 +47,7 @@ export function generatePriceLine({
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const bfDataAttribute = JSON.stringify({ buff_name, itemStyle, priceFromReference, priceListing, priceOrder, userCurrency, source }).replace(/'/g, '&#39;');
 
-	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && hasPro);
+	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat, MarketSource.Marketcsgo].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
 			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom  hint--rounded ${tooltipArrow ? '' : 'hint--no-arrow'}" 
