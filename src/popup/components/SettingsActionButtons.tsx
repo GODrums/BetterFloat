@@ -1,4 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { motion } from 'framer-motion';
 import type { SVGProps } from 'react';
 import { CSF_DEFAULT_ACTIONS, type CSFActionType } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -106,7 +107,9 @@ const SingleActionButton = ({
 	return (
 		<SettingsTooltip text={text} side="bottom" asChild>
 			<Button variant="ghost" size="icon" className={cn('size-8 p-0', active && 'bg-neutral-800 ring-[0.5px] ring-neutral-600')} onClick={onClick} disabled={disabled}>
-				{logo({ className: cn('size-7 rounded-lg', active && '') })}
+				<motion.div animate={active ? { scale: [1.2, 1] } : { scale: 1 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
+					{logo({ className: cn('size-7 rounded-lg') })}
+				</motion.div>
 			</Button>
 		</SettingsTooltip>
 	);

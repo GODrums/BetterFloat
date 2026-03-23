@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
-import type { ReactElement, SVGProps } from 'react';
+import { type ReactElement, type SVGProps, useCallback, useState } from 'react';
 import { cn, toast } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
@@ -31,9 +31,18 @@ export function MaterialSymbolsDisabledByDefaultOutline(props: SVGProps<SVGSVGEl
 
 export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew = false, isPro = false }: CheckboxProps) => {
 	const [checked, setChecked] = useStorage(id);
+	const [highlighted, setHighlighted] = useState(false);
+
+	const onToggle = useCallback(() => {
+		setHighlighted(true);
+		setTimeout(() => setHighlighted(false), 600);
+		toast({
+			description: 'Please refresh the website for changes to come into effect!',
+		});
+	}, []);
 
 	return (
-		<div className={cn('flex justify-between items-center align-middle gap-4', disabled && 'opacity-50 cursor-not-allowed')}>
+		<div className={cn('flex justify-between items-center align-middle gap-4 rounded-md transition-colors duration-500', disabled && 'opacity-50 cursor-not-allowed', highlighted && 'bg-accent/20')}>
 			<div className="flex items-center gap-2">
 				{icon}
 				<Label htmlFor={id} className="text-balance leading-5">
@@ -61,11 +70,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 					id={id}
 					checked={checked}
 					onCheckedChange={setChecked}
-					onClick={() => {
-						toast({
-							description: 'Please refresh the website for changes to come into effect!',
-						});
-					}}
+					onClick={onToggle}
 					disabled={disabled}
 				/>
 			</div>

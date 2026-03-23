@@ -53,6 +53,14 @@ export type SourceInfo = {
 	source: MarketSource;
 };
 
+const animateProps = {
+	initial: { height: 0, opacity: 0 },
+	animate: { height: 'auto' as const, opacity: 1 },
+	exit: { height: 0, opacity: 0 },
+	transition: { duration: 0.2, ease: 'easeInOut' as const },
+	className: 'overflow-hidden',
+};
+
 const VISIBLE_COUNT = 5;
 
 export const SettingsSource = ({ prefix }: { prefix: string }) => {
@@ -104,13 +112,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 				</div>
 				<AnimatePresence>
 					{showOverflow && (
-						<motion.div
-							initial={{ height: 0, opacity: 0 }}
-							animate={{ height: 'auto', opacity: 1 }}
-							exit={{ height: 0, opacity: 0 }}
-							transition={{ duration: 0.2, ease: 'easeInOut' }}
-							className="overflow-hidden"
-						>
+						<motion.div {...animateProps}>
 							<div className="w-full flex justify-start items-center">
 								{overflowSources.map(({ text, logo, source: singleSource }) => (
 									<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(singleSource)} active={source === singleSource} />
@@ -119,34 +121,44 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 						</motion.div>
 					)}
 				</AnimatePresence>
-				{[MarketSource.Buff, MarketSource.Steam, MarketSource.Marketcsgo].includes(source) && (
-					<div className="pt-1 px-4">
-						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
-						<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />
-					</div>
-				)}
-				{source === MarketSource.YouPin && (
-					<>
-						<InfoCallout text="YouPin/UU bid prices only available on the Pro plan!" className="text-center my-2" />
-						<div className="px-4">
-							<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
-						</div>
-					</>
-				)}
-				{source === MarketSource.CSFloat && (
-					<div className="pt-1 px-4">
-						<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
-					</div>
-				)}
-				{prefix === 'csf' && source !== MarketSource.Steam && (
-					<div className="pt-1 px-4">
-						<SettingsCheckbox
-							id={`${prefix}-steamsupplement`}
-							text="Supplement with Steam"
-							tooltipText="Adds the respective percentage to the Steam Market ask price to the Steam Market link."
-						/>
-					</div>
-				)}
+				<AnimatePresence mode="wait">
+					{[MarketSource.Buff, MarketSource.Steam, MarketSource.Marketcsgo].includes(source) && (
+						<motion.div key="buff-steam-marketcsgo" {...animateProps}>
+							<div className="pt-1 px-4">
+								<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+								<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />
+							</div>
+						</motion.div>
+					)}
+					{source === MarketSource.YouPin && (
+						<motion.div key="youpin" {...animateProps}>
+							<InfoCallout text="YouPin/UU bid prices only available on the Pro plan!" className="text-center my-2" />
+							<div className="px-4">
+								<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+							</div>
+						</motion.div>
+					)}
+					{source === MarketSource.CSFloat && (
+						<motion.div key="csfloat" {...animateProps}>
+							<div className="pt-1 px-4">
+								<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+				<AnimatePresence>
+					{prefix === 'csf' && source !== MarketSource.Steam && (
+						<motion.div {...animateProps}>
+							<div className="pt-1 px-4">
+								<SettingsCheckbox
+									id={`${prefix}-steamsupplement`}
+									text="Supplement with Steam"
+									tooltipText="Adds the respective percentage to the Steam Market ask price to the Steam Market link."
+								/>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</CardContent>
 		</Card>
 	);
