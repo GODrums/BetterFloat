@@ -42,7 +42,9 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 	}, []);
 
 	return (
-		<div className={cn('flex justify-between items-center align-middle gap-4 rounded-md transition-colors duration-500', disabled && 'opacity-50 cursor-not-allowed', highlighted && 'bg-accent/20')}>
+		<div
+			className={cn('flex justify-between items-center align-middle gap-4 rounded-md transition-colors duration-500', disabled && 'opacity-50 cursor-not-allowed', highlighted && 'bg-accent/20')}
+		>
 			<div className="flex items-center gap-2">
 				{icon}
 				<Label htmlFor={id} className="text-balance leading-5">
@@ -66,13 +68,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				<Checkbox
-					id={id}
-					checked={checked}
-					onCheckedChange={setChecked}
-					onClick={onToggle}
-					disabled={disabled}
-				/>
+				<Checkbox id={id} checked={checked} onCheckedChange={setChecked} onClick={onToggle} disabled={disabled} />
 			</div>
 		</div>
 	);

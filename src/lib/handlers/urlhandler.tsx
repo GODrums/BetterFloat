@@ -1,6 +1,7 @@
 import globalStyle from 'url:~/style.css';
 import { relayMessage } from '@plasmohq/messaging';
 import { createIsolatedElement } from '@webext-core/isolated-element';
+import type { JSX } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
