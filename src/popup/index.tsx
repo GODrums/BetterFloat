@@ -28,7 +28,6 @@ import {
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { SkinBidIcon } from '~popup/components/Icons';
 import { SparklesCore } from '~popup/components/Sparkles';
-import { Toaster } from '~popup/components/Toaster';
 import { About } from '~popup/tabs/About';
 import { BuffMarketSettings } from '~popup/tabs/Buffmarket';
 import { CSFloatSettings } from '~popup/tabs/Csfloat';
@@ -38,6 +37,7 @@ import { SkinbaronSettings } from '~popup/tabs/Skinbaron';
 import { SkinbidSettings } from '~popup/tabs/Skinbid';
 import { SkinportSettings } from '~popup/tabs/Skinport';
 import { Avatar, AvatarFallback, AvatarImage } from '~popup/ui/avatar';
+import { Toaster } from '~popup/ui/sonner';
 import Header from './layout/header';
 import { AvanSettings } from './tabs/Avan';
 import { BitskinsSettings } from './tabs/Bitskins';
@@ -210,7 +210,7 @@ export default function IndexPopup() {
 					<About />
 					<UserProfile user={user} setUser={setUser} />
 				</Tabs>
-				<Toaster />
+				<Toaster theme="dark" position="top-center" richColors duration={2500} />
 			</div>
 		</div>
 	);

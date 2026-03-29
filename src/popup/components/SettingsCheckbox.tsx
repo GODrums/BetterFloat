@@ -1,7 +1,8 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import { type ReactElement, type SVGProps, useCallback, useState } from 'react';
-import { cn, toast } from '~lib/utils';
+import { toast } from 'sonner';
+import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Checkbox } from '~popup/ui/checkbox';
@@ -36,9 +37,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 	const onToggle = useCallback(() => {
 		setHighlighted(true);
 		setTimeout(() => setHighlighted(false), 600);
-		toast({
-			description: 'Please refresh the website for changes to come into effect!',
-		});
+		toast.info('Please refresh the website for changes to come into effect!');
 	}, []);
 
 	return (
