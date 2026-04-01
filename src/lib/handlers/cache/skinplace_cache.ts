@@ -2,17 +2,17 @@ import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 
 const userInventory: { [img: string]: Skinplace.InventoryItem } = {};
 
-const offers: { [img: string]: Skinplace.Offer } = {};
+const marketItems: { [img: string]: Skinplace.GetItem } = {};
 
-export function cacheSkinplaceOffers(data: Skinplace.OffersResponse) {
-	data.list.forEach((offer) => {
-		offers[offer.skin.image] = { ...offer };
+export function cacheSkinplaceMarketItems(data: Skinplace.GetItemsResponse) {
+	data.items.forEach((item) => {
+		marketItems[item.cdn_icon_url] = { ...item };
 	});
 }
 
 export function cacheSkinplaceUserInventory(inventory: Skinplace.InventoryResponse) {
 	inventory.inv.forEach((item) => {
-		userInventory[item.icon_url] = { ...item };
+		userInventory[item.cdn_icon_url] = { ...item };
 	});
 }
 
@@ -20,10 +20,10 @@ export function getSpecificSkinplaceUserItem(imgSrc: string) {
 	return userInventory[imgSrc];
 }
 
-export function getSpecificSkinplaceOffer(imgSrc: string) {
-	return offers[imgSrc];
+export function getSpecificSkinplaceMarketItem(imgSrc: string) {
+	return marketItems[imgSrc];
 }
 
-export function isSkinplaceOffersCacheEmpty() {
-	return Object.keys(offers).length === 0;
+export function isSkinplaceMarketCacheEmpty() {
+	return Object.keys(marketItems).length === 0;
 }

@@ -47,7 +47,7 @@ import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache/skinbaron_cach
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from './cache/skinbid_cache';
 import { cacheSkinflowBotsItems, cacheSkinflowInventoryItems } from './cache/skinflow_cache';
 import { cacheSkinoutItems, cacheSkinoutUserInventory } from './cache/skinout_cache';
-import { cacheSkinplaceOffers, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
+import { cacheSkinplaceMarketItems, cacheSkinplaceUserInventory } from './cache/skinplace_cache';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache/skinport_cache';
 import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache/skinsmonkey_cache';
 import { cacheSkinswapChinaItems, cacheSkinswapItems, cacheSkinswapUserInventory } from './cache/skinswap_cache';
@@ -205,8 +205,8 @@ function processSkinplaceEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 	if (eventData.url.includes('api/market/instant/inventory')) {
 		cacheSkinplaceUserInventory(eventData.data as Skinplace.InventoryResponse);
-	} else if (eventData.url.includes('api/marketplace/offers')) {
-		cacheSkinplaceOffers(eventData.data as Skinplace.OffersResponse);
+	} else if (eventData.url.includes('api/market/get_items')) {
+		cacheSkinplaceMarketItems(eventData.data as Skinplace.GetItemsResponse);
 	}
 }
 

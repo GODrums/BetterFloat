@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getSpecificSkinplaceOffer, getSpecificSkinplaceUserItem, isSkinplaceOffersCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
+import { getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem, isSkinplaceMarketCacheEmpty } from '~lib/handlers/cache/skinplace_cache';
 import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
@@ -67,8 +67,8 @@ function firstLaunch() {
 	setInterval(async () => {
 		if (firstLaunch) {
 			firstLaunch = false;
-			if (location.pathname === '/buy-cs2-skins' && isSkinplaceOffersCacheEmpty()) {
-				console.log('[BetterFloat] Skinplace offers cache is empty, refreshing...');
+			if (location.pathname === '/buy-cs2-skins' && isSkinplaceMarketCacheEmpty()) {
+				console.debug('[BetterFloat] Skinplace cache is empty, refreshing...');
 				document.querySelector<HTMLElement>('button.refresh-button_type_primary')?.click();
 			}
 		}
@@ -107,14 +107,20 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(container: Element, state: PageState): Skinplace.InventoryItem | Skinplace.Offer | null {
+function getImageID(imgSrc: string) {
+	const parts = imgSrc.split('/');
+	return [parts[3], parts[4]].join('/');
+}
+
+function getAPIItem(container: Element, state: PageState): Skinplace.InventoryItem | Skinplace.GetItem | null {
 	if (state === PageState.Market) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.market.image)?.getAttribute('src');
-		const iconUrl = imgSrc?.includes('steamcommunity') ? imgSrc?.split('image/')[1]?.split('/')[0] : imgSrc;
-		return iconUrl ? getSpecificSkinplaceOffer(iconUrl) : null;
+		if (!imgSrc) return null;
+		return getSpecificSkinplaceMarketItem(getImageID(imgSrc));
 	} else if (state === PageState.Inventory) {
-		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.inventory.image)?.getAttribute('src')?.split('image/')[1]?.split('/')[0] ?? '';
-		return getSpecificSkinplaceUserItem(imgSrc) || null;
+		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.inventory.image)?.getAttribute('src');
+		if (!imgSrc) return null;
+		return getSpecificSkinplaceUserItem(getImageID(imgSrc));
 	}
 	return null;
 }
@@ -133,11 +139,11 @@ async function adjustItem(container: Element, state: PageState) {
 	await addBuffPrice(item, container, state);
 }
 
-function isInventoryItem(item: Skinplace.InventoryItem | Skinplace.Offer): item is Skinplace.InventoryItem {
+function isInventoryItem(item: Skinplace.InventoryItem | Skinplace.GetItem): item is Skinplace.InventoryItem {
 	return 'market_hash_name' in item;
 }
 
-async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
 	let footerContainer: Element | null = null;
@@ -147,7 +153,6 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, con
 		footerContainer = container.querySelector(SKINPLACE_SELECTORS.market.priceInfo);
 	}
 
-	const isDoppler = isInventoryItem(item) ? item.market_hash_name.includes('Doppler') : !!item.skin.phase;
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
@@ -162,7 +167,7 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.Offer, con
 			userCurrency: currency.text ?? 'USD',
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
-			isDoppler,
+			isDoppler: !!item.phase,
 			isPopout: false,
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
@@ -231,7 +236,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	`;
 }
 
-async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.Offer) {
+async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem) {
 	let source = (extensionSettings['splace-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -289,22 +294,14 @@ function getUserCurrency() {
 	return localStorage.getItem('currency') || 'USD';
 }
 
-function getItemPrice(item: Skinplace.InventoryItem | Skinplace.Offer): Decimal {
-	return new Decimal(isInventoryItem(item) ? item.price : item.priceMarket);
+function getItemPrice(item: Skinplace.InventoryItem | Skinplace.GetItem): Decimal {
+	return new Decimal(isInventoryItem(item) ? item.price : item.price_market);
 }
 
-function createBuffItem(item: Skinplace.InventoryItem | Skinplace.Offer): { name: string; style: ItemStyle } {
-	const buff_item = {
-		name: isInventoryItem(item) ? item.market_hash_name : item.skin.fullName,
-		style: '' as ItemStyle,
-	};
-	if (isInventoryItem(item) ? item.market_hash_name.includes('Doppler') : !!item.skin.phase) {
-		buff_item.style = (isInventoryItem(item) ? item.phase : item.skin.phase) as ItemStyle;
-		buff_item.name = isInventoryItem(item) ? item.market_hash_name : item.skin.fullName;
-	}
+function createBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem): { name: string; style: ItemStyle } {
 	return {
-		name: buff_item.name,
-		style: buff_item.style,
+		name: item.steam_market_hash_name,
+		style: (item.phase ?? '') as ItemStyle,
 	};
 }
 
