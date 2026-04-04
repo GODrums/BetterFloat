@@ -4,15 +4,15 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinflow } from '~lib/@typings/SkinflowTypes';
-import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { cacheSkinflowInventoryItems, getSkinflowBotsItem, getSkinflowInventoryItem, isSkinflowInventoryEmpty } from '~lib/handlers/cache/skinflow_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getDopplerPhase, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { cacheSkinflowInventoryItems, getSkinflowBotsItem, getSkinflowInventoryItem, isSkinflowInventoryEmpty } from './cache';
 import { activateSkinflowEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -218,7 +218,7 @@ async function getBuffItem(item: Skinflow.Item) {
 	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {

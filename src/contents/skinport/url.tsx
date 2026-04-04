@@ -3,13 +3,14 @@ import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { addMessageRelays, RELAY_CREATE_NOTIFICATION } from '~lib/shared/relay';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 
 export function activateSkinportUrlHandler() {
-	addMessageRelays();
 	registerRuntimeUrlHandler(handleStateChange);
 	void handleStateChange(getCurrentUrlState());
+	addMessageRelays(RELAY_CREATE_NOTIFICATION);
 	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
 }
 

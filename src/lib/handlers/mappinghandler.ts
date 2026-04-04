@@ -3,11 +3,8 @@ import { loadMarketIds } from '~lib/shared/marketids';
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
-import { fetchCurrencyRates } from './networkhandler';
 
 let fetchIDPromise: Promise<void> | null = null;
-// cached currency rates by exchangerate.host: USD -> X
-let realRatesFromUSD: { [currency: string]: number } = {};
 // maps buff_name to buff_id
 let marketIdMapping: Record<string, Partial<Extension.MarketIDEntry>> = {};
 // maps buff_name to prices and more - custom mapping
@@ -22,24 +19,6 @@ const priceMapping: {
 } = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {}, csmoney: {}, marketCsgo: {} };
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
-
-export function cacheRealCurrencyRates(data: { [currency: string]: number }) {
-	if (Object.keys(realRatesFromUSD).length > 0) {
-		console.debug('[BetterFloat] Real currency rates already cached, overwriting old ones: ', realRatesFromUSD);
-	}
-	realRatesFromUSD = data;
-}
-
-export async function getAndFetchCurrencyRate(currency: string) {
-	if (Object.keys(realRatesFromUSD).length === 0) {
-		await fetchCurrencyRates();
-	}
-	return realRatesFromUSD[currency];
-}
-
-export function getRealCurrencyRates() {
-	return realRatesFromUSD;
-}
 
 export async function getPriceMapping(source: MarketSource) {
 	if (Object.keys(priceMapping[source]).length === 0) {

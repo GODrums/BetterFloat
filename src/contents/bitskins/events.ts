@@ -1,7 +1,7 @@
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
-import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from '~lib/handlers/cache/bitskins_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheBitskinsItems, cacheBitskinsPopoutItem } from './cache';
 
 function processBitskinsEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
@@ -11,8 +11,6 @@ function processBitskinsEvent(eventData: EventData<unknown>) {
 		} else if (eventData.url.includes('/get')) {
 			cacheBitskinsPopoutItem(eventData.data as Bitskins.PopoutItem);
 		}
-	} else if (eventData.url.includes('config/currency/get')) {
-		cacheBitskinsCurrencyList(eventData.data as Bitskins.CurrencyList);
 	}
 }
 

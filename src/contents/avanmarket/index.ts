@@ -4,17 +4,17 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from '~lib/handlers/cache/avan_cache';
-import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { initAvan } from '~lib/handlers/history/avan_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
+import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from './cache';
 import { activateAvanmarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -311,7 +311,7 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {

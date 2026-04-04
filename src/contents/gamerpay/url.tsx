@@ -1,12 +1,11 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import GPAutorefresh from '~lib/inline/GPAutorefresh';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function activateGamerpayUrlHandler() {
-	addMessageRelays();
 	registerRuntimeUrlHandler(handleGamerpayChange);
 	void handleGamerpayChange(getCurrentUrlState());
 	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');

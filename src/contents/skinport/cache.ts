@@ -1,6 +1,5 @@
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getRealCurrencyRates } from '../mappinghandler';
-import { fetchCurrencyRates } from '../networkhandler';
+import { fetchCurrencyRates, getRealCurrencyRates } from '~lib/shared/currency';
 
 // skinport: user currency (e.g. EUR)
 let skinportUserCurrency = '';

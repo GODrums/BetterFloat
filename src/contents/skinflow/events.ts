@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinflow } from '~lib/@typings/SkinflowTypes';
-import { cacheSkinflowBotsItems, cacheSkinflowInventoryItems } from '~lib/handlers/cache/skinflow_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSkinflowBotsItems, cacheSkinflowInventoryItems } from './cache';
 
 function processSkinflowEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

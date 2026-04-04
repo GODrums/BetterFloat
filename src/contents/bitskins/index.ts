@@ -4,8 +4,8 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getBitskinsCurrencyRate, getBitskinsPopoutItem, getSpecificBitskinsItem } from '~lib/handlers/cache/bitskins_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
+import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -13,6 +13,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
+import { getBitskinsPopoutItem, getSpecificBitskinsItem } from './cache';
 import { activateBitskinsEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -354,7 +355,7 @@ async function getBuffItem(item: Bitskins.Item) {
 	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {

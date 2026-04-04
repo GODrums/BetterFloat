@@ -4,7 +4,6 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
-import { getSwapggInventorySite, getSwapggInventoryUser } from '~lib/handlers/cache/swapgg_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
@@ -12,6 +11,7 @@ import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro }
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getSwapggInventorySite, getSwapggInventoryUser } from './cache';
 import { activateSwapggEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {

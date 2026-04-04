@@ -2,13 +2,13 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
-import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handlers/cache/whitemarket_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from './cache';
 import { activateWhitemarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {

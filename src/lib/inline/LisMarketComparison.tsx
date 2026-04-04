@@ -164,7 +164,7 @@ const LisMarketComparison: React.FC = () => {
 		}
 
 		// Determine the rate to convert *to* the local currency
-		const rate = currencyRates[currency.toLowerCase()] ?? 1;
+		const rate = currencyRates[currency] ?? currencyRates[currency.toUpperCase()] ?? currencyRates[currency.toLowerCase()] ?? 1;
 
 		try {
 			const { data } = await fetchMarketComparisonData(buff_name);

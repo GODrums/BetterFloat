@@ -2,12 +2,12 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~contents/skinout/cache';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
-import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
+import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -202,7 +202,7 @@ async function getBuffItem(item: Skinout.Item | Skinout.InventoryItem) {
 	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {

@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
-import { cacheSwapggInventorySite, cacheSwapggInventoryUser } from '~lib/handlers/cache/swapgg_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSwapggInventorySite, cacheSwapggInventoryUser } from './cache';
 
 function processSwapggEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

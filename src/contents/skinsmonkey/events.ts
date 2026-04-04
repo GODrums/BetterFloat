@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinsmonkey } from '~lib/@typings/Skinsmonkey';
-import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from '~lib/handlers/cache/skinsmonkey_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSkinsmonkeyBotInventory, cacheSkinsmonkeyUserInventory } from './cache';
 
 function processSkinsmonkeyEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

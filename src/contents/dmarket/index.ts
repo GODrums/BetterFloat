@@ -5,7 +5,6 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
 import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
@@ -16,6 +15,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
+import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from './cache';
 import { activateDMarketEventHandler as activateHandler } from './events';
 import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 

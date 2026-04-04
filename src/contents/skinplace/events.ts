@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
-import { cacheSkinplaceMarketItems, cacheSkinplaceUserInventory } from '~lib/handlers/cache/skinplace_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSkinplaceMarketItems, cacheSkinplaceUserInventory } from './cache';
 
 function processSkinplaceEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

@@ -4,9 +4,9 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
-import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
-import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
+import { getUSDToCurrencyRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -14,6 +14,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from './cache';
 import { activateTradeitEventHandler as activateHandler } from './events';
 
 type PriceResult = {
@@ -200,7 +201,7 @@ async function getBuffItem(container: Element, item: Tradeit.Item) {
 
 	const currency = getUserCurrency() ?? 'USD';
 	const currencySymbol = getSymbolFromCurrency(currency) ?? '$';
-	const currencyRate = currency === 'USD' ? 1 : await getAndFetchCurrencyRate(currency);
+	const currencyRate = currency === 'USD' ? 1 : await getUSDToCurrencyRate(currency);
 	if (priceListing && currencyRate && currencyRate !== 1) {
 		priceListing = priceListing.mul(currencyRate);
 	}

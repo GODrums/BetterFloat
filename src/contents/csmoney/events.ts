@@ -1,7 +1,7 @@
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
-import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from '~lib/handlers/cache/csmoney_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache';
 
 function processCSMoneyEvent(eventData: EventData<unknown>) {
 	if (!eventData.data || (typeof eventData.data !== 'object' && !Object.hasOwn(eventData.data, 'error'))) {

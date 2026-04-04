@@ -3,7 +3,8 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
-import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
+import { BigCurrency, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
+import { getUSDToCurrencyRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -335,7 +336,7 @@ async function getBuffItem(item: HTMLItem) {
 	const market_id = await getMarketID(buff_name, source);
 
 	const currency = getUserCurrency();
-	const currencyRate = await getAndFetchCurrencyRate(currency);
+	const currencyRate = await getUSDToCurrencyRate(currency);
 	if (currencyRate) {
 		priceListing = priceListing?.mul(currencyRate);
 		priceOrder = priceOrder?.mul(currencyRate);

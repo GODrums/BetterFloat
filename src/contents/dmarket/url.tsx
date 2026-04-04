@@ -2,12 +2,11 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup, watchUrlStateChanges } from '~lib/shared/url';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup, watchUrlStateChanges } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function activateDMarketUrlHandler() {
-	addMessageRelays();
 	registerRuntimeUrlHandler(handleDMarketChange);
 	void handleDMarketChange(getCurrentUrlState());
 	watchUrlStateChanges(handleDMarketChange, 1500);

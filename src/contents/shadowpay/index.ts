@@ -4,16 +4,16 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
-import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
-import { getShadowpayInventoryItem, getSpecificShadowpayItem } from '~lib/handlers/cache/shadowpay_cache';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SHADOWPAY_SELECTORS } from '~lib/handlers/selectors/shadowpay_selectors';
+import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getShadowpayInventoryItem, getSpecificShadowpayItem } from './cache';
 import { activateShadowpayEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -231,7 +231,7 @@ async function getBuffItem(item: Shadowpay.Item) {
 	let itemPrice = getItemPrice(item);
 	const userCurrency = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = getBitskinsCurrencyRate(userCurrency);
+	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
 	if (currencyRate && currencyRate !== 1) {
 		if (priceListing) {

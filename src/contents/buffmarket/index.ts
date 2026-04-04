@@ -3,7 +3,6 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
 import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
@@ -12,6 +11,7 @@ import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handl
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from './cache';
 import { activateBuffmarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {

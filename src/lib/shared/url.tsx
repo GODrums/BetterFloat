@@ -37,12 +37,6 @@ export function watchUrlStateChanges(handleChange: UrlStateHandler, interval = 1
 	}, interval);
 }
 
-export function addMessageRelays(names: Array<'createNotification' | 'getMarketComparison'> = ['createNotification', 'getMarketComparison']) {
-	for (const name of names) {
-		relayMessage({ name });
-	}
-}
-
 export function scheduleVersionedPopup(render: () => JSX.Element, version: string, delayMs = 3000) {
 	setTimeout(async () => {
 		const extensionVersion = chrome.runtime.getManifest().version;

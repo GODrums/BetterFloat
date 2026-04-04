@@ -4,15 +4,6 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
-import {
-	getFirstSkbItem,
-	getSkbCurrency,
-	getSkbInventoryItemByHash,
-	getSkbInventoryItemByImage,
-	getSkbUserConversion,
-	getSkbUserCurrencyRate,
-	getSpecificSkbItem,
-} from '~lib/handlers/cache/skinbid_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
@@ -21,6 +12,7 @@ import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice,
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
+import { getFirstSkbItem, getSkbCurrency, getSkbInventoryItemByHash, getSkbInventoryItemByImage, getSkbUserConversion, getSkbUserCurrencyRate, getSpecificSkbItem } from './cache';
 import { activateSkinbidEventHandler as activateHandler } from './events';
 import { activateSkinbidUrlHandler as dynamicUIHandler, mountSkbBargainButtons } from './url';
 

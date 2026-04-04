@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinswap } from '~lib/@typings/SkinswapTypes';
-import { cacheSkinswapChinaItems, cacheSkinswapItems, cacheSkinswapUserInventory } from '~lib/handlers/cache/skinswap_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSkinswapChinaItems, cacheSkinswapItems, cacheSkinswapUserInventory } from './cache';
 
 function processSkinswapEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

@@ -5,19 +5,6 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
-import {
-	fetchAndStoreCSFInventory,
-	getCSFAllBuyOrders,
-	getCSFCurrencyRate,
-	getCSFHistoryGraph,
-	getCSFPopupItem,
-	getFirstCSFItem,
-	getFirstCSFSimilarItem,
-	getFirstHistorySale,
-	getNextCSFMeBuyOrder,
-	getSpecificCSFInventoryItem,
-	getSpecificCSFOffer,
-} from '~lib/handlers/cache/csfloat_cache';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { injectScript } from '~lib/helpers/inject_helper';
@@ -85,6 +72,19 @@ import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
+import {
+	fetchAndStoreCSFInventory,
+	getCSFAllBuyOrders,
+	getCSFCurrencyRate,
+	getCSFHistoryGraph,
+	getCSFPopupItem,
+	getFirstCSFItem,
+	getFirstCSFSimilarItem,
+	getFirstHistorySale,
+	getNextCSFMeBuyOrder,
+	getSpecificCSFInventoryItem,
+	getSpecificCSFOffer,
+} from './cache';
 import { activateCSFloatEventHandler as activateHandler } from './events';
 import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
 
@@ -1012,13 +1012,11 @@ function addSaleListListener(container: Element) {
 }
 
 async function adjustSaleListItem(container: Element, active: boolean, displayBuff: boolean, percentage: number) {
-	console.log('[BetterFloat] Adjusting sale list item:', active, displayBuff, percentage);
 	const listItem = Array.from(document.querySelectorAll('app-sell-queue-item')).pop();
 	if (!listItem) return;
 
 	const buffA = container.querySelector('a.betterfloat-buff-a')?.cloneNode(true) as HTMLElement;
 	const buffData = JSON.parse(buffA?.getAttribute('data-betterfloat') ?? '{}') as DOMBuffData;
-	console.log('[BetterFloat] Buff data:', buffData);
 	if (!buffA || !buffData) return;
 
 	if (displayBuff) {

@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
-import { cacheSkinbaronItems, cacheSkinbaronRates } from '~lib/handlers/cache/skinbaron_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheSkinbaronItems, cacheSkinbaronRates } from './cache';
 
 function processSkinbaronEvent(eventData: EventData<unknown>) {
 	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);

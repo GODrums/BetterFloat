@@ -1,4 +1,6 @@
 import type { CSFloat, EventData } from '~lib/@typings/FloatTypes';
+import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
+import { activateSiteEventHandler } from '~lib/shared/events';
 import {
 	cacheCSFBuyOrders,
 	cacheCSFExchangeRates,
@@ -11,9 +13,7 @@ import {
 	cacheCSFOffers,
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
-} from '~lib/handlers/cache/csfloat_cache';
-import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
-import { activateSiteEventHandler } from '~lib/shared/events';
+} from './cache';
 
 type StallData = {
 	data: CSFloat.ListingData[];

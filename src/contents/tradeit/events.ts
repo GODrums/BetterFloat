@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
-import { cacheTradeitBotItems, cacheTradeitOwnItems } from '~lib/handlers/cache/tradeit_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache';
 
 function processTradeitEvent(eventData: EventData<unknown>) {
 	if (eventData.url.includes('api/v2/inventory/data')) {

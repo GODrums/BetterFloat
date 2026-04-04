@@ -4,7 +4,6 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import { initPriceMapping } from '~lib/shared/pricing';
@@ -29,6 +28,7 @@ import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/mess
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
+import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from './cache';
 import { activateSkinportEventHandler as activateHandler } from './events';
 import { activateSkinportUrlHandler as dynamicUIHandler } from './url';
 

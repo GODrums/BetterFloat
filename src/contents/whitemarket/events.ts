@@ -1,7 +1,7 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
-import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from '~lib/handlers/cache/whitemarket_cache';
 import { activateSiteEventHandler } from '~lib/shared/events';
+import { cacheWhiteMarketInventory, cacheWhiteMarketItems } from './cache';
 
 function processWhiteMarketEvent(eventData: EventData<unknown>) {
 	console.debug(`[BetterFloat] Received data from url: ${eventData.url}, data:`, eventData.data);

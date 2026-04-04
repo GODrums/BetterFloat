@@ -3,22 +3,16 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import {
-	getCSMoneyItemByImg,
-	getCSMoneyPopupItem,
-	getFirstCSMoneyBotInventoryItem,
-	getFirstCSMoneyItem,
-	getFirstCSMoneyUserInventoryItem,
-	getSpecificCSMoneyItem,
-} from '~lib/handlers/cache/csmoney_cache';
-import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
+import { getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
+import { getUSDToCurrencyRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { getCSMoneyItemByImg, getCSMoneyPopupItem, getFirstCSMoneyBotInventoryItem, getFirstCSMoneyItem, getFirstCSMoneyUserInventoryItem, getSpecificCSMoneyItem } from './cache';
 import { activateCSMoneyEventHandler as activateHandler } from './events';
 import { activateCSMoneyUrlHandler as dynamicUIHandler } from './url';
 
@@ -290,7 +284,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 	if (!currencyItem?.text) {
 		throw new Error('[BetterFloat] No currency rate found. Please report this issue.');
 	}
-	const currencyRate = await getAndFetchCurrencyRate(currencyItem!.text);
+	const currencyRate = await getUSDToCurrencyRate(currencyItem!.text);
 	if (priceListing && currencyRate) {
 		priceListing = priceListing.mul(currencyRate);
 	}

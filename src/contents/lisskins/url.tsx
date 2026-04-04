@@ -2,12 +2,11 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
 
 export function activateLisskinsUrlHandler() {
-	addMessageRelays();
 	registerRuntimeUrlHandler(handleLisSkinsChange);
 	void handleLisSkinsChange(getCurrentUrlState());
 	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
