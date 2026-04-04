@@ -2,6 +2,7 @@
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
 	"version": "3.4.3",
+	"packageManager": "pnpm@10.32.1",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
