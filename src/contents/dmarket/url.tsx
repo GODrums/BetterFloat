@@ -1,8 +1,8 @@
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup, watchUrlStateChanges } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
 import UpdatePopup from '~lib/inline/UpdatePopup';
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup, watchUrlStateChanges } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 

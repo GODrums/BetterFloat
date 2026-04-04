@@ -1,7 +1,6 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
@@ -14,6 +13,7 @@ import {
 } from '~lib/handlers/cache/csmoney_cache';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
+import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';

@@ -1,7 +1,7 @@
-import { activateSiteEventHandler } from '~contents/shared/events';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales } from '~lib/handlers/cache/dmarket_cache';
+import { activateSiteEventHandler } from '~lib/shared/events';
 
 function processDmarketEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

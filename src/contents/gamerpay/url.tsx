@@ -1,7 +1,7 @@
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import GPAutorefresh from '~lib/inline/GPAutorefresh';
 import UpdatePopup from '~lib/inline/UpdatePopup';
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 

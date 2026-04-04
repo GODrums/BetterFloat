@@ -2,7 +2,6 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
@@ -10,6 +9,7 @@ import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getS
 import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
+import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';

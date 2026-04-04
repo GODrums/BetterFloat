@@ -1,8 +1,8 @@
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import SkbAutorefresh from '~lib/inline/SkbAutorefresh';
 import SkbBargainButtons from '~lib/inline/SkbBargainButtons';
 import UpdatePopup from '~lib/inline/UpdatePopup';
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 

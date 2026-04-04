@@ -1,7 +1,7 @@
-import { activateSiteEventHandler } from '~contents/shared/events';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import { cacheSkbInventory, cacheSkbItems, cacheSkinbidCurrencyRates, cacheSkinbidUserCurrency } from '~lib/handlers/cache/skinbid_cache';
+import { activateSiteEventHandler } from '~lib/shared/events';
 
 function processSkinbidEvent(eventData: EventData<unknown>) {
 	if (!eventData.url.includes('ping')) {

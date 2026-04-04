@@ -1,7 +1,7 @@
-import { activateSiteEventHandler } from '~contents/shared/events';
 import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import { cacheAvanmarketInventory, cacheAvanmarketItems } from '~lib/handlers/cache/avan_cache';
+import { activateSiteEventHandler } from '~lib/shared/events';
 
 function processAvanmarketEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

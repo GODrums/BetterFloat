@@ -3,7 +3,6 @@ import { CrimsonKimonoMapping, OverprintMapping, PhoenixMapping } from 'cs-tierl
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
@@ -22,6 +21,7 @@ import {
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { injectScript } from '~lib/helpers/inject_helper';
+import { initPriceMapping } from '~lib/shared/pricing';
 import {
 	AskBidMarkets,
 	ICON_ARROWDOWN,

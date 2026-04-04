@@ -1,7 +1,7 @@
-import { activateSiteEventHandler } from '~contents/shared/events';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import { cacheSkinoutItems, cacheSkinoutUserInventory } from '~lib/handlers/cache/skinout_cache';
+import { activateSiteEventHandler } from '~lib/shared/events';
 
 function processSkinoutEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

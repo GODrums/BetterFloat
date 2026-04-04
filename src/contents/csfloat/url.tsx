@@ -1,4 +1,3 @@
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
@@ -8,6 +7,7 @@ import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFSellSettings from '~lib/inline/CSFSellSettings';
 import UpdatePopup from '~lib/inline/UpdatePopup';
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
 

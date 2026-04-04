@@ -2,12 +2,12 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
+import { initPriceMapping } from '~lib/shared/pricing';
 import {
 	AskBidMarkets,
 	ICON_ARROWUP_SMALL,

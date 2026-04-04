@@ -1,10 +1,10 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
+import { initPriceMapping } from '~lib/shared/pricing';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';

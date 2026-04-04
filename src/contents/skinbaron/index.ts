@@ -1,12 +1,12 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/cache/skinbaron_cache';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
+import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
