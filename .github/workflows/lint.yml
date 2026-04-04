@@ -15,7 +15,5 @@ jobs:
           node-version: 24.x
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
-        with:
-          version: 2.7.1
       - name: Run Biome
         run: biome ci src/
