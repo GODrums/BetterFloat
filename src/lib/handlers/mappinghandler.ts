@@ -1,5 +1,5 @@
-import marketIds from 'raw:@/assets/marketids.json';
 import Decimal from 'decimal.js';
+import { loadMarketIds } from '~lib/shared/marketids';
 import { MarketSource } from '~lib/util/globals';
 import type { Extension } from '../@typings/ExtensionTypes';
 import { handleSpecialStickerNames } from '../util/helperfunctions';
@@ -85,11 +85,9 @@ export async function getCrimsonWebMapping(weapon: Extension.CWWeaponTypes, pain
 export async function initMarketIdMapping() {
 	if (Object.keys(marketIdMapping).length === 0) {
 		if (!fetchIDPromise) {
-			fetchIDPromise = fetch(marketIds)
-				.then((response) => response.json())
-				.then((data) => {
-					marketIdMapping = data;
-				});
+			fetchIDPromise = loadMarketIds().then((data) => {
+				marketIdMapping = data;
+			});
 		}
 		await fetchIDPromise;
 		fetchIDPromise = null;

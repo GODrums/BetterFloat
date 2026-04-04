@@ -1,8 +1,7 @@
 import Fuse from 'fuse.js';
-import marketIds from '@/assets/marketids.json';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { MarketSource } from '~lib/util/globals';
-import { getMarketURL } from '~lib/util/helperfunctions';
+import { getMarketURL } from '~lib/util/market_urls';
 
 // Keyword mapping => corresponding market source
 const KEYWORDS: Record<string, MarketSource> = {
@@ -86,21 +85,47 @@ const MARKET_ID_PROP: Record<MarketSource, string | null> = {
 	[MarketSource.Skinout]: null,
 };
 
-// Initialize Fuse.js for fuzzy searching
-const fuse = new Fuse(Object.keys(marketIds), {
-	threshold: 0.5, // Lower = more strict, higher = more fuzzy (0.0 = perfect match, 1.0 = match anything)
-	distance: 100, // Maximum distance for a match
-	minMatchCharLength: 2, // Minimum character length to match
-	ignoreLocation: true, // Don't give preference to matches at the beginning
-	includeScore: true, // Include match score for sorting
-	findAllMatches: true, // Needs to be true to show suggestions for long names
-});
+let marketIdsCache: Record<string, Partial<Extension.MarketIDEntry>> | null = null;
+let fuse: Fuse<string> | null = null;
+
+function getMarketIdsAssetUrl() {
+	const resource = chrome.runtime
+		.getManifest()
+		.web_accessible_resources?.flatMap((entry) => entry.resources)
+		.find((resource) => /^marketids\.[a-f0-9]+\.json$/.test(resource));
+
+	if (!resource) {
+		throw new Error('Could not resolve marketids asset from manifest web_accessible_resources');
+	}
+
+	return chrome.runtime.getURL(resource);
+}
+
+async function getMarketIds() {
+	if (!marketIdsCache) {
+		marketIdsCache = (await fetch(getMarketIdsAssetUrl()).then((response) => response.json())) as Record<string, Partial<Extension.MarketIDEntry>>;
+	}
+	return marketIdsCache;
+}
+
+async function getFuse(marketIds: Record<string, Partial<Extension.MarketIDEntry>>) {
+	if (!fuse) {
+		fuse = new Fuse(Object.keys(marketIds), {
+			threshold: 0.5, // Lower = more strict, higher = more fuzzy (0.0 = perfect match, 1.0 = match anything)
+			distance: 100, // Maximum distance for a match
+			minMatchCharLength: 2, // Minimum character length to match
+			ignoreLocation: true, // Don't give preference to matches at the beginning
+			includeScore: true, // Include match score for sorting
+		});
+	}
+	return fuse;
+}
 
 chrome.omnibox.setDefaultSuggestion({
 	description: 'Search CS2 skins on markets — Use: &lt;market&gt; &lt;skin name&gt; or just &lt;skin name&gt; for Buff',
 });
 
-function getMarketId(buffName: string, source: MarketSource): number | string | undefined {
+function getMarketId(marketIds: Record<string, Partial<Extension.MarketIDEntry>>, buffName: string, source: MarketSource): number | string | undefined {
 	if (source === MarketSource.Pricempire) return undefined;
 	const entry = marketIds[buffName] as Partial<Extension.MarketIDEntry> | undefined;
 	if (!entry) return undefined;
@@ -109,7 +134,7 @@ function getMarketId(buffName: string, source: MarketSource): number | string | 
 	return entry[prop];
 }
 
-chrome.omnibox.onInputChanged.addListener((text, addSuggestions) => {
+chrome.omnibox.onInputChanged.addListener(async (text, addSuggestions) => {
 	const trimmed = text.trim();
 	if (!trimmed) {
 		addSuggestions([]);
@@ -125,7 +150,9 @@ chrome.omnibox.onInputChanged.addListener((text, addSuggestions) => {
 		return;
 	}
 
-	// Use Fuse.js for fuzzy searching
+	const marketIds = await getMarketIds();
+	const fuse = await getFuse(marketIds);
+
 	const results = fuse.search(query);
 
 	// Take only the top 6 results and sort by score (lower score = better match)
@@ -135,7 +162,7 @@ chrome.omnibox.onInputChanged.addListener((text, addSuggestions) => {
 		const name = result.item;
 		// default to Buff if no source is provided
 		const targetSource = source ?? MarketSource.Buff;
-		const marketId = getMarketId(name, targetSource);
+		const marketId = getMarketId(marketIds, name, targetSource);
 		const url = getMarketURL({ source: targetSource, buff_name: name, market_id: marketId ?? 0 });
 
 		const targetSourceText = SOURCE_TEXT[targetSource];

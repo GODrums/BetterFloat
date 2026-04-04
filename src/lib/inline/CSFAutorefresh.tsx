@@ -310,7 +310,7 @@ const CSFAutorefresh: React.FC = () => {
 										type="number"
 										id="notification-percentage"
 										value={percentage}
-										onChange={(e) => setPercentage(parseInt(e.target.value))}
+										onChange={(e) => setPercentage(parseInt(e.target.value, 10))}
 										className="bg-transparent border border-[--highlight-background] rounded-lg py-1 px-2 text-[--subtext-color]"
 									/>
 								</div>

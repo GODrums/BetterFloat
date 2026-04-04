@@ -1,6 +1,6 @@
 import skinportInjectUrl from 'url:~lib/util/skinport_inject.ts';
 import getSymbolFromCurrency from 'currency-symbol-map';
-import { getBuffItem } from '~contents/skinport_script';
+import { getBuffItem } from '~contents/skinport/index';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { AskBidMarkets, ICON_BUFF, ICON_C5GAME, ICON_STEAM, ICON_YOUPIN, MarketSource } from '~lib/util/globals';

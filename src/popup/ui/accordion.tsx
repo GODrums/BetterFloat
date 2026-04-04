@@ -37,4 +37,4 @@ const AccordionContent = React.forwardRef<React.ElementRef<typeof AccordionPrimi
 );
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export { Accordion, AccordionContent, AccordionItem, AccordionTrigger };

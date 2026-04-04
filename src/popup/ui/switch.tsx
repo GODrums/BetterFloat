@@ -36,4 +36,4 @@ const EnableSwitch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.R
 ));
 EnableSwitch.displayName = SwitchPrimitives.Root.displayName;
 
-export { Switch, EnableSwitch };
+export { EnableSwitch, Switch };

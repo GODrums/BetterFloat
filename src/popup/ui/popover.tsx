@@ -47,4 +47,4 @@ const PopoverColorPicker = React.forwardRef<React.ElementRef<typeof PopoverPrimi
 );
 PopoverColorPicker.displayName = PopoverPrimitive.Content.displayName;
 
-export { Popover, PopoverTrigger, PopoverContent, PopoverColorPicker, PopoverAnchor, PopoverClose };
+export { Popover, PopoverAnchor, PopoverClose, PopoverColorPicker, PopoverContent, PopoverTrigger };
