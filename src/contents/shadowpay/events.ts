@@ -1,7 +1,7 @@
+import { activateSiteEventHandler } from '~contents/shared/events';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Shadowpay } from '~lib/@typings/ShadowpayTypes';
 import { cacheShadowpayInventory, cacheShadowpayItems } from '~lib/handlers/cache/shadowpay_cache';
-import { activateSiteEventHandler } from '~contents/shared/events';
 
 function processShadowpayEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

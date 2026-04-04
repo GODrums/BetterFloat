@@ -1,3 +1,4 @@
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
@@ -9,7 +10,6 @@ import CSFSellSettings from '~lib/inline/CSFSellSettings';
 import UpdatePopup from '~lib/inline/UpdatePopup';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 
 let lastCSFState: Extension.URLState | null = null;
 

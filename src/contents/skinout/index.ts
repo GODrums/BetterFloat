@@ -2,12 +2,11 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import { getBitskinsCurrencyRate } from '~lib/handlers/cache/bitskins_cache';
 import { getFirstSkinoutItem, getSpecificSkinoutUserItem } from '~lib/handlers/cache/skinout_cache';
-import { activateSkinoutEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
@@ -15,6 +14,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateSkinoutEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinout.gg/*'],

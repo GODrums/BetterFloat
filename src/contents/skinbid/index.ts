@@ -2,6 +2,7 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbid } from '~lib/@typings/SkinbidTypes';
 import {
@@ -13,16 +14,15 @@ import {
 	getSkbUserCurrencyRate,
 	getSpecificSkbItem,
 } from '~lib/handlers/cache/skinbid_cache';
-import { activateSkinbidEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
-import { activateSkinbidUrlHandler as dynamicUIHandler, mountSkbBargainButtons } from './url';
 import { AskBidMarkets, AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
+import { activateSkinbidEventHandler as activateHandler } from './events';
+import { activateSkinbidUrlHandler as dynamicUIHandler, mountSkbBargainButtons } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],

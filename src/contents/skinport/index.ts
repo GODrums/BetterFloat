@@ -2,11 +2,11 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from '~lib/handlers/cache/skinport_cache';
 import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
-import { activateSkinportUrlHandler as dynamicUIHandler } from './url';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import {
 	AskBidMarkets,
@@ -30,7 +30,7 @@ import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
 import { generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
 import { activateSkinportEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
+import { activateSkinportUrlHandler as dynamicUIHandler } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],

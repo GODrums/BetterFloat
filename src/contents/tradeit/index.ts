@@ -2,11 +2,10 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Tradeit } from '~lib/@typings/TradeitTypes';
 import { getFirstTradeitBotItem, getFirstTradeitOwnItem, getTradeitOwnItemByName } from '~lib/handlers/cache/tradeit_cache';
-import { activateTradeitEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { TRADEIT_SELECTORS } from '~lib/handlers/selectors/tradeit_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
@@ -15,6 +14,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateTradeitEventHandler as activateHandler } from './events';
 
 type PriceResult = {
 	price_difference: number;

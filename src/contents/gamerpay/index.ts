@@ -2,17 +2,17 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Gamerpay } from '~lib/@typings/GamerpayTypes';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getMarketID, initMarketIdMapping } from '~lib/handlers/mappinghandler';
 import { GAMERPAY_SELECTORS } from '~lib/handlers/selectors/gamerpay_selectors';
-import { activateGamerpayUrlHandler as dynamicUIHandler } from './url';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateGamerpayUrlHandler as dynamicUIHandler } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.gamerpay.gg/*'],

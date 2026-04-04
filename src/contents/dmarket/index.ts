@@ -2,22 +2,22 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from '~lib/handlers/cache/dmarket_cache';
-import { activateDMarketEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
-import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getOldBlueGemName, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
+import { activateDMarketEventHandler as activateHandler } from './events';
+import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.dmarket.com/*'],

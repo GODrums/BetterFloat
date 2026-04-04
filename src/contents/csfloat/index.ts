@@ -3,6 +3,7 @@ import { CrimsonKimonoMapping, OverprintMapping, PhoenixMapping } from 'cs-tierl
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat, DopplerPhase, ItemCondition, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
@@ -18,7 +19,7 @@ import {
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
-import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
+import { getCrimsonWebMapping, getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { injectScript } from '~lib/helpers/inject_helper';
 import {
@@ -63,15 +64,6 @@ import {
 	isProduction,
 	MarketSource,
 } from '~lib/util/globals';
-import { attachMarketPopover } from '~lib/util/market_popover';
-import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
-import type { IStorage } from '~lib/util/storage';
-import { getAllSettings, getSetting } from '~lib/util/storage';
-import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
-import { activateCSFloatEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
-import { getCrimsonWebMapping, getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import {
 	CurrencyFormatter,
 	calculateEpochFromDate,
@@ -87,6 +79,14 @@ import {
 	isUserPro,
 	waitForElement,
 } from '~lib/util/helperfunctions';
+import { attachMarketPopover } from '~lib/util/market_popover';
+import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
+import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import type { IStorage } from '~lib/util/storage';
+import { getAllSettings, getSetting } from '~lib/util/storage';
+import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
+import { activateCSFloatEventHandler as activateHandler } from './events';
+import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],

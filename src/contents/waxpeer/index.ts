@@ -2,11 +2,10 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Waxpeer } from '~lib/@typings/WaxpeerTypes';
 import { getSpecificWaxpeerItem } from '~lib/handlers/cache/waxpeer_cache';
-import { activateWaxpeerEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { WAXPEER_SELECTORS } from '~lib/handlers/selectors/waxpeer_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
@@ -14,6 +13,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateWaxpeerEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.waxpeer.com/*'],

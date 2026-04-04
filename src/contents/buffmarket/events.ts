@@ -1,15 +1,7 @@
+import { activateSiteEventHandler } from '~contents/shared/events';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
-import {
-	cacheBuffBuyOrders,
-	cacheBuffCurrencyRate,
-	cacheBuffGoodsInfos,
-	cacheBuffMarketItems,
-	cacheBuffPageItems,
-	cacheBuffPopoutData,
-	cacheBuffUserId,
-} from '~lib/handlers/cache/buffmarket_cache';
-import { activateSiteEventHandler } from '~contents/shared/events';
+import { cacheBuffBuyOrders, cacheBuffCurrencyRate, cacheBuffGoodsInfos, cacheBuffMarketItems, cacheBuffPageItems, cacheBuffPopoutData, cacheBuffUserId } from '~lib/handlers/cache/buffmarket_cache';
 
 function processBuffMarketEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

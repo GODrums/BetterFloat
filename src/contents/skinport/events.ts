@@ -1,8 +1,8 @@
+import { activateSiteCustomEventHandler, activateSiteEventHandler } from '~contents/shared/events';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from '~lib/handlers/cache/skinport_cache';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
-import { activateSiteCustomEventHandler, activateSiteEventHandler } from '~contents/shared/events';
 
 type SkinportWebsocketData = {
 	eventType: string;

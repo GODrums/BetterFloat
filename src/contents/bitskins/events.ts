@@ -1,7 +1,7 @@
+import { activateSiteEventHandler } from '~contents/shared/events';
 import type { Bitskins } from '~lib/@typings/BitskinsTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import { cacheBitskinsCurrencyList, cacheBitskinsItems, cacheBitskinsPopoutItem } from '~lib/handlers/cache/bitskins_cache';
-import { activateSiteEventHandler } from '~contents/shared/events';
 
 function processBitskinsEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);

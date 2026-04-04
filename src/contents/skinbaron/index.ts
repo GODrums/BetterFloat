@@ -1,11 +1,10 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getFirstSkinbaronItem, getSkinbaronCurrencyRate } from '~lib/handlers/cache/skinbaron_cache';
-import { activateSkinbaronEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';
 import { AskBidMarkets, ICON_EXCLAMATION, MarketSource } from '~lib/util/globals';
@@ -13,6 +12,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateSkinbaronEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinbaron.de/*'],

@@ -1,19 +1,18 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { activateLisskinsEventHandler as activateHandler } from './events';
 import { initPriceMapping } from '~contents/shared/pricing';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
-import { activateLisskinsUrlHandler as dynamicUIHandler } from './url';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateLisskinsEventHandler as activateHandler } from './events';
+import { activateLisskinsUrlHandler as dynamicUIHandler } from './url';
 
 type PriceResult = {
 	currency: string;

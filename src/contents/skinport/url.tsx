@@ -1,9 +1,9 @@
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 
 export function activateSkinportUrlHandler() {

@@ -1,7 +1,7 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import {
@@ -12,16 +12,15 @@ import {
 	getFirstCSMoneyUserInventoryItem,
 	getSpecificCSMoneyItem,
 } from '~lib/handlers/cache/csmoney_cache';
-import { activateCSMoneyEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
-import { activateCSMoneyUrlHandler as dynamicUIHandler } from './url';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateCSMoneyEventHandler as activateHandler } from './events';
+import { activateCSMoneyUrlHandler as dynamicUIHandler } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.cs.money/*'],

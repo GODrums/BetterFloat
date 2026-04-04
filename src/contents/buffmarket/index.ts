@@ -1,11 +1,10 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
+import { initPriceMapping } from '~contents/shared/pricing';
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from '~lib/handlers/cache/buffmarket_cache';
-import { activateBuffmarketEventHandler as activateHandler } from './events';
-import { initPriceMapping } from '~contents/shared/pricing';
 import { BigCurrency, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { BUFFMARKET_SELECTORS } from '~lib/handlers/selectors/buffmarket_selectors';
 import { AskBidMarkets, ICON_CLOCK, MarketSource } from '~lib/util/globals';
@@ -13,6 +12,7 @@ import { CurrencyFormatter, calculateTime, checkUserPlanPro, getBuffPrice, handl
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateBuffmarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.buff.market/*'],

@@ -2,15 +2,15 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { activateMarketcsgoEventHandler as activateHandler } from './events';
 import { initPriceMapping } from '~contents/shared/pricing';
+import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { activateMarketcsgoEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.market.csgo.com/*'],

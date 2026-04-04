@@ -1,8 +1,8 @@
+import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
 import UpdatePopup from '~lib/inline/UpdatePopup';
-import { CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
-import { addMessageRelays, getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~contents/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
