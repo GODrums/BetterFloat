@@ -1,7 +1,7 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 
-import { adjustOfferContainer } from '~contents/csfloat_script';
+import { adjustOfferContainer } from '~contents/csfloat/index';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { ICON_EXCLAMATION, ICON_STEAM } from '~lib/util/globals';
