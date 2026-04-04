@@ -38,6 +38,7 @@ key.json
 
 # typescript
 .tsbuildinfo
+tsconfig.tsbuildinfo
 
 # page specific data
 src/lib/handlers/selectors/*.ts

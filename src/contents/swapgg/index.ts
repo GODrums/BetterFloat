@@ -241,7 +241,7 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 			iconHeight: tileSize === 'Small' ? '15px' : tileSize === 'Medium' ? '18px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
 			tooltipArrow: true,
-			priceClass: tileSize ? `betterfloat-${tileSize?.toLowerCase() ?? ''}-price` : undefined,
+			priceClass: tileSize ? `betterfloat-${tileSize.toLowerCase()}-price` : undefined,
 		});
 
 		if (!footerContainer.querySelector('.betterfloat-buffprice')) {
