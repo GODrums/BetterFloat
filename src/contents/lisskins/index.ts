@@ -341,7 +341,7 @@ async function getBuffItem(item: HTMLItem) {
 		priceOrder = priceOrder?.mul(currencyRate);
 	}
 	const priceFromReference =
-		Number.parseInt(String(extensionSettings['lis-pricereference'])) === 0 &&
+		Number.parseInt(String(extensionSettings['lis-pricereference']), 10) === 0 &&
 		([MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;

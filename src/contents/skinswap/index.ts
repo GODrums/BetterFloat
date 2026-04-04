@@ -96,7 +96,11 @@ function applyMutation() {
 					if (location.pathname.startsWith('/china')) {
 						const items = addedNode.querySelectorAll('.grow.center');
 						for (const item of items) {
-							await adjustItem(item.parentElement?.parentElement!, PageState.China, true);
+							const container = item.parentElement?.parentElement;
+							if (!container) {
+								continue;
+							}
+							await adjustItem(container, PageState.China, true);
 						}
 					} else {
 						const items = addedNode.querySelectorAll('.item-card');

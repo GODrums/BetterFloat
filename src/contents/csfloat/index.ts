@@ -305,7 +305,7 @@ type DOMBuffData = {
 async function adjustUserBuyOrderRow(buyOrder: Element) {
 	const expressionColumn = buyOrder.querySelector<HTMLTableCellElement>('td.mat-column-expression');
 	const buyOrderData = getNextCSFMeBuyOrder();
-	if (!expressionColumn || !buyOrderData || !buyOrderData.market_hash_name) return;
+	if (!expressionColumn || !buyOrderData?.market_hash_name) return;
 
 	if (expressionColumn.querySelector('a')) return;
 
@@ -1810,7 +1810,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 
 function adjustExistingSP(container: Element) {
 	const spContainer = container.querySelector('.sticker-percentage');
-	let spValue = spContainer?.textContent!.trim().split('%')[0];
+	let spValue = spContainer?.textContent?.trim().split('%')[0];
 	if (!spValue || !spContainer) return;
 	if (spValue.startsWith('>')) {
 		spValue = spValue.substring(1);

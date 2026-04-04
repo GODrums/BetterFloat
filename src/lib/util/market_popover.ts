@@ -287,7 +287,7 @@ async function buildDataHtml(data: Extension.APIMarketResponse, buffName: string
 	for (const marketInfo of AvailableMarketSources) {
 		const entry = data[marketInfo.source];
 		const id = await getMarketID(buffName, marketInfo.source);
-		if (!entry || !entry.ask) continue;
+		if (!entry?.ask) continue;
 		const row: MarketRow = {
 			text: marketInfo.text,
 			logo: marketInfo.logo,

@@ -98,7 +98,7 @@ async function adjustItem(container: Element, state: PageState) {
 	if (!hrefTag) {
 		hrefTag = container.querySelector('a.font16')?.getAttribute('href')?.split('/').at(-1) ?? '0';
 	}
-	const itemId = parseInt(hrefTag);
+	const itemId = parseInt(hrefTag, 10);
 	if (state !== PageState.Popup && !itemId) {
 		console.error('[BetterFloat] No item ID found: ', container, state);
 		return;

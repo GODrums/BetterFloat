@@ -12,4 +12,4 @@ const InfoCallout = ({ text, className }: { text: string; className?: string }) 
 	</div>
 );
 
-export { WarningCallout, InfoCallout };
+export { InfoCallout, WarningCallout };

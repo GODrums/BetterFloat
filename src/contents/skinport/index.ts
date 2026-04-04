@@ -104,7 +104,7 @@ async function firstLaunch() {
 	if (!extensionSettings['sp-enable']) return;
 
 	const gameTitle = document.querySelector('.GameSwitcherButton-title')?.textContent;
-	if (!gameTitle || !gameTitle.includes('CS2')) return;
+	if (!gameTitle?.includes('CS2')) return;
 
 	const path = location.pathname;
 
@@ -206,7 +206,7 @@ async function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		if (extensionSettings['sp-enable']) {
 			const gameTitle = document.querySelector('.GameSwitcherButton-title')?.textContent;
-			if (!gameTitle || !gameTitle.includes('CS2')) return;
+			if (!gameTitle?.includes('CS2')) return;
 			for (const mutation of mutations) {
 				for (let i = 0; i < mutation.addedNodes.length; i++) {
 					const addedNode = mutation.addedNodes[i];
@@ -594,7 +594,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	if (!itemHeader) return;
 
 	const linksContainer = container.querySelector('.ItemHistory-links');
-	if (!linksContainer || !linksContainer.lastElementChild) return;
+	if (!linksContainer?.lastElementChild) return;
 	const patternLink = <HTMLElement>linksContainer.lastElementChild.cloneNode(true);
 	patternLink.id = 'react-tabs-6';
 	patternLink.setAttribute('aria-controls', 'react-tabs-7');
@@ -602,7 +602,7 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	patternLink.style.color = 'deepskyblue';
 
 	const itemHistory = container.querySelector('.ItemHistory');
-	if (!itemHistory || !itemHistory.lastElementChild) return;
+	if (!itemHistory?.lastElementChild) return;
 	const tableTab = <HTMLElement>itemHistory.lastElementChild.cloneNode(false);
 	tableTab.id = 'react-tabs-7';
 	tableTab.setAttribute('aria-labelledby', 'react-tabs-6');
@@ -700,7 +700,7 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	const typeCheck = !spFilter.types[item.category.toLowerCase().replace(' ', '-')];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
-	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1]) : undefined;
+	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1], 10) : undefined;
 	const newCheck = spFilter.new && (!tradeLock || tradeLock < 7);
 
 	return nameCheck || priceCheck || typeCheck || newCheck;
@@ -839,7 +839,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 	let style: ItemStyle = '';
 	if (full_name.includes('Doppler') && (category === 'Knife' || category === 'Weapon')) {
 		const phase = container.querySelector('.ItemVersionBadge-value')?.textContent?.trim() ?? '';
-		if (Number.isNaN(parseInt(phase))) {
+		if (Number.isNaN(parseInt(phase, 10))) {
 			style = phase as ItemStyle;
 		} else {
 			style = `Phase ${phase}` as ItemStyle;
@@ -1026,7 +1026,7 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 		};
 	}
 	let discountContainer = container.querySelector<HTMLElement>('.ItemPreview-discount');
-	if (!discountContainer || !discountContainer.firstChild) {
+	if (!discountContainer?.firstChild) {
 		discountContainer = document.createElement('div');
 		discountContainer.className = 'GradientLabel ItemPreview-discount';
 		const newSaleTag = document.createElement('span');

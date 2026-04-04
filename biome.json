@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,
@@ -7,12 +7,7 @@
 		"indentWidth": 4,
 		"lineEnding": "lf",
 		"lineWidth": 200,
-		"includes": [
-			"**",
-			"!**/dist",
-			"!**/node_modules",
-			"!**/src/lib/vendors/resq.ts"
-		]
+		"includes": ["**", "!**/dist", "!**/node_modules", "!**/src/lib/vendors/resq.ts"]
 	},
 	"assist": {
 		"actions": {
@@ -28,12 +23,14 @@
 			"suspicious": {
 				"noExplicitAny": "off",
 				"noArrayIndexKey": "off",
-				"noConfusingVoidType": "off"
+				"noConfusingVoidType": "off",
+				"noUnknownAtRules": "off"
 			},
 			"complexity": {
 				"useLiteralKeys": "off",
 				"noForEach": "off",
-				"noArguments": "off"
+				"noArguments": "off",
+				"noImportantStyles": "off"
 			},
 			"a11y": {
 				"useAltText": "off",
@@ -57,19 +54,13 @@
 				"noInferrableTypes": "error"
 			},
 			"correctness": {
-				"useExhaustiveDependencies": "off"
-			},
-			"nursery": {
+				"useExhaustiveDependencies": "off",
 				"useUniqueElementIds": "off",
 				"noNestedComponentDefinitions": "off"
-			}
+			},
+			"nursery": {}
 		},
-		"includes": [
-			"**",
-			"!**/src/lib/utils.ts",
-			"!**/src/lib/components/Vortex.tsx",
-			"!**/src/lib/vendors/resq.ts"
-		]
+		"includes": ["**", "!**/src/lib/utils.ts", "!**/src/lib/components/Vortex.tsx", "!**/src/lib/vendors/resq.ts"]
 	},
 	"javascript": {
 		"formatter": {
@@ -77,6 +68,11 @@
 			"trailingCommas": "es5",
 			"semicolons": "always",
 			"quoteStyle": "single"
+		}
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
 		}
 	},
 	"files": {
