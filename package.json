@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.4.2",
+	"version": "3.4.3",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -55,7 +55,7 @@
 		"socket.io-client": "^4.8.1",
 		"socket.io-msgpack-parser": "^3.0.2",
 		"sonner": "^2.0.7",
-		"tailwind-merge": "^2.6.0",
+		"tailwind-merge": "^2.6.1",
 		"tailwindcss-animate": "^1.0.7"
 	},
 	"devDependencies": {

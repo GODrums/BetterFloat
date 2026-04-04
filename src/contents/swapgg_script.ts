@@ -5,7 +5,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Swapgg } from '~lib/@typings/SwapggTypes';
 import { getSwapggInventorySite, getSwapggInventoryUser } from '~lib/handlers/cache/swapgg_cache';
-import { activateHandler } from '~lib/handlers/eventhandler';
+import { activateSwapggEventHandler as activateHandler } from '~lib/sites/swapgg/events';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SWAPGG_SELECTORS } from '~lib/handlers/selectors/swapgg_selectors';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';

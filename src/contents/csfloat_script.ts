@@ -18,7 +18,7 @@ import {
 	getSpecificCSFInventoryItem,
 	getSpecificCSFOffer,
 } from '~lib/handlers/cache/csfloat_cache';
-import { dynamicUIHandler, mountCSFBargainButtons } from '~lib/handlers/urlhandler';
+import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from '~lib/sites/csfloat/url';
 import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import { injectScript } from '~lib/helpers/inject_helper';
 import {
@@ -69,7 +69,8 @@ import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
-import { activateHandler, initPriceMapping } from '../lib/handlers/eventhandler';
+import { activateCSFloatEventHandler as activateHandler } from '~lib/sites/csfloat/events';
+import { initPriceMapping } from '~lib/sites/shared/pricing';
 import { getCrimsonWebMapping, getItemPrice, getMarketID } from '../lib/handlers/mappinghandler';
 import {
 	CurrencyFormatter,

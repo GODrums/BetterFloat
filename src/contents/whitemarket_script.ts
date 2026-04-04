@@ -3,7 +3,7 @@ import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from '~lib/handlers/cache/whitemarket_cache';
-import { activateHandler } from '~lib/handlers/eventhandler';
+import { activateWhitemarketEventHandler as activateHandler } from '~lib/sites/whitemarket/events';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';

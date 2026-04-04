@@ -3,10 +3,11 @@ import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
-import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { activateLisskinsEventHandler as activateHandler } from '~lib/sites/lisskins/events';
+import { initPriceMapping } from '~lib/sites/shared/pricing';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getAndFetchCurrencyRate, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { activateLisskinsUrlHandler as dynamicUIHandler } from '~lib/sites/lisskins/url';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';

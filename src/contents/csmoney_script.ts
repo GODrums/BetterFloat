@@ -12,10 +12,11 @@ import {
 	getFirstCSMoneyUserInventoryItem,
 	getSpecificCSMoneyItem,
 } from '~lib/handlers/cache/csmoney_cache';
-import { activateHandler, initPriceMapping } from '~lib/handlers/eventhandler';
+import { activateCSMoneyEventHandler as activateHandler } from '~lib/sites/csmoney/events';
+import { initPriceMapping } from '~lib/sites/shared/pricing';
 import { getAndFetchCurrencyRate, getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
-import { dynamicUIHandler } from '~lib/handlers/urlhandler';
+import { activateCSMoneyUrlHandler as dynamicUIHandler } from '~lib/sites/csmoney/url';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, parsePrice, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
