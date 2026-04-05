@@ -1,15 +1,15 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import SkbAutorefresh from '~lib/inline/SkbAutorefresh';
 import SkbBargainButtons from '~lib/inline/SkbBargainButtons';
-import UpdatePopup from '~lib/inline/UpdatePopup';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { scheduleUpdatePopup } from '~lib/inline/update_popup';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function activateSkinbidUrlHandler() {
 	registerRuntimeUrlHandler(handleSkinbidChange);
 	void handleSkinbidChange(getCurrentUrlState());
-	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
+	scheduleUpdatePopup();
 }
 
 async function handleSkinbidChange(state: Extension.URLState) {

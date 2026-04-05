@@ -1,8 +1,8 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import DMMarketComparison from '~lib/inline/DMMarketComparison';
 import DmAutorefresh from '~lib/inline/DmAutorefresh';
-import UpdatePopup from '~lib/inline/UpdatePopup';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup, watchUrlStateChanges } from '~lib/shared/url';
+import { scheduleUpdatePopup } from '~lib/inline/update_popup';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, watchUrlStateChanges } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
@@ -10,7 +10,7 @@ export function activateDMarketUrlHandler() {
 	registerRuntimeUrlHandler(handleDMarketChange);
 	void handleDMarketChange(getCurrentUrlState());
 	watchUrlStateChanges(handleDMarketChange, 1500);
-	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
+	scheduleUpdatePopup();
 }
 
 async function handleDMarketChange(state: Extension.URLState) {

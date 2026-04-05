@@ -6,9 +6,9 @@ import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
 import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFSellSettings from '~lib/inline/CSFSellSettings';
-import UpdatePopup from '~lib/inline/UpdatePopup';
+import { scheduleUpdatePopup } from '~lib/inline/update_popup';
 import { addMessageRelays, RELAY_CREATE_NOTIFICATION } from '~lib/shared/relay';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
 
@@ -23,7 +23,7 @@ export function activateCSFloatUrlHandler() {
 	registerRuntimeUrlHandler(handleStateChange);
 	void handleStateChange(getCurrentUrlState());
 	addMessageRelays(RELAY_CREATE_NOTIFICATION);
-	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
+	scheduleUpdatePopup();
 }
 
 async function handleCSFloatChange(state: Extension.URLState) {

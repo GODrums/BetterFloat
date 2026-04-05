@@ -6,14 +6,13 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
-import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem, isSkinplaceMarketCacheEmpty } from './cache';
+import { getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem } from './cache';
 import { activateSkinplaceEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -64,15 +63,11 @@ async function init() {
 }
 
 function firstLaunch() {
-	let firstLaunch = true;
+	// if (location.pathname === '/buy-cs2-skins' && isSkinplaceMarketCacheEmpty()) {
+	// 	console.debug('[BetterFloat] Skinplace cache is empty, refreshing...');
+	// 	document.querySelector<HTMLElement>('button.refresh-button_type_primary')?.click();
+	// }
 	setInterval(async () => {
-		if (firstLaunch) {
-			firstLaunch = false;
-			if (location.pathname === '/buy-cs2-skins' && isSkinplaceMarketCacheEmpty()) {
-				console.debug('[BetterFloat] Skinplace cache is empty, refreshing...');
-				document.querySelector<HTMLElement>('button.refresh-button_type_primary')?.click();
-			}
-		}
 		const items = document.querySelectorAll<HTMLElement>('.item-buy-card:not(.betterfloat-buff-a)');
 		for (const item of items) {
 			await adjustItem(item, PageState.Market);
@@ -252,18 +247,18 @@ async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem) {
 	const market_id = await getMarketID(buff_name, source);
 
 	let itemPrice = getItemPrice(item);
-	const userCurrency = getUserCurrency();
+	const userCurrency = await getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = await getCurrencyToUsdRate(userCurrency);
+	const currencyRate = await getUserCurrencyRate();
 
-	if (currencyRate && currencyRate !== 1) {
+	if (currencyRate && userCurrency !== 'USD') {
 		if (priceListing) {
-			priceListing = priceListing.div(currencyRate);
+			priceListing = priceListing.mul(currencyRate);
 		}
 		if (priceOrder) {
-			priceOrder = priceOrder.div(currencyRate);
+			priceOrder = priceOrder.mul(currencyRate);
 		}
-		itemPrice = itemPrice.div(currencyRate);
+		itemPrice = itemPrice.mul(currencyRate);
 	}
 
 	const referencePrice =
@@ -291,8 +286,14 @@ async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem) {
 	};
 }
 
-function getUserCurrency() {
-	return localStorage.getItem('currency') || 'USD';
+async function getUserCurrency() {
+	return (await window.cookieStore.get('currency_type_storage'))?.value || 'USD';
+}
+
+async function getUserCurrencyRate() {
+	const currencyRate = (await window.cookieStore.get('currency_rate_storage'))?.value;
+	if (!currencyRate) return 1;
+	return parseFloat(currencyRate);
 }
 
 function getItemPrice(item: Skinplace.InventoryItem | Skinplace.GetItem): Decimal {

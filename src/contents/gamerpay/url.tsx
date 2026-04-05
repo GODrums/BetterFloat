@@ -1,14 +1,14 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import GPAutorefresh from '~lib/inline/GPAutorefresh';
-import UpdatePopup from '~lib/inline/UpdatePopup';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { scheduleUpdatePopup } from '~lib/inline/update_popup';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function activateGamerpayUrlHandler() {
 	registerRuntimeUrlHandler(handleGamerpayChange);
 	void handleGamerpayChange(getCurrentUrlState());
-	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
+	scheduleUpdatePopup();
 }
 
 async function handleGamerpayChange(state: Extension.URLState) {

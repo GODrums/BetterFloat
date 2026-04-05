@@ -7,14 +7,13 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { initAvan } from '~lib/handlers/history/avan_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
-import { getCurrencyToUsdRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getAvanmarketInventoryItem, getFirstAvanmarketItem } from './cache';
+import { getAvanmarketCurrency, getAvanmarketInventoryItem, getFirstAvanmarketItem } from './cache';
 import { activateAvanmarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -188,7 +187,7 @@ async function adjustItemPage(container: Element) {
 				.replace(/,/g, '')
 				.replace(/[^0-9.]/g, '') ?? 0;
 		const itemPrice = new Decimal(parsedPrice).div(100);
-		const saleTag = createSaleTag(itemPrice.minus(priceData.priceFromReference ?? 0), itemPrice.div(priceData.priceFromReference ?? 0).mul(100), CurrencyFormatter(getUserCurrency(), 0, 2));
+		const saleTag = createSaleTag(itemPrice.minus(priceData.priceFromReference ?? 0), itemPrice.div(priceData.priceFromReference ?? 0).mul(100), CurrencyFormatter(getUserCurrency().name, 0, 2));
 		priceContainer?.insertAdjacentHTML('beforeend', saleTag);
 
 		priceContainer.setAttribute('style', 'width: max-content; gap: 8px;');
@@ -309,18 +308,17 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 	}
 	const market_id = await getMarketID(buff_name, source);
 
-	const userCurrency = getUserCurrency();
+	const { name: userCurrency, rate: currencyRate } = getUserCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
-	const currencyRate = await getCurrencyToUsdRate(userCurrency);
 
-	if (currencyRate && currencyRate !== 1) {
+	if (currencyRate && userCurrency !== 'USD') {
 		if (priceListing) {
-			priceListing = priceListing.div(currencyRate);
+			priceListing = priceListing.mul(currencyRate);
 		}
 		if (priceOrder) {
-			priceOrder = priceOrder.div(currencyRate);
+			priceOrder = priceOrder.mul(currencyRate);
 		}
-		itemPrice = itemPrice.div(currencyRate);
+		itemPrice = itemPrice.mul(currencyRate);
 	}
 
 	const referencePrice =
@@ -349,14 +347,7 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 }
 
 function getUserCurrency() {
-	const currency = localStorage.getItem('currency');
-	if (!currency) return 'USD';
-
-	// previously it was only a string, now it's an object
-	if (!currency.includes('{')) return currency;
-
-	// new format: $ USD, € EUR, etc.
-	return JSON.parse(currency)?.name?.split(' ')[1];
+	return getAvanmarketCurrency();
 }
 
 function getItemPrice(item: Avanmarket.Item | Avanmarket.InventoryItem) {

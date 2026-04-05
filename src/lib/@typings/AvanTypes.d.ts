@@ -11,6 +11,15 @@ export namespace Avanmarket {
 		rateId: number;
 	};
 
+	export type CurrencyResponse = {
+		courseToBuy: number;
+		courseToUsd: number;
+		createdAt: string;
+		id: number;
+		name: string;
+		updatedAt: string;
+	};
+
 	export type Item = {
 		id: number;
 		rarity: string;

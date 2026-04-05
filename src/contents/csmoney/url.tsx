@@ -1,15 +1,15 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import CSMAutorefresh from '~lib/inline/CSMAutorefresh';
-import UpdatePopup from '~lib/inline/UpdatePopup';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler, scheduleVersionedPopup } from '~lib/shared/url';
+import { scheduleUpdatePopup } from '~lib/inline/update_popup';
+import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function activateCSMoneyUrlHandler() {
 	registerRuntimeUrlHandler(handleCSMoneyChange);
 	void handleCSMoneyChange(getCurrentUrlState());
-	scheduleVersionedPopup(() => <UpdatePopup />, '3.3.0');
+	scheduleUpdatePopup();
 }
 
 async function handleCSMoneyChange(state: Extension.URLState) {

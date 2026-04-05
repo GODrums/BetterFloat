@@ -1,12 +1,10 @@
 import globalStyle from 'url:~/style.css';
-import { relayMessage } from '@plasmohq/messaging';
 import { createIsolatedElement } from '@webext-core/isolated-element';
 import type { JSX } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { createUrlListener } from '~lib/util/helperfunctions';
-import { ExtensionStorage } from '~lib/util/storage';
 
 export type UrlStateHandler = (state: Extension.URLState) => void | Promise<void>;
 
@@ -35,25 +33,6 @@ export function watchUrlStateChanges(handleChange: UrlStateHandler, interval = 1
 	return createUrlListener((url) => {
 		void handleChange(toUrlState(url));
 	}, interval);
-}
-
-export function scheduleVersionedPopup(render: () => JSX.Element, version: string, delayMs = 3000) {
-	setTimeout(async () => {
-		const extensionVersion = chrome.runtime.getManifest().version;
-		if (extensionVersion !== version) {
-			return;
-		}
-
-		const storageKey = `show-update-popup-${version}`;
-		const showUpdate = await ExtensionStorage.sync.get<boolean>(storageKey);
-		if (showUpdate !== false) {
-			await mountShadowRoot(render(), {
-				tagName: 'betterfloat-update-popup',
-				parent: document.body,
-			});
-			await ExtensionStorage.sync.set(storageKey, false);
-		}
-	}, delayMs);
 }
 
 export async function mountShadowRoot(component: JSX.Element, options: { tagName: string; parent?: Element | null; position?: 'before' | 'after' }) {

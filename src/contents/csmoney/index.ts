@@ -1,4 +1,5 @@
 import { html } from 'common-tags';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
@@ -61,8 +62,6 @@ async function firstLaunch() {
 	if (!success) return;
 
 	await new Promise((resolve) => setTimeout(resolve, 500));
-	// call once to refresh local storage
-	getUserCurrency(true);
 
 	// these reloads are required to get the API data,
 	// as the injected script is too slow for the initial load
@@ -280,7 +279,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 	}
 	const market_id = await getMarketID(buff_name, source);
 
-	const currencyItem = getUserCurrency();
+	const currencyItem = await getUserCurrency();
 	if (!currencyItem?.text) {
 		throw new Error('[BetterFloat] No currency rate found. Please report this issue.');
 	}
@@ -365,40 +364,13 @@ function createBuffItem(item: CSMoney.Item): { name: string; style: ItemStyle } 
 	};
 }
 
-export function getUserCurrency(forceRefresh = false): { symbol: string; text: string } | null {
-	if (!forceRefresh) {
-		const userCurrency = localStorage.getItem('userCurrency');
-		if (userCurrency) {
-			return JSON.parse(userCurrency);
-		}
-	}
-	if (location.pathname.includes('/csgo/trade/')) {
-		const oldCurrency = (document.querySelector(CSMONEY_SELECTORS.trade.currencyContainer) ?? document.querySelector(CSMONEY_SELECTORS.trade.currencyDropdown))?.textContent?.split(' ');
-		if (oldCurrency) {
-			const currency = {
-				symbol: oldCurrency[0],
-				text: oldCurrency[1],
-			};
-			localStorage.setItem('userCurrency', JSON.stringify(currency));
-			return currency;
-		}
-		return null;
-	}
-
-	const dropDownSvg = Array.from(document.querySelectorAll(CSMONEY_SELECTORS.market.userCurrency)).pop();
-	if (!dropDownSvg) {
-		return {
-			symbol: 'USD',
-			text: 'USD',
-		};
-	}
-	const selectedCurrency = dropDownSvg.parentElement?.previousElementSibling?.textContent?.split(' ');
-	const currency = {
-		symbol: selectedCurrency?.[0] ?? 'USD',
-		text: selectedCurrency?.[1] ?? 'USD',
+export async function getUserCurrency(): Promise<{ symbol: string; text: string }> {
+	const currency = (await window.cookieStore.get('user_currency'))?.value;
+	if (!currency) return { symbol: '$', text: 'USD' };
+	return {
+		symbol: getSymbolFromCurrency(currency) ?? '$',
+		text: currency ?? 'USD',
 	};
-	localStorage.setItem('userCurrency', JSON.stringify(currency));
-	return currency;
 }
 
 function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
