@@ -68,7 +68,7 @@ import {
 } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import { AphroditeMapping, ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
@@ -87,6 +87,7 @@ import {
 } from './cache';
 import { activateCSFloatEventHandler as activateHandler } from './events';
 import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
+import { generateAphroditeIcon } from '~lib/util/icon_generation';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -1450,7 +1451,25 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgeNocts(container, item);
 	} else if (item.type === 'charm') {
 		badgeCharm(container, item);
+	} else if (item.def_index === 7 && item.paint_index === 1397) {
+		await badgeAphrodite(container, item);
 	}
+}
+
+async function badgeAphrodite(container: Element, item: CSFloat.Item) {
+	const gem_data = AphroditeMapping[item.paint_seed!];
+	if (!gem_data) return;
+	console.log(gem_data);
+
+	const { type, tier } = gem_data;
+	const icon = generateAphroditeIcon(type, tier, 30);
+
+	CSFloatHelpers.addSvgPatternBadge({
+		container,
+		svg: icon,
+		tooltipText: [`${type.charAt(0).toUpperCase() + type.slice(1)} Gem`].concat(tier ? [`Tier ${tier}`] : []),
+		tooltipStyle: 'translate: -20px 15px; width: 60px;',
+	});
 }
 
 async function badgeChromaGems(container: Element, item: CSFloat.Item) {

@@ -5,6 +5,7 @@ import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { initLisskins } from '~lib/handlers/history/lisskins_history';
 import { BigCurrency, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { getUSDToCurrencyRate } from '~lib/shared/currency';
+import { activateSiteEventHandler } from '~lib/shared/events';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
@@ -13,7 +14,6 @@ import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 import { activateLisskinsUrlHandler as dynamicUIHandler } from './url';
-import { activateSiteEventHandler } from '~lib/shared/events';
 
 type PriceResult = {
 	currency: string;

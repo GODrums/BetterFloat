@@ -222,6 +222,45 @@ export namespace CSFloatHelpers {
 		badgeContainer.appendChild(badge);
 	}
 
+	export function addSvgPatternBadge({ container, svg, svgStyle, tooltipText, tooltipStyle, badgeText, badgeStyle }: Omit<AddPatternBadgeOptions, 'svgfile'> & { svg: string }) {
+		const badgeTooltip = document.createElement('div');
+		badgeTooltip.className = 'bf-tooltip-inner';
+		badgeTooltip.setAttribute('style', tooltipStyle);
+		for (let i = 0; i < tooltipText.length; i++) {
+			const badgeTooltipSpan = document.createElement('span');
+			badgeTooltipSpan.textContent = tooltipText[i];
+			badgeTooltip.appendChild(badgeTooltipSpan);
+		}
+		const badge = document.createElement('div');
+		badge.className = 'bf-tooltip';
+		const badgeDiv = document.createElement('div');
+		badgeDiv.className = 'bf-badge-text';
+		badgeDiv.innerHTML = svg;
+		if (svgStyle) {
+			badgeDiv.setAttribute('style', svgStyle);
+		}
+		if (badgeText) {
+			const badgeSpan = document.createElement('span');
+			badgeSpan.textContent = badgeText;
+			if (badgeStyle) {
+				badgeSpan.setAttribute('style', badgeStyle);
+			}
+			badgeDiv.appendChild(badgeSpan);
+		}
+		badge.appendChild(badgeDiv);
+		badge.appendChild(badgeTooltip);
+		let badgeContainer = container.querySelector('.badge-container');
+		if (!badgeContainer) {
+			badgeContainer = document.createElement('div');
+			badgeContainer.setAttribute('style', 'position: absolute; top: 5px; left: 5px;');
+			container.querySelector('.item-img')?.after(badgeContainer);
+		} else {
+			badgeContainer = badgeContainer.querySelector('.container') ?? badgeContainer;
+			badgeContainer.setAttribute('style', 'gap: 5px;');
+		}
+		badgeContainer.appendChild(badge);
+	}
+
 	export function addItemScreenshot(container: Element, item: CSFloat.Item) {
 		if (!item.cs2_screenshot_id) return;
 

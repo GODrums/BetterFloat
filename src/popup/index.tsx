@@ -127,41 +127,41 @@ export default function IndexPopup() {
 								<TabsTrigger value="lisskins">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_LISSKINS} />
 								</TabsTrigger>
-								<TabsTrigger value="gamerpay">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_GAMERPAY} />
-								</TabsTrigger>
-								<TabsTrigger value="skinbaron">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
-								</TabsTrigger>
-								<TabsTrigger value="skinsmonkey">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
-								</TabsTrigger>
-								<TabsTrigger value="waxpeer">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
-								</TabsTrigger>
-								<TabsTrigger value="whitemarket">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WHITEMARKET} />
-								</TabsTrigger>
-								<TabsTrigger value="shadowpay">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
-								</TabsTrigger>
 								<TabsTrigger value="marketcsgo">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_MARKETCSGO} />
 								</TabsTrigger>
-								<TabsTrigger value="swapgg">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SWAPGG} />
-								</TabsTrigger>
-								<TabsTrigger value="avan">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
-								</TabsTrigger>
-								<TabsTrigger value="skinout">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINOUT} />
+								<TabsTrigger value="ss">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSWAP} />
 								</TabsTrigger>
 								<TabsTrigger value="splace">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPLACE} />
 								</TabsTrigger>
-								<TabsTrigger value="ss">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSWAP} />
+								<TabsTrigger value="avan">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
+								</TabsTrigger>
+								<TabsTrigger value="gamerpay">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_GAMERPAY} />
+								</TabsTrigger>
+								<TabsTrigger value="skinsmonkey">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSMONKEY} />
+								</TabsTrigger>
+								<TabsTrigger value="whitemarket">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WHITEMARKET} />
+								</TabsTrigger>
+								<TabsTrigger value="skinbaron">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINBARON} />
+								</TabsTrigger>
+								<TabsTrigger value="waxpeer">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_WAXPEER} />
+								</TabsTrigger>
+								<TabsTrigger value="shadowpay">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SHADOWPAY} />
+								</TabsTrigger>
+								<TabsTrigger value="swapgg">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SWAPGG} />
+								</TabsTrigger>
+								<TabsTrigger value="skinout">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINOUT} />
 								</TabsTrigger>
 								<TabsTrigger value="skinflow">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINFLOW} />
