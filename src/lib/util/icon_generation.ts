@@ -1,6 +1,10 @@
 import { html } from 'common-tags';
 import type { AphroditeGemType } from './patterns';
 
+export function svgtoBase64Encode(raw: string) {
+	return 'data:image/svg+xml;base64,' + window.btoa(raw);
+}
+
 export function generateAphroditeIcon(type: AphroditeGemType, tier?: number, size?: number) {
 	let c1: string;
 	let c2: string;
@@ -68,4 +72,12 @@ export function generateAphroditeIcon(type: AphroditeGemType, tier?: number, siz
 ${numberMask}
 </svg>
 `;
+}
+
+export function generateMixPatternIcon(color: string, size?: number) {
+	return html`
+    <svg width="${size ?? 256}" height="${size ?? 256}" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+    <path fill="none" stroke="${color}" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M6 8h4m4 8h4M16 6v4m-8 4v4M22 8h4m4 8h4M32 6v4m-8 4v4M38 8h4m-2 6v4M6 24h4m4 8h4m-2-10v4m-8 4v4m14-10h4m4 8h4m-2-10v4m-8 4v4m14-10h4m-2 6v4M6 40h4m6-2v4m6-2h4m6-2v4m6-2h4"/>
+</svg>
+    `;
 }

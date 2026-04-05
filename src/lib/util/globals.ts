@@ -85,6 +85,8 @@ import iconSapphire2 from 'data-base64:/assets/patterns/sapphire-rank-2.png';
 import iconSapphire3 from 'data-base64:/assets/patterns/sapphire-rank-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
+import iconCloudChasers1 from 'data-base64:/assets/patterns/cloud-chasers-1.png';
+import iconCloudChasers2 from 'data-base64:/assets/patterns/cloud-chasers-2.png';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
@@ -178,7 +180,8 @@ export const ICON_SKINFLOW = iconSkinflow;
 export const ICON_SKINFLOW_FULL = iconSkinflowFull;
 export const ICON_SKINSWAP = iconSkinswap;
 export const ICON_SKINSWAP_FULL = iconSkinswapFull;
-
+export const ICON_CLOUD_CHASERS_1 = iconCloudChasers1;
+export const ICON_CLOUD_CHASERS_2 = iconCloudChasers2;
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
 export const ocoKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;

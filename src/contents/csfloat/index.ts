@@ -50,6 +50,8 @@ import {
 	ICON_STEAMANALYST,
 	isProduction,
 	MarketSource,
+	ICON_CLOUD_CHASERS_1,
+	ICON_CLOUD_CHASERS_2,
 } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
@@ -68,7 +70,17 @@ import {
 } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
-import { AphroditeMapping, ButterflyGemMapping, DiamonGemMapping, KarambitGemMapping, NoctsMapping, PinkGalaxyMapping } from '~lib/util/patterns';
+import {
+	AphroditeMapping,
+	ButterflyGemMapping,
+	CloudChasersMapping,
+	DiamonGemMapping,
+	KarambitGemMapping,
+	NoctsMapping,
+	PillowPunchersMapping,
+	PinkGalaxyMapping,
+	UltraViolentMapping,
+} from '~lib/util/patterns';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings, getSetting } from '~lib/util/storage';
 import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
@@ -87,7 +99,7 @@ import {
 } from './cache';
 import { activateCSFloatEventHandler as activateHandler } from './events';
 import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
-import { generateAphroditeIcon } from '~lib/util/icon_generation';
+import { generateAphroditeIcon, generateMixPatternIcon, svgtoBase64Encode } from '~lib/util/icon_generation';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -1453,13 +1465,74 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		badgeCharm(container, item);
 	} else if (item.def_index === 7 && item.paint_index === 1397) {
 		await badgeAphrodite(container, item);
+	} else if (item.def_index === 5030 && item.paint_index === 1410) {
+		await badgeUltraViolent(container, item);
+	} else if (item.def_index === 5034 && item.paint_index === 1440) {
+		await badgeCloudChasers(container, item);
+	} else if (item.def_index === 5034 && item.paint_index === 1438) {
+		await badgePillowPunchers(container, item);
 	}
+}
+
+async function badgePillowPunchers(container: Element, item: CSFloat.Item) {
+	const pillow_data = PillowPunchersMapping[item.paint_seed!];
+	if (!pillow_data) return;
+
+	const icon = generateMixPatternIcon('#F6F7F9', 30);
+	const base64 = svgtoBase64Encode(icon);
+
+	const badgeStyle = 'color: white; font-size: 18px; font-weight: 500; position: absolute; top: 6px; text-shadow: -1px 0 #444, 0 1px #444, 1px 0 #444, 0 -1px #444;';
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: base64,
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Tier ${pillow_data}`],
+		tooltipStyle: 'translate: -20px 15px; width: 50px;',
+		badgeText: String(pillow_data),
+		badgeStyle,
+	});
+}
+
+async function badgeCloudChasers(container: Element, item: CSFloat.Item) {
+	const cloud_data = CloudChasersMapping[item.paint_seed!];
+	if (!cloud_data) return;
+
+	const iconMapping = {
+		1: ICON_CLOUD_CHASERS_1,
+		2: ICON_CLOUD_CHASERS_2,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[cloud_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Double Centered Dragons', `Tier ${cloud_data}`],
+		tooltipStyle: 'translate: -40px 15px; width: 100px;',
+	});
+}
+
+async function badgeUltraViolent(container: Element, item: CSFloat.Item) {
+	const mix_data = UltraViolentMapping[item.paint_seed!];
+	if (!mix_data) return;
+
+	const icon = generateMixPatternIcon(mix_data.type === 'blue' ? '#00BCFF' : '#6155F5', 30);
+	const base64 = svgtoBase64Encode(icon);
+
+	const badgeStyle = 'color: lightgrey; font-size: 18px; font-weight: 500; position: absolute; top: 6px;';
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: base64,
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Max ${mix_data.type.charAt(0).toUpperCase() + mix_data.type.slice(1)} Tier ${mix_data.tier}`],
+		tooltipStyle: 'translate: -27px 15px; width: 70px;',
+		badgeText: String(mix_data.tier),
+		badgeStyle,
+	});
 }
 
 async function badgeAphrodite(container: Element, item: CSFloat.Item) {
 	const gem_data = AphroditeMapping[item.paint_seed!];
 	if (!gem_data) return;
-	console.log(gem_data);
 
 	const { type, tier } = gem_data;
 	const icon = generateAphroditeIcon(type, tier, 30);
