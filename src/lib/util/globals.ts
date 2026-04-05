@@ -59,6 +59,10 @@ import iconSkinflowFull from 'data-base64:/assets/logos/skinflow_full.webp';
 import iconSkinport from 'data-base64:/assets/logos/skinport.ico';
 import iconSkinsmonkey from 'data-base64:/assets/logos/skinsmonkey.jpg';
 import iconSkinsmonkeyFull from 'data-base64:/assets/logos/skinsmonkey_full.svg';
+import iconBigSwell1 from 'data-base64:/assets/patterns/big-swell-1.png';
+import iconBigSwell2 from 'data-base64:/assets/patterns/big-swell-2.png';
+import iconCloudChasers1 from 'data-base64:/assets/patterns/cloud-chasers-1.png';
+import iconCloudChasers2 from 'data-base64:/assets/patterns/cloud-chasers-2.png';
 import iconCrimson from 'data-base64:/assets/patterns/crimson-pattern.svg';
 import iconDiamondGem1 from 'data-base64:/assets/patterns/diamond-gem-1.png';
 import iconDiamondGem2 from 'data-base64:/assets/patterns/diamond-gem-2.png';
@@ -85,8 +89,6 @@ import iconSapphire2 from 'data-base64:/assets/patterns/sapphire-rank-2.png';
 import iconSapphire3 from 'data-base64:/assets/patterns/sapphire-rank-3.png';
 import iconSpiderWeb from 'data-base64:/assets/patterns/spider-web.svg';
 import iconArrowupSmall from 'data-text:/assets/icons/arrow-up-right-from-square-solid-small.svg';
-import iconCloudChasers1 from 'data-base64:/assets/patterns/cloud-chasers-1.png';
-import iconCloudChasers2 from 'data-base64:/assets/patterns/cloud-chasers-2.png';
 
 export const DISCORD_URL = 'https://discord.gg/VQWXp33nSW';
 export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
@@ -182,6 +184,8 @@ export const ICON_SKINSWAP = iconSkinswap;
 export const ICON_SKINSWAP_FULL = iconSkinswapFull;
 export const ICON_CLOUD_CHASERS_1 = iconCloudChasers1;
 export const ICON_CLOUD_CHASERS_2 = iconCloudChasers2;
+export const ICON_BIG_SWELL_1 = iconBigSwell1;
+export const ICON_BIG_SWELL_2 = iconBigSwell2;
 export const EVENT_URL_CHANGED = 'BetterFloat_URL_CHANGED';
 
 export const ocoKeyRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;

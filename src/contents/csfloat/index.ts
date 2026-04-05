@@ -14,9 +14,13 @@ import {
 	ICON_ARROWDOWN,
 	ICON_ARROWUP_SMALL,
 	ICON_ARROWUP2,
+	ICON_BIG_SWELL_1,
+	ICON_BIG_SWELL_2,
 	ICON_BUFF,
 	ICON_CAMERA_FLIPPED,
 	ICON_CLOCK,
+	ICON_CLOUD_CHASERS_1,
+	ICON_CLOUD_CHASERS_2,
 	ICON_CRIMSON,
 	ICON_CSFLOAT,
 	ICON_CSGOSKINS,
@@ -50,8 +54,6 @@ import {
 	ICON_STEAMANALYST,
 	isProduction,
 	MarketSource,
-	ICON_CLOUD_CHASERS_1,
-	ICON_CLOUD_CHASERS_2,
 } from '~lib/util/globals';
 import {
 	CurrencyFormatter,
@@ -68,10 +70,12 @@ import {
 	isUserPro,
 	waitForElement,
 } from '~lib/util/helperfunctions';
+import { generateAphroditeIcon, generateMixPatternIcon, svgtoBase64Encode } from '~lib/util/icon_generation';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import {
 	AphroditeMapping,
+	BigSwellMapping,
 	ButterflyGemMapping,
 	CloudChasersMapping,
 	DiamonGemMapping,
@@ -99,7 +103,6 @@ import {
 } from './cache';
 import { activateCSFloatEventHandler as activateHandler } from './events';
 import { activateCSFloatUrlHandler as dynamicUIHandler, mountCSFBargainButtons } from './url';
-import { generateAphroditeIcon, generateMixPatternIcon, svgtoBase64Encode } from '~lib/util/icon_generation';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.csfloat.com/*'],
@@ -1471,6 +1474,8 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgeCloudChasers(container, item);
 	} else if (item.def_index === 5034 && item.paint_index === 1438) {
 		await badgePillowPunchers(container, item);
+	} else if (item.def_index === 5034 && item.paint_index === 1437) {
+		await badgeBigSwell(container, item);
 	}
 }
 
@@ -1490,6 +1495,24 @@ async function badgePillowPunchers(container: Element, item: CSFloat.Item) {
 		tooltipStyle: 'translate: -20px 15px; width: 50px;',
 		badgeText: String(pillow_data),
 		badgeStyle,
+	});
+}
+
+async function badgeBigSwell(container: Element, item: CSFloat.Item) {
+	const big_swell_data = BigSwellMapping[item.paint_seed!];
+	if (!big_swell_data) return;
+
+	const iconMapping = {
+		1: ICON_BIG_SWELL_1,
+		2: ICON_BIG_SWELL_2,
+	};
+
+	CSFloatHelpers.addPatternBadge({
+		container,
+		svgfile: iconMapping[big_swell_data],
+		svgStyle: 'height: 30px;',
+		tooltipText: ['Centered Waves', `Tier ${big_swell_data}`],
+		tooltipStyle: 'translate: -40px 15px; width: 100px;',
 	});
 }
 
