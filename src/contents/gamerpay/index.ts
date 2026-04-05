@@ -12,7 +12,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, getSPBackgroundColor
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { activateGamerpayUrlHandler as dynamicUIHandler } from './url';
+import { activateGamerpayUrlHandler } from './url';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.gamerpay.gg/*'],
@@ -31,11 +31,12 @@ async function init() {
 
 	if (!extensionSettings['gp-enable']) return;
 
-	// check if user has the required plan
 	if (!(await checkUserPlanPro(extensionSettings['user']))) {
 		console.log('[BetterFloat] Pro plan required for Gamerpay features');
 		return;
 	}
+
+	activateGamerpayUrlHandler();
 
 	await initPriceMapping(extensionSettings, 'gp');
 
@@ -55,8 +56,6 @@ async function init() {
 
 	// may lead to currency rate changes not being loaded in time, but it's fine...
 	currencyRates = await getCurrencyRates();
-
-	dynamicUIHandler();
 
 	console.timeEnd('[BetterFloat] Gamerpay init timer');
 }

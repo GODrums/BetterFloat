@@ -14,7 +14,6 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { activateRapidEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.rapidskins.com/*'],
@@ -32,10 +31,6 @@ async function init() {
 	if (location.host !== 'rapidskins.com') {
 		return;
 	}
-
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	activateHandler();
 
 	extensionSettings = await getAllSettings();
 

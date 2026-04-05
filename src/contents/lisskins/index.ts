@@ -12,8 +12,8 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { activateLisskinsEventHandler as activateHandler } from './events';
 import { activateLisskinsUrlHandler as dynamicUIHandler } from './url';
+import { activateSiteEventHandler } from '~lib/shared/events';
 
 type PriceResult = {
 	currency: string;
@@ -35,9 +35,7 @@ async function init() {
 
 	initLisskins();
 
-	// catch the events thrown by the script
-	// this has to be done as first thing to not miss timed events
-	activateHandler();
+	activateSiteEventHandler(() => {});
 
 	extensionSettings = await getAllSettings();
 
