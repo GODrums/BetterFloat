@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+## Run using: ./scripts/create-source-archive.sh
 
 set -euo pipefail
 
