@@ -45,6 +45,11 @@ export namespace Tradeit {
 		colors: string[]; // e.g. ["#8650AC"]
 		createdAt: string;
 		currentStock?: number;
+		fade?: {
+			percentage: number;
+			ranking: number;
+			seed: number;
+		};
 		floatValue?: number;
 		floatValues?: number[];
 		gameId: string;

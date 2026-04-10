@@ -188,6 +188,25 @@ async function adjustItem(container: Element, isOwn = false) {
 			valueTag.setAttribute('style', 'margin-top: 25px;');
 		}
 	}
+
+	if (apiItem.fade) {
+		addFadeBadge(container, apiItem);
+	}
+}
+
+function addFadeBadge(container: Element, item: Tradeit.Item) {
+	const fadePercentage = item.fade?.percentage ?? 0;
+	if (!fadePercentage) return;
+
+	const fadePercentageDecimal = new Decimal(fadePercentage).toDP(1);
+	const indicatorsContainer = container.querySelector(TRADEIT_SELECTORS.indicators);
+	if (!indicatorsContainer) return;
+
+	const fadeBadge = document.createElement('div');
+	fadeBadge.className = 'betterfloat-fade-badge';
+	fadeBadge.setAttribute('style', `background-position-x: ${fadePercentageDecimal.toNumber()}%;`);
+	fadeBadge.textContent = `${fadePercentageDecimal.toFixed(1)}%`;
+	indicatorsContainer.insertBefore(fadeBadge, indicatorsContainer.firstElementChild);
 }
 
 async function getBuffItem(container: Element, item: Tradeit.Item) {

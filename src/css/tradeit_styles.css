@@ -83,3 +83,18 @@
 .betterfloat-similar-a:hover {
 	background-color: #77709b;
 }
+
+.betterfloat-fade-badge {
+	width: fit-content;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	line-height: 16px;
+	font-size: 12px;
+	padding: 2px;
+	border-radius: 7px;
+	color: #00000080;
+	background-size: 170%;
+	background-image: linear-gradient(to right, #d9bba5, #e5903b, #db5977, #6775e1);
+}
