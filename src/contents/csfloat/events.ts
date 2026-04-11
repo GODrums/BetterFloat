@@ -28,8 +28,8 @@ function getPathname(url: string) {
 	}
 }
 
-function isSingleOfferPath(pathname: string) {
-	return /^\/api\/v1\/offers\/[^/]+$/.test(pathname);
+function isOfferHistoryPath(pathname: string) {
+	return /^\/api\/v1\/offers\/[^/]+\/history$/.test(pathname);
 }
 
 function processCSFloatEvent(eventData: EventData<unknown>) {
@@ -50,7 +50,7 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 		cacheCSFOffers((eventData.data as CSFloat.OffersTimeline).offers);
 	} else if (pathname === '/api/v1/offers') {
 		upsertCSFBargainHistoryCreateResponse(eventData.data);
-	} else if (isSingleOfferPath(pathname)) {
+	} else if (isOfferHistoryPath(pathname)) {
 		const offers = Array.isArray(eventData.data) ? (eventData.data as CSFloat.Offer[]) : [];
 		if (offers.length > 0) {
 			adjustOfferBubbles(offers);

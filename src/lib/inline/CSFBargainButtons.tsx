@@ -1,6 +1,8 @@
-import { type FC, useEffect, useRef, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { Check, CircleHelp, Clock3, X } from 'lucide-react';
+import { type FC, useEffect, useState } from 'react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-import { CSF_BARGAIN_HISTORY_UPDATED_EVENT, type CSFloatBargainHistoryEntry, getCSFBargainHistory } from '~lib/db/csfloatBargainHistory';
+import { type CSFloatBargainHistoryEntry, getCSFBargainHistory } from '~lib/db/csfloatBargainHistory';
 import { Button } from '~popup/ui/button';
 import { MultiplierInput } from '~popup/ui/input';
 
@@ -10,8 +12,10 @@ type PricingData = {
 	userCurrency: string;
 };
 
-type BargainHistoryUpdateDetail = {
-	contractId: string;
+type OfferStatePresentation = {
+	Icon: React.ElementType;
+	className: string;
+	label: string;
 };
 
 const PercentageButton: FC<{ percentage: number; handleClick: (percentage: number) => void }> = ({ percentage, handleClick }) => {
@@ -19,6 +23,82 @@ const PercentageButton: FC<{ percentage: number; handleClick: (percentage: numbe
 		<Button className="h-8 px-3 bg-[#c1ceff0a] hover:bg-[#fff3]" onClick={() => handleClick(percentage)}>
 			{percentage}%
 		</Button>
+	);
+};
+
+function getOfferStatePresentation(state: string): OfferStatePresentation {
+	const normalizedState = state.toLowerCase();
+
+	if (normalizedState === 'accepted') {
+		return {
+			Icon: Check,
+			className: 'text-[#39d98a]',
+			label: 'Accepted',
+		};
+	}
+
+	if (normalizedState === 'declined' || normalizedState === 'canceled') {
+		return {
+			Icon: X,
+			className: 'text-[#ff6b6b]',
+			label: normalizedState === 'declined' ? 'Declined' : 'Canceled',
+		};
+	}
+
+	if (normalizedState === 'active' || normalizedState === 'expired') {
+		return {
+			Icon: Clock3,
+			className: 'text-[#7db2ff]',
+			label: normalizedState === 'active' ? 'Active' : 'Expired',
+		};
+	}
+
+	return {
+		Icon: CircleHelp,
+		className: 'text-[#9EA7B1]',
+		label: state || 'Unknown',
+	};
+}
+
+const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[] }> = ({ history }) => {
+	if (history.length === 0) {
+		return null;
+	}
+
+	return (
+		<div className="mt-4 border-t border-[#ffffff1f] pt-3">
+			<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
+			<div className="flex flex-col gap-2">
+				{history.map((entry) => {
+					const { Icon, className, label } = getOfferStatePresentation(entry.state);
+
+					return (
+						<div key={entry.offerId} className="flex items-center justify-between rounded-md bg-[#c1ceff0a] px-3 py-2 text-sm">
+							<div className="flex items-center gap-2 text-[#E5E7EB]">
+								<span className={className} title={label}>
+									<Icon size={14} aria-hidden="true" />
+								</span>
+								<span>
+									{Intl.NumberFormat(undefined, {
+										style: 'currency',
+										currency: entry.currency,
+										currencyDisplay: 'narrowSymbol',
+										minimumFractionDigits: 0,
+										maximumFractionDigits: 2,
+									}).format(entry.price / 100)}
+								</span>
+							</div>
+							<div className="text-right text-xs text-[#9EA7B1]">
+								{new Intl.DateTimeFormat(undefined, {
+									dateStyle: 'medium',
+									timeStyle: 'short',
+								}).format(new Date(entry.createdAt || entry.recordedAt))}
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		</div>
 	);
 };
 
@@ -48,8 +128,7 @@ async function getPopupContractId() {
 
 const CSFBargainButtons: FC = () => {
 	const [percentage, setPercentage] = useState<string>('');
-	const [history, setHistory] = useState<CSFloatBargainHistoryEntry[]>([]);
-	const contractIdRef = useRef<string | null>(null);
+	const [contractId, setContractId] = useState<string | null>(() => parsePopupListing()?.id ?? null);
 
 	const inputElement = document.querySelector<HTMLInputElement>('app-make-offer-dialog .inputs input');
 
@@ -76,41 +155,31 @@ const CSFBargainButtons: FC = () => {
 	};
 
 	useEffect(() => {
+		if (contractId) {
+			return;
+		}
+
 		let cancelled = false;
-
-		const loadHistory = async (nextContractId?: string | null) => {
-			const resolvedContractId = nextContractId ?? (await getPopupContractId());
-			if (cancelled) {
-				return;
-			}
-
-			contractIdRef.current = resolvedContractId;
-			if (!resolvedContractId) {
-				setHistory([]);
-				return;
-			}
-
-			const entries = await getCSFBargainHistory(resolvedContractId);
+		void getPopupContractId().then((resolvedContractId) => {
 			if (!cancelled) {
-				setHistory(entries);
+				setContractId(resolvedContractId);
 			}
-		};
-
-		void loadHistory();
-
-		const handleHistoryUpdate = (event: Event) => {
-			const { detail } = event as CustomEvent<BargainHistoryUpdateDetail>;
-			if (detail?.contractId && detail.contractId === contractIdRef.current) {
-				void loadHistory(detail.contractId);
-			}
-		};
-
-		document.addEventListener(CSF_BARGAIN_HISTORY_UPDATED_EVENT, handleHistoryUpdate as EventListener);
+		});
 		return () => {
 			cancelled = true;
-			document.removeEventListener(CSF_BARGAIN_HISTORY_UPDATED_EVENT, handleHistoryUpdate as EventListener);
 		};
-	}, []);
+	}, [contractId]);
+
+	const history = useLiveQuery<CSFloatBargainHistoryEntry[], CSFloatBargainHistoryEntry[]>(
+		async () => {
+			if (!contractId) {
+				return [];
+			}
+			return await getCSFBargainHistory(contractId);
+		},
+		[contractId],
+		[]
+	);
 
 	return (
 		<div style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
@@ -137,32 +206,7 @@ const CSFBargainButtons: FC = () => {
 					Apply
 				</Button>
 			</div>
-			{history.length > 0 && (
-				<div className="mt-4 border-t border-[#ffffff1f] pt-3">
-					<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
-					<div className="flex flex-col gap-2">
-						{history.map((entry) => (
-							<div key={entry.offerId} className="flex items-center justify-between rounded-md bg-[#c1ceff0a] px-3 py-2 text-sm">
-								<div className="text-[#E5E7EB]">
-									{Intl.NumberFormat(undefined, {
-										style: 'currency',
-										currency: entry.currency,
-										currencyDisplay: 'narrowSymbol',
-										minimumFractionDigits: 0,
-										maximumFractionDigits: 2,
-									}).format(entry.price / 100)}
-								</div>
-								<div className="text-right text-xs text-[#9EA7B1]">
-									{new Intl.DateTimeFormat(undefined, {
-										dateStyle: 'medium',
-										timeStyle: 'short',
-									}).format(new Date(entry.createdAt || entry.recordedAt))}
-								</div>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
+			<BargainHistoryList history={history} />
 		</div>
 	);
 };

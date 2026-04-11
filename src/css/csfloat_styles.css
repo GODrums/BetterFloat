@@ -52,6 +52,33 @@ app-user-orders {
 	color: var(--primary-text-color);
 }
 
+.betterfloat-bargain-input-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.betterfloat-bargain-meta {
+	position: relative;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 8px;
+	font-size: 16px;
+	white-space: nowrap;
+	margin-left: 8px;
+}
+
+.betterfloat-bargain-diff {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 86px;
+	min-height: 26px;
+	text-align: center;
+}
+
 .betterfloat-buffprice {
 	margin-left: 2px;
 	padding-top: 1px;

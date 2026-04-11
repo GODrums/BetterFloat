@@ -475,23 +475,158 @@ function getJSONAttribute<T = any>(data: string | null | undefined): T | null {
 	return JSON.parse(data) as T;
 }
 
+type CSFBargainPopupData = {
+	item: CSFloat.ListingData;
+	buffData: { priceFromReference: number; userCurrency: string };
+	stickerData: { priceSum?: number; spPercentage?: number } | null;
+};
+
+function getBargainPopupData(itemContainer: Element): CSFBargainPopupData | null {
+	const item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
+	const buffData = getJSONAttribute<{ priceFromReference: number; userCurrency: string }>(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
+	const stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+
+	if (!item || !buffData?.priceFromReference || buffData.priceFromReference <= 0) {
+		return null;
+	}
+
+	return { item, buffData, stickerData };
+}
+
+async function waitForBargainPopupData(itemContainer: Element) {
+	let popupData = getBargainPopupData(itemContainer);
+	let tries = 20;
+	while (!popupData && tries-- > 0) {
+		await new Promise((r) => setTimeout(r, 100));
+		popupData = getBargainPopupData(itemContainer);
+	}
+	return popupData;
+}
+
+function formatSignedCurrencyDifference(diff: Decimal, currency: string) {
+	return `${diff.isNegative() ? '-' : '+'}${currency}${diff.absoluteValue().toDP(2).toNumber()}`;
+}
+
+function getBargainDiffColor(negativeIsProfit: boolean) {
+	return negativeIsProfit ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss'];
+}
+
+function getBargainPopupStyles(showSP: boolean, spPercentage: number, diffColor: string) {
+	return {
+		spStyle: `display: ${showSP ? 'block' : 'none'}; background-color: ${getSPBackgroundColor(spPercentage)}`,
+		diffStyle: `background-color: ${diffColor}`,
+	};
+}
+
+function renderBargainMinOfferSummary(popupContainer: Element, currency: string, minOffer: Decimal, minPercentage: number, showSP: boolean, styles: { spStyle: string; diffStyle: string }) {
+	popupContainer.querySelector('.betterfloat-bargain-summary')?.remove();
+
+	const summaryMarkup = html`
+		<div class="betterfloat-bargain-summary" style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;">
+			<span class="betterfloat-bargain-text" style="${styles.diffStyle}">
+				${formatSignedCurrencyDifference(minOffer, currency)}
+			</span>
+			${showSP ? `<span class="betterfloat-sticker-percentage" style="${styles.spStyle}">${minPercentage}% SP</span>` : ''}
+		</div>
+	`;
+
+	popupContainer.querySelector('.minimum-offer')?.insertAdjacentHTML('beforeend', summaryMarkup);
+}
+
+function renderBargainInputMeta(popupContainer: Element, inputField: HTMLInputElement, showSP: boolean, styles: { spStyle: string; diffStyle: string }) {
+	inputField.parentElement?.classList.add('betterfloat-bargain-input-row');
+	popupContainer.querySelector('.betterfloat-bargain-meta')?.remove();
+
+	inputField.insertAdjacentHTML(
+		'afterend',
+		html`
+			<div class="betterfloat-bargain-meta">
+				<span
+					class="betterfloat-bargain-text betterfloat-bargain-diff"
+					style="${styles.diffStyle}; cursor: pointer; background-color: ${extensionSettings['csf-color-neutral']};"
+				>
+					-
+				</span>
+				${showSP ? `<span class="betterfloat-sticker-percentage betterfloat-bargain-sp" style="${styles.spStyle}; display: none;"></span>` : ''}
+			</div>
+		`
+	);
+
+	return {
+		diffElement: popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff'),
+		spElement: popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-sp'),
+	};
+}
+
+function updateBargainInputMeta({
+	inputField,
+	diffElement,
+	spElement,
+	buffReferencePrice,
+	currency,
+	stickerData,
+	absolute,
+}: {
+	inputField: HTMLInputElement;
+	diffElement: HTMLElement | null;
+	spElement: HTMLElement | null;
+	buffReferencePrice: number;
+	currency: string;
+	stickerData: { priceSum?: number; spPercentage?: number } | null;
+	absolute: boolean;
+}) {
+	if (!diffElement) {
+		return;
+	}
+
+	const rawValue = inputField.value.trim();
+	if (rawValue.length === 0) {
+		diffElement.textContent = absolute ? `+${currency}0` : 'Enter offer';
+		diffElement.style.backgroundColor = extensionSettings['csf-color-neutral'];
+		if (spElement) {
+			spElement.style.display = 'none';
+		}
+		return;
+	}
+
+	const inputPrice = new Decimal(rawValue);
+	if (absolute) {
+		const diff = inputPrice.minus(buffReferencePrice);
+		diffElement.textContent = formatSignedCurrencyDifference(diff, currency);
+		diffElement.style.backgroundColor = getBargainDiffColor(diff.isNegative());
+		if (spElement) {
+			spElement.style.display = 'none';
+		}
+		return;
+	}
+
+	const percentage = inputPrice.div(buffReferencePrice).mul(100);
+	diffElement.textContent = `${percentage.absoluteValue().toDP(2).toNumber()}%`;
+	diffElement.style.backgroundColor = getBargainDiffColor(percentage.lessThan(100));
+
+	if (!spElement || !stickerData?.priceSum) {
+		return;
+	}
+
+	const stickerPercentage = inputPrice.minus(buffReferencePrice).div(stickerData.priceSum).mul(100).toDP(2);
+	if (stickerPercentage.lessThan(0)) {
+		spElement.style.display = 'none';
+		return;
+	}
+
+	spElement.style.display = 'block';
+	spElement.textContent = `${stickerPercentage.toNumber()}% SP`;
+	spElement.style.border = '1px solid grey';
+}
+
 async function adjustBargainPopup(itemContainer: Element, popupContainer: Element) {
 	const itemCard = popupContainer.querySelector('item-card');
 	if (!itemCard) return;
 
-	let item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
-	let buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
-	let stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+	const popupData = await waitForBargainPopupData(itemContainer);
+	if (!popupData) return;
 
-	let i = 0;
-	while (!item && i++ < 20) {
-		await new Promise((r) => setTimeout(r, 100));
-		item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
-		buff_data = getJSONAttribute(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
-		stickerData = getJSONAttribute(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
-	}
-
-	if (!item) return;
+	const { item, buffData, stickerData } = popupData;
 
 	CSFloatHelpers.storeApiItem(itemCard, item);
 
@@ -499,82 +634,41 @@ async function adjustBargainPopup(itemContainer: Element, popupContainer: Elemen
 
 	await mountCSFBargainButtons();
 
-	// console.log('[BetterFloat] Bargain popup data:', itemContainer, item, buff_data, stickerData);
-	if (buff_data?.priceFromReference && buff_data.priceFromReference > 0 && item?.min_offer_price) {
-		const currency = getSymbolFromCurrency(buff_data.userCurrency);
-		const minOffer = new Decimal(item.min_offer_price).div(100).minus(buff_data.priceFromReference);
-		const minPercentage = minOffer.greaterThan(0) && stickerData?.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
-		const showSP = stickerData?.priceSum > 0;
-
-		const spStyle = `display: ${showSP ? 'block' : 'none'}; background-color: ${getSPBackgroundColor(stickerData?.spPercentage ?? 0)}`;
-		const diffStyle = `background-color: ${minOffer.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-		const bargainTags = html`
-			<div style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; margin-left: 10px;">
-				<span class="betterfloat-bargain-text" style="${diffStyle}">
-					${minOffer.isNegative() ? '-' : '+'}${currency}${minOffer.absoluteValue().toDP(2).toNumber()}
-				</span>
-				<span class="betterfloat-sticker-percentage" style="${spStyle}">${minPercentage}% SP</span>
-			</div>
-		`;
-
-		const minContainer = popupContainer.querySelector('.minimum-offer');
-		if (minContainer) {
-			minContainer.insertAdjacentHTML('beforeend', bargainTags);
-		}
-
-		const inputField = popupContainer.querySelector<HTMLInputElement>('input');
-		if (!inputField) return;
-		inputField.parentElement?.setAttribute('style', 'display: flex; align-items: center; justify-content: space-between;');
-		inputField.insertAdjacentHTML(
-			'afterend',
-			html`
-				<div style="position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; gap: 8px; font-size: 16px; white-space: nowrap;">
-					<span class="betterfloat-bargain-text betterfloat-bargain-diff" style="${diffStyle} cursor: pointer;"></span>
-					${showSP && `<span class="betterfloat-sticker-percentage betterfloat-bargain-sp" style="${spStyle}"></span>`}
-				</div>
-			`
-		);
-
-		const diffElement = popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff');
-		const spElement = popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-sp');
-		let absolute = false;
-
-		const calculateDiff = () => {
-			const inputPrice = new Decimal(inputField.value ?? 0);
-			if (absolute) {
-				const diff = inputPrice.minus(buff_data.priceFromReference);
-				if (diffElement) {
-					diffElement.textContent = `${diff.isNegative() ? '-' : '+'}${currency}${diff.absoluteValue().toDP(2).toNumber()}`;
-					diffElement.style.backgroundColor = `${diff.isNegative() ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-				}
-			} else {
-				const diff = inputPrice.div(buff_data.priceFromReference).mul(100);
-				const percentage = stickerData?.priceSum ? inputPrice.minus(buff_data.priceFromReference).div(stickerData.priceSum).mul(100).toDP(2) : null;
-				if (diffElement) {
-					diffElement.textContent = `${diff.absoluteValue().toDP(2).toNumber()}%`;
-					diffElement.style.backgroundColor = `${diff.lessThan(100) ? extensionSettings['csf-color-profit'] : extensionSettings['csf-color-loss']}`;
-				}
-				if (spElement && percentage) {
-					if (percentage.lessThan(0)) {
-						spElement.style.display = 'none';
-					} else {
-						spElement.style.display = 'block';
-						spElement.textContent = `${percentage.toNumber()}% SP`;
-						spElement.style.border = '1px solid grey';
-					}
-				}
-			}
-		};
-
-		inputField.addEventListener('input', () => {
-			calculateDiff();
-		});
-
-		diffElement?.addEventListener('click', () => {
-			absolute = !absolute;
-			calculateDiff();
-		});
+	if (!item.min_offer_price) {
+		return;
 	}
+
+	const currency = getSymbolFromCurrency(buffData.userCurrency);
+	const minOffer = new Decimal(item.min_offer_price).div(100).minus(buffData.priceFromReference);
+	const showSP = (stickerData?.priceSum ?? 0) > 0;
+	const minPercentage = minOffer.greaterThan(0) && stickerData?.priceSum ? minOffer.div(stickerData.priceSum).mul(100).toDP(2).toNumber() : 0;
+	const styles = getBargainPopupStyles(showSP, stickerData?.spPercentage ?? 0, getBargainDiffColor(minOffer.isNegative()));
+
+	renderBargainMinOfferSummary(popupContainer, currency ?? '', minOffer, minPercentage, showSP, styles);
+
+	const inputField = popupContainer.querySelector<HTMLInputElement>('input');
+	if (!inputField) return;
+
+	const { diffElement, spElement } = renderBargainInputMeta(popupContainer, inputField, showSP, styles);
+	let absolute = false;
+
+	const updateMeta = () =>
+		updateBargainInputMeta({
+			inputField,
+			diffElement,
+			spElement,
+			buffReferencePrice: buffData.priceFromReference,
+			currency: currency ?? '',
+			stickerData,
+			absolute,
+		});
+
+	updateMeta();
+	inputField.addEventListener('input', updateMeta);
+	diffElement?.addEventListener('click', () => {
+		absolute = !absolute;
+		updateMeta();
+	});
 }
 
 async function adjustLatestSales(addedNode: Element) {

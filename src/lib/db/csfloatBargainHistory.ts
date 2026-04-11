@@ -1,8 +1,6 @@
 import Dexie, { type Table } from 'dexie';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 
-export const CSF_BARGAIN_HISTORY_UPDATED_EVENT = 'BetterFloat_CSF_BARGAIN_HISTORY_UPDATED';
-
 export type CSFloatOfferCreateFailure = {
 	code: number;
 	message: string;
@@ -20,10 +18,6 @@ export type CSFloatBargainHistoryEntry = {
 	buyerId: string;
 	currency: string;
 	recordedAt: string;
-};
-
-type BargainHistoryUpdateDetail = {
-	contractId: string;
 };
 
 class CSFloatBargainHistoryDB extends Dexie {
@@ -105,16 +99,6 @@ function normalizeOfferToHistoryEntry(offer: unknown): CSFloatBargainHistoryEntr
 	};
 }
 
-function dispatchHistoryUpdate(contractIds: Iterable<string>) {
-	for (const contractId of contractIds) {
-		document.dispatchEvent(
-			new CustomEvent<BargainHistoryUpdateDetail>(CSF_BARGAIN_HISTORY_UPDATED_EVENT, {
-				detail: { contractId },
-			})
-		);
-	}
-}
-
 function mergeHistoryEntry(existing: CSFloatBargainHistoryEntry | undefined, next: CSFloatBargainHistoryEntry) {
 	if (!existing) {
 		return next;
@@ -145,8 +129,6 @@ async function putHistoryEntries(entries: CSFloatBargainHistoryEntry[]) {
 			await bargainHistoryDb.bargains.bulkPut(merged);
 			return merged;
 		});
-		const contractIds = [...new Set(mergedEntries.map((entry) => entry.contractId))];
-		dispatchHistoryUpdate(contractIds);
 		return mergedEntries;
 	} catch (error) {
 		console.warn('[BetterFloat] Failed to persist CSFloat bargain history:', error);
