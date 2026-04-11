@@ -1,63 +1,63 @@
 import { sendToBackground } from '@plasmohq/messaging';
-import type { RequestEcbRatesResponse } from '~background/messages/requestEcbRates';
+import type { RequestRatesResponse } from '~background/messages/requestRates';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { ExtensionStorage } from '~lib/util/storage';
 
 const STORAGE_KEY = 'currencyrates';
-const CACHE_TTL = 1000 * 60 * 60 * 24;
+const CACHE_TTL = 1000 * 60 * 60 * 12;
 
-let ecbUsdBasedRates: Extension.CurrencyRates['rates'] | null = null;
-let ecbUsdBasedRatesPromise: Promise<Extension.CurrencyRates['rates']> | null = null;
+let usdBasedRates: Extension.CurrencyRates['rates'] | null = null;
+let usdBasedRatesPromise: Promise<Extension.CurrencyRates['rates']> | null = null;
 
 export function getRealCurrencyRates() {
-	return ecbUsdBasedRates ?? {};
+	return usdBasedRates ?? {};
 }
 
 async function persistCurrencyRates(rates: Extension.CurrencyRates['rates']) {
-	ecbUsdBasedRates = rates;
+	usdBasedRates = rates;
 	await ExtensionStorage.local.setItem(STORAGE_KEY, {
 		lastUpdate: Date.now(),
 		rates,
 	} satisfies Extension.CurrencyRates);
 }
 
-async function loadEcbUsdBasedRates() {
-	if (ecbUsdBasedRates) {
-		return ecbUsdBasedRates;
+async function loadUsdBasedRates() {
+	if (usdBasedRates) {
+		return usdBasedRates;
 	}
 
-	if (!ecbUsdBasedRatesPromise) {
-		ecbUsdBasedRatesPromise = ExtensionStorage.local
+	if (!usdBasedRatesPromise) {
+		usdBasedRatesPromise = ExtensionStorage.local
 			.getItem<Extension.CurrencyRates>(STORAGE_KEY)
 			.then(async (storedRates) => {
 				if (storedRates?.rates && storedRates.lastUpdate > Date.now() - CACHE_TTL) {
-					ecbUsdBasedRates = storedRates.rates;
-					return ecbUsdBasedRates;
+					usdBasedRates = storedRates.rates;
+					return usdBasedRates;
 				}
 
 				const response = (await sendToBackground({
-					name: 'requestEcbRates',
-				})) as RequestEcbRatesResponse;
+					name: 'requestRates',
+				})) as RequestRatesResponse;
 				const rates = response.rates ?? storedRates?.rates ?? { USD: 1 };
 
 				await persistCurrencyRates(rates);
 				return rates;
 			})
 			.catch((error) => {
-				console.error('[BetterFloat] Failed to load ECB currency rates:', error);
-				ecbUsdBasedRates = { USD: 1 };
-				return ecbUsdBasedRates;
+				console.error('[BetterFloat] Failed to load currency rates:', error);
+				usdBasedRates = { USD: 1 };
+				return usdBasedRates;
 			})
 			.finally(() => {
-				ecbUsdBasedRatesPromise = null;
+				usdBasedRatesPromise = null;
 			});
 	}
 
-	return ecbUsdBasedRatesPromise;
+	return usdBasedRatesPromise;
 }
 
 export async function fetchCurrencyRates() {
-	return loadEcbUsdBasedRates();
+	return loadUsdBasedRates();
 }
 
 // Returns how many units of the target currency equal 1 USD.
@@ -67,7 +67,7 @@ export async function getUSDToCurrencyRate(currency: string) {
 		return 1;
 	}
 
-	const rates = await loadEcbUsdBasedRates();
+	const rates = await loadUsdBasedRates();
 	return rates[normalizedCurrency] ?? 1;
 }
 
