@@ -1472,7 +1472,7 @@ async function patternDetections(container: Element, listing: CSFloat.ListingDat
 		await badgeUltraViolent(container, item);
 	} else if (item.def_index === 5034 && item.paint_index === 1440) {
 		await badgeCloudChasers(container, item);
-	} else if (item.def_index === 5034 && item.paint_index === 1438) {
+	} else if (item.def_index === 5034 && item.paint_index === 1438 && item.float_value! > 0.15 && item.float_value! < 0.38) {
 		await badgePillowPunchers(container, item);
 	} else if (item.def_index === 5034 && item.paint_index === 1437) {
 		await badgeBigSwell(container, item);
