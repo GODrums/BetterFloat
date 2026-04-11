@@ -1,8 +1,11 @@
+import { useStorage } from '@plasmohq/storage/hook';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Check, CircleHelp, Clock3, X } from 'lucide-react';
+import { Check, CircleHelp, Clock3, LockKeyhole, X } from 'lucide-react';
 import { type FC, useEffect, useState } from 'react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { type CSFloatBargainHistoryEntry, getCSFBargainHistory } from '~lib/db/csfloatBargainHistory';
+import type { SettingsUser } from '~lib/util/storage';
+import { cn } from '~lib/utils';
 import { Button } from '~popup/ui/button';
 import { MultiplierInput } from '~popup/ui/input';
 
@@ -60,7 +63,7 @@ function getOfferStatePresentation(state: string): OfferStatePresentation {
 	};
 }
 
-const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[] }> = ({ history }) => {
+const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[]; isPro: boolean }> = ({ history, isPro }) => {
 	if (history.length === 0) {
 		return null;
 	}
@@ -68,35 +71,49 @@ const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[] }> = ({ his
 	return (
 		<div className="mt-4 border-t border-[#ffffff1f] pt-3">
 			<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
-			<div className="flex flex-col gap-2">
-				{history.map((entry) => {
-					const { Icon, className, label } = getOfferStatePresentation(entry.state);
+			<div className="relative">
+				<div className={cn('flex flex-col gap-2', !isPro && 'blur-sm pointer-events-none select-none')}>
+					{history.map((entry) => {
+						const { Icon, className, label } = getOfferStatePresentation(entry.state);
 
-					return (
-						<div key={entry.offerId} className="flex items-center justify-between rounded-md bg-[#c1ceff0a] px-3 py-2 text-sm">
-							<div className="flex items-center gap-2 text-[#E5E7EB]">
-								<span className={className} title={label}>
-									<Icon size={14} aria-hidden="true" />
-								</span>
-								<span>
-									{Intl.NumberFormat(undefined, {
-										style: 'currency',
-										currency: entry.currency,
-										currencyDisplay: 'narrowSymbol',
-										minimumFractionDigits: 0,
-										maximumFractionDigits: 2,
-									}).format(entry.price / 100)}
-								</span>
+						return (
+							<div key={entry.offerId} className="flex items-center justify-between rounded-md bg-[#c1ceff0a] px-3 py-2 text-sm">
+								<div className="flex items-center gap-2 text-[#E5E7EB]">
+									<span className={className} title={label}>
+										<Icon size={14} aria-hidden="true" />
+									</span>
+									<span>
+										{isPro
+											? Intl.NumberFormat(undefined, {
+													style: 'currency',
+													currency: entry.currency,
+													currencyDisplay: 'narrowSymbol',
+													minimumFractionDigits: 0,
+													maximumFractionDigits: 2,
+												}).format(entry.price / 100)
+											: '••••'}
+									</span>
+								</div>
+								<div className="text-right text-xs text-[#9EA7B1]">
+									{new Intl.DateTimeFormat(undefined, {
+										dateStyle: 'medium',
+										timeStyle: 'short',
+									}).format(new Date(entry.createdAt || entry.recordedAt))}
+								</div>
 							</div>
-							<div className="text-right text-xs text-[#9EA7B1]">
-								{new Intl.DateTimeFormat(undefined, {
-									dateStyle: 'medium',
-									timeStyle: 'short',
-								}).format(new Date(entry.createdAt || entry.recordedAt))}
-							</div>
-						</div>
-					);
-				})}
+						);
+					})}
+				</div>
+				{!isPro && (
+					<div className="absolute inset-0 flex items-center justify-center">
+						<Button variant="purple" size="sm" asChild>
+							<a className="flex items-center gap-2" href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
+								<LockKeyhole className="h-5 w-5 text-[#9EA7B1]" />
+								Unlock Bargain History
+							</a>
+						</Button>
+					</div>
+				)}
 			</div>
 		</div>
 	);
@@ -129,6 +146,8 @@ async function getPopupContractId() {
 const CSFBargainButtons: FC = () => {
 	const [percentage, setPercentage] = useState<string>('');
 	const [contractId, setContractId] = useState<string | null>(() => parsePopupListing()?.id ?? null);
+	const [user] = useStorage<SettingsUser>('user');
+	const isPro = user?.plan?.type === 'pro';
 
 	const inputElement = document.querySelector<HTMLInputElement>('app-make-offer-dialog .inputs input');
 
@@ -206,7 +225,7 @@ const CSFBargainButtons: FC = () => {
 					Apply
 				</Button>
 			</div>
-			<BargainHistoryList history={history} />
+			<BargainHistoryList history={history} isPro={isPro} />
 		</div>
 	);
 };
