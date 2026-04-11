@@ -1,5 +1,6 @@
 import Decimal from 'decimal.js';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
+import { upsertCSFBargainHistoryOffers } from '~lib/db/csfloatBargainHistory';
 import { Queue } from '~lib/util/queue';
 
 type CSFloatAPIStorage = {
@@ -67,6 +68,7 @@ export function cacheCSFHistoryGraph(data: CSFloat.HistoryGraphData[]) {
 
 export function cacheCSFOffers(data: CSFloat.Offer[]) {
 	CSFLOAT_API_DATA.offers = data;
+	void upsertCSFBargainHistoryOffers(data);
 }
 
 export function cacheCSFHistorySales(data: CSFloat.HistorySalesData[]) {

@@ -10,6 +10,11 @@ import { MarketSource } from './globals';
 import { synchronizePlanWithStorage } from './jwt';
 import type { SettingsUser } from './storage';
 
+export function getJSONAttribute<T = unknown>(data: string | null | undefined): T | null {
+	if (!data) return null;
+	return JSON.parse(data) as T;
+}
+
 export function getOldBlueGemName(name: string) {
 	if (name.startsWith('★')) {
 		return name.split(' | ')[0].split('★ ')[1];

@@ -1,5 +1,5 @@
 import type { CSFloat, EventData } from '~lib/@typings/FloatTypes';
-import { adjustOfferBubbles } from '~lib/helpers/csfloat_helpers';
+import { upsertCSFBargainHistoryCreateResponse, upsertCSFBargainHistoryOffers } from '~lib/db/csfloatBargainHistory';
 import { activateSiteEventHandler } from '~lib/shared/events';
 import {
 	cacheCSFBuyOrders,
@@ -14,13 +14,27 @@ import {
 	cacheCSFPopupItem,
 	cacheCSFSimilarItems,
 } from './cache';
+import { adjustOfferBubbles } from './modules/offers';
 
 type StallData = {
 	data: CSFloat.ListingData[];
 };
 
+function getPathname(url: string) {
+	try {
+		return new URL(url).pathname;
+	} catch {
+		return '';
+	}
+}
+
+function isOfferHistoryPath(pathname: string) {
+	return /^\/api\/v1\/offers\/[^/]+\/history$/.test(pathname);
+}
+
 function processCSFloatEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
+	const pathname = getPathname(eventData.url);
 
 	if (eventData.url.includes('v1/listings?')) {
 		cacheCSFItems((eventData.data as CSFloat.ListingsResponse).data);
@@ -34,8 +48,14 @@ function processCSFloatEvent(eventData: EventData<unknown>) {
 		cacheCSFItems(eventData.data as CSFloat.ListingData[]);
 	} else if (eventData.url.includes('v1/me/offers-timeline')) {
 		cacheCSFOffers((eventData.data as CSFloat.OffersTimeline).offers);
-	} else if (eventData.url.includes('v1/offers/')) {
-		adjustOfferBubbles(eventData.data as CSFloat.Offer[]);
+	} else if (pathname === '/api/v1/offers') {
+		upsertCSFBargainHistoryCreateResponse(eventData.data);
+	} else if (isOfferHistoryPath(pathname)) {
+		const offers = Array.isArray(eventData.data) ? (eventData.data as CSFloat.Offer[]) : [];
+		if (offers.length > 0) {
+			adjustOfferBubbles(offers);
+			upsertCSFBargainHistoryOffers(offers);
+		}
 	} else if (eventData.url.includes('v1/users/') && eventData.url.includes('/stall')) {
 		cacheCSFItems((eventData.data as StallData).data);
 	} else if (eventData.url.includes('v1/history/')) {
