@@ -1,5 +1,4 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import { CSFloatHelpers } from '~lib/helpers/csfloat_helpers';
 import CSFAutorefresh from '~lib/inline/CSFAutorefresh';
 import CSFBargainButtons from '~lib/inline/CSFBargainButtons';
 import CSFMarketComparison from '~lib/inline/CSFMarketComparison';
@@ -11,11 +10,12 @@ import { addMessageRelays, RELAY_CREATE_NOTIFICATION } from '~lib/shared/relay';
 import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
+import { adjustCSFTitle } from './modules/title';
 
 let lastCSFState: Extension.URLState | null = null;
 
 async function handleStateChange(state: Extension.URLState) {
-	CSFloatHelpers.adjustCSFTitle(state);
+	adjustCSFTitle(state);
 	await handleCSFloatChange(state);
 }
 
