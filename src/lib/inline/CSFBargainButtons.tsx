@@ -1,5 +1,6 @@
-import type React from 'react';
-import { useState } from 'react';
+import { type FC, useEffect, useRef, useState } from 'react';
+import type { CSFloat } from '~lib/@typings/FloatTypes';
+import { CSF_BARGAIN_HISTORY_UPDATED_EVENT, type CSFloatBargainHistoryEntry, getCSFBargainHistory } from '~lib/db/csfloatBargainHistory';
 import { Button } from '~popup/ui/button';
 import { MultiplierInput } from '~popup/ui/input';
 
@@ -9,7 +10,11 @@ type PricingData = {
 	userCurrency: string;
 };
 
-const PercentageButton: React.FC<{ percentage: number; handleClick: (percentage: number) => void }> = ({ percentage, handleClick }) => {
+type BargainHistoryUpdateDetail = {
+	contractId: string;
+};
+
+const PercentageButton: FC<{ percentage: number; handleClick: (percentage: number) => void }> = ({ percentage, handleClick }) => {
 	return (
 		<Button className="h-8 px-3 bg-[#c1ceff0a] hover:bg-[#fff3]" onClick={() => handleClick(percentage)}>
 			{percentage}%
@@ -17,8 +22,34 @@ const PercentageButton: React.FC<{ percentage: number; handleClick: (percentage:
 	);
 };
 
-const CSFBargainButtons: React.FC = () => {
+function parsePopupListing() {
+	const itemCard = document.querySelector('app-make-offer-dialog item-card');
+	const listingData = itemCard?.getAttribute('data-betterfloat');
+	if (!listingData) {
+		return null;
+	}
+
+	try {
+		return JSON.parse(listingData) as CSFloat.ListingData;
+	} catch {
+		return null;
+	}
+}
+
+async function getPopupContractId() {
+	const listing = parsePopupListing();
+	if (listing?.id) {
+		return listing.id;
+	}
+
+	await new Promise((resolve) => setTimeout(resolve, 200));
+	return parsePopupListing()?.id ?? null;
+}
+
+const CSFBargainButtons: FC = () => {
 	const [percentage, setPercentage] = useState<string>('');
+	const [history, setHistory] = useState<CSFloatBargainHistoryEntry[]>([]);
+	const contractIdRef = useRef<string | null>(null);
 
 	const inputElement = document.querySelector<HTMLInputElement>('app-make-offer-dialog .inputs input');
 
@@ -43,6 +74,43 @@ const CSFBargainButtons: React.FC = () => {
 			inputElement.dispatchEvent(new Event('input', { bubbles: true }));
 		}
 	};
+
+	useEffect(() => {
+		let cancelled = false;
+
+		const loadHistory = async (nextContractId?: string | null) => {
+			const resolvedContractId = nextContractId ?? (await getPopupContractId());
+			if (cancelled) {
+				return;
+			}
+
+			contractIdRef.current = resolvedContractId;
+			if (!resolvedContractId) {
+				setHistory([]);
+				return;
+			}
+
+			const entries = await getCSFBargainHistory(resolvedContractId);
+			if (!cancelled) {
+				setHistory(entries);
+			}
+		};
+
+		void loadHistory();
+
+		const handleHistoryUpdate = (event: Event) => {
+			const { detail } = event as CustomEvent<BargainHistoryUpdateDetail>;
+			if (detail?.contractId && detail.contractId === contractIdRef.current) {
+				void loadHistory(detail.contractId);
+			}
+		};
+
+		document.addEventListener(CSF_BARGAIN_HISTORY_UPDATED_EVENT, handleHistoryUpdate as EventListener);
+		return () => {
+			cancelled = true;
+			document.removeEventListener(CSF_BARGAIN_HISTORY_UPDATED_EVENT, handleHistoryUpdate as EventListener);
+		};
+	}, []);
 
 	return (
 		<div style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
@@ -69,6 +137,32 @@ const CSFBargainButtons: React.FC = () => {
 					Apply
 				</Button>
 			</div>
+			{history.length > 0 && (
+				<div className="mt-4 border-t border-[#ffffff1f] pt-3">
+					<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
+					<div className="flex flex-col gap-2">
+						{history.map((entry) => (
+							<div key={entry.offerId} className="flex items-center justify-between rounded-md bg-[#c1ceff0a] px-3 py-2 text-sm">
+								<div className="text-[#E5E7EB]">
+									{Intl.NumberFormat(undefined, {
+										style: 'currency',
+										currency: entry.currency,
+										currencyDisplay: 'narrowSymbol',
+										minimumFractionDigits: 0,
+										maximumFractionDigits: 2,
+									}).format(entry.price / 100)}
+								</div>
+								<div className="text-right text-xs text-[#9EA7B1]">
+									{new Intl.DateTimeFormat(undefined, {
+										dateStyle: 'medium',
+										timeStyle: 'short',
+									}).format(new Date(entry.createdAt || entry.recordedAt))}
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };
