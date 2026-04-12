@@ -19,7 +19,7 @@ import { activateShadowpayEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.shadowpay.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/bitskins_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/bitskins_styles.css'],
 };
 
 type PriceResult = {
@@ -159,7 +159,6 @@ async function addBuffPrice(item: Shadowpay.Item, container: Element, state: Pag
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 

@@ -4,7 +4,7 @@ import { getAllSettings, type IStorage } from '~lib/util/storage';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.youpin898.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/youpin_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/youpin_styles.css'],
 };
 
 async function init() {

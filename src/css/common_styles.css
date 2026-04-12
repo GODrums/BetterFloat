@@ -163,6 +163,42 @@
 	color: light-dark(forestgreen, greenyellow);
 }
 
+/* Liquidity indicator — sticky footer inside scrollable popover */
+.bf-popover-liquidity {
+	position: sticky;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 5px 10px;
+	font-size: 11px;
+	border-top: 1px solid var(--highlight-background, rgba(255, 255, 255, 0.08));
+	background-color: var(--dropdown-color, rgba(30, 30, 30, 0.95));
+	-webkit-backdrop-filter: blur(12px);
+	backdrop-filter: blur(12px);
+	color: var(--subtext-color, rgba(255, 255, 255, 0.4));
+	z-index: 1;
+}
+.bf-popover-liquidity-value {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-variant-numeric: tabular-nums;
+}
+.bf-popover-liquidity-track {
+	width: 32px;
+	height: 3px;
+	border-radius: 1.5px;
+	background: var(--highlight-background, rgba(255, 255, 255, 0.08));
+	overflow: hidden;
+}
+.bf-popover-liquidity-fill {
+	height: 100%;
+	border-radius: 1.5px;
+	transition: width 0.3s ease;
+}
+
 .bf-popover-upsell {
 	padding: 7px 12px;
 	text-align: center;

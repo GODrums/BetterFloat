@@ -19,7 +19,7 @@ import { activateSkinsmonkeyEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinsmonkey.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinsmonkey_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinsmonkey_styles.css'],
 };
 
 type PriceResult = {
@@ -154,7 +154,6 @@ async function addBuffPrice(item: Skinsmonkey.Item, container: Element): Promise
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);

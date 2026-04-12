@@ -18,7 +18,7 @@ import { activateSkinbaronEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinbaron.de/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinbaron_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinbaron_styles.css'],
 };
 
 type PriceResult = {

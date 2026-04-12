@@ -23,7 +23,7 @@ type PriceResult = {
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.lis-skins.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/lisskins_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/lisskins_styles.css'],
 };
 
 async function init() {

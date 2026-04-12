@@ -18,7 +18,7 @@ import { activateWaxpeerEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.waxpeer.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/waxpeer_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/waxpeer_styles.css'],
 };
 
 type PriceResult = {
@@ -140,7 +140,6 @@ async function addBuffPrice(item: Waxpeer.Item, container: Element, state: PageS
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : state === PageState.List ? '16px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 

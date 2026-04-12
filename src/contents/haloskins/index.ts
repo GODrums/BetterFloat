@@ -19,7 +19,7 @@ import { activateHaloskinsEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.haloskins.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/haloskins_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/haloskins_styles.css'],
 };
 
 type PriceResult = {
@@ -141,7 +141,6 @@ async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, containe
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);

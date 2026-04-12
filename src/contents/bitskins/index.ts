@@ -19,7 +19,7 @@ import { activateBitskinsEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.bitskins.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/bitskins_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/bitskins_styles.css'],
 };
 
 type PriceResult = {
@@ -279,7 +279,6 @@ async function addBuffPrice(item: Bitskins.Item, container: Element, state: Page
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : state === PageState.List ? '16px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		footerContainer.outerHTML = buffContainer;
 

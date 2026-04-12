@@ -18,7 +18,7 @@ import { generatePriceLine } from '~lib/util/uigeneration';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.rapidskins.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/rapid_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/rapid_styles.css'],
 };
 
 type PriceResult = {
@@ -136,7 +136,6 @@ async function addBuffPrice(item: Skinout.Item | Skinout.InventoryItem, containe
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);

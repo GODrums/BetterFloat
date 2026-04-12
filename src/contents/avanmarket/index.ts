@@ -19,7 +19,7 @@ import { activateAvanmarketEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.avan.market/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/avan_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/avan_styles.css'],
 };
 
 type PriceResult = {
@@ -158,7 +158,6 @@ async function adjustItemPage(container: Element) {
 			showPrefix: true,
 			iconHeight: '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		footerContainer.setAttribute('style', 'width: max-content;');
@@ -227,7 +226,6 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 			showPrefix: false,
 			iconHeight: isInventoryItem ? '16px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		if (state === PageState.Market) {
 			footerContainer.insertAdjacentHTML('afterend', buffContainer);

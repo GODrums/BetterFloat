@@ -18,7 +18,7 @@ import { activateSkinswapEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skinswap.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinswap_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinswap_styles.css'],
 };
 
 type PriceResult = {
@@ -186,7 +186,6 @@ async function addBuffPrice(item: Skinswap.Item, container: Element, state: Page
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		if (state === PageState.China) {

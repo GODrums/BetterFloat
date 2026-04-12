@@ -17,7 +17,7 @@ import { activateGamerpayUrlHandler } from './url';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.gamerpay.gg/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/gamerpay_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/gamerpay_styles.css'],
 };
 
 async function init() {
@@ -201,7 +201,6 @@ async function addBuffPrice(item: Gamerpay.Item, container: HTMLElement, state: 
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		footerContainer.insertAdjacentHTML('afterend', buffContainer);

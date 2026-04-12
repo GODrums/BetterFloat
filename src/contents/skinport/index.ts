@@ -35,7 +35,7 @@ import { activateSkinportUrlHandler as dynamicUIHandler } from './url';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinport.com/*'],
 	run_at: 'document_idle',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinport_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinport_styles.css'],
 };
 
 init();

@@ -18,7 +18,7 @@ import { activateSkinbidUrlHandler as dynamicUIHandler, mountSkbBargainButtons }
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.skinbid.com/*'],
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinbid_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinbid_styles.css'],
 	run_at: 'document_end',
 };
 

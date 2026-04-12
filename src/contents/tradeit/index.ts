@@ -24,7 +24,7 @@ type PriceResult = {
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.tradeit.gg/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/tradeit_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/tradeit_styles.css'],
 };
 
 async function init() {

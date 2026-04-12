@@ -18,7 +18,7 @@ import { activateSkinplaceEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.skin.place/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/skinplace_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/skinplace_styles.css'],
 };
 
 type PriceResult = {
@@ -169,7 +169,6 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, c
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		footerContainer.insertAdjacentHTML('beforeend', buffContainer);

@@ -15,7 +15,7 @@ import { activateMarketcsgoEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.market.csgo.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/marketcsgo_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/marketcsgo_styles.css'],
 };
 
 type PriceResult = {
@@ -123,7 +123,6 @@ async function addBuffPrice(itemName: string, container: Element, state: PageSta
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '20px' : '18px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 		if (state === PageState.Market) {
 			footerContainer.insertAdjacentHTML('afterend', buffContainer);

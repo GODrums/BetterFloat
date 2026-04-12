@@ -22,7 +22,7 @@ import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketCompar
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.dmarket.com/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/dmarket_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/dmarket_styles.css'],
 };
 
 type PriceResult = {

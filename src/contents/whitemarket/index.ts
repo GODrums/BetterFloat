@@ -14,7 +14,7 @@ import { activateWhitemarketEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.white.market/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/whitemarket_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/whitemarket_styles.css'],
 };
 
 type PriceResult = {
@@ -222,7 +222,6 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 			showPrefix: isItemPage,
 			iconHeight: isItemPage ? '24px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 		});
 
 		if (!container.querySelector('.betterfloat-buffprice')) {

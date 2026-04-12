@@ -17,7 +17,7 @@ import { activateSwapggEventHandler as activateHandler } from './events';
 export const config: PlasmoCSConfig = {
 	matches: ['*://*.swap.gg/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/swapgg_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/swapgg_styles.css'],
 };
 
 type PriceResult = {
@@ -240,7 +240,6 @@ async function addBuffPrice(item: Swapgg.Item, container: Element, isOwn: boolea
 			showPrefix: false,
 			iconHeight: tileSize === 'Small' ? '15px' : tileSize === 'Medium' ? '18px' : '20px',
 			hasPro: isUserPro(extensionSettings['user']),
-			tooltipArrow: true,
 			priceClass: tileSize ? `betterfloat-${tileSize.toLowerCase()}-price` : undefined,
 		});
 

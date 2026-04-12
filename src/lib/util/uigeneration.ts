@@ -22,7 +22,6 @@ export function generatePriceLine({
 	priceClass: containerClass,
 	addSpaceBetweenPrices = true,
 	hasPro = false,
-	tooltipArrow = false,
 }: {
 	source: MarketSource;
 	market_id: number | string | undefined;
@@ -40,23 +39,22 @@ export function generatePriceLine({
 	addSpaceBetweenPrices?: boolean;
 	showPrefix?: boolean;
 	hasPro?: boolean;
-	tooltipArrow?: boolean;
 }) {
 	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? itemStyle : undefined });
 	const { logo: icon, style: iconStyle } = getSourceIcon(source);
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
-	const bfDataAttribute = JSON.stringify({ buff_name, itemStyle, priceFromReference, priceListing, priceOrder, userCurrency, source }).replace(/'/g, '&#39;');
+	const bfDataAttribute = JSON.stringify({ buff_name, itemStyle, priceFromReference, userCurrency }).replace(/'/g, '&#39;');
 
 	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat, MarketSource.Marketcsgo].includes(source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
-			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''} hint--bottom  hint--rounded ${tooltipArrow ? '' : 'hint--no-arrow'}" 
+			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''}" 
 			href="${href}" 
 			target="_blank"
 			aria-label="Highest buy order | Lowest listing"
 			data-betterfloat='${bfDataAttribute}'
 		>
-			<img src="${icon}" style="height: ${iconHeight ?? '15px'}; margin-right: 5px; ${iconStyle}" />
+			<img src="${icon}" alt="${source}" style="height: ${iconHeight ?? '15px'}; margin-right: 5px; ${iconStyle}" />
 			<div 
 				class="${containerClass ?? ''} betterfloat-buffprice ${isPopout ? 'betterfloat-big-price' : ''}" 
 			>

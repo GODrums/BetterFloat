@@ -275,6 +275,34 @@ function renderError(buffName: string, isPro: boolean) {
 	`;
 }
 
+function liquidityColor(pct: number): string {
+	// HSL interpolation: 0 (red) → 40 (amber) → 120 (green)
+	const clamped = Math.max(0, Math.min(100, pct));
+	const hue = (clamped / 100) * 120;
+	return `hsl(${hue}, 75%, 55%)`;
+}
+
+function buildLiquidityHtml(liquidity: number | undefined): string {
+	if (liquidity === undefined) return '';
+	const color = liquidityColor(liquidity);
+	const pct = Math.max(0, Math.min(100, liquidity));
+	return html`
+		<div class="bf-popover-liquidity">
+			<span>Liquidity</span>
+			<div class="bf-popover-liquidity-value">
+				<div class="bf-popover-liquidity-track">
+					<div class="bf-popover-liquidity-fill" style="width: ${pct}%; background: ${color};"></div>
+				</div>
+				<span style="color: ${color};">${liquidity.toFixed(1)}%</span>
+			</div>
+		</div>
+	`;
+}
+
+function buildUpsellHtml(): string {
+	return html`<div class="bf-popover-upsell"><a href="${WEBSITE_URL}pricing" target="_blank">Unlock 20+ markets with Pro</a></div>`;
+}
+
 async function buildDataHtml(data: Extension.APIMarketResponse, buffName: string, userCurrency: string, currencyRate: number, isPro: boolean, itemStyle?: ItemStyle | undefined): Promise<string> {
 	const formatter = CurrencyFormatter(userCurrency, 2, 2);
 
@@ -336,6 +364,9 @@ async function buildDataHtml(data: Extension.APIMarketResponse, buffName: string
 
 	const hasBothSections = primaryRows.length > 0 && otherRows.length > 0;
 
+	const liquidity = data['meta'] && isPro ? Number((data['meta'] as any).liquidity) : undefined;
+	const liquidityHtml = liquidity && Number.isFinite(liquidity) ? buildLiquidityHtml(liquidity) : '';
+
 	return html`
 		${buildPopoverHeader(buffName, { itemStyle, isPro })}
 		<table class="bf-popover-table">
@@ -352,47 +383,8 @@ async function buildDataHtml(data: Extension.APIMarketResponse, buffName: string
 				${renderRows(otherRows)}
 			</tbody>
 		</table>
-	`;
-}
-
-function buildFreeHtml(source: MarketSource, buffName: string, priceListing: number | undefined, priceOrder: number | undefined, userCurrency: string): string {
-	const popoverHeader = buildPopoverHeader(buffName, { isPro: false });
-
-	const marketInfo = AvailableMarketSources.find((m) => m.source === source);
-	if (!marketInfo || (!priceListing && !priceOrder)) {
-		return html`
-			${popoverHeader}
-			<div class="bf-popover-loading">No prices available</div>
-		`;
-	}
-
-	const formatter = CurrencyFormatter(userCurrency, 2, 2);
-	const showBidColumn = marketInfo.hasBid && priceOrder !== undefined;
-
-	return html`
-		${popoverHeader}
-		<table class="bf-popover-table">
-			<thead>
-				<tr>
-					<th>Market</th>
-					${showBidColumn ? html`<th style="text-align: right;">Bid</th>` : ''}
-					<th style="text-align: right;">Ask</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr data-href="${getMarketURL({ source, buff_name: buffName })}">
-					<td>
-						<div class="bf-popover-market-cell">
-							<img src="${marketInfo.logo}" style="${marketInfo.style}" />
-							<span>${marketInfo.text}</span>
-						</div>
-					</td>
-					${showBidColumn ? html`<td class="bf-popover-bid">${formatter.format(priceOrder)}</td>` : ''}
-					<td class="bf-popover-ask">${priceListing ? formatter.format(priceListing) : '-'}</td>
-				</tr>
-			</tbody>
-		</table>
-		<div class="bf-popover-upsell"><a href="${WEBSITE_URL}pricing" target="_blank">Unlock all markets with Pro</a></div>
+		${liquidityHtml}
+		${!isPro ? buildUpsellHtml() : ''}
 	`;
 }
 
@@ -403,12 +395,9 @@ type ShowPopoverOptions = {
 	userCurrency: string;
 	currencyRate: number;
 	isPro: boolean;
-	source?: MarketSource;
-	priceListing?: number;
-	priceOrder?: number;
 };
 
-async function showPopover({ trigger, buffName, itemStyle, userCurrency, currencyRate, isPro, source, priceListing, priceOrder }: ShowPopoverOptions) {
+async function showPopover({ trigger, buffName, itemStyle, userCurrency, currencyRate, isPro }: ShowPopoverOptions) {
 	const el = getPopover();
 	currentTrigger = trigger;
 
@@ -416,18 +405,6 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 
 	if (itemStyle && itemStyle !== 'Vanilla') {
 		buff_name += ` - ${itemStyle}`;
-	}
-
-	if (!isPro && source && (priceListing || priceOrder)) {
-		el.innerHTML = buildFreeHtml(source, buff_name, priceListing, priceOrder, userCurrency);
-		try {
-			el.showPopover();
-		} catch {
-			// ignore
-		}
-		animateIn(el);
-		positionPopover(trigger);
-		return;
 	}
 
 	renderLoading(buff_name, isPro);
@@ -490,13 +467,6 @@ async function showPopover({ trigger, buffName, itemStyle, userCurrency, currenc
 }
 
 export function attachMarketPopover(el: HTMLElement, options: { isPro: boolean; currencyRate: number }) {
-	// Strip hint.css tooltip
-	const hintClasses = Array.from(el.classList).filter((c) => c.startsWith('hint--'));
-	for (const cls of hintClasses) {
-		el.classList.remove(cls);
-	}
-	el.removeAttribute('aria-label');
-
 	el.addEventListener('mouseenter', () => {
 		cancelHide();
 		cancelShow();
@@ -518,9 +488,6 @@ export function attachMarketPopover(el: HTMLElement, options: { isPro: boolean; 
 					userCurrency,
 					currencyRate: options.currencyRate,
 					isPro: options.isPro,
-					source: parsed.source,
-					priceListing: parsed.priceListing,
-					priceOrder: parsed.priceOrder,
 				});
 			} catch {
 				// ignore parse errors

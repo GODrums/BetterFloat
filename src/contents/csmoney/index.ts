@@ -20,7 +20,7 @@ import { activateCSMoneyUrlHandler as dynamicUIHandler } from './url';
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.cs.money/*'],
 	run_at: 'document_end',
-	css: ['../../css/hint.min.css', '../../css/common_styles.css', '../../css/csmoney_styles.css'],
+	css: ['../../css/common_styles.css', '../../css/csmoney_styles.css'],
 };
 
 export type PriceResult = {
