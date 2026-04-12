@@ -1,0 +1,386 @@
+[
+  {
+    "name": "same manifest twice",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "permissions": ["storage"],
+      "host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "permissions": ["storage"],
+      "host_permissions": ["https://example.com/*"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "add non warning permission only",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "permissions": ["storage"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "add optional permission only",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "optional_permissions": ["notifications"]
+    },
+    "expected": {
+      "requiresReacceptance": false,
+      "ignoredOptionalPermissionChanges": {
+        "permissions": ["notifications"]
+      }
+    }
+  },
+  {
+    "name": "add optional host permission only",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "optional_host_permissions": ["https://example.com/*"]
+    },
+    "expected": {
+      "requiresReacceptance": false,
+      "ignoredOptionalPermissionChanges": {
+        "hostPermissions": ["https://example.com/*"]
+      }
+    }
+  },
+  {
+    "name": "add host already covered by previous wildcard host",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["*://*.example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["*://*.example.com/*", "https://api.example.com/v1/*"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "add tabs when old host access already covered all urls",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["<all_urls>"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["<all_urls>"],
+      "permissions": ["tabs"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "content script match covered by previous host permission",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["https://*.example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://*.example.com/*"],
+      "content_scripts": [
+        {
+          "matches": ["https://app.example.com/dashboard/*"],
+          "js": ["content.js"]
+        }
+      ]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "add warning producing permission notifications",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "permissions": ["notifications"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["display_notifications"],
+      "addedRequiredPermissions": ["notifications"]
+    }
+  },
+  {
+    "name": "add first required host permission",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://example.com/*"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["https://example.com/*"]
+    }
+  },
+  {
+    "name": "add one new specific host not covered before",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://example.com/*", "https://another.example/*"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["https://another.example/*"]
+    }
+  },
+  {
+    "name": "add all urls host access where old manifest had specific domains",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["<all_urls>"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["<all_urls>"]
+    }
+  },
+  {
+    "name": "add content script match on new domain",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "content_scripts": [
+        {
+          "matches": ["https://example.com/*"],
+          "js": ["content.js"]
+        }
+      ]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "content_scripts": [
+        {
+          "matches": ["https://example.com/*", "https://docs.example.com/*"],
+          "js": ["content.js"]
+        }
+      ]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["https://docs.example.com/*"]
+    }
+  },
+  {
+    "name": "add sessions when manifest already had tabs",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "permissions": ["tabs"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "permissions": ["tabs", "sessions"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["signed_in_history_read"],
+      "addedRequiredPermissions": ["sessions"]
+    }
+  },
+  {
+    "name": "move host from optional to required",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "optional_host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://example.com/*"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["https://example.com/*"]
+    }
+  },
+  {
+    "name": "dedupes repeated entries",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "permissions": ["storage"],
+      "host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "permissions": ["storage", "storage", "storage"],
+      "host_permissions": ["https://example.com/*", "https://example.com/path/*"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "path only changes on host patterns do not count",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["https://example.com/old/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://example.com/new/*"]
+    },
+    "expected": {
+      "requiresReacceptance": false
+    }
+  },
+  {
+    "name": "invalid json is rejected",
+    "oldRaw": "{",
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1"
+    },
+    "expected": {
+      "errorIncludes": "Failed to parse manifest"
+    }
+  },
+  {
+    "name": "missing file is rejected",
+    "omitOld": true,
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1"
+    },
+    "expected": {
+      "errorIncludes": "Failed to read manifest"
+    }
+  },
+  {
+    "name": "non mv3 manifest is rejected",
+    "oldManifest": {
+      "manifest_version": 2,
+      "name": "Fixture",
+      "version": "1.0.0"
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1"
+    },
+    "expected": {
+      "errorIncludes": "Manifest V3"
+    }
+  },
+  {
+    "name": "unsupported match pattern is treated conservatively",
+    "oldManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.0",
+      "host_permissions": ["https://example.com/*"]
+    },
+    "newManifest": {
+      "manifest_version": 3,
+      "name": "Fixture",
+      "version": "1.0.1",
+      "host_permissions": ["https://example.com/*", "urn://example"]
+    },
+    "expected": {
+      "requiresReacceptance": true,
+      "addedWarningCategories": ["host_access"],
+      "addedRequiredHostPatterns": ["urn://example"]
+    }
+  }
+]
