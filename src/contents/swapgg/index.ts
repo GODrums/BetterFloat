@@ -107,26 +107,18 @@ async function adjustItem(container: Element, isOwn: boolean) {
 	if (container.querySelector('.betterfloat-buff-a')) return;
 
 	const getItem = () => {
-		const imageElement = container.querySelector<HTMLElement>(SWAPGG_SELECTORS.item.imageContainer);
-		if (!imageElement) {
-			return;
-		}
+		const itemName = container.querySelector<HTMLImageElement>(SWAPGG_SELECTORS.item.imageContainer)?.alt;
+		if (!itemName) return null;
 
-		const imageLink = imageElement.style.backgroundImage?.substring(5, imageElement.style.backgroundImage.length - 2);
 		if (isOwn) {
-			return getSwapggInventoryUser(imageLink);
+			return getSwapggInventoryUser(itemName);
 		} else {
-			return getSwapggInventorySite(imageLink);
+			return getSwapggInventorySite(itemName);
 		}
 	};
 
 	const apiItem = getItem();
-
-	console.debug('[BetterFloat] API item detected:', apiItem);
-
-	if (!apiItem) {
-		return;
-	}
+	if (!apiItem) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const _priceResult = await addBuffPrice(apiItem!, container, isOwn);
