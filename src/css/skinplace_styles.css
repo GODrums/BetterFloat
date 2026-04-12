@@ -22,6 +22,11 @@ html {
 	text-decoration: none;
 }
 
+.betterfloat-big-a {
+	padding-top: 10px;
+	width: fit-content;
+}
+
 .betterfloat-buffprice {
 	margin-left: 2px;
 }

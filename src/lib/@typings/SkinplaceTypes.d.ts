@@ -1,4 +1,21 @@
 export namespace Skinplace {
+	export type MarketOffersResponse = {
+		data: MarketOffer[];
+		item: {
+			cdn_icon_url: string;
+			id: number;
+			steam_market_hash_name: string;
+			steam_price_en: number;
+		};
+		meta: {
+			count: number;
+			limit: number;
+			offset: number;
+		};
+		status: string;
+		steam_price: number;
+	};
+
 	export type InventoryResponse = {
 		daily_withdraw_limit: number;
 		instant_item_count_limit: number;
@@ -11,6 +28,40 @@ export namespace Skinplace {
 	export type GetItemsResponse = {
 		items: GetItem[];
 		status: string;
+	};
+
+	export type MarketOffer = {
+		id: number;
+		item_id: number;
+		price_market: number;
+		price_real: number;
+		is_hold: boolean;
+		time_unhold: string | null;
+		delivery_time: number;
+		steam_market_hash_name: string;
+		game: string;
+		floatvalue: number | null;
+		paintindex: number | null;
+		paintseed: number | null;
+		inspect_url: string;
+		discount: number;
+		hot_deal: number;
+		steam_listing_url: string;
+		shorten_exterior: string;
+		steam_icon_url: string;
+		cdn_icon_url: string;
+		steam_short_name: string;
+		steam_exterior: string;
+		steam_itemtype: string;
+		steam_rarity: string;
+		is_souvenir: number;
+		steam_url_name: string;
+		collection: string | null;
+		subcategory_name: string;
+		phase: string | null;
+		is_stattrak: number;
+		hero: string | null;
+		stickers: unknown[];
 	};
 
 	export type GetItem = {

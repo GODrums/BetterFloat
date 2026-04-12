@@ -12,7 +12,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem } from './cache';
+import { getSkinplaceMarketOffer, getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem } from './cache';
 import { activateSkinplaceEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -23,6 +23,7 @@ export const config: PlasmoCSConfig = {
 
 type PriceResult = {
 	price_difference: Decimal;
+	priceFromReference: Decimal | undefined;
 };
 
 async function init() {
@@ -63,14 +64,15 @@ async function init() {
 }
 
 function firstLaunch() {
-	// if (location.pathname === '/buy-cs2-skins' && isSkinplaceMarketCacheEmpty()) {
-	// 	console.debug('[BetterFloat] Skinplace cache is empty, refreshing...');
-	// 	document.querySelector<HTMLElement>('button.refresh-button_type_primary')?.click();
-	// }
 	setInterval(async () => {
-		const items = document.querySelectorAll<HTMLElement>('.item-buy-card:not(.betterfloat-buff-a)');
-		for (const item of items) {
-			await adjustItem(item, PageState.Market);
+		if (location.pathname === '/buy-cs2-skins') {
+			// search pages
+			const items = document.querySelectorAll<HTMLElement>(SKINPLACE_SELECTORS.market.itemNotBuffed);
+			for (const item of items) {
+				await adjustItem(item, PageState.Market);
+			}
+		} else if (location.pathname.startsWith('/buy-cs2-skins/')) {
+			adjustItemPage();
 		}
 	}, 2000);
 }
@@ -101,6 +103,34 @@ function applyMutation() {
 		}
 	});
 	observer.observe(document, { childList: true, subtree: true });
+}
+
+async function adjustItemPage() {
+	if (document.querySelector(SKINPLACE_SELECTORS.itempage.pageNotBuffed)) return;
+
+	const data = getSkinplaceMarketOffer();
+	if (!data?.data.length) return;
+
+	const { priceFromReference } = await addBuffPrice(data.data[0], document.querySelector('div.item-page')!, PageState.ItemPage);
+
+	if (!priceFromReference) return;
+
+	const items = document.querySelectorAll<HTMLElement>(SKINPLACE_SELECTORS.itempage.offerItemNotBuffed);
+	for (let i = 0; i < items.length; i++) {
+		// add sale tag
+		const item = items[i];
+		const itemData = data.data[i];
+		const itemPrice = new Decimal(itemData.price_market);
+		const priceContainer = item.querySelector<HTMLElement>(SKINPLACE_SELECTORS.itempage.offerPrice);
+		if (priceContainer) {
+			priceContainer.querySelector(SKINPLACE_SELECTORS.itempage.discountLabel)?.remove();
+			priceContainer.insertAdjacentHTML(
+				'beforeend',
+				createSaleTag(itemPrice.minus(priceFromReference), itemPrice.div(priceFromReference ?? 1).mul(100), CurrencyFormatter(await getUserCurrency(), 0, 2))
+			);
+			priceContainer.style.paddingRight = '0';
+		}
+	}
 }
 
 function getImageID(imgSrc: string) {
@@ -135,11 +165,11 @@ async function adjustItem(container: Element, state: PageState) {
 	await addBuffPrice(item, container, state);
 }
 
-function isInventoryItem(item: Skinplace.InventoryItem | Skinplace.GetItem): item is Skinplace.InventoryItem {
+function isInventoryItem(item: Skinplace.InventoryItem | Skinplace.GetItem | Skinplace.MarketOffer): item is Skinplace.InventoryItem {
 	return 'market_hash_name' in item;
 }
 
-async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem | Skinplace.MarketOffer, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
 	let footerContainer: Element | null = null;
@@ -147,6 +177,8 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, c
 		footerContainer = container.querySelector(SKINPLACE_SELECTORS.inventory.info);
 	} else if (state === PageState.Market) {
 		footerContainer = container.querySelector(SKINPLACE_SELECTORS.market.priceInfo);
+	} else if (state === PageState.ItemPage) {
+		footerContainer = container.querySelector(SKINPLACE_SELECTORS.itempage.footer);
 	}
 
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
@@ -164,21 +196,25 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, c
 			itemStyle: itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
 			isDoppler: !!item.phase,
-			isPopout: false,
+			isPopout: state === PageState.ItemPage,
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
 			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
 		});
 
-		footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		if (state === PageState.ItemPage) {
+			footerContainer.insertAdjacentHTML('afterend', buffContainer);
+		} else {
+			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
+		}
 
 		if (state === PageState.Market) {
 			footerContainer.querySelector(SKINPLACE_SELECTORS.market.priceValue)?.setAttribute('style', 'display: flex; align-items: center;');
 			footerContainer.closest<HTMLDivElement>(SKINPLACE_SELECTORS.market.info)!.style.height = '120px';
 		}
 
-		const buffElement = footerContainer.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		const buffElement = footerContainer.parentElement?.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
 			buffElement.addEventListener('click', (e) => {
 				e.preventDefault();
@@ -194,6 +230,8 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, c
 		priceContainer = container.querySelector(SKINPLACE_SELECTORS.inventory.price);
 	} else if (state === PageState.Market) {
 		priceContainer = container.querySelector(SKINPLACE_SELECTORS.market.priceValue);
+	} else if (state === PageState.ItemPage) {
+		priceContainer = container.querySelector(SKINPLACE_SELECTORS.itempage.priceValue);
 	}
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['splace-buffdifference'] || extensionSettings['splace-buffdifferencepercent'])) {
@@ -201,11 +239,14 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem, c
 
 		if (state === PageState.Market) {
 			(priceContainer.lastElementChild as HTMLDivElement).style.marginLeft = '10px';
+		} else if (state === PageState.ItemPage) {
+			priceContainer.querySelector(SKINPLACE_SELECTORS.itempage.discountLabel)?.remove();
 		}
 	}
 
 	return {
 		price_difference: difference,
+		priceFromReference,
 	};
 }
 
@@ -231,7 +272,7 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	`;
 }
 
-async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem) {
+async function getBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem | Skinplace.MarketOffer) {
 	let source = (extensionSettings['splace-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -295,11 +336,11 @@ async function getUserCurrencyRate() {
 	return parseFloat(currencyRate);
 }
 
-function getItemPrice(item: Skinplace.InventoryItem | Skinplace.GetItem): Decimal {
+function getItemPrice(item: Skinplace.InventoryItem | Skinplace.GetItem | Skinplace.MarketOffer): Decimal {
 	return new Decimal(isInventoryItem(item) ? item.price : item.price_market);
 }
 
-function createBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem): { name: string; style: ItemStyle } {
+function createBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem | Skinplace.MarketOffer): { name: string; style: ItemStyle } {
 	return {
 		name: item.steam_market_hash_name,
 		style: (item.phase ?? '') as ItemStyle,
@@ -309,6 +350,8 @@ function createBuffItem(item: Skinplace.InventoryItem | Skinplace.GetItem): { na
 enum PageState {
 	Market = 0,
 	Inventory = 1,
+	ItemPage = 2,
+	ItemList = 3,
 }
 
 // mutation observer active?
