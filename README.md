@@ -73,18 +73,6 @@ Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are
 
 Due to cases of abuse and illegal activities, this repository does not contain the full source code anymore. The hosted versions on the Chrome Web Store or Mozilla Add-on Store are the only valid distributions of this extension.
 
-## Permission upgrade checker
-
-Chrome can disable an updated extension until users re-accept it when the update adds a new required permission warning. Optional permissions do not trigger that upgrade disable path, which is why BetterFloat keeps broad access in `optional_host_permissions` where possible.
-
-This repository includes a checker that compares two fully resolved Chrome MV3 manifests and reports whether the newer one introduces a new warning surface:
-
-```bash
-pnpm check:permission-increase -- build/chrome-mv3-prod/manifest.json /path/to/next-build/manifest.json
-```
-
-Use built `manifest.json` files, not `package.json`, because Plasmo-generated `content_scripts[].matches` also affect Chrome's permission warnings. Exit codes are `0` for no new warning, `2` when re-acceptance is likely required, and `1` for usage or manifest parsing errors.
-
 ## How does BetterFloat work?
 
 ```mermaid
