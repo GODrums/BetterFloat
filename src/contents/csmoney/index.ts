@@ -432,6 +432,11 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
 			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
+			buffElement.addEventListener('click', (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				window.open(buffElement.href, '_blank');
+			});
 		}
 	}
 
