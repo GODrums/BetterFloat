@@ -96,7 +96,7 @@ export async function adjustSalesTableRow(container: Element) {
 		}
 	}
 
-	const itemWear = document.querySelector('item-detail .wear')?.textContent;
+	const itemWear = document.querySelector('item-detail .wear')?.textContent?.trim();
 	if (itemWear && cachedSale.item.float_value && new Decimal(itemWear).toDP(10).equals(cachedSale.item.float_value.toFixed(10))) {
 		container.setAttribute('style', 'background-color: #0b255d;');
 	}

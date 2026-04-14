@@ -106,8 +106,8 @@ export function adjustActionButtons(container: Element, item: CSFloat.Item) {
 	}
 }
 
-export function addCollectionLink(container: Element) {
-	const collectionLink = container.querySelector('div.collection');
+export function addCollectionLink() {
+	const collectionLink = document.querySelector('item-detail div.collection');
 	if (collectionLink?.textContent) {
 		const link = html`
 			<a href="${getCollectionLink(collectionLink.textContent)}" target="_blank">
@@ -126,6 +126,7 @@ export function getAlternativeItemLink(item: CSFloat.Item) {
 		':': '',
 		'(': '',
 		')': '',
+		'!': '',
 		$: '',
 	};
 	let link = item.item_name.toLowerCase();

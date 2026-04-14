@@ -191,7 +191,7 @@ export async function adjustItem(container: Element, insertType = INSERT_TYPE.NO
 		if (isMainItem) {
 			addQuickLinks(container, apiItem);
 			copyNameOnClick(container, apiItem.item);
-			addCollectionLink(container);
+			addCollectionLink();
 		}
 		storeApiItem(container, apiItem);
 		await showBargainPrice(container, apiItem, insertType);
