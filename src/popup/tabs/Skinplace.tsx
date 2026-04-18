@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useEffect, useState } from 'react';
-import { ICON_CSBLUEGEM, ICON_SKINPLACE_FULL } from '~lib/util/globals';
-import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
+import { ICON_SKINPLACE_FULL } from '~lib/util/globals';
+import { IcOutlineDiscount, IcRoundAccessTime, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';

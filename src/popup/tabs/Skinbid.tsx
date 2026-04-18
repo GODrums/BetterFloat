@@ -7,8 +7,8 @@ import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
-import { TabTemplate } from './TabTemplate';
 import { WarningCallout } from '~popup/ui/callout';
+import { TabTemplate } from './TabTemplate';
 
 interface SkinbidSettingsProps {
 	hasProPlan: boolean;
