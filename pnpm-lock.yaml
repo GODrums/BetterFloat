@@ -96,8 +96,8 @@ importers:
         specifier: ^7.1.0
         version: 7.1.0
       jose:
-        specifier: ^5.10.0
-        version: 5.10.0
+        specifier: ^6.2.2
+        version: 6.2.2
       lucide-react:
         specifier: ^0.469.0
         version: 0.469.0(react@19.1.5)
@@ -3130,8 +3130,8 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
 
-  jose@5.10.0:
-    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+  jose@6.2.2:
+    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -7447,7 +7447,7 @@ snapshots:
 
   jiti@1.21.7: {}
 
-  jose@5.10.0: {}
+  jose@6.2.2: {}
 
   joycon@3.1.1: {}
 

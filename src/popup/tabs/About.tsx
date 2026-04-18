@@ -1,5 +1,5 @@
 import betterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { ICON_CSMONEY_FULL, WEBSITE_URL } from '~lib/util/globals';
+import { ICON_CSMONEY_FULL, ICON_SKINPLACE_FULL, WEBSITE_URL } from '~lib/util/globals';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { Spotlight } from '~popup/components/Spotlight';
 import { Button } from '~popup/ui/button';
@@ -23,7 +23,7 @@ export const About = () => {
 					<SettingsCard className="mt-4 mx-2">
 						<div className="flex flex-col">
 							<h4 className="dark:text-white text-black font-medium text-base pb-2">Our Partners</h4>
-							<div className="flex gap-2 items-center flex-wrap justify-center">
+							<div className="flex gap-1 items-center flex-wrap justify-center">
 								<Button
 									variant="outline"
 									className="w-32 h-16"
@@ -31,8 +31,8 @@ export const About = () => {
 								>
 									<img src={ICON_CSMONEY_FULL} />
 								</Button>
-								<Button variant="outline" className="h-fit">
-									<p className="text-base font-normal">... more soon!</p>
+								<Button variant="outline" className="w-32 h-16" onClick={() => window.open('https://skin.place?utm_campaign=IiV5cv0kjHjDlFR')}>
+									<img src={ICON_SKINPLACE_FULL} />
 								</Button>
 							</div>
 						</div>

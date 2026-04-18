@@ -210,6 +210,7 @@ export enum MarketSource {
 	Waxpeer = 'waxpeer',
 	Skinbaron = 'skinbaron',
 	Skinflow = 'skinflow',
+	Skinplace = 'skinplace',
 	Tradeit = 'tradeit',
 	Whitemarket = 'whitemarket',
 	Swapgg = 'swap.gg',
@@ -244,9 +245,10 @@ export const AvailableMarketSources = [
 	{ text: 'Shadowpay', logo: ICON_SHADOWPAY, source: MarketSource.Shadowpay, style: '', hasBid: false },
 	{ text: 'Skinout', logo: ICON_SKINOUT, source: MarketSource.Skinout, style: '', hasBid: false },
 	{ text: 'Skinflow', logo: ICON_SKINFLOW, source: MarketSource.Skinflow, style: '', hasBid: false },
+	{ text: 'Skinplace', logo: ICON_SKINPLACE, source: MarketSource.Skinplace, style: '', hasBid: false },
 ];
 
-export const FreeMarkets = [MarketSource.CSMoney, MarketSource.Marketcsgo, MarketSource.Tradeit];
+export const FreeMarkets = [MarketSource.CSMoney, MarketSource.Marketcsgo, MarketSource.Tradeit, MarketSource.Skinplace];
 
 export const AskBidMarkets = AvailableMarketSources.filter((market) => market.hasBid);
 

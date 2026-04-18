@@ -1,4 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
+import { useEffect, useState } from 'react';
 import { ICON_CSBLUEGEM, ICON_SKINPLACE_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, PhSticker, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';
@@ -6,44 +7,50 @@ import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
-import { Badge } from '~popup/ui/badge';
-import { WarningCallout } from '~popup/ui/callout';
+import { Button } from '~popup/ui/button';
 import { TabTemplate } from './TabTemplate';
 
-interface SkinplaceSettingsProps {
-	hasProPlan: boolean;
-}
+const SKINPLACE_ORIGINS = ['*://*.skin.place/*'];
 
-export const SkinplaceSettings = ({ hasProPlan }: SkinplaceSettingsProps) => {
+export const SkinplaceSettings = () => {
 	const [checked] = useStorage<boolean>('splace-enable');
+
+	const [granted, setGranted] = useState(true);
+
+	const grantPermissions = async () => {
+		const granted = await chrome.permissions.request({
+			origins: SKINPLACE_ORIGINS,
+		});
+		setGranted(granted);
+	};
+
+	useEffect(() => {
+		const checkPermissions = async () => {
+			try {
+				const granted = await chrome.permissions.contains({
+					origins: SKINPLACE_ORIGINS,
+				});
+				setGranted(granted);
+			} catch (error) {
+				console.error('Error checking permissions:', error);
+				setGranted(false);
+			}
+		};
+
+		checkPermissions();
+	}, []);
 
 	return (
 		<TabTemplate value="splace" checked={checked}>
-			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinplace features" />}
 			<MarketLogoFull icon={ICON_SKINPLACE_FULL} link="https://skin.place?utm_campaign=IiV5cv0kjHjDlFR" />
-			<div className="flex items-center justify-center gap-2">
-				<Badge variant="outline">BETA</Badge>
-			</div>
-			<SettingsEnable id="splace-enable" isPremiumFeature hasProPlan={hasProPlan} />
-			<div className="">
-				<div className="pt-4 pb-2">
-					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>
+			<SettingsEnable id="splace-enable" />
+			{!granted && (
+				<div className="flex justify-center items-center mt-2">
+					<Button variant="outline" size="sm" onClick={grantPermissions} className="text-red-500">
+						Grant Permissions
+					</Button>
 				</div>
-				<div className="flex flex-col gap-1">
-					<SettingsCard>
-						<SettingsCheckbox
-							id="splace-csbluegem"
-							text="Blue Gem Enhancements"
-							icon={<img className="h-6 w-6" src={ICON_CSBLUEGEM} alt="CSBlueGem Logo" />}
-							tooltipText="Adds pattern details and past sales to case hardened skins."
-							disabled
-						/>
-					</SettingsCard>
-					<SettingsCard>
-						<SettingsCheckbox id="splace-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} disabled />
-					</SettingsCard>
-				</div>
-			</div>
+			)}
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Prices</p>

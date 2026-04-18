@@ -78,6 +78,8 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://skinflow.gg/buy?referral=BETTERFLOAT&search=${encodeURIComponent(buff_name)}`;
 		case MarketSource.Shadowpay:
 			return `https://shadowpay.com/csgo-items?search=${encodeURIComponent(buff_name)}&utm_campaign=j8MVU4KVXS3Liun`;
+		case MarketSource.Skinplace:
+			return `https://skin.place/buy-cs2-skins?search=${encodeURIComponent(buff_name)}?utm_campaign=IiV5cv0kjHjDlFR`;
 	}
 	return '';
 }

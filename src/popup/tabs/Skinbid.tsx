@@ -8,14 +8,20 @@ import { SettingsColorPicker } from '~popup/components/SettingsColorPicker';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { TabTemplate } from './TabTemplate';
+import { WarningCallout } from '~popup/ui/callout';
 
-export const SkinbidSettings = () => {
+interface SkinbidSettingsProps {
+	hasProPlan: boolean;
+}
+
+export const SkinbidSettings = ({ hasProPlan }: SkinbidSettingsProps) => {
 	const [checked] = useStorage<boolean>('skb-enable');
 
 	return (
 		<TabTemplate value="skinbid" checked={checked}>
+			{!hasProPlan && <WarningCallout text="Please upgrade to Pro to access Skinbid features" />}
 			<MarketLogoFull icon={ICON_SKINBID_FULL} link="https://skinbid.com?utm_source=betterfloat&ref=betterfloat" />
-			<SettingsEnable id="skb-enable" />
+			<SettingsEnable id="skb-enable" isPremiumFeature hasProPlan={hasProPlan} />
 			<div className="">
 				<div className="pt-4 pb-2">
 					<p className="text-base font-bold leading-none tracking-tight uppercase">Features</p>

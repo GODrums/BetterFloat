@@ -8,7 +8,7 @@ import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINPLACE_SELECTORS } from '~lib/handlers/selectors/skinplace_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
@@ -42,12 +42,6 @@ async function init() {
 	extensionSettings = await getAllSettings();
 
 	if (!extensionSettings['splace-enable']) return;
-
-	// check if user has the required plan
-	if (!(await checkUserPlanPro(extensionSettings['user']))) {
-		console.log('[BetterFloat] Pro plan required for Skin.Place features');
-		return;
-	}
 
 	await initPriceMapping(extensionSettings, 'splace');
 
@@ -106,12 +100,15 @@ function applyMutation() {
 }
 
 async function adjustItemPage() {
-	if (document.querySelector(SKINPLACE_SELECTORS.itempage.pageNotBuffed)) return;
-
 	const data = getSkinplaceMarketOffer();
 	if (!data?.data.length) return;
 
-	const { priceFromReference } = await addBuffPrice(data.data[0], document.querySelector('div.item-page')!, PageState.ItemPage);
+	await waitForElement(SKINPLACE_SELECTORS.itempage.pageNotBuffed);
+
+	const itemPage = document.querySelector(SKINPLACE_SELECTORS.itempage.pageNotBuffed);
+	if (!itemPage) return;
+
+	const { priceFromReference } = await addBuffPrice(data.data[0], itemPage, PageState.ItemPage);
 
 	if (!priceFromReference) return;
 
@@ -123,7 +120,7 @@ async function adjustItemPage() {
 		const itemPrice = new Decimal(itemData.price_market);
 		const priceContainer = item.querySelector<HTMLElement>(SKINPLACE_SELECTORS.itempage.offerPrice);
 		if (priceContainer) {
-			priceContainer.querySelector(SKINPLACE_SELECTORS.itempage.discountLabel)?.remove();
+			priceContainer.querySelector(SKINPLACE_SELECTORS.common.discountLabel)?.remove();
 			priceContainer.insertAdjacentHTML(
 				'beforeend',
 				createSaleTag(itemPrice.minus(priceFromReference), itemPrice.div(priceFromReference ?? 1).mul(100), CurrencyFormatter(await getUserCurrency(), 0, 2))
@@ -203,13 +200,14 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem | 
 			hasPro: isUserPro(extensionSettings['user']),
 		});
 
-		if (state === PageState.ItemPage) {
+		if (state === PageState.ItemPage || state === PageState.Market) {
 			footerContainer.insertAdjacentHTML('afterend', buffContainer);
 		} else {
 			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		}
 
 		if (state === PageState.Market) {
+			footerContainer.querySelector(SKINPLACE_SELECTORS.common.discountLabel)?.remove();
 			footerContainer.querySelector(SKINPLACE_SELECTORS.market.priceValue)?.setAttribute('style', 'display: flex; align-items: center;');
 			footerContainer.closest<HTMLDivElement>(SKINPLACE_SELECTORS.market.info)!.style.height = '120px';
 		}
@@ -240,7 +238,7 @@ async function addBuffPrice(item: Skinplace.InventoryItem | Skinplace.GetItem | 
 		if (state === PageState.Market) {
 			(priceContainer.lastElementChild as HTMLDivElement).style.marginLeft = '10px';
 		} else if (state === PageState.ItemPage) {
-			priceContainer.querySelector(SKINPLACE_SELECTORS.itempage.discountLabel)?.remove();
+			priceContainer.querySelector(SKINPLACE_SELECTORS.common.discountLabel)?.remove();
 		}
 	}
 

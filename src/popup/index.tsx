@@ -97,11 +97,11 @@ export default function IndexPopup() {
 								<TabsTrigger value="skinport">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPORT} />
 								</TabsTrigger>
-								<TabsTrigger value="skinbid">
-									<SkinBidIcon height={40} width={40} />
-								</TabsTrigger>
 								<TabsTrigger value="csmoney">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_CSMONEY} />
+								</TabsTrigger>
+								<TabsTrigger value="splace">
+									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPLACE} />
 								</TabsTrigger>
 								<TabsTrigger value="tradeit">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_TRADEIT} />
@@ -133,11 +133,11 @@ export default function IndexPopup() {
 								<TabsTrigger value="ss">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINSWAP} />
 								</TabsTrigger>
-								<TabsTrigger value="splace">
-									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_SKINPLACE} />
-								</TabsTrigger>
 								<TabsTrigger value="avan">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_AVANMARKET} />
+								</TabsTrigger>
+								<TabsTrigger value="skinbid">
+									<SkinBidIcon height={40} width={40} />
 								</TabsTrigger>
 								<TabsTrigger value="gamerpay">
 									<img className="h-10 w-10 rounded-lg object-contain" src={ICON_GAMERPAY} />
@@ -187,13 +187,14 @@ export default function IndexPopup() {
 					</TabsList>
 					<CSFloatSettings hasProPlan={hasProPlan} />
 					<SkinportSettings />
-					<SkinbidSettings />
 					<CSMoneySettings />
 					<TradeitSettings />
+					<SkinplaceSettings />
 					<BuffMarketSettings hasProPlan={hasProPlan} />
 					<DmarketSettings hasProPlan={hasProPlan} />
 					<BitskinsSettings hasProPlan={hasProPlan} />
 					<LisSkinsSettings hasProPlan={hasProPlan} />
+					<SkinbidSettings hasProPlan={hasProPlan} />
 					<GamerpaySettings hasProPlan={hasProPlan} />
 					<SkinbaronSettings hasProPlan={hasProPlan} />
 					<SkinsmonkeySettings hasProPlan={hasProPlan} />
@@ -204,7 +205,6 @@ export default function IndexPopup() {
 					<SwapggSettings hasProPlan={hasProPlan} />
 					<AvanSettings hasProPlan={hasProPlan} />
 					<SkinoutSettings hasProPlan={hasProPlan} />
-					<SkinplaceSettings hasProPlan={hasProPlan} />
 					<SkinswapSettings hasProPlan={hasProPlan} />
 					<SkinflowSettings hasProPlan={hasProPlan} />
 					<About />

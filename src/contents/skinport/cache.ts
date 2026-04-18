@@ -90,12 +90,15 @@ export async function getSpUserCurrencyRate(rates: 'skinport' | 'real' = 'real')
 		await fetchSpUserData();
 	}
 	if (skinportUserCurrency === 'USD') return 1;
+
+	if (rates === 'skinport') return skinportRatesFromUSD['USD'];
+
 	let realRatesFromUSD = getRealCurrencyRates();
 	if (rates === 'real' && Object.keys(realRatesFromUSD).length === 0) {
 		await fetchCurrencyRates();
 		realRatesFromUSD = getRealCurrencyRates();
 	}
-	return rates === 'real' ? realRatesFromUSD[skinportUserCurrency] : skinportRatesFromUSD['USD'];
+	return realRatesFromUSD[skinportUserCurrency];
 }
 
 export async function getSpUserCurrency() {

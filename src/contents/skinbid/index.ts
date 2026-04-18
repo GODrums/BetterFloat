@@ -8,7 +8,17 @@ import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, calculateEpochFromDate, calculateTime, getBuffPrice, getMarketURL, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
+import {
+	CurrencyFormatter,
+	calculateEpochFromDate,
+	calculateTime,
+	checkUserPlanPro,
+	getBuffPrice,
+	getMarketURL,
+	getSPBackgroundColor,
+	handleSpecialStickerNames,
+	toTitleCase,
+} from '~lib/util/helperfunctions';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
@@ -37,8 +47,11 @@ async function init() {
 
 	extensionSettings = await getAllSettings();
 
-	if (!extensionSettings['skb-enable']) {
-		console.log('[BetterFloat] Skinbid disabled');
+	if (!extensionSettings['skb-enable']) return;
+
+	// check if user has the required plan
+	if (!(await checkUserPlanPro(extensionSettings['user']))) {
+		console.log('[BetterFloat] Pro plan required for Skinbid');
 		return;
 	}
 
