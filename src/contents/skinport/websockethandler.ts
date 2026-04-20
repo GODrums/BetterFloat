@@ -1,13 +1,12 @@
 import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
-import type { Skinport } from '../@typings/SkinportTypes';
-import { addPattern } from './skinport_helpers';
+import type { Skinport } from '../../lib/@typings/SkinportTypes';
+import { addPattern } from '../../lib/helpers/skinport_helpers';
 
 export async function handleListed(data: Skinport.Item[]) {
 	setTimeout(async () => {
 		for (const item of data) {
 			const element = document.querySelector(`.sale-${item.saleId}`);
 			if (element) {
-				// console.debug('[BetterFloat] Found listed item:', item);
 				if (item.pattern) {
 					addPattern(element, item);
 				}
@@ -20,7 +19,6 @@ export async function handleSold(data: Skinport.Item[]) {
 	for (const item of data) {
 		const element = document.querySelector(`.sale-${item.saleId}`);
 		if (element) {
-			// console.debug('[BetterFloat] Found sold item:', item);
 			element.querySelector('.ItemPreview-itemImage')?.appendChild(createSoldOverlay());
 			if (element.firstElementChild) {
 				element.firstElementChild.className += ' ItemPreview--inCart';

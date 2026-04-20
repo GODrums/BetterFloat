@@ -3,6 +3,7 @@ import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { addTotalInventoryPrice } from '~lib/helpers/skinport_helpers';
 import { activateSiteCustomEventHandler, activateSiteEventHandler } from '~lib/shared/events';
 import { cacheSkinportCurrencyRates, cacheSpItems, cacheSpMinOrderPrice, cacheSpPopupInventoryItem, cacheSpPopupItem } from './cache';
+import { handleListed, handleSold } from './websockethandler';
 
 type SkinportWebsocketData = {
 	eventType: string;
@@ -10,7 +11,6 @@ type SkinportWebsocketData = {
 };
 
 async function handleSkinportWebsocket(eventData: SkinportWebsocketData) {
-	const { handleListed, handleSold } = await import('~lib/helpers/websockethandler');
 	if (eventData.eventType === 'listed') {
 		await handleListed(eventData.data);
 	} else if (eventData.eventType === 'sold') {
