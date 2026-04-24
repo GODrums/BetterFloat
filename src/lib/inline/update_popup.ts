@@ -331,5 +331,6 @@ function scheduleVersionedPopup(render: () => string, version: string, delayMs =
 }
 
 export function scheduleUpdatePopup() {
-	scheduleVersionedPopup(renderUpdatePopupMarkup, UPDATE_POPUP_VERSION, UPDATE_POPUP_DELAY_MS, bindUpdatePopupEvents);
+	// disable the popup for now
+	// scheduleVersionedPopup(renderUpdatePopupMarkup, UPDATE_POPUP_VERSION, UPDATE_POPUP_DELAY_MS, bindUpdatePopupEvents);
 }

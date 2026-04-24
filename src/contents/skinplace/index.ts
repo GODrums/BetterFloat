@@ -119,7 +119,7 @@ async function adjustItemPage() {
 		const itemData = data.data[i];
 		const itemPrice = new Decimal(itemData.price_market);
 		const priceContainer = item.querySelector<HTMLElement>(SKINPLACE_SELECTORS.itempage.offerPrice);
-		if (priceContainer) {
+		if (priceContainer && !item.querySelector('.betterfloat-sale-tag')) {
 			priceContainer.querySelector(SKINPLACE_SELECTORS.common.discountLabel)?.remove();
 			priceContainer.insertAdjacentHTML(
 				'beforeend',

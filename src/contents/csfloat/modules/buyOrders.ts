@@ -15,8 +15,10 @@ import { getCSFloatSettings } from './runtime';
 export async function adjustUserBuyOrderRow(buyOrder: Element) {
 	const extensionSettings = getCSFloatSettings();
 	const expressionColumn = buyOrder.querySelector<HTMLTableCellElement>('td.mat-column-expression');
+	if (!expressionColumn) return;
+
 	const buyOrderData = getNextCSFMeBuyOrder();
-	if (!expressionColumn || !buyOrderData?.market_hash_name) return;
+	if (!buyOrderData?.market_hash_name) return;
 
 	if (expressionColumn.querySelector('a')) return;
 
@@ -51,7 +53,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 		hasPro: isUserPro(extensionSettings['user']),
 	});
 
-	expressionColumn.innerHTML = `<a class="betterfloat-buyorder-link" href="/search?market_hash_name=${itemName}&sort_by=lowest_price" target="_blank">${expressionColumn.innerHTML}</a>${buffContainer}`;
+	expressionColumn.insertAdjacentHTML('beforeend', buffContainer);
 	expressionColumn.setAttribute('style', 'height: 52px; display: flex; align-items: center; gap: 8px;');
 
 	const buffAnchor = expressionColumn.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
