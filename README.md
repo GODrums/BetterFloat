@@ -40,15 +40,16 @@ We maintain a very active Discord server, where you can share your snipes, ask q
 
 ## 📄 Highlights
 
-Currently supports CSFloat.com, Skinport.com and Skinbid.com, but more sites are coming soon!
+BetterFloat supports 20+ CS2 marketplaces, including CSFloat, CSMoney and Skinport, bringing powerful insights directly into your browsing experience. Highlights include:
 
--   Unified pricing from Buff163, Steam, YouPin/UU, C5Game, and CSFloat displayed right next to the item
--   Determine market overpay through applied sticker data (% SP) with gradual coloring
--   Get Case Hardened pattern data such as blue percentage or ranking directly
--   See the listing age of an item in a convenient format
--   Auto-refresh in the "Newest Items"-section on CSFloat
--   Advanced currency conversion with support for many different currencies
--   ... and more than 50 other Quality-of-Life features!
+-   Unified pricing from Buff163, YouPin/UU, CSFloat, Steam and more, displayed directly beside each item
+-   Built-in pattern guides for popular pattern-based skins
+-   Applied sticker analysis with gradual % SP coloring to help estimate market overpay
+-   Instant Case Hardened evaluation powered by historical sales and pattern data
+-   Clear listing-age indicators for faster market research
+-   Auto-refresh support for "Newest Items" sections
+-   Advanced currency conversion with support for a wide range of currencies
+-   ... and more than 50 additional quality-of-life features designed for smarter CS2 trading
 
 ⚠️ Please note that we explicitly forbid the use of the extension for illegal activities. This includes but is not limited to using the extension to gain an unfair advantage over other users. We reserve the right to ban users from our services and report them to the respective platforms if they are found to be engaged in illegal activities.
 
