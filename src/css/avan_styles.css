@@ -17,10 +17,11 @@ html {
 .betterfloat-buff-a {
 	display: inline-flex;
 	align-items: center;
-	font-size: 13px;
+	font-size: 12px;
 	line-height: 21px;
 	text-decoration: none;
 	z-index: 10;
+	margin-top: 5px;
 }
 
 .inventory-item .betterfloat-buff-a {
@@ -40,11 +41,10 @@ html {
 .betterfloat-sale-tag {
 	padding: 5px !important;
 	border-radius: 4px !important;
-	gap: 4px;
-	font-family: Roboto, sans-serif;
 	font-size: 12px;
 	font-weight: 600;
 	line-height: 1;
+	letter-spacing: -0.03rem;
 }
 
 .inventory-item .betterfloat-sale-tag {

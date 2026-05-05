@@ -97,9 +97,7 @@ function getAPIItem(container: Element, state: PageState) {
 		return getFirstAvanmarketItem();
 	} else if (state === PageState.Inventory) {
 		const iconUrl = container.querySelector<HTMLImageElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_ICON)?.getAttribute('src');
-		// full steam url
-		const srcUrlParam = new URL(`https://avan.market${iconUrl ?? ''}`).searchParams.get('url');
-		const iconPath = decodeURIComponent(new URL(srcUrlParam ?? '').pathname.split('/image/').pop() ?? '');
+		const iconPath = decodeURIComponent(new URL(iconUrl ?? '').pathname.split('/image/').pop() ?? '');
 		if (iconPath) {
 			return getAvanmarketInventoryItem(iconPath);
 		}
@@ -204,7 +202,6 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 		container.classList.add('inventory-item');
 	}
 
-	const isInventoryItem = state === PageState.Inventory;
 	const isDoppler = isAvanmarketItem(item) && !!item.phase;
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
@@ -224,7 +221,7 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 			isPopout: false,
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
-			iconHeight: isInventoryItem ? '16px' : '20px',
+			iconHeight: '16px',
 			hasPro: isUserPro(extensionSettings['user']),
 		});
 		if (state === PageState.Market) {
