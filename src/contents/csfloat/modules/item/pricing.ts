@@ -55,7 +55,7 @@ export function getFloatItem(container: Element): CSFloat.FloatItem {
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
 	const wearContainer = container.querySelector('item-float-bar .wear');
-	const float = wearContainer ? Number(wearContainer.textContent) : undefined;
+	const float = wearContainer ? Number(wearContainer.childNodes[1].textContent?.trim() ?? '0') : undefined;
 	let condition: ItemCondition | undefined;
 	let quality = '';
 	let style: ItemStyle = '';
@@ -288,7 +288,7 @@ export async function addBuffPrice(item: CSFloat.FloatItem, container: Element, 
 	if (
 		(extensionSettings['csf-steamsupplement'] || extensionSettings['csf-steamlink']) &&
 		buff_name &&
-		insertType !== INSERT_TYPE.CART &&
+		![INSERT_TYPE.CART, INSERT_TYPE.SIMILAR].includes(insertType) &&
 		(!container.querySelector('.betterfloat-steamlink') || isPopout)
 	) {
 		const flexGrow = container.querySelector('div.seller-details > div');
@@ -341,7 +341,7 @@ export async function addBuffPrice(item: CSFloat.FloatItem, container: Element, 
 	) {
 		let priceIcon: HTMLElement | null = null;
 		let floatAppraiser: HTMLElement | null = null;
-		if (insertType === INSERT_TYPE.CART) {
+		if ([INSERT_TYPE.CART, INSERT_TYPE.SIMILAR].includes(insertType)) {
 			priceIcon = container.querySelector<HTMLElement>('app-price-icon');
 			floatAppraiser = container.querySelector<HTMLElement>('app-reference-widget');
 		} else if (priceContainer) {

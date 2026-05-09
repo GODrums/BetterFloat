@@ -184,6 +184,7 @@ export namespace CSFloat {
 		is_commodity: boolean;
 		is_souvenir?: boolean;
 		is_stattrak?: boolean;
+		is_highlight?: boolean;
 		item_name: string;
 		keychains: StickerData[];
 		keychain_index?: number;

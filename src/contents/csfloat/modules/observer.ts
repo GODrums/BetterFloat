@@ -3,7 +3,7 @@ import { getSetting } from '~lib/util/storage';
 
 import { addBuyOrderPercentage, adjustUserBuyOrderRow } from './buyOrders';
 import { adjustCurrencyChangeNotice } from './dom';
-import { adjustItem, getInsertTypeForItemCard } from './item';
+import { adjustItem, adjustSimilarItem, getInsertTypeForItemCard } from './item';
 import { adjustOfferContainer } from './offers';
 import { adjustChartContainer, adjustLatestSales } from './sales';
 import { adjustSellDialog } from './sell';
@@ -35,6 +35,11 @@ async function handleAddedNode(addedNode: HTMLElement) {
 
 	if (addedNode.tagName === 'ITEM-LATEST-SALES') {
 		await adjustLatestSales(addedNode);
+		return;
+	}
+
+	if (addedNode.className.toString().startsWith('compact-item')) {
+		await adjustSimilarItem(addedNode);
 		return;
 	}
 

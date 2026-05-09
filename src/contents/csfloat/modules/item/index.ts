@@ -11,7 +11,7 @@ import { getCSFloatSettings } from '../runtime';
 import { addSaleListListener } from '../sell';
 import { INSERT_TYPE } from '../types';
 import { addCollectionLink, addQuickLinks, addScreenshotListener, adjustActionButtons } from './actions';
-import { addListingAge, addSellerDetails, adjustExistingSP } from './metadata';
+import { addListingAge, addMiniListingAge, addMiniSellerDetails, addSellerDetails, adjustExistingSP } from './metadata';
 import { liveNotifications } from './notifications';
 import { patternDetections } from './patterns';
 import { addBuffPrice, getFloatItem, showBargainPrice } from './pricing';
@@ -202,4 +202,40 @@ export async function adjustItem(container: Element, insertType = INSERT_TYPE.NO
 	}
 	addBargainListener(container);
 	addCartListener(container, item);
+}
+
+export async function adjustSimilarItem(container: Element) {
+	const extensionSettings = getCSFloatSettings();
+	if (container.querySelector('.betterfloat-buff-a')) {
+		return;
+	}
+
+	let apiItem = getFirstCSFSimilarItem();
+	let tries = 10;
+	while (!apiItem && tries-- > 0) {
+		await new Promise((resolve) => setTimeout(resolve, 200));
+		apiItem = getFirstCSFSimilarItem();
+	}
+
+	if (!apiItem) {
+		console.warn('[BetterFloat] Could not find similar item.');
+		return;
+	}
+
+	// get main item
+	const floatItem = getFloatItem(document.querySelector('mat-card.item-card.large')!);
+	floatItem.price = apiItem.price / 100;
+
+	if (!apiItem.auction_details) {
+		const _ = await addBuffPrice(floatItem, container, INSERT_TYPE.SIMILAR);
+	}
+
+	if (extensionSettings['csf-floatcoloring']) {
+		addFloatColoring(container, apiItem);
+	}
+	addMiniListingAge(container, apiItem);
+	if (extensionSettings['csf-sellerstatistics']) {
+		await addMiniSellerDetails(container as HTMLElement, apiItem);
+	}
+	addScreenshotListener(container, apiItem.item);
 }
