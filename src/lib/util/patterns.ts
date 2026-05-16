@@ -3506,6 +3506,7 @@ export const UltraViolentMapping: Record<number, UltraViolentTier> = {
 	663: { type: 'purple', tier: 2 },
 	508: { type: 'purple', tier: 2 },
 	192: { type: 'purple', tier: 2 },
+	829: { type: 'purple', tier: 2 },
 };
 
 // https://steamcommunity.com/sharedfiles/filedetails/?id=3686307515
