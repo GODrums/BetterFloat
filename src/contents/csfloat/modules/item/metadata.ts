@@ -137,6 +137,7 @@ export async function addMiniSellerDetails(container: HTMLElement, apiItem: CSFl
 	if (!seller) return;
 
 	const getColoring = (successRate: number) => {
+		if (seller.statistics.total_verified_trades === 0) return 'var(--subtext-color)';
 		if (successRate > 85) return 'rgb(100, 236, 66)';
 		if (successRate > 60) return '#ff8100';
 		return 'rgb(255, 66, 66)';
