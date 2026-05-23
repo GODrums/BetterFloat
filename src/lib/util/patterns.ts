@@ -3547,6 +3547,7 @@ export const CloudChasersMapping: Record<number, 1 | 2> = {
 	572: 2,
 	302: 2,
 	880: 2,
+	659: 2,
 };
 
 // https://steamcommunity.com/sharedfiles/filedetails/?id=3692388912

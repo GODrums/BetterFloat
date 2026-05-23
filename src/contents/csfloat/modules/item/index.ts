@@ -189,7 +189,7 @@ export async function adjustItem(container: Element, insertType = INSERT_TYPE.NO
 		addFloatColoring(container, apiItem);
 		await patternDetections(container, apiItem, isMainItem);
 		if (isMainItem) {
-			addQuickLinks(container, apiItem);
+			addQuickLinks(apiItem);
 			copyNameOnClick(container, apiItem.item);
 			addCollectionLink();
 		}

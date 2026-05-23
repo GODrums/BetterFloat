@@ -20,7 +20,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 	const buyOrderData = getNextCSFMeBuyOrder();
 	if (!buyOrderData?.market_hash_name) return;
 
-	if (expressionColumn.querySelector('a')) return;
+	if (expressionColumn.querySelector('a.betterfloat-buff-a')) return;
 
 	const itemName = buyOrderData.market_hash_name;
 	let itemStyle: ItemStyle = '';

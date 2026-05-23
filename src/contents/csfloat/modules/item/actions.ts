@@ -127,6 +127,7 @@ export function getAlternativeItemLink(item: CSFloat.Item) {
 		'(': '',
 		')': '',
 		'!': '',
+		"'": '',
 		$: '',
 	};
 	let link = item.item_name.toLowerCase();
@@ -144,27 +145,12 @@ export function getAlternativeItemLink(item: CSFloat.Item) {
 	return link;
 }
 
-export function createPricempireItemLink(container: Element, item: CSFloat.Item) {
-	const itemType = (currentItem: CSFloat.Item) => {
-		if (currentItem.type === 'container' && !currentItem.item_name.includes('Case')) {
-			return 'sticker-capsule';
-		}
-		return currentItem.type;
-	};
-	const sanitizeURL = (url: string) => {
-		return url.replace(/\s\|/g, '').replace('(', '').replace(')', '').replace('™', '').replace('★ ', '').replace(/\s+/g, '-');
-	};
-
-	return `${itemType(item)}/${sanitizeURL(createBuffName(getFloatItem(container)).toLowerCase())}${item.phase ? `-${sanitizeURL(item.phase.toLowerCase())}` : ''}`;
-}
-
-export function addQuickLinks(container: Element, listing: CSFloat.ListingData) {
+export function addQuickLinks(listing: CSFloat.ListingData) {
 	const actionsContainer = document.querySelector('.item-actions');
 	if (!actionsContainer) return;
 
 	actionsContainer.setAttribute('style', 'flex-wrap: wrap;');
 	const altURL = getAlternativeItemLink(listing.item);
-	const pricempireURL = createPricempireItemLink(container, listing.item);
 	let buff_name = listing.item.market_hash_name;
 	if (listing.item.phase) {
 		buff_name += ` - ${listing.item.phase}`;
@@ -179,11 +165,6 @@ export function addQuickLinks(container: Element, listing: CSFloat.ListingData) 
 			icon: ICON_STEAMANALYST,
 			tooltip: 'Show SteamAnalyst Page',
 			link: `https://csgo.steamanalyst.com/skin/${altURL.replace('/', '-')}?utm_source=betterfloat`,
-		},
-		{
-			icon: ICON_PRICEMPIRE_APP,
-			tooltip: 'Show Pricempire App Page',
-			link: `https://app.pricempire.com/item/cs2/${pricempireURL}?utm_source=betterfloat`,
 		},
 		{
 			icon: ICON_PRICEMPIRE,

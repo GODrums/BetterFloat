@@ -308,7 +308,18 @@ function getUserCurrency() {
 }
 
 function getItemPrice(item: Skinswap.Item): Decimal {
-	return new Decimal(item.price.trade ?? item.price.lowest ?? item.price.buy).div(100);
+	let price = 0;
+	if (location.pathname === '/sell') {
+		price = item.price.sell;
+		if (document.querySelector('div.bottom-20 span.hidden')) {
+			price = price * 1.03;
+		}
+	} else if (location.pathname === '/trade') {
+		price = item.price.trade ?? 0;
+	} else {
+		price = item.price.lowest ?? item.price.buy;
+	}
+	return new Decimal(price).div(100);
 }
 
 function createBuffItem(item: Skinswap.Item): { name: string; style: ItemStyle } {
