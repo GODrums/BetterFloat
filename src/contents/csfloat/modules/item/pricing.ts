@@ -189,7 +189,7 @@ export async function getBuffItem(item: CSFloat.FloatItem) {
 		market_id,
 		priceListing: pricingData.priceListing?.mul(currencyRate),
 		priceOrder: pricingData.priceOrder?.mul(currencyRate),
-		priceFromReference,
+		priceFromReference: priceFromReference?.mul(currencyRate),
 		difference: new Decimal(item.price).minus(priceFromReference ?? 0),
 		source,
 	};

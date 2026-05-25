@@ -45,7 +45,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 		case MarketSource.Lisskins:
 			return `https://lis-skins.com/market/csgo/?query=${encodeURIComponent(buff_name)}&rf=130498354&utm_source=betterfloat`;
 		case MarketSource.BuffMarket:
-			return `https://buff.market/market/all?search=${encodeURIComponent(buff_name)}`;
+			return `https://buff.market/market/all?search=${encodeURIComponent(buff_name)}&ref=U1093229240`;
 		case MarketSource.Skinbid:
 			return `https://skinbid.com/market?search=${encodeURIComponent(buff_name)}&sort=price%23asc&sellType=all&utm_source=betterfloat&ref=betterfloat`;
 		case MarketSource.Skinport:

@@ -14,7 +14,7 @@ import { addCollectionLink, addQuickLinks, addScreenshotListener, adjustActionBu
 import { addListingAge, addMiniListingAge, addMiniSellerDetails, addSellerDetails, adjustExistingSP } from './metadata';
 import { liveNotifications } from './notifications';
 import { patternDetections } from './patterns';
-import { addBuffPrice, getFloatItem, showBargainPrice } from './pricing';
+import { addBuffPrice, getCurrencyRate, getFloatItem, showBargainPrice } from './pricing';
 import { addFloatColoring } from './schema';
 import { addStickerInfo } from './stickers';
 export function getInsertTypeForItemCard(itemCard: Element) {
@@ -225,6 +225,10 @@ export async function adjustSimilarItem(container: Element) {
 	// get main item
 	const floatItem = getFloatItem(document.querySelector('mat-card.item-card.large')!);
 	floatItem.price = apiItem.price / 100;
+	const { currencyRate } = await getCurrencyRate();
+	if (currencyRate !== 1) {
+		floatItem.price = new Decimal(floatItem.price).mul(currencyRate).toNumber();
+	}
 
 	if (!apiItem.auction_details) {
 		const _ = await addBuffPrice(floatItem, container, INSERT_TYPE.SIMILAR);
