@@ -12,7 +12,7 @@ import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, 
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getSkinplaceMarketOffer, getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem } from './cache';
+import { getSkinplaceMarketOffer, getSpecificSkinplaceMarketItem, getSpecificSkinplaceUserItem, type SkinplaceMarketItemLookup } from './cache';
 import { activateSkinplaceEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -135,11 +135,24 @@ function getImageID(imgSrc: string) {
 	return [parts[3], parts[4]].join('/');
 }
 
+function getMarketItemLookup(container: Element, cdnIconUrl: string): SkinplaceMarketItemLookup {
+	const isStatTrak = !!container.querySelector(SKINPLACE_SELECTORS.market.skinVariant);
+	const isSouvenir = !!container.querySelector(SKINPLACE_SELECTORS.market.skinSouvenir);
+	const exterior = container.querySelector(SKINPLACE_SELECTORS.market.skinExterior)?.textContent?.trim() ?? '';
+
+	return {
+		cdnIconUrl,
+		isStatTrak,
+		isSouvenir,
+		exterior,
+	};
+}
+
 function getAPIItem(container: Element, state: PageState): Skinplace.InventoryItem | Skinplace.GetItem | null {
 	if (state === PageState.Market) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.market.image)?.getAttribute('src');
 		if (!imgSrc) return null;
-		return getSpecificSkinplaceMarketItem(getImageID(imgSrc));
+		return getSpecificSkinplaceMarketItem(getMarketItemLookup(container, getImageID(imgSrc)));
 	} else if (state === PageState.Inventory) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.inventory.image)?.getAttribute('src');
 		if (!imgSrc) return null;
