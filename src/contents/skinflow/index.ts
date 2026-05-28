@@ -162,11 +162,11 @@ async function addBuffPrice(item: Skinflow.Item, container: Element, state: Page
 		container.querySelector('.sale-wrapper')?.remove();
 	}
 
-	const priceContainer = container.querySelector('p.font-normal.text-md');
+	const priceContainer = container.querySelector('p.font-medium.leading-none');
 
 	if (priceContainer && (extensionSettings['sf-buffdifference'] || extensionSettings['sf-buffdifferencepercent'])) {
 		const priceWrapper = html`
-			<div class="sale-wrapper absolute right-0" style="bottom: 26px;">
+			<div class="sale-wrapper">
 				${createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter)}
 			</div>
 		`;
