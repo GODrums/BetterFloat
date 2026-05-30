@@ -25,6 +25,12 @@ app-user-orders {
 	font-size: 15px;
 	padding: 5px;
 	border-radius: 5px;
+
+	&.minimal {
+		background: none;
+		border: 1px solid var(--highlight-background-heavy);
+		color: var(--subtext-color);
+	}
 }
 
 .betterfloat-table-sp {

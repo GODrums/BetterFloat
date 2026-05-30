@@ -378,6 +378,17 @@ export function getDopplerPhase(paintIndex: number): DopplerPhase | null {
 			return 'Black Pearl';
 		case 568:
 			return 'Emerald';
+		// Glock
+		case 1119:
+			return 'Emerald';
+		case 1120:
+			return 'Phase 1';
+		case 1121:
+			return 'Phase 2';
+		case 1122:
+			return 'Phase 3';
+		case 1123:
+			return 'Phase 4';
 	}
 	return null;
 }

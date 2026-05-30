@@ -354,7 +354,7 @@ export async function addBuffPrice(item: CSFloat.FloatItem, container: Element, 
 			floatAppraiser?.remove();
 		}
 
-		const saleTag = createSaleTag(difference, percentage, currencyFormatter, isPopout, priceFromReference);
+		const saleTag = createSaleTag(difference, percentage, currencyFormatter, { isPopout, priceFromReference });
 
 		if (isPopout) {
 			priceContainer?.insertBefore(saleTag, floatAppraiser ?? priceContainer.firstChild);
@@ -391,30 +391,44 @@ export async function addBuffPrice(item: CSFloat.FloatItem, container: Element, 
 	};
 }
 
-export function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatter: Intl.NumberFormat, isPopout: boolean, priceFromReference?: Decimal) {
+export type SaleTagDisplay = 'absolute' | 'percentage' | 'both';
+
+export function createSaleTag(
+	difference: Decimal,
+	percentage: Decimal,
+	currencyFormatter: Intl.NumberFormat,
+	{ isPopout = false, priceFromReference, display, minimal = false }: { isPopout?: boolean; priceFromReference?: Decimal; display?: SaleTagDisplay; minimal?: boolean } = {}
+) {
 	const extensionSettings = getCSFloatSettings();
 	const differenceSymbol = difference.isPositive() ? '+' : '-';
-	let backgroundColor: string;
 	const profitPercentage = Number(extensionSettings['csf-profitpercentage']) ?? 100;
+	let tagColor: string;
 	if (percentage.isFinite() && percentage.lt(profitPercentage)) {
-		backgroundColor = `light-dark(${extensionSettings['csf-color-profit']}80, ${extensionSettings['csf-color-profit']})`;
+		tagColor = extensionSettings['csf-color-profit'] as string;
 	} else if (percentage.isFinite() && percentage.gt(profitPercentage)) {
-		backgroundColor = `light-dark(${extensionSettings['csf-color-loss']}80, ${extensionSettings['csf-color-loss']})`;
+		tagColor = extensionSettings['csf-color-loss'] as string;
 	} else {
-		backgroundColor = `light-dark(${extensionSettings['csf-color-neutral']}80, ${extensionSettings['csf-color-neutral']})`;
+		tagColor = extensionSettings['csf-color-neutral'] as string;
 	}
+
+	const showDifference = display ? display === 'absolute' || display === 'both' : Boolean(extensionSettings['csf-buffdifference']) || isPopout;
+	const showPercentage = display ? display === 'percentage' || display === 'both' : Boolean(extensionSettings['csf-buffdifferencepercent']) || isPopout;
 
 	const saleTag = document.createElement('span');
 	saleTag.setAttribute('class', 'betterfloat-sale-tag');
-	saleTag.style.backgroundColor = backgroundColor;
 	saleTag.setAttribute('data-betterfloat', String(difference));
+	if (minimal) {
+		saleTag.classList.add('minimal');
+	} else {
+		saleTag.style.backgroundColor = `light-dark(${tagColor}80, ${tagColor})`;
+	}
 
-	let saleTagInner = extensionSettings['csf-buffdifference'] || isPopout ? html`<span>${differenceSymbol}${currencyFormatter.format(difference.abs().toNumber())}</span>` : '';
-	if ((extensionSettings['csf-buffdifferencepercent'] || isPopout) && priceFromReference && percentage.isFinite()) {
+	let saleTagInner = showDifference ? html`<span>${differenceSymbol}${currencyFormatter.format(difference.abs().toNumber())}</span>` : '';
+	if (showPercentage && priceFromReference && percentage.isFinite()) {
 		const percentageDecimalPlaces = percentage.toDP(percentage.greaterThan(200) ? 0 : percentage.greaterThan(150) ? 1 : 2).toNumber();
 		saleTagInner += html`
-			<span class="betterfloat-sale-tag-percentage" ${extensionSettings['csf-buffdifference'] || isPopout ? 'style="margin-left: 5px;"' : ''}>
-				${extensionSettings['csf-buffdifference'] || isPopout ? ` (${percentageDecimalPlaces}%)` : `${percentageDecimalPlaces}%`}
+			<span class="betterfloat-sale-tag-percentage" ${showDifference ? 'style="margin-left: 5px;"' : ''}>
+				${showDifference ? ` (${percentageDecimalPlaces}%)` : `${percentageDecimalPlaces}%`}
 			</span>
 		`;
 	}

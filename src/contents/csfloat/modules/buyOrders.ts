@@ -3,13 +3,13 @@ import Decimal from 'decimal.js';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getBuffPrice, isUserPro } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, getBuffPrice, getDopplerPhase, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { generatePriceLine, getSourceIcon } from '~lib/util/uigeneration';
 
 import { getCSFAllBuyOrders, getNextCSFMeBuyOrder } from '../cache';
 import { getCSFloatUserCurrency } from './currency';
-import { getCurrencyRate } from './item/pricing';
+import { createSaleTag, getCurrencyRate } from './item/pricing';
 import { getCSFloatSettings } from './runtime';
 
 export async function adjustUserBuyOrderRow(buyOrder: Element) {
@@ -27,6 +27,10 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 	if (itemName.includes('★') && !itemName.includes('|')) {
 		itemStyle = 'Vanilla';
 	}
+	if (buyOrderData.hybrid_properties?.paint_index) {
+		itemStyle = getDopplerPhase(buyOrderData.hybrid_properties.paint_index) ?? '';
+	}
+
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_id = await getMarketID(itemName, source);
 	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
@@ -35,7 +39,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 		extensionSettings['csf-pricereference'] === 0 &&
 		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
 	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
-	const userCurrency = getCSFloatUserCurrency();
+	const { userCurrency, currencyRate } = await getCurrencyRate();
 
 	const buffContainer = generatePriceLine({
 		source: extensionSettings['csf-pricingsource'] as MarketSource,
@@ -58,8 +62,15 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 
 	const buffAnchor = expressionColumn.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 	if (buffAnchor) {
-		const { currencyRate } = await getCurrencyRate();
 		attachMarketPopover(buffAnchor, { isPro: isUserPro(extensionSettings['user']), currencyRate });
+	}
+
+	if (priceFromReference.isPositive()) {
+		const buyOrderPrice = new Decimal(buyOrderData.price).mul(currencyRate).div(100);
+		const difference = buyOrderPrice.minus(priceFromReference);
+		const percentage = buyOrderPrice.div(priceFromReference).times(100);
+		const saleTag = createSaleTag(difference, percentage, CurrencyFormatter(userCurrency), { priceFromReference, display: 'percentage', minimal: true });
+		expressionColumn.appendChild(saleTag);
 	}
 }
 

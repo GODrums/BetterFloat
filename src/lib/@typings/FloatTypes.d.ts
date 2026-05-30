@@ -292,8 +292,23 @@ export namespace CSFloat {
 	export type BuyOrderData = {
 		market_hash_name?: string;
 		expression?: string;
+		hybrid_properties?: {
+			min_float: number;
+			max_float: number;
+			paint_seeds: number[];
+			paint_index: number;
+			min_keychain_pattern: number;
+			max_keychain_pattern: number;
+			applied_stickers: AppliedStickerData[];
+			applied_keychains: AppliedKeychainData[];
+		};
 		price: number;
 		qty: number;
+	};
+
+	export type AppliedStickerData = {
+		sId: number;
+		s?: number;
 	};
 
 	export type OffersTimeline = {

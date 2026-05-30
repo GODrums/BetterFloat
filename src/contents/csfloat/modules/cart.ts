@@ -64,7 +64,7 @@ export async function adjustCart() {
 	const totalContainer = cartContainer.querySelector<HTMLDivElement>('.footer .total');
 	if (!totalContainer || totalDifference.isZero()) return;
 
-	const saleTag = createSaleTag(totalDifference, new Decimal(Infinity), CurrencyFormatter(getCSFloatUserCurrency()), false, undefined);
+	const saleTag = createSaleTag(totalDifference, new Decimal(Infinity), CurrencyFormatter(getCSFloatUserCurrency()), { display: 'absolute' });
 	saleTag.style.marginRight = '10px';
 
 	totalContainer.lastElementChild?.insertAdjacentHTML('beforebegin', '<div style="flex-grow: 1;"></div>');
