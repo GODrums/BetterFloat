@@ -3694,3 +3694,36 @@ export const BigSwellMapping: Record<number, 1 | 2> = {
 	797: 2,
 	963: 2,
 };
+
+// https://steamcommunity.com/sharedfiles/filedetails/?id=3685336438
+export const AmberlineMapping: Record<number, 'white' | 'gold'> = {
+	// Full White Amber
+	269: 'white',
+	350: 'white',
+	435: 'white',
+	543: 'white',
+	613: 'white',
+	890: 'white',
+	959: 'white',
+
+	// Full Gold Amber
+	46: 'gold',
+	47: 'gold',
+	101: 'gold',
+	135: 'gold',
+	152: 'gold',
+	193: 'gold',
+	308: 'gold',
+	379: 'gold',
+	392: 'gold',
+	397: 'gold',
+	483: 'gold',
+	608: 'gold',
+	639: 'gold',
+	643: 'gold',
+	842: 'gold',
+	855: 'gold',
+	882: 'gold',
+	899: 'gold',
+	914: 'gold',
+};

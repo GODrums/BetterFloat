@@ -44,6 +44,7 @@ import { getBlueGemName, getCharmColoring } from '~lib/util/helperfunctions';
 import { generateAphroditeIcon, generateMixPatternIcon, svgtoBase64Encode } from '~lib/util/icon_generation';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import {
+	AmberlineMapping,
 	AphroditeMapping,
 	BigSwellMapping,
 	ButterflyGemMapping,
@@ -99,7 +100,25 @@ export async function patternDetections(container: Element, listing: CSFloat.Lis
 		await badgePillowPunchers(container, item);
 	} else if (item.def_index === 5034 && item.paint_index === 1437) {
 		await badgeBigSwell(container, item);
+	} else if (item.def_index === 33 && item.paint_index === 1436) {
+		await badgeAmberline(container, item);
 	}
+}
+
+async function badgeAmberline(container: Element, item: CSFloat.Item) {
+	const amber_data = AmberlineMapping[item.paint_seed!];
+	if (!amber_data) return;
+
+	const icon = generateMixPatternIcon(amber_data === 'gold' ? '#FFB60A' : '#F6F7F9', 30);
+	const base64 = svgtoBase64Encode(icon);
+
+	addPatternBadge({
+		container,
+		svgfile: base64,
+		svgStyle: 'height: 30px;',
+		tooltipText: [`Full ${amber_data === 'gold' ? 'Gold' : 'White'}`],
+		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+	});
 }
 
 async function badgePillowPunchers(container: Element, item: CSFloat.Item) {
