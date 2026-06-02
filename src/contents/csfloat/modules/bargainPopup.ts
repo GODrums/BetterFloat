@@ -83,7 +83,7 @@ function renderBargainInputMeta(popupContainer: Element, inputField: HTMLInputEl
 					class="betterfloat-bargain-text betterfloat-bargain-diff"
 					style="${styles.diffStyle}; cursor: pointer; background-color: ${extensionSettings['csf-color-neutral']};"
 				>
-					Enter offer
+					-
 				</span>
 				${showSP ? `<span class="betterfloat-sticker-percentage betterfloat-bargain-sp" style="${styles.spStyle}; display: none;"></span>` : ''}
 			</div>
@@ -120,7 +120,7 @@ function updateBargainInputMeta({
 
 	const rawValue = inputField.value.trim();
 	if (rawValue.length === 0) {
-		diffElement.textContent = absolute ? `+${currency}0` : 'Enter offer';
+		diffElement.textContent = absolute ? `+${currency}0` : '-';
 		diffElement.style.backgroundColor = extensionSettings['csf-color-neutral'];
 		if (spElement) {
 			spElement.style.display = 'none';
