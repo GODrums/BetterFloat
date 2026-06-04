@@ -1,7 +1,19 @@
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 
-// dmarket: cached items from api
-const dmarketItems: DMarket.Item[] = [];
+// dmarket: cached market items and user assets from api
+const dmarketItems: DMarket.CachedListing[] = [];
+
+export function isDMarketAsset(listing: DMarket.CachedListing): listing is DMarket.Asset {
+	return 'cs2' in listing;
+}
+
+export function getDMarketPhase(listing: DMarket.CachedListing): string | undefined {
+	return isDMarketAsset(listing) ? listing.cs2.phase : listing.extra.phase;
+}
+
+export function getDMarketPaintSeed(listing: DMarket.CachedListing): number | undefined {
+	return isDMarketAsset(listing) ? listing.cs2.paintSeed : listing.extra.paintSeed;
+}
 let dmarketCurrency: string | null = null;
 let dmarketExchangeRates: { [key: string]: number } = {};
 let dmarketLatestSales: DMarket.LatestSale[] = [];
@@ -21,7 +33,7 @@ export function getDMarketCurrency() {
 	return dmarketCurrency || 'USD';
 }
 
-export function cacheDMarketItems(data: DMarket.Item[]) {
+export function cacheDMarketItems(data: DMarket.CachedListing[]) {
 	data.forEach((item) => {
 		if (dmarketItems.findIndex((i) => i.itemId === item.itemId) === -1) {
 			dmarketItems.push(item);

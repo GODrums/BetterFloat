@@ -9,6 +9,8 @@ function processDmarketEvent(eventData: EventData<unknown>) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('exchange/v1/user/items')) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
+	} else if (eventData.url.includes('exchange/v1/user/assets')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeUserAssets).assets);
 	} else if (eventData.url.includes('exchange/v1/selection/item?')) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('exchange/v1/user/offers?')) {

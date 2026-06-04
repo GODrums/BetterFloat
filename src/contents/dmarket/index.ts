@@ -15,7 +15,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
-import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getSpecificDMarketItem } from './cache';
+import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem } from './cache';
 import { activateDMarketEventHandler as activateHandler } from './events';
 import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 
@@ -108,7 +108,7 @@ async function adjustItem(container: Element, state: PageState) {
 	await patternDetections(container, item, false);
 }
 
-function addPopupListener(container: Element, item: DMarket.Item) {
+function addPopupListener(container: Element, item: DMarket.CachedListing) {
 	const popupButton = container.querySelector(DMARKET_SELECTORS.market.infoButton);
 	if (popupButton) {
 		popupButton.addEventListener('click', async () => {
@@ -197,7 +197,7 @@ async function addLatestSalesEnhancements(container: HTMLElement) {
 	}
 }
 
-function addQuickLinks(container: HTMLElement, item: DMarket.Item) {
+function addQuickLinks(container: HTMLElement, item: DMarket.CachedListing) {
 	const quickLinks = container.querySelector('asset-action-button > .c-assetPreviewButtons');
 	if (!quickLinks) {
 		return;
@@ -209,7 +209,7 @@ function addQuickLinks(container: HTMLElement, item: DMarket.Item) {
 	quickLinks.appendChild(actionButton);
 }
 
-async function patternDetections(container: Element, item: DMarket.Item, isPopout: boolean) {
+async function patternDetections(container: Element, item: DMarket.CachedListing, isPopout: boolean) {
 	if (item.title.includes('Case Hardened') || item.title.includes('Heat Treated')) {
 		if (extensionSettings['dm-csbluegem'] || isPopout) {
 			await caseHardenedDetection(container, item, isPopout);
@@ -217,8 +217,9 @@ async function patternDetections(container: Element, item: DMarket.Item, isPopou
 	}
 }
 
-async function caseHardenedDetection(container: Element, item: DMarket.Item, isPopout: boolean) {
-	if (item.title.includes('Gloves') || !item.extra.paintSeed || container.querySelector('.betterfloat-gem-container')) return;
+async function caseHardenedDetection(container: Element, item: DMarket.CachedListing, isPopout: boolean) {
+	const paintSeed = getDMarketPaintSeed(item);
+	if (item.title.includes('Gloves') || !paintSeed || container.querySelector('.betterfloat-gem-container')) return;
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const type = getOldBlueGemName(item.title.replace('StatTrak™ ', ''));
@@ -232,7 +233,7 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 		}
 	}
 	if (!patternElement) {
-		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.extra.paintSeed });
+		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: paintSeed });
 		container.setAttribute('data-bluegemlab', JSON.stringify(patternElement));
 	}
 	if (!patternElement) {
@@ -263,7 +264,7 @@ async function caseHardenedDetection(container: Element, item: DMarket.Item, isP
 	}
 }
 
-async function addBuffPrice(item: DMarket.Item, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: DMarket.CachedListing, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
 	let footerContainer: Element | null = null;
@@ -355,7 +356,7 @@ async function addBuffPrice(item: DMarket.Item, container: Element, state: PageS
 	};
 }
 
-async function getBuffItem(item: DMarket.Item) {
+async function getBuffItem(item: DMarket.CachedListing) {
 	let source = (extensionSettings['dm-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	const buff_item = createBuffItem(item);
 	const buff_name = handleSpecialStickerNames(buff_item.name);
@@ -409,7 +410,7 @@ async function getBuffItem(item: DMarket.Item) {
 	};
 }
 
-function getItemPrice(item: DMarket.Item) {
+function getItemPrice(item: DMarket.CachedListing) {
 	if (location.search.includes('exchangeTab=myItems')) {
 		return new Decimal(item.instantPrice.USD).div(100);
 	} else if (location.search.includes('exchangeTab=exchange')) {
@@ -418,13 +419,13 @@ function getItemPrice(item: DMarket.Item) {
 	return new Decimal(item.price.USD).div(100);
 }
 
-function createBuffItem(item: DMarket.Item): { name: string; style: ItemStyle } {
+function createBuffItem(item: DMarket.CachedListing): { name: string; style: ItemStyle } {
 	const buff_item = {
 		name: item.title,
 		style: '' as ItemStyle,
 	};
-	if (item.extra.phase) {
-		const phase = item.extra.phase;
+	const phase = getDMarketPhase(item);
+	if (phase) {
 		switch (phase) {
 			case 'phase-1':
 				buff_item.style = 'Phase 1';
