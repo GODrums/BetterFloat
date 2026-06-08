@@ -112,7 +112,7 @@ export namespace DMarket {
 		hasAdvanced: boolean;
 		cs2: AssetCs2;
 	};
-	
+
 	export type Item = {
 		amount: number;
 		classId: string;
