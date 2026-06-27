@@ -57,7 +57,7 @@ async function init() {
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
-	await activateHandler();
+	activateHandler();
 
 	if (isProduction && (location.pathname.startsWith('/item/') || location.pathname.startsWith('/i/') || location.pathname.startsWith('/myitems/i/'))) {
 		const interval = setInterval(() => {
@@ -986,30 +986,15 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
+			buffElement.addEventListener('click', (e) => {
+				e.stopPropagation();
+				e.preventDefault();
+				window.open(buffElement.href, '_blank');
+			});
+
 			attachMarketPopover(buffElement, {
 				isPro: isUserPro(extensionSettings['user']),
 				currencyRate: await getSpUserCurrencyRate(Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport'),
-			});
-		}
-	}
-
-	const href = getMarketURL({ source, market_id, buff_name, phase: isDoppler ? (item.style as DopplerPhase) : undefined });
-
-	if (Number(extensionSettings['sp-bufflink']) === 0) {
-		const presentationDiv = container.querySelector('.ItemPreview-mainAction');
-		if (presentationDiv) {
-			const buffLink = html`<a class="ItemPreview-sideAction betterfloat-bufflink" style="border-radius: 0; width: 60px;" target="_blank" href="${href}">${toTitleCase(source)}</a>`;
-			if (!container.querySelector('.betterfloat-bufflink')) {
-				presentationDiv.insertAdjacentHTML('afterend', buffLink);
-			}
-		}
-	} else {
-		const buffContainer = container.querySelector('.betterfloat-buff-container');
-		if (buffContainer) {
-			buffContainer.addEventListener('click', (e) => {
-				e.stopPropagation();
-				e.preventDefault();
-				window.open(href, '_blank');
 			});
 		}
 	}

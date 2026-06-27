@@ -80,14 +80,6 @@ export const SkinportSettings = () => {
 				</div>
 				<div className="flex flex-col gap-1">
 					<SettingsCard>
-						<SettingsSelect
-							id="sp-bufflink"
-							text="Buff Link Position"
-							options={['Action Button', 'Text Link']}
-							tooltipText="Define the placement of the Buff link. Per default it is located in the action bar. Alternatively you it can be placed as on-click for the buff prices."
-						/>
-					</SettingsCard>
-					<SettingsCard>
 						<SettingsCheckbox
 							id="sp-floatcoloring"
 							text="Low/High Float Coloring"
