@@ -22,7 +22,7 @@ export function addScript() {
 				const target = <XMLHttpRequest>e.currentTarget;
 				const targetUrl = new URL(target.responseURL);
 
-				if (!targetUrl.hostname.includes(location.hostname)) {
+				if (!isRelatedHost(targetUrl.hostname)) {
 					// console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
 					return;
 				}
@@ -102,7 +102,7 @@ export function addScript() {
 			const url = response.url;
 			const targetUrl = new URL(url);
 
-			if (!targetUrl.hostname.includes(location.hostname)) {
+			if (!isRelatedHost(targetUrl.hostname)) {
 				return response;
 			}
 			if (['.js', '.css', '.svg', '.proto'].some((ext) => targetUrl.pathname.endsWith(ext))) {
@@ -130,7 +130,7 @@ export function addScript() {
 			}
 
 			return response;
-		};
+		} as typeof fetch;
 
 		// Mark as intercepted
 		(window as any).__BetterFloat_Fetch_Intercepted = true;
@@ -138,6 +138,10 @@ export function addScript() {
 
 	if (location.hostname === 'gamerpay.gg') {
 		return;
+	}
+
+	function isRelatedHost(hostname: string) {
+		return hostname === location.hostname || hostname.endsWith(`.${location.hostname}`) || location.hostname.endsWith(`.${hostname}`);
 	}
 
 	xmlHttpRequestIntercept();

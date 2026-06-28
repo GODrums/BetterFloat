@@ -13,6 +13,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
+import { initNewLisskins } from './new';
 import { activateLisskinsUrlHandler as dynamicUIHandler } from './url';
 
 type PriceResult = {
@@ -28,6 +29,11 @@ export const config: PlasmoCSConfig = {
 
 async function init() {
 	console.time('[BetterFloat] Lis-Skins init timer');
+
+	if (location.host === 'new.lis-skins.com') {
+		await initNewLisskins();
+		return;
+	}
 
 	if (location.host !== 'lis-skins.com') {
 		return;

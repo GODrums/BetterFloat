@@ -22,7 +22,7 @@ function xmlHttpRequestIntercept() {
 			const target = <XMLHttpRequest>e.currentTarget;
 			const targetUrl = new URL(target.responseURL);
 
-			if (!targetUrl.hostname.includes(location.hostname)) {
+			if (!isRelatedHost(targetUrl.hostname)) {
 				// console.debug('[BetterFloat] Ignoring HTTP request to: ' + target.responseURL);
 				return;
 			}
@@ -101,7 +101,7 @@ function fetchIntercept() {
 		const url = response.url;
 		const targetUrl = new URL(url);
 
-		if (!targetUrl.hostname.includes(location.hostname)) {
+		if (!isRelatedHost(targetUrl.hostname)) {
 			return response;
 		}
 		if (['.js', '.css', '.svg', '.proto'].some((ext) => targetUrl.pathname.endsWith(ext))) {
@@ -129,7 +129,11 @@ function fetchIntercept() {
 		}
 
 		return response;
-	};
+	} as typeof fetch;
 
 	(window as any).__BetterFloat_Fetch_Intercepted = true;
+}
+
+function isRelatedHost(hostname: string) {
+	return hostname === location.hostname || hostname.endsWith(`.${location.hostname}`) || location.hostname.endsWith(`.${hostname}`);
 }
