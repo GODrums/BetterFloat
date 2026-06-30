@@ -27,6 +27,7 @@ import iconWaxpeer from 'data-base64:~/../assets/logos/waxpeer.png';
 import iconWaxpeerFull from 'data-base64:~/../assets/logos/waxpeer_full.svg';
 import iconWhitemarket from 'data-base64:~/../assets/logos/whitemarket.svg';
 import iconWhitemarketFull from 'data-base64:~/../assets/logos/whitemarket_full.svg';
+import betterfloatLogo from 'data-base64:/assets/icon.png';
 import iconArrowdown from 'data-base64:/assets/icons/arrow-down.svg';
 import iconArrowup2 from 'data-base64:/assets/icons/arrow-up.svg';
 import iconArrowup from 'data-base64:/assets/icons/arrow-up-right-from-square-solid.svg';
@@ -95,6 +96,7 @@ export const GITHUB_URL = 'https://github.com/GODrums/BetterFloat';
 export const WEBSITE_URL = 'https://betterfloat.com/';
 export const TWITTER_URL = 'https://twitter.com/rumscsgo';
 
+export const BETTERFLOAT_LOGO = betterfloatLogo;
 export const ICON_BUFF = iconBuff;
 export const ICON_STEAM = iconSteam;
 export const ICON_YOUPIN = iconYouPin;

@@ -9,6 +9,7 @@ import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '
 import { initPriceMapping } from '~lib/shared/pricing';
 import {
 	AskBidMarkets,
+	BETTERFLOAT_LOGO,
 	ICON_ARROWUP_SMALL,
 	ICON_BUFF,
 	ICON_CAMERA,
@@ -22,14 +23,14 @@ import {
 	isProduction,
 	MarketSource,
 } from '~lib/util/globals';
-import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, getMarketURL, isUserPro, toTitleCase, waitForElement } from '~lib/util/helperfunctions';
-import { attachMarketPopover } from '~lib/util/market_popover';
+import { CurrencyFormatter, checkUserPlanPro, delay, getBuffPrice, getFloatColoring, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 import { createNotificationMessage, fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage, SPFilter } from '~lib/util/storage';
 import { DEFAULT_FILTER, getAllSettings } from '~lib/util/storage';
-import { generatePriceLine, generateSpStickerContainer } from '~lib/util/uigeneration';
+import { generateSpStickerContainer } from '~lib/util/uigeneration';
 import { getSpItem, getSpPopupInventoryItem, getSpPopupItem, getSpUserCurrency, getSpUserCurrencyRate } from './cache';
 import { activateSkinportEventHandler as activateHandler } from './events';
+import { attachInfoPopover } from './info_popover';
 import { activateSkinportUrlHandler as dynamicUIHandler } from './url';
 
 export const config: PlasmoCSConfig = {
@@ -71,13 +72,13 @@ async function init() {
 
 	await initPriceMapping(extensionSettings, 'sp');
 
-	await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
-		if (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
-			console.warn('[BetterFloat] Skinport has to be set to the English language for this extension to work. Aborting ...');
-			createLanguagePopup();
-			return;
-		}
-	});
+	// await waitForElement('.Language', { interval: 100, maxTries: 20 }).then(() => {
+	// 	if (document.getElementsByClassName('Language').length > 0 && document.getElementsByClassName('CountryFlag--GB').length === 0) {
+	// 		console.warn('[BetterFloat] Skinport has to be set to the English language for this extension to work. Aborting ...');
+	// 		createLanguagePopup();
+	// 		return;
+	// 	}
+	// });
 
 	console.timeEnd('[BetterFloat] Skinport init timer');
 
@@ -471,21 +472,27 @@ function addQuickLinks(container: Element, popupItem: Skinport.InventoryItem | S
 	];
 
 	const quickLinksContainer = html`
-		<div class="ButtonGroup ItemPage-btnGroup betterfloat-quicklinks" style="margin-top: 10px;">
+	<div class="quicklinks-container">
+		<div class="header">
+		<img src="${BETTERFLOAT_LOGO}" class="logo" style="margin-right: 5px;" />
+			Quick Links
+		</div>
+		<div class="ButtonGroup ItemPage-btnGroup quicklinks" style="margin-top: 10px;">
 			${quickLinks
 				.map(
 					(link) => html`
 						<button type="button" onclick="window.open('${link.link}?utm_source=betterfloat', '_blank')" style="flex-direction: column; gap: 4px;">
-							<img src="${link.icon}" style="height: 24px; border-radius: 5px; vertical-align: middle;" />
+							<img src="${link.icon}" class="logo" />
 							<span>${link.text}</span>
 						</button>
 					`
 				)
 				.join('')}
 		</div>
+	</div>
 	`;
 
-	if (!buttonGroup.querySelector('.betterfloat-quicklinks')) {
+	if (!buttonGroup.querySelector('.quicklinks')) {
 		buttonGroup.insertAdjacentHTML('afterend', quickLinksContainer);
 	}
 }
@@ -942,28 +949,28 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 	const priceParent = container.querySelector<HTMLElement>(selector.priceParent)!;
 	const priceDiv = container.querySelector<HTMLElement>(selector.oldPrice);
 	const currencyRate = await getSpUserCurrency();
-	const isDoppler = item.full_name.includes('Doppler') && item.category === 'Knife';
-	if (!container.querySelector('.betterfloat-buffprice')) {
-		const buffContainer = generatePriceLine({
-			source,
-			market_id,
-			buff_name,
-			priceOrder,
-			priceListing,
-			priceFromReference: priceListing,
-			userCurrency: currencyRate,
-			itemStyle: item.style as DopplerPhase,
-			CurrencyFormatter: new Intl.NumberFormat(undefined, {
-				style: 'currency',
-				currency: currencyRate,
-				currencyDisplay: 'narrowSymbol',
-				minimumFractionDigits: 0,
-				maximumFractionDigits: 2,
-			}),
-			isDoppler,
-			isPopout: selector === itemSelectors.page,
-			hasPro: isUserPro(extensionSettings['user']),
+	const priceFromReference =
+		extensionSettings['sp-pricereference'] === 0 && (AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+			? priceOrder
+			: priceListing;
+	if (!container.querySelector('.bf-buffprice')) {
+		const currencyFormatter = new Intl.NumberFormat(undefined, {
+			style: 'currency',
+			currency: currencyRate,
+			currencyDisplay: 'narrowSymbol',
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
 		});
+		const isPopout = selector === itemSelectors.page;
+
+		const buffContainer = html`
+		<div class="bf-buff-a ${isPopout ? 'bf-big-a' : ''}">
+			<img src="${BETTERFLOAT_LOGO}" />
+			<span class="bf-buffprice"> 
+				${currencyFormatter.format(priceFromReference?.toNumber() ?? 0)}
+			</span>
+		</div>
+		`;
 
 		const parentContainer = priceDiv ?? priceParent;
 		if (selector === itemSelectors.page) {
@@ -984,25 +991,12 @@ async function addBuffPrice(item: Skinport.Listing, container: Element, selector
 			priceParent?.setAttribute('style', 'flex-direction: column; align-items: flex-start;');
 		}
 
-		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
+		const buffElement = container.querySelector<HTMLElement>('.bf-buff-a');
 		if (buffElement) {
-			buffElement.addEventListener('click', (e) => {
-				e.stopPropagation();
-				e.preventDefault();
-				window.open(buffElement.href, '_blank');
-			});
-
-			attachMarketPopover(buffElement, {
-				isPro: isUserPro(extensionSettings['user']),
-				currencyRate: await getSpUserCurrencyRate(Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport'),
-			});
+			attachInfoPopover(buffElement);
 		}
 	}
 
-	const priceFromReference =
-		extensionSettings['sp-pricereference'] === 0 && (AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
-			? priceOrder
-			: priceListing;
 	const difference = new Decimal(item.price).minus(priceFromReference ?? 0);
 	const percentage = new Decimal(item.price).div(priceFromReference ?? item.price).mul(100);
 	if ((!extensionSettings['sp-buffdifference'] && !extensionSettings['sp-buffdifferencepercent']) || location.pathname === '/myitems/inventory' || location.pathname.startsWith('/sell/')) {
