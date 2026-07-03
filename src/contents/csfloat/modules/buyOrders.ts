@@ -33,13 +33,17 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const buff_id = await getMarketID(itemName, source);
-	const { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
+	let { priceListing, priceOrder } = await getBuffPrice(itemName, itemStyle, source);
 	const useOrderPrice =
 		priceOrder &&
 		extensionSettings['csf-pricereference'] === 0 &&
 		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])));
-	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
 	const { userCurrency, currencyRate } = await getCurrencyRate();
+	if (currencyRate) {
+		priceListing = priceListing?.mul(currencyRate);
+		priceOrder = priceOrder?.mul(currencyRate);
+	}
+	const priceFromReference = useOrderPrice ? priceOrder : (priceListing ?? new Decimal(0));
 
 	const buffContainer = generatePriceLine({
 		source: extensionSettings['csf-pricingsource'] as MarketSource,
@@ -49,7 +53,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 		priceListing,
 		priceFromReference,
 		userCurrency,
-		itemStyle: '' as DopplerPhase,
+		itemStyle: itemStyle as DopplerPhase,
 		CurrencyFormatter: CurrencyFormatter(getCSFloatUserCurrency()),
 		isDoppler: false,
 		isPopout: false,
@@ -65,7 +69,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 		attachMarketPopover(buffAnchor, { isPro: isUserPro(extensionSettings['user']), currencyRate });
 	}
 
-	if (priceFromReference.isPositive()) {
+	if (priceFromReference?.isPositive()) {
 		const buyOrderPrice = new Decimal(buyOrderData.price).mul(currencyRate).div(100);
 		const difference = buyOrderPrice.minus(priceFromReference);
 		const percentage = buyOrderPrice.div(priceFromReference).times(100);
