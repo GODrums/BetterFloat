@@ -6,7 +6,8 @@ import { cacheTradeitBotItems, cacheTradeitOwnItems } from './cache';
 function processTradeitEvent(eventData: EventData<unknown>) {
 	if (eventData.url.includes('api/v2/inventory/data')) {
 		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-		cacheTradeitBotItems([...(eventData.data as Tradeit.BotDataResponse).items]);
+		const isExpanded = eventData.url.includes('groupId=');
+		cacheTradeitBotItems([...(eventData.data as Tradeit.BotDataResponse).items], isExpanded);
 	} else if (eventData.url.includes('api/v2/inventory/my/data')) {
 		console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 		cacheTradeitOwnItems((eventData.data as Tradeit.OwnInventoryResponse).items);
