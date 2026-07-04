@@ -34,7 +34,7 @@ enum PageType {
 }
 
 export async function initNewLisskins() {
-	if (location.host !== 'new.lis-skins.com') {
+	if (!location.host.includes('lis-skins.com')) {
 		return;
 	}
 

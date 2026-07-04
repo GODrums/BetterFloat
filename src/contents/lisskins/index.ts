@@ -30,12 +30,12 @@ export const config: PlasmoCSConfig = {
 async function init() {
 	console.time('[BetterFloat] Lis-Skins init timer');
 
-	if (location.host === 'new.lis-skins.com') {
+	if (location.host === 'lis-skins.com') {
 		await initNewLisskins();
 		return;
 	}
 
-	if (location.host !== 'lis-skins.com') {
+	if (location.host !== 'app.lis-skins.com') {
 		return;
 	}
 
