@@ -34,7 +34,7 @@ export function getDMarketCurrency() {
 }
 
 export function cacheDMarketItems(data: DMarket.CachedListing[]) {
-	data.forEach((item) => {
+	data?.forEach((item) => {
 		if (dmarketItems.findIndex((i) => i.itemId === item.itemId) === -1) {
 			dmarketItems.push(item);
 		}

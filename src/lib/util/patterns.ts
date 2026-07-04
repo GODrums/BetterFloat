@@ -3440,6 +3440,8 @@ export const UltraViolentMapping: Record<number, UltraViolentTier> = {
 	508: { type: 'purple', tier: 2 },
 	192: { type: 'purple', tier: 2 },
 	829: { type: 'purple', tier: 2 },
+	350: { type: 'purple', tier: 2 },
+	322: { type: 'purple', tier: 2 },
 };
 
 // https://steamcommunity.com/sharedfiles/filedetails/?id=3686307515
@@ -3481,6 +3483,7 @@ export const CloudChasersMapping: Record<number, 1 | 2> = {
 	302: 2,
 	880: 2,
 	659: 2,
+	65: 2,
 };
 
 // https://steamcommunity.com/sharedfiles/filedetails/?id=3692388912
