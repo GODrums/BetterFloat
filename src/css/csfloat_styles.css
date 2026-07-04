@@ -12,6 +12,17 @@ app-user-orders {
 	}
 }
 
+.betterfloat-listing-age {
+	position: relative;
+	z-index: 1;
+}
+
+item-card:has(.betterfloat-listing-age:hover),
+.item-card:has(.betterfloat-listing-age:hover) {
+	position: relative;
+	z-index: 20;
+}
+
 .betterfloat-buff-a {
 	display: inline-flex;
 	align-items: center;
