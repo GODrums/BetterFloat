@@ -13,6 +13,10 @@ html {
 	z-index: 30;
 }
 
+#__nuxt .betterfloat-buff-a {
+	z-index: 10;
+}
+
 .betterfloat-big-a {
 	position: static;
 }
@@ -41,6 +45,10 @@ html {
 	text-wrap: nowrap;
 	padding: 1px 3px;
 	border-radius: 4px;
+}
+
+#__nuxt .betterfloat-sale-tag {
+	z-index: 10;
 }
 
 .betterfloat-buff-tooltip {
