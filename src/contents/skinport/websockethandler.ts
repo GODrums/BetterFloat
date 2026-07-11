@@ -1,4 +1,4 @@
-import iconBan from 'data-base64:~/../assets/icons/ban-solid.svg';
+import iconBan from '@@/assets/icons/ban-solid.svg?inline';
 import type { Skinport } from '../../lib/@typings/SkinportTypes';
 import { addPattern } from '../../lib/helpers/skinport_helpers';
 

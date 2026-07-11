@@ -1,4 +1,4 @@
-import { sendToBackground } from '@plasmohq/messaging';
+import { sendToBackground } from '~lib/util/messaging-compat';
 import { loadMapping } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';

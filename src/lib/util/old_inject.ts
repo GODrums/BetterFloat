@@ -1,5 +1,6 @@
 let loadNumber = 0;
 const isDev = process.env.NODE_ENV !== 'production';
+export {};
 xmlHttpRequestIntercept();
 fetchIntercept();
 

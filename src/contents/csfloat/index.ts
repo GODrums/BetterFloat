@@ -1,4 +1,4 @@
-import type { PlasmoCSConfig } from 'plasmo';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 
 import { injectScript } from '~lib/helpers/inject_helper';
 

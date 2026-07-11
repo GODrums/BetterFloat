@@ -1,4 +1,4 @@
-import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
+import steamLogo from '@@/assets/icons/icon-steam.svg?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type SVGProps, useState } from 'react';

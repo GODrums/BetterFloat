@@ -53,6 +53,7 @@ const SOURCE_TEXT: Record<MarketSource, string> = {
 	[MarketSource.Skinsmonkey]: 'Skinsmonkey',
 	[MarketSource.Shadowpay]: 'Shadowpay',
 	[MarketSource.Skinout]: 'Skinout',
+	[MarketSource.Skinplace]: 'Skinplace',
 };
 
 // Map MarketSource -> property key in marketIds.json
@@ -83,6 +84,7 @@ const MARKET_ID_PROP: Record<MarketSource, string | null> = {
 	[MarketSource.Skinsmonkey]: null,
 	[MarketSource.Shadowpay]: null,
 	[MarketSource.Skinout]: null,
+	[MarketSource.Skinplace]: null,
 };
 
 let marketIdsCache: Record<string, Partial<Extension.MarketIDEntry>> | null = null;

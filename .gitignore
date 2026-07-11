@@ -28,9 +28,11 @@ yarn-error.log*
 out/
 build/
 dist/
+.output/
 
 # plasmo - https://www.plasmo.com
 .plasmo
+.wxt
 
 # bpp - https://github.com/PlasmoHQ/bpp
 keys.json

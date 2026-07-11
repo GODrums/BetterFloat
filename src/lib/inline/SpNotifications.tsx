@@ -1,4 +1,4 @@
-import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
+import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';

@@ -1,4 +1,4 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
+import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 
 export type GetBlueSalesBody = {

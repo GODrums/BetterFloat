@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		ExtensionStorage.sync.setItems(DEFAULT_SETTINGS);
 
 		if (!chrome.runtime.getManifest().name.includes('DEV')) {
-			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+			const onboardingUrl = chrome.runtime.getURL('/onboarding.html');
 			await chrome.tabs.create({ url: onboardingUrl });
 		}
 	} else if (details.reason === 'update') {

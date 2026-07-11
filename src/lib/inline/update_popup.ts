@@ -1,4 +1,4 @@
-import betterfloatLogo from 'data-base64:/assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { ICON_SKINPLACE_FULL } from '~lib/util/globals';
 import { ExtensionStorage } from '~lib/util/storage';
 

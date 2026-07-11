@@ -1,4 +1,4 @@
-import { type MessagesMetadata, type PlasmoMessaging, relayMessage } from '@plasmohq/messaging';
+import { type MessagesMetadata, type PlasmoMessaging, relayMessage } from '~lib/util/messaging-compat';
 
 export type MessageRelay<T = unknown> = PlasmoMessaging.Request<keyof MessagesMetadata, T>;
 

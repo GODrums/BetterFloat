@@ -69,7 +69,7 @@
 
 @font-face {
 	font-family: "Inter";
-	src: url("data-base64:/assets/Inter.ttf") format("truetype");
+	src: url("../assets/Inter.ttf") format("truetype");
 	font-weight: 500 600 700 800;
 }
 

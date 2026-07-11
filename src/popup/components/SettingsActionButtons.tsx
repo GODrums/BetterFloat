@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { motion } from 'framer-motion';
-import type { SVGProps } from 'react';
+import type { ReactElement, SVGProps } from 'react';
 import { CSF_DEFAULT_ACTIONS, type CSFActionType } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
@@ -99,7 +99,7 @@ const SingleActionButton = ({
 	active = false,
 }: {
 	text: string;
-	logo: (props: SVGProps<SVGSVGElement>) => JSX.Element;
+	logo: (props: SVGProps<SVGSVGElement>) => ReactElement;
 	onClick: () => void;
 	disabled?: boolean;
 	active?: boolean;
@@ -118,7 +118,7 @@ const SingleActionButton = ({
 type ActionInfo = {
 	key: CSFActionType;
 	text: string;
-	logo: (props: SVGProps<SVGSVGElement>) => JSX.Element;
+	logo: (props: SVGProps<SVGSVGElement>) => ReactElement;
 };
 
 export const SettingsActionButtons = ({ id, isPro = false }: ActionButtonsProps) => {

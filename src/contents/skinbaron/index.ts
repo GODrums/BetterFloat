@@ -1,6 +1,6 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';

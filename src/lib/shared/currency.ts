@@ -1,4 +1,4 @@
-import { sendToBackground } from '@plasmohq/messaging';
+import { sendToBackground } from '~lib/util/messaging-compat';
 import type { RequestRatesResponse } from '~background/messages/requestRates';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { ExtensionStorage } from '~lib/util/storage';

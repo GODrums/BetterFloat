@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { WhiteMarket } from '~lib/@typings/WhitemarketTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';

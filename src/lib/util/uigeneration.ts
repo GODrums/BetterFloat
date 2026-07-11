@@ -1,4 +1,4 @@
-import iconGemshop from 'data-base64:/assets/icons/gem-shop.svg';
+import iconGemshop from '@@/assets/icons/gem-shop.svg?inline';
 import { html } from 'common-tags';
 import type Decimal from 'decimal.js';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';

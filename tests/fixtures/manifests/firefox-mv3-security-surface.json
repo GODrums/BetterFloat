@@ -1,0 +1,230 @@
+{
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.avan.market/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.bitskins.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.dmarket.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.gamerpay.gg/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.haloskins.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.market.csgo.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.rapidskins.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.shadowpay.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skin.place/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skinbaron.de/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skinflow.gg/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skinout.gg/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skinsmonkey.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.skinswap.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.swap.gg/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.waxpeer.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "*://*.youpin898.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.buff.market/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.cs.money/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.csfloat.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.skinbid.com/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.skinport.com/*"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.tradeit.gg/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://*.white.market/*"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://lis-skins.com/*"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "externally_connectable": [
+    "https://*.rums.dev/*"
+  ],
+  "gecko": {
+    "id": "betterfloat@rums.dev",
+    "strict_min_version": "128.0"
+  },
+  "host_permissions": [
+    "*://*.avan.market/*",
+    "*://*.bitskins.com/*",
+    "*://*.cs.money/*",
+    "*://*.csfloat.com/*",
+    "*://*.dmarket.com/*",
+    "*://*.gamerpay.gg/*",
+    "*://*.haloskins.com/*",
+    "*://*.lis-skins.com/*",
+    "*://*.market.csgo.com/*",
+    "*://*.rapidskins.com/*",
+    "*://*.shadowpay.com/*",
+    "*://*.skin.place/*",
+    "*://*.skinbaron.de/*",
+    "*://*.skinbid.com/*",
+    "*://*.skinflow.gg/*",
+    "*://*.skinout.com/*",
+    "*://*.skinport.com/*",
+    "*://*.skinsmonkey.com/*",
+    "*://*.skinswap.com/*",
+    "*://*.steamcommunity.com/*",
+    "*://*.steampowered.com/*",
+    "*://*.swap.gg/*",
+    "*://*.tradeit.gg/*",
+    "*://*.waxpeer.com/*",
+    "*://*.whitemarket.com/*",
+    "*://*.youpin898.com/*"
+  ],
+  "key": null,
+  "optional_host_permissions": [
+    "*://*.buff.market/*",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "optional_permissions": [],
+  "permissions": [
+    "activeTab",
+    "notifications",
+    "omnibox",
+    "scripting",
+    "storage",
+    "unlimitedStorage"
+  ],
+  "war_matches": [
+    "*://*.avan.market/*",
+    "*://*.bitskins.com/*",
+    "*://*.dmarket.com/*",
+    "*://*.gamerpay.gg/*",
+    "*://*.haloskins.com/*",
+    "*://*.market.csgo.com/*",
+    "*://*.rapidskins.com/*",
+    "*://*.shadowpay.com/*",
+    "*://*.skin.place/*",
+    "*://*.skinbaron.de/*",
+    "*://*.skinflow.gg/*",
+    "*://*.skinout.gg/*",
+    "*://*.skinsmonkey.com/*",
+    "*://*.skinswap.com/*",
+    "*://*.swap.gg/*",
+    "*://*.waxpeer.com/*",
+    "https://*.buff.market/*",
+    "https://*.cs.money/*",
+    "https://*.csfloat.com/*",
+    "https://*.skinbid.com/*",
+    "https://*.skinport.com/*",
+    "https://*.tradeit.gg/*",
+    "https://*.white.market/*",
+    "https://lis-skins.com/*"
+  ]
+}

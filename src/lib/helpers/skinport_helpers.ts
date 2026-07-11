@@ -1,5 +1,5 @@
-import skinportInjectUrl from 'url:~lib/util/skinport_inject.ts';
 import getSymbolFromCurrency from 'currency-symbol-map';
+import { injectScript } from 'wxt/utils/inject-script';
 import { getBuffItem } from '~contents/skinport/index';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
@@ -8,13 +8,7 @@ import { getCharmColoring, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 export function startSkinportSocket() {
-	const script = document.createElement('script');
-	script.type = 'module';
-	script.src = skinportInjectUrl;
-	script.onload = function () {
-		(this as HTMLScriptElement).remove();
-	};
-	(document.head || document.documentElement).appendChild(script);
+	void injectScript('/skinport-main.js');
 }
 
 export function addPattern(container: Element, item: Skinport.Item) {

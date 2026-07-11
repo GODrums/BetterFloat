@@ -1,4 +1,4 @@
-import { sendToBackground, sendToBackgroundViaRelay } from '@plasmohq/messaging';
+import { sendToBackground, sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { GetBlueBody } from '~background/messages/getBluePercent';
 import type { GetBlueSalesBody } from '~background/messages/getBlueSales';

@@ -1,4 +1,4 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
+import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import { ICON_CSFLOAT, ICON_SKINPORT } from '~lib/util/globals';
 
 export type CreateNotificationBody = {

@@ -11,3 +11,4 @@ allowBuilds:
   lmdb: true
   msgpackr-extract: true
   sharp: true
+  spawn-sync: true

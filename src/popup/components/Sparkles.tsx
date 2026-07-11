@@ -410,7 +410,7 @@ export const SparklesCore = (props: ParticlesProps) => {
 							},
 						},
 						detectRetina: true,
-					}}
+					} as any}
 				/>
 			</motion.div>
 		</ParticlesProvider>

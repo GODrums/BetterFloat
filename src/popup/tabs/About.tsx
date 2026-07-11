@@ -1,4 +1,4 @@
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { ICON_CSMONEY_FULL, ICON_SKINPLACE_FULL, WEBSITE_URL } from '~lib/util/globals';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { Spotlight } from '~popup/components/Spotlight';

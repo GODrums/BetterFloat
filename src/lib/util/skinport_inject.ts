@@ -1,4 +1,4 @@
-import { io } from 'socket.io-client/build/esm';
+import { io } from 'socket.io-client';
 import socketParser from 'socket.io-msgpack-parser';
 
 const isDev = process.env.NODE_ENV !== 'production';

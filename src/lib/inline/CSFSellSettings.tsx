@@ -1,4 +1,4 @@
-import betterfloatLogo from 'data-base64:/assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';

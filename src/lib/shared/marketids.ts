@@ -1,4 +1,5 @@
-import marketIdsUrl from 'raw:@/assets/marketids.json';
+const marketIdsUrl = chrome.runtime.getURL('/marketids.json');
+
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 
 type MarketIdsMap = Record<string, Partial<Extension.MarketIDEntry>>;
