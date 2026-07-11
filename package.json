@@ -2,7 +2,7 @@
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
 	"version": "3.6.2",
-	"packageManager": "pnpm@11.11.0",
+	"packageManager": "bun@1.3.13",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
 	"license": "CC BY NC SA 4.0",
@@ -14,7 +14,7 @@
 		"dev:firefox": "wxt -b firefox --mv3",
 		"build": "wxt build",
 		"build:firefox": "wxt build -b firefox --mv3",
-		"build:all": "pnpm build && pnpm build:firefox && pnpm manifest:check",
+		"build:all": "bun run build && bun run build:firefox && bun run manifest:check",
 		"package": "wxt zip",
 		"package:firefox": "wxt zip -b firefox --mv3",
 		"typecheck": "tsc --noEmit",
@@ -26,6 +26,17 @@
 		"format": "biome format src/ --write && biome check src/ --fix",
 		"zip": "bash ./scripts/create-source-archive.sh"
 	},
+	"trustedDependencies": [
+		"@parcel/watcher",
+		"@swc/core",
+		"@tsparticles/engine",
+		"esbuild",
+		"lefthook",
+		"lmdb",
+		"msgpackr-extract",
+		"sharp",
+		"spawn-sync"
+	],
 	"dependencies": {
 		"@plasmohq/storage": "^1.15.0",
 		"@webext-core/messaging": "^2.3.0",

@@ -2,26 +2,26 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
-    "command": "pnpm",
+    "command": "bun",
     "tasks": [
         {
             "label": "install",
             "type": "shell",
-            "command": "pnpm",
+            "command": "bun",
             "args": ["install"]
         },
         {
             "label": "update",
             "type": "shell",
-            "command": "pnpm",
+            "command": "bun",
             "args": ["update"]
         },
         {
             "label": "build",
             "type": "shell",
             "group": "build",
-            "command": "pnpm",
-            "args": ["dev"]
+            "command": "bun",
+            "args": ["run", "dev"]
         }
     ]
 }

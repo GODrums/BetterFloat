@@ -1,17 +1,17 @@
 #   Refer for explanation to following link:
 #   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
 
-#   To manually execute this group use: `pnpm lefthook run pre-commit`
-#   Sync hooks with: `pnpm lefthook install`
+#   To manually execute this group use: `bunx lefthook run pre-commit`
+#   Sync hooks with: `bunx lefthook install`
 # pre-commit:
 #   # parallel: true
 #   commands:
 #     typecheck:
 #       glob: "./src/**/*.{ts,tsx}"
-#       run: pnpm tsc --noEmit {staged_files}
+#       run: bunx tsc --noEmit {staged_files}
 #     lint:
 #       glob: "src/**/*.{ts,tsx,js,jsx}"
-#       run: pnpm biome lint --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
+#       run: bunx biome lint --write {staged_files} && bunx biome check --write {staged_files} && git update-index --again
 #     format:
 #       glob: "src/**/*.{ts,tsx,js,jsx,css}"
-#       run: pnpm biome format --write {staged_files} && pnpm biome check --write {staged_files} && git update-index --again
+#       run: bunx biome format --write {staged_files} && bunx biome check --write {staged_files} && git update-index --again
