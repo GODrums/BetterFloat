@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
-import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { SVGProps } from 'react';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';

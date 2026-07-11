@@ -31,6 +31,7 @@ const hostPermissions = [
 ];
 
 export default defineConfig({
+	modules: ['@wxt-dev/module-react'],
 	publicDir: 'public',
 	webExt: { disabled: true },
 	hooks: {

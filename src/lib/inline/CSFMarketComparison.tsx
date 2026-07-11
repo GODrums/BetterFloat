@@ -2,7 +2,6 @@ import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';

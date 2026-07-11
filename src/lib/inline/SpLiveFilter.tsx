@@ -1,7 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type React from 'react';
-import { useEffect, useState } from 'react';
 import { DEFAULT_FILTER, type SettingsUser, type SPFilter } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~popup/components/Icons';

@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { useEffect, useState } from 'react';
 import { ICON_SKINPLACE_FULL } from '~lib/util/globals';
 import { IcOutlineDiscount, IcRoundAccessTime, StreamlineDiscountPercentCoupon } from '~popup/components/Icons';
 import { MarketLogoFull } from '~popup/components/MarketLogoFull';

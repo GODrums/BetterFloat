@@ -1,8 +1,6 @@
 import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
-import type React from 'react';
-import { useState } from 'react';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import type { SettingsUser } from '~lib/util/storage';

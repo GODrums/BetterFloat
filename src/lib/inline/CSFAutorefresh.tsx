@@ -1,7 +1,6 @@
 import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
-import { type SVGProps, useEffect, useRef, useState } from 'react';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import type { SettingsUser } from '~lib/util/storage';
@@ -13,6 +12,7 @@ import { CSFCheckbox } from '~popup/ui/checkbox';
 import { DualRangeSlider } from '~popup/ui/dualrangeslider';
 import { Separator } from '~popup/ui/separator';
 import { Switch } from '~popup/ui/switch';
+import type { SVGProps } from 'react';
 
 function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (

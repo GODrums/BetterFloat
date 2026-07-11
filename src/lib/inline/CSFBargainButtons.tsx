@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Check, CircleHelp, Clock3, LockKeyhole, Pencil, X } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
 import { getCSFCurrencyRate } from '~contents/csfloat/cache';
 import { getCSFloatUserCurrency } from '~contents/csfloat/modules/currency';
 import type { CSFloat } from '~lib/@typings/FloatTypes';

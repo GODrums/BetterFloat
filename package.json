@@ -86,6 +86,7 @@
 		"@types/node": "24.3.0",
 		"@types/react": "19.2.14",
 		"@types/react-dom": "19.2.3",
+		"@wxt-dev/module-react": "1.2.2",
 		"cs-tierlist": "^1.2.4",
 		"currency-symbol-map": "^5.1.0",
 		"decimal.js": "^10.6.0",

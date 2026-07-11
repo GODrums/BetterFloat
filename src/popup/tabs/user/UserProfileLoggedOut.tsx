@@ -1,5 +1,4 @@
 import { Bell, Globe, Star, Zap } from 'lucide-react';
-import { useState } from 'react';
 import { getSteamLogin } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 import { MdiSteamColored } from '~popup/components/Icons';

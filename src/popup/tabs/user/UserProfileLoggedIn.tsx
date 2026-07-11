@@ -1,5 +1,4 @@
 import { Check, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { decodeJWT, refreshToken, verifyPlan } from '~lib/util/jwt';
 import { getSteamLogin } from '~lib/util/steam';

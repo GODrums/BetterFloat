@@ -1,6 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import type { IconProps } from '@radix-ui/react-icons/dist/types';
-import { type ReactElement, type SVGProps, useCallback, useState } from 'react';
+import type { ReactElement, SVGProps } from 'react';
 import { toast } from 'sonner';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';

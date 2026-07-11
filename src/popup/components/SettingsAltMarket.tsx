@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { useEffect, useState } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Label } from '~popup/ui/label';
