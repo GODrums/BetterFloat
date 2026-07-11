@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.6.1",
+	"version": "3.6.2",
 	"packageManager": "pnpm@11.11.0",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
