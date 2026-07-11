@@ -8,19 +8,26 @@ let fetchIDPromise: Promise<void> | null = null;
 // maps buff_name to buff_id
 let marketIdMapping: Record<string, Partial<Extension.MarketIDEntry>> = {};
 // maps buff_name to prices and more - custom mapping
-const priceMapping: {
-	buff: Extension.PriceMappingBuff;
-	youpin: Extension.PriceMappingMisc;
-	c5game: Extension.PriceMappingMisc;
-	steam: Extension.PriceMappingSteam;
-	csfloat: Extension.PriceMappingMisc;
-	csmoney: Extension.PriceMappingMisc;
-	marketCsgo: Extension.PriceMappingMisc;
-} = { buff: {}, youpin: {}, c5game: {}, steam: {}, csfloat: {}, csmoney: {}, marketCsgo: {} };
+type PriceMappingSource = MarketSource.Buff | MarketSource.YouPin | MarketSource.C5Game | MarketSource.Steam | MarketSource.CSFloat | MarketSource.CSMoney | MarketSource.Marketcsgo;
+
+const priceMapping: Record<PriceMappingSource, Extension.AbstractPriceMapping> = {
+	[MarketSource.Buff]: {},
+	[MarketSource.YouPin]: {},
+	[MarketSource.C5Game]: {},
+	[MarketSource.Steam]: {},
+	[MarketSource.CSFloat]: {},
+	[MarketSource.CSMoney]: {},
+	[MarketSource.Marketcsgo]: {},
+};
+
+function isPriceMappingSource(source: MarketSource): source is PriceMappingSource {
+	return source in priceMapping;
+}
 // crimson web mapping
 let crimsonWebMapping: Extension.CrimsonWebMapping | null = null;
 
 export async function getPriceMapping(source: MarketSource) {
+	if (!isPriceMappingSource(source)) return {};
 	if (Object.keys(priceMapping[source]).length === 0) {
 		await loadMapping(source);
 	}
@@ -33,6 +40,7 @@ export async function getPriceMapping(source: MarketSource) {
  * @returns
  */
 export async function getItemPrice(buff_name: string, source: MarketSource): Promise<{ starting_at: number; highest_order: number }> {
+	if (!isPriceMappingSource(source)) return { starting_at: 0, highest_order: 0 };
 	if (Object.keys(priceMapping[source]).length === 0) {
 		await loadMapping(source);
 	}
@@ -102,6 +110,7 @@ export async function getMarketID(name: string, source: MarketSource) {
 }
 
 export async function loadMapping(source: MarketSource) {
+	if (!isPriceMappingSource(source)) return false;
 	if (Object.keys(priceMapping[source]).length === 0) {
 		console.debug(`[BetterFloat] Attempting to load ${source} price mapping from local storage`);
 

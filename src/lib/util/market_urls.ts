@@ -2,10 +2,17 @@ import type { DopplerPhase } from '../@typings/FloatTypes';
 import { MarketSource } from './globals';
 import { phaseMapping } from './patterns';
 
+function getPhaseTag(marketId: number | string, phase?: DopplerPhase | null) {
+	if (!phase) return undefined;
+	const phases: Partial<Record<DopplerPhase, number>> | undefined = phaseMapping[Number(marketId)];
+	return phases?.[phase];
+}
+
 export function getBuffLink(buff_id: number, phase?: DopplerPhase | null) {
 	const baseUrl = `https://buff.163.com/goods/${buff_id}`;
-	if (phase) {
-		return `${baseUrl}#tag_ids=${phaseMapping[buff_id][phase]}`;
+	const phaseTag = getPhaseTag(buff_id, phase);
+	if (phaseTag) {
+		return `${baseUrl}#tag_ids=${phaseTag}`;
 	}
 	return baseUrl;
 }
@@ -16,7 +23,8 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			if (Number(market_id) === 0) {
 				return `https://buff.163.com/market/csgo#tab=selling&page_num=1&search=${encodeURIComponent(buff_name)}`;
 			}
-			return `https://buff.163.com/goods/${market_id}${phase && phaseMapping[market_id] ? `#tag_ids=${phaseMapping[market_id][phase]}` : ''}`;
+			const phaseTag = getPhaseTag(market_id, phase);
+			return `https://buff.163.com/goods/${market_id}${phaseTag ? `#tag_ids=${phaseTag}` : ''}`;
 		}
 		case MarketSource.Steam:
 			return `https://steamcommunity.com/market/listings/730/${encodeURIComponent(buff_name)}`;

@@ -144,7 +144,7 @@ async function badgeBigSwell(container: Element, item: CSFloat.Item) {
 	const big_swell_data = BigSwellMapping[item.paint_seed!];
 	if (!big_swell_data) return;
 
-	const iconMapping = {
+	const iconMapping: Record<number, string> = {
 		1: ICON_BIG_SWELL_1,
 		2: ICON_BIG_SWELL_2,
 	};
@@ -162,7 +162,7 @@ async function badgeCloudChasers(container: Element, item: CSFloat.Item) {
 	const cloud_data = CloudChasersMapping[item.paint_seed!];
 	if (!cloud_data) return;
 
-	const iconMapping = {
+	const iconMapping: Record<number, string> = {
 		1: ICON_CLOUD_CHASERS_1,
 		2: ICON_CLOUD_CHASERS_2,
 	};
@@ -219,7 +219,7 @@ async function badgeChromaGems(container: Element, item: CSFloat.Item) {
 	}
 	if (!gem_data) return;
 
-	const iconMapping = {
+	const iconMapping: Record<'Sapphire' | 'Ruby' | 'Emerald', Record<number, string>> = {
 		Sapphire: {
 			1: ICON_SAPPHIRE_1,
 			2: ICON_SAPPHIRE_2,
@@ -250,7 +250,7 @@ async function badgeNocts(container: Element, item: CSFloat.Item) {
 	const nocts_data = NoctsMapping[item.paint_seed!];
 	if (!nocts_data) return;
 
-	const iconMapping = {
+	const iconMapping: Record<number, string> = {
 		1: ICON_NOCTS_1,
 		2: ICON_NOCTS_2,
 		3: ICON_NOCTS_3,
@@ -282,7 +282,7 @@ async function badgeDiamondGem(container: Element, item: CSFloat.Item) {
 	const diamondGem_data = DiamonGemMapping[item.paint_seed!];
 	if (!diamondGem_data) return;
 
-	const iconMapping = {
+	const iconMapping: Record<number, string> = {
 		1: ICON_DIAMOND_GEM_1,
 		2: ICON_DIAMOND_GEM_2,
 		3: ICON_DIAMOND_GEM_3,

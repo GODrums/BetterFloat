@@ -2,7 +2,7 @@
 	"extends": "./.wxt/tsconfig.json",
 	"exclude": ["node_modules", "build", ".output"],
 	"compilerOptions": {
-		"strict": false,
+		"strict": true,
 		"resolveJsonModule": true,
 		"strictNullChecks": true,
 		"jsx": "react-jsx",

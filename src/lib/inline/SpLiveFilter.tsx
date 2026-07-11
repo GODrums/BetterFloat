@@ -17,7 +17,7 @@ interface TypeCheckboxProps {
 }
 
 const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => {
-	const key = props.label.toLowerCase().replace(' ', '-');
+	const key = props.label.toLowerCase().replace(' ', '-') as keyof SPFilter['types'];
 	const [checked, setChecked] = useState<boolean>(props.types[key] ?? DEFAULT_FILTER.types[key]);
 	const id = `filter-type-${key}`;
 

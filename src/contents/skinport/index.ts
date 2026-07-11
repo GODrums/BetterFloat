@@ -1,8 +1,8 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { getItemPrice } from '~lib/handlers/mappinghandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
@@ -704,7 +704,8 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	// if true, item should be filtered
 	const nameCheck = targetName !== '' && !item.full_name.toLowerCase().includes(targetName);
 	const priceCheck = item.price < spFilter.priceLow || item.price > spFilter.priceHigh;
-	const typeCheck = !spFilter.types[item.category.toLowerCase().replace(' ', '-')];
+	const category = item.category.toLowerCase().replace(' ', '-') as keyof SPFilter['types'];
+	const typeCheck = !spFilter.types[category];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
 	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1], 10) : undefined;

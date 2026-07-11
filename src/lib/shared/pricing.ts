@@ -1,20 +1,25 @@
-import { sendToBackground } from '~lib/util/messaging-compat';
 import { loadMapping } from '~lib/handlers/mappinghandler';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
+import { sendToBackground } from '~lib/util/messaging-compat';
 import { getSetting, type IStorage } from '~lib/util/storage';
 
-export async function initPriceMapping(extensionSettings: IStorage, prefix: string) {
+type PricingSourceKey = Extract<keyof IStorage, `${string}-pricingsource`>;
+type AltMarketKey = Extract<keyof IStorage, `${string}-altmarket`>;
+type SteamSupplementKey = Extract<keyof IStorage, `${string}-steamsupplement`>;
+type PrefixFor<Key> = Key extends `${infer Prefix}-pricingsource` ? Prefix : never;
+type PricingPrefix = PrefixFor<PricingSourceKey>;
+
+export async function initPriceMapping(extensionSettings: IStorage, prefix: PricingPrefix) {
 	const sources = new Set<MarketSource>();
-	sources.add(extensionSettings[`${prefix}-pricingsource`] as MarketSource);
-	if (
-		extensionSettings[`${prefix}-altmarket`] &&
-		extensionSettings[`${prefix}-altmarket`] !== 'none' &&
-		AskBidMarkets.map((market) => market.source).includes(extensionSettings[`${prefix}-pricingsource`])
-	) {
-		sources.add(extensionSettings[`${prefix}-altmarket`] as MarketSource);
+	const pricingSource = extensionSettings[`${prefix}-pricingsource` as PricingSourceKey] as MarketSource;
+	const altMarket = extensionSettings[`${prefix}-altmarket` as AltMarketKey] as MarketSource | undefined;
+	sources.add(pricingSource);
+	if (altMarket && altMarket !== MarketSource.None && AskBidMarkets.map((market) => market.source).includes(pricingSource)) {
+		sources.add(altMarket);
 	}
-	if (extensionSettings[`${prefix}-steamsupplement`]) {
+	const steamSupplementKey = `${prefix}-steamsupplement`;
+	if (steamSupplementKey in extensionSettings && extensionSettings[steamSupplementKey as SteamSupplementKey]) {
 		sources.add(MarketSource.Steam);
 	}
 	console.log('[BetterFloat] Sources:', sources);

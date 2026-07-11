@@ -75,7 +75,7 @@ export function addScript() {
 				}
 			});
 
-			return open.apply(this, arguments);
+			return Reflect.apply(open, this, arguments as unknown as Parameters<typeof open>);
 		};
 
 		// Mark as intercepted
@@ -97,8 +97,8 @@ export function addScript() {
 			console.log('[BetterFloat] Activating Fetch Intercept...');
 		}
 
-		window.fetch = async function (...args) {
-			const response = await originalFetch.apply(this, args);
+		window.fetch = (async (...args) => {
+			const response = await originalFetch(...args);
 			const url = response.url;
 			const targetUrl = new URL(url);
 
@@ -130,7 +130,7 @@ export function addScript() {
 			}
 
 			return response;
-		} as typeof fetch;
+		}) as typeof fetch;
 
 		// Mark as intercepted
 		(window as any).__BetterFloat_Fetch_Intercepted = true;
