@@ -1,11 +1,10 @@
 import { html } from 'common-tags';
 
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-import { ICON_CSGOSKINS, ICON_PRICEMPIRE, ICON_PRICEMPIRE_APP, ICON_STEAM, ICON_STEAMANALYST } from '~lib/util/globals';
+import { ICON_CSGOSKINS, ICON_PRICEMPIRE, ICON_STEAM, ICON_STEAMANALYST } from '~lib/util/globals';
 import { getCollectionLink, isUserPro, waitForElement } from '~lib/util/helperfunctions';
 
 import { getCSFloatSettings } from '../runtime';
-import { createBuffName, getFloatItem } from './pricing';
 import { getSkinSchema, getWeaponSchemaIndex, initItemSchema } from './schema';
 
 type QuickLink = {

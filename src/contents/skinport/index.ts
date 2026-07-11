@@ -2,9 +2,9 @@ import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
 import type { PlasmoCSConfig } from 'plasmo';
-import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
-import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
+import { getItemPrice } from '~lib/handlers/mappinghandler';
 import { addPattern, createLiveLink, filterDisplay, startSkinportSocket } from '~lib/helpers/skinport_helpers';
 import { initPriceMapping } from '~lib/shared/pricing';
 import {
@@ -943,8 +943,7 @@ function convertCurrency(price: Decimal, currencyRate: number, settingRate: 'rea
 }
 
 async function addBuffPrice(item: Skinport.Listing, container: Element, selector: ItemSelectors) {
-	const { buff_name, priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
-	const market_id = await getMarketID(buff_name, source);
+	const { priceListing, priceOrder, source } = await getBuffItem(item.full_name, item.style);
 
 	const priceParent = container.querySelector<HTMLElement>(selector.priceParent)!;
 	const priceDiv = container.querySelector<HTMLElement>(selector.oldPrice);
