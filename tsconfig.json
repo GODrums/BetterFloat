@@ -5,6 +5,7 @@
 		"strict": false,
 		"resolveJsonModule": true,
 		"strictNullChecks": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"types": ["bun", "chrome"]
 	}
 }

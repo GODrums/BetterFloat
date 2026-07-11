@@ -92,7 +92,7 @@
 		"lefthook": "^1.11.13",
 		"postcss": "8.4.49",
 		"tailwindcss": "3.4.17",
-		"typescript": "5.9.2",
+		"typescript": "7.0.2",
 		"wxt": "0.20.27"
 	}
 }
