@@ -31,15 +31,26 @@ export const INJECTION_DOMAINS = [
 	'lis-skins.com',
 ];
 
+export function isInjectionDomain(hostname: string) {
+	return INJECTION_DOMAINS.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
+}
+
 /**
  * Main injection logic that will be executed in the page context
  * This function is called when the script is injected via chrome.scripting.executeScript
  */
 export function executeInjection(tabId: number, url: string) {
-	if (url.includes('gamerpay.gg')) {
-		injectResqForGamerpay(tabId);
+	let hostname: string;
+	try {
+		hostname = new URL(url).hostname;
+	} catch {
+		return;
 	}
-	if (url.includes('lis-skins.com')) {
+	if (!isInjectionDomain(hostname)) return;
+
+	if (hostname === 'gamerpay.gg' || hostname.endsWith('.gamerpay.gg')) {
+		injectResqForGamerpay(tabId);
+	} else if (hostname === 'lis-skins.com' || hostname.endsWith('.lis-skins.com')) {
 		chrome.scripting
 			.executeScript({
 				target: { tabId },
@@ -50,6 +61,7 @@ export function executeInjection(tabId: number, url: string) {
 			.catch((error) => {
 				console.debug('[BetterFloat] Lis-Skins Vue injection error:', error);
 			});
+		return;
 	}
 
 	// Inject the main script immediately

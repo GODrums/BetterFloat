@@ -14,7 +14,7 @@ export function connectLisSkinsVue() {
 	const dataEvent = 'BetterFloat_LISSKINS_QUERY_DATA';
 	const cartDataEvent = 'BetterFloat_LISSKINS_CART_DATA';
 	const requestEvent = 'BetterFloat_REQUEST_LISSKINS_QUERY_DATA';
-	const supportedQueries = new Set(['skins', 'obtained-skins', 'skin']);
+	const supportedQueries = new Set(['skins', 'obtained-skins', 'skin', 'inventory']);
 	const emittedQueries = new Map<string, number>();
 	let queryCache: any;
 	let cartStore: any;

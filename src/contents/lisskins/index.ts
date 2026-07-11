@@ -181,12 +181,16 @@ async function adjustCard(container: HTMLElement, page: PageType) {
 	}
 
 	const itemId = isMarketItem(apiItem) ? String(apiItem.id) : apiItem.asset_id;
-	prepareLisSkinsContainer(container, itemId, `${itemId}:${item.price.toString()}:${item.currency}`);
+	const itemKey = `${itemId}:${item.price.toString()}:${item.currency}`;
+	if (container.dataset.betterfloatLisProcessed === itemKey && container.querySelector('.betterfloat-buff-a')) return;
+
+	prepareLisSkinsContainer(container, itemId, itemKey);
 	container.setAttribute('data-betterfloat', JSON.stringify({ name: item.name, phase: item.style, price: item.price.toNumber() }));
 
 	const priceResult = await addBuffPrice(item, container, page, undefined, itemId);
 	if (container.dataset.betterfloatLisId !== itemId) return;
 	await addStickerPercentage(container, item, priceResult.priceFromReference, page, itemId);
+	if (container.dataset.betterfloatLisId === itemId) container.dataset.betterfloatLisProcessed = itemKey;
 }
 
 async function adjustItemPage() {

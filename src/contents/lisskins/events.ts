@@ -1,5 +1,4 @@
-import type { EventData } from '~lib/@typings/FloatTypes';
-import { activateSiteEventHandler } from '~lib/shared/events';
+import { addMessageRelays, RELAY_GET_MARKET_COMPARISON } from '~lib/shared/relay';
 import type { LisSkins } from './types';
 
 const lisItemsById = new Map<number, LisSkins.MarketItem>();
@@ -21,33 +20,13 @@ function notifyDataUpdate() {
 	for (const handler of dataUpdateHandlers) handler();
 }
 
-function processLisSkinsEvent(eventData: EventData<unknown>) {
-	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-
-	if (eventData.url.includes('/api/v2/obtained-skins')) {
-		const items = (eventData.data as LisSkins.MarketApiResponse).data ?? [];
-		cacheLisSkinsMarketItems(items);
-		if (/^\/market\/csgo\/[^/]+/.test(location.pathname)) {
-			activeOfferItems = items;
-		} else {
-			activeMarketItems = items;
-		}
-		notifyDataUpdate();
-	} else if (eventData.url.includes('/api/v2/sell-skins/inventory')) {
-		cacheLisSkinsInventoryItems((eventData.data as LisSkins.InventoryApiResponse).data ?? []);
-		notifyDataUpdate();
-	} else {
-		return;
-	}
-}
-
 function processLisSkinsQueryEvent(event: Event) {
 	const detail = (event as CustomEvent<string>).detail;
 	if (typeof detail !== 'string') return;
 
 	try {
 		const payload = JSON.parse(detail) as LisSkins.QueryPayload;
-		if (!['skins', 'obtained-skins', 'skin'].includes(payload.type) || !payload.queryHash || !payload.data) return;
+		if (!['skins', 'obtained-skins', 'skin', 'inventory'].includes(payload.type) || !payload.queryHash || !payload.data) return;
 
 		const signature = `${payload.queryHash}:${payload.dataUpdatedAt}`;
 		if (activeQuerySignatures.get(payload.type) === signature) return;
@@ -61,8 +40,10 @@ function processLisSkinsQueryEvent(event: Event) {
 			const items = (payload.data as LisSkins.MarketApiResponse).data ?? [];
 			activeOfferItems = items;
 			cacheLisSkinsMarketItems(items);
-		} else {
+		} else if (payload.type === 'skin') {
 			activeSkin = (payload.data as LisSkins.SkinApiResponse).data?.skin;
+		} else {
+			cacheLisSkinsInventoryItems((payload.data as LisSkins.InventoryApiResponse).data ?? []);
 		}
 
 		notifyDataUpdate();
@@ -152,7 +133,7 @@ export function activateLisSkinsEventHandler() {
 		return;
 	}
 	isEventHandlerActive = true;
-	activateSiteEventHandler(processLisSkinsEvent);
+	addMessageRelays(RELAY_GET_MARKET_COMPARISON);
 	document.addEventListener(LIS_QUERY_DATA_EVENT, processLisSkinsQueryEvent);
 	document.addEventListener(LIS_CART_DATA_EVENT, processLisSkinsCartEvent);
 }

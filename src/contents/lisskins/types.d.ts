@@ -1,5 +1,5 @@
 export namespace LisSkins {
-	export type QueryType = 'skins' | 'obtained-skins' | 'skin';
+	export type QueryType = 'skins' | 'obtained-skins' | 'skin' | 'inventory';
 
 	export type QueryPayload = {
 		type: QueryType;

@@ -3,7 +3,7 @@ import { EVENT_URL_CHANGED, WEBSITE_URL } from '~lib/util/globals';
 import { synchronizePlanWithStorage } from '~lib/util/jwt';
 import type { IStorage, SettingsUser } from '~lib/util/storage';
 import { DEFAULT_SETTINGS, ExtensionStorage } from '~lib/util/storage';
-import { executeInjection, INJECTION_DOMAINS } from './scripting/injectionhandler';
+import { executeInjection, isInjectionDomain } from './scripting/injectionhandler';
 import './omnibox';
 
 // Check whether new version is installed
@@ -67,8 +67,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	// }
 
 	// Handle script injection for supported trading sites
-	if (!tab.url.includes('cdn.swap.gg') && INJECTION_DOMAINS.some((domain) => tab.url?.includes(domain))) {
-		const hostname = new URL(tab.url).hostname;
+	const hostname = new URL(tab.url).hostname;
+	if (hostname !== 'cdn.swap.gg' && isInjectionDomain(hostname)) {
 		// if within last 1 second, don't inject
 		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 1000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
