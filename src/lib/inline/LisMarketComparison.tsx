@@ -12,7 +12,6 @@ import { ExtensionStorage } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
 import { Button } from '~popup/ui/button';
-import { ScrollArea } from '~popup/ui/scroll-area';
 
 interface MarketEntry {
 	market: string;
@@ -197,8 +196,10 @@ const LisMarketComparison: React.FC = () => {
 
 	const initData = async () => {
 		// Get currency from Lis-Skins UI
-		const currencyElement = document.querySelector('p.currency-switcher__selected-currency');
-		const localCurrency = currencyElement?.textContent?.toUpperCase() || 'USD';
+		const localCurrency =
+			document.querySelector('[aria-selected="true"]')?.textContent?.match(/[A-Z]{3}/)?.[0] ??
+			document.querySelector('.currency-switcher__selected-currency')?.textContent?.match(/[A-Z]{3}/)?.[0] ??
+			'USD';
 		setCurrency(localCurrency);
 
 		// Fetch our stored currency rates
@@ -211,7 +212,7 @@ const LisMarketComparison: React.FC = () => {
 		}
 
 		// Find the target element where data-betterfloat is stored
-		const itemContainer = document.querySelector('div.skins-market-view[data-betterfloat]');
+		const itemContainer = document.querySelector('main.skin[data-betterfloat]');
 
 		let betterfloatData = itemContainer?.getAttribute('data-betterfloat');
 		let attempts = 0;
@@ -288,35 +289,34 @@ const LisMarketComparison: React.FC = () => {
 	}, [marketData, listing]);
 
 	return (
-		<div className="max-h-[60vh] bg-[#21242a] rounded-md text-sm" style={{ fontFamily: 'inherit' }}>
+		<div className="w-full min-w-0 max-w-full overflow-hidden bg-[#21242a] rounded-md text-sm" style={{ fontFamily: 'inherit' }}>
 			{isLoading ? (
-				<div className="flex justify-center items-center mt-8">
+				<div className="flex min-h-24 justify-center items-center">
 					<LoadingSpinner className="size-10 text-gray-700" />
 				</div>
 			) : (
-				<div className="flex flex-col">
+				<div className="flex w-full min-w-0 max-w-full flex-col">
 					{/* Adapt header styling */}
-					<div className="w-full rounded-md flex justify-between items-center gap-1 px-4 pt-4">
-						<div className="flex justify-center items-center gap-2">
-							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-gray-200 font-bold text-xl">Market Comparison</span>
+					<div className="flex w-full min-w-0 flex-wrap items-center justify-between gap-3 rounded-md px-4 pt-4">
+						<div className="flex min-w-0 items-center gap-2">
+							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8 shrink-0" />
+							<span className="min-w-0 text-lg font-bold text-gray-200 sm:text-xl">Market Comparison</span>
 						</div>
-						<div className="flex flex-col justify-center items-center text-gray-200">
-							<div className="flex items-center justify-between">
+						<div className="flex shrink-0 flex-col items-end justify-center text-gray-200">
+							<div className="flex items-center justify-between gap-2">
 								<span>Total Listings:</span>
 								<span className="font-medium">{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
 							</div>
 							{liquidity && (
-								<div className="flex items-center justify-between">
+								<div className="flex items-center justify-between gap-2">
 									<span>Liquidity:</span>
 									<span className="font-medium">{liquidity.toFixed(2)}%</span>
 								</div>
 							)}
 						</div>
 					</div>
-					{/* Adapt scroll area styling for horizontal scroll */}
-					<ScrollArea className="w-full" viewportClass="w-full whitespace-nowrap rounded-md" orientation="horizontal">
-						<div className="flex w-max space-x-4 p-4">
+					<div className="w-full min-w-0 max-w-full overflow-x-auto overflow-y-hidden overscroll-x-contain">
+						<div className="flex w-max min-w-full space-x-4 p-4">
 							{listing && marketDataWithHrefs.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 							{(!marketDataWithHrefs || marketDataWithHrefs.length === 0) && (
 								// Adapt no listings styling (keep it somewhat centered)
@@ -342,7 +342,7 @@ const LisMarketComparison: React.FC = () => {
 								</div>
 							)}
 						</div>
-					</ScrollArea>
+					</div>
 				</div>
 			)}
 		</div>

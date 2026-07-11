@@ -1,116 +1,97 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
 import { activateSiteEventHandler } from '~lib/shared/events';
-
-export namespace LisSkins {
-	export type MarketApiResponse = {
-		data?: MarketItem[];
-		max_price: number;
-		meta: {
-			current_page: number;
-			last_page: number;
-			per_page: number;
-			total: number;
-		};
-		min_price: number;
-	};
-
-	export type InventoryApiResponse = {
-		data?: InventoryItem[];
-		disabled_count: number;
-	};
-
-	export type Item = MarketItem | InventoryItem;
-
-	export type MarketItem = {
-		id: number;
-		final_withdrawal_price: number;
-		item_float?: string | number | null;
-		similar_count?: number;
-		skin?: {
-			id?: number;
-			name?: string;
-			name_short?: string;
-			url?: string;
-			exterior?: {
-				title_short?: string;
-			};
-			skin_type?: {
-				title?: string;
-				url?: string;
-			};
-		};
-		stickers?: MarketSticker[];
-		tag_manager_data?: {
-			currency?: string;
-			price?: number;
-		};
-	};
-
-	export type InventoryItem = {
-		name: string;
-		name_short: string;
-		price: number;
-		asset_id: string;
-		icon_url: string;
-		stickers?: InventorySticker[];
-		exterior?: {
-			id?: number;
-			title?: string;
-			title_short?: string;
-			css_color?: string;
-		};
-		sort_order?: number;
-		skin_type?: {
-			id?: number;
-			title?: string;
-			url?: string;
-			is_popular?: boolean;
-		};
-		skin_rarity?: {
-			id?: number;
-			title?: string;
-			sort_order?: number;
-			color?: string;
-		};
-		disabled_reason?: string | null;
-		item_float?: string | number | null;
-	};
-
-	export type MarketSticker = {
-		wear?: number | null;
-		prepared_wear?: number | null;
-		skin_sticker?: {
-			is_charm?: boolean;
-			title?: string;
-			skin?: {
-				name?: string;
-				name_short?: string;
-				steam_price?: number | null;
-			};
-		};
-	};
-
-	export type InventorySticker = {
-		name: string;
-		image?: string;
-		steam_link?: string;
-	};
-}
+import type { LisSkins } from './types';
 
 const lisItemsById = new Map<number, LisSkins.MarketItem>();
 const lisItemsBySlug = new Map<string, LisSkins.MarketItem>();
 const lisItemsByIcon = new Map<string, LisSkins.InventoryItem>();
+const dataUpdateHandlers = new Set<() => void>();
+const activeQuerySignatures = new Map<LisSkins.QueryType, string>();
+let activeMarketItems: LisSkins.MarketItem[] = [];
+let activeOfferItems: LisSkins.MarketItem[] = [];
+let activeCartItems: LisSkins.CartItem[] = [];
+let activeSkin: LisSkins.Skin | undefined;
 let isEventHandlerActive = false;
+
+const LIS_QUERY_DATA_EVENT = 'BetterFloat_LISSKINS_QUERY_DATA';
+const LIS_CART_DATA_EVENT = 'BetterFloat_LISSKINS_CART_DATA';
+const LIS_QUERY_DATA_REQUEST_EVENT = 'BetterFloat_REQUEST_LISSKINS_QUERY_DATA';
+
+function notifyDataUpdate() {
+	for (const handler of dataUpdateHandlers) handler();
+}
 
 function processLisSkinsEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
 
 	if (eventData.url.includes('/api/v2/obtained-skins')) {
-		cacheLisSkinsMarketItems((eventData.data as LisSkins.MarketApiResponse).data ?? []);
+		const items = (eventData.data as LisSkins.MarketApiResponse).data ?? [];
+		cacheLisSkinsMarketItems(items);
+		if (/^\/market\/csgo\/[^/]+/.test(location.pathname)) {
+			activeOfferItems = items;
+		} else {
+			activeMarketItems = items;
+		}
+		notifyDataUpdate();
 	} else if (eventData.url.includes('/api/v2/sell-skins/inventory')) {
 		cacheLisSkinsInventoryItems((eventData.data as LisSkins.InventoryApiResponse).data ?? []);
+		notifyDataUpdate();
 	} else {
 		return;
+	}
+}
+
+function processLisSkinsQueryEvent(event: Event) {
+	const detail = (event as CustomEvent<string>).detail;
+	if (typeof detail !== 'string') return;
+
+	try {
+		const payload = JSON.parse(detail) as LisSkins.QueryPayload;
+		if (!['skins', 'obtained-skins', 'skin'].includes(payload.type) || !payload.queryHash || !payload.data) return;
+
+		const signature = `${payload.queryHash}:${payload.dataUpdatedAt}`;
+		if (activeQuerySignatures.get(payload.type) === signature) return;
+		activeQuerySignatures.set(payload.type, signature);
+
+		if (payload.type === 'skins') {
+			const items = (payload.data as LisSkins.MarketApiResponse).data ?? [];
+			activeMarketItems = items;
+			cacheLisSkinsMarketItems(items);
+		} else if (payload.type === 'obtained-skins') {
+			const items = (payload.data as LisSkins.MarketApiResponse).data ?? [];
+			activeOfferItems = items;
+			cacheLisSkinsMarketItems(items);
+		} else {
+			activeSkin = (payload.data as LisSkins.SkinApiResponse).data?.skin;
+		}
+
+		notifyDataUpdate();
+	} catch (error) {
+		console.debug('[BetterFloat] Ignoring malformed Lis-Skins Vue Query data:', error);
+	}
+}
+
+function processLisSkinsCartEvent(event: Event) {
+	const detail = (event as CustomEvent<string>).detail;
+	if (typeof detail !== 'string') return;
+
+	try {
+		const items = JSON.parse(detail) as LisSkins.CartItem[];
+		if (!Array.isArray(items)) return;
+		activeCartItems = items;
+		for (const item of items) {
+			if (!item.obtained_skin) continue;
+			cacheLisSkinsMarketItems([
+				{
+					...item.obtained_skin,
+					final_withdrawal_price: item.current_price,
+					skin: item.skin,
+				},
+			]);
+		}
+		notifyDataUpdate();
+	} catch (error) {
+		console.debug('[BetterFloat] Ignoring malformed Lis-Skins cart data:', error);
 	}
 }
 
@@ -141,10 +122,37 @@ export function getLisSkinsItemByIcon(iconUrl: string) {
 	return lisItemsByIcon.get(iconUrl);
 }
 
+export function getActiveLisSkinsMarketItems() {
+	return activeMarketItems;
+}
+
+export function getActiveLisSkinsOfferItems() {
+	return activeOfferItems;
+}
+
+export function getActiveLisSkinsCartItems() {
+	return activeCartItems;
+}
+
+export function getActiveLisSkinsSkin() {
+	return activeSkin;
+}
+
+export function subscribeLisSkinsDataUpdates(handler: () => void) {
+	dataUpdateHandlers.add(handler);
+	return () => dataUpdateHandlers.delete(handler);
+}
+
+export function requestLisSkinsQueryData() {
+	document.dispatchEvent(new CustomEvent(LIS_QUERY_DATA_REQUEST_EVENT));
+}
+
 export function activateLisSkinsEventHandler() {
 	if (isEventHandlerActive) {
 		return;
 	}
 	isEventHandlerActive = true;
 	activateSiteEventHandler(processLisSkinsEvent);
+	document.addEventListener(LIS_QUERY_DATA_EVENT, processLisSkinsQueryEvent);
+	document.addEventListener(LIS_CART_DATA_EVENT, processLisSkinsCartEvent);
 }

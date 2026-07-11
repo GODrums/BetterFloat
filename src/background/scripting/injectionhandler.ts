@@ -1,3 +1,4 @@
+import { connectLisSkinsVue } from '~contents/lisskins/vue';
 import { addScript } from '~lib/util/inject';
 import resqOriginal from '~lib/vendors/resq';
 import { injectResq } from './resq';
@@ -37,6 +38,18 @@ export const INJECTION_DOMAINS = [
 export function executeInjection(tabId: number, url: string) {
 	if (url.includes('gamerpay.gg')) {
 		injectResqForGamerpay(tabId);
+	}
+	if (url.includes('lis-skins.com')) {
+		chrome.scripting
+			.executeScript({
+				target: { tabId },
+				func: connectLisSkinsVue,
+				injectImmediately: true,
+				world: 'MAIN',
+			})
+			.catch((error) => {
+				console.debug('[BetterFloat] Lis-Skins Vue injection error:', error);
+			});
 	}
 
 	// Inject the main script immediately

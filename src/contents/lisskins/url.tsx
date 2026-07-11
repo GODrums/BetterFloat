@@ -2,41 +2,59 @@ import type { Extension } from '~lib/@typings/ExtensionTypes';
 import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import { scheduleUpdatePopup } from '~lib/inline/update_popup';
-import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
+import { getCurrentUrlState, mountShadowRoot, watchUrlStateChanges } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
 
-export function activateLisskinsUrlHandler() {
-	registerRuntimeUrlHandler(handleLisSkinsChange);
-	void handleLisSkinsChange(getCurrentUrlState());
+function isLisMarketPage(path: string) {
+	return path.startsWith('/market/');
+}
+
+function isLisItemPage(path: string) {
+	return /^\/market\/csgo\/[^/]+/.test(path);
+}
+
+export function activateLisskinsUrlHandler(onUrlChange: () => void) {
+	void handleLisSkinsChange(getCurrentUrlState(), onUrlChange);
+	watchUrlStateChanges(async (state) => await handleLisSkinsChange(state, onUrlChange), 500);
 	scheduleUpdatePopup();
 }
 
-async function handleLisSkinsChange(state: Extension.URLState) {
-	const isItemPage = state.path.includes('/market/csgo/') || state.path.includes('/market/cs2/');
+async function handleLisSkinsChange(state: Extension.URLState, onUrlChange: () => void) {
+	const isMarketPage = isLisMarketPage(state.path);
+	const isItemPage = isLisItemPage(state.path);
+	const comparison = document.querySelector<HTMLElement>('betterfloat-lis-market-comparison');
+	if (comparison && comparison.dataset.lisPath !== state.path) comparison.remove();
+	onUrlChange();
 
-	if (isItemPage) {
-		const lisAutorefresh = await getSetting('lis-autorefresh');
-		if (lisAutorefresh) {
-			const success = await waitForElement('div.reload');
-			if (success && !document.querySelector('betterfloat-lis-autorefresh')) {
-				const { root } = await mountShadowRoot(<LisAutorefresh />, {
-					tagName: 'betterfloat-lis-autorefresh',
-					parent: document.querySelector('div.reload'),
-					position: 'after',
-				});
-				const interval = createUrlListener((url) => {
-					if (!url.pathname.includes('/market/')) {
-						root.unmount();
-						document.querySelector('betterfloat-lis-autorefresh')?.remove();
-						clearInterval(interval);
-					}
-				}, 1000);
-			}
-		}
+	if (isMarketPage && !isItemPage) {
+		// const lisAutorefresh = await getSetting('lis-autorefresh');
+		// if (lisAutorefresh) {
+		// 	await waitForElement('html[data-betterfloat-lis-hydrated="true"]', { maxTries: 25 });
+		// 	const success = await waitForElement('.top-filters__refresh > button');
+		// 	if (success && !document.querySelector('betterfloat-lis-autorefresh')) {
+		// 		const topFilters = document.querySelector<HTMLElement>('.top-filters');
+		// 		if (!topFilters) return;
+		// 		const { root, parentElement } = await mountShadowRoot(<LisAutorefresh />, {
+		// 			tagName: 'betterfloat-lis-autorefresh',
+		// 			parent: document.querySelector('.top-filters__refresh'),
+		// 			position: 'after',
+		// 		});
+		// 		topFilters.classList.add('betterfloat-has-autorefresh');
+		// 		parentElement.classList.add('betterfloat-lis-autorefresh-host');
+		// 		const interval = createUrlListener((url) => {
+		// 			if (!isLisMarketPage(url.pathname) || isLisItemPage(url.pathname)) {
+		// 				root.unmount();
+		// 				document.querySelector('betterfloat-lis-autorefresh')?.remove();
+		// 				topFilters.classList.remove('betterfloat-has-autorefresh');
+		// 				clearInterval(interval);
+		// 			}
+		// 		}, 1000);
+		// 	}
+		// }
 	}
 
-	if (isItemPage && document.querySelector('div.skins-market-view')) {
+	if (isItemPage) {
 		await mountLisMarketComparison();
 	}
 }
@@ -47,25 +65,34 @@ async function mountLisMarketComparison() {
 		return;
 	}
 
-	const itemPageContainerResult = await waitForElement('div.skins-market-view[data-betterfloat]', { maxTries: 20 });
+	await waitForElement('html[data-betterfloat-lis-hydrated="true"]', { maxTries: 25 });
+	const itemPageContainerResult = await waitForElement('main.skin[data-betterfloat]', { maxTries: 20 });
 
 	if (itemPageContainerResult && !document.querySelector('betterfloat-lis-market-comparison')) {
-		const itemPageContainer = document.querySelector<HTMLElement>('div.market-skin-preview');
+		const itemPageContainer = document.querySelector<HTMLElement>('main.skin > .skin__description');
+		if (!itemPageContainer) return;
+		const itemPath = location.pathname;
 
-		const { root } = await mountShadowRoot(<LisMarketComparison />, {
+		const { root, parentElement } = await mountShadowRoot(<LisMarketComparison />, {
 			tagName: 'betterfloat-lis-market-comparison',
 			parent: itemPageContainer,
 			position: 'after',
 		});
 
-		const comparisonElement = document.querySelector('betterfloat-lis-market-comparison');
-		if (comparisonElement) {
-			(comparisonElement as HTMLElement).style.width = '240px';
-			(comparisonElement as HTMLElement).style.flexShrink = '0';
+		if (parentElement) {
+			parentElement.dataset.lisPath = itemPath;
+			parentElement.style.display = 'block';
+			parentElement.style.alignSelf = 'stretch';
+			parentElement.style.boxSizing = 'border-box';
+			parentElement.style.contain = 'inline-size';
+			parentElement.style.maxWidth = '100%';
+			parentElement.style.minWidth = '0';
+			parentElement.style.overflow = 'hidden';
+			parentElement.style.width = '100%';
 		}
 
 		const interval = createUrlListener((url) => {
-			if (!url.pathname.includes('/market/csgo/') || !document.querySelector('div.skins-market-view')) {
+			if (url.pathname !== itemPath || !document.querySelector('main.skin')) {
 				root.unmount();
 				document.querySelector('betterfloat-lis-market-comparison')?.remove();
 				clearInterval(interval);

@@ -37,7 +37,7 @@ const LisAutorefresh: React.FC = () => {
 
 	const [user] = useStorage<SettingsUser>('user');
 
-	const refreshButton = document.querySelector<HTMLButtonElement>('div.reload');
+	const refreshButton = document.querySelector<HTMLButtonElement>('.top-filters__refresh > button');
 
 	const ref = useRef(null);
 
@@ -85,7 +85,6 @@ const LisAutorefresh: React.FC = () => {
 	};
 
 	useEffect(() => {
-		document.querySelector('div.controls')?.setAttribute('style', 'grid-template-columns: 44px 120px 138px minmax(150px,383px) auto;');
 		const handleClickOutside = (event: MouseEvent) => {
 			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-LIS-AUTOREFRESH') {
 				onClickOutside();
