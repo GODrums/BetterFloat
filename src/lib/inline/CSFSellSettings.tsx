@@ -1,6 +1,6 @@
 import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';

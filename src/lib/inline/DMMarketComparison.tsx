@@ -1,7 +1,7 @@
 import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { getDMarketCurrency } from '~contents/dmarket/cache';
 import type { DMarket } from '~lib/@typings/DMarketTypes';

@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import type { SVGProps } from 'react';
 import { cn } from '~lib/utils';

@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type { SVGProps } from 'react';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { CSFloat } from '~lib/@typings/FloatTypes';

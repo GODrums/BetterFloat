@@ -1,6 +1,6 @@
 import BetterfloatLogo from '@@/assets/icon.png?inline';
-import { motion } from 'framer-motion';
 import { ArrowRight, BadgeCheck, BellRing, Gauge, LineChart, Link2, Radar, RefreshCw, Zap } from 'lucide-react';
+import { motion } from 'motion/react';
 import {
 	DISCORD_URL,
 	GITHUB_URL,

@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
 import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';

@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import type { SVGProps } from 'react';
 import { CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';

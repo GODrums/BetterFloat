@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '~lib/utils';
 
 export const Highlight = ({ children, className }: { children: React.ReactNode; className?: string }) => {

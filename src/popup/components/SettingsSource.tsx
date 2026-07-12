@@ -1,6 +1,6 @@
 import steamLogo from '@@/assets/icons/icon-steam.svg?inline';
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { type SVGProps, useState } from 'react';
 import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_MARKETCSGO, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';

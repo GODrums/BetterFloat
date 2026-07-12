@@ -1,5 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import type { ReactElement, SVGProps } from 'react';
 import { CSF_DEFAULT_ACTIONS, type CSFActionType } from '~lib/util/storage';
 import { cn } from '~lib/utils';
