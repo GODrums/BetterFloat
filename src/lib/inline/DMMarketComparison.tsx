@@ -247,8 +247,9 @@ const DMMarketComparison: React.FC = () => {
 						const market_id = await getMarketID(buff_name, marketDetails.source);
 
 						let phase: DopplerPhase | undefined;
-						if (item.extra.phase) {
-							switch (item.extra.phase) {
+						const potentialPhase = item.extra?.phase || item.cs2?.phase;
+						if (potentialPhase && typeof potentialPhase === 'string') {
+							switch (potentialPhase) {
 								case 'phase-1':
 									phase = 'Phase 1';
 									break;

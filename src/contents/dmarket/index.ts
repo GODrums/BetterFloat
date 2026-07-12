@@ -15,7 +15,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
-import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem } from './cache';
+import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem, isDMarketOfferV2 } from './cache';
 import { activateDMarketEventHandler as activateHandler } from './events';
 import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 
@@ -411,6 +411,9 @@ async function getBuffItem(item: DMarket.CachedListing) {
 }
 
 function getItemPrice(item: DMarket.CachedListing) {
+	if (isDMarketOfferV2(item)) {
+		return new Decimal(item.priceCents).div(100);
+	}
 	if (location.search.includes('exchangeTab=myItems')) {
 		return new Decimal(item.instantPrice.USD).div(100);
 	} else if (location.search.includes('exchangeTab=exchange')) {
