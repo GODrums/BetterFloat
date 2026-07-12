@@ -332,10 +332,8 @@ const LisMarketComparison: React.FC = () => {
 									<div className="flex flex-col items-center justify-center gap-2 p-4 h-full min-w-[200px]">
 										<LockKeyhole className="h-8 w-8 text-gray-200" />
 										<span className="text-base text-center text-gray-200">Unlock 10+ more markets</span>
-										<Button variant="purple" size="sm" asChild>
-											<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-												Upgrade to Pro
-											</a>
+										<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+											Upgrade to Pro
 										</Button>
 									</div>
 								</div>

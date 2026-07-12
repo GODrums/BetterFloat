@@ -94,31 +94,24 @@ const CSFSellSettings: React.FC = () => {
 								</Badge>
 							</div>
 							<div className="flex items-center gap-2 mt-2">
-								<CSFCheckbox
-									id="setting-show-buff"
-									checked={displayBuff}
-									onCheckedChange={(state) => setDisplayBuff(state === 'indeterminate' ? false : state)}
-									disabled={user?.plan.type !== 'pro'}
-								/>
+								<CSFCheckbox id="setting-show-buff" checked={displayBuff} onCheckedChange={setDisplayBuff} disabled={user?.plan.type !== 'pro'} />
 								<label className="text-(--subtext-color) text-sm" htmlFor="setting-show-buff">
 									Show Reference Price
 								</label>
 							</div>
 							<Separator className="my-4 bg-[#c1ceff0a]" />
 							<div className="flex items-center gap-2">
-								<CSFCheckbox
-									id="setting-active"
-									checked={isActive}
-									onCheckedChange={(state) => setIsActive(state === 'indeterminate' ? false : state)}
-									disabled={user?.plan.type !== 'pro'}
-								/>
+								<CSFCheckbox id="setting-active" checked={isActive} onCheckedChange={setIsActive} disabled={user?.plan.type !== 'pro'} />
 								<label className="text-(--subtext-color) text-sm" htmlFor="setting-active">
 									Enable
 								</label>
-								<Button variant="invisible" size="icon" className="h-8 w-8 text-(--subtext-color)" asChild>
-									<a href="https://docs.betterfloat.com/tutorials/csfloat-sell-pricing" target="_blank" rel="noreferrer">
-										<CircleHelp />
-									</a>
+								<Button
+									variant="invisible"
+									size="icon"
+									className="h-8 w-8 text-(--subtext-color)"
+									render={<a href="https://docs.betterfloat.com/tutorials/csfloat-sell-pricing" target="_blank" rel="noreferrer" />}
+								>
+									<CircleHelp />
 								</Button>
 							</div>
 							<div className="flex flex-col items-start">

@@ -105,7 +105,7 @@ const SingleActionButton = ({
 	active?: boolean;
 }) => {
 	return (
-		<SettingsTooltip text={text} side="bottom" asChild>
+		<SettingsTooltip text={text} side="bottom">
 			<Button variant="ghost" size="icon" className={cn('size-8 p-0', active && 'bg-neutral-800 ring-[0.5px] ring-neutral-600')} onClick={onClick} disabled={disabled}>
 				<motion.div animate={active ? { scale: [1.2, 1] } : { scale: 1 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
 					{logo({ className: cn('size-7 rounded-lg') })}
@@ -163,7 +163,7 @@ export const SettingsActionButtons = ({ id, isPro = false }: ActionButtonsProps)
 							Pro
 						</Badge>
 					</div>
-					<SettingsTooltip text="Customize the action buttons displayed for listings. Does not affect item popouts. Selecting more than 4 buttons might lead to space issues." asChild>
+					<SettingsTooltip text="Customize the action buttons displayed for listings. Does not affect item popouts. Selecting more than 4 buttons might lead to space issues.">
 						<Button variant="ghost" size="icon" className="size-8 p-1">
 							<MaterialSymbolsHelpOutline className="size-6" />
 						</Button>

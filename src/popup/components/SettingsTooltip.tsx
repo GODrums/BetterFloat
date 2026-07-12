@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~popup/ui/tooltip';
 
 export const SettingsTooltip = ({
@@ -6,19 +7,17 @@ export const SettingsTooltip = ({
 	open,
 	className,
 	side = 'top',
-	asChild = false,
 }: {
 	text: string;
 	children: React.ReactNode;
 	open?: boolean;
 	className?: string;
 	side?: 'top' | 'right' | 'bottom' | 'left';
-	asChild?: boolean;
 }) => {
 	return (
-		<TooltipProvider delayDuration={300}>
+		<TooltipProvider delay={300}>
 			<Tooltip defaultOpen={open ?? false}>
-				<TooltipTrigger asChild={asChild}>{children}</TooltipTrigger>
+				{React.isValidElement(children) ? <TooltipTrigger render={children} /> : <TooltipTrigger>{children}</TooltipTrigger>}
 				<TooltipContent className={className} side={side}>
 					<p>{text}</p>
 				</TooltipContent>

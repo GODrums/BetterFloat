@@ -237,20 +237,18 @@ const CSFAutorefresh: React.FC = () => {
 							</div>
 							<div className="flex flex-col gap-4 mt-2">
 								<div className="flex items-center gap-2">
-									<CSFCheckbox
-										id="notification-enable"
-										checked={nActive}
-										onCheckedChange={(state) => setNActive(state === 'indeterminate' ? false : state)}
-										disabled={!isActive || user?.plan.type !== 'pro'}
-									/>
+									<CSFCheckbox id="notification-enable" checked={nActive} onCheckedChange={setNActive} disabled={!isActive || user?.plan.type !== 'pro'} />
 									<label className="text-(--subtext-color) text-sm" htmlFor="notification-enable">
 										Enable
 									</label>
 
-									<Button variant="invisible" size="icon" className="h-8 w-8 text-(--subtext-color)" asChild>
-										<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
-											<CircleHelp />
-										</a>
+									<Button
+										variant="invisible"
+										size="icon"
+										className="h-8 w-8 text-(--subtext-color)"
+										render={<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer" />}
+									>
+										<CircleHelp />
 									</Button>
 								</div>
 								<div className="flex items-center gap-2">
@@ -258,7 +256,7 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-use-browser"
 										checked={useBrowser}
 										onCheckedChange={async (state) => {
-											const newState = state === 'indeterminate' ? false : state;
+											const newState = state;
 											if (newState) {
 												const hasPermission = await requestNotificationPermission();
 												if (!hasPermission) {
@@ -294,7 +292,7 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-float"
 										label={(value) => value}
 										value={floatRanges}
-										onValueChange={(value) => setFloatRanges(value)}
+										onValueChange={(value) => setFloatRanges(Array.isArray(value) ? [...value] : [value])}
 										min={0}
 										max={1}
 										step={0.01}

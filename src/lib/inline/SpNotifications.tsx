@@ -134,10 +134,13 @@ const SpNotifications: React.FC = () => {
 						<Button variant="invisible" size="icon" className="absolute top-4 right-7" onClick={() => setOpen(false)}>
 							<MaterialSymbolsCloseSmallOutlineRounded className="h-8 w-8" />
 						</Button>
-						<Button variant="invisible" size="icon" className="absolute top-4 left-7" asChild>
-							<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
-								<CircleHelp className="h-8 w-8" />
-							</a>
+						<Button
+							variant="invisible"
+							size="icon"
+							className="absolute top-4 left-7"
+							render={<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer" />}
+						>
+							<CircleHelp className="h-8 w-8" />
 						</Button>
 						<div className="flex flex-col items-start">
 							<div className="flex items-center gap-2 mt-2">
@@ -198,7 +201,7 @@ const SpNotifications: React.FC = () => {
 								id="notifications-float"
 								label={(value) => value}
 								value={floatRanges}
-								onValueChange={(value) => setFloatRanges(value)}
+								onValueChange={(value) => setFloatRanges(Array.isArray(value) ? [...value] : [value])}
 								min={0}
 								max={1}
 								step={0.01}

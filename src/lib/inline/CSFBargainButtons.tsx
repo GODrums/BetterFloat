@@ -127,11 +127,9 @@ const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[]; isPro: boo
 				</div>
 				{!isPro && (
 					<div className="absolute inset-0 flex items-center justify-center">
-						<Button variant="purple" size="sm" asChild>
-							<a className="flex items-center gap-2" href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-								<LockKeyhole className="h-5 w-5 text-[#9EA7B1]" />
-								Unlock Bargain History
-							</a>
+						<Button variant="purple" size="sm" render={<a className="flex items-center gap-2" href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+							<LockKeyhole className="h-5 w-5 text-[#9EA7B1]" />
+							Unlock Bargain History
 						</Button>
 					</div>
 				)}
@@ -287,10 +285,14 @@ const CSFBargainButtons: FC = () => {
 						<Pencil size={14} />
 					</Button>
 				) : (
-					<Button size="icon" variant="ghost" className="h-6 w-6 text-[#9EA7B1] hover:bg-[#fff3]" asChild title="Editing percentages is a Pro feature">
-						<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-							<LockKeyhole size={14} />
-						</a>
+					<Button
+						size="icon"
+						variant="ghost"
+						className="h-6 w-6 text-[#9EA7B1] hover:bg-[#fff3]"
+						render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}
+						title="Editing percentages is a Pro feature"
+					>
+						<LockKeyhole size={14} />
 					</Button>
 				)}
 			</div>

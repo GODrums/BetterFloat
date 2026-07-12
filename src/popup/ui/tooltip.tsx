@@ -1,6 +1,6 @@
 'use client';
 
-import * as TooltipPrimitive from '@radix-ui/react-tooltip';
+import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import * as React from 'react';
 import { cn } from '~lib/utils';
 
@@ -9,19 +9,22 @@ const Tooltip = TooltipPrimitive.Root;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 const TooltipPortal = TooltipPrimitive.Portal;
 
-const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPrimitive.Content>, React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>>(
-	({ className, sideOffset = 4, ...props }, ref) => (
-		<TooltipPrimitive.Content
-			ref={ref}
-			sideOffset={sideOffset}
-			className={cn(
-				'z-50 max-w-64 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground text-center animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
-				className
-			)}
-			{...props}
-		/>
-	)
-);
-TooltipContent.displayName = TooltipPrimitive.Content.displayName;
+type TooltipContentProps = React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Popup> & Pick<TooltipPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>;
+
+const TooltipContent = React.forwardRef<React.ElementRef<typeof TooltipPrimitive.Popup>, TooltipContentProps>(({ className, align, alignOffset, side, sideOffset = 4, ...props }, ref) => (
+	<TooltipPrimitive.Portal>
+		<TooltipPrimitive.Positioner align={align} alignOffset={alignOffset} side={side} sideOffset={sideOffset} className="isolate z-50">
+			<TooltipPrimitive.Popup
+				ref={ref}
+				className={cn(
+					'z-50 max-w-64 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground text-center transition-[opacity,transform] data-starting-style:opacity-0 data-ending-style:opacity-0 data-starting-style:scale-95 data-ending-style:scale-95',
+					className
+				)}
+				{...props}
+			/>
+		</TooltipPrimitive.Positioner>
+	</TooltipPrimitive.Portal>
+));
+TooltipContent.displayName = 'TooltipContent';
 
 export { Tooltip, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger };

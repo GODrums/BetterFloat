@@ -1,6 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import type { IconProps } from '@radix-ui/react-icons/dist/types';
-import type { ReactElement } from 'react';
+import type { ReactElement, SVGProps } from 'react';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Input } from '~popup/ui/input';
 import { Label } from '~popup/ui/label';
@@ -9,7 +8,7 @@ import { SettingsTooltip } from './SettingsTooltip';
 type TextboxProps = {
 	id: string;
 	text: string;
-	icon?: ReactElement<IconProps>;
+	icon?: ReactElement<SVGProps<SVGSVGElement>>;
 	tooltipText?: string;
 };
 

@@ -11,7 +11,7 @@ export const SettingsEnable = ({ id, isPremiumFeature = false, hasProPlan }: { i
 
 	return (
 		<div className="flex justify-center items-center space-x-2 w-full mt-2">
-			<EnableSwitch id={id} checked={checked} onCheckedChange={setChecked} disabled={hasProPlan === false} />
+			<EnableSwitch id={id} checked={checked ?? false} onCheckedChange={setChecked} disabled={hasProPlan === false} />
 			<Label htmlFor={id} className={checked ? 'text-card-foreground' : 'text-muted-foreground'}>
 				Enabled
 			</Label>

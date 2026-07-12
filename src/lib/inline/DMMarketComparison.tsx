@@ -400,10 +400,8 @@ const DMMarketComparison: React.FC = () => {
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-white" />
 									<span className="text-base text-center text-white">Unlock 10+ more markets</span>
-									<Button variant="purple" size="sm" asChild>
-										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-											Upgrade to Pro
-										</a>
+									<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+										Upgrade to Pro
 									</Button>
 								</div>
 							</div>

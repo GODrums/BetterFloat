@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import type { IconProps } from '@radix-ui/react-icons/dist/types';
 import type { ReactElement, SVGProps } from 'react';
 import { toast } from 'sonner';
 import { cn } from '~lib/utils';
@@ -12,7 +11,7 @@ import { SettingsTooltip } from './SettingsTooltip';
 type CheckboxProps = {
 	id: string;
 	text: string;
-	icon?: ReactElement<IconProps>;
+	icon?: ReactElement<SVGProps<SVGSVGElement>>;
 	tooltipText?: string;
 	disabled?: boolean;
 	isNew?: boolean;
@@ -67,7 +66,7 @@ export const SettingsCheckbox = ({ id, text, icon, tooltipText, disabled, isNew 
 						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				<Checkbox id={id} checked={checked} onCheckedChange={setChecked} onClick={onToggle} disabled={disabled} />
+				<Checkbox id={id} checked={checked ?? false} onCheckedChange={setChecked} onClick={onToggle} disabled={disabled} />
 			</div>
 		</div>
 	);

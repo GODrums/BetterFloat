@@ -414,10 +414,8 @@ const CSFMarketComparison: React.FC = () => {
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-(--primary-text-color)" />
 									<span className="text-base text-center text-(--primary-text-color)">Unlock 20+ markets & liquidity tracker</span>
-									<Button variant="purple" size="sm" asChild>
-										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-											Upgrade to Pro
-										</a>
+									<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+										Upgrade to Pro
 									</Button>
 								</div>
 							</div>
