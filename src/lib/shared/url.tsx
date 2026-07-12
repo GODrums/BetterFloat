@@ -67,7 +67,7 @@ export async function mountShadowRoot(component: JSX.Element, options: { tagName
 							try {
 								root.unmount();
 							} catch (error) {
-								console.warn('[BetterFloat] Error unmounting shadow root:', error);
+								console.warn('[BetterFloat] Error unmounting shadow-sm root:', error);
 							}
 							obs.disconnect();
 						}

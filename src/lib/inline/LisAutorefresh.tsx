@@ -106,7 +106,7 @@ const LisAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-[999] bg-[#3f424a] border border-[#555860] flex flex-col items-center gap-2 p-6"
+							className="fixed z-999 bg-[#3f424a] border border-[#555860] flex flex-col items-center gap-2 p-6"
 							style={{ translate: '-55px 10px', borderRadius: '8px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}

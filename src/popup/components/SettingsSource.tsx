@@ -30,7 +30,7 @@ const SingleMarket = ({ text, logo, onClick, active = false }: { text: string; l
 	return (
 		<SettingsTooltip text={text} side="bottom" asChild>
 			<Button variant="ghost" size="icon" className={cn('size-10 p-0 m-0.5', active && '')} onClick={onClick}>
-				<img src={logo} alt={text} className={cn('size-9 rounded-lg', active && 'ring ring-sky-900')} />
+				<img src={logo} alt={text} className={cn('size-9 rounded-lg', active && 'ring-3 ring-sky-900')} />
 			</Button>
 		</SettingsTooltip>
 	);

@@ -117,12 +117,12 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; cur
 	}
 
 	return (
-		<div className="w-[210px] text-[--ex-color-primary] my-2 bg-[--ex-mat-button-background] rounded-md">
+		<div className="w-[210px] text-(--ex-color-primary) my-2 bg-(--ex-mat-button-background) rounded-md">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
-						<span className="text-lg font-semibold text-[--ex-color-primary]">{marketDetails.text}</span>
+						<span className="text-lg font-semibold text-(--ex-color-primary)">{marketDetails.text}</span>
 						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Tradeit].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
@@ -132,25 +132,25 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; cur
 						</span>
 					</div>
 				</div>
-				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={entry.href} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#3e4044] hover:bg-(--ex-bg-color--100)" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between text-sm">
-								<span className="text-[--subtext-color]">Buy Order</span>
+								<span className="text-(--subtext-color)">Buy Order</span>
 								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
 						<div className="flex items-center justify-between text-sm">
-							<span className="text-[--ex-color-primary]">Lowest</span>
+							<span className="text-(--ex-color-primary)">Lowest</span>
 							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
 							</span>
 						</div>
 						{priceDifference && pricePercentage && (
 							<div className="flex items-center justify-center mt-1">
-								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-[--ex-bg-color--100] font-semibold">
+								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-(--ex-bg-color--100) font-semibold">
 									{priceDifference.isPositive() ? <CirclePlus /> : <CircleMinus />}
 									<span>{formatCurrency(priceDifference.abs().toNumber())}</span>
 									<span>({pricePercentage.add(100).toDP(2).toNumber()}%)</span>
@@ -315,21 +315,21 @@ const DMMarketComparison: React.FC = () => {
 	const filteredMarketData = marketDataWithHrefs.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
-		<div className="bg-[--ex-bg-color--400] w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>
+		<div className="bg-(--ex-bg-color--400) w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
-					<LoadingSpinner className="size-10 text-[--ex-color-primary]" />
+					<LoadingSpinner className="size-10 text-(--ex-color-primary)" />
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
-					<div className="w-full bg-[--ex-mat-button-background] rounded-md py-2 flex flex-col items-center gap-1">
+					<div className="w-full bg-(--ex-mat-button-background) rounded-md py-2 flex flex-col items-center gap-1">
 						<div className="flex justify-center items-center gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-[--ex-color-primary] font-semibold">Market Comparison</span>
+							<span className="text-(--ex-color-primary) font-semibold">Market Comparison</span>
 						</div>
 						<div className="flex justify-center items-center gap-2">
 							<Button
-								className="h-9 gap-2 bg-[--ex-bg-color--100] hover:bg-[--ex-mat-button-background-hover] text-[--ex-color-primary]"
+								className="h-9 gap-2 bg-(--ex-bg-color--100) hover:bg-(--ex-mat-button-background-hover) text-(--ex-color-primary)"
 								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
 							>
 								<Settings className="h-6 w-6" />
@@ -339,14 +339,14 @@ const DMMarketComparison: React.FC = () => {
 					</div>
 					<AnimatePresence>
 						{isSettingsOpen && (
-							<div ref={ref} className="w-full bg-[--ex-mat-button-background] rounded-md p-4 flex flex-col items-center gap-1">
+							<div ref={ref} className="w-full bg-(--ex-mat-button-background) rounded-md p-4 flex flex-col items-center gap-1">
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-semibold text-lg text-[--ex-color-primary]">Settings</div>
-									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-[--ex-mat-button-background-hover]" onClick={() => setIsSettingsOpen(false)}>
+									<div className="font-semibold text-lg text-(--ex-color-primary)">Settings</div>
+									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-(--ex-mat-button-background-hover)" onClick={() => setIsSettingsOpen(false)}>
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
 								</div>
-								<div className="w-full space-y-3 text-[--ex-color-primary]">
+								<div className="w-full space-y-3 text-(--ex-color-primary)">
 									{AvailableMarketSources.map((market) => (
 										<div key={market.source} className="flex justify-between items-center space-x-2">
 											<div className="flex items-center space-x-2">
@@ -370,7 +370,7 @@ const DMMarketComparison: React.FC = () => {
 						)}
 					</AnimatePresence>
 
-					<div className="flex flex-col justify-center gap-1 p-4 bg-[--ex-mat-button-background] text-[--ex-color-primary] text-sm rounded-md">
+					<div className="flex flex-col justify-center gap-1 p-4 bg-(--ex-mat-button-background) text-(--ex-color-primary) text-sm rounded-md">
 						<div className="flex items-center justify-between">
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
@@ -387,7 +387,7 @@ const DMMarketComparison: React.FC = () => {
 							<MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />
 						))}
 						{filteredMarketData.length === 0 && (
-							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
+							<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<BanIcon className="size-8 text-white" />
 									<span className="text-base text-center text-white">No listings found</span>
@@ -395,7 +395,7 @@ const DMMarketComparison: React.FC = () => {
 							</div>
 						)}
 						{user?.plan.type !== 'pro' && (
-							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
+							<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-white" />
 									<span className="text-base text-center text-white">Unlock 10+ more markets</span>

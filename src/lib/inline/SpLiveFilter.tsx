@@ -113,7 +113,7 @@ const SpLiveFilter: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[450px] h-[520px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
+						className="fixed w-[450px] h-[520px] z-9999 bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}

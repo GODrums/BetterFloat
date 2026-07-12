@@ -28,10 +28,10 @@ const CSFMenuControl: React.FC = () => {
 	};
 
 	return (
-		<Button variant="light" size="icon" className="w-8 h-8 bg-[--highlight-background-minimal] hover:bg-[--highlight-background]" onClick={toggleHide}>
+		<Button variant="light" size="icon" className="w-8 h-8 bg-(--highlight-background-minimal) hover:bg-(--highlight-background)" onClick={toggleHide}>
 			<AnimatePresence>
 				<motion.div animate={{ rotate: hidden ? 180 : 0 }}>
-					<BxBxsChevronLeft className={cn('h-6 w-6 text-[--primary-text-color]')} />
+					<BxBxsChevronLeft className={cn('h-6 w-6 text-(--primary-text-color)')} />
 				</motion.div>
 			</AnimatePresence>
 		</Button>

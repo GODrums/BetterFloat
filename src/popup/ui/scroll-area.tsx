@@ -17,7 +17,7 @@ const ScrollArea = React.forwardRef<React.ElementRef<typeof ScrollAreaPrimitive.
 			<ScrollAreaPrimitive.Viewport className={cn('h-full w-full rounded-[inherit]', viewportClass)}>{children}</ScrollAreaPrimitive.Viewport>
 			<ScrollBar orientation={orientation} hideScrollbar={hideScrollbar} />
 			<ScrollAreaPrimitive.Corner />
-			{fadeOut && <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background/80 to-transparent pointer-events-none z-10" />}
+			{fadeOut && <div className="absolute bottom-0 left-0 right-0 h-8 bg-linear-to-t from-background/80 to-transparent pointer-events-none z-10" />}
 		</ScrollAreaPrimitive.Root>
 	)
 );
@@ -32,8 +32,8 @@ const ScrollBar = React.forwardRef<
 		orientation={orientation}
 		className={cn(
 			'flex touch-none select-none transition-colors',
-			orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent p-[1px]',
-			orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent p-[1px]',
+			orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent p-px',
+			orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent p-px',
 			className,
 			hideScrollbar && 'hidden'
 		)}

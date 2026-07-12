@@ -90,7 +90,7 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntryWithHref; 
 
 	return (
 		// Adapt styling to match Lis-Skins (light theme, different colors)
-		<div className="w-[210px] text-gray-200 my-2 bg-[#2d313b] rounded-md shadow-sm">
+		<div className="w-[210px] text-gray-200 my-2 bg-[#2d313b] rounded-md shadow-xs">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
@@ -319,7 +319,7 @@ const LisMarketComparison: React.FC = () => {
 							{listing && marketDataWithHrefs.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 							{(!marketDataWithHrefs || marketDataWithHrefs.length === 0) && (
 								// Adapt no listings styling (keep it somewhat centered)
-								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
+								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-xs">
 									<div className="flex flex-col items-center justify-center gap-1 p-4 h-full min-w-[200px]">
 										<BanIcon className="size-8 text-gray-200" />
 										<span className="text-base text-center text-gray-200">No listings found</span>
@@ -328,7 +328,7 @@ const LisMarketComparison: React.FC = () => {
 							)}
 							{user?.plan.type !== 'pro' && (
 								// Adapt Pro upgrade styling
-								<div className="flex-shrink-0 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
+								<div className="shrink-0 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-xs">
 									<div className="flex flex-col items-center justify-center gap-2 p-4 h-full min-w-[200px]">
 										<LockKeyhole className="h-8 w-8 text-gray-200" />
 										<span className="text-base text-center text-gray-200">Unlock 10+ more markets</span>

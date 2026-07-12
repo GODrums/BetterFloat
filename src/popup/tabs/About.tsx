@@ -8,7 +8,7 @@ import { TabTemplate } from './TabTemplate';
 export const About = () => {
 	return (
 		<TabTemplate value="about">
-			<div className="h-full w-full rounded-md flex md:items-center md:justify-center bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
+			<div className="h-full w-full rounded-md flex md:items-center md:justify-center bg-black/96 antialiased bg-grid-white/[0.02] relative overflow-hidden">
 				<Spotlight className="-top-28 left-0 md:left-60 md:-top-20 z-50" fill="white" />
 				<div className="max-w-7xl mx-auto relative z-10 w-full pt-12 md:pt-0">
 					<div className="flex justify-center">
@@ -16,8 +16,8 @@ export const About = () => {
 							<img className="h-20" src={betterfloatLogo} />
 						</Button>
 					</div>
-					<h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">BetterFloat</h1>
-					<h2 className="pt-4 text-lg font-semibold text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
+					<h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-linear-to-b from-neutral-50 to-neutral-400 bg-opacity-50">BetterFloat</h1>
+					<h2 className="pt-4 text-lg font-semibold text-center bg-clip-text text-transparent bg-linear-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
 						open-source & <span className="text-blue-500 dark:text-blue-500">community</span>-driven
 					</h2>
 					<SettingsCard className="mt-4 mx-2">
@@ -39,7 +39,7 @@ export const About = () => {
 					</SettingsCard>
 				</div>
 			</div>
-			<footer className="absolute bottom-2 w-full text-center text-xs font-semibold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
+			<footer className="absolute bottom-2 w-full text-center text-xs font-semibold bg-clip-text text-transparent bg-linear-to-b from-neutral-50 to-neutral-400 bg-opacity-50">
 				<p>
 					Built with 🖤 in Munich by{' '}
 					<span className="cursor-pointer text-green-900" onClick={() => window.open('https://x.com/rumscsgo')}>

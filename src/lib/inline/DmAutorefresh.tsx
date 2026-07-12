@@ -106,7 +106,7 @@ const DmAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-[99] bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
+							className="fixed z-99 bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
 							style={{ translate: '-55px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}

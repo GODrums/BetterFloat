@@ -15,7 +15,7 @@ const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigg
 	<TabsPrimitive.Trigger
 		ref={ref}
 		className={cn(
-			'inline-flex items-center justify-center whitespace-nowrap rounded-md p-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow',
+			'inline-flex items-center justify-center whitespace-nowrap rounded-md p-1 text-sm font-medium cursor-pointer ring-offset-background transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-sm',
 			className
 		)}
 		{...props}
@@ -27,7 +27,7 @@ const TabsContent = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Conte
 	<TabsPrimitive.Content
 		ref={ref}
 		className={cn(
-			'ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-full w-full rounded-lg border shadow-sm border-muted text-card-foreground data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-200',
+			'ring-offset-background focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 h-full w-full rounded-lg border shadow-xs border-muted text-card-foreground data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-200',
 			className
 		)}
 		{...props}

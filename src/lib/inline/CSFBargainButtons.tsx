@@ -93,7 +93,7 @@ const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[]; isPro: boo
 		<div className="mt-4 border-t border-[#ffffff1f] pt-3">
 			<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
 			<div className="relative">
-				<div className={cn('flex flex-col gap-2', !isPro && 'blur-sm pointer-events-none select-none')}>
+				<div className={cn('flex flex-col gap-2', !isPro && 'blur-xs pointer-events-none select-none')}>
 					{history.map((entry) => {
 						const { Icon, className, label } = getOfferStatePresentation(entry.state);
 
@@ -301,7 +301,7 @@ const CSFBargainButtons: FC = () => {
 								key={index}
 								type="text"
 								inputMode="decimal"
-								className="h-8 w-full min-w-0 rounded-md border-none text-center text-white bg-[#c1ceff0a] hover:bg-[#fff3] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#237BFF]"
+								className="h-8 w-full min-w-0 rounded-md border-none text-center text-white bg-[#c1ceff0a] hover:bg-[#fff3] focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237BFF]"
 								value={value}
 								onChange={(event) => updateDraft(index, event.target.value)}
 							/>
