@@ -1,5 +1,5 @@
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
+import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 
 export type GetBlueSalesBody = {
 	weapon: string;

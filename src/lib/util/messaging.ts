@@ -1,9 +1,9 @@
-import { sendToBackground, sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { GetBlueBody } from '~background/messages/getBluePercent';
 import type { GetBlueSalesBody } from '~background/messages/getBlueSales';
 import type { GetMarketComparisonBody, GetMarketComparisonResponse } from '~background/messages/getMarketComparison';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
+import { sendToBackground, sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 
 export async function createNotificationMessage(body: CreateNotificationBody) {
 	const response = await sendToBackground<CreateNotificationBody, CreateNotificationResponse>({

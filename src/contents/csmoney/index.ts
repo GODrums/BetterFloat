@@ -1,9 +1,9 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { type CSMONEY_SELECTOR, CSMONEY_SELECTORS } from '~lib/handlers/selectors/csmoney_selectors';
 import { getUSDToCurrencyRate } from '~lib/shared/currency';

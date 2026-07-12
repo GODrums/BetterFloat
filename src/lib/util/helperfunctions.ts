@@ -1,5 +1,5 @@
-import { sendToBackground } from '~lib/util/messaging-compat';
 import Decimal from 'decimal.js';
+import { sendToBackground } from '~lib/util/messaging-compat';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 

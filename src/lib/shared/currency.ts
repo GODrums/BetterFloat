@@ -1,6 +1,6 @@
-import { sendToBackground } from '~lib/util/messaging-compat';
 import type { RequestRatesResponse } from '~background/messages/requestRates';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { sendToBackground } from '~lib/util/messaging-compat';
 import { ExtensionStorage } from '~lib/util/storage';
 
 const STORAGE_KEY = 'currencyrates';

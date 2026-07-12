@@ -1,5 +1,5 @@
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import { ExtensionStorage } from '~lib/util/storage';
 
 export type RequestEcbRatesResponse = {

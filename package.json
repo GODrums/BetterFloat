@@ -22,7 +22,7 @@
 		"manifest:baseline": "bun run scripts/manifestSecuritySurface.ts baseline",
 		"manifest:check": "bun run scripts/manifestSecuritySurface.ts check",
 		"check:permission-increase": "bun run scripts/checkPermissionIncrease.ts",
-		"lint": "biome ci entrypoints/ wxt.config.ts scripts/manifestSecuritySurface.ts src/lib/util/messaging-compat.ts",
+		"lint": "biome ci src/ entrypoints/ wxt.config.ts scripts/manifestSecuritySurface.ts",
 		"format": "biome format src/ --write && biome check src/ --fix",
 		"zip": "bash ./scripts/create-source-archive.sh"
 	},

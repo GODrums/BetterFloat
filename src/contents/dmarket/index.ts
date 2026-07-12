@@ -1,10 +1,10 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';

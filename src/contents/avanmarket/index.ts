@@ -1,9 +1,9 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { initAvan } from '~lib/handlers/history/avan_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';

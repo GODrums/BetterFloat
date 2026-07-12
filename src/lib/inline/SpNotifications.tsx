@@ -1,8 +1,8 @@
-import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';

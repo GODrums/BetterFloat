@@ -1,6 +1,6 @@
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { FreeMarkets } from '~lib/util/globals';
+import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 
 export type GetMarketComparisonBody = {

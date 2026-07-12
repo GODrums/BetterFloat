@@ -1,7 +1,7 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
-import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { BigCurrency, getItemPrice, getMarketID, SmallCurrency } from '~lib/handlers/mappinghandler';
 import { getUSDToCurrencyRate } from '~lib/shared/currency';
 import { initPriceMapping } from '~lib/shared/pricing';
