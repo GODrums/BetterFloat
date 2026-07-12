@@ -192,7 +192,7 @@ const CSFAutorefresh: React.FC = () => {
 
 	return (
 		<div className="bg-transparent" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
-			<Button variant="light" className="h-9 flex items-center gap-2 bg-(--highlight-background-minimal) hover:bg-(--highlight-background)" onClick={toggleOpen}>
+			<Button variant="light" className="h-9 flex items-center gap-2 bg-(--highlight-background-minimal) hover:bg-(--highlight-background) cursor-pointer" onClick={toggleOpen}>
 				<MaterialSymbolsUpdate className="h-6 w-6 text-(--primary-text-color)" />
 				<ActivityBadge active={isActive} />
 			</Button>
@@ -200,8 +200,8 @@ const CSFAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-99 bg-(--module-background-color) border-2 border-(--highlight-background) flex flex-col items-center gap-2 p-6 text-center"
-							style={{ translate: '-75px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+							className="fixed z-99 bg-(--module-background-color) border-2 border-solid border-(--highlight-background) flex flex-col items-center gap-2 p-6 text-center"
+							style={{ translate: '-65px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
@@ -281,7 +281,7 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-name"
 										value={name}
 										onChange={(e) => setName(e.target.value)}
-										className="bg-transparent border border-(--highlight-background) rounded-lg py-1 px-2 text-(--subtext-color)"
+										className="w-full min-w-0 rounded-lg bg-(--highlight-background-minimal,#ffffff08) px-2 py-1 text-(--subtext-color) focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff]"
 									/>
 								</div>
 								<div className="dark flex flex-col items-start gap-6">
@@ -309,13 +309,13 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-percentage"
 										value={percentage}
 										onChange={(e) => setPercentage(parseInt(e.target.value, 10))}
-										className="bg-transparent border border-(--highlight-background) rounded-lg py-1 px-2 text-(--subtext-color)"
+										className="w-full min-w-0 rounded-lg bg-(--highlight-background-minimal,#ffffff08) px-2 py-1 text-(--subtext-color) focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff]"
 									/>
 								</div>
 								<Button
 									variant="default"
 									className={cn(
-										'w-full mt-2 transition-colors duration-200 text-(--primary-text-color)',
+										'w-full mt-2 transition-colors duration-200 text-(--primary-text-color) cursor-pointer',
 										saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
 									)}
 									onClick={handleSave}
@@ -326,7 +326,7 @@ const CSFAutorefresh: React.FC = () => {
 								{user?.plan.type === 'pro' ? (
 									<Button
 										variant="default"
-										className="w-full bg-(--highlight-background-minimal) hover:bg-(--highlight-background) text-(--primary-text-color)"
+										className="w-full bg-(--highlight-background-minimal) hover:bg-(--highlight-background) text-(--primary-text-color) cursor-pointer"
 										onClick={testNotification}
 									>
 										Send Test Notification

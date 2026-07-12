@@ -14,7 +14,9 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
 		ref={ref}
 	>
 		<SwitchPrimitives.Thumb
-			className={cn('pointer-events-none block h-4 w-4 rounded-full shadow-lg bg-muted ring-0 transition-transform data-checked:translate-x-4 data-unchecked:translate-x-0')}
+			className={cn(
+				'pointer-events-none block h-4 w-4 rounded-full shadow-lg bg-muted ring-0 transition-transform data-checked:[transform:translateX(1rem)] data-unchecked:[transform:translateX(0)]'
+			)}
 		/>
 	</SwitchPrimitives.Root>
 ));
@@ -30,7 +32,9 @@ const EnableSwitch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.R
 		ref={ref}
 	>
 		<SwitchPrimitives.Thumb
-			className={cn('pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-checked:translate-x-4 data-unchecked:translate-x-0')}
+			className={cn(
+				'pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-checked:[transform:translateX(1rem)] data-unchecked:[transform:translateX(0)]'
+			)}
 		/>
 	</SwitchPrimitives.Root>
 ));
