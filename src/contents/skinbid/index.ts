@@ -8,17 +8,8 @@ import { getItemPrice, getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBID_SELECTOR, SKINBID_SELECTORS } from '~lib/handlers/selectors/skinbid_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
 import { AskBidMarkets, AvailableMarketSources, ICON_ARROWUP_SMALL, ICON_BUFF, ICON_CAMERA, ICON_CLOCK, ICON_CSFLOAT, MarketSource } from '~lib/util/globals';
-import {
-	CurrencyFormatter,
-	calculateEpochFromDate,
-	calculateTime,
-	checkUserPlanPro,
-	getBuffPrice,
-	getMarketURL,
-	getSPBackgroundColor,
-	handleSpecialStickerNames,
-	toTitleCase,
-} from '~lib/util/helperfunctions';
+import { CurrencyFormatter, calculateEpochFromDate, calculateTime, checkUserPlanPro, getBuffPrice, getSPBackgroundColor, handleSpecialStickerNames, toTitleCase } from '~lib/util/helperfunctions';
+import { getMarketURL } from '~lib/util/market_urls';
 import { fetchBlueGemPastSales } from '~lib/util/messaging';
 import type { IStorage } from '~lib/util/storage';
 import { getAllSettings } from '~lib/util/storage';

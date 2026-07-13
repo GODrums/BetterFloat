@@ -3,7 +3,7 @@ import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import { getDMarketCurrency } from '~contents/dmarket/cache';
+import { getDMarketCurrency, getDMarketItemPrice, getDMarketPhase } from '~contents/dmarket/cache';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
@@ -105,8 +105,8 @@ const convertStylesStringToObject = (stringStyles: string) =>
 			}, {})
 		: {};
 
-const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; currency: string }> = ({ item, entry, currency }) => {
-	const itemPrice = new Decimal(item.price.USD).div(100);
+const MarketCard: React.FC<{ item: DMarket.CachedListing; entry: MarketEntryWithHref; currency: string }> = ({ item, entry, currency }) => {
+	const itemPrice = getDMarketItemPrice(item);
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
 	const priceDifference = entry.ask ? itemPrice.minus(entry.ask) : null;
 	const pricePercentage = entry.ask ? itemPrice.div(entry.ask).mul(100).minus(100) : null;
@@ -172,7 +172,7 @@ const DMMarketComparison: React.FC = () => {
 	const [marketDataWithHrefs, setMarketDataWithHrefs] = useState<MarketEntryWithHref[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [buffData, setBuffData] = useState<any>(null);
-	const [item, setItemData] = useState<any>(null);
+	const [item, setItemData] = useState<DMarket.CachedListing | null>(null);
 	const [currency, setCurrency] = useState<string | null>(null);
 
 	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
@@ -248,7 +248,7 @@ const DMMarketComparison: React.FC = () => {
 						const market_id = await getMarketID(buff_name, marketDetails.source);
 
 						let phase: DopplerPhase | undefined;
-						const potentialPhase = item.extra?.phase || item.cs2?.phase;
+						const potentialPhase = getDMarketPhase(item);
 						if (potentialPhase && typeof potentialPhase === 'string') {
 							switch (potentialPhase) {
 								case 'phase-1':
@@ -385,9 +385,7 @@ const DMMarketComparison: React.FC = () => {
 						)}
 					</div>
 					<ScrollArea className="w-full flex-1" viewportClass="max-h-[625px]">
-						{filteredMarketData.map((dataEntry) => (
-							<MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />
-						))}
+						{item && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />)}
 						{filteredMarketData.length === 0 && (
 							<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">

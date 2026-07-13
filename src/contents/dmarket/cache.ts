@@ -1,3 +1,4 @@
+import Decimal from 'decimal.js';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 
 // dmarket: cached market items and user assets from api
@@ -19,6 +20,19 @@ export function getDMarketPhase(listing: DMarket.CachedListing): string | undefi
 export function getDMarketPaintSeed(listing: DMarket.CachedListing): number | undefined {
 	if (isDMarketOfferV2(listing)) return listing.cs2.paintSeed;
 	return isDMarketAsset(listing) ? listing.cs2.paintSeed : listing.extra.paintSeed;
+}
+
+export function getDMarketItemPrice(listing: DMarket.CachedListing, pageSearch = location.search): Decimal {
+	if (isDMarketOfferV2(listing)) {
+		return new Decimal(listing.priceCents).div(100);
+	}
+	if (pageSearch.includes('exchangeTab=myItems')) {
+		return new Decimal(listing.instantPrice.USD).div(100);
+	}
+	if (pageSearch.includes('exchangeTab=exchange')) {
+		return new Decimal(listing.type === 'offer' ? listing.price.USD : listing.exchangePrice.USD).div(100);
+	}
+	return new Decimal(listing.price.USD).div(100);
 }
 
 function getDMarketListingIds(listing: DMarket.CachedListing): string[] {
