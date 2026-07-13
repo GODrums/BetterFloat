@@ -8,15 +8,6 @@ function getPhaseTag(marketId: number | string, phase?: DopplerPhase | null) {
 	return phases?.[phase];
 }
 
-export function getBuffLink(buff_id: number, phase?: DopplerPhase | null) {
-	const baseUrl = `https://buff.163.com/goods/${buff_id}`;
-	const phaseTag = getPhaseTag(buff_id, phase);
-	if (phaseTag) {
-		return `${baseUrl}#tag_ids=${phaseTag}`;
-	}
-	return baseUrl;
-}
-
 export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {
 	switch (source) {
 		case MarketSource.Buff: {

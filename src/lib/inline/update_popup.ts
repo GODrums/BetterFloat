@@ -4,8 +4,10 @@ import { ExtensionStorage } from '~lib/util/storage';
 
 const SKINPLACE_URL = 'https://skin.place?utm_campaign=IiV5cv0kjHjDlFR';
 const UPDATE_POPUP_VERSION = '3.5.0';
+// biome-ignore lint/correctness/noUnusedVariables: Unused until next major release
 const UPDATE_POPUP_DELAY_MS = 3000;
 
+// biome-ignore lint/correctness/noUnusedVariables: Unused until next major release
 function renderUpdatePopupMarkup() {
 	return `
 		<style>
@@ -297,6 +299,7 @@ function renderUpdatePopupMarkup() {
 	`;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: Unused until next major release
 function bindUpdatePopupEvents(parentElement: HTMLElement) {
 	parentElement.querySelector<HTMLButtonElement>('.bf-close-button')?.addEventListener('click', () => {
 		parentElement.remove();
@@ -315,6 +318,7 @@ function mountHtml(html: string) {
 	return parentElement;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: Unused until next major release
 function scheduleVersionedPopup(render: () => string, version: string, delayMs = 3000, onMount?: (parentElement: HTMLElement) => void) {
 	setTimeout(async () => {
 		const extensionVersion = chrome.runtime.getManifest().version;

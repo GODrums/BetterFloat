@@ -9,7 +9,7 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
 	<CheckboxPrimitive.Root
 		ref={ref}
 		className={cn(
-			'peer relative inline-flex h-6 w-6 shrink-0 box-border cursor-pointer items-center justify-center rounded-sm border border-primary [border-style:solid] shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50 data-checked:bg-primary data-checked:text-primary-foreground',
+			'peer relative inline-flex h-6 w-6 shrink-0 box-border cursor-pointer items-center justify-center rounded-sm border border-primary border-solid shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50 data-checked:bg-primary data-checked:text-primary-foreground',
 			className
 		)}
 		{...props}
@@ -26,7 +26,7 @@ const CSFCheckbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.R
 	<CheckboxPrimitive.Root
 		ref={ref}
 		className={cn(
-			'peer relative inline-flex h-6 w-6 shrink-0 box-border cursor-pointer items-center justify-center rounded-md border-2 border-[#ffffff8a] [border-style:solid] shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff] data-disabled:cursor-not-allowed data-disabled:opacity-50 data-checked:bg-[#237bff] data-checked:text-white',
+			'peer relative inline-flex h-6 w-6 shrink-0 box-border cursor-pointer items-center justify-center rounded-md border-2 border-[#ffffff8a] border-solid shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff] data-disabled:cursor-not-allowed data-disabled:opacity-50 data-checked:bg-[#237bff] data-checked:text-white',
 			className
 		)}
 		{...props}

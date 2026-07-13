@@ -2,9 +2,6 @@ import Decimal from 'decimal.js';
 import { backgroundMessaging } from '~lib/messaging/background';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
-
-export { getBuffLink, getMarketURL } from './market_urls';
-
 import { CHARM_GRADIENTS } from './charms';
 import { MarketSource } from './globals';
 import { synchronizePlanWithStorage } from './jwt';

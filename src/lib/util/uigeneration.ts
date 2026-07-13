@@ -4,7 +4,7 @@ import type Decimal from 'decimal.js';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import type { BlueGem } from '../@typings/ExtensionTypes';
 import { AvailableMarketSources, ICON_EXCLAMATION, MarketSource } from './globals';
-import { getMarketURL } from './helperfunctions';
+import { getMarketURL } from './market_urls';
 
 export function generatePriceLine({
 	source,
