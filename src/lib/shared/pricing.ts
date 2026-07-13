@@ -1,7 +1,7 @@
 import { loadMapping } from '~lib/handlers/mappinghandler';
+import { backgroundMessaging } from '~lib/messaging/background';
 import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { toTitleCase } from '~lib/util/helperfunctions';
-import { sendToBackground } from '~lib/util/messaging-compat';
 import { getSetting, type IStorage } from '~lib/util/storage';
 
 type PricingSourceKey = Extract<keyof IStorage, `${string}-pricingsource`>;
@@ -38,12 +38,9 @@ export async function sourceRefresh(source: MarketSource, steamId: string | null
 	if (lastUpdate < Date.now() - 1000 * 60 * 60 * refreshIntervalPlan) {
 		console.debug(`[BetterFloat] ${toTitleCase(source)} prices are older than ${refreshIntervalPlan} hour(s), last update: ${new Date(lastUpdate)}. Refreshing ${toTitleCase(source)} prices...`);
 
-		const response: { status: number } = await sendToBackground({
-			name: 'refreshPrices',
-			body: {
-				source: source,
-				steamId: steamId,
-			},
+		const response = await backgroundMessaging.sendMessage('refreshPrices', {
+			source,
+			steamId: steamId ?? undefined,
 		});
 
 		console.debug('[BetterFloat] Prices refresh result: ', response.status);

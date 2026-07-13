@@ -1,23 +1,26 @@
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 
-type OpenTabBody = {
+export type OpenTabRequest = {
 	url: string;
 };
 
-type OpenTabResponse = {
+export type OpenTabResponse = {
 	success: boolean;
 };
+
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		openTab: (data: OpenTabRequest) => OpenTabResponse;
+	}
+}
 
 // Avoid opening the same URL multiple times
 let lastOpenedURL = '';
 
-const handler: PlasmoMessaging.MessageHandler<OpenTabBody, OpenTabResponse> = async (req, res) => {
-	const url = req.body?.url;
+defineBackgroundHandler('openTab', async (data) => {
+	const url = data?.url;
 	if (!url || url === lastOpenedURL) {
-		res.send({
-			success: false,
-		});
-		return;
+		return { success: false };
 	}
 	lastOpenedURL = url;
 	const tab = await chrome.tabs.create({ url, active: false, index: 0 });
@@ -29,10 +32,5 @@ const handler: PlasmoMessaging.MessageHandler<OpenTabBody, OpenTabResponse> = as
 		}
 	});
 
-	res.send({
-		success: true,
-	});
-	return;
-};
-
-export default handler;
+	return { success: true };
+});

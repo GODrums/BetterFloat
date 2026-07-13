@@ -6,7 +6,7 @@ import CSFMenuControl from '~lib/inline/CSFMenuControl';
 import CSFQuickMenu from '~lib/inline/CSFQuickMenu';
 import CSFSellSettings from '~lib/inline/CSFSellSettings';
 import { scheduleUpdatePopup } from '~lib/inline/update_popup';
-import { addMessageRelays, RELAY_CREATE_NOTIFICATION } from '~lib/shared/relay';
+import { enablePageMessaging } from '~lib/messaging/page-bridge';
 import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { ExtensionStorage, getSetting } from '~lib/util/storage';
@@ -22,7 +22,7 @@ async function handleStateChange(state: Extension.URLState) {
 export function activateCSFloatUrlHandler() {
 	registerRuntimeUrlHandler(handleStateChange);
 	void handleStateChange(getCurrentUrlState());
-	addMessageRelays(RELAY_CREATE_NOTIFICATION);
+	enablePageMessaging('createNotification');
 	scheduleUpdatePopup();
 }
 

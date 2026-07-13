@@ -1,9 +1,9 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 import { FreeMarkets } from '~lib/util/globals';
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
 import { ExtensionStorage, type IStorage } from '~lib/util/storage';
 
-export type GetMarketComparisonBody = {
+export type GetMarketComparisonRequest = {
 	buff_name: string;
 	isVIP?: boolean;
 };
@@ -13,31 +13,35 @@ export type GetMarketComparisonResponse = {
 	fromCache: boolean;
 };
 
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		getMarketComparison: (data: GetMarketComparisonRequest) => GetMarketComparisonResponse;
+	}
+}
+
 // Cache TTL in milliseconds (15 minutes)
 const CACHE_TTL = 15 * 60 * 1000;
-
-const manifestVersion = chrome.runtime.getManifest().version;
 
 // In-memory cache to avoid redundant API calls
 const marketComparisonCache: Record<string, { data: Extension.APIMarketResponse; timestamp: number }> = {};
 
-const handler: PlasmoMessaging.MessageHandler<GetMarketComparisonBody, GetMarketComparisonResponse> = async (req, res) => {
-	if (!req.body) {
+defineBackgroundHandler('getMarketComparison', async (data) => {
+	if (!data || typeof data.buff_name !== 'string' || !data.buff_name) {
 		throw new Error('Request body is missing');
 	}
 
-	const { buff_name: buffName, isVIP } = req.body;
+	const { buff_name: buffName, isVIP } = data;
 
 	// check user subscription and steamid
 	const user = await ExtensionStorage.sync.getItem<IStorage['user']>('user');
 
 	const steamId = isVIP ? '76561198112185660' : user?.plan?.type === 'pro' ? user?.steam?.steamid : undefined;
 
-	const data = await fetchMarketComparisonData(buffName, steamId);
-	res.send(data);
-};
+	return fetchMarketComparisonData(buffName, steamId);
+});
 
 const fetchMarketComparisonData = async (buffName: string, steamId: IStorage['user']['steam']['steamid']) => {
+	const manifestVersion = chrome.runtime.getManifest().version;
 	// Check in-memory cache first
 	if (marketComparisonCache[buffName] && Date.now() - marketComparisonCache[buffName].timestamp < CACHE_TTL) {
 		return {
@@ -90,5 +94,3 @@ const fetchMarketComparisonData = async (buffName: string, steamId: IStorage['us
 		};
 	}
 };
-
-export default handler;

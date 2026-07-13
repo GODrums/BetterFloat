@@ -1,19 +1,26 @@
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 
-export type GetBlueSalesBody = {
+export type GetBlueSalesRequest = {
 	weapon: string;
 	type: 'ch' | 'ht';
 	pattern: number;
 };
 
-const handler: PlasmoMessaging.MessageHandler<GetBlueSalesBody, BlueGem.PastSale[]> = async (req, res) => {
-	const body = req.body;
-	if (!body) {
-		res.send([]);
-		return;
+export type GetBlueSalesResponse = BlueGem.PastSale[];
+
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		getBlueSales: (data: GetBlueSalesRequest) => GetBlueSalesResponse;
 	}
-	let { weapon, type, pattern } = body;
+}
+
+defineBackgroundHandler('getBlueSales', async (data) => {
+	if (!data?.weapon || !['ch', 'ht'].includes(data.type) || typeof data.pattern !== 'number') {
+		return [];
+	}
+	let { weapon } = data;
+	const { type, pattern } = data;
 
 	if (weapon === 'desert') {
 		weapon = 'deagle';
@@ -24,11 +31,9 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueSalesBody, BlueGem.PastSale
 		.catch(() => null);
 
 	if (responseData) {
-		return res.send(responseData);
+		return responseData;
 	}
 
 	// data unavailable
-	return res.send([]);
-};
-
-export default handler;
+	return [];
+});

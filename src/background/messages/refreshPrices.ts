@@ -1,31 +1,31 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 
-type PriceBody = {
+export type RefreshPricesRequest = {
 	source: string;
 	steamId?: string;
 };
 
-type PriceResponse = {
+export type RefreshPricesResponse = {
 	status: number;
 };
 
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		refreshPrices: (data: RefreshPricesRequest) => RefreshPricesResponse;
+	}
+}
+
 const lastRequest: Record<string, number> = {};
 
-const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async (req, res) => {
-	const source = req.body?.source;
+defineBackgroundHandler('refreshPrices', async (data) => {
+	const source = data?.source;
 	if (!source) {
-		res.send({
-			status: 500,
-		});
-		return;
+		return { status: 500 };
 	}
 	if (lastRequest[source] > 0 && Date.now() - lastRequest[source] < 1000 * 60 * 10) {
 		console.log('[BetterFloat] Prices were requested within the last 10 minutes. Skipping refresh.');
-		res.send({
-			status: 200,
-		});
-		return;
+		return { status: 200 };
 	}
 	lastRequest[source] = Date.now();
 	console.log('[BetterFloat] Refreshing prices from source:', source);
@@ -38,7 +38,7 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 			'Content-Type': 'application/json',
 			'x-via': `BetterFloat/${chrome.runtime.getManifest().version}`,
 			'x-id': `chrome-extension://${chrome.runtime.id}`,
-			'x-steam': req.body?.steamId || '',
+			'x-steam': data.steamId || '',
 		},
 	});
 
@@ -55,10 +55,5 @@ const handler: PlasmoMessaging.MessageHandler<PriceBody, PriceResponse> = async 
 			[`${source}-update`]: Date.now(), // avoid refetches until auth is resolved
 		});
 	}
-	res.send({
-		status: response.status,
-	});
-	return;
-};
-
-export default handler;
+	return { status: response.status };
+});

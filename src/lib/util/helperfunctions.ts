@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { sendToBackground } from '~lib/util/messaging-compat';
+import { backgroundMessaging } from '~lib/messaging/background';
 import type { DopplerPhase, ItemStyle } from '../@typings/FloatTypes';
 import { getPriceMapping } from '../handlers/mappinghandler';
 
@@ -115,14 +115,13 @@ export function createHistoryRewrite(paramsMap: Record<string, string>, force = 
 		history.replaceState({}, '', url.href);
 	} else {
 		url.pathname = '/';
-		sendToBackground({
-			name: 'openTab',
-			body: {
+		backgroundMessaging
+			.sendMessage('openTab', {
 				url: url.href,
-			},
-		}).then((response) => {
-			console.log('[BetterFloat] Opened tab successfully:', response);
-		});
+			})
+			.then((response) => {
+				console.log('[BetterFloat] Opened tab successfully:', response);
+			});
 	}
 }
 

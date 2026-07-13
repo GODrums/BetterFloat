@@ -1,11 +1,17 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import type { PlasmoMessaging } from '~lib/util/messaging-compat';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 import { ExtensionStorage } from '~lib/util/storage';
 
 export type RequestEcbRatesResponse = {
 	status: number;
 	rates: Extension.CurrencyRates['rates'];
 };
+
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		requestEcbRates: () => RequestEcbRatesResponse;
+	}
+}
 
 const STORAGE_KEY = 'ecb-usd-rates';
 const CACHE_TTL = 1000 * 60 * 60 * 24;
@@ -53,14 +59,13 @@ async function getStoredRates(key: string) {
 	return ExtensionStorage.local.getItem<Extension.CurrencyRates>(key);
 }
 
-const handler: PlasmoMessaging.MessageHandler<null, RequestEcbRatesResponse> = async (_req, res) => {
+defineBackgroundHandler('requestEcbRates', async () => {
 	const storedRates = await getStoredRates(STORAGE_KEY);
 	if (storedRates?.rates && storedRates.lastUpdate > Date.now() - CACHE_TTL) {
-		res.send({
+		return {
 			status: 200,
 			rates: storedRates.rates,
-		});
-		return;
+		};
 	}
 
 	try {
@@ -85,38 +90,33 @@ const handler: PlasmoMessaging.MessageHandler<null, RequestEcbRatesResponse> = a
 		await ExtensionStorage.local.setItem(STORAGE_KEY, storedRates);
 		await ExtensionStorage.local.setItem('currencyrates', storedRates);
 
-		res.send({
+		return {
 			status: response.status,
 			rates: usdBasedRates,
-		});
-		return;
+		};
 	} catch (error) {
 		console.error('[BetterFloat] Failed to fetch ECB rates:', error);
 	}
 
 	if (storedRates?.rates) {
-		res.send({
+		return {
 			status: 200,
 			rates: storedRates.rates,
-		});
-		return;
+		};
 	}
 
 	const fallbackRates = await getStoredRates('currencyrates');
 	if (fallbackRates?.rates) {
-		res.send({
+		return {
 			status: 200,
 			rates: fallbackRates.rates,
-		});
-		return;
+		};
 	}
 
-	res.send({
+	return {
 		status: 503,
 		rates: {
 			USD: 1,
 		},
-	});
-};
-
-export default handler;
+	};
+});

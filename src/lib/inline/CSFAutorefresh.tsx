@@ -1,9 +1,8 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'motion/react';
 import type { SVGProps } from 'react';
-import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-import { sendToBackgroundViaRelay } from '~lib/util/messaging-compat';
+import { createNotificationMessage } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
@@ -155,14 +154,11 @@ const CSFAutorefresh: React.FC = () => {
 				window.open(location.href, '_blank');
 			};
 		} else {
-			await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
-				name: 'createNotification',
-				body: {
-					id: Math.random().toString(36).substring(2, 9), // generate a random id
-					message: 'This is a test notification',
-					title: 'BetterFloat Notification',
-					site: 'csfloat',
-				},
+			await createNotificationMessage({
+				id: Math.random().toString(36).substring(2, 9), // generate a random id
+				message: 'This is a test notification',
+				title: 'BetterFloat Notification',
+				site: 'csfloat',
 			});
 		}
 	};

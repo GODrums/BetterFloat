@@ -1,4 +1,4 @@
-import { addMessageRelays, RELAY_GET_MARKET_COMPARISON } from '~lib/shared/relay';
+import { enablePageMessaging } from '~lib/messaging/page-bridge';
 import type { LisSkins } from './types';
 
 const lisItemsById = new Map<number, LisSkins.MarketItem>();
@@ -133,7 +133,7 @@ export function activateLisSkinsEventHandler() {
 		return;
 	}
 	isEventHandlerActive = true;
-	addMessageRelays(RELAY_GET_MARKET_COMPARISON);
+	enablePageMessaging('getMarketComparison');
 	document.addEventListener(LIS_QUERY_DATA_EVENT, processLisSkinsQueryEvent);
 	document.addEventListener(LIS_CART_DATA_EVENT, processLisSkinsCartEvent);
 }
