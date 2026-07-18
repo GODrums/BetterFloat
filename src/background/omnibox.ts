@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { loadMarketIds } from '~lib/shared/marketids';
 import { MarketSource } from '~lib/util/globals';
 import { getMarketURL } from '~lib/util/market_urls';
 
@@ -87,30 +88,9 @@ const MARKET_ID_PROP: Record<MarketSource, 'buff' | 'uu' | 'c5' | null> = {
 	[MarketSource.Skinplace]: null,
 };
 
-let marketIdsCache: Record<string, Partial<Extension.MarketIDEntry>> | null = null;
 let fuse: Fuse<string> | null = null;
 
-function getMarketIdsAssetUrl() {
-	const resource = chrome.runtime
-		.getManifest()
-		.web_accessible_resources?.flatMap((entry) => (typeof entry === 'string' ? [] : entry.resources))
-		.find((resource) => /^marketids\.[a-f0-9]+\.json$/.test(resource));
-
-	if (!resource) {
-		throw new Error('Could not resolve marketids asset from manifest web_accessible_resources');
-	}
-
-	return chrome.runtime.getURL(resource);
-}
-
-async function getMarketIds() {
-	if (!marketIdsCache) {
-		marketIdsCache = (await fetch(getMarketIdsAssetUrl()).then((response) => response.json())) as Record<string, Partial<Extension.MarketIDEntry>>;
-	}
-	return marketIdsCache;
-}
-
-async function getFuse(marketIds: Record<string, Partial<Extension.MarketIDEntry>>) {
+function getFuse(marketIds: Record<string, Partial<Extension.MarketIDEntry>>) {
 	if (!fuse) {
 		fuse = new Fuse(Object.keys(marketIds), {
 			threshold: 0.5, // Lower = more strict, higher = more fuzzy (0.0 = perfect match, 1.0 = match anything)
@@ -121,6 +101,10 @@ async function getFuse(marketIds: Record<string, Partial<Extension.MarketIDEntry
 		});
 	}
 	return fuse;
+}
+
+function escapeDescription(text: string) {
+	return text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;');
 }
 
 chrome.omnibox.setDefaultSuggestion({
@@ -152,8 +136,8 @@ chrome.omnibox.onInputChanged.addListener(async (text, addSuggestions) => {
 		return;
 	}
 
-	const marketIds = await getMarketIds();
-	const fuse = await getFuse(marketIds);
+	const marketIds = await loadMarketIds();
+	const fuse = getFuse(marketIds);
 
 	const results = fuse.search(query);
 
@@ -168,7 +152,7 @@ chrome.omnibox.onInputChanged.addListener(async (text, addSuggestions) => {
 		const url = getMarketURL({ source: targetSource, buff_name: name, market_id: marketId ?? 0 });
 
 		const targetSourceText = SOURCE_TEXT[targetSource];
-		const description = `[${targetSourceText}] ${name}`;
+		const description = escapeDescription(`[${targetSourceText}] ${name}`);
 
 		return {
 			content: url,
