@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'wxt';
+import { escapeChromiumRejectedCharacters, validateChromiumManifestScripts } from './scripts/chromiumUtf8';
 
 const hostPermissions = [
 	'*://*.csfloat.com/*',
@@ -38,8 +39,23 @@ export default defineConfig({
 		'build:publicAssets': (_wxt, files) => {
 			files.push({ absoluteSrc: resolve('assets/icon.png'), relativeDest: 'icon.png' }, { absoluteSrc: resolve('assets/marketids.json'), relativeDest: 'marketids.json' });
 		},
+		'build:done': async (wxt, output) => {
+			await validateChromiumManifestScripts(wxt.config.outDir, output.manifest);
+		},
 	},
 	vite: () => ({
+		// Chromium rejects literal Unicode noncharacters such as Dexie's U+FFFF
+		// sentinel, so keep their JavaScript values while escaping their source bytes.
+		plugins: [
+			{
+				name: 'chromium-compatible-utf8',
+				generateBundle(_options, bundle) {
+					for (const output of Object.values(bundle)) {
+						if (output.type === 'chunk') output.code = escapeChromiumRejectedCharacters(output.code);
+					}
+				},
+			},
+		],
 		define: Object.fromEntries(
 			['PLASMO_PUBLIC_PRICINGAPI', 'PLASMO_PUBLIC_BETTERFLOATAPI', 'PLASMO_PUBLIC_BETTERFLOATCDN', 'PLASMO_PUBLIC_CRYPTO'].map((name) => [
 				`process.env.${name}`,
@@ -59,7 +75,7 @@ export default defineConfig({
 		author: 'Rums',
 		description: 'Enhance your website experience on 15+ CS2 skin markets!',
 		homepage_url: 'https://betterfloat.com',
-		version: '3.6.3',
+		version: '3.6.4',
 		permissions: ['unlimitedStorage', 'storage', 'scripting', 'activeTab', 'omnibox', 'notifications'],
 		host_permissions: hostPermissions,
 		optional_host_permissions: ['https://*/*', 'http://*/*', '*://*.buff.market/*'],

@@ -1,7 +1,7 @@
 {
 	"name": "betterfloat",
 	"displayName": "BetterFloat",
-	"version": "3.6.3",
+	"version": "0.0.0",
 	"packageManager": "bun@1.3.13",
 	"description": "Enhance your website experience on 15+ CS2 skin markets!",
 	"author": "Rums",
@@ -22,7 +22,7 @@
 		"manifest:baseline": "bun run scripts/manifestSecuritySurface.ts baseline",
 		"manifest:check": "bun run scripts/manifestSecuritySurface.ts check",
 		"check:permission-increase": "bun run scripts/checkPermissionIncrease.ts",
-		"lint": "biome ci src/ entrypoints/ wxt.config.ts scripts/manifestSecuritySurface.ts",
+		"lint": "biome ci src/ entrypoints/ wxt.config.ts scripts/manifestSecuritySurface.ts scripts/chromiumUtf8.ts",
 		"format": "biome format src/ --write && biome check src/ --fix",
 		"zip": "bash ./scripts/create-source-archive.sh"
 	},
