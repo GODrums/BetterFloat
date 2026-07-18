@@ -56,7 +56,9 @@ export default defineConfig({
 	},
 	manifest: ({ browser, mode }) => ({
 		name: mode === 'development' ? 'DEV - BetterFloat' : 'BetterFloat',
+		author: 'Rums',
 		description: 'Enhance your website experience on 15+ CS2 skin markets!',
+		homepage_url: 'https://betterfloat.com',
 		version: '3.6.3',
 		permissions: ['unlimitedStorage', 'storage', 'scripting', 'activeTab', 'omnibox', 'notifications'],
 		host_permissions: hostPermissions,
