@@ -199,11 +199,11 @@ async function addLatestSalesEnhancements(container: HTMLElement) {
 
 function addQuickLinks(container: HTMLElement, item: DMarket.CachedListing) {
 	const quickLinks = container.querySelector('asset-action-button > .c-assetPreviewButtons');
-	if (!quickLinks) {
-		return;
-	}
+	if (!quickLinks) return;
 
 	const actionButton = quickLinks.firstElementChild?.cloneNode(true) as HTMLElement;
+	if (!actionButton) return;
+
 	actionButton.querySelector('.mdc-button__label')!.textContent = 'Pricempire';
 	actionButton.querySelector('a')?.setAttribute('href', `https://pricempire.com/item/${item.title}`);
 	quickLinks.appendChild(actionButton);

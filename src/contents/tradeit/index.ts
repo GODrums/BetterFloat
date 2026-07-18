@@ -129,23 +129,28 @@ async function adjustCartItem(container: Element) {
 	});
 
 	targetElement?.closest('.selected-items')?.setAttribute('style', 'gap: 60px;');
-	// console.log('[BetterFloat] Adjusting cart item: ', targetElement, itemDetails);
+	if (!targetElement) return;
 
-	if (targetElement) {
-		const content = targetElement.querySelector('.price')?.parentElement;
-		targetElement.classList.remove('betterfloat-await');
-		const buffElement = <HTMLElement>itemDetails.querySelector('.betterfloat-buff-a')?.cloneNode(true);
-		buffElement?.setAttribute('style', 'position: absolute; left: 10px;z-index: 100;text-decoration: none;');
-		buffElement.querySelector('.suggested-price')?.children[0].remove();
-		buffElement.querySelector('.suggested-price')?.children[0].remove();
-		content?.appendChild(buffElement!);
-		const priceElement = <HTMLElement>itemDetails.querySelector('.sale-tag')?.cloneNode(true);
-		priceElement.style.flexDirection = 'column';
-		priceElement.style.gap = '0px';
-		priceElement.style.fontSize = '14px';
-		targetElement.querySelector('.price')?.appendChild(priceElement);
-		targetElement.querySelector('.price')?.previousElementSibling?.setAttribute('style', 'bottom: 40px;');
-	}
+	const content = targetElement.querySelector('.price')?.parentElement;
+	if (!content) return;
+
+	targetElement.classList.remove('betterfloat-await');
+	const buffElement = <HTMLElement>itemDetails.querySelector('.betterfloat-buff-a')?.cloneNode(true);
+	if (!buffElement) return;
+
+	buffElement.setAttribute('style', 'position: absolute; left: 10px;z-index: 100;text-decoration: none;');
+	buffElement.querySelector('.suggested-price')?.children[0].remove();
+	buffElement.querySelector('.suggested-price')?.children[0].remove();
+	content.appendChild(buffElement);
+
+	const priceElement = <HTMLElement>itemDetails.querySelector('.sale-tag')?.cloneNode(true);
+	if (!priceElement) return;
+	priceElement.style.flexDirection = 'column';
+	priceElement.style.gap = '0px';
+	priceElement.style.fontSize = '14px';
+
+	targetElement.querySelector('.price')?.appendChild(priceElement);
+	targetElement.querySelector('.price')?.previousElementSibling?.setAttribute('style', 'bottom: 40px;');
 }
 
 async function adjustItem(container: Element, isOwn = false) {

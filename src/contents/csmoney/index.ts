@@ -465,9 +465,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 		!container.querySelector('.betterfloat-sale-tag')
 	) {
 		let priceContainer: HTMLElement | null | undefined = null;
-		if (selector === CSMONEY_SELECTORS.market) {
-			priceContainer = container.querySelector<HTMLElement>('a.betterfloat-buff-a')?.previousElementSibling?.previousElementSibling?.firstElementChild?.firstElementChild as HTMLElement;
-		} else if (selector === CSMONEY_SELECTORS.market_popout) {
+		if (selector === CSMONEY_SELECTORS.market_popout) {
 			priceContainer = container.querySelector<HTMLElement>('a.betterfloat-buff-a')?.previousElementSibling?.lastElementChild?.lastElementChild as HTMLElement;
 		} else {
 			priceContainer = container.querySelector<HTMLElement>(selector.price);
