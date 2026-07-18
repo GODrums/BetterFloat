@@ -1,4 +1,4 @@
-import type { PlasmoCSConfig } from 'plasmo';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 
 export const config: PlasmoCSConfig = {

@@ -21,7 +21,7 @@ export type CSFloatBargainHistoryEntry = {
 };
 
 class CSFloatBargainHistoryDB extends Dexie {
-	bargains: Table<CSFloatBargainHistoryEntry, string>;
+	bargains!: Table<CSFloatBargainHistoryEntry, string>;
 
 	constructor() {
 		super('betterfloat-bargain-history');

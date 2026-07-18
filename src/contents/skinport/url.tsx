@@ -3,14 +3,14 @@ import { createLiveLink, filterDisplay } from '~lib/helpers/skinport_helpers';
 import SpLiveFilter from '~lib/inline/SpLiveFilter';
 import SpNotifications from '~lib/inline/SpNotifications';
 import { scheduleUpdatePopup } from '~lib/inline/update_popup';
-import { addMessageRelays, RELAY_CREATE_NOTIFICATION } from '~lib/shared/relay';
+import { enablePageMessaging } from '~lib/messaging/page-bridge';
 import { getCurrentUrlState, mountShadowRoot, registerRuntimeUrlHandler } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 
 export function activateSkinportUrlHandler() {
 	registerRuntimeUrlHandler(handleStateChange);
 	void handleStateChange(getCurrentUrlState());
-	addMessageRelays(RELAY_CREATE_NOTIFICATION);
+	enablePageMessaging('createNotification');
 	scheduleUpdatePopup();
 }
 

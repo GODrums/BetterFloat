@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { useEffect, useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Button } from '~popup/ui/button';
 import { Card, CardContent } from '~popup/ui/card';

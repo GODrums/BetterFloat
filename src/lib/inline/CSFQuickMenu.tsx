@@ -10,11 +10,9 @@ type QuickMenuButtonProps = {
 
 const QuickMenuButton: React.FC<QuickMenuButtonProps> = ({ label, href, icon }) => {
 	return (
-		<Button variant="ghost" className="hover:bg-[#2c2d34] hover:text-[#9EA7B1]" asChild>
-			<a className="flex items-center gap-2" href={href} target="_self" rel="noreferrer">
-				{icon}
-				<span>{label}</span>
-			</a>
+		<Button variant="ghost" className="hover:bg-[#2c2d34] hover:text-[#9EA7B1]" render={<a className="flex items-center gap-2" href={href} target="_self" rel="noreferrer" />}>
+			{icon}
+			<span>{label}</span>
 		</Button>
 	);
 };

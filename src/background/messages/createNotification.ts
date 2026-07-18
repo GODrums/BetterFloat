@@ -1,7 +1,7 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 import { ICON_CSFLOAT, ICON_SKINPORT } from '~lib/util/globals';
 
-export type CreateNotificationBody = {
+export type CreateNotificationRequest = {
 	id: string;
 	title: string;
 	message: string;
@@ -12,15 +12,18 @@ export type CreateNotificationResponse = {
 	success: boolean;
 };
 
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		createNotification: (data: CreateNotificationRequest) => CreateNotificationResponse;
+	}
+}
+
 let isListenerActive = false;
 
-const handler: PlasmoMessaging.MessageHandler<CreateNotificationBody, CreateNotificationResponse> = async (req, res) => {
-	const id = req.body?.id;
-	if (!req.body) {
-		res.send({
-			success: false,
-		});
-		return;
+defineBackgroundHandler('createNotification', async (data) => {
+	const id = data?.id;
+	if (!data || !id || !data.title || !data.message || !data.site) {
+		return { success: false };
 	}
 	if (!isListenerActive) {
 		const granted = await chrome.permissions.contains({ permissions: ['notifications'] });
@@ -29,38 +32,29 @@ const handler: PlasmoMessaging.MessageHandler<CreateNotificationBody, CreateNoti
 			try {
 				permission = await chrome.permissions.request({ permissions: ['notifications'] });
 				if (!permission) {
-					res.send({
-						success: false,
-					});
-					return;
+					return { success: false };
 				}
 			} catch (e) {
 				console.error(e);
 			}
 			if (!permission) {
-				res.send({
-					success: false,
-				});
-				return;
+				return { success: false };
 			}
 		}
 		isListenerActive = true;
 		chrome.notifications.onClicked.addListener(onClickNotification);
 	}
 
-	chrome.notifications.create(`betterfloat.${req.body.site}.${id}`, {
+	chrome.notifications.create(`betterfloat.${data.site}.${id}`, {
 		type: 'basic',
-		title: req.body.title,
-		message: req.body.message,
-		iconUrl: getSiteIcon(req.body.site),
+		title: data.title,
+		message: data.message,
+		iconUrl: getSiteIcon(data.site),
 		isClickable: true,
 	});
 
-	res.send({
-		success: true,
-	});
-	return;
-};
+	return { success: true };
+});
 
 async function onClickNotification(notificationId: string) {
 	// format: betterfloat.site.id
@@ -92,5 +86,3 @@ function getSiteIcon(site: string) {
 			return '';
 	}
 }
-
-export default handler;

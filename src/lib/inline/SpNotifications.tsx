@@ -1,10 +1,7 @@
-import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
-import type React from 'react';
-import { useState } from 'react';
-import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
+import { AnimatePresence, motion } from 'motion/react';
 import type { Skinport } from '~lib/@typings/SkinportTypes';
+import { createNotificationMessage } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsCloseSmallOutlineRounded } from '~popup/components/Icons';
@@ -91,14 +88,11 @@ const SpNotifications: React.FC = () => {
 				window.open(location.href, '_blank');
 			};
 		} else {
-			await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
-				name: 'createNotification',
-				body: {
-					id: Math.random().toString(36).substring(2, 9), // generate a random id
-					message: 'This is a test notification',
-					title: 'BetterFloat Notification',
-					site: 'skinport',
-				},
+			await createNotificationMessage({
+				id: Math.random().toString(36).substring(2, 9), // generate a random id
+				message: 'This is a test notification',
+				title: 'BetterFloat Notification',
+				site: 'skinport',
 			});
 		}
 	};
@@ -117,7 +111,7 @@ const SpNotifications: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[350px] h-[450px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
+						className="fixed w-[350px] h-[450px] z-9999 bg-[#232728] border border-black flex flex-col items-center gap-4 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
@@ -136,10 +130,13 @@ const SpNotifications: React.FC = () => {
 						<Button variant="invisible" size="icon" className="absolute top-4 right-7" onClick={() => setOpen(false)}>
 							<MaterialSymbolsCloseSmallOutlineRounded className="h-8 w-8" />
 						</Button>
-						<Button variant="invisible" size="icon" className="absolute top-4 left-7" asChild>
-							<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
-								<CircleHelp className="h-8 w-8" />
-							</a>
+						<Button
+							variant="invisible"
+							size="icon"
+							className="absolute top-4 left-7"
+							render={<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer" />}
+						>
+							<CircleHelp className="h-8 w-8" />
 						</Button>
 						<div className="flex flex-col items-start">
 							<div className="flex items-center gap-2 mt-2">
@@ -200,7 +197,7 @@ const SpNotifications: React.FC = () => {
 								id="notifications-float"
 								label={(value) => value}
 								value={floatRanges}
-								onValueChange={(value) => setFloatRanges(value)}
+								onValueChange={(value) => setFloatRanges(Array.isArray(value) ? [...value] : [value])}
 								min={0}
 								max={1}
 								step={0.01}

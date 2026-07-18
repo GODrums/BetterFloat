@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 		ExtensionStorage.sync.setItems(DEFAULT_SETTINGS);
 
 		if (!chrome.runtime.getManifest().name.includes('DEV')) {
-			const onboardingUrl = chrome.runtime.getURL('tabs/onboarding.html');
+			const onboardingUrl = chrome.runtime.getURL('/onboarding.html');
 			await chrome.tabs.create({ url: onboardingUrl });
 		}
 	} else if (details.reason === 'update') {
@@ -31,7 +31,7 @@ async function initializeSettings() {
 	const data = await ExtensionStorage.sync.getAll();
 	if (!data) {
 		console.log('[BetterFloat] No settings found, setting default settings.');
-		for (const key in DEFAULT_SETTINGS) {
+		for (const key of Object.keys(DEFAULT_SETTINGS) as Array<keyof IStorage>) {
 			ExtensionStorage.sync.setItem(key, DEFAULT_SETTINGS[key]);
 		}
 		return;
@@ -40,7 +40,7 @@ async function initializeSettings() {
 	const storedSettings = data as unknown as IStorage;
 	console.debug('[BetterFloat] Loaded settings: ', storedSettings);
 
-	for (const key in DEFAULT_SETTINGS) {
+	for (const key of Object.keys(DEFAULT_SETTINGS) as Array<keyof IStorage>) {
 		if (!Object.hasOwn(storedSettings, key)) {
 			// add missing settings
 			console.log('[BetterFloat] Adding missing setting: ', key);

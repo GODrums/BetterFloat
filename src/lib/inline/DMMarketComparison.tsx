@@ -1,14 +1,15 @@
-import betterfloatLogo from 'data-base64:/assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import { getDMarketCurrency } from '~contents/dmarket/cache';
+import { getDMarketCurrency, getDMarketItemPrice, getDMarketPhase } from '~contents/dmarket/cache';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL, handleSpecialStickerNames } from '~lib/util/helperfunctions';
+import { CurrencyFormatter, handleSpecialStickerNames } from '~lib/util/helperfunctions';
+import { getMarketURL } from '~lib/util/market_urls';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -104,8 +105,8 @@ const convertStylesStringToObject = (stringStyles: string) =>
 			}, {})
 		: {};
 
-const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; currency: string }> = ({ item, entry, currency }) => {
-	const itemPrice = new Decimal(item.price.USD).div(100);
+const MarketCard: React.FC<{ item: DMarket.CachedListing; entry: MarketEntryWithHref; currency: string }> = ({ item, entry, currency }) => {
+	const itemPrice = getDMarketItemPrice(item);
 	const marketDetails = AvailableMarketSources.find((source) => source.source === entry.market);
 	const priceDifference = entry.ask ? itemPrice.minus(entry.ask) : null;
 	const pricePercentage = entry.ask ? itemPrice.div(entry.ask).mul(100).minus(100) : null;
@@ -117,12 +118,12 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; cur
 	}
 
 	return (
-		<div className="w-[210px] text-[--ex-color-primary] my-2 bg-[--ex-mat-button-background] rounded-md">
+		<div className="w-[210px] text-(--ex-color-primary) my-2 bg-(--ex-mat-button-background) rounded-md">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
-						<span className="text-lg font-semibold text-[--ex-color-primary]">{marketDetails.text}</span>
+						<span className="text-lg font-semibold text-(--ex-color-primary)">{marketDetails.text}</span>
 						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Tradeit].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
@@ -132,25 +133,25 @@ const MarketCard: React.FC<{ item: DMarket.Item; entry: MarketEntryWithHref; cur
 						</span>
 					</div>
 				</div>
-				<a className="border-t border-[#3e4044] hover:bg-[--ex-bg-color--100]" href={entry.href} target="_blank" rel="noreferrer">
+				<a className="border-t border-[#3e4044] hover:bg-(--ex-bg-color--100)" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between text-sm">
-								<span className="text-[--subtext-color]">Buy Order</span>
+								<span className="text-(--subtext-color)">Buy Order</span>
 								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
 						<div className="flex items-center justify-between text-sm">
-							<span className="text-[--ex-color-primary]">Lowest</span>
+							<span className="text-(--ex-color-primary)">Lowest</span>
 							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
 							</span>
 						</div>
 						{priceDifference && pricePercentage && (
 							<div className="flex items-center justify-center mt-1">
-								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-[--ex-bg-color--100] font-semibold">
+								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-(--ex-bg-color--100) font-semibold">
 									{priceDifference.isPositive() ? <CirclePlus /> : <CircleMinus />}
 									<span>{formatCurrency(priceDifference.abs().toNumber())}</span>
 									<span>({pricePercentage.add(100).toDP(2).toNumber()}%)</span>
@@ -171,7 +172,7 @@ const DMMarketComparison: React.FC = () => {
 	const [marketDataWithHrefs, setMarketDataWithHrefs] = useState<MarketEntryWithHref[]>([]);
 	const [liquidity, setLiquidity] = useState<number | null>(null);
 	const [buffData, setBuffData] = useState<any>(null);
-	const [item, setItemData] = useState<any>(null);
+	const [item, setItemData] = useState<DMarket.CachedListing | null>(null);
 	const [currency, setCurrency] = useState<string | null>(null);
 
 	const [visibleMarkets, setVisibleMarkets] = useStorage<string[]>(
@@ -247,8 +248,9 @@ const DMMarketComparison: React.FC = () => {
 						const market_id = await getMarketID(buff_name, marketDetails.source);
 
 						let phase: DopplerPhase | undefined;
-						if (item.extra.phase) {
-							switch (item.extra.phase) {
+						const potentialPhase = getDMarketPhase(item);
+						if (potentialPhase && typeof potentialPhase === 'string') {
+							switch (potentialPhase) {
 								case 'phase-1':
 									phase = 'Phase 1';
 									break;
@@ -315,21 +317,21 @@ const DMMarketComparison: React.FC = () => {
 	const filteredMarketData = marketDataWithHrefs.filter((entry) => visibleMarkets.includes(entry.market));
 
 	return (
-		<div className="bg-[--ex-bg-color--400] w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>
+		<div className="bg-(--ex-bg-color--400) w-[230px] rounded-md px-[10px]" style={{ fontFamily: '"Montserrat", arial, sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
-					<LoadingSpinner className="size-10 text-[--ex-color-primary]" />
+					<LoadingSpinner className="size-10 text-(--ex-color-primary)" />
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
-					<div className="w-full bg-[--ex-mat-button-background] rounded-md py-2 flex flex-col items-center gap-1">
+					<div className="w-full bg-(--ex-mat-button-background) rounded-md py-2 flex flex-col items-center gap-1">
 						<div className="flex justify-center items-center gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-[--ex-color-primary] font-semibold">Market Comparison</span>
+							<span className="text-(--ex-color-primary) font-semibold">Market Comparison</span>
 						</div>
 						<div className="flex justify-center items-center gap-2">
 							<Button
-								className="h-9 gap-2 bg-[--ex-bg-color--100] hover:bg-[--ex-mat-button-background-hover] text-[--ex-color-primary]"
+								className="h-9 gap-2 bg-(--ex-bg-color--100) hover:bg-(--ex-mat-button-background-hover) text-(--ex-color-primary)"
 								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
 							>
 								<Settings className="h-6 w-6" />
@@ -339,14 +341,14 @@ const DMMarketComparison: React.FC = () => {
 					</div>
 					<AnimatePresence>
 						{isSettingsOpen && (
-							<div ref={ref} className="w-full bg-[--ex-mat-button-background] rounded-md p-4 flex flex-col items-center gap-1">
+							<div ref={ref} className="w-full bg-(--ex-mat-button-background) rounded-md p-4 flex flex-col items-center gap-1">
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-semibold text-lg text-[--ex-color-primary]">Settings</div>
-									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-[--ex-mat-button-background-hover]" onClick={() => setIsSettingsOpen(false)}>
+									<div className="font-semibold text-lg text-(--ex-color-primary)">Settings</div>
+									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-(--ex-mat-button-background-hover)" onClick={() => setIsSettingsOpen(false)}>
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
 								</div>
-								<div className="w-full space-y-3 text-[--ex-color-primary]">
+								<div className="w-full space-y-3 text-(--ex-color-primary)">
 									{AvailableMarketSources.map((market) => (
 										<div key={market.source} className="flex justify-between items-center space-x-2">
 											<div className="flex items-center space-x-2">
@@ -370,7 +372,7 @@ const DMMarketComparison: React.FC = () => {
 						)}
 					</AnimatePresence>
 
-					<div className="flex flex-col justify-center gap-1 p-4 bg-[--ex-mat-button-background] text-[--ex-color-primary] text-sm rounded-md">
+					<div className="flex flex-col justify-center gap-1 p-4 bg-(--ex-mat-button-background) text-(--ex-color-primary) text-sm rounded-md">
 						<div className="flex items-center justify-between">
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
@@ -383,11 +385,9 @@ const DMMarketComparison: React.FC = () => {
 						)}
 					</div>
 					<ScrollArea className="w-full flex-1" viewportClass="max-h-[625px]">
-						{filteredMarketData.map((dataEntry) => (
-							<MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />
-						))}
+						{item && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />)}
 						{filteredMarketData.length === 0 && (
-							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
+							<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<BanIcon className="size-8 text-white" />
 									<span className="text-base text-center text-white">No listings found</span>
@@ -395,14 +395,12 @@ const DMMarketComparison: React.FC = () => {
 							</div>
 						)}
 						{user?.plan.type !== 'pro' && (
-							<div className="text-[--ex-color-primary] mt-2 bg-[--ex-mat-button-background] rounded-md">
+							<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
 									<LockKeyhole className="h-8 w-8 text-white" />
 									<span className="text-base text-center text-white">Unlock 10+ more markets</span>
-									<Button variant="purple" size="sm" asChild>
-										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-											Upgrade to Pro
-										</a>
+									<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+										Upgrade to Pro
 									</Button>
 								</div>
 							</div>

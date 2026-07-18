@@ -1,10 +1,9 @@
 import type { Extension } from '~lib/@typings/ExtensionTypes';
-import LisAutorefresh from '~lib/inline/LisAutorefresh';
 import LisMarketComparison from '~lib/inline/LisMarketComparison';
 import { scheduleUpdatePopup } from '~lib/inline/update_popup';
 import { getCurrentUrlState, mountShadowRoot, watchUrlStateChanges } from '~lib/shared/url';
 import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
-import { ExtensionStorage, getSetting } from '~lib/util/storage';
+import { ExtensionStorage } from '~lib/util/storage';
 
 function isLisMarketPage(path: string) {
 	return path.startsWith('/market/');

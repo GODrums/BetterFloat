@@ -1,5 +1,8 @@
 let loadNumber = 0;
 const isDev = process.env.NODE_ENV !== 'production';
+
+export {};
+
 xmlHttpRequestIntercept();
 fetchIntercept();
 
@@ -75,7 +78,7 @@ function xmlHttpRequestIntercept() {
 			}
 		});
 
-		return open.apply(this, arguments);
+		return Reflect.apply(open, this, arguments as unknown as Parameters<typeof open>);
 	};
 
 	(window as any).__BetterFloat_XMLHttpRequest_Intercepted = true;
@@ -96,8 +99,8 @@ function fetchIntercept() {
 		console.log('[BetterFloat] Activating Fetch Intercept...');
 	}
 
-	window.fetch = async function (...args) {
-		const response = await originalFetch.apply(this, args);
+	window.fetch = (async (...args) => {
+		const response = await originalFetch(...args);
 		const url = response.url;
 		const targetUrl = new URL(url);
 
@@ -129,7 +132,7 @@ function fetchIntercept() {
 		}
 
 		return response;
-	} as typeof fetch;
+	}) as typeof fetch;
 
 	(window as any).__BetterFloat_Fetch_Intercepted = true;
 }

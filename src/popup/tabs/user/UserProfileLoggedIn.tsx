@@ -1,5 +1,4 @@
 import { Check, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { decodeJWT, refreshToken, verifyPlan } from '~lib/util/jwt';
 import { getSteamLogin } from '~lib/util/steam';
@@ -160,9 +159,9 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 			<div className="flex flex-col items-center justify-center">
 				<div className="relative mb-2">
 					{user.plan.type === 'pro' ? (
-						<div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow blur-sm" />
+						<div className="absolute inset-0 bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow blur-xs" />
 					) : (
-						<div className="absolute inset-0 bg-gradient-to-r from-gray-500 via-gray-400 to-gray-300 rounded-full animate-spin-slow blur-sm" />
+						<div className="absolute inset-0 bg-linear-to-r from-gray-500 via-gray-400 to-gray-300 rounded-full animate-spin-slow blur-xs" />
 					)}
 					<div className="relative bg-background rounded-full p-0.5">
 						<Avatar className="size-20">
@@ -181,7 +180,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 
 					<div className="flex justify-between items-center gap-2">
 						{user.plan.type === 'pro' ? (
-							<span className="font-semibold text-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
+							<span className="font-semibold text-lg bg-clip-text text-transparent bg-linear-to-r from-blue-500 via-purple-500 to-pink-500">Pro</span>
 						) : (
 							<span className="text-lg font-semibold text-center">Free</span>
 						)}

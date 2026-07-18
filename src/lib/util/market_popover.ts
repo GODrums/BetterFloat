@@ -1,10 +1,11 @@
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { html } from 'common-tags';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
-import { CurrencyFormatter, getMarketURL } from './helperfunctions';
+import { CurrencyFormatter } from './helperfunctions';
+import { getMarketURL } from './market_urls';
 import { fetchMarketComparisonData } from './messaging';
 
 type CacheEntry = {

@@ -1,9 +1,8 @@
-import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
-import { type SVGProps, useEffect, useRef, useState } from 'react';
-import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
+import { AnimatePresence, motion } from 'motion/react';
+import type { SVGProps } from 'react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
+import { createNotificationMessage } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
@@ -37,7 +36,7 @@ function CircleHelp() {
 
 const ActivityBadge = ({ active }: { active: boolean }) => {
 	return (
-		<Badge variant="default" className={cn('text-[--primary-text-color] font-normal', active ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>
+		<Badge variant="default" className={cn('text-(--primary-text-color) font-normal', active ? 'bg-green-500/80 hover:bg-green-400/30' : 'bg-red-600/50 hover:bg-red-500/30')}>
 			{active ? 'ON' : 'OFF'}
 		</Badge>
 	);
@@ -155,14 +154,11 @@ const CSFAutorefresh: React.FC = () => {
 				window.open(location.href, '_blank');
 			};
 		} else {
-			await sendToBackgroundViaRelay<CreateNotificationBody, CreateNotificationResponse>({
-				name: 'createNotification',
-				body: {
-					id: Math.random().toString(36).substring(2, 9), // generate a random id
-					message: 'This is a test notification',
-					title: 'BetterFloat Notification',
-					site: 'csfloat',
-				},
+			await createNotificationMessage({
+				id: Math.random().toString(36).substring(2, 9), // generate a random id
+				message: 'This is a test notification',
+				title: 'BetterFloat Notification',
+				site: 'csfloat',
 			});
 		}
 	};
@@ -192,37 +188,37 @@ const CSFAutorefresh: React.FC = () => {
 
 	return (
 		<div className="bg-transparent" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
-			<Button variant="light" className="h-9 flex items-center gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background]" onClick={toggleOpen}>
-				<MaterialSymbolsUpdate className="h-6 w-6 text-[--primary-text-color]" />
+			<Button variant="light" className="h-9 flex items-center gap-2 bg-(--highlight-background-minimal) hover:bg-(--highlight-background) cursor-pointer" onClick={toggleOpen}>
+				<MaterialSymbolsUpdate className="h-6 w-6 text-(--primary-text-color)" />
 				<ActivityBadge active={isActive} />
 			</Button>
 			<AnimatePresence>
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-[99] bg-[--module-background-color] border-2 border-[--highlight-background] flex flex-col items-center gap-2 p-6 text-center"
-							style={{ translate: '-75px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
+							className="fixed z-99 bg-(--module-background-color) border-2 border-solid border-(--highlight-background) flex flex-col items-center gap-2 p-6 text-center"
+							style={{ translate: '-65px 10px', borderRadius: '12px', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
 							transition={{ duration: 0.3, ease: 'easeOut' }}
 						>
 							<div className="flex items-center gap-2">
-								<span className="text-[--primary-text-color] font-semibold">Auto-Refresh</span>
+								<span className="text-(--primary-text-color) font-semibold">Auto-Refresh</span>
 								<ActivityBadge active={isActive} />
 							</div>
 							<div className="flex items-center gap-2 mt-2">
 								<Switch checked={isActive} onCheckedChange={setActive} />
-								<MaterialSymbolsAvgTimeOutlineRounded className="h-6 w-6 text-[--primary-text-color]" />
+								<MaterialSymbolsAvgTimeOutlineRounded className="h-6 w-6 text-(--primary-text-color)" />
 								<select
-									className="appearance-none bg-transparent text-[--primary-text-color] border border-[--highlight-background] rounded-lg py-1 px-2 cursor-pointer"
+									className="appearance-none bg-transparent text-(--primary-text-color) border border-(--highlight-background) rounded-lg py-1 px-2 cursor-pointer"
 									value={rInterval}
 									onChange={(e) => setRInterval(Number(e.target.value))}
 								>
 									{intervalOptions
 										.filter((_, index) => index !== 0 || user?.plan.type === 'pro')
 										.map((option, index) => (
-											<option key={index} value={index.toString()} className="bg-[--module-background-color]">
+											<option key={index} value={index.toString()} className="bg-(--module-background-color)">
 												{option}
 											</option>
 										))}
@@ -230,27 +226,25 @@ const CSFAutorefresh: React.FC = () => {
 							</div>
 							<Separator className="my-4 bg-[#c1ceff0a]" />
 							<div className="flex items-center gap-2">
-								<span className="text-[--primary-text-color] font-semibold">Notifications</span>
+								<span className="text-(--primary-text-color) font-semibold">Notifications</span>
 								<Badge variant="purple" className="text-white font-medium">
 									Pro
 								</Badge>
 							</div>
 							<div className="flex flex-col gap-4 mt-2">
 								<div className="flex items-center gap-2">
-									<CSFCheckbox
-										id="notification-enable"
-										checked={nActive}
-										onCheckedChange={(state) => setNActive(state === 'indeterminate' ? false : state)}
-										disabled={!isActive || user?.plan.type !== 'pro'}
-									/>
-									<label className="text-[--subtext-color] text-sm" htmlFor="notification-enable">
+									<CSFCheckbox id="notification-enable" checked={nActive} onCheckedChange={setNActive} disabled={!isActive || user?.plan.type !== 'pro'} />
+									<label className="text-(--subtext-color) text-sm" htmlFor="notification-enable">
 										Enable
 									</label>
 
-									<Button variant="invisible" size="icon" className="h-8 w-8 text-[--subtext-color]" asChild>
-										<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer">
-											<CircleHelp />
-										</a>
+									<Button
+										variant="invisible"
+										size="icon"
+										className="h-8 w-8 text-(--subtext-color)"
+										render={<a href="https://docs.betterfloat.com/tutorials/activate-notifications" target="_blank" rel="noreferrer" />}
+									>
+										<CircleHelp />
 									</Button>
 								</div>
 								<div className="flex items-center gap-2">
@@ -258,7 +252,7 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-use-browser"
 										checked={useBrowser}
 										onCheckedChange={async (state) => {
-											const newState = state === 'indeterminate' ? false : state;
+											const newState = state;
 											if (newState) {
 												const hasPermission = await requestNotificationPermission();
 												if (!hasPermission) {
@@ -270,12 +264,12 @@ const CSFAutorefresh: React.FC = () => {
 										}}
 										disabled={user?.plan.type !== 'pro'}
 									/>
-									<label className="text-[--subtext-color] text-sm" htmlFor="notification-use-browser">
+									<label className="text-(--subtext-color) text-sm" htmlFor="notification-use-browser">
 										Use Site Notifications
 									</label>
 								</div>
 								<div className="flex flex-col items-start">
-									<label className="text-[--subtext-color] text-sm" htmlFor="notification-name">
+									<label className="text-(--subtext-color) text-sm" htmlFor="notification-name">
 										Item Name
 									</label>
 									<input
@@ -283,27 +277,27 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-name"
 										value={name}
 										onChange={(e) => setName(e.target.value)}
-										className="bg-transparent border border-[--highlight-background] rounded-lg py-1 px-2 text-[--subtext-color]"
+										className="w-full min-w-0 rounded-lg bg-(--highlight-background-minimal,#ffffff08) px-2 py-1 text-(--subtext-color) focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff]"
 									/>
 								</div>
 								<div className="dark flex flex-col items-start gap-6">
-									<label className="text-[--subtext-color] text-sm" htmlFor="notification-float">
+									<label className="text-(--subtext-color) text-sm" htmlFor="notification-float">
 										Float
 									</label>
 									<DualRangeSlider
 										id="notification-float"
 										label={(value) => value}
 										value={floatRanges}
-										onValueChange={(value) => setFloatRanges(value)}
+										onValueChange={(value) => setFloatRanges(Array.isArray(value) ? [...value] : [value])}
 										min={0}
 										max={1}
 										step={0.01}
-										className="text-[--subtext-color]"
+										className="text-(--subtext-color)"
 										style={{ '--primary': '0 0% 80%' } as React.CSSProperties}
 									/>
 								</div>
 								<div className="flex flex-col items-start">
-									<label className="text-[--subtext-color] text-sm" htmlFor="notification-percentage">
+									<label className="text-(--subtext-color) text-sm" htmlFor="notification-percentage">
 										Maximum Market %
 									</label>
 									<input
@@ -311,13 +305,13 @@ const CSFAutorefresh: React.FC = () => {
 										id="notification-percentage"
 										value={percentage}
 										onChange={(e) => setPercentage(parseInt(e.target.value, 10))}
-										className="bg-transparent border border-[--highlight-background] rounded-lg py-1 px-2 text-[--subtext-color]"
+										className="w-full min-w-0 rounded-lg bg-(--highlight-background-minimal,#ffffff08) px-2 py-1 text-(--subtext-color) focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237bff]"
 									/>
 								</div>
 								<Button
 									variant="default"
 									className={cn(
-										'w-full mt-2 transition-colors duration-200 text-[--primary-text-color]',
+										'w-full mt-2 transition-colors duration-200 text-(--primary-text-color) cursor-pointer',
 										saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'
 									)}
 									onClick={handleSave}
@@ -328,13 +322,13 @@ const CSFAutorefresh: React.FC = () => {
 								{user?.plan.type === 'pro' ? (
 									<Button
 										variant="default"
-										className="w-full bg-[--highlight-background-minimal] hover:bg-[--highlight-background] text-[--primary-text-color]"
+										className="w-full bg-(--highlight-background-minimal) hover:bg-(--highlight-background) text-(--primary-text-color) cursor-pointer"
 										onClick={testNotification}
 									>
 										Send Test Notification
 									</Button>
 								) : (
-									<p className="text-[--subtext-color] text-sm text-center">
+									<p className="text-(--subtext-color) text-sm text-center">
 										Upgrade to BetterFloat Pro
 										<br />
 										to activate Notifications

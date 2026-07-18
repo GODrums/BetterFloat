@@ -2,21 +2,21 @@ name: QA / Lint (Biome)
 
 on:
   push:
-
-permissions:
-  contents: read
+  pull_request:
 
 jobs:
   quality:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v5
         with:
-          node-version: 24.x
+          persist-credentials: false
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
+        with:
+          version: latest
       - name: Run Biome
-        run: biome ci src/
+        run: biome ci src/ entrypoints/

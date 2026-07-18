@@ -1,7 +1,6 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
 import { DEFAULT_FILTER, type SettingsUser, type SPFilter } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { CarbonFilterReset, MaterialSymbolsCloseSmallOutlineRounded, MaterialSymbolsFilterAlt } from '~popup/components/Icons';
@@ -17,7 +16,7 @@ interface TypeCheckboxProps {
 }
 
 const TypeCheckbox: React.FC<TypeCheckboxProps> = (props: TypeCheckboxProps) => {
-	const key = props.label.toLowerCase().replace(' ', '-');
+	const key = props.label.toLowerCase().replace(' ', '-') as keyof SPFilter['types'];
 	const [checked, setChecked] = useState<boolean>(props.types[key] ?? DEFAULT_FILTER.types[key]);
 	const id = `filter-type-${key}`;
 
@@ -114,7 +113,7 @@ const SpLiveFilter: React.FC = () => {
 			<AnimatePresence>
 				{open && (
 					<motion.div
-						className="fixed w-[450px] h-[520px] z-[9999] bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
+						className="fixed w-[450px] h-[520px] z-9999 bg-[#232728] border border-black flex flex-col items-center gap-2 px-3 py-4 text-center text-white"
 						style={{ translate: '-210px 10px', borderRadius: '20px' }}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}

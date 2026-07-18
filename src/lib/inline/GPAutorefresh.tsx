@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
-import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { SVGProps } from 'react';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
@@ -119,7 +119,7 @@ const GpAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="absolute z-[9999] w-[200px] bg-[#1a1d21] border border-[#374151] flex flex-col gap-4 p-4 shadow-2xl rounded-lg"
+							className="absolute z-9999 w-[200px] bg-[#1a1d21] border border-[#374151] flex flex-col gap-4 p-4 shadow-2xl rounded-lg"
 							style={{ translate: '-50px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0, scale: 0.95, y: -10 }}
 							animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -149,7 +149,7 @@ const GpAutorefresh: React.FC = () => {
 									<span className="text-gray-300 text-lg">Interval</span>
 								</div>
 								<select
-									className="bg-[#2a2f36] border border-[#374151] rounded-md px-2 py-1 text-white text-lg min-w-[60px] cursor-pointer focus:outline-none focus:border-blue-500"
+									className="bg-[#2a2f36] border border-[#374151] rounded-md px-2 py-1 text-white text-lg min-w-[60px] cursor-pointer focus:outline-hidden focus:border-blue-500"
 									value={rInterval}
 									onChange={(e) => setRInterval(e.target.value)}
 								>

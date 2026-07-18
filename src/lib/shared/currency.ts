@@ -1,6 +1,5 @@
-import { sendToBackground } from '@plasmohq/messaging';
-import type { RequestRatesResponse } from '~background/messages/requestRates';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { backgroundMessaging } from '~lib/messaging/background';
 import { ExtensionStorage } from '~lib/util/storage';
 
 const STORAGE_KEY = 'currencyrates';
@@ -35,9 +34,7 @@ async function loadUsdBasedRates() {
 					return usdBasedRates;
 				}
 
-				const response = (await sendToBackground({
-					name: 'requestRates',
-				})) as RequestRatesResponse;
+				const response = await backgroundMessaging.sendMessage('requestRates');
 				const rates = response.rates ?? storedRates?.rates ?? { USD: 1 };
 
 				await persistCurrencyRates(rates);

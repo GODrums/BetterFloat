@@ -1,10 +1,18 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 
-export type GetBlueBody = {
+export type GetBluePercentRequest = {
 	type: string;
 	pattern: number;
 };
+
+export type GetBluePercentResponse = Partial<BlueGem.PatternData>;
+
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		getBluePercent: (data: GetBluePercentRequest) => GetBluePercentResponse;
+	}
+}
 
 const jsonCache: {
 	[type: string]: {
@@ -12,17 +20,14 @@ const jsonCache: {
 	};
 } = {};
 
-const handler: PlasmoMessaging.MessageHandler<GetBlueBody, Partial<BlueGem.PatternData>> = async (req, res) => {
-	const body = req.body;
-	if (!body) {
-		res.send({});
-		return;
+defineBackgroundHandler('getBluePercent', async (data) => {
+	if (!data || typeof data.type !== 'string' || typeof data.pattern !== 'number') {
+		return {};
 	}
-	const { type, pattern } = body;
+	const { type, pattern } = data;
 
 	if (jsonCache[type]) {
-		res.send(jsonCache[type][pattern]);
-		return;
+		return jsonCache[type][pattern];
 	}
 
 	// get type data from storage
@@ -30,7 +35,7 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueBody, Partial<BlueGem.Patte
 	const typeData = await chrome.storage.local.get(storageKey);
 	if (typeData[storageKey]) {
 		jsonCache[type] = typeData[storageKey];
-		return res.send(jsonCache[type][pattern]);
+		return jsonCache[type][pattern];
 	}
 
 	// fetch from API
@@ -41,11 +46,9 @@ const handler: PlasmoMessaging.MessageHandler<GetBlueBody, Partial<BlueGem.Patte
 		jsonCache[type] = responseData;
 		// cache in local storage
 		await chrome.storage.local.set({ [storageKey]: responseData });
-		return res.send(jsonCache[type][pattern]);
+		return jsonCache[type][pattern];
 	}
 
 	// data unavailable
-	return res.send({});
-};
-
-export default handler;
+	return {};
+});

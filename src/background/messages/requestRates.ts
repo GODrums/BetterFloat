@@ -1,11 +1,17 @@
-import type { PlasmoMessaging } from '@plasmohq/messaging';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
+import { defineBackgroundHandler } from '~lib/messaging/background';
 import { ExtensionStorage } from '~lib/util/storage';
 
 export type RequestRatesResponse = {
 	status: number;
 	rates: Extension.CurrencyRates['rates'];
 };
+
+declare module '~lib/messaging/background' {
+	interface BackgroundProtocol {
+		requestRates: () => RequestRatesResponse;
+	}
+}
 
 const CACHE_TTL = 1000 * 60 * 60 * 12;
 
@@ -18,14 +24,13 @@ const storageFallback = async () => {
 	return currencyRates;
 };
 
-const handler: PlasmoMessaging.MessageHandler<null, RequestRatesResponse> = async (_req, res) => {
+defineBackgroundHandler('requestRates', async () => {
 	const storedRates = await ExtensionStorage.local.getItem<Extension.CurrencyRates>('currencyrates');
 	if (storedRates?.rates && storedRates.lastUpdate > Date.now() - CACHE_TTL) {
-		res.send({
+		return {
 			status: 200,
 			rates: storedRates.rates,
-		});
-		return;
+		};
 	}
 
 	try {
@@ -40,39 +45,37 @@ const handler: PlasmoMessaging.MessageHandler<null, RequestRatesResponse> = asyn
 		let currencyRates: Extension.CurrencyRates | null = null;
 		if (!response.ok) {
 			currencyRates = await storageFallback();
-			res.send({
+			return {
 				status: response.status,
 				rates: currencyRates.rates,
-			});
-			return;
+			};
 		}
 		const responseJson = await response.json();
 
 		if (!responseJson?.rates) {
 			currencyRates = await storageFallback();
-			res.send({
+			return {
 				status: response.status,
 				rates: currencyRates.rates,
-			});
-			return;
+			};
 		}
 
 		await ExtensionStorage.local.setItem('currencyrates', responseJson);
 
-		res.send({
+		return {
 			status: response.status,
 			rates: responseJson.rates,
-		});
+		};
 	} catch (error) {
 		console.error('[BetterFloat] Failed to fetch currency rates:', error);
 
 		const currencyRates = await storageFallback();
-		res.send({
+		return {
 			status: 503,
 			rates: currencyRates.rates,
-		});
+		};
 	}
-};
+});
 
 const DEFAULT_CURRENCY_RATES: Extension.CurrencyRates = {
 	lastUpdate: 1713917552461,
@@ -112,5 +115,3 @@ const DEFAULT_CURRENCY_RATES: Extension.CurrencyRates = {
 		ZAR: 19.1043926724,
 	},
 };
-
-export default handler;

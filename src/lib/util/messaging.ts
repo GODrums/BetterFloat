@@ -1,30 +1,15 @@
-import { sendToBackground, sendToBackgroundViaRelay } from '@plasmohq/messaging';
-import type { CreateNotificationBody, CreateNotificationResponse } from '~background/messages/createNotification';
-import type { GetBlueBody } from '~background/messages/getBluePercent';
-import type { GetBlueSalesBody } from '~background/messages/getBlueSales';
-import type { GetMarketComparisonBody, GetMarketComparisonResponse } from '~background/messages/getMarketComparison';
-import type { BlueGem } from '~lib/@typings/ExtensionTypes';
+import { type BackgroundRequest, backgroundMessaging } from '~lib/messaging/background';
 
-export async function createNotificationMessage(body: CreateNotificationBody) {
-	const response = await sendToBackground<CreateNotificationBody, CreateNotificationResponse>({
-		name: 'createNotification',
-		body,
-	});
-	return response;
+export async function createNotificationMessage(data: BackgroundRequest<'createNotification'>) {
+	return backgroundMessaging.sendMessage('createNotification', data);
 }
 
-export async function fetchBlueGemPastSales(body: GetBlueSalesBody) {
-	return await sendToBackground<GetBlueSalesBody, BlueGem.PastSale[]>({
-		name: 'getBlueSales',
-		body: body,
-	});
+export async function fetchBlueGemPastSales(data: BackgroundRequest<'getBlueSales'>) {
+	return backgroundMessaging.sendMessage('getBlueSales', data);
 }
 
-export async function fetchBlueGemPatternData(body: GetBlueBody) {
-	return await sendToBackground<GetBlueBody, Partial<BlueGem.PatternData>>({
-		name: 'getBluePercent',
-		body,
-	});
+export async function fetchBlueGemPatternData(data: BackgroundRequest<'getBluePercent'>) {
+	return backgroundMessaging.sendMessage('getBluePercent', data);
 }
 
 type RetryOptions = {
@@ -62,12 +47,9 @@ async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): P
 export async function fetchMarketComparisonData(buff_name: string, isVIP?: boolean) {
 	return await withRetry(
 		() =>
-			sendToBackgroundViaRelay<GetMarketComparisonBody, GetMarketComparisonResponse>({
-				name: 'getMarketComparison',
-				body: {
-					buff_name,
-					isVIP,
-				},
+			backgroundMessaging.sendMessage('getMarketComparison', {
+				buff_name,
+				isVIP,
 			}),
 		{
 			maxRetries: 3,

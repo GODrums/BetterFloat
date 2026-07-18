@@ -1,19 +1,44 @@
+import Decimal from 'decimal.js';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 
 // dmarket: cached market items and user assets from api
 const dmarketItems: DMarket.CachedListing[] = [];
 
+export function isDMarketOfferV2(listing: DMarket.CachedListing): listing is DMarket.MarketOfferV2 {
+	return 'priceCents' in listing;
+}
+
 export function isDMarketAsset(listing: DMarket.CachedListing): listing is DMarket.Asset {
-	return 'cs2' in listing;
+	return 'itemId' in listing && 'cs2' in listing;
 }
 
 export function getDMarketPhase(listing: DMarket.CachedListing): string | undefined {
+	if (isDMarketOfferV2(listing)) return;
 	return isDMarketAsset(listing) ? listing.cs2.phase : listing.extra.phase;
 }
 
 export function getDMarketPaintSeed(listing: DMarket.CachedListing): number | undefined {
+	if (isDMarketOfferV2(listing)) return listing.cs2.paintSeed;
 	return isDMarketAsset(listing) ? listing.cs2.paintSeed : listing.extra.paintSeed;
 }
+
+export function getDMarketItemPrice(listing: DMarket.CachedListing, pageSearch = location.search): Decimal {
+	if (isDMarketOfferV2(listing)) {
+		return new Decimal(listing.priceCents).div(100);
+	}
+	if (pageSearch.includes('exchangeTab=myItems')) {
+		return new Decimal(listing.instantPrice.USD).div(100);
+	}
+	if (pageSearch.includes('exchangeTab=exchange')) {
+		return new Decimal(listing.type === 'offer' ? listing.price.USD : listing.exchangePrice.USD).div(100);
+	}
+	return new Decimal(listing.price.USD).div(100);
+}
+
+function getDMarketListingIds(listing: DMarket.CachedListing): string[] {
+	return isDMarketOfferV2(listing) ? [listing.offerId, listing.assetId] : [listing.itemId];
+}
+
 let dmarketCurrency: string | null = null;
 let dmarketExchangeRates: { [key: string]: number } = {};
 let dmarketLatestSales: DMarket.LatestSale[] = [];
@@ -35,7 +60,8 @@ export function getDMarketCurrency() {
 
 export function cacheDMarketItems(data: DMarket.CachedListing[]) {
 	data?.forEach((item) => {
-		if (dmarketItems.findIndex((i) => i.itemId === item.itemId) === -1) {
+		const listingIds = getDMarketListingIds(item);
+		if (!dmarketItems.some((cachedItem) => getDMarketListingIds(cachedItem).some((id) => listingIds.includes(id)))) {
 			dmarketItems.push(item);
 		}
 	});
@@ -46,7 +72,7 @@ export function cacheDMarketExchangeRates(data: { [key: string]: number }) {
 }
 
 export function getSpecificDMarketItem(id: string) {
-	return dmarketItems.find((i) => i.itemId === id);
+	return dmarketItems.find((item) => getDMarketListingIds(item).includes(id));
 }
 
 export function getDMarketExchangeRate(currency: string) {

@@ -62,7 +62,7 @@ export function addFloatColoring(container: Element, listing: CSFloat.ListingDat
 	if (!listing.item.float_value) return;
 	const skinSchema = getSkinSchema(listing.item);
 
-	const element = container.querySelector<HTMLElement>('div.wear');
+	const element = container.querySelector<HTMLElement>('span.wear-value');
 	if (element) {
 		const lowestRank = Math.min(listing.item.low_rank || 99, listing.item.high_rank || 99);
 		const floatColoring = getRankedFloatColoring(listing.item.float_value, skinSchema?.min ?? 0, skinSchema?.max ?? 1, listing.item.paint_index === 0, lowestRank);

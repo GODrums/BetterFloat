@@ -1,5 +1,4 @@
 import type React from 'react';
-import { useState } from 'react';
 import { Button } from '~popup/ui/button';
 import { MultiplierInput } from '~popup/ui/input';
 

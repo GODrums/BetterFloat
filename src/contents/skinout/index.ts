@@ -1,8 +1,8 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { Skinout } from '~lib/@typings/SkinoutTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { SKINOUT_SELECTORS } from '~lib/handlers/selectors/skinout_selectors';

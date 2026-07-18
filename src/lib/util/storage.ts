@@ -33,14 +33,16 @@ function isNumeric(value: string) {
 
 export async function getAllSettings() {
 	const settings = (await ExtensionStorage.sync.getAll()) as unknown as IStorage;
+	const mutableSettings = settings as unknown as Record<keyof IStorage, unknown>;
 	// iterate through settings and parse JSON strings correctly
-	for (const key in DEFAULT_SETTINGS) {
-		if (typeof settings[key] === 'string') {
+	for (const key of Object.keys(DEFAULT_SETTINGS) as Array<keyof IStorage>) {
+		const rawSetting = mutableSettings[key];
+		if (typeof rawSetting === 'string') {
 			let result: string | number | boolean | null = null;
 			try {
-				result = JSON.parse(settings[key]);
+				result = JSON.parse(rawSetting);
 			} catch {
-				result = settings[key];
+				result = rawSetting;
 			}
 			if (typeof result === 'string') {
 				if (isNumeric(result)) {
@@ -56,7 +58,7 @@ export async function getAllSettings() {
 					ExtensionStorage.sync.setItem(key, result);
 				}
 			}
-			settings[key] = result;
+			mutableSettings[key] = result;
 		}
 	}
 	if (!settings['user']) {
@@ -278,6 +280,19 @@ export const DEFAULT_SETTINGS = {
 	'sf-pricereference': 0,
 	'sf-buffdifference': true,
 	'sf-buffdifferencepercent': true,
+	'hs-enable': true,
+	'hs-pricingsource': 'buff',
+	'hs-altmarket': 'none',
+	'hs-pricereference': 0,
+	'hs-buffdifference': true,
+	'hs-buffdifferencepercent': true,
+	'rs-enable': true,
+	'rs-pricingsource': 'buff',
+	'rs-altmarket': 'none',
+	'rs-pricereference': 0,
+	'rs-buffdifference': true,
+	'rs-buffdifferencepercent': true,
+	'uu-enable': true,
 	user: { steam: { isLoggedIn: false }, plan: { type: 'free' } } as SettingsUser,
 };
 

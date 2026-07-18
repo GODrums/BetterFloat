@@ -1,5 +1,4 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { useEffect, useState } from 'react';
 import { MarketSource } from '~lib/util/globals';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Label } from '~popup/ui/label';
@@ -52,13 +51,13 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 
 	const AltMarketSelectChrome = () => {
 		return (
-			<Select value={value} onValueChange={onValueChange}>
+			<Select value={value} onValueChange={(newValue) => newValue != null && onValueChange(newValue)}>
 				<SelectTrigger>
 					<SelectValue aria-label={value.toString()}>
 						<span className="text-xs">{currentSource.text}</span>
 					</SelectValue>
 				</SelectTrigger>
-				<SelectContent className="w-[90px]" position="popper" sideOffset={2} align="end">
+				<SelectContent className="w-[90px]" alignItemWithTrigger={false} sideOffset={2} align="end">
 					{sources.map((source, index) => (
 						<SelectItem key={index} value={source.source}>
 							<div className="flex items-center justify-center gap-2">
@@ -76,8 +75,8 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 		// Firefox is a bit special and needs a state to handle the dropdown
 		const [open, setOpen] = useState(false);
 
-		const onValueChange = (value: MarketSource) => {
-			setValue(value);
+		const onValueChange = (value: MarketSource | null) => {
+			if (value != null) setValue(value);
 			setOpen(false);
 		};
 
@@ -88,7 +87,7 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 						<span className="text-xs">{currentSource.text}</span>
 					</SelectValue>
 				</SelectTrigger>
-				<SelectContent className="w-[90px]" position="popper" sideOffset={2} align="end">
+				<SelectContent className="w-[90px]" alignItemWithTrigger={false} sideOffset={2} align="end">
 					{sources.map((source, index) => (
 						<SelectItem key={index} value={source.source}>
 							<div className="flex items-center justify-center gap-2">

@@ -1,12 +1,6 @@
-import inject from 'url:~lib/util/old_inject.ts';
+import { injectScript as injectMainWorldScript } from 'wxt/utils/inject-script';
 
 // inject script into page
 export function injectScript() {
-	const script = document.createElement('script');
-	script.type = 'module';
-	script.src = inject;
-	script.onload = function () {
-		(<typeof script>this).remove();
-	};
-	(document.head || document.documentElement).appendChild(script);
+	void injectMainWorldScript('/betterfloat-main.js');
 }

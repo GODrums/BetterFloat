@@ -77,7 +77,7 @@ export default function IndexPopup() {
 	return (
 		<div className="dark flex flex-col bg-card justify-between h-[600px] w-[480px]">
 			<Header />
-			<div className="h-[40rem] relative w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
+			<div className="h-160 relative w-full bg-black flex flex-col items-center justify-center overflow-hidden rounded-md">
 				<div className="w-full absolute inset-0 h-screen">
 					<SparklesCore id="tsparticlesfullpage" background="transparent" minSize={0.6} maxSize={1.4} particleDensity={50} className="w-full h-full" particleColor="#FFFFFF" />
 				</div>

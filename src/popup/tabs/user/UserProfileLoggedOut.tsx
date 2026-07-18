@@ -1,5 +1,4 @@
 import { Bell, Globe, Star, Zap } from 'lucide-react';
-import { useState } from 'react';
 import { getSteamLogin } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 import { MdiSteamColored } from '~popup/components/Icons';
@@ -49,7 +48,7 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 	return (
 		<>
 			<div className="flex flex-col items-center justify-center gap-1 mb-2">
-				<h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">BetterFloat Pro</h1>
+				<h1 className="pt-2 text-4xl md:text-7xl font-bold text-center bg-clip-text text-transparent bg-linear-to-r from-blue-500 via-purple-500 to-pink-500">BetterFloat Pro</h1>
 			</div>
 			<Button variant="default" className="flex gap-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-200" onClick={steamSignin} disabled={isLoading}>
 				{isLoading ? (

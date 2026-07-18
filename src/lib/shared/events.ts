@@ -1,17 +1,17 @@
 import type { EventData } from '~lib/@typings/FloatTypes';
-import { addMessageRelays, RELAY_GET_MARKET_COMPARISON } from './relay';
+import { enablePageMessaging } from '~lib/messaging/page-bridge';
 
 export type SiteEventProcessor = (eventData: EventData<unknown>) => void;
 
 export function activateSiteEventHandler(processEvent: SiteEventProcessor) {
-	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', (event: CustomEvent<EventData<unknown>>) => {
-		processEvent(event.detail);
+	document.addEventListener('BetterFloat_INTERCEPTED_REQUEST', (event) => {
+		processEvent((event as CustomEvent<EventData<unknown>>).detail);
 	});
-	addMessageRelays(RELAY_GET_MARKET_COMPARISON);
+	enablePageMessaging('getMarketComparison');
 }
 
 export function activateSiteCustomEventHandler<T>(eventName: string, processEvent: (detail: T) => void | Promise<void>) {
-	document.addEventListener(eventName, (event: CustomEvent<T>) => {
-		void processEvent(event.detail);
+	document.addEventListener(eventName, (event) => {
+		void processEvent((event as CustomEvent<T>).detail);
 	});
 }

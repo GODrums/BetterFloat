@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Check, CircleHelp, Clock3, LockKeyhole, Pencil, X } from 'lucide-react';
-import { type FC, useEffect, useState } from 'react';
+import type { FC } from 'react';
 import { getCSFCurrencyRate } from '~contents/csfloat/cache';
 import { getCSFloatUserCurrency } from '~contents/csfloat/modules/currency';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
@@ -93,7 +93,7 @@ const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[]; isPro: boo
 		<div className="mt-4 border-t border-[#ffffff1f] pt-3">
 			<h3 className="text-sm font-medium text-[#9EA7B1] mb-2">Previous bargains for this skin</h3>
 			<div className="relative">
-				<div className={cn('flex flex-col gap-2', !isPro && 'blur-sm pointer-events-none select-none')}>
+				<div className={cn('flex flex-col gap-2', !isPro && 'blur-xs pointer-events-none select-none')}>
 					{history.map((entry) => {
 						const { Icon, className, label } = getOfferStatePresentation(entry.state);
 
@@ -127,11 +127,9 @@ const BargainHistoryList: FC<{ history: CSFloatBargainHistoryEntry[]; isPro: boo
 				</div>
 				{!isPro && (
 					<div className="absolute inset-0 flex items-center justify-center">
-						<Button variant="purple" size="sm" asChild>
-							<a className="flex items-center gap-2" href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-								<LockKeyhole className="h-5 w-5 text-[#9EA7B1]" />
-								Unlock Bargain History
-							</a>
+						<Button variant="purple" size="sm" render={<a className="flex items-center gap-2" href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+							<LockKeyhole className="h-5 w-5 text-[#9EA7B1]" />
+							Unlock Bargain History
 						</Button>
 					</div>
 				)}
@@ -287,10 +285,14 @@ const CSFBargainButtons: FC = () => {
 						<Pencil size={14} />
 					</Button>
 				) : (
-					<Button size="icon" variant="ghost" className="h-6 w-6 text-[#9EA7B1] hover:bg-[#fff3]" asChild title="Editing percentages is a Pro feature">
-						<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-							<LockKeyhole size={14} />
-						</a>
+					<Button
+						size="icon"
+						variant="ghost"
+						className="h-6 w-6 text-[#9EA7B1] hover:bg-[#fff3]"
+						render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}
+						title="Editing percentages is a Pro feature"
+					>
+						<LockKeyhole size={14} />
 					</Button>
 				)}
 			</div>
@@ -301,7 +303,7 @@ const CSFBargainButtons: FC = () => {
 								key={index}
 								type="text"
 								inputMode="decimal"
-								className="h-8 w-full min-w-0 rounded-md border-none text-center text-white bg-[#c1ceff0a] hover:bg-[#fff3] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#237BFF]"
+								className="h-8 w-full min-w-0 rounded-md border-none text-center text-white bg-[#c1ceff0a] hover:bg-[#fff3] focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-[#237BFF]"
 								value={value}
 								onChange={(event) => updateDraft(index, event.target.value)}
 							/>

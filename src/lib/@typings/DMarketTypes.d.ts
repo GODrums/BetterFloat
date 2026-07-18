@@ -2,6 +2,15 @@ export namespace DMarket {
 	export interface LatestSalesResponse {
 		sales: LatestSale[];
 	}
+
+	export interface ExchangeMarketV2 {
+		offers: MarketOfferV2[];
+		total: {
+			items: number;
+		};
+		pageToken: string;
+	}
+
 	export interface ExchangeMarket {
 		cursor: string;
 		objects: Item[];
@@ -113,6 +122,40 @@ export namespace DMarket {
 		cs2: AssetCs2;
 	};
 
+	export type MarketOfferV2 = {
+		offerId: string;
+		assetId: string;
+		priceCents: number;
+		createdAt: string;
+		locked: boolean;
+		recommendedPrice: number;
+		overpriced: boolean;
+		overpricePercent: number;
+		discount: number;
+		title: string;
+		name: string;
+		image: string;
+		slug: string;
+		categoryPath: string;
+		gameId: string;
+		backgroundColor: string;
+		owner: string;
+		tradable: boolean;
+		withdrawable: boolean;
+		tradeProtectionRemoved: boolean;
+		unlockDate: string;
+		settlementTime: string;
+		cs2: {
+			exterior: string;
+			category: string;
+			quality: string;
+			floatValue: string;
+			paintSeed: number;
+		};
+		isNew: boolean;
+		favorite: Record<string, unknown>;
+	};
+
 	export type Item = {
 		amount: number;
 		classId: string;
@@ -192,7 +235,7 @@ export namespace DMarket {
 		type: string;
 	};
 
-	export type CachedListing = Item | Asset;
+	export type CachedListing = Item | Asset | MarketOfferV2;
 
 	export type Sticker = {
 		image: string;

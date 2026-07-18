@@ -1,11 +1,11 @@
-import betterfloatLogo from 'data-base64:/assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
-import { useEffect, useState } from 'react';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL } from '~lib/util/helperfunctions';
+import { CurrencyFormatter } from '~lib/util/helperfunctions';
+import { getMarketURL } from '~lib/util/market_urls';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { ExtensionStorage } from '~lib/util/storage';
@@ -91,7 +91,7 @@ const MarketCard: React.FC<{ listing: LisSkinsItem; entry: MarketEntryWithHref; 
 
 	return (
 		// Adapt styling to match Lis-Skins (light theme, different colors)
-		<div className="w-[210px] text-gray-200 my-2 bg-[#2d313b] rounded-md shadow-sm">
+		<div className="w-[210px] text-gray-200 my-2 bg-[#2d313b] rounded-md shadow-xs">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
@@ -320,7 +320,7 @@ const LisMarketComparison: React.FC = () => {
 							{listing && marketDataWithHrefs.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 							{(!marketDataWithHrefs || marketDataWithHrefs.length === 0) && (
 								// Adapt no listings styling (keep it somewhat centered)
-								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
+								<div className="flex-1 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-xs">
 									<div className="flex flex-col items-center justify-center gap-1 p-4 h-full min-w-[200px]">
 										<BanIcon className="size-8 text-gray-200" />
 										<span className="text-base text-center text-gray-200">No listings found</span>
@@ -329,14 +329,12 @@ const LisMarketComparison: React.FC = () => {
 							)}
 							{user?.plan.type !== 'pro' && (
 								// Adapt Pro upgrade styling
-								<div className="flex-shrink-0 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-sm">
+								<div className="shrink-0 text-gray-200 bg-[#2d313b] border border-gray-500 rounded-md shadow-xs">
 									<div className="flex flex-col items-center justify-center gap-2 p-4 h-full min-w-[200px]">
 										<LockKeyhole className="h-8 w-8 text-gray-200" />
 										<span className="text-base text-center text-gray-200">Unlock 10+ more markets</span>
-										<Button variant="purple" size="sm" asChild>
-											<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-												Upgrade to Pro
-											</a>
+										<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+											Upgrade to Pro
 										</Button>
 									</div>
 								</div>

@@ -1,6 +1,6 @@
-import steamLogo from 'data-base64:/assets/icons/icon-steam.svg';
+import steamLogo from '@@/assets/icons/icon-steam.svg?inline';
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { type SVGProps, useState } from 'react';
 import { ICON_BUFF, ICON_C5GAME, ICON_CSFLOAT, ICON_CSMONEY, ICON_MARKETCSGO, ICON_YOUPIN, MarketSource } from '~lib/util/globals';
 import { cn } from '~lib/utils';
@@ -28,9 +28,9 @@ export function MaterialSymbolsLightStorefrontOutline(props: SVGProps<SVGSVGElem
 
 const SingleMarket = ({ text, logo, onClick, active = false }: { text: string; logo: string; onClick: () => void; active?: boolean }) => {
 	return (
-		<SettingsTooltip text={text} side="bottom" asChild>
+		<SettingsTooltip text={text} side="bottom">
 			<Button variant="ghost" size="icon" className={cn('size-10 p-0 m-0.5', active && '')} onClick={onClick}>
-				<img src={logo} alt={text} className={cn('size-9 rounded-lg', active && 'ring ring-sky-900')} />
+				<img src={logo} alt={text} className={cn('size-9 rounded-lg', active && 'ring-3 ring-sky-900')} />
 			</Button>
 		</SettingsTooltip>
 	);
@@ -94,7 +94,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 							POPULAR
 						</Badge>
 					</div>
-					<SettingsTooltip text="Determines the source market for all prices. If you are unsure about this, stick to Buff." asChild>
+					<SettingsTooltip text="Determines the source market for all prices. If you are unsure about this, stick to Buff.">
 						<Button variant="ghost" size="icon" className="size-8 p-1">
 							<MaterialSymbolsHelpOutline className="size-6" />
 						</Button>
@@ -104,7 +104,7 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 					{visibleSources.map(({ text, logo, source: singleSource }) => (
 						<SingleMarket key={text} text={text} logo={logo} onClick={() => setSource(singleSource)} active={source === singleSource} />
 					))}
-					<SettingsTooltip text={showOverflow ? 'Show less' : 'Show more'} side="bottom" asChild>
+					<SettingsTooltip text={showOverflow ? 'Show less' : 'Show more'} side="bottom">
 						<Button variant="ghost" size="icon" className="size-10 p-0 m-0.5 ml-2" onClick={() => setExpanded(!showOverflow)}>
 							<ExpandIcon className={cn('size-8 text-sky-400 transition-transform', showOverflow && 'rotate-180')} />
 						</Button>

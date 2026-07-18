@@ -1,6 +1,6 @@
-import BetterfloatLogo from 'data-base64:~/../assets/icon.png';
-import { motion } from 'framer-motion';
+import BetterfloatLogo from '@@/assets/icon.png?inline';
 import { ArrowRight, BadgeCheck, BellRing, Gauge, LineChart, Link2, Radar, RefreshCw, Zap } from 'lucide-react';
+import { motion } from 'motion/react';
 import {
 	DISCORD_URL,
 	GITHUB_URL,
@@ -159,14 +159,14 @@ export default function OnboardingPage() {
 				<section className="grid grid-cols-1 items-center gap-8 py-12 lg:grid-cols-12 lg:gap-12 lg:py-20">
 					{/* Left: welcome + prominent free CTA */}
 					<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col lg:col-span-7">
-						<div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
+						<div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/3 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-neutral-400">
 							<span className="inline-block h-1.5 w-1.5 rounded-full bg-purple-400" />
 							Install successful
 						</div>
 
 						<h1 className="mt-6 text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
-							<span className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-transparent">Welcome to </span>
-							<span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">BetterFloat.</span>
+							<span className="bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text text-transparent">Welcome to </span>
+							<span className="bg-linear-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">BetterFloat.</span>
 						</h1>
 
 						<p className="mt-5 max-w-xl text-base text-neutral-400 md:text-lg">
@@ -189,7 +189,7 @@ export default function OnboardingPage() {
 
 					{/* Right: Pro panel — structured data layout echoing the sections below */}
 					<motion.aside initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.08 }} className="relative lg:col-span-5">
-						<div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+						<div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/2">
 							{/* Subtle purple wash — signals Pro without the glossy card aesthetic */}
 							<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.10),transparent_65%)]" />
 
@@ -209,7 +209,7 @@ export default function OnboardingPage() {
 							<div className="relative grid grid-cols-[1.25fr_1fr] border-b border-white/10">
 								<div className="flex flex-col justify-center border-r border-white/10 p-5">
 									<div className="flex items-baseline gap-1.5">
-										<span className="bg-gradient-to-b from-white to-neutral-400 bg-clip-text font-mono text-5xl font-bold tracking-tight text-transparent tabular-nums">$10</span>
+										<span className="bg-linear-to-b from-white to-neutral-400 bg-clip-text font-mono text-5xl font-bold tracking-tight text-transparent tabular-nums">$10</span>
 										<span className="font-mono text-xs uppercase tracking-wider text-neutral-500">/mo</span>
 									</div>
 									<span className="mt-1.5 font-mono text-[10px] uppercase tracking-widest text-neutral-600">Cancel anytime</span>
@@ -231,11 +231,11 @@ export default function OnboardingPage() {
 							</div>
 
 							{/* 2×2 stat grid — same gap-px pattern as the features section below */}
-							<div className="relative grid grid-cols-2 gap-px border-b border-white/10 bg-white/[0.08]">
+							<div className="relative grid grid-cols-2 gap-px border-b border-white/10 bg-white/8">
 								{proFeatures.map(({ icon: Icon, stat, label, detail }) => (
 									<div key={label} className="group flex flex-col gap-2.5 bg-neutral-950 p-4 transition-colors hover:bg-neutral-900/60">
 										<div className="flex items-start justify-between">
-											<span className="bg-gradient-to-br from-white to-neutral-400 bg-clip-text font-mono text-2xl font-bold leading-none tracking-tight text-transparent tabular-nums">
+											<span className="bg-linear-to-br from-white to-neutral-400 bg-clip-text font-mono text-2xl font-bold leading-none tracking-tight text-transparent tabular-nums">
 												{stat}
 											</span>
 											<span className="flex h-7 w-7 items-center justify-center rounded-md bg-purple-500/10 text-purple-300 ring-1 ring-purple-500/20">
@@ -256,9 +256,9 @@ export default function OnboardingPage() {
 									href={`${WEBSITE_URL}pricing`}
 									target="_blank"
 									rel="noreferrer"
-									className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-fuchsia-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-950/50 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-900/60"
+									className="group relative flex items-center justify-center gap-2 overflow-hidden rounded-lg bg-linear-to-r from-indigo-500 via-purple-500 to-fuchsia-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-950/50 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-purple-900/60"
 								>
-									<span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+									<span className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 									<Zap className="relative h-4 w-4 fill-current" />
 									<span className="relative">Subscribe to Pro</span>
 									<ArrowRight className="relative h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -278,7 +278,7 @@ export default function OnboardingPage() {
 						<span className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-600">Core · Free plan</span>
 					</div>
 
-					<div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/[0.05] sm:grid-cols-2 lg:grid-cols-4">
+					<div className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:grid-cols-2 lg:grid-cols-4">
 						{features.map((feature, i) => {
 							const Icon = feature.icon;
 							return (
@@ -326,16 +326,16 @@ export default function OnboardingPage() {
 							className="lg:col-span-6"
 						>
 							<h2 className="text-3xl font-bold leading-[1.05] tracking-tight md:text-4xl">
-								<span className="bg-gradient-to-b from-neutral-50 to-neutral-400 bg-clip-text text-transparent">Every market.</span>
+								<span className="bg-linear-to-b from-neutral-50 to-neutral-400 bg-clip-text text-transparent">Every market.</span>
 								<br />
-								<span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">One hover away.</span>
+								<span className="bg-linear-to-r from-indigo-400 via-purple-400 to-fuchsia-400 bg-clip-text text-transparent">One hover away.</span>
 							</h2>
 							<p className="mt-5 max-w-md text-base leading-relaxed text-neutral-400">
 								Our most-loved feature. Hover any listing and BetterFloat overlays a live comparison across every supported marketplace - sorted by best ask, with bids, liquidity and
 								one-click deep-links.
 							</p>
 
-							<ul className="mt-7 space-y-px overflow-hidden rounded-xl border border-white/10 bg-white/[0.05]">
+							<ul className="mt-7 space-y-px overflow-hidden rounded-xl border border-white/10 bg-white/5">
 								{[
 									{ label: 'Sorted by lowest ask price', tier: 'core' as const },
 									{ label: 'Click any row to open the market', tier: 'core' as const },
@@ -373,7 +373,7 @@ export default function OnboardingPage() {
 							<div className="relative mx-auto w-full max-w-[380px]">
 								<div className="relative max-h-[360px] overflow-y-auto overflow-x-hidden rounded-[10px] border border-white/10 bg-[rgba(30,30,30,0.95)] text-xs text-white shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md [&::-webkit-scrollbar-thumb]:rounded-sm [&::-webkit-scrollbar-thumb]:bg-white/15 [&::-webkit-scrollbar]:w-1">
 									{/* Popover header — sticks to top so it stays visible while scrolling */}
-									<div className="sticky top-0 z-10 flex items-center justify-between gap-2.5 border-b border-white/[0.08] bg-[rgba(30,30,30,0.95)] px-3 py-1 text-sm font-semibold backdrop-blur-md">
+									<div className="sticky top-0 z-10 flex items-center justify-between gap-2.5 border-b border-white/8 bg-[rgba(30,30,30,0.95)] px-3 py-1 text-sm font-semibold backdrop-blur-md">
 										<div className="flex min-w-0 items-center gap-1.5">
 											<img src={BetterfloatLogo} alt="" className="h-4 w-4 rounded-[3px]" />
 											<span>Market Comparison</span>
@@ -384,7 +384,7 @@ export default function OnboardingPage() {
 											rel="noopener noreferrer"
 											aria-label="View on Pricempire"
 											title="View on Pricempire"
-											className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.02] transition-colors hover:border-white/[0.18] hover:bg-white/[0.08]"
+											className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/2 transition-colors hover:border-white/18 hover:bg-white/8"
 										>
 											<img src={ICON_PRICEMPIRE} alt="Pricempire" className="h-[18px] w-[18px] rounded-[4px]" />
 										</a>
@@ -416,7 +416,7 @@ export default function OnboardingPage() {
 											))}
 											<tr aria-hidden>
 												<td colSpan={3} className="p-0">
-													<div className="h-[2px] bg-white/[0.08]" />
+													<div className="h-[2px] bg-white/8" />
 												</td>
 											</tr>
 											{comparisonOther.map((row) => (
@@ -437,10 +437,10 @@ export default function OnboardingPage() {
 									</table>
 
 									{/* Liquidity footer — sticks to bottom so it stays visible while scrolling */}
-									<div className="sticky bottom-0 z-10 flex items-center justify-between gap-2 border-t border-white/[0.08] bg-[rgba(30,30,30,0.95)] px-2.5 py-[5px] text-[11px] text-white/40 backdrop-blur-md">
+									<div className="sticky bottom-0 z-10 flex items-center justify-between gap-2 border-t border-white/8 bg-[rgba(30,30,30,0.95)] px-2.5 py-[5px] text-[11px] text-white/40 backdrop-blur-md">
 										<span>Liquidity</span>
 										<div className="flex items-center gap-1.5 tabular-nums">
-											<div className="h-[3px] w-8 overflow-hidden rounded-[1.5px] bg-white/[0.08]">
+											<div className="h-[3px] w-8 overflow-hidden rounded-[1.5px] bg-white/8">
 												<div className="h-full rounded-[1.5px]" style={{ width: `${LIQUIDITY_PCT}%`, background: liquidityColor }} />
 											</div>
 											<span style={{ color: liquidityColor }}>{LIQUIDITY_PCT.toFixed(1)}%</span>
@@ -482,7 +482,7 @@ export default function OnboardingPage() {
 							{[...markets, ...markets].map((market, i) => (
 								<div
 									key={i}
-									className="flex h-12 w-44 shrink-0 items-center gap-3 rounded-md border border-white/5 bg-white/[0.02] px-3 transition-colors hover:border-white/15 hover:bg-white/[0.05]"
+									className="flex h-12 w-44 shrink-0 items-center gap-3 rounded-md border border-white/5 bg-white/2 px-3 transition-colors hover:border-white/15 hover:bg-white/5"
 								>
 									<img src={market.icon} alt={market.name} className="h-6 w-6 shrink-0 rounded object-contain" />
 									<div className="flex min-w-0 flex-1 items-center justify-between">

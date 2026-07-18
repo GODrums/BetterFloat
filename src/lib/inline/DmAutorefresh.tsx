@@ -1,7 +1,7 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
-import { type SVGProps, useEffect, useRef, useState } from 'react';
+import type { SVGProps } from 'react';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
@@ -106,7 +106,7 @@ const DmAutorefresh: React.FC = () => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-[99] bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
+							className="fixed z-99 bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
 							style={{ translate: '-55px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}

@@ -1,12 +1,12 @@
-import betterfloatLogo from 'data-base64:/assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
 import Decimal from 'decimal.js';
-import { AnimatePresence } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence } from 'motion/react';
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AvailableMarketSources, FreeMarkets, MarketSource } from '~lib/util/globals';
-import { CurrencyFormatter, getMarketURL } from '~lib/util/helperfunctions';
+import { CurrencyFormatter } from '~lib/util/helperfunctions';
+import { getMarketURL } from '~lib/util/market_urls';
 import { fetchMarketComparisonData } from '~lib/util/messaging';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
@@ -114,12 +114,12 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntryWit
 	}
 
 	return (
-		<div className="w-[210px] text-[--subtext-color] my-2 bg-[--highlight-background-minimal] rounded-md">
+		<div className="w-[210px] text-(--subtext-color) my-2 bg-(--highlight-background-minimal) rounded-md">
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-1 p-4 pb-1">
 					<div className="flex items-center gap-2">
 						<img src={marketDetails.logo} className="h-8 w-8" style={convertStylesStringToObject(marketDetails.style)} />
-						<span className="text-lg font-bold text-[--primary-text-color]">{marketDetails.text}</span>
+						<span className="text-lg font-bold text-(--primary-text-color)">{marketDetails.text}</span>
 						{[MarketSource.Buff, MarketSource.CSFloat, MarketSource.Tradeit].includes(marketDetails.source) && <ShieldCheck className="h-6 w-6 text-green-500" />}
 					</div>
 					<div className="flex justify-center items-center gap-1">
@@ -130,25 +130,25 @@ const MarketCard: React.FC<{ listing: CSFloat.ListingData; entry: MarketEntryWit
 						{/* <span className="text-sm">{entry.updated}</span> */}
 					</div>
 				</div>
-				<a className="border-t border-border hover:bg-[--highlight-background-heavy]" href={entry.href} target="_blank" rel="noreferrer">
+				<a className="border-t border-border hover:bg-(--highlight-background-heavy)" href={entry.href} target="_blank" rel="noreferrer">
 					<div className="flex flex-col px-4 py-2">
 						{entry.bid !== undefined && (
 							<div className="flex items-center justify-between">
-								<span className="text-[--subtext-color]">Buy Order</span>
+								<span className="text-(--subtext-color)">Buy Order</span>
 								<span className="text-sm" style={{ color: 'light-dark(darkorange, orange)' }}>
 									{formatCurrency(entry.bid)}
 								</span>
 							</div>
 						)}
 						<div className="flex items-center justify-between">
-							<span className="text-[--primary-text-color]">Lowest</span>
+							<span className="text-(--primary-text-color)">Lowest</span>
 							<span className="text-sm" style={{ color: 'light-dark(forestgreen, greenyellow)' }}>
 								{entry.ask ? formatCurrency(entry.ask) : 'N/A'}
 							</span>
 						</div>
 						{priceDifference && pricePercentage && (
 							<div className="flex items-center justify-center mt-1">
-								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-[--highlight-background-minimal] font-semibold">
+								<div className="flex items-center gap-1 text-sm py-1 px-2 rounded-lg bg-(--highlight-background-minimal) font-semibold">
 									{priceDifference.isPositive() ? <CirclePlus /> : <CircleMinus />}
 									<span>{formatCurrency(priceDifference.abs().toNumber())}</span>
 									<span>({pricePercentage.add(100).toDP(2).toNumber()}%)</span>
@@ -330,18 +330,18 @@ const CSFMarketComparison: React.FC = () => {
 		<div className="dark w-[210px] max-h-[60vh]" style={{ fontFamily: 'Roboto, "Helvetica Neue", sans-serif' }}>
 			{isLoading ? (
 				<div className="flex justify-center items-center mt-8">
-					<LoadingSpinner className="size-10 text-[--primary-text-color]" />
+					<LoadingSpinner className="size-10 text-(--primary-text-color)" />
 				</div>
 			) : (
 				<div className="flex flex-col gap-2">
-					<div className="w-full bg-[--highlight-background-minimal] rounded-md py-2 flex flex-col items-center gap-1">
+					<div className="w-full bg-(--highlight-background-minimal) rounded-md py-2 flex flex-col items-center gap-1">
 						<div className="flex justify-center items-center gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
-							<span className="text-[--primary-text-color] font-bold">Market Comparison</span>
+							<span className="text-(--primary-text-color) font-bold">Market Comparison</span>
 						</div>
 						<div className="flex justify-center items-center gap-2">
 							<Button
-								className="h-9 gap-2 bg-[--highlight-background-minimal] hover:bg-[--highlight-background-heavy] text-[--primary-text-color]"
+								className="h-9 gap-2 bg-(--highlight-background-minimal) hover:bg-(--highlight-background-heavy) text-(--primary-text-color)"
 								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
 							>
 								<Settings className="h-6 w-6" />
@@ -351,14 +351,14 @@ const CSFMarketComparison: React.FC = () => {
 					</div>
 					<AnimatePresence>
 						{isSettingsOpen && (
-							<div ref={ref} className="w-full bg-[--highlight-background-minimal] rounded-md p-4 flex flex-col items-center gap-1">
+							<div ref={ref} className="w-full bg-(--highlight-background-minimal) rounded-md p-4 flex flex-col items-center gap-1">
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
-									<div className="font-bold text-lg text-[--primary-text-color]">Settings</div>
+									<div className="font-bold text-lg text-(--primary-text-color)">Settings</div>
 									<Button variant="ghost" size="icon" className="w-8 h-8 hover:bg-neutral-500/70" onClick={() => setIsSettingsOpen(false)}>
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
 								</div>
-								<div className="w-full space-y-3 text-[--subtext-color]">
+								<div className="w-full space-y-3 text-(--subtext-color)">
 									{AvailableMarketSources.map((market) => (
 										<div key={market.source} className="flex justify-between items-center space-x-2">
 											<div className="flex items-center space-x-2">
@@ -371,7 +371,7 @@ const CSFMarketComparison: React.FC = () => {
 												</div>
 											</div>
 											{!FreeMarkets.includes(market.source) && (
-												<Badge variant="purple" className="text-[--primary-text-color]">
+												<Badge variant="purple" className="text-(--primary-text-color)">
 													Pro
 												</Badge>
 											)}
@@ -382,7 +382,7 @@ const CSFMarketComparison: React.FC = () => {
 						)}
 					</AnimatePresence>
 
-					<div className="flex flex-col justify-center gap-1 p-4 bg-[--highlight-background-minimal] text-[--subtext-color] text-sm rounded-md">
+					<div className="flex flex-col justify-center gap-1 p-4 bg-(--highlight-background-minimal) text-(--subtext-color) text-sm rounded-md">
 						<div className="flex items-center justify-between">
 							<span>Total Listings:</span>
 							<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
@@ -392,7 +392,7 @@ const CSFMarketComparison: React.FC = () => {
 							{isUserPro() ? (
 								<span>{liquidity !== null ? `${liquidity.toFixed(2)}%` : 'N/A'}</span>
 							) : (
-								<Badge variant="purple" className="text-[--primary-text-color]">
+								<Badge variant="purple" className="text-(--primary-text-color)">
 									<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
 										Pro
 									</a>
@@ -400,25 +400,23 @@ const CSFMarketComparison: React.FC = () => {
 							)}
 						</div>
 					</div>
-					<ScrollArea className="w-full flex-1 [--border:227_100%_88%_/_0.07]" viewportClass="h-[825px]">
+					<ScrollArea className="w-full flex-1 [--border:227_100%_88%/0.07]" viewportClass="h-[825px]">
 						{listing && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} listing={listing} entry={dataEntry} currency={currency} />)}
 						{filteredMarketData.length === 0 && (
-							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
+							<div className="text-(--subtext-color) mt-2 bg-(--highlight-background-minimal) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<BanIcon className="size-8 text-[--primary-text-color]" />
-									<span className="text-base text-center text-[--primary-text-color]">No listings found</span>
+									<BanIcon className="size-8 text-(--primary-text-color)" />
+									<span className="text-base text-center text-(--primary-text-color)">No listings found</span>
 								</div>
 							</div>
 						)}
 						{!isUserPro() && (
-							<div className="text-[--subtext-color] mt-2 bg-[--highlight-background-minimal] rounded-md">
+							<div className="text-(--subtext-color) mt-2 bg-(--highlight-background-minimal) rounded-md">
 								<div className="flex flex-col items-center justify-center gap-1 p-4">
-									<LockKeyhole className="h-8 w-8 text-[--primary-text-color]" />
-									<span className="text-base text-center text-[--primary-text-color]">Unlock 20+ markets & liquidity tracker</span>
-									<Button variant="purple" size="sm" asChild>
-										<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer">
-											Upgrade to Pro
-										</a>
+									<LockKeyhole className="h-8 w-8 text-(--primary-text-color)" />
+									<span className="text-base text-center text-(--primary-text-color)">Unlock 20+ markets & liquidity tracker</span>
+									<Button variant="purple" size="sm" render={<a href="https://betterfloat.com/pricing" target="_blank" rel="noreferrer" />}>
+										Upgrade to Pro
 									</Button>
 								</div>
 							</div>

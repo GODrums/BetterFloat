@@ -1,6 +1,5 @@
 import { useStorage } from '@plasmohq/storage/hook';
-import type { IconProps } from '@radix-ui/react-icons/dist/types';
-import { type ReactElement, useEffect, useState } from 'react';
+import { type ReactElement, type SVGProps, useEffect, useState } from 'react';
 import { MaterialSymbolsHelpOutline } from '~popup/components/Icons';
 import { Label } from '~popup/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~popup/ui/select';
@@ -10,7 +9,7 @@ type SelectProps = {
 	id: string;
 	text: string;
 	options: string[];
-	icon?: ReactElement<IconProps>;
+	icon?: ReactElement<SVGProps<SVGSVGElement>>;
 	tooltipText?: string;
 };
 
@@ -41,13 +40,13 @@ export const SettingsSelectChrome = ({ id, text, options, icon, tooltipText }: S
 						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				<Select value={value} onValueChange={setValue}>
+				<Select value={value ?? null} onValueChange={setValue}>
 					<SelectTrigger style={{ width: width }}>
 						<SelectValue aria-label={value}>
 							<SelectValue>{options[value ?? 0]}</SelectValue>
 						</SelectValue>
 					</SelectTrigger>
-					<SelectContent className="w-[60px]" position="popper" sideOffset={2} align="end">
+					<SelectContent className="w-[60px]" alignItemWithTrigger={false} sideOffset={2} align="end">
 						{options.map((option, index) => (
 							<SelectItem key={index} value={index.toString()}>
 								{option}
@@ -89,13 +88,13 @@ export const SettingsSelectFirefox = ({ id, text, options, icon, tooltipText }: 
 						<MaterialSymbolsHelpOutline className="h-6 w-6" />
 					</SettingsTooltip>
 				)}
-				<Select open={open} value={value} onValueChange={onValueChange}>
+				<Select open={open} value={value ?? null} onValueChange={onValueChange}>
 					<SelectTrigger style={{ width: width }} onClick={() => setOpen(!open)}>
 						<SelectValue aria-label={value}>
 							<SelectValue>{options[value ?? 0]}</SelectValue>
 						</SelectValue>
 					</SelectTrigger>
-					<SelectContent className="w-[80px]" position="popper" sideOffset={2} align="end">
+					<SelectContent className="w-[80px]" alignItemWithTrigger={false} sideOffset={2} align="end">
 						{options.map((option, index) => (
 							<SelectItem key={index} value={index.toString()}>
 								{option}

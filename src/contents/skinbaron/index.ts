@@ -1,7 +1,7 @@
 import { html } from 'common-tags';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import type { Skinbaron } from '~lib/@typings/SkinbaronTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { type SKINBARON_SELECTOR, SKINBARON_SELECTORS } from '~lib/handlers/selectors/skinbaron_selectors';

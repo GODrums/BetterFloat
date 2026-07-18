@@ -1,7 +1,6 @@
-import '~style.css';
-import betterfloatLogo from 'data-base64:~/../assets/icon.png';
+import betterfloatLogo from '@@/assets/icon.png?inline';
 import { useStorage } from '@plasmohq/storage/hook';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { DISCORD_URL, GITHUB_URL, WEBSITE_URL } from '~lib/util/globals';
 import { DEFAULT_SETTINGS, type IStorage } from '~lib/util/storage';
 import { IcRoundWarning, MdiGithub, SkillIconsDiscord } from '~popup/components/Icons';
@@ -10,52 +9,40 @@ import { Button } from '~popup/ui/button';
 
 export default function Header() {
 	const [user] = useStorage<IStorage['user']>('user', DEFAULT_SETTINGS.user);
-	const hostpermissions = chrome.runtime.getManifest().host_permissions as string[];
+	const [showPermissionsWarning, setShowPermissionsWarning] = useState(false);
+	const manifest = chrome.runtime.getManifest();
+	const hostPermissions = manifest.host_permissions as string[];
 
-	const requestPermissions = () => {
-		chrome.permissions
-			.request({
-				origins: hostpermissions,
-			})
-			.then((granted) => {
-				if (!granted) {
-					console.log('Permission denied');
-				} else {
-					document.getElementById('permissions-warning')!.classList.add('hidden');
-				}
-			});
+	const requestPermissions = async () => {
+		const granted = await chrome.permissions.request({ origins: hostPermissions });
+		if (granted) {
+			setShowPermissionsWarning(false);
+		} else {
+			console.log('Permission denied');
+		}
 	};
 
 	useEffect(() => {
-		document.getElementById('version')!.textContent = `v. ${chrome.runtime.getManifest().version_name ?? chrome.runtime.getManifest().version}`;
-
-		chrome.permissions
-			.contains({
-				origins: hostpermissions,
-			})
-			.then((result) => {
-				const warning = document.getElementById('permissions-warning')!;
-				if (result) {
-					warning.classList.add('hidden');
-				} else {
-					warning.classList.remove('hidden');
-				}
-			});
-	}, [hostpermissions]);
+		chrome.permissions.contains({ origins: hostPermissions }).then((granted) => {
+			setShowPermissionsWarning(!granted);
+		});
+	}, []);
 
 	return (
-		<header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-sm">
+		<header className="w-full flex align-middle justify-between px-4 py-1.5 bg-card text-card-foreground border-b border-muted shadow-xs">
 			<div className="flex gap-2 align-middle items-center">
 				<img className="h-[38px] cursor-pointer" src={betterfloatLogo} onClick={() => window.open(WEBSITE_URL)} />
 				<Badge variant={user.plan.type === 'pro' ? 'purple' : 'secondary'}>{user.plan.type === 'pro' ? 'Pro' : 'Free'}</Badge>
 				<Badge id="version" variant="outline" className="border-muted text-muted-foreground">
-					v. 3.2.0
+					v. {manifest.version_name ?? manifest.version}
 				</Badge>
 			</div>
 			<div className="flex gap-1">
-				<Button variant="ghost" size="icon" className="" id="permissions-warning" onClick={requestPermissions}>
-					<IcRoundWarning height={30} width={30} filter="invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" />
-				</Button>
+				{showPermissionsWarning && (
+					<Button variant="ghost" size="icon" id="permissions-warning" onClick={requestPermissions}>
+						<IcRoundWarning height={30} width={30} filter="invert(19%) sepia(98%) saturate(7473%) hue-rotate(359deg) brightness(103%) contrast(109%)" />
+					</Button>
+				)}
 
 				<Button variant="ghost" size="icon" onClick={() => window.open(DISCORD_URL)} title={DISCORD_URL}>
 					<SkillIconsDiscord height={30} width={30} />

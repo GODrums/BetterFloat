@@ -5,7 +5,9 @@ import { cacheDMarketExchangeRates, cacheDMarketItems, cacheDMarketLatestSales }
 
 function processDmarketEvent(eventData: EventData<unknown>) {
 	console.debug('[BetterFloat] Received data from url: ' + eventData.url + ', data:', eventData.data);
-	if (eventData.url.includes('exchange/v1/market/items')) {
+	if (eventData.url.includes('exchange/v1/market/items/v2')) {
+		cacheDMarketItems((eventData.data as DMarket.ExchangeMarketV2).offers);
+	} else if (eventData.url.includes('exchange/v1/market/items')) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);
 	} else if (eventData.url.includes('exchange/v1/user/items')) {
 		cacheDMarketItems((eventData.data as DMarket.ExchangeMarket).objects);

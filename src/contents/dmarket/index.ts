@@ -1,10 +1,10 @@
 import { html } from 'common-tags';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import Decimal from 'decimal.js';
-import type { PlasmoCSConfig } from 'plasmo';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
+import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
 import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
@@ -15,7 +15,7 @@ import { attachMarketPopover } from '~lib/util/market_popover';
 import { fetchBlueGemPatternData } from '~lib/util/messaging';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine, genGemContainer } from '~lib/util/uigeneration';
-import { getDMarketCurrency, getDMarketExchangeRate, getDMarketLatestSales, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem } from './cache';
+import { getDMarketCurrency, getDMarketExchangeRate, getDMarketItemPrice, getDMarketLatestSales, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem } from './cache';
 import { activateDMarketEventHandler as activateHandler } from './events';
 import { activateDMarketUrlHandler as dynamicUIHandler, mountDMarketMarketComparison } from './url';
 
@@ -370,7 +370,7 @@ async function getBuffItem(item: DMarket.CachedListing) {
 	}
 	const market_id = await getMarketID(buff_name, source);
 
-	let itemPrice = getItemPrice(item);
+	let itemPrice = getDMarketItemPrice(item);
 	const userCurrency = getDMarketCurrency();
 	const currencySymbol = getSymbolFromCurrency(userCurrency);
 	const currencyRate = getDMarketExchangeRate(userCurrency);
@@ -408,15 +408,6 @@ async function getBuffItem(item: DMarket.CachedListing) {
 			symbol: currencySymbol,
 		},
 	};
-}
-
-function getItemPrice(item: DMarket.CachedListing) {
-	if (location.search.includes('exchangeTab=myItems')) {
-		return new Decimal(item.instantPrice.USD).div(100);
-	} else if (location.search.includes('exchangeTab=exchange')) {
-		return item.type === 'offer' ? new Decimal(item.price.USD).div(100) : new Decimal(item.exchangePrice.USD).div(100);
-	}
-	return new Decimal(item.price.USD).div(100);
 }
 
 function createBuffItem(item: DMarket.CachedListing): { name: string; style: ItemStyle } {

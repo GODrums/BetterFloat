@@ -1,10 +1,10 @@
-import globalStyle from 'url:~/style.css';
 import { createIsolatedElement } from '@webext-core/isolated-element';
 import type { JSX } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import { EVENT_URL_CHANGED } from '~lib/util/globals';
 import { createUrlListener } from '~lib/util/helperfunctions';
+import globalStyle from '../../style.css?inline';
 
 export type UrlStateHandler = (state: Extension.URLState) => void | Promise<void>;
 
@@ -39,7 +39,7 @@ export async function mountShadowRoot(component: JSX.Element, options: { tagName
 	const { parentElement, isolatedElement } = await createIsolatedElement({
 		name: options.tagName,
 		css: {
-			url: globalStyle,
+			textContent: globalStyle,
 		},
 		isolateEvents: true,
 	});
@@ -67,7 +67,7 @@ export async function mountShadowRoot(component: JSX.Element, options: { tagName
 							try {
 								root.unmount();
 							} catch (error) {
-								console.warn('[BetterFloat] Error unmounting shadow root:', error);
+								console.warn('[BetterFloat] Error unmounting shadow-sm root:', error);
 							}
 							obs.disconnect();
 						}

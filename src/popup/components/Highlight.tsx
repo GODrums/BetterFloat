@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { cn } from '~lib/utils';
 
 export const Highlight = ({ children, className }: { children: React.ReactNode; className?: string }) => {
@@ -20,7 +20,7 @@ export const Highlight = ({ children, className }: { children: React.ReactNode; 
 				backgroundPosition: 'left center',
 				display: 'inline',
 			}}
-			className={cn('relative inline-block pb-1 px-1 rounded-lg bg-gradient-to-r from-indigo-300 to-purple-300 dark:from-indigo-500 dark:to-purple-500', className)}
+			className={cn('relative inline-block pb-1 px-1 rounded-lg bg-linear-to-r from-indigo-300 to-purple-300 dark:from-indigo-500 dark:to-purple-500', className)}
 		>
 			{children}
 		</motion.span>
