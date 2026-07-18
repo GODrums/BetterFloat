@@ -1,7 +1,8 @@
 import type { BuffMarket } from '~lib/@typings/BuffmarketTypes';
 
-// buffmarket: cached items from api
-let buffItems: { [id: number]: BuffMarket.Item[] } = {};
+// Buff Market routes can identify goods by either the legacy numeric goods ID or
+// their MarketHashName. Keep both indexes so old and new routes remain usable.
+let buffItems: Record<string, BuffMarket.Item[]> = {};
 let buffPageItems: BuffMarket.Item[] = [];
 let buffRecommendations: BuffMarket.Item[] = [];
 let buffPopoutData: BuffMarket.ItemDetailData | null = null;
@@ -36,30 +37,48 @@ export function cacheBuffGoodsInfos(data: { [goods_id: number]: BuffMarket.Goods
 }
 
 export function cacheBuffMarketItems(data: BuffMarket.Item[]) {
-	if (!buffItems) {
-		buffItems = {};
-	}
 	for (const item of data) {
-		if ((<BuffMarket.MarketListing>item).id) {
-			let key = 0;
-			if (typeof (<BuffMarket.MarketListing>item).id === 'string') {
-				key = (<any>item).asset_info.goods_id;
-			} else {
-				key = (<BuffMarket.MarketListing>item).id;
-			}
+		for (const key of getBuffItemCacheKeys(item)) {
 			if (buffItems[key]) {
 				buffItems[key].push(item);
 			} else {
 				buffItems[key] = [item];
 			}
-		} else if ((<BuffMarket.InventoryItem>item).goods_id) {
-			if (buffItems[(<BuffMarket.InventoryItem>item).goods_id]) {
-				buffItems[(<BuffMarket.InventoryItem>item).goods_id].push(item);
-			} else {
-				buffItems[(<BuffMarket.InventoryItem>item).goods_id] = [item];
-			}
 		}
 	}
+}
+
+type CacheableBuffItem = BuffMarket.Item & {
+	id?: number | string;
+	goods_id?: number;
+	market_hash_name?: string;
+	asset_info?: {
+		goods_id?: number;
+	};
+};
+
+function getBuffItemCacheKeys(item: BuffMarket.Item): string[] {
+	const cacheableItem = item as CacheableBuffItem;
+	const keys = new Set<string>();
+
+	if (typeof cacheableItem.id === 'number') {
+		keys.add(getBuffItemCacheKey(cacheableItem.id));
+	}
+	if (cacheableItem.goods_id) {
+		keys.add(getBuffItemCacheKey(cacheableItem.goods_id));
+	}
+	if (cacheableItem.asset_info?.goods_id) {
+		keys.add(getBuffItemCacheKey(cacheableItem.asset_info.goods_id));
+	}
+	if (cacheableItem.market_hash_name) {
+		keys.add(getBuffItemCacheKey(cacheableItem.market_hash_name));
+	}
+
+	return [...keys];
+}
+
+function getBuffItemCacheKey(identifier: number | string): string {
+	return typeof identifier === 'number' ? `id:${identifier}` : `name:${identifier}`;
 }
 
 export function cacheBuffRecommendations(data: BuffMarket.Item[]) {
@@ -93,11 +112,11 @@ export function getBuffGoodsInfo(goods_id: number) {
 }
 
 export function deleteBuffMarketItems() {
-	buffItems = [];
+	buffItems = {};
 }
 
-export function getBuffMarketItem(id: number) {
-	return buffItems[id]?.shift();
+export function getBuffMarketItem(identifier: number | string) {
+	return buffItems[getBuffItemCacheKey(identifier)]?.shift();
 }
 
 export function getFirstBuffRecommendation() {

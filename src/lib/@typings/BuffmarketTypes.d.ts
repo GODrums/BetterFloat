@@ -123,7 +123,7 @@ export namespace BuffMarket {
 		msg: string | null;
 	};
 
-	// https://api.buff.market/api/market/goods/info?game=csgo&goods_id=6018
+	// https://api.buff.market/api/market/goods/info?game=csgo&market_hash_name=AK-47%20%7C%20Redline%20(Field-Tested)
 	export type GoodsInfoResponse = {
 		code: string;
 		data: GoodsItem;

@@ -10,7 +10,7 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 	} else if (eventData.url.includes('api/market/goods/sell_order')) {
 		const responseData = (eventData.data as BuffMarket.SellOrderResponse).data;
 		cacheBuffGoodsInfos(responseData.goods_infos);
-		if (eventData.url.includes('goods_id=')) {
+		if (isItemPageSellOrderRequest(eventData.url)) {
 			cacheBuffPageItems(responseData.items);
 		} else {
 			cacheBuffMarketItems(responseData.items);
@@ -42,6 +42,15 @@ function processBuffMarketEvent(eventData: EventData<unknown>) {
 		cacheBuffGoodsInfos((eventData.data as BuffMarket.SellingOnSaleResponse).data.goods_infos);
 	} else if (eventData.url.includes('api/market/item_detail')) {
 		cacheBuffPopoutData((eventData.data as BuffMarket.ItemDetailResponse).data);
+	}
+}
+
+function isItemPageSellOrderRequest(url: string): boolean {
+	try {
+		const searchParams = new URL(url, location.origin).searchParams;
+		return searchParams.has('goods_id') || searchParams.has('market_hash_name');
+	} catch {
+		return url.includes('goods_id=') || url.includes('market_hash_name=');
 	}
 }
 

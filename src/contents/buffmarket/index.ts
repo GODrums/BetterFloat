@@ -13,6 +13,7 @@ import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
 import { getBuffCurrencyRate, getBuffGoodsInfo, getBuffMarketItem, getBuffPopoutItem, getFirstBuffBuyOrder, getFirstBuffPageItem } from './cache';
 import { activateBuffmarketEventHandler as activateHandler } from './events';
+import { parseBuffMarketGoodsIdentifier } from './identifiers';
 
 export const config: PlasmoCSConfig = {
 	matches: ['https://*.buff.market/*'],
@@ -73,8 +74,7 @@ function applyMutation() {
 					await adjustItem(addedNode, state);
 				} else if (addedNode.classList.contains(BUFFMARKET_SELECTORS.MUTATION.ITEM_PAGE)) {
 					await adjustItem(addedNode, PageState.ItemPage);
-				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MINIMAL_ITEM)) {
-					// addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER)
+				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MINIMAL_ITEM) || addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER)) {
 					for (let i = 1; i < addedNode.children.length; i++) {
 						// items in item page but without title or recommendations
 						if (addedNode.children[i].className.includes('content')) {
@@ -94,13 +94,9 @@ function applyMutation() {
 }
 
 async function adjustItem(container: Element, state: PageState) {
-	let hrefTag = [PageState.ItemPage, PageState.Popup].includes(state) ? location.pathname.split('/')?.[3] : container.firstElementChild?.getAttribute('href')?.split('/').at(-1);
-	if (!hrefTag) {
-		hrefTag = container.querySelector('a.font16')?.getAttribute('href')?.split('/').at(-1) ?? '0';
-	}
-	const itemId = parseInt(hrefTag, 10);
-	if (state !== PageState.Popup && !itemId) {
-		console.error('[BetterFloat] No item ID found: ', container, state);
+	const itemIdentifier = getItemIdentifier(container, state);
+	if (![PageState.ItemPage, PageState.Popup].includes(state) && itemIdentifier === null) {
+		console.error('[BetterFloat] No item identifier found: ', container, state);
 		return;
 	}
 	const getApiItem = () => {
@@ -110,7 +106,7 @@ async function adjustItem(container: Element, state: PageState) {
 		} else if (state === PageState.Popup) {
 			return getBuffPopoutItem();
 		}
-		return getBuffMarketItem(itemId);
+		return itemIdentifier === null ? undefined : getBuffMarketItem(itemIdentifier);
 	};
 	let apiItem = getApiItem();
 	let attempts = 0;
@@ -132,6 +128,18 @@ async function adjustItem(container: Element, state: PageState) {
 	if (state === PageState.ItemPage && extensionSettings['bm-listingage']) {
 		addListingAge(container, apiItem);
 	}
+}
+
+function getItemIdentifier(container: Element, state: PageState): number | string | null {
+	if ([PageState.ItemPage, PageState.Popup].includes(state)) return null;
+
+	const href =
+		container.firstElementChild?.getAttribute('href') ??
+		container.querySelector<HTMLAnchorElement>('a[href*="/market/goods/"]')?.getAttribute('href') ??
+		container.querySelector<HTMLAnchorElement>('a.font16')?.getAttribute('href');
+	if (!href) return null;
+
+	return parseBuffMarketGoodsIdentifier(href, location.origin);
 }
 
 function addListingAge(container: Element, item: BuffMarket.Item) {
@@ -328,7 +336,8 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 	let priceContainer: HTMLElement | null = null;
 	let newline = false;
 	if (state === PageState.ItemPage) {
-		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.ITEMPAGE.PRICE);
+		const isBuyOrderPage = container.parentElement?.className.includes(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER);
+		priceContainer = container.querySelector(isBuyOrderPage ? BUFFMARKET_SELECTORS.STATE.ITEMPAGE.BUY_ORDER_PRICE : BUFFMARKET_SELECTORS.STATE.ITEMPAGE.PRICE);
 	} else if (location.pathname.includes('best_deals')) {
 		priceContainer = container.querySelector(BUFFMARKET_SELECTORS.STATE.ITEMPAGE.PRICE_ALT);
 		newline = true;
