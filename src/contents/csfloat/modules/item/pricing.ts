@@ -54,7 +54,7 @@ export function getFloatItem(container: Element): CSFloat.FloatItem {
 
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
-	const wearContainer = container.querySelector('item-float-bar .wear');
+	const wearContainer = container.querySelector('item-float-bar .wear-value');
 	const float = wearContainer ? Number(wearContainer.childNodes[1].textContent?.trim() ?? '0') : undefined;
 	let condition: ItemCondition | undefined;
 	let quality = '';
