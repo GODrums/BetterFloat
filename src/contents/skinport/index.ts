@@ -164,6 +164,7 @@ async function firstLaunch() {
 	);
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: Will be reintroduced at some point (maybe)
 function createLanguagePopup() {
 	const newPopup = html`
 		<div class="betterfloat-popup-outer" style="backdrop-filter: blur(2px); font-size: 16px;">

@@ -18,10 +18,20 @@ async function handleCSMoneyChange(state: Extension.URLState) {
 		if (csmAutorefresh) {
 			const success = await waitForElement(CSMONEY_SELECTORS.market.reloadButton, { maxTries: 30 });
 			if (success && !document.querySelector('betterfloat-csm-autorefresh')) {
-				const { root } = await mountShadowRoot(<CSMAutorefresh />, {
+				const refreshButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
+				const refreshButtonContainer = refreshButton?.parentElement;
+				if (!refreshButtonContainer) return;
+
+				const { root, parentElement } = await mountShadowRoot(<CSMAutorefresh />, {
 					tagName: 'betterfloat-csm-autorefresh',
-					parent: document.querySelector(CSMONEY_SELECTORS.market.reloadButton)?.parentElement,
+					parent: refreshButtonContainer,
+					position: 'after',
 				});
+				// Astro's refresh control lives in a fixed 38x38 cell. Mounting inside
+				// that cell makes both controls overflow and overlap the toolbar.
+				parentElement.style.display = 'block';
+				parentElement.style.flex = '0 0 auto';
+				parentElement.style.height = '38px';
 				const interval = createUrlListener((url) => {
 					if (url.pathname !== '/market/buy/') {
 						root.unmount();

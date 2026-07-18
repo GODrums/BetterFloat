@@ -35,7 +35,7 @@ async function init() {
 	}
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
-	activateHandler();
+	const hasAstroPageParams = activateHandler();
 
 	extensionSettings = await getAllSettings();
 
@@ -52,12 +52,12 @@ async function init() {
 		console.log('[BetterFloat] Mutation observer started');
 	}
 
-	await firstLaunch();
+	await firstLaunch(hasAstroPageParams);
 
 	dynamicUIHandler();
 }
 
-async function firstLaunch() {
+async function firstLaunch(hasAstroPageParams: boolean) {
 	const success = await waitForElement(CSMONEY_SELECTORS.other.header);
 	if (!success) return;
 
@@ -66,6 +66,13 @@ async function firstLaunch() {
 	// these reloads are required to get the API data,
 	// as the injected script is too slow for the initial load
 	if (location.pathname.includes('/market/buy/')) {
+		// Astro embeds the initial inventory in #__page-params, and its cards
+		// already exist before our MutationObserver starts.
+		if (hasAstroPageParams) {
+			await Promise.all(Array.from(document.querySelectorAll<HTMLElement>('[data-card-item-id]')).map((item) => adjustItem(item)));
+			return;
+		}
+
 		// reload market page
 		let reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
 		if (reloadButton) {
@@ -116,9 +123,12 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[|BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
-				if (addedNode.getAttribute('data-card-item-id')) {
-					// item in buy-tab
-					await adjustItem(addedNode);
+				const marketItems = addedNode.matches('[data-card-item-id]') ? [addedNode] : Array.from(addedNode.querySelectorAll('[data-card-item-id]'));
+				if (marketItems.length > 0) {
+					// Astro/React may add either individual cards or an inventory wrapper.
+					for (const item of marketItems) {
+						await adjustItem(item);
+					}
 				} else if (addedNode.tagName === 'DIV' && addedNode.className.startsWith('UserSkin_user_skin__')) {
 					// item in insta sell page
 					await adjustItem(addedNode);
@@ -160,6 +170,10 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.isUserItem);
 			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
 		} else {
+			if (itemId) {
+				const item = getSpecificCSMoneyItem(Number(itemId));
+				if (item) return item;
+			}
 			const itemImg = container.querySelector<HTMLImageElement>(CSMONEY_SELECTORS.sell.itemImg)?.src?.split('/plain/')[1];
 			if (itemImg) {
 				return getCSMoneyItemByImg(itemImg, getItemQuality(container));
@@ -397,7 +411,10 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
 
-	const footerContainer = container.querySelector<HTMLElement>(selector.footer)?.parentElement;
+	const footer =
+		container.querySelector<HTMLElement>(selector.footer) ??
+		(!isPopout && location.pathname.includes('/market/buy/') ? container.querySelector<HTMLElement>('div[class*="Price-module_container__"]') : null);
+	const footerContainer = footer?.parentElement;
 
 	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
@@ -431,6 +448,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
+			buffElement.parentElement?.setAttribute('style', 'flex-direction: column;');
 			attachMarketPopover(buffElement, { isPro: isUserPro(extensionSettings['user']), currencyRate: currency.rate ?? 1 });
 			buffElement.addEventListener('click', (e) => {
 				e.preventDefault();

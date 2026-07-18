@@ -101,9 +101,9 @@ const CSMAutorefresh: React.FC = () => {
 	});
 
 	return (
-		<div className="bg-transparent" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>
-			<Button variant="light" className="group h-12 flex items-center gap-2 bg-transparent hover:bg-transparent rounded-[2px]" onClick={toggleOpen}>
-				<MaterialSymbolsUpdate className="h-6 w-6 text-[#edeeffa3] group-hover:text-white group-hover:scale-110 transition-all duration-200" />
+		<div className="h-[38px] flex items-center bg-transparent" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>
+			<Button variant="light" className="group h-[38px] px-2 flex items-center gap-1.5 bg-transparent hover:bg-transparent rounded-[2px]" onClick={toggleOpen}>
+				<MaterialSymbolsUpdate className="h-5 w-5 text-[#edeeffa3] group-hover:text-white group-hover:scale-110 transition-all duration-200" />
 				<ActivityBadge active={isActive} />
 			</Button>
 			<AnimatePresence>
@@ -111,7 +111,7 @@ const CSMAutorefresh: React.FC = () => {
 					<div ref={ref}>
 						<motion.div
 							className="fixed z-99 bg-[#403d4d] flex flex-col items-center gap-2 p-6 shadow-2xl"
-							style={{ translate: '-55px 10px', borderRadius: '12px' }}
+							style={{ translate: '-140px 25px', borderRadius: '12px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							exit={{ opacity: 0 }}
