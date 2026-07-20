@@ -460,7 +460,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 	if (
 		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
-		priceListing?.gt(0.06) &&
+		priceFromReference?.gt(0) &&
 		!location.pathname.includes('/market/sell/') &&
 		!container.querySelector('.betterfloat-sale-tag')
 	) {

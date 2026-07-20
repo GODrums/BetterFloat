@@ -35,6 +35,14 @@ export function securitySurface(manifest: Manifest) {
 	};
 }
 
+function plasmoBaselineSecuritySurface(browser: string, manifest: Manifest) {
+	const surface = securitySurface(manifest);
+	// Firefox enables the omnibox API through the top-level manifest key;
+	// listing "omnibox" as an API permission is invalid and only retained by Chrome.
+	if (browser === 'firefox') surface.permissions = surface.permissions.filter((permission) => permission !== 'omnibox');
+	return surface;
+}
+
 async function readJson(path: string) {
 	return JSON.parse(await readFile(resolve(path), 'utf8'));
 }
@@ -44,7 +52,7 @@ async function main() {
 	if (command === 'baseline') {
 		if (!process.argv.includes('--update')) throw new Error('Refusing to overwrite manifest fixtures without --update');
 		for (const [browser, paths] of Object.entries(targets)) {
-			const output = `${JSON.stringify(securitySurface(await readJson(paths.plasmo)), null, 2)}\n`;
+			const output = `${JSON.stringify(plasmoBaselineSecuritySurface(browser, await readJson(paths.plasmo)), null, 2)}\n`;
 			await mkdir(dirname(paths.baseline), { recursive: true });
 			await writeFile(paths.baseline, output);
 			console.log(`Updated ${browser} security fixture`);

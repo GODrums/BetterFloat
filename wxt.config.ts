@@ -35,6 +35,9 @@ export default defineConfig({
 	modules: ['@wxt-dev/module-react'],
 	publicDir: 'public',
 	webExt: { disabled: true },
+	zip: {
+		excludeSources: ['build/**'],
+	},
 	hooks: {
 		'build:publicAssets': (_wxt, files) => {
 			files.push({ absoluteSrc: resolve('assets/icon.png'), relativeDest: 'icon.png' }, { absoluteSrc: resolve('assets/marketids.json'), relativeDest: 'marketids.json' });
@@ -75,8 +78,8 @@ export default defineConfig({
 		author: 'Rums',
 		description: 'Enhance your website experience on 15+ CS2 skin markets!',
 		homepage_url: 'https://betterfloat.com',
-		version: '3.6.4',
-		permissions: ['unlimitedStorage', 'storage', 'scripting', 'activeTab', 'omnibox', 'notifications'],
+		version: '3.6.5',
+		permissions: ['unlimitedStorage', 'storage', 'scripting', 'activeTab', ...(browser === 'firefox' ? [] : ['omnibox' as const]), 'notifications'],
 		host_permissions: hostPermissions,
 		optional_host_permissions: ['https://*/*', 'http://*/*', '*://*.buff.market/*'],
 		externally_connectable: { matches: ['https://*.rums.dev/*'] },

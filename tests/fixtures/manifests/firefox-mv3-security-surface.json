@@ -196,7 +196,6 @@
   "permissions": [
     "activeTab",
     "notifications",
-    "omnibox",
     "scripting",
     "storage",
     "unlimitedStorage"
