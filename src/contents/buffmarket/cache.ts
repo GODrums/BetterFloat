@@ -55,6 +55,9 @@ type CacheableBuffItem = BuffMarket.Item & {
 	asset_info?: {
 		goods_id?: number;
 	};
+	goods_info?: {
+		market_hash_name?: string;
+	};
 };
 
 function getBuffItemCacheKeys(item: BuffMarket.Item): string[] {
@@ -72,6 +75,18 @@ function getBuffItemCacheKeys(item: BuffMarket.Item): string[] {
 	}
 	if (cacheableItem.market_hash_name) {
 		keys.add(getBuffItemCacheKey(cacheableItem.market_hash_name));
+	}
+	if (cacheableItem.goods_info?.market_hash_name) {
+		keys.add(getBuffItemCacheKey(cacheableItem.goods_info.market_hash_name));
+	}
+
+	// Curated market tabs (Best Deals, Popular, etc.) return individual sell
+	// orders. Their cards link by MarketHashName, while the order itself only
+	// contains a goods_id and the name is supplied in the response's
+	// goods_infos map.
+	const goodsInfo = cacheableItem.goods_id ? buffGoodsInfo[cacheableItem.goods_id] : undefined;
+	if (goodsInfo?.market_hash_name) {
+		keys.add(getBuffItemCacheKey(goodsInfo.market_hash_name));
 	}
 
 	return [...keys];
