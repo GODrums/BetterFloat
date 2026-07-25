@@ -146,7 +146,7 @@ function addListingAge(container: Element, item: BuffMarket.Item) {
 	const sellerContainer = container.querySelector(BUFFMARKET_SELECTORS.PAGE.SELLER_CONTAINER);
 	const sellOrderItem = item as BuffMarket.SellOrderListing;
 
-	if (!sellerContainer || !sellOrderItem.created_at) return;
+	if (!sellerContainer || !sellOrderItem.created_at || container.querySelector('.betterfloat-listing-age')) return;
 
 	const listingAge = html`
 		<div 
