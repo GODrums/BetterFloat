@@ -1,5 +1,5 @@
 import { Bell, Globe, Star, Zap } from 'lucide-react';
-import { getSteamLogin } from '~lib/util/steam';
+import { getSteamLogin, SteamLoginError } from '~lib/util/steam';
 import type { IStorage } from '~lib/util/storage';
 import { MdiSteamColored } from '~popup/components/Icons';
 import { LoadingSpinner } from '~popup/components/LoadingSpinner';
@@ -12,34 +12,56 @@ interface LoggedOutViewProps {
 	setUser: (user: IStorage['user']) => void;
 }
 
+type SteamSignInError = 'permission-denied' | 'permission-error' | 'not-signed-in' | 'network' | 'steam-unavailable' | 'invalid-response' | 'unexpected';
+
+const steamSignInErrorMessages: Record<SteamSignInError, string> = {
+	'permission-denied': 'Steam access was not granted. Try again and allow access when your browser asks.',
+	'permission-error': 'Your browser could not request access to Steam. Try again or review BetterFloat’s site permissions.',
+	'not-signed-in': 'You are not signed in to Steam in this browser. Sign in on Steam, then try again.',
+	network: 'Could not reach Steam. Check your internet connection, then try again.',
+	'steam-unavailable': 'Steam could not complete the request right now. Please wait a moment and try again.',
+	'invalid-response': 'Steam responded, but BetterFloat could not read your account details. Reload Steam and try again.',
+	unexpected: 'Something went wrong while signing in with Steam. Please try again.',
+};
+
 export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
-	const [permissionDenied, setPermissionDenied] = useState(false);
-	const [noSteamLogon, setNoSteamLogon] = useState(false);
+	const [signInError, setSignInError] = useState<SteamSignInError | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const steamSignin = async () => {
-		setPermissionDenied(false);
+		setSignInError(null);
 		setIsLoading(true);
 
 		try {
-			if (!(await chrome.permissions.contains({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'] }))) {
-				const granted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'] });
+			try {
+				if (!(await chrome.permissions.contains({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'] }))) {
+					const granted = await chrome.permissions.request({ origins: ['*://*.steamcommunity.com/*', '*://*.steampowered.com/*'] });
 
-				if (!granted) {
-					setPermissionDenied(true);
-					console.warn('Permission denied');
-					return;
+					if (!granted) {
+						setSignInError('permission-denied');
+						return;
+					}
 				}
+			} catch (error) {
+				console.error('Failed to request Steam permissions:', error);
+				setSignInError('permission-error');
+				return;
 			}
 
 			const steamUser = await getSteamLogin();
 			if (!steamUser) {
-				console.warn('Failed to get Steam login');
-				setNoSteamLogon(true);
+				setSignInError('not-signed-in');
 				return;
 			}
 
 			setUser({ ...user, steam: steamUser });
+		} catch (error) {
+			console.error('Steam sign-in failed:', error);
+			if (error instanceof SteamLoginError) {
+				setSignInError(error.code);
+			} else {
+				setSignInError('unexpected');
+			}
 		} finally {
 			setIsLoading(false);
 		}
@@ -60,12 +82,7 @@ export function LoggedOutView({ user, setUser }: LoggedOutViewProps) {
 					</>
 				)}
 			</Button>
-			{noSteamLogon && (
-				<div className="flex items-center justify-center gap-2 px-3 py-2 bg-amber-500/20 rounded-lg border border-amber-500/30">
-					<span className="text-sm text-amber-500">Login to Steam to continue</span>
-				</div>
-			)}
-			{permissionDenied && <WarningCallout text="Please allow access to Steam to login" />}
+			{signInError && <WarningCallout text={steamSignInErrorMessages[signInError]} className="w-full text-center" />}
 			<Card className="shadow-md border-muted mx-1 w-full">
 				<CardContent className="space-y-3 flex flex-col justify-center">
 					<p className="text-base font-semibold leading-none tracking-tight uppercase">Features</p>
