@@ -220,7 +220,7 @@ export default function OnboardingPage() {
 										Save 20%
 									</span>
 									<span className="text-sm font-semibold text-neutral-200">Annual plan</span>
-									<span className="font-mono text-[10px] uppercase tracking-widest text-neutral-600">$96 /yr</span>
+									<span className="font-mono text-[10px] uppercase tracking-widest text-neutral-600">$100 /yr</span>
 								</div>
 							</div>
 
