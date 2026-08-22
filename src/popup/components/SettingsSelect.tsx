@@ -22,10 +22,10 @@ export const SettingsSelect = (props: SelectProps) => {
 export const SettingsSelectChrome = ({ id, text, options, icon, tooltipText }: SelectProps) => {
 	const [value, setValue] = useStorage(id);
 
-	let width = options[value ?? 0].length * 8 + 50 + 'px';
+	let width = (options[value ?? 0]?.length ?? 0) * 8 + 50 + 'px';
 
 	useEffect(() => {
-		width = options[value ?? 0].length * 8 + 50 + 'px';
+		width = (options[value ?? 0]?.length ?? 0) * 8 + 50 + 'px';
 	}, [value]);
 
 	return (
@@ -46,7 +46,7 @@ export const SettingsSelectChrome = ({ id, text, options, icon, tooltipText }: S
 							<SelectValue>{options[value ?? 0]}</SelectValue>
 						</SelectValue>
 					</SelectTrigger>
-					<SelectContent className="w-[60px]" alignItemWithTrigger={false} sideOffset={2} align="end">
+					<SelectContent className="w-15" alignItemWithTrigger={false} sideOffset={2} align="end">
 						{options.map((option, index) => (
 							<SelectItem key={index} value={index.toString()}>
 								{option}
@@ -94,7 +94,7 @@ export const SettingsSelectFirefox = ({ id, text, options, icon, tooltipText }: 
 							<SelectValue>{options[value ?? 0]}</SelectValue>
 						</SelectValue>
 					</SelectTrigger>
-					<SelectContent className="w-[80px]" alignItemWithTrigger={false} sideOffset={2} align="end">
+					<SelectContent className="w-20" alignItemWithTrigger={false} sideOffset={2} align="end">
 						{options.map((option, index) => (
 							<SelectItem key={index} value={index.toString()}>
 								{option}

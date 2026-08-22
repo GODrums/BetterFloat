@@ -40,8 +40,10 @@ export function adjustCurrencyChangeNotice(container: Element) {
 			</button>
 		</div>
 	`;
-	container.children[0].insertAdjacentHTML('beforeend', warningDiv);
-	container.children[0].querySelector('button.bf-reload')?.addEventListener('click', () => {
+	const content = container.children[0];
+	if (!content) return;
+	content.insertAdjacentHTML('beforeend', warningDiv);
+	content.querySelector('button.bf-reload')?.addEventListener('click', () => {
 		location.reload();
 	});
 }

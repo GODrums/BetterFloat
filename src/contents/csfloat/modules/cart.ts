@@ -50,7 +50,7 @@ export async function adjustCart() {
 	for (let i = 0; i < cartDomItems.length; i++) {
 		const cartItem = cartDomItems[i];
 		const item = cartItems[i];
-		if (!item) continue;
+		if (!cartItem || !item) continue;
 
 		const priceResult = await addBuffPrice(item, cartItem, INSERT_TYPE.CART);
 		totalDifference = totalDifference.plus(priceResult.price_difference);

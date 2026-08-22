@@ -27,7 +27,7 @@ function parseEcbRates(xml: string) {
 	for (const match of xml.matchAll(regex)) {
 		const code = match[1];
 		const rate = Number(match[2]);
-		if (!Number.isNaN(rate)) {
+		if (code && !Number.isNaN(rate)) {
 			rates[code] = rate;
 		}
 	}

@@ -5,7 +5,6 @@ import type { DMarket } from '~lib/@typings/DMarketTypes';
 import type { BlueGem } from '~lib/@typings/ExtensionTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
-import { initDmarket } from '~lib/handlers/history/dmarket_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
@@ -35,8 +34,6 @@ async function init() {
 	if (location.host !== 'dmarket.com') {
 		return;
 	}
-
-	initDmarket();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -178,6 +175,7 @@ async function addLatestSalesEnhancements(container: HTMLElement) {
 	for (let i = 0; i < rows.length; i++) {
 		const row = rows[i];
 		const sale = latestSales[i];
+		if (!row || !sale) continue;
 
 		const innerContainer = row.querySelector('last-sales-details-popup > div.c-assetPreview_icon');
 		if (innerContainer) {
@@ -223,6 +221,7 @@ async function caseHardenedDetection(container: Element, item: DMarket.CachedLis
 
 	let patternElement: Partial<BlueGem.PatternData> | null = null;
 	const type = getOldBlueGemName(item.title.replace('StatTrak™ ', ''));
+	if (!type) return false;
 
 	// retrieve the stored data instead of fetching newly
 	if (isPopout) {

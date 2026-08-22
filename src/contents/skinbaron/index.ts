@@ -70,19 +70,19 @@ async function init() {
 async function firstLaunch() {
 	if (location.pathname === '/en') {
 		const suggestedItems = document.querySelectorAll('.recentlyviewed-container .promo-item');
-		for (let i = 0; i < suggestedItems.length; i++) {
-			adjustItem(suggestedItems[i], SKINBARON_SELECTORS.promo);
+		for (const item of suggestedItems) {
+			adjustItem(item, SKINBARON_SELECTORS.promo);
 		}
 
 		const offerItems = document.querySelectorAll('.topoffers-container .promo-item');
-		for (let i = 0; i < offerItems.length; i++) {
-			adjustItem(offerItems[i], SKINBARON_SELECTORS.promo);
+		for (const item of offerItems) {
+			adjustItem(item, SKINBARON_SELECTORS.promo);
 		}
 	} else if (location.pathname.startsWith('/en/csgo/')) {
 		const items = document.querySelectorAll('.product-box');
 
-		for (let i = 0; i < items.length; i++) {
-			adjustItem(items[i], SKINBARON_SELECTORS.card);
+		for (const item of items) {
+			adjustItem(item, SKINBARON_SELECTORS.card);
 		}
 	}
 }

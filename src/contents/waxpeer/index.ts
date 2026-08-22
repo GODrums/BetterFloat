@@ -257,7 +257,8 @@ function createBuffItem(item: Waxpeer.Item): { name: string; style: ItemStyle } 
 	};
 	if (item.name.includes('Doppler')) {
 		// Get and remove the phase from name
-		const phase = item.name.split('Doppler')[1].split('(')[0].trim() as DopplerPhase;
+		const phase = item.name.split('Doppler')[1]?.split('(')[0]?.trim() as DopplerPhase | undefined;
+		if (!phase) return buff_item;
 		buff_item.name = item.name.replace(` ${phase}`, '').trim();
 		buff_item.style = phase;
 	}

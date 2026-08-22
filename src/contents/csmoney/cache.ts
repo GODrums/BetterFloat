@@ -31,6 +31,8 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 			if (!csmoneyItemImgMapping[item.img]) {
 				csmoneyItemImgMapping[item.img] = {};
 			}
+			const imageItems = csmoneyItemImgMapping[item.img];
+			if (!imageItems) return;
 			if (qualityKey !== '0') {
 				if (item.isStatTrak) {
 					qualityKey = 'st-' + qualityKey;
@@ -38,7 +40,7 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 					qualityKey = 'sv-' + qualityKey;
 				}
 			}
-			csmoneyItemImgMapping[(item as CSMoney.InventoryItem).img][qualityKey] = { ...item };
+			imageItems[qualityKey] = { ...item };
 		}
 	});
 	csmoneyItems.push(...data);

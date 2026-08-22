@@ -17,14 +17,14 @@ async function firstLaunch() {
 		items = document.querySelectorAll('item-card');
 	}
 
-	for (let i = 0; i < items.length; i++) {
-		await adjustItem(items[i], getInsertTypeForItemCard(items[i]));
+	for (const item of items) {
+		await adjustItem(item, getInsertTypeForItemCard(item));
 	}
 
 	if (items.length < 40) {
 		const newItems = document.querySelectorAll('item-card');
-		for (let i = 0; i < newItems.length; i++) {
-			await adjustItem(newItems[i], getInsertTypeForItemCard(newItems[i]));
+		for (const item of newItems) {
+			await adjustItem(item, getInsertTypeForItemCard(item));
 		}
 	}
 

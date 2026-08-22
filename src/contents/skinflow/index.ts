@@ -72,11 +72,11 @@ function firstLaunch() {
 function getAPIItem(container: Element, state: PageState): Skinflow.Item | null {
 	if (state === PageState.Market) {
 		const id = container.getAttribute('id');
-		return id ? getSkinflowBotsItem(id) : null;
+		return id ? (getSkinflowBotsItem(id) ?? null) : null;
 	}
 	if (state === PageState.Inventory) {
 		const mhn = container.querySelector('img')?.getAttribute('alt')?.replace(' icon', '');
-		return mhn ? getSkinflowInventoryItem(mhn) : null;
+		return mhn ? (getSkinflowInventoryItem(mhn) ?? null) : null;
 	}
 	return null;
 }

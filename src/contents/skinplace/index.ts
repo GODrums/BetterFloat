@@ -108,7 +108,9 @@ async function adjustItemPage() {
 	const itemPage = document.querySelector(SKINPLACE_SELECTORS.itempage.pageNotBuffed);
 	if (!itemPage) return;
 
-	const { priceFromReference } = await addBuffPrice(data.data[0], itemPage, PageState.ItemPage);
+	const firstOffer = data.data[0];
+	if (!firstOffer) return;
+	const { priceFromReference } = await addBuffPrice(firstOffer, itemPage, PageState.ItemPage);
 
 	if (!priceFromReference) return;
 
@@ -117,6 +119,7 @@ async function adjustItemPage() {
 		// add sale tag
 		const item = items[i];
 		const itemData = data.data[i];
+		if (!item || !itemData) continue;
 		const itemPrice = new Decimal(itemData.price_market);
 		const priceContainer = item.querySelector<HTMLElement>(SKINPLACE_SELECTORS.itempage.offerPrice);
 		if (priceContainer && !item.querySelector('.betterfloat-sale-tag')) {
@@ -152,11 +155,11 @@ function getAPIItem(container: Element, state: PageState): Skinplace.InventoryIt
 	if (state === PageState.Market) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.market.image)?.getAttribute('src');
 		if (!imgSrc) return null;
-		return getSpecificSkinplaceMarketItem(getMarketItemLookup(container, getImageID(imgSrc)));
+		return getSpecificSkinplaceMarketItem(getMarketItemLookup(container, getImageID(imgSrc))) ?? null;
 	} else if (state === PageState.Inventory) {
 		const imgSrc = container.querySelector(SKINPLACE_SELECTORS.inventory.image)?.getAttribute('src');
 		if (!imgSrc) return null;
-		return getSpecificSkinplaceUserItem(getImageID(imgSrc));
+		return getSpecificSkinplaceUserItem(getImageID(imgSrc)) ?? null;
 	}
 	return null;
 }

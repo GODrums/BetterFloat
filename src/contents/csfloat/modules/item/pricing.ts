@@ -26,14 +26,14 @@ export const parsePrice = (textContent: string) => {
 		try {
 			let pricingText: string;
 			if (location.pathname === '/sell') {
-				pricingText = priceText[1].split('Price')[1] ?? '$ 0';
+				pricingText = priceText[1]?.split('Price')[1] ?? '$ 0';
 			} else {
-				pricingText = priceText[0];
+				pricingText = priceText[0] ?? '$0';
 			}
 			if (pricingText.split(/\s/).length > 1) {
 				const parts = pricingText.replace(',', '').replace('.', '').split(/\s/);
 				price = Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100;
-				currency = parts.filter((x) => Number.isNaN(+x))[0];
+				currency = parts.find((x) => Number.isNaN(+x)) ?? '$';
 			} else {
 				const firstDigit = Array.from(pricingText).findIndex((x) => !Number.isNaN(Number(x)));
 				currency = pricingText.substring(0, firstDigit);
@@ -55,7 +55,7 @@ export function getFloatItem(container: Element): CSFloat.FloatItem {
 	const name = nameContainer?.querySelector('.item-name')?.textContent?.replace('\n', '').trim();
 	const { price } = parsePrice(priceContainer?.textContent ?? '');
 	const wearContainer = container.querySelector('item-float-bar .wear-value');
-	const float = wearContainer ? Number(wearContainer.childNodes[1].textContent?.trim() ?? '0') : undefined;
+	const float = wearContainer ? Number(wearContainer.childNodes[1]?.textContent?.trim() ?? '0') : undefined;
 	let condition: ItemCondition | undefined;
 	let quality = '';
 	let style: ItemStyle = '';

@@ -256,7 +256,9 @@ async function adjustOfferRows() {
 		return;
 	}
 
-	const reference = await getItemPageReference(createItem(offers[0]));
+	const firstOffer = offers[0];
+	if (!firstOffer) return;
+	const reference = await getItemPageReference(createItem(firstOffer));
 	const priceFromReference = reference.priceFromReference;
 	if (!priceFromReference || priceFromReference.lte(0)) return;
 	let hasMismatch = false;
@@ -264,6 +266,10 @@ async function adjustOfferRows() {
 	for (let index = 0; index < rows.length; index++) {
 		const row = rows[index];
 		const offer = offers[index];
+		if (!row || !offer) {
+			hasMismatch = true;
+			continue;
+		}
 		if (!offerMatchesRow(row, offer)) {
 			hasMismatch = true;
 			continue;
@@ -315,13 +321,15 @@ function findCartItemForRow(row: HTMLElement, cartItems: LisSkins.CartItem[], us
 	for (let index = 0; index < cartItems.length; index++) {
 		if (usedItems.has(index)) continue;
 		const cartItem = cartItems[index];
+		if (!cartItem) continue;
 		const itemName = cartItem.skin.name_short || cartItem.skin.name;
 		if (imageName && itemName !== imageName) continue;
 		if (fallbackIndex < 0) fallbackIndex = index;
 		if (!Number.isFinite(displayedPrice) || Math.abs(displayedPrice - cartItem.current_price) <= 0.02) return { cartItem, index };
 	}
 
-	return fallbackIndex >= 0 ? { cartItem: cartItems[fallbackIndex], index: fallbackIndex } : undefined;
+	const fallbackItem = fallbackIndex >= 0 ? cartItems[fallbackIndex] : undefined;
+	return fallbackItem ? { cartItem: fallbackItem, index: fallbackIndex } : undefined;
 }
 
 function addCartItemLink(container: HTMLElement, cartItem: LisSkins.CartItem) {

@@ -4,7 +4,6 @@ import Decimal from 'decimal.js';
 import type { Avanmarket } from '~lib/@typings/AvanTypes';
 import type { DopplerPhase, ItemStyle } from '~lib/@typings/FloatTypes';
 import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/MigrationTypes';
-import { initAvan } from '~lib/handlers/history/avan_history';
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
@@ -34,7 +33,6 @@ async function init() {
 	}
 
 	console.time('[BetterFloat] Avanmarket init timer');
-	initAvan();
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
@@ -181,7 +179,7 @@ async function adjustItemPage(container: Element) {
 		const parsedPrice =
 			priceContainer.textContent
 				?.split(' ')[0]
-				.replace(/,/g, '')
+				?.replace(/,/g, '')
 				.replace(/[^0-9.]/g, '') ?? 0;
 		const itemPrice = new Decimal(parsedPrice).div(100);
 		const saleTag = createSaleTag(itemPrice.minus(priceData.priceFromReference ?? 0), itemPrice.div(priceData.priceFromReference ?? 0).mul(100), CurrencyFormatter(getUserCurrency().name, 0, 2));
@@ -347,7 +345,7 @@ function getUserCurrency() {
 
 function getItemPrice(item: Avanmarket.Item | Avanmarket.InventoryItem) {
 	if (isAvanmarketItem(item)) {
-		return new Decimal(item.sell_items[0].sell_price);
+		return new Decimal(item.sell_items[0]?.sell_price ?? 0);
 	} else {
 		return new Decimal(item.price);
 	}

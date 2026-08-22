@@ -77,8 +77,9 @@ function applyMutation() {
 				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MINIMAL_ITEM) || addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.BUY_ORDER)) {
 					for (let i = 1; i < addedNode.children.length; i++) {
 						// items in item page but without title or recommendations
-						if (addedNode.children[i].className.includes('content')) {
-							await adjustItem(addedNode.children[i], PageState.ItemPage);
+						const child = addedNode.children[i];
+						if (child?.className.includes('content')) {
+							await adjustItem(child, PageState.ItemPage);
 						}
 					}
 				} else if (addedNode.className.startsWith(BUFFMARKET_SELECTORS.MUTATION.MODAL)) {
@@ -237,7 +238,7 @@ function createBuffItem(item?: BuffMarket.Item): ExtendedBuffItem {
 		buff_item.name = (<BuffMarket.MarketListing>item)?.market_hash_name;
 	} else if ((<BuffMarket.SellOrderListing>item).price) {
 		const goods_info = getBuffGoodsInfo((<BuffMarket.SellOrderListing>item).goods_id);
-		buff_item.name = goods_info?.market_hash_name;
+		buff_item.name = goods_info?.market_hash_name ?? '';
 	}
 	if ((<BuffMarket.InventoryItem>item)?.asset_info?.info?.metaphysic?.data?.name) {
 		switch ((<BuffMarket.InventoryItem>item)?.asset_info?.info?.metaphysic?.data?.name) {

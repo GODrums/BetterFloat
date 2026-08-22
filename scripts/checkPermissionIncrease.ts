@@ -199,8 +199,12 @@ function parseMatchPattern(pattern: string): ParsedPattern | null {
 		return null;
 	}
 
-	const scheme = match.groups.scheme as MatchScheme;
-	const rawHost = match.groups.host.toLowerCase();
+	const { scheme: matchedScheme, host } = match.groups;
+	if (!matchedScheme || host === undefined) {
+		return null;
+	}
+	const scheme = matchedScheme as MatchScheme;
+	const rawHost = host.toLowerCase();
 
 	if (scheme === 'file') {
 		return { kind: 'match', scheme, hostKind: 'file', hostValue: '' };
@@ -549,7 +553,7 @@ function isPatternCoveredBySet(oldPatterns: string[], newPattern: string): boole
 	}
 
 	const parsedNewPattern = parseMatchPattern(newPattern);
-	if (!parsedNewPattern || parsedNewPattern.kind !== 'match' || parsedNewPattern.scheme !== '*') {
+	if (parsedNewPattern?.kind !== 'match' || parsedNewPattern.scheme !== '*') {
 		return false;
 	}
 
@@ -673,9 +677,13 @@ async function main(): Promise<void> {
 	if (positionalArgs.length !== 2) {
 		exitWithError(getUsage());
 	}
+	const [oldManifestPath, newManifestPath] = positionalArgs;
+	if (!oldManifestPath || !newManifestPath) {
+		return;
+	}
 
 	try {
-		const result = await checkPermissionIncrease(positionalArgs[0], positionalArgs[1]);
+		const result = await checkPermissionIncrease(oldManifestPath, newManifestPath);
 		if (jsonOutput) {
 			console.log(JSON.stringify(result, null, 2));
 		} else {

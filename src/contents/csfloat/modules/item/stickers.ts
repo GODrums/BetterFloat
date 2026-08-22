@@ -57,7 +57,7 @@ export function addStickerLinks(container: Element, item: CSFloat.Item) {
 	for (let i = 0; i < stickerContainers.length; i++) {
 		const stickerContainer = stickerContainers[i];
 		const stickerData = data[i];
-		if (!stickerData) continue;
+		if (!stickerContainer || !stickerData) continue;
 
 		stickerContainer.addEventListener('click', () => {
 			const isSouvenirCharm = stickerData.name.includes('Souvenir Charm |');

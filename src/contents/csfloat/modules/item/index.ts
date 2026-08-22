@@ -48,7 +48,7 @@ function resolveApiItem(insertType: INSERT_TYPE, container: Element, item: CSFlo
 		case INSERT_TYPE.PAGE: {
 			let newItem = getCSFPopupItem();
 			if (!newItem || location.pathname.split('/').pop() !== newItem.id) {
-				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
+				const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop()).item(0);
 				newItem = getApiItem(itemPreview);
 			}
 			return newItem;

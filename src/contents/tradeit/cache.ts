@@ -30,7 +30,7 @@ export function getTradeitOwnItemByName(name: string) {
 }
 
 export function getTradeitOwnItemByGridImg(name: string) {
-	return Object.values(tradeitOwnItems).find((items) => items[0].imgUrls?.gridImgUrl === name)?.[0];
+	return Object.values(tradeitOwnItems).find((items) => items[0]?.imgUrls?.gridImgUrl === name)?.[0];
 }
 
 export function getFirstTradeitOwnItem(steamImg: string) {

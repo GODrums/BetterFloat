@@ -26,7 +26,7 @@ export function getMarketURL({ source, buff_name, market_id = 0, phase }: { sour
 			return `https://youpin898.com/market/csgo?gameId=730&search=${encodeURIComponent(buff_name)}`;
 		case MarketSource.C5Game: {
 			if (market_id && market_id !== -1) {
-				return `https://www.c5game.com/en/csgo/${market_id}/${encodeURIComponent(buff_name.split(' (')[0])}/sell`;
+				return `https://www.c5game.com/en/csgo/${market_id}/${encodeURIComponent(buff_name.split(' (')[0] ?? buff_name)}/sell`;
 			} else {
 				return `https://www.c5game.com/en/csgo?marketKeyword=${encodeURIComponent(buff_name)}`;
 			}

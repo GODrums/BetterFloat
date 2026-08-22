@@ -16,18 +16,10 @@ export function getWeaponSchemaIndex(item: CSFloat.Item) {
 
 	initItemSchema();
 
-	const names = item.item_name.split(' | ');
-	if (names[0].includes('★')) {
-		names[0] = names[0].replace('★ ', '');
-	}
-	if (item.paint_index === 0) {
-		names[1] = 'Vanilla';
-	}
-	if (item.phase) {
-		names[1] += ` (${item.phase})`;
-	}
+	let [weaponName = ''] = item.item_name.split(' | ');
+	weaponName = weaponName.replace('★ ', '');
 
-	return Object.entries((itemSchema as CSFloat.ItemSchema.TypeSchema).weapons).find(([_, value]) => value.name === names[0])?.[0];
+	return Object.entries((itemSchema as CSFloat.ItemSchema.TypeSchema).weapons).find(([_, value]) => value.name === weaponName)?.[0];
 }
 
 export function getSkinSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSchema | null {
@@ -41,21 +33,19 @@ export function getSkinSchema(item: CSFloat.Item): CSFloat.ItemSchema.SingleSche
 		return null;
 	}
 
-	const names = item.item_name.split(' | ');
-	if (names[0].includes('★')) {
-		names[0] = names[0].replace('★ ', '');
-	}
+	let [weaponName = '', paintName = ''] = item.item_name.split(' | ');
+	weaponName = weaponName.replace('★ ', '');
 	if (item.paint_index === 0) {
-		names[1] = 'Vanilla';
+		paintName = 'Vanilla';
 	}
 	if (item.phase) {
-		names[1] += ` (${item.phase})`;
+		paintName += ` (${item.phase})`;
 	}
 
-	const weapon = Object.values((itemSchema as CSFloat.ItemSchema.TypeSchema).weapons).find((el) => el.name === names[0]);
+	const weapon = Object.values((itemSchema as CSFloat.ItemSchema.TypeSchema).weapons).find((el) => el.name === weaponName);
 	if (!weapon) return null;
 
-	return Object.values(weapon.paints).find((el) => el.name === names[1]) as CSFloat.ItemSchema.SingleSchema;
+	return (Object.values(weapon.paints).find((el) => el.name === paintName) as CSFloat.ItemSchema.SingleSchema | undefined) ?? null;
 }
 
 export function addFloatColoring(container: Element, listing: CSFloat.ListingData) {

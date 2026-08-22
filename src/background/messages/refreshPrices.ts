@@ -23,7 +23,8 @@ defineBackgroundHandler('refreshPrices', async (data) => {
 	if (!source) {
 		return { status: 500 };
 	}
-	if (lastRequest[source] > 0 && Date.now() - lastRequest[source] < 1000 * 60 * 10) {
+	const previousRequest = lastRequest[source];
+	if (previousRequest !== undefined && Date.now() - previousRequest < 1000 * 60 * 10) {
 		console.log('[BetterFloat] Prices were requested within the last 10 minutes. Skipping refresh.');
 		return { status: 200 };
 	}

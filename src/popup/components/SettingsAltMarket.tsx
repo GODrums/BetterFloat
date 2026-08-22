@@ -21,12 +21,12 @@ const defaultSource: SourceInfo = {
 export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProps) => {
 	const id = `${prefix}-altmarket`;
 	const [value, setValue] = useStorage<MarketSource>(id, (s) => (s === undefined ? MarketSource.None : s));
-	const [currentSource, setCurrentSource] = useState(sources[0]);
+	const [currentSource, setCurrentSource] = useState(sources[0] ?? defaultSource);
 
 	const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
 	// create a 'none' source on demand
-	if (sources[0].text !== 'None') {
+	if (sources[0]?.text !== 'None') {
 		sources.unshift(defaultSource);
 	}
 
@@ -46,7 +46,7 @@ export const SettingsAltMarket = ({ prefix, sources, primarySource }: SelectProp
 	}
 
 	useEffect(() => {
-		setCurrentSource(sources.find((s) => value.includes(s.source)) ?? sources[0]);
+		setCurrentSource(sources.find((s) => value.includes(s.source)) ?? sources[0] ?? defaultSource);
 	}, [value]);
 
 	const AltMarketSelectChrome = () => {

@@ -227,7 +227,7 @@ const CSFBargainButtons: FC = () => {
 	const saveEditing = () => {
 		const next = draft.map((value, index) => {
 			const parsed = Number(value);
-			return Number.isFinite(parsed) && parsed > 0 ? parsed : percentages[index];
+			return Number.isFinite(parsed) && parsed > 0 ? parsed : (percentages[index] ?? 0);
 		});
 		setPercentages(next);
 		savePercentages(next);

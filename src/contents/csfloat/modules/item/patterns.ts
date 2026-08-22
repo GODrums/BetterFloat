@@ -148,10 +148,12 @@ async function badgeBigSwell(container: Element, item: CSFloat.Item) {
 		1: ICON_BIG_SWELL_1,
 		2: ICON_BIG_SWELL_2,
 	};
+	const icon = iconMapping[big_swell_data];
+	if (!icon) return;
 
 	addPatternBadge({
 		container,
-		svgfile: iconMapping[big_swell_data],
+		svgfile: icon,
 		svgStyle: 'height: 30px;',
 		tooltipText: ['Centered Waves', `Tier ${big_swell_data}`],
 		tooltipStyle: 'translate: -40px 15px; width: 100px;',
@@ -166,10 +168,12 @@ async function badgeCloudChasers(container: Element, item: CSFloat.Item) {
 		1: ICON_CLOUD_CHASERS_1,
 		2: ICON_CLOUD_CHASERS_2,
 	};
+	const icon = iconMapping[cloud_data];
+	if (!icon) return;
 
 	addPatternBadge({
 		container,
-		svgfile: iconMapping[cloud_data],
+		svgfile: icon,
 		svgStyle: 'height: 30px;',
 		tooltipText: ['Double Centered Dragons', `Tier ${cloud_data}`],
 		tooltipStyle: 'translate: -40px 15px; width: 100px;',
@@ -237,9 +241,13 @@ async function badgeChromaGems(container: Element, item: CSFloat.Item) {
 		},
 	};
 
+	const phaseIcons = iconMapping[item.phase as 'Sapphire' | 'Ruby' | 'Emerald'];
+	const icon = phaseIcons?.[gem_data];
+	if (!icon) return;
+
 	addPatternBadge({
 		container,
-		svgfile: iconMapping[item.phase as 'Sapphire' | 'Ruby' | 'Emerald'][gem_data],
+		svgfile: icon,
 		svgStyle: 'height: 30px;',
 		tooltipText: [`Max ${item.phase}`, `Rank ${gem_data}`],
 		tooltipStyle: 'translate: -25px 15px; width: 60px;',
@@ -255,10 +263,12 @@ async function badgeNocts(container: Element, item: CSFloat.Item) {
 		2: ICON_NOCTS_2,
 		3: ICON_NOCTS_3,
 	};
+	const icon = iconMapping[nocts_data];
+	if (!icon) return;
 
 	addPatternBadge({
 		container,
-		svgfile: iconMapping[nocts_data],
+		svgfile: icon,
 		svgStyle: 'height: 30px;',
 		tooltipText: ['Max Black', `Tier ${nocts_data}`],
 		tooltipStyle: 'translate: -25px 15px; width: 60px;',
@@ -287,10 +297,12 @@ async function badgeDiamondGem(container: Element, item: CSFloat.Item) {
 		2: ICON_DIAMOND_GEM_2,
 		3: ICON_DIAMOND_GEM_3,
 	};
+	const icon = iconMapping[diamondGem_data.tier];
+	if (!icon) return;
 
 	addPatternBadge({
 		container,
-		svgfile: iconMapping[diamondGem_data.tier],
+		svgfile: icon,
 		svgStyle: 'height: 30px;',
 		tooltipText: ['Diamond Gem', `Rank ${diamondGem_data.rank} (T${diamondGem_data.tier})`, `Blue: ${diamondGem_data.blue}%`],
 		tooltipStyle: 'translate: -40px 15px; width: 110px;',
@@ -396,7 +408,8 @@ async function badgePhoenix(container: Element, item: CSFloat.Item) {
 }
 
 async function webDetection(container: Element, item: CSFloat.Item) {
-	const type = item.item_name.includes('Gloves') ? 'gloves' : item.item_name.split('★ ')[1].split(' ')[0].toLowerCase();
+	const type = item.item_name.includes('Gloves') ? 'gloves' : item.item_name.split('★ ')[1]?.split(' ')[0]?.toLowerCase();
+	if (!type) return;
 	const cw_data = await getCrimsonWebMapping(type as Extension.CWWeaponTypes, item.paint_seed!);
 	if (!cw_data) return;
 	if (!container.querySelector('.item-img')) return;
@@ -499,7 +512,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 		tableTr.setAttribute('role', 'row');
 		tableTr.className = 'mat-mdc-header-row mdc-data-table__header-row cdk-header-row ng-star-inserted';
 		const headerValues = ['Source', 'Date', 'Price', 'Float Value'];
-		for (let i = 0; i < headerValues.length; i++) {
+		for (const [i, headerValue] of headerValues.entries()) {
 			const headerCell = document.createElement('th');
 			headerCell.setAttribute('role', 'columnheader');
 			const headerCellStyle = `text-align: center; color: var(--subtext-color); letter-spacing: .03em; background: rgba(193, 206, 255, .04); ${
@@ -507,7 +520,7 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 			}`;
 			headerCell.setAttribute('style', headerCellStyle);
 			headerCell.className = 'mat-mdc-header-cell mdc-data-table__header-cell ng-star-inserted';
-			headerCell.textContent = headerValues[i];
+			headerCell.textContent = headerValue;
 			tableTr.appendChild(headerCell);
 		}
 		const linkHeaderCell = document.createElement('th');

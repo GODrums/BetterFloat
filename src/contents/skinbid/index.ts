@@ -64,8 +64,8 @@ async function init() {
 
 async function firstLaunch() {
 	const items = document.getElementsByTagName('APP-MARKET-CARD');
-	for (let i = 0; i < items.length; i++) {
-		await adjustItem(items[i], SKINBID_SELECTORS.card);
+	for (const item of items) {
+		await adjustItem(item, SKINBID_SELECTORS.card);
 	}
 }
 
@@ -89,7 +89,7 @@ function applyMutation() {
 					await adjustItem(addedNode.querySelector('app-market-card')!, SKINBID_SELECTORS.card);
 				} else if (addedNode.children.length === 1) {
 					const firstChild = addedNode.children[0];
-					if (firstChild.tagName === 'APP-MARKET-CARD') {
+					if (firstChild?.tagName === 'APP-MARKET-CARD') {
 						await adjustItem(firstChild, SKINBID_SELECTORS.card);
 					}
 				}
@@ -145,7 +145,7 @@ async function adjustInventoryItem(container: Element) {
 	if (!imageURL) return;
 	const getInventoryItem = (url: URL) => {
 		if (url.hostname === 'skinbid.ams3.digitaloceanspaces.com') {
-			return getSkbInventoryItemByHash(url.pathname.split('_')[0].substring(1));
+			return getSkbInventoryItemByHash(url.pathname.split('_')[0]?.substring(1) ?? '');
 		} else {
 			return getSkbInventoryItemByImage(url.toString());
 		}
@@ -293,6 +293,7 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 	const currencyRate = await getSkbUserConversion();
 	const type = item.subCategory === 'Case Hardened' ? 'ch' : 'ht';
 	const weapon = item.subCategory.toLowerCase().replaceAll('-', '').split(' ')[0];
+	if (!weapon) return;
 	const pastSales = await fetchBlueGemPastSales({ weapon, type, pattern: item.paintSeed });
 
 	const newTab = document.createElement('div');
@@ -386,7 +387,7 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
                 </table>
             </div>
         `;
-		chartContainer.childNodes[5].replaceWith(salesTable);
+		chartContainer.childNodes[5]?.replaceWith(salesTable);
 	});
 	Array.from(chartContainer.querySelectorAll('.tab')).forEach((tabContainer) => {
 		console.log(tabContainer);
@@ -404,9 +405,10 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
 }
 
 export async function addStickerInfo(container: Element, item: Skinbid.Listing, selector: SKINBID_SELECTOR, priceDifference: Decimal) {
-	if (!item.items || item.items[0].item.category === 'Sticker') return;
-	let stickers = item.items[0].item.stickers;
-	if (item.items[0].item.isSouvenir) {
+	const listingItem = item.items?.[0]?.item;
+	if (!listingItem || listingItem.category === 'Sticker') return;
+	let stickers = listingItem.stickers;
+	if (listingItem.isSouvenir) {
 		stickers = stickers.filter((s) => s?.name && !s.name.includes('(Gold)'));
 	}
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(`Sticker | ${s.name}`, extensionSettings['skb-pricingsource'] as MarketSource)));
@@ -451,7 +453,8 @@ export function addListingAge(container: Element, cachedItem: Skinbid.Listing, p
 		const listingContainer = referenceDiv?.cloneNode(true);
 		if (listingContainer.firstChild) {
 			listingContainer.firstChild.textContent = ' Time of Listing ';
-			listingContainer.childNodes[1].textContent = calculateTime(calculateEpochFromDate(cachedItem.auction.created));
+			const timeContainer = listingContainer.childNodes[1];
+			if (timeContainer) timeContainer.textContent = calculateTime(calculateEpochFromDate(cachedItem.auction.created));
 		}
 		referenceDiv.after(listingContainer);
 	} else {
@@ -592,6 +595,7 @@ async function addBuffPrice(
 			for (let i = 0; i < bids.length; i++) {
 				const bidPrice = bids[i];
 				const bidData = cachedItem.bids[i];
+				if (!bidPrice || !bidData) continue;
 
 				const bidAmount = currencyRate ? new Decimal(bidData.amount).mul(currencyRate) : new Decimal(bidData.amount);
 				const bidDifference = bidAmount.minus(priceFromReference);

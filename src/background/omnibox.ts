@@ -128,7 +128,7 @@ chrome.omnibox.onInputChanged.addListener(async (text, addSuggestions) => {
 	}
 
 	const parts = trimmed.split(/\s+/);
-	const keywordCandidate = parts[0].toLowerCase();
+	const keywordCandidate = parts[0]?.toLowerCase() ?? '';
 	const source = KEYWORDS[keywordCandidate];
 	const query = source ? parts.slice(1).join(' ') : trimmed;
 	if (query.length < 2) {

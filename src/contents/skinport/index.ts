@@ -122,8 +122,8 @@ async function firstLaunch() {
 		}
 	} else if (path === '/market' || path.startsWith('/shop/')) {
 		const catalogItems = Array.from(document.querySelectorAll('.CatalogPage-item'));
-		for (let i = 0; i < catalogItems.length; i++) {
-			await adjustItem(catalogItems[i]);
+		for (const item of catalogItems) {
+			await adjustItem(item);
 		}
 		if (location.search.includes('sort=date')) {
 			await waitForElement('.CatalogHeader-tooltipLive');
@@ -519,9 +519,9 @@ async function liveNotifications(item: Skinport.Listing, percentage: Decimal) {
 		if (
 			notificationSettings.floatRanges &&
 			notificationSettings.floatRanges.length === 2 &&
-			notificationSettings.floatRanges[0] > 0 &&
-			notificationSettings.floatRanges[1] < 1 &&
-			(!item.wear || item.wear < notificationSettings.floatRanges[0] || item.wear > notificationSettings.floatRanges[1])
+			(notificationSettings.floatRanges[0] ?? 0) > 0 &&
+			(notificationSettings.floatRanges[1] ?? 1) < 1 &&
+			(!item.wear || item.wear < (notificationSettings.floatRanges[0] ?? 0) || item.wear > (notificationSettings.floatRanges[1] ?? 1))
 		) {
 			return;
 		}
@@ -589,10 +589,11 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 	const usedCurrency = sanitizedCurrency(item.currency);
 	const currencySymbol = getSymbolFromCurrency(usedCurrency);
 	const settingRate = Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport';
-	const currencyRate = await getSpUserCurrencyRate(settingRate);
+	const currencyRate = (await getSpUserCurrencyRate(settingRate)) ?? 1;
 
 	const type = item.family === 'Case Hardened' ? 'ch' : 'ht';
-	let weapon = item.subCategory!.toLowerCase().replaceAll('-', '').split(' ')[0];
+	let weapon = item.subCategory?.toLowerCase().replaceAll('-', '').split(' ')[0];
+	if (!weapon) return;
 	if (weapon.startsWith('five')) {
 		weapon = 'five_seven';
 	}
@@ -709,7 +710,8 @@ function applyFilter(item: Skinport.Listing, container: Element) {
 	const typeCheck = !spFilter.types[category];
 
 	const tradeLockText = container.querySelector('div.TradeLock-lock')?.textContent?.split(' ');
-	const tradeLock = tradeLockText?.length === 3 ? parseInt(tradeLockText[1], 10) : undefined;
+	const tradeLockValue = tradeLockText?.length === 3 ? tradeLockText[1] : undefined;
+	const tradeLock = tradeLockValue ? parseInt(tradeLockValue, 10) : undefined;
 	const newCheck = spFilter.new && (!tradeLock || tradeLock < 7);
 
 	return nameCheck || priceCheck || typeCheck || newCheck;
@@ -723,9 +725,9 @@ async function addStickerInfo(container: Element, item: Skinport.Listing, select
 	const stickerPrices = await Promise.all(stickers.map(async (s) => await getItemPrice(s.name, extensionSettings['sp-pricingsource'] as MarketSource)));
 
 	const settingRate = Number(extensionSettings['sp-currencyrates']) === 0 ? 'real' : 'skinport';
-	const currencyRate = await getSpUserCurrencyRate(settingRate);
+	const currencyRate = (await getSpUserCurrencyRate(settingRate)) ?? 1;
 
-	const priceSum = convertCurrency(new Decimal(stickerPrices.reduce((a, b) => a + b.starting_at, 0)), currencyRate, settingRate);
+	const priceSum = convertCurrency(new Decimal(stickerPrices.reduce((a, b) => a + (b.starting_at ?? 0), 0)), currencyRate, settingRate);
 	const spPercentage = new Decimal(price_difference).div(priceSum);
 
 	const itemInfoDiv = container.querySelector(selector.info);
@@ -818,7 +820,7 @@ function getSkinportItem(container: Element, selector: ItemSelectors): Skinport.
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
 		const parts = priceText.replace(',', '').replace('.', '').replace('’', '').split(/\s/);
 		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
-		currency = parts.filter((x) => Number.isNaN(+x))[0];
+		currency = parts.find((x) => Number.isNaN(+x)) ?? '';
 	} else {
 		// format: "€1,696.00"
 		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
@@ -926,7 +928,7 @@ export async function getBuffItem(buff_name: string, itemStyle: ItemStyle) {
 
 	//convert prices to user's currency
 	const settingRate = extensionSettings['sp-currencyrates'] === 0 ? 'real' : 'skinport';
-	const currencyRate = await getSpUserCurrencyRate(settingRate);
+	const currencyRate = (await getSpUserCurrencyRate(settingRate)) ?? 1;
 	if (priceListing) {
 		priceListing = convertCurrency(priceListing, currencyRate, settingRate);
 	}

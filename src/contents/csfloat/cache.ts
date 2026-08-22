@@ -88,7 +88,9 @@ export function cacheCSFInventory(data: CSFloat.Item[]) {
 		if (!CSFLOAT_API_DATA.inventory[item.item_name]) {
 			CSFLOAT_API_DATA.inventory[item.item_name] = [];
 		}
-		CSFLOAT_API_DATA.inventory[item.item_name].push(item);
+		const inventoryItems = CSFLOAT_API_DATA.inventory[item.item_name];
+		if (!inventoryItems) continue;
+		inventoryItems.push(item);
 	}
 }
 
@@ -151,7 +153,7 @@ export function getSpecificCSFOffer(index: number) {
 }
 
 export function getSpecificCSFInventoryItem(item_name: string, float?: number) {
-	return CSFLOAT_API_DATA.inventory[item_name].find((item) => !float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float));
+	return CSFLOAT_API_DATA.inventory[item_name]?.find((item) => !float || !item.float_value || new Decimal(item.float_value).toDP(12).equals(float));
 }
 
 async function fetchCSFCurrencyRates() {

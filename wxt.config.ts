@@ -78,7 +78,6 @@ export default defineConfig({
 		author: 'Rums',
 		description: 'Enhance your website experience on 15+ CS2 skin markets!',
 		homepage_url: 'https://betterfloat.com',
-		version: '3.6.6',
 		permissions: ['unlimitedStorage', 'storage', 'scripting', 'activeTab', ...(browser === 'firefox' ? [] : ['omnibox' as const]), 'notifications'],
 		host_permissions: hostPermissions,
 		optional_host_permissions: ['https://*/*', 'http://*/*', '*://*.buff.market/*'],

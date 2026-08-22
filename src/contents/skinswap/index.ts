@@ -32,8 +32,6 @@ async function init() {
 		return;
 	}
 
-	// initSkinswap();
-
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();

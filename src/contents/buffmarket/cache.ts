@@ -32,7 +32,8 @@ export function cacheBuffCurrencyRate(currencyItem: BuffMarket.CurrencyItem) {
 
 export function cacheBuffGoodsInfos(data: { [goods_id: number]: BuffMarket.GoodsInfo }) {
 	for (const key in data) {
-		buffGoodsInfo[key] = data[key];
+		const goodsInfo = data[key];
+		if (goodsInfo) buffGoodsInfo[key] = goodsInfo;
 	}
 }
 

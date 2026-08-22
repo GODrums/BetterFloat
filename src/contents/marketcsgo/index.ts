@@ -140,7 +140,7 @@ async function addBuffPrice(itemName: string, container: Element, state: PageSta
 		const spans = Array.from(footerContainer.querySelectorAll('span'));
 		if (spans.length === 2) {
 			// remove second span
-			spans[1].remove();
+			spans[1]?.remove();
 		}
 		footerContainer.insertAdjacentHTML('beforeend', createSaleTag(difference, itemPrice.div(priceFromReference ?? 1).mul(100), currencyFormatter, isItemPage));
 	}

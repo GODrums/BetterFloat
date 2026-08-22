@@ -64,18 +64,19 @@ async function firstLaunch() {
 
 	const ownItems = document.querySelectorAll(TRADEIT_SELECTORS.firstLaunch.ownItems);
 	for (let i = 1; i < ownItems.length; i++) {
-		await adjustItem(ownItems[i], true);
+		const item = ownItems[i];
+		if (item) await adjustItem(item, true);
 	}
 
 	const botsItems = document.querySelectorAll(TRADEIT_SELECTORS.firstLaunch.botsItems);
-	for (let i = 0; i < botsItems.length; i++) {
-		await adjustItem(botsItems[i], false);
+	for (const item of botsItems) {
+		await adjustItem(item, false);
 	}
 
 	if (location.pathname === '/csgo/sell') {
 		const sellItems = document.querySelectorAll(TRADEIT_SELECTORS.firstLaunch.sellItems);
-		for (let i = 0; i < sellItems.length; i++) {
-			await adjustItem(sellItems[i], true);
+		for (const item of sellItems) {
+			await adjustItem(item, true);
 		}
 	}
 }
@@ -105,8 +106,8 @@ function applyMutation() {
 					await adjustCartItem(addedNode);
 				} else if (addedNode.id === TRADEIT_SELECTORS.inventory.container.substring(1)) {
 					const sellItems = addedNode.querySelectorAll(TRADEIT_SELECTORS.itemContainer);
-					for (let i = 0; i < sellItems.length; i++) {
-						await adjustItem(sellItems[i], true);
+					for (const item of sellItems) {
+						await adjustItem(item, true);
 					}
 				} else if (addedNode.className === 'grid-col' && addedNode.firstElementChild?.className.includes('item-cell')) {
 					const inventoryContainer = Array.from(document.querySelectorAll(TRADEIT_SELECTORS.inventory.container));
@@ -139,8 +140,8 @@ async function adjustCartItem(container: Element) {
 	if (!buffElement) return;
 
 	buffElement.setAttribute('style', 'position: absolute; left: 10px;z-index: 100;text-decoration: none;');
-	buffElement.querySelector('.suggested-price')?.children[0].remove();
-	buffElement.querySelector('.suggested-price')?.children[0].remove();
+	buffElement.querySelector('.suggested-price')?.children[0]?.remove();
+	buffElement.querySelector('.suggested-price')?.children[0]?.remove();
 	content.appendChild(buffElement);
 
 	const priceElement = <HTMLElement>itemDetails.querySelector('.sale-tag')?.cloneNode(true);
@@ -159,7 +160,7 @@ async function adjustItem(container: Element, isOwn = false) {
 			const imgSrc = container.querySelector('img.item-image')?.getAttribute('src') ?? '';
 			if (imgSrc.includes('https://cdn.tradeit.gg/')) {
 				const decodedName = decodeURIComponent(imgSrc).split('/csgo/')[1]?.split('_')[0]?.replaceAll(' - ', ' | ').replace('StatTrak-', 'StatTrak™').replace('CS-GO', 'CS:GO');
-				return getTradeitOwnItemByName(decodedName);
+				return decodedName ? getTradeitOwnItemByName(decodedName) : undefined;
 			} else {
 				return getFirstTradeitOwnItem(imgSrc)?.[0];
 			}
@@ -262,7 +263,7 @@ function getItemPrice(container: Element, item: Tradeit.Item) {
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
 		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
 		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
-		currency = parts.filter((x) => Number.isNaN(+x))[0];
+		currency = parts.find((x) => Number.isNaN(+x)) ?? '';
 	} else {
 		// format: "€1,696.00"
 		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));

@@ -59,8 +59,9 @@ defineBackgroundHandler('createNotification', async (data) => {
 async function onClickNotification(notificationId: string) {
 	// format: betterfloat.site.id
 	if (notificationId.startsWith('betterfloat.')) {
-		const parts = notificationId.split('.');
-		const url = getSiteURL(parts[1]) + parts[2];
+		const [, site, id] = notificationId.split('.');
+		if (!site || !id) return;
+		const url = getSiteURL(site) + id;
 		await chrome.tabs.create({ url });
 	}
 }

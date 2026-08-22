@@ -153,9 +153,9 @@ function getItemQuality(container: Element) {
 	const WEAR_OPTIONS = ['fn', 'mw', 'ft', 'ww', 'bs'];
 	const SPECIAL_OPTIONS = ['st', 'sv'];
 	const [special, quality] = qualityText;
-	if (special && SPECIAL_OPTIONS.includes(special) && WEAR_OPTIONS.includes(quality)) {
+	if (special && quality && SPECIAL_OPTIONS.includes(special) && WEAR_OPTIONS.includes(quality)) {
 		return `${special}-${quality}`;
-	} else if (WEAR_OPTIONS.includes(special)) {
+	} else if (special && WEAR_OPTIONS.includes(special)) {
 		return special;
 	}
 	return undefined;
@@ -258,7 +258,7 @@ async function addPopupListener(container: Element, item: CSMoney.Item) {
  * @param item item object from the API
  */
 function addSimilarButton(container: Element, item: CSMoney.Item) {
-	let parentElement: HTMLElement | null = null;
+	let parentElement: HTMLElement | null | undefined;
 	if (location.pathname.includes('/market/buy/')) {
 		const selector = CSMONEY_SELECTORS.market.popup_similar;
 		const allSelectors = Array.from(container.querySelectorAll(selector));
@@ -381,8 +381,8 @@ function createBuffItem(item: CSMoney.Item): { name: string; style: ItemStyle } 
 	let style: ItemStyle = '';
 	if (name.includes('Doppler')) {
 		const parts = name.split(' Doppler ');
-		const secondParts = parts[1].split(' (');
-		if (secondParts.length > 1) {
+		const secondParts = parts[1]?.split(' (');
+		if (secondParts && secondParts.length > 1) {
 			name = parts[0] + ' Doppler (' + secondParts[1];
 			style = secondParts[0] as ItemStyle;
 		}

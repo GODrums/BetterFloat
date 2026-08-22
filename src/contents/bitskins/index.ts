@@ -91,8 +91,8 @@ function applyMutation() {
 					}
 				} else if (addedNode.className === 'items') {
 					const items = addedNode.querySelectorAll('.item');
-					for (let i = 0; i < items.length; i++) {
-						await adjustItem(items[i], PageState.Market);
+					for (const item of items) {
+						await adjustItem(item, PageState.Market);
 					}
 				} else if (addedNode.classList.contains('featured-item')) {
 					if (addedNode.style.display !== 'none') {
@@ -201,6 +201,7 @@ async function caseHardenedDetection(container: Element, item: Bitskins.Item, st
 	const isPopout = state === PageState.ItemPage;
 
 	const type = getOldBlueGemName(item.name.replace('StatTrak™ ', ''));
+	if (!type) return false;
 	const patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: item.paint_seed });
 
 	if (!patternElement) {
@@ -406,7 +407,8 @@ function createBuffItem(item: Bitskins.Item): { name: string; style: ItemStyle }
 	};
 	if (item.phase_id && item.name.includes('Doppler')) {
 		// Get and remove the phase from name
-		const phase = item.name.split('Doppler')[1].split('(')[0].trim() as DopplerPhase;
+		const phase = item.name.split('Doppler')[1]?.split('(')[0]?.trim() as DopplerPhase | undefined;
+		if (!phase) return buff_item;
 		buff_item.name = item.name.replace(` ${phase}`, '').trim();
 		buff_item.style = phase;
 	}

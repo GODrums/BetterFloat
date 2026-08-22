@@ -28,7 +28,8 @@ function processSkinportEvent(eventData: EventData<unknown>) {
 		cacheSpPopupItem(eventData.data as Skinport.ItemData);
 	} else if (eventData.url.includes('api/home')) {
 		const data = eventData.data as Skinport.HomeData;
-		cacheSpItems([...data.sales[0].items]);
+		const firstSale = data.sales[0];
+		if (firstSale) cacheSpItems([...firstSale.items]);
 	} else if (eventData.url.includes('api/data/')) {
 		const data = eventData.data as Skinport.UserData;
 		localStorage.setItem('userData', JSON.stringify(data));

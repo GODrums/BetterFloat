@@ -70,7 +70,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 	const hostname = new URL(tab.url).hostname;
 	if (hostname !== 'cdn.swap.gg' && isInjectionDomain(hostname)) {
 		// if within last 1 second, don't inject
-		if (!injectedTabs[tabId] || injectedTabs[tabId].hostname !== hostname || Date.now() - injectedTabs[tabId].time > 1000) {
+		const previousInjection = injectedTabs[tabId];
+		if (!previousInjection || previousInjection.hostname !== hostname || Date.now() - previousInjection.time > 1000) {
 			injectedTabs[tabId] = { hostname, time: Date.now() };
 			const delay = hostname === 'bitskins.com' ? 1000 : 0;
 			setTimeout(() => executeInjection(tabId, tab.url!), delay);
@@ -82,7 +83,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 	// Handle URL change messages for specific sites
 	if (urlsToListenFor.some((url) => tab.url!.startsWith(url))) {
-		if (lastSentMessage[tab.url] && Date.now() - lastSentMessage[tab.url] < 200) {
+		const previousMessage = lastSentMessage[tab.url];
+		if (previousMessage !== undefined && Date.now() - previousMessage < 200) {
 			console.debug('[BetterFloat] URL changed to: ', tab.url, ' but not sending message because it was sent less than 200ms ago');
 			return;
 		}

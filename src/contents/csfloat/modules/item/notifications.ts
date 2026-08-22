@@ -27,8 +27,8 @@ export async function liveNotifications(apiItem: CSFloat.ListingData, percentage
 	if (
 		notificationSettings.floatRanges &&
 		notificationSettings.floatRanges.length === 2 &&
-		(notificationSettings.floatRanges[0] > 0 || notificationSettings.floatRanges[1] < 1) &&
-		(!item.float_value || item.float_value < notificationSettings.floatRanges[0] || item.float_value > notificationSettings.floatRanges[1])
+		((notificationSettings.floatRanges[0] ?? 0) > 0 || (notificationSettings.floatRanges[1] ?? 1) < 1) &&
+		(!item.float_value || item.float_value < (notificationSettings.floatRanges[0] ?? 0) || item.float_value > (notificationSettings.floatRanges[1] ?? 1))
 	) {
 		return;
 	}

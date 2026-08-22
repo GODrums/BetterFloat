@@ -104,11 +104,13 @@ export async function adjustOfferBubbles(offers: CSFloat.Offer[]) {
 
 	for (let i = 0; i < bubbles.length; i++) {
 		const bubble = bubbles[i];
+		if (!bubble) continue;
 		if (bubble.querySelector('.betterfloat-bubble-buff')) {
 			continue;
 		}
 
 		const offer = offers[offers.length - 1 - i];
+		if (!offer) continue;
 		const difference = new Decimal(offer.price).div(100).minus(buffData.priceFromReference);
 		const subText = bubble.querySelector<HTMLElement>('.sub-text');
 		if (!subText) {

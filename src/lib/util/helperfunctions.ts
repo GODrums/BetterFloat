@@ -14,11 +14,11 @@ export function getJSONAttribute<T = unknown>(data: string | null | undefined): 
 
 export function getOldBlueGemName(name: string) {
 	if (name.startsWith('★')) {
-		return name.split(' | ')[0].split('★ ')[1];
+		return name.split(' | ')[0]?.split('★ ')[1] ?? name;
 	} else if (name === 'Five-SeveN | Heat Treated') {
 		return 'Five-SeveN Heat Treated';
 	} else {
-		return name.split(' | ')[0];
+		return name.split(' | ')[0] ?? name;
 	}
 }
 
@@ -27,7 +27,7 @@ export function getBlueGemName(name: string): { weapon: string; type: 'ch' | 'ht
 
 	const type = typeRaw === 'Case Hardened' ? 'ch' : 'ht';
 
-	const weapon = weaponRaw.replace('★ ', '').replace('StatTrak™ ', '').replace('-', '').split(' ')[0].toLowerCase();
+	const weapon = (weaponRaw ?? '').replace('★ ', '').replace('StatTrak™ ', '').replace('-', '').split(' ')[0]?.toLowerCase() ?? '';
 	return { weapon, type };
 }
 
@@ -38,7 +38,7 @@ export function parsePrice(priceText: string) {
 		// format: "1 696,00 €" -> Skinport uses &nbsp instead of whitespaces in this format!
 		const parts = priceText.replace(',', '').replace('.', '').split(/\s/);
 		priceText = String(Number(parts.filter((x) => !Number.isNaN(+x)).join('')) / 100);
-		currency = parts.filter((x) => Number.isNaN(+x))[0];
+		currency = parts.find((x) => Number.isNaN(+x)) ?? '';
 	} else {
 		// format: "€1,696.00"
 		const firstDigit = Array.from(priceText).findIndex((x) => !Number.isNaN(Number(x)));
@@ -220,10 +220,7 @@ export function toTruncatedString(num: number, digits: number) {
  */
 export function toTitleCase(str: string) {
 	const splitStr = str.toLowerCase().split(' ');
-	for (let i = 0; i < splitStr.length; i++) {
-		splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
-	}
-	return splitStr.join(' ');
+	return splitStr.map((word) => word.charAt(0).toUpperCase() + word.substring(1)).join(' ');
 }
 
 export function calculateEpochFromDate(date: string) {
@@ -431,8 +428,11 @@ function getGradientColor(pattern: number, stops: Array<[number, string]>): stri
 
 	// Find the two stops to interpolate between
 	for (let i = 0; i < stops.length - 1; i++) {
-		const [pattern1, color1] = stops[i];
-		const [pattern2, color2] = stops[i + 1];
+		const firstStop = stops[i];
+		const secondStop = stops[i + 1];
+		if (!firstStop || !secondStop) continue;
+		const [pattern1, color1] = firstStop;
+		const [pattern2, color2] = secondStop;
 
 		if (clampedPattern >= pattern1 && clampedPattern <= pattern2) {
 			// Calculate interpolation factor
@@ -442,7 +442,7 @@ function getGradientColor(pattern: number, stops: Array<[number, string]>): stri
 	}
 
 	// If pattern is beyond all stops, return the last color
-	return stops[stops.length - 1][1];
+	return stops.at(-1)?.[1] ?? '#ffffff';
 }
 
 /**

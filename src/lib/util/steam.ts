@@ -49,7 +49,9 @@ export async function getSteamLogin(): Promise<SettingsUser['steam'] | null> {
 	let steamUserInfo: Steam.UserInfo;
 	try {
 		// Convert HTML entities and create valid JSON
-		const decodedString = decodeURIComponent(steamUserInfoMatch[1])
+		const encodedUserInfo = steamUserInfoMatch[1];
+		if (!encodedUserInfo) return null;
+		const decodedString = decodeURIComponent(encodedUserInfo)
 			.replace(/&quot;/g, '"')
 			.replace(/&amp;/g, '&');
 		steamUserInfo = JSON.parse(`{${decodedString}}`) as Steam.UserInfo;

@@ -112,7 +112,7 @@ async function adjustItem(container: Element, state: PageState) {
 				return null;
 			}
 			const listing = getWhiteMarketItem(slug);
-			price = listing?.price;
+			price = listing?.price ?? null;
 			return listing?.item;
 		}
 		return null;

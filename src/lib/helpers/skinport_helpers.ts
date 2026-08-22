@@ -20,7 +20,7 @@ export function addPattern(container: Element, item: Skinport.Item) {
 	const santizeText = (text: string) => {
 		let parts = text.split(' ');
 		if (parts.length > 2) {
-			parts = parts.slice(0, parts[0].indexOf('-') > -1 ? 1 : 2);
+			parts = parts.slice(0, (parts[0] ?? '').indexOf('-') > -1 ? 1 : 2);
 		}
 		return parts.join(' ');
 	};
@@ -28,7 +28,7 @@ export function addPattern(container: Element, item: Skinport.Item) {
 	const getPatternStyle = () => {
 		if (item.category === 'Charm') {
 			const badgeProps = getCharmColoring(item.pattern, item.name);
-			return `color: ${badgeProps[0]}; font-weight: 600; font-size: 13px;border-radius: 7px; padding: 2px 5px; margin-top: 4px`;
+			return `color: ${badgeProps[0] ?? 'inherit'}; font-weight: 600; font-size: 13px;border-radius: 7px; padding: 2px 5px; margin-top: 4px`;
 		}
 		return 'color: mediumpurple; font-weight: 600; font-size: 13px;';
 	};
@@ -42,11 +42,13 @@ export async function addTotalInventoryPrice(data: Skinport.InventoryListed | Sk
 	const reference = Number(await getSetting('sp-pricereference'));
 
 	let total = 0;
-	const currency = getSymbolFromCurrency(data.items[0].currency);
+	const firstItem = data.items[0];
+	if (!firstItem) return;
+	const currency = getSymbolFromCurrency(firstItem.currency);
 
 	const getStyle: (itemName: string) => ItemStyle = (itemName) => {
 		if (itemName.includes('Doppler')) {
-			return itemName.split('(')[1].split(')')[0] as ItemStyle;
+			return (itemName.split('(')[1]?.split(')')[0] ?? '') as ItemStyle;
 		}
 		if (itemName.includes('Vanilla')) {
 			return 'Vanilla';

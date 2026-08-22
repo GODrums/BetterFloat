@@ -72,11 +72,12 @@ export async function getSkbUserCurrencyRate() {
 	if (skinbidRates.length === 0) {
 		await fetchSkbExchangeRates();
 	}
+	const eurRate = skinbidRates[0]?.rate ?? 1;
 	if (currency === 'USD') return 1;
-	else if (currency === 'EUR') return 1 / skinbidRates[0].rate;
+	else if (currency === 'EUR') return 1 / eurRate;
 	// origin is USD, first convert to EUR, then to user currency: USD -> EUR -> user currency
 	// example: 1 USD -> 1/USDrate EUR -> 1/USDrate * EURUserCurrency
-	else return (skinbidRates.find((rate) => rate.currencyCode === currency)?.rate ?? 1) / skinbidRates[0].rate;
+	else return (skinbidRates.find((rate) => rate.currencyCode === currency)?.rate ?? 1) / eurRate;
 }
 
 export async function getSkbUserConversion() {
@@ -96,7 +97,7 @@ async function fetchSkbExchangeRates() {
 		skinbidRates = JSON.parse(localRates) as Skinbid.ExchangeRates;
 		// only fetch if rates are older than 1 day
 		const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
-		const ratesDate = new Date(skinbidRates[0].updated);
+		const ratesDate = new Date(skinbidRates[0]?.updated ?? 0);
 		if (ratesDate > oneDayAgo) {
 			return;
 		}
