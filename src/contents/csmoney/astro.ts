@@ -4,6 +4,18 @@ type CSMoneyAstroPageParams = {
 	inventory?: {
 		items?: CSMoney.MarketItem[];
 	};
+	botsInventory?: {
+		items?: CSMoney.InventoryItem[];
+	};
+	userInventory?: {
+		items?: CSMoney.InventoryItem[];
+	};
+};
+
+export type CSMoneyAstroItems = {
+	market: CSMoney.MarketItem[];
+	bots: CSMoney.InventoryItem[];
+	user: CSMoney.InventoryItem[];
 };
 
 /**
@@ -11,14 +23,19 @@ type CSMoneyAstroPageParams = {
  * payload. Those items never pass through fetch or XMLHttpRequest in the
  * browser, so the content script needs to hydrate its cache from the payload.
  */
-export function parseCSMoneyAstroItems(serializedPageParams: string | null | undefined): CSMoney.MarketItem[] {
-	if (!serializedPageParams) return [];
+export function parseCSMoneyAstroItems(serializedPageParams: string | null | undefined): CSMoneyAstroItems {
+	const emptyItems = { market: [], bots: [], user: [] };
+	if (!serializedPageParams) return emptyItems;
 
 	try {
 		const pageParams = JSON.parse(serializedPageParams) as CSMoneyAstroPageParams;
-		return Array.isArray(pageParams.inventory?.items) ? pageParams.inventory.items : [];
+		return {
+			market: Array.isArray(pageParams.inventory?.items) ? pageParams.inventory.items : [],
+			bots: Array.isArray(pageParams.botsInventory?.items) ? pageParams.botsInventory.items : [],
+			user: Array.isArray(pageParams.userInventory?.items) ? pageParams.userInventory.items : [],
+		};
 	} catch (error) {
 		console.debug('[BetterFloat] Failed to parse CS.MONEY Astro page params:', error);
-		return [];
+		return emptyItems;
 	}
 }

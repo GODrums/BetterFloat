@@ -25,7 +25,7 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 		return;
 	}
 	data.forEach((item) => {
-		csmoneyItemMapping[item.id] = item;
+		cacheCSMoneyItemMapping(item);
 		if (isCSMoneyInventoryItem(item)) {
 			let qualityKey = item.quality || '0';
 			if (!csmoneyItemImgMapping[item.img]) {
@@ -44,7 +44,16 @@ export function cacheCSMoneyItems(data: CSMoney.Item[]) {
 	csmoneyItems.push(...data);
 }
 
+function cacheCSMoneyItemMapping(item: CSMoney.Item) {
+	csmoneyItemMapping[item.id] = item;
+}
+
+export function cacheCSMoneyItemMappings(items: CSMoney.Item[]) {
+	items.forEach(cacheCSMoneyItemMapping);
+}
+
 export function cacheCSMoneyUserInventory(data: CSMoney.InventoryItem[]) {
+	cacheCSMoneyItemMappings(data);
 	if (csmoneyUserInventory.length > 0) {
 		csmoneyUserInventory.push(...data);
 	} else {
@@ -53,6 +62,7 @@ export function cacheCSMoneyUserInventory(data: CSMoney.InventoryItem[]) {
 }
 
 export function cacheCSMoneyBotInventory(data: CSMoney.InventoryItem[]) {
+	cacheCSMoneyItemMappings(data);
 	if (csmoneyBotInventory.length > 0) {
 		csmoneyBotInventory.push(...data);
 	} else {

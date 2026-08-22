@@ -6,16 +6,28 @@ import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cac
 
 const processedAstroPageParams = new WeakSet<HTMLScriptElement>();
 
+export type CSMoneyServerData = {
+	hasMarketItems: boolean;
+	hasTradeItems: boolean;
+};
+
+const noServerData: CSMoneyServerData = { hasMarketItems: false, hasTradeItems: false };
+
 export function cacheCSMoneyAstroPageParams() {
 	const pageParams = document.querySelector<HTMLScriptElement>('script#__page-params');
-	if (!pageParams || processedAstroPageParams.has(pageParams)) return false;
+	if (!pageParams || processedAstroPageParams.has(pageParams)) return noServerData;
 
 	const items = parseCSMoneyAstroItems(pageParams.textContent);
-	if (items.length === 0) return false;
-
 	processedAstroPageParams.add(pageParams);
-	cacheCSMoneyItems(items);
-	return true;
+
+	cacheCSMoneyItems(items.market);
+	cacheCSMoneyBotInventory(items.bots);
+	cacheCSMoneyUserInventory(items.user);
+
+	return {
+		hasMarketItems: items.market.length > 0,
+		hasTradeItems: items.bots.length > 0 || items.user.length > 0,
+	};
 }
 
 function processCSMoneyEvent(eventData: EventData<unknown>) {
@@ -48,8 +60,9 @@ export function activateCSMoneyEventHandler() {
 
 	// Astro server-renders the initial inventory instead of requesting it from
 	// the browser. Cache it immediately and again after Astro page transitions.
-	const hasAstroPageParams = cacheCSMoneyAstroPageParams();
+	const serverData = cacheCSMoneyAstroPageParams();
 	document.addEventListener('astro:page-load', cacheCSMoneyAstroPageParams);
 	document.addEventListener('astro:after-swap', cacheCSMoneyAstroPageParams);
-	return hasAstroPageParams;
+
+	return serverData;
 }
