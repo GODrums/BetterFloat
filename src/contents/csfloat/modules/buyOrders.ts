@@ -62,7 +62,7 @@ export async function adjustUserBuyOrderRow(buyOrder: Element) {
 	});
 
 	expressionColumn.insertAdjacentHTML('beforeend', buffContainer);
-	expressionColumn.setAttribute('style', 'height: 52px; display: flex; align-items: center; gap: 8px;');
+	expressionColumn.setAttribute('style', 'min-height: 52px; display: flex; align-items: center; gap: 8px;');
 
 	const buffAnchor = expressionColumn.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 	if (buffAnchor) {
