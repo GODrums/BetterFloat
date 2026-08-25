@@ -2,7 +2,7 @@ import type { CSMoney } from '~lib/@typings/CsmoneyTypes';
 import type { EventData } from '~lib/@typings/FloatTypes';
 import { activateSiteEventHandler } from '~lib/shared/events';
 import { parseCSMoneyAstroItems } from './astro';
-import { cacheCSMoneyBotInventory, cacheCSMoneyItems, cacheCSMoneyPopupItem, cacheCSMoneyUserInventory } from './cache';
+import { cacheCSMoneyItems, cacheCSMoneyPopupItem } from './cache';
 
 const processedAstroPageParams = new WeakSet<HTMLScriptElement>();
 
@@ -21,8 +21,8 @@ export function cacheCSMoneyAstroPageParams() {
 	processedAstroPageParams.add(pageParams);
 
 	cacheCSMoneyItems(items.market);
-	cacheCSMoneyBotInventory(items.bots);
-	cacheCSMoneyUserInventory(items.user);
+	cacheCSMoneyItems(items.bots);
+	cacheCSMoneyItems(items.user);
 
 	return {
 		hasMarketItems: items.market.length > 0,
@@ -49,9 +49,9 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 			cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
 		}
 	} else if (eventData.url.includes('/load_user_inventory/730')) {
-		cacheCSMoneyUserInventory((eventData.data as CSMoney.UserInventoryResponse).items);
+		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
 	} else if (eventData.url.includes('/load_bots_inventory/730')) {
-		cacheCSMoneyBotInventory((eventData.data as CSMoney.UserInventoryResponse).items);
+		cacheCSMoneyItems((eventData.data as CSMoney.UserInventoryResponse).items);
 	}
 }
 

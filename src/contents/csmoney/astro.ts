@@ -29,6 +29,7 @@ export function parseCSMoneyAstroItems(serializedPageParams: string | null | und
 
 	try {
 		const pageParams = JSON.parse(serializedPageParams) as CSMoneyAstroPageParams;
+		console.log('[BetterFloat] Parsed CS.MONEY Astro page params:', pageParams);
 		return {
 			market: Array.isArray(pageParams.inventory?.items) ? pageParams.inventory.items : [],
 			bots: Array.isArray(pageParams.botsInventory?.items) ? pageParams.botsInventory.items : [],

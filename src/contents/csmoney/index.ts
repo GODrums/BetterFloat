@@ -13,7 +13,7 @@ import { CurrencyFormatter, getBuffPrice, handleSpecialStickerNames, isUserPro, 
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getCSMoneyItemByImg, getCSMoneyPopupItem, getFirstCSMoneyBotInventoryItem, getFirstCSMoneyItem, getFirstCSMoneyUserInventoryItem, getSpecificCSMoneyItem } from './cache';
+import { getCSMoneyItem, getCSMoneyPopupItem } from './cache';
 import { activateCSMoneyEventHandler as activateHandler, type CSMoneyServerData } from './events';
 import { activateCSMoneyUrlHandler as dynamicUIHandler } from './url';
 
@@ -26,6 +26,8 @@ export const config: PlasmoCSConfig = {
 export type PriceResult = {
 	price_difference: Decimal;
 };
+
+const ITEM_SELECTOR = '[data-card-item-id]';
 
 async function init() {
 	console.time('[BetterFloat] CSMoney init timer');
@@ -65,44 +67,11 @@ async function firstLaunch(serverData: CSMoneyServerData) {
 
 	// these reloads are required to get the API data,
 	// as the injected script is too slow for the initial load
-	if (location.pathname.includes('/market/buy/')) {
-		// Astro embeds the initial inventory in #__page-params, and its cards
-		// already exist before our MutationObserver starts.
-		if (serverData.hasMarketItems) {
-			await Promise.all(Array.from(document.querySelectorAll<HTMLElement>('[data-card-item-id]')).map((item) => adjustItem(item)));
-			return;
-		}
-
-		// reload market page
-		let reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
-		if (reloadButton) {
-			console.log('[BetterFloat] Reloading market page...');
-			reloadButton.click();
-		} else {
-			console.log('[BetterFloat] Waiting for market page to reload...');
-			await waitForElement(CSMONEY_SELECTORS.market.reloadButton);
-			reloadButton = document.querySelector<HTMLElement>(CSMONEY_SELECTORS.market.reloadButton);
-			if (reloadButton) {
-				reloadButton.click();
-			}
-		}
-	} else if (location.pathname.includes('/market/instant-sell/') || location.pathname.includes('/market/sell/')) {
-		// reload instant sell page
-		const detectItems = async () => {
-			const items = document.querySelectorAll<HTMLElement>('div[class*="UserSkin_user_skin__"]');
-			if (items.length === 0) return false;
-
-			for (const item of items) {
-				await adjustItem(item);
-			}
-			return true;
-		};
-		while (!(await detectItems())) {
-			await new Promise((resolve) => setTimeout(resolve, 500));
-		}
+	if (location.pathname.includes('/market/buy/') || location.pathname.includes('sell/')) {
+		await Promise.all(Array.from(document.querySelectorAll<HTMLElement>(ITEM_SELECTOR)).map((item) => adjustItem(item)));
 	} else if (location.pathname.includes('/csgo/trade/')) {
 		if (serverData.hasTradeItems) {
-			const items = document.querySelectorAll<HTMLElement>(CSMONEY_SELECTORS.trade.itemCard);
+			const items = document.querySelectorAll<HTMLElement>(ITEM_SELECTOR);
 			await Promise.all(Array.from(items).map((item) => adjustItem(item)));
 			return;
 		} else {
@@ -125,20 +94,15 @@ function applyMutation() {
 		for (const mutation of mutations) {
 			for (let i = 0; i < mutation.addedNodes.length; i++) {
 				const addedNode = mutation.addedNodes[i];
-				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
+
 				// console.debug('[|BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
-				const itemSelector = location.pathname.includes('/csgo/trade/') ? CSMONEY_SELECTORS.trade.itemCard : '[data-card-item-id]';
-				const items = addedNode.matches(itemSelector) ? [addedNode] : Array.from(addedNode.querySelectorAll(itemSelector));
+				const items = addedNode.matches(ITEM_SELECTOR) ? [addedNode] : Array.from(addedNode.querySelectorAll(ITEM_SELECTOR));
 				if (items.length > 0) {
-					// Astro/React may add either individual cards or an inventory wrapper.
 					for (const item of items) {
 						await adjustItem(item);
 					}
-				} else if (addedNode.tagName === 'DIV' && addedNode.className.startsWith('UserSkin_user_skin__')) {
-					// item in insta sell page
-					await adjustItem(addedNode);
 				}
 			}
 		}
@@ -146,51 +110,13 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getItemQuality(container: Element) {
-	const qualityText = container.querySelector(CSMONEY_SELECTORS.sell.itemQuality)?.textContent?.toLowerCase().split(' / ');
-	if (!qualityText) return undefined;
-
-	const WEAR_OPTIONS = ['fn', 'mw', 'ft', 'ww', 'bs'];
-	const SPECIAL_OPTIONS = ['st', 'sv'];
-	const [special, quality] = qualityText;
-	if (special && quality && SPECIAL_OPTIONS.includes(special) && WEAR_OPTIONS.includes(quality)) {
-		return `${special}-${quality}`;
-	} else if (special && WEAR_OPTIONS.includes(special)) {
-		return special;
-	}
-	return undefined;
-}
-
 async function adjustItem(container: Element, isPopout = false, eventDataItem: CSMoney.Item | null = null) {
-	const itemId = container?.getAttribute('data-card-item-id');
-	const tradeItemId = getTradeItemId(container);
+	const itemId = container.getAttribute('data-card-item-id');
 	const getApiItem = () => {
 		if (isPopout) {
 			return getCSMoneyPopupItem() ?? eventDataItem;
 		}
-		if (location.pathname.includes('/csgo/trade/')) {
-			if (tradeItemId) {
-				// A known card ID must wait for its mapped item instead of consuming
-				// an unrelated entry from the legacy response-order queue.
-				return getSpecificCSMoneyItem(tradeItemId);
-			}
-			const isUserItem = !container.closest(CSMONEY_SELECTORS.trade.botInventory);
-			return isUserItem ? getFirstCSMoneyUserInventoryItem() : getFirstCSMoneyBotInventoryItem();
-		} else {
-			if (itemId) {
-				const item = getSpecificCSMoneyItem(Number(itemId));
-				if (item) return item;
-			}
-			const itemImg = container.querySelector<HTMLImageElement>(CSMONEY_SELECTORS.sell.itemImg)?.src?.split('/plain/')[1];
-			if (itemImg) {
-				return getCSMoneyItemByImg(itemImg, getItemQuality(container));
-			}
-			let newItem = getFirstCSMoneyItem();
-			if (!newItem) {
-				newItem = getSpecificCSMoneyItem(itemId ? Number(itemId) : 0);
-			}
-			return newItem;
-		}
+		return itemId ? getCSMoneyItem(Number(itemId)) : undefined;
 	};
 	let apiItem = getApiItem();
 	let tries = 10;
@@ -198,43 +124,16 @@ async function adjustItem(container: Element, isPopout = false, eventDataItem: C
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		apiItem = getApiItem();
 	}
-
 	if (!apiItem) {
-		console.error('[BetterFloat] No item found, skipping...');
+		console.error('[BetterFloat] No item found for card, skipping...', itemId);
 		return;
 	}
 
-	// make sure item id matches with queue, otherwise bring the queue up to date
-	if (!tradeItemId && itemId && apiItem && apiItem.id !== Number(itemId)) {
-		console.debug('[BetterFloat] Item ID mismatch, bringing queue up to date...');
-		let altItem = getFirstCSMoneyItem();
-		while (altItem && altItem?.id !== Number(itemId)) {
-			altItem = getFirstCSMoneyItem();
-		}
-		if (altItem) {
-			console.debug('[BetterFloat] Item found in queue:', altItem);
-			apiItem = altItem;
-		} else {
-			console.error('[BetterFloat] Item not found in queue:', itemId);
-		}
-	}
-	if (!apiItem) {
-		console.error('[BetterFloat] No item found, skipping...');
-		return;
-	}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const _priceResult = await addBuffPrice(apiItem, container, isPopout);
+	await addBuffPrice(apiItem, container, isPopout);
 
 	if (!isPopout) {
 		await addPopupListener(container, apiItem);
 	}
-}
-
-function getTradeItemId(container: Element) {
-	if (!location.pathname.includes('/csgo/trade/')) return undefined;
-
-	const itemId = container.getAttribute('data-card-item-id') ?? container.getAttribute('data-card-id');
-	return itemId ? Number(itemId) : undefined;
 }
 
 async function addPopupListener(container: Element, item: CSMoney.Item) {
@@ -424,19 +323,15 @@ function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
 	return CSMONEY_SELECTORS.market;
 }
 
-async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<PriceResult> {
+async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = false): Promise<void> {
 	const selector = getSelectors(isPopout);
 
 	const { buff_name, itemStyle, market_id, itemPrice, priceListing, priceOrder, priceFromReference, difference, source, currency } = await getBuffItem(container, item);
 
-	const footer =
-		container.querySelector<HTMLElement>(selector.footer) ??
-		(!isPopout && location.pathname.includes('/market/buy/') ? container.querySelector<HTMLElement>('div[class*="Price-module_container__"]') : null);
-	const footerContainer = footer?.parentElement;
-
 	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const Formatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
+	const footerContainer = container.querySelector<HTMLElement>(selector.footer);
 	if (footerContainer && !container.querySelector('.betterfloat-buffprice')) {
 		const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
 		const buffContainer = generatePriceLine({
@@ -459,13 +354,8 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		if (isPopout) {
 			footerContainer.insertAdjacentHTML('beforebegin', buffContainer);
-		} else if (location.pathname.includes('/csgo/trade/')) {
-			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		} else {
-			footerContainer.insertAdjacentHTML('afterend', buffContainer);
-			if (container.firstElementChild instanceof HTMLElement) {
-				container.firstElementChild.style.setProperty('overflow', 'visible');
-			}
+			footerContainer.insertAdjacentHTML('beforeend', buffContainer);
 		}
 
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
@@ -530,10 +420,6 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 
 		priceContainer?.insertAdjacentHTML('beforeend', buffPriceHTML);
 	}
-
-	return {
-		price_difference: difference,
-	};
 }
 
 // mutation observer active?
