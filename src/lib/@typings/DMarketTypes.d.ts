@@ -29,6 +29,10 @@ export namespace DMarket {
 		totalSize: number;
 	}
 
+	export interface ExchangeSelectionV2 {
+		items: Asset[];
+	}
+
 	export interface ExchangeRates {
 		Rates: {
 			[currency: string]: number;
@@ -150,6 +154,7 @@ export namespace DMarket {
 			category: string;
 			quality: string;
 			floatValue: string;
+			phase?: string;
 			paintSeed: number;
 		};
 		isNew: boolean;

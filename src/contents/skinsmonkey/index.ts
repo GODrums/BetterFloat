@@ -35,7 +35,9 @@ async function init() {
 
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
-	activateHandler();
+	activateHandler(() => {
+		if (isObserverActive) void adjustVisibleItems();
+	});
 
 	extensionSettings = await getAllSettings();
 
@@ -63,8 +65,12 @@ async function init() {
 
 async function firstLaunch() {
 	await new Promise((resolve) => setTimeout(resolve, 1000));
+	await adjustVisibleItems();
+}
 
-	const items = document.querySelectorAll(`.${SKINSMONKEY_SELECTORS.item.card}`);
+async function adjustVisibleItems() {
+	const items = document.querySelectorAll(SKINSMONKEY_SELECTORS.item.cardSelector);
+	console.log('[BetterFloat] Skinsmonkey first launch items:', items);
 	for (const item of items) {
 		const isUser = item.closest(SKINSMONKEY_SELECTORS.item.tradeInventory)?.getAttribute(SKINSMONKEY_SELECTORS.attributes.dataInventory) === SKINSMONKEY_SELECTORS.attributes.userInventory;
 		await adjustItem(item, isUser);

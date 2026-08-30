@@ -13,7 +13,7 @@ export function isDMarketAsset(listing: DMarket.CachedListing): listing is DMark
 }
 
 export function getDMarketPhase(listing: DMarket.CachedListing): string | undefined {
-	if (isDMarketOfferV2(listing)) return;
+	if (isDMarketOfferV2(listing)) return listing.cs2.phase;
 	return isDMarketAsset(listing) ? listing.cs2.phase : listing.extra.phase;
 }
 
@@ -60,8 +60,8 @@ export function getDMarketCurrency() {
 
 export function cacheDMarketItems(data: DMarket.CachedListing[]) {
 	data?.forEach((item) => {
-		const listingIds = getDMarketListingIds(item);
-		if (!dmarketItems.some((cachedItem) => getDMarketListingIds(cachedItem).some((id) => listingIds.includes(id)))) {
+		const listingIds = getDMarketListingIds(item).map((id) => id.toLowerCase());
+		if (!dmarketItems.some((cachedItem) => getDMarketListingIds(cachedItem).some((id) => listingIds.includes(id.toLowerCase())))) {
 			dmarketItems.push(item);
 		}
 	});
@@ -72,7 +72,8 @@ export function cacheDMarketExchangeRates(data: { [key: string]: number }) {
 }
 
 export function getSpecificDMarketItem(id: string) {
-	return dmarketItems.find((item) => getDMarketListingIds(item).includes(id));
+	const normalizedId = id.toLowerCase();
+	return dmarketItems.find((item) => getDMarketListingIds(item).some((listingId) => listingId.toLowerCase() === normalizedId));
 }
 
 export function getDMarketExchangeRate(currency: string) {

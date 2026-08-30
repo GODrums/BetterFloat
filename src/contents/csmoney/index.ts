@@ -218,7 +218,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 		priceOrder = priceOrder.mul(currencyRate);
 	}
 
-	let { itemPrice, converted } = getHTMLPrice(container, item);
+	let { itemPrice, converted } = getItemPrice(container, item);
 	if (!converted && currencyRate) {
 		itemPrice = itemPrice.mul(currencyRate);
 	}
@@ -246,7 +246,7 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 	};
 }
 
-function getHTMLPrice(container: Element, item: CSMoney.Item): { itemPrice: Decimal; converted: boolean } {
+function getItemPrice(container: Element, item: CSMoney.Item): { itemPrice: Decimal; converted: boolean } {
 	if ((item as CSMoney.MarketItem)?.pricing?.computed) {
 		return { itemPrice: new Decimal((item as CSMoney.MarketItem).pricing.computed), converted: true };
 	}

@@ -2,12 +2,15 @@ import { useStorage } from '@plasmohq/storage/hook';
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
 import type { SVGProps } from 'react';
+import { DMARKET_SELECTORS } from '~lib/handlers/selectors/dmarket_selectors';
 import type { SettingsUser } from '~lib/util/storage';
 import { cn } from '~lib/utils';
 import { MaterialSymbolsAvgTimeOutlineRounded } from '~popup/components/Icons';
 import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { Switch } from '~popup/ui/switch';
+
+const REFRESH_SELECTOR = `${DMARKET_SELECTORS.market.refreshButton}, ${DMARKET_SELECTORS.modern.market.refreshButton}`;
 
 function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (
@@ -28,7 +31,7 @@ const ActivityBadge = ({ active }: { active: boolean }) => {
 	);
 };
 
-const DmAutorefresh: React.FC = () => {
+const DmAutorefresh: React.FC<{ modern?: boolean }> = ({ modern = false }) => {
 	const [open, setOpen] = useState(false);
 	// auto-refresh
 	const [isActive, setIsActive] = useState(false);
@@ -36,8 +39,6 @@ const DmAutorefresh: React.FC = () => {
 	const [interval, setIntervalValue] = useState<NodeJS.Timeout | null>(null);
 
 	const [user] = useStorage<SettingsUser>('user');
-
-	const refreshButton = document.querySelector<HTMLButtonElement>('button.o-filter--refresh');
 
 	const ref = useRef(null);
 
@@ -65,11 +66,7 @@ const DmAutorefresh: React.FC = () => {
 		setIsActive(value);
 		if (value) {
 			const newInterval = setInterval(() => {
-				if (!refreshButton && interval) {
-					clearInterval(interval);
-					setIntervalValue(null);
-					return;
-				}
+				const refreshButton = document.querySelector<HTMLButtonElement>(REFRESH_SELECTOR);
 				refreshButton?.click();
 			}, getInterval());
 			setIntervalValue(newInterval);
@@ -84,6 +81,17 @@ const DmAutorefresh: React.FC = () => {
 		setOpen(false);
 	};
 
+	const themeStyle = {
+		fontFamily: 'Montserrat, Arial, sans-serif',
+		'--dm-autorefresh-button': modern ? '#2a2a2a' : '#2a2c2e',
+		'--dm-autorefresh-button-hover': modern ? '#353535' : '#222324',
+		'--dm-autorefresh-surface': modern ? '#1e1e1e' : '#2a2c2e',
+		'--dm-autorefresh-border': modern ? '#343434' : '#c1ceff12',
+		'--dm-autorefresh-primary': modern ? '#e5e5e5' : '#ffffff',
+		'--dm-autorefresh-subtext': modern ? '#848484' : '#9ea7b1',
+		'--dm-autorefresh-option': modern ? '#2a2a2a' : '#272829',
+	} as React.CSSProperties;
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if ((event?.target as HTMLElement)?.tagName !== 'BETTERFLOAT-DM-AUTOREFRESH') {
@@ -97,16 +105,23 @@ const DmAutorefresh: React.FC = () => {
 	});
 
 	return (
-		<div className="bg-transparent" style={{ fontFamily: 'Montserrat, Arial, sans-serif' }}>
-			<Button variant="light" className="h-12 flex items-center gap-2 bg-[#2a2c2e] hover:bg-[#222324] rounded-[2px]" onClick={toggleOpen}>
-				<MaterialSymbolsUpdate className="h-6 w-6 text-white" />
+		<div className="bg-transparent" style={themeStyle}>
+			<Button
+				variant="light"
+				className={cn(
+					'h-12 flex items-center gap-2 bg-(--dm-autorefresh-button) hover:bg-(--dm-autorefresh-button-hover) text-(--dm-autorefresh-primary)',
+					modern ? 'rounded-md border border-(--dm-autorefresh-border)' : 'rounded-[2px]'
+				)}
+				onClick={toggleOpen}
+			>
+				<MaterialSymbolsUpdate className="h-6 w-6 text-(--dm-autorefresh-primary)" />
 				<ActivityBadge active={isActive} />
 			</Button>
 			<AnimatePresence>
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className="fixed z-99 bg-[#2a2c2e] flex flex-col items-center gap-2 p-6 shadow-2xl"
+							className={cn('fixed z-99 bg-(--dm-autorefresh-surface) flex flex-col items-center gap-2 p-6 shadow-2xl', modern && 'border border-(--dm-autorefresh-border)')}
 							style={{ translate: '-55px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
@@ -114,19 +129,24 @@ const DmAutorefresh: React.FC = () => {
 							transition={{ duration: 0.3, ease: 'easeOut' }}
 						>
 							<div className="flex items-center gap-2">
-								<span className="text-white font-semibold">Auto-Refresh</span>
+								<span className="text-(--dm-autorefresh-primary) font-semibold">Auto-Refresh</span>
 								<ActivityBadge active={isActive} />
 							</div>
 							<div className="flex items-center gap-2 mt-2">
 								<Switch checked={isActive} onCheckedChange={setActive} />
-								<MaterialSymbolsAvgTimeOutlineRounded className="ml-2 h-6 w-6 text-white" />
+								<MaterialSymbolsAvgTimeOutlineRounded className="ml-2 h-6 w-6 text-(--dm-autorefresh-primary)" />
 								<select
-									className="appearance-none bg-transparent text-[#9EA7B1] border border-[#c1ceff12] rounded-lg py-1 px-2 cursor-pointer"
+									className="appearance-none bg-(--dm-autorefresh-button) text-(--dm-autorefresh-subtext) border border-(--dm-autorefresh-border) rounded-lg py-1 px-2 cursor-pointer"
 									value={rInterval}
 									onChange={(e) => setRInterval(e.target.value)}
 								>
 									{intervalOptions.map((option, index) => (
-										<option key={index} value={index.toString()} className="bg-[#272829] text-white/80" disabled={index === 0 && user?.plan.type !== 'pro'}>
+										<option
+											key={index}
+											value={index.toString()}
+											className="bg-(--dm-autorefresh-option) text-(--dm-autorefresh-primary)"
+											disabled={index === 0 && user?.plan.type !== 'pro'}
+										>
 											{option}
 										</option>
 									))}

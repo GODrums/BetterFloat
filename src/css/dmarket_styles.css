@@ -50,3 +50,87 @@ html {
 [class*="hint--"][aria-label]:after {
 	display: none;
 }
+
+.betterfloat-aphrodite-target,
+.betterfloat-pattern-target {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.betterfloat-aphrodite-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	cursor: help;
+	transition: transform 0.15s ease-in-out;
+}
+
+.betterfloat-aphrodite-badge:hover {
+	transform: scale(1.35);
+}
+
+.betterfloat-aphrodite-badge svg {
+	display: block;
+}
+
+.dm-new dm-exchange-market-asset-item .betterfloat-buff-a,
+.dm-new dm-exchange-user-inventory-asset-item .betterfloat-buff-a {
+	height: 22px;
+	line-height: 22px;
+}
+
+.dm-new dm-exchange-market-asset-item .betterfloat-buffprice,
+.dm-new dm-exchange-user-inventory-asset-item .betterfloat-buffprice {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 22px;
+}
+
+.dm-new dm-exchange-market-asset-item .betterfloat-sale-tag,
+.dm-new dm-exchange-user-inventory-asset-item .betterfloat-sale-tag {
+	height: 20px;
+	margin-top: 0;
+	line-height: 20px;
+}
+
+.dm-new #exchange-product-card-dialog betterfloat-dm-market-comparison {
+	display: block;
+	width: 100%;
+	margin-top: 16px;
+}
+
+.dm-new #exchange-product-card-dialog .betterfloat-big-a {
+	width: fit-content;
+	margin: -16px 0 0;
+}
+
+.dm-new #exchange-product-card-dialog .betterfloat-big-price {
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 24px;
+}
+
+.dm-new #exchange-product-card-dialog .betterfloat-modern-sale-cell {
+	vertical-align: middle;
+}
+
+.dm-new #exchange-product-card-dialog .betterfloat-modern-sale-cell .betterfloat-sale-tag {
+	display: inline-flex;
+	align-items: center;
+	margin: 0 0 0 8px;
+	vertical-align: middle;
+}
+
+.dm-new .betterfloat-refresh-controls {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.dm-new .betterfloat-refresh-controls > betterfloat-dm-autorefresh {
+	display: inline-flex;
+	flex: 0 0 auto;
+}
