@@ -248,11 +248,11 @@ export async function getBuffItem(container: Element, item: CSMoney.Item) {
 
 function getItemPrice(container: Element, item: CSMoney.Item): { itemPrice: Decimal; converted: boolean } {
 	if ((item as CSMoney.MarketItem)?.pricing?.computed) {
-		return { itemPrice: new Decimal((item as CSMoney.MarketItem).pricing.computed), converted: true };
+		return { itemPrice: new Decimal((item as CSMoney.MarketItem).pricing.computed), converted: false };
 	}
 
 	if ((item as CSMoney.InventoryItem)?.buyOrder?.maxPrice) {
-		return { itemPrice: new Decimal((item as CSMoney.InventoryItem).buyOrder?.maxPrice ?? 0), converted: true };
+		return { itemPrice: new Decimal((item as CSMoney.InventoryItem).buyOrder?.maxPrice ?? 0), converted: false };
 	}
 
 	const cardPrice = container.getAttribute('data-card-price');
