@@ -31,6 +31,8 @@ html {
 }
 
 .betterfloat-sale-tag {
+	display: inline-flex;
+	align-items: center;
 	padding: 1px 5px !important;
 	border-radius: 4px !important;
 	gap: 4px;
@@ -38,7 +40,80 @@ html {
 }
 
 .betterfloat-similar-tag {
-	padding: 5px !important;
+	flex-wrap: wrap;
+	padding: 2px 4px !important;
 	border-radius: 4px !important;
-	gap: 4px;
+	gap: 0 4px;
+	font-size: 11px;
+	line-height: 15px;
+}
+
+.betterfloat-item-page-price-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 6px 12px !important;
+}
+
+.betterfloat-item-page-reference {
+	display: flex;
+	align-items: center;
+	margin-top: 8px;
+}
+
+.sale-order-row .price-col {
+	min-width: 0;
+}
+
+.sale-order-row .betterfloat-similar-tag {
+	margin-left: 4px;
+}
+
+.sale-rows-list > article .betterfloat-similar-tag {
+	max-width: 120px;
+}
+
+.item-card .betterfloat-price-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 2px 6px;
+	min-width: 0;
+	margin-top: 4px;
+}
+
+.item-card .betterfloat-buff-a,
+.item-card .betterfloat-buffprice {
+	min-width: 0;
+	white-space: nowrap;
+}
+
+.item-card .betterfloat-buffprice {
+	display: inline-flex;
+	margin-left: 0;
+}
+
+.item-card .betterfloat-listing-price-group {
+	width: 100%;
+	min-width: 0;
+	gap: 6px;
+}
+
+.item-card .betterfloat-listing-price-group > .font-medium.whitespace-nowrap {
+	flex: 0 0 auto;
+}
+
+.item-card .betterfloat-listing-price-group > .betterfloat-sale-tag {
+	flex-wrap: wrap;
+	min-width: 0;
+	padding: 2px 4px !important;
+	gap: 0 4px;
+	font-size: 11px;
+	line-height: 15px;
+	margin-top: 2px;
+}
+
+.item-card .betterfloat-listing-price-group > .betterfloat-sale-tag > span {
+	white-space: nowrap;
 }

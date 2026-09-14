@@ -1,4 +1,6 @@
 export namespace Waxpeer {
+	export type Listing = Pick<Item, 'item_id' | 'name' | 'price'> & { phase?: string };
+
 	// https://waxpeer.com/api/data/index/
 	export type MarketData = {
 		items: Item[];
