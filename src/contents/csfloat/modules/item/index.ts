@@ -137,7 +137,9 @@ export async function adjustItem(container: Element, insertType = INSERT_TYPE.NO
 		}
 
 		if (extensionSettings['csf-stickerprices']) {
-			await addStickerInfo(container, apiItem, priceResult.price_difference);
+			try {
+				await addStickerInfo(container, apiItem, priceResult.price_difference);
+			} catch (_) {}
 		} else {
 			adjustExistingSP(container);
 		}

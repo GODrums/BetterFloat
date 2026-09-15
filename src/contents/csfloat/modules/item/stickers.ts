@@ -11,7 +11,7 @@ import { adjustExistingSP } from './metadata';
 import { getCurrencyRate } from './pricing';
 
 export async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
-	if (!apiItem.item?.stickers && !apiItem.item?.keychains) return;
+	if (!apiItem.item?.stickers) return;
 
 	if (apiItem.item.quality === 12) {
 		adjustExistingSP(container);
@@ -19,26 +19,16 @@ export async function addStickerInfo(container: Element, apiItem: CSFloat.Listin
 		return;
 	}
 
-	if (apiItem.item.stickers) {
-		let csfSP = container.querySelector('.sticker-percentage');
-		if (!csfSP) {
-			const newContainer = html`
-				<div class="mat-mdc-tooltip-trigger sticker-percentage" style="padding: 5px; background-color: #0003; border-radius: 5px; width: -moz-fit-content; width: fit-content; font-size: 12px; margin-left: 8px; margin-bottom: 4px;"></div>
-			`;
-			container.querySelector('.sticker-container')?.insertAdjacentHTML('afterbegin', newContainer);
-			csfSP = container.querySelector('.sticker-percentage');
-		}
+	const csfSP = container.querySelector('.sticker-percentage .sticker-badge');
+	if (!csfSP) return;
 
-		if (csfSP) {
-			let difference = price_difference;
-			if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
-				difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
-			}
-			const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
-			if (!didChange) {
-				csfSP.remove();
-			}
-		}
+	let difference = price_difference;
+	if (apiItem.price === apiItem.auction_details?.reserve_price && !apiItem.auction_details?.top_bid) {
+		difference = new Decimal(apiItem.auction_details.reserve_price).div(100).plus(price_difference).toDP(2).toNumber();
+	}
+	const didChange = await changeSpContainer(csfSP, apiItem.item.stickers, difference);
+	if (!didChange) {
+		csfSP.remove();
 	}
 
 	addStickerLinks(container, apiItem.item);
