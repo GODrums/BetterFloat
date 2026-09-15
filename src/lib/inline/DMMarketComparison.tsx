@@ -165,8 +165,7 @@ const MarketCard: React.FC<{ item: DMarket.CachedListing; entry: MarketEntryWith
 	);
 };
 
-const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ layout = 'vertical' }) => {
-	const isHorizontal = layout === 'horizontal';
+const DMMarketComparison: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [marketData, setMarketData] = useState<MarketEntry[]>([]);
@@ -294,11 +293,11 @@ const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ 
 	}, [marketData, item]);
 
 	useEffect(() => {
-		const popupPrice = document.querySelector('#exchange-product-card-dialog .betterfloat-big-a, asset-description-layout .betterfloat-big-a');
+		const popupPrice = document.querySelector('#exchange-product-card-dialog .betterfloat-big-a');
 		if (popupPrice) {
 			setBuffData(JSON.parse(popupPrice.getAttribute('data-betterfloat') ?? '{}'));
 		}
-		const popupContainer = document.querySelector('#exchange-product-card-dialog [data-betterfloat], asset-description-layout[data-betterfloat]');
+		const popupContainer = document.querySelector('#exchange-product-card-dialog [data-betterfloat]');
 		if (popupContainer) {
 			setItemData(JSON.parse(popupContainer.getAttribute('data-betterfloat') ?? '{}'));
 		}
@@ -320,46 +319,42 @@ const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ 
 	const filteredMarketData = marketDataWithHrefs.filter((entry) => visibleMarkets.includes(entry.market));
 	const themeStyle = {
 		fontFamily: '"Montserrat", arial, sans-serif',
-		'--ex-divider-color': isHorizontal ? '#343434' : '#3e4044',
-		...(isHorizontal && {
-			'--ex-bg-color--400': '#181818',
-			'--ex-bg-color--100': '#2a2a2a',
-			'--ex-mat-button-background': '#1e1e1e',
-			'--ex-mat-button-background-hover': '#353535',
-			'--ex-color-primary': '#e5e5e5',
-			'--subtext-color': '#848484',
-			'--border': '#4a4a4a',
-		}),
+		'--ex-divider-color': '#343434',
+		'--ex-bg-color--400': '#181818',
+		'--ex-bg-color--100': '#2a2a2a',
+		'--ex-mat-button-background': '#1e1e1e',
+		'--ex-mat-button-background-hover': '#353535',
+		'--ex-color-primary': '#e5e5e5',
+		'--subtext-color': '#848484',
+		'--border': '#4a4a4a',
 	} as React.CSSProperties;
 
 	return (
-		<div className={cn('bg-(--ex-bg-color--400) rounded-md px-[10px]', isHorizontal ? 'w-full py-2' : 'w-[230px]')} style={themeStyle}>
+		<div className="w-full rounded-md bg-(--ex-bg-color--400) px-[10px] py-2" style={themeStyle}>
 			{isLoading ? (
-				<div className={cn('flex justify-center items-center', isHorizontal ? 'min-h-[190px]' : 'mt-8')}>
+				<div className="flex min-h-[190px] items-center justify-center">
 					<LoadingSpinner className="size-10 text-(--ex-color-primary)" />
 				</div>
 			) : (
 				<div className="relative flex min-w-0 flex-col gap-2">
-					<div className={cn('w-full bg-(--ex-mat-button-background) rounded-md py-2 flex items-center gap-1', isHorizontal ? 'flex-row justify-between px-4' : 'flex-col justify-center')}>
-						<div className={cn('flex items-center gap-2', isHorizontal ? 'justify-start' : 'justify-center')}>
+					<div className="flex w-full flex-row items-center justify-between gap-1 rounded-md bg-(--ex-mat-button-background) px-4 py-2">
+						<div className="flex items-center justify-start gap-2">
 							<img src={betterfloatLogo} alt="BetterFloat" className="h-8 w-8" />
 							<span className="text-(--ex-color-primary) font-semibold">Market Comparison</span>
 						</div>
-						<div className={cn('flex items-center', isHorizontal ? 'justify-end gap-5' : 'justify-center gap-2')}>
-							{isHorizontal && (
-								<div className="flex items-center gap-4 text-(--ex-color-primary) text-sm">
-									<div className="flex items-center gap-1.5">
-										<span className="text-(--subtext-color)">Total Listings:</span>
-										<span className="font-semibold">{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
-									</div>
-									{liquidity && (
-										<div className="flex items-center gap-1.5">
-											<span className="text-(--subtext-color)">Liquidity:</span>
-											<span className="font-semibold">{liquidity.toFixed(2)}%</span>
-										</div>
-									)}
+						<div className="flex items-center justify-end gap-5">
+							<div className="flex items-center gap-4 text-(--ex-color-primary) text-sm">
+								<div className="flex items-center gap-1.5">
+									<span className="text-(--subtext-color)">Total Listings:</span>
+									<span className="font-semibold">{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
 								</div>
-							)}
+								{liquidity && (
+									<div className="flex items-center gap-1.5">
+										<span className="text-(--subtext-color)">Liquidity:</span>
+										<span className="font-semibold">{liquidity.toFixed(2)}%</span>
+									</div>
+								)}
+							</div>
 							<Button
 								className="h-9 gap-2 bg-(--ex-bg-color--100) hover:bg-(--ex-mat-button-background-hover) text-(--ex-color-primary)"
 								onClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -373,10 +368,7 @@ const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ 
 						{isSettingsOpen && (
 							<div
 								ref={ref}
-								className={cn(
-									'w-full bg-(--ex-mat-button-background) rounded-md p-4 flex flex-col items-center gap-1',
-									isHorizontal && 'absolute top-[60px] right-0 z-50 max-h-[320px] w-[520px] max-w-full overflow-y-auto shadow-xl'
-								)}
+								className="absolute top-[60px] right-0 z-50 flex max-h-[320px] w-[520px] max-w-full flex-col items-center gap-1 overflow-y-auto rounded-md bg-(--ex-mat-button-background) p-4 shadow-xl"
 							>
 								<div className="w-full flex justify-between items-center gap-2 pb-2">
 									<div className="font-semibold text-lg text-(--ex-color-primary)">Settings</div>
@@ -384,7 +376,7 @@ const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ 
 										<MaterialSymbolsCloseSmallOutlineRounded className="size-6" />
 									</Button>
 								</div>
-								<div className={cn('w-full text-(--ex-color-primary)', isHorizontal ? 'grid grid-cols-2 gap-x-4 gap-y-3' : 'space-y-3')}>
+								<div className="grid w-full grid-cols-2 gap-x-4 gap-y-3 text-(--ex-color-primary)">
 									{AvailableMarketSources.map((market) => (
 										<div key={market.source} className="flex justify-between items-center space-x-2">
 											<div className="flex items-center space-x-2">
@@ -408,28 +400,8 @@ const DMMarketComparison: React.FC<{ layout?: 'vertical' | 'horizontal' }> = ({ 
 						)}
 					</AnimatePresence>
 
-					{!isHorizontal && (
-						<div
-							className={cn('flex flex-col justify-center gap-1 p-4 bg-(--ex-mat-button-background) text-(--ex-color-primary) text-sm rounded-md', isHorizontal && 'w-[170px] shrink-0')}
-						>
-							<div className="flex items-center justify-between">
-								<span>Total Listings:</span>
-								<span>{marketData.reduce((acc, curr) => acc + curr.count, 0)}</span>
-							</div>
-							{liquidity && (
-								<div className="flex items-center justify-between">
-									<span>Liquidity:</span>
-									<span>{liquidity.toFixed(2)}%</span>
-								</div>
-							)}
-						</div>
-					)}
-					<ScrollArea
-						orientation={isHorizontal ? 'horizontal' : 'vertical'}
-						className={cn('w-full flex-1', isHorizontal && 'min-w-0')}
-						viewportClass={isHorizontal ? 'max-w-full' : 'max-h-[625px]'}
-					>
-						<div className={cn(isHorizontal && 'flex w-max gap-2')}>
+					<ScrollArea orientation="horizontal" className="w-full min-w-0 flex-1" viewportClass="max-w-full">
+						<div className="flex w-max gap-2">
 							{item && filteredMarketData.map((dataEntry) => <MarketCard key={dataEntry.market} item={item} entry={dataEntry} currency={currency ?? 'USD'} />)}
 							{filteredMarketData.length === 0 && (
 								<div className="text-(--ex-color-primary) mt-2 bg-(--ex-mat-button-background) rounded-md">

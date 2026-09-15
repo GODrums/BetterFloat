@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { cacheDMarketItems, getDMarketItemPrice, getDMarketPaintSeed, getDMarketPhase, getSpecificDMarketItem } from '~contents/dmarket/cache';
 import type { DMarket } from '~lib/@typings/DMarketTypes';
 
-describe('DMarket redesign listings', () => {
+describe('DMarket listings', () => {
 	test('uses v2 offer data for IDs, Doppler phases, patterns, and prices', () => {
 		const offer = {
 			offerId: 'Offer-ID',
@@ -28,7 +28,7 @@ describe('DMarket redesign listings', () => {
 		expect(getDMarketItemPrice(offer, '')?.toNumber()).toBe(123.45);
 	});
 
-	test('uses the displayed inventory and trade prices for redesign user assets', () => {
+	test('uses the displayed inventory and trade prices for user assets', () => {
 		const asset = {
 			itemId: 'Inventory-Asset-ID',
 			title: 'AK-47 | Aphrodite (Factory New)',

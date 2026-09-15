@@ -3,33 +3,37 @@ html {
 }
 
 .betterfloat-buffprice {
-	font-size: 11px;
+	font-size: 14px;
 	margin-left: 2px;
 	padding-top: 1px;
 	font-style: normal;
-	font-weight: 500;
-	line-height: 20px;
+	font-weight: 600;
+	line-height: 22px;
 	letter-spacing: 0.02em;
 }
 
 .betterfloat-big-price {
-	font-size: 14px;
+	font-size: 18px;
+	font-weight: 600;
+	line-height: 24px;
 }
 
 .betterfloat-big-a {
-	margin-top: 10px;
+	width: fit-content;
+	margin: -16px 0 0;
 }
 
 .betterfloat-sale-tag {
 	font-size: 11px;
 	font-style: normal;
 	font-weight: 525;
-	line-height: 17px;
+	height: 20px;
+	line-height: 20px;
 	letter-spacing: -0.005em;
 	text-wrap: nowrap;
 	padding: 1px 3px;
 	border-radius: 4px;
-	margin-top: 3px;
+	margin-top: 0;
 }
 
 .betterfloat-big-sale {
@@ -44,11 +48,6 @@ html {
 	display: inline-flex;
 	align-items: center;
 	flex-direction: row;
-}
-
-/* Hide tooltip due to issues with overlapping elements */
-[class*="hint--"][aria-label]:after {
-	display: none;
 }
 
 .betterfloat-aphrodite-target,
@@ -75,62 +74,37 @@ html {
 	display: block;
 }
 
-.dm-new dm-exchange-market-asset-item .betterfloat-buff-a,
-.dm-new dm-exchange-user-inventory-asset-item .betterfloat-buff-a {
+dm-exchange-market-asset-item .betterfloat-buff-a,
+dm-exchange-user-inventory-asset-item .betterfloat-buff-a {
 	height: 22px;
 	line-height: 22px;
 }
 
-.dm-new dm-exchange-market-asset-item .betterfloat-buffprice,
-.dm-new dm-exchange-user-inventory-asset-item .betterfloat-buffprice {
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 22px;
-}
-
-.dm-new dm-exchange-market-asset-item .betterfloat-sale-tag,
-.dm-new dm-exchange-user-inventory-asset-item .betterfloat-sale-tag {
-	height: 20px;
-	margin-top: 0;
-	line-height: 20px;
-}
-
-.dm-new #exchange-product-card-dialog betterfloat-dm-market-comparison {
+#exchange-product-card-dialog betterfloat-dm-market-comparison {
 	display: block;
 	width: 100%;
 	margin-top: 16px;
 }
 
-.dm-new #exchange-product-card-dialog .betterfloat-big-a {
-	width: fit-content;
-	margin: -16px 0 0;
-}
-
-.dm-new #exchange-product-card-dialog .betterfloat-big-price {
-	font-size: 18px;
-	font-weight: 600;
-	line-height: 24px;
-}
-
-.dm-new #exchange-product-card-dialog .betterfloat-modern-sale-cell {
+#exchange-product-card-dialog .betterfloat-sale-cell {
 	vertical-align: middle;
 }
 
-.dm-new #exchange-product-card-dialog .betterfloat-modern-sale-cell .betterfloat-sale-tag {
+#exchange-product-card-dialog .betterfloat-sale-cell .betterfloat-sale-tag {
 	display: inline-flex;
 	align-items: center;
 	margin: 0 0 0 8px;
 	vertical-align: middle;
 }
 
-.dm-new .betterfloat-refresh-controls {
+.betterfloat-refresh-controls {
 	display: flex;
 	flex-flow: row nowrap;
 	align-items: center;
 	gap: 8px;
 }
 
-.dm-new .betterfloat-refresh-controls > betterfloat-dm-autorefresh {
+.betterfloat-refresh-controls > betterfloat-dm-autorefresh {
 	display: inline-flex;
 	flex: 0 0 auto;
 }

@@ -8,18 +8,12 @@ export function isDMarketOfferV2(listing: DMarket.CachedListing): listing is DMa
 	return 'priceCents' in listing;
 }
 
-export function isDMarketAsset(listing: DMarket.CachedListing): listing is DMarket.Asset {
-	return 'itemId' in listing && 'cs2' in listing;
-}
-
 export function getDMarketPhase(listing: DMarket.CachedListing): string | undefined {
-	if (isDMarketOfferV2(listing)) return listing.cs2.phase;
-	return isDMarketAsset(listing) ? listing.cs2.phase : listing.extra.phase;
+	return listing.cs2.phase;
 }
 
 export function getDMarketPaintSeed(listing: DMarket.CachedListing): number | undefined {
-	if (isDMarketOfferV2(listing)) return listing.cs2.paintSeed;
-	return isDMarketAsset(listing) ? listing.cs2.paintSeed : listing.extra.paintSeed;
+	return listing.cs2.paintSeed;
 }
 
 export function getDMarketItemPrice(listing: DMarket.CachedListing, pageSearch = location.search): Decimal {

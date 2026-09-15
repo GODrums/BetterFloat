@@ -10,7 +10,7 @@ import { Badge } from '~popup/ui/badge';
 import { Button } from '~popup/ui/button';
 import { Switch } from '~popup/ui/switch';
 
-const REFRESH_SELECTOR = `${DMARKET_SELECTORS.market.refreshButton}, ${DMARKET_SELECTORS.modern.market.refreshButton}`;
+const REFRESH_SELECTOR = DMARKET_SELECTORS.market.refreshButton;
 
 function MaterialSymbolsUpdate(props: SVGProps<SVGSVGElement>) {
 	return (
@@ -31,7 +31,7 @@ const ActivityBadge = ({ active }: { active: boolean }) => {
 	);
 };
 
-const DmAutorefresh: React.FC<{ modern?: boolean }> = ({ modern = false }) => {
+const DmAutorefresh: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	// auto-refresh
 	const [isActive, setIsActive] = useState(false);
@@ -83,13 +83,13 @@ const DmAutorefresh: React.FC<{ modern?: boolean }> = ({ modern = false }) => {
 
 	const themeStyle = {
 		fontFamily: 'Montserrat, Arial, sans-serif',
-		'--dm-autorefresh-button': modern ? '#2a2a2a' : '#2a2c2e',
-		'--dm-autorefresh-button-hover': modern ? '#353535' : '#222324',
-		'--dm-autorefresh-surface': modern ? '#1e1e1e' : '#2a2c2e',
-		'--dm-autorefresh-border': modern ? '#343434' : '#c1ceff12',
-		'--dm-autorefresh-primary': modern ? '#e5e5e5' : '#ffffff',
-		'--dm-autorefresh-subtext': modern ? '#848484' : '#9ea7b1',
-		'--dm-autorefresh-option': modern ? '#2a2a2a' : '#272829',
+		'--dm-autorefresh-button': '#2a2a2a',
+		'--dm-autorefresh-button-hover': '#353535',
+		'--dm-autorefresh-surface': '#1e1e1e',
+		'--dm-autorefresh-border': '#343434',
+		'--dm-autorefresh-primary': '#e5e5e5',
+		'--dm-autorefresh-subtext': '#848484',
+		'--dm-autorefresh-option': '#2a2a2a',
 	} as React.CSSProperties;
 
 	useEffect(() => {
@@ -108,10 +108,7 @@ const DmAutorefresh: React.FC<{ modern?: boolean }> = ({ modern = false }) => {
 		<div className="bg-transparent" style={themeStyle}>
 			<Button
 				variant="light"
-				className={cn(
-					'h-12 flex items-center gap-2 bg-(--dm-autorefresh-button) hover:bg-(--dm-autorefresh-button-hover) text-(--dm-autorefresh-primary)',
-					modern ? 'rounded-md border border-(--dm-autorefresh-border)' : 'rounded-[2px]'
-				)}
+				className="h-12 flex items-center gap-2 rounded-md border border-(--dm-autorefresh-border) bg-(--dm-autorefresh-button) text-(--dm-autorefresh-primary) hover:bg-(--dm-autorefresh-button-hover)"
 				onClick={toggleOpen}
 			>
 				<MaterialSymbolsUpdate className="h-6 w-6 text-(--dm-autorefresh-primary)" />
@@ -121,7 +118,7 @@ const DmAutorefresh: React.FC<{ modern?: boolean }> = ({ modern = false }) => {
 				{open && (
 					<div ref={ref}>
 						<motion.div
-							className={cn('fixed z-99 bg-(--dm-autorefresh-surface) flex flex-col items-center gap-2 p-6 shadow-2xl', modern && 'border border-(--dm-autorefresh-border)')}
+							className="fixed z-99 flex flex-col items-center gap-2 border border-(--dm-autorefresh-border) bg-(--dm-autorefresh-surface) p-6 shadow-2xl"
 							style={{ translate: '-55px 10px', borderRadius: '12px' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}

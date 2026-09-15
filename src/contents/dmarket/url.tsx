@@ -8,7 +8,7 @@ import { createUrlListener, waitForElement } from '~lib/util/helperfunctions';
 import { getSetting } from '~lib/util/storage';
 
 const AUTOREFRESH_HOST_SELECTOR = 'betterfloat-dm-autorefresh';
-const REFRESH_SELECTOR = `${DMARKET_SELECTORS.market.refreshButton}, ${DMARKET_SELECTORS.modern.market.refreshButton}`;
+const REFRESH_SELECTOR = DMARKET_SELECTORS.market.refreshButton;
 let autorefreshMountInProgress = false;
 
 export function activateDMarketUrlHandler() {
@@ -47,21 +47,19 @@ async function handleDMarketChange(state: Extension.URLState) {
 			const success = await waitForElement(REFRESH_SELECTOR, { maxTries: 100 });
 			if (success && isDMarketMarketPage(location.pathname, location.search) && !document.querySelector(AUTOREFRESH_HOST_SELECTOR)) {
 				const refreshButton = document.querySelector<HTMLElement>(REFRESH_SELECTOR);
-				const mountTarget = document.querySelector('span.c-assetFilters__spacer') ?? refreshButton;
-				if (!mountTarget) return;
-				const isModern = Boolean(refreshButton?.closest('[data-test-id="exchange_market_area"]'));
-				const modernRefreshControls = isModern ? refreshButton?.parentElement : null;
-				modernRefreshControls?.classList.add('betterfloat-refresh-controls');
-				const { root } = await mountShadowRoot(<DmAutorefresh modern={isModern} />, {
+				if (!refreshButton) return;
+				const refreshControls = refreshButton.parentElement;
+				refreshControls?.classList.add('betterfloat-refresh-controls');
+				const { root } = await mountShadowRoot(<DmAutorefresh />, {
 					tagName: 'betterfloat-dm-autorefresh',
-					parent: mountTarget,
+					parent: refreshButton,
 					position: 'before',
 				});
 				const interval = createUrlListener((url) => {
 					if (!isDMarketMarketPage(url.pathname, url.search)) {
 						root.unmount();
 						document.querySelector(AUTOREFRESH_HOST_SELECTOR)?.remove();
-						modernRefreshControls?.classList.remove('betterfloat-refresh-controls');
+						refreshControls?.classList.remove('betterfloat-refresh-controls');
 						clearInterval(interval);
 					}
 				}, 1000);
@@ -72,8 +70,8 @@ async function handleDMarketChange(state: Extension.URLState) {
 	}
 }
 
-export async function mountDMarketMarketComparison(container: HTMLElement, layout: 'vertical' | 'horizontal' = 'vertical') {
-	await mountShadowRoot(<DMMarketComparison layout={layout} />, {
+export async function mountDMarketMarketComparison(container: HTMLElement) {
+	await mountShadowRoot(<DMMarketComparison />, {
 		tagName: 'betterfloat-dm-market-comparison',
 		parent: container,
 	});

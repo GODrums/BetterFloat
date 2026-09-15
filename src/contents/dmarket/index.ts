@@ -77,23 +77,15 @@ function applyMutation() {
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
 
-				if (addedNode.matches(DMARKET_SELECTORS.modern.cards)) {
-					void adjustItem(addedNode, getModernCardState(addedNode));
+				if (addedNode.matches(DMARKET_SELECTORS.cards)) {
+					void adjustItem(addedNode, getCardState(addedNode));
 				}
-				const parentCard = addedNode.closest(DMARKET_SELECTORS.modern.cards);
+				const parentCard = addedNode.closest(DMARKET_SELECTORS.cards);
 				if (parentCard && parentCard !== addedNode) {
-					void adjustItem(parentCard, getModernCardState(parentCard));
+					void adjustItem(parentCard, getCardState(parentCard));
 				}
-				for (const card of addedNode.querySelectorAll(DMARKET_SELECTORS.modern.cards)) {
-					void adjustItem(card, getModernCardState(card));
-				}
-
-				// c-asset__figure c-asset__exterior
-				if (addedNode.className.startsWith('c-asset__price')) {
-					const parent = addedNode.closest('asset-card') ?? addedNode.closest('asset-card-v2');
-					if (parent) {
-						adjustItem(parent, PageState.Market);
-					}
+				for (const card of addedNode.querySelectorAll(DMARKET_SELECTORS.cards)) {
+					void adjustItem(card, getCardState(card));
 				}
 			}
 		}
@@ -103,19 +95,18 @@ function applyMutation() {
 }
 
 async function adjustVisibleMarketItems() {
-	for (const container of document.querySelectorAll(DMARKET_SELECTORS.modern.cards)) {
-		await adjustItem(container, getModernCardState(container));
+	for (const container of document.querySelectorAll(DMARKET_SELECTORS.cards)) {
+		await adjustItem(container, getCardState(container));
 	}
 }
 
-function getModernCardState(container: Element) {
-	return container.matches(DMARKET_SELECTORS.modern.inventory.container) ? PageState.Inventory : PageState.Market;
+function getCardState(container: Element) {
+	return container.matches(DMARKET_SELECTORS.inventory.container) ? PageState.Inventory : PageState.Market;
 }
 
 function getDMarketItemId(container: Element) {
 	const itemElement =
-		container.querySelector<HTMLElement>(`${DMARKET_SELECTORS.modern.market.item}, ${DMARKET_SELECTORS.modern.inventory.item}`) ??
-		container.querySelector<HTMLElement>(':scope > [data-test-id][id]');
+		container.querySelector<HTMLElement>(`${DMARKET_SELECTORS.market.item}, ${DMARKET_SELECTORS.inventory.item}`) ?? container.querySelector<HTMLElement>(':scope > [data-test-id][id]');
 	if (container.id || itemElement?.id) return container.id || itemElement?.id || null;
 
 	const testId = container.querySelector<HTMLElement>('[data-test-id*="_asset_item_"]')?.dataset.testId;
@@ -139,12 +130,7 @@ async function adjustItem(container: Element, state: PageState) {
 }
 
 async function addPopupListener(container: Element, item: DMarket.CachedListing) {
-	const isModern = container.matches(DMARKET_SELECTORS.modern.cards);
-	const popupButtonSelector = isModern
-		? container.matches(DMARKET_SELECTORS.modern.inventory.container)
-			? DMARKET_SELECTORS.modern.inventory.infoButton
-			: DMARKET_SELECTORS.modern.market.infoButton
-		: DMARKET_SELECTORS.market.infoButton;
+	const popupButtonSelector = container.matches(DMARKET_SELECTORS.inventory.container) ? DMARKET_SELECTORS.inventory.infoButton : DMARKET_SELECTORS.market.infoButton;
 	let popupButton = container.querySelector<HTMLElement>(popupButtonSelector);
 	let buttonTries = 10;
 	while (!popupButton && buttonTries-- > 0) {
@@ -155,11 +141,11 @@ async function addPopupListener(container: Element, item: DMarket.CachedListing)
 
 	popupButton.dataset.betterfloatListener = 'true';
 	popupButton.addEventListener('click', async () => {
-		let popup: HTMLElement | null = null;
+		let popup = document.querySelector<HTMLElement>(DMARKET_SELECTORS.popup.container);
 		let tries = 10;
-		while ((!popup || (isModern && !popup.querySelector(DMARKET_SELECTORS.modern.popup.details))) && tries-- > 0) {
+		while (!popup?.querySelector(DMARKET_SELECTORS.popup.details) && tries-- > 0) {
 			await new Promise((resolve) => setTimeout(resolve, 200));
-			popup = isModern ? document.querySelector<HTMLElement>(DMARKET_SELECTORS.modern.popup.container) : document.getElementById(DMARKET_SELECTORS.popup.container);
+			popup = document.querySelector<HTMLElement>(DMARKET_SELECTORS.popup.container);
 		}
 		if (!popup) return;
 
@@ -167,22 +153,20 @@ async function addPopupListener(container: Element, item: DMarket.CachedListing)
 		await patternDetections(popup, item, true);
 		addQuickLinks(popup, item);
 
-		const popupContainer = isModern ? popup.querySelector<HTMLElement>(DMARKET_SELECTORS.modern.popup.details) : popup.closest<HTMLElement>('asset-description-layout');
+		const popupContainer = popup.querySelector<HTMLElement>(DMARKET_SELECTORS.popup.details);
 		if (!popupContainer) return;
 
 		popupContainer.setAttribute('data-betterfloat', JSON.stringify(item));
 		if (extensionSettings['dm-marketcomparison'] && !popupContainer.querySelector('betterfloat-dm-market-comparison')) {
-			await mountDMarketMarketComparison(popupContainer, isModern ? 'horizontal' : 'vertical');
+			await mountDMarketMarketComparison(popupContainer);
 		}
 
-		await addLatestSalesEnhancements(isModern ? popup : popupContainer);
+		await addLatestSalesEnhancements(popup);
 	});
 }
 
 async function addLatestSalesEnhancements(container: HTMLElement) {
-	const modernRowsSelector = DMARKET_SELECTORS.modern.popup.recentSalesRows;
-	const isModern = container.matches(DMARKET_SELECTORS.modern.popup.container);
-	const latestSalesContainer = isModern ? container.querySelector('dm-exchange-product-card-recent-sales-table') : container.querySelector('last-sales');
+	const latestSalesContainer = container.querySelector('dm-exchange-product-card-recent-sales-table');
 	if (!latestSalesContainer) {
 		return;
 	}
@@ -209,18 +193,18 @@ async function addLatestSalesEnhancements(container: HTMLElement) {
 	const userCurrency = getDMarketCurrency();
 	const currencyFormatter = CurrencyFormatter(userCurrency ?? 'USD');
 
-	let rows = isModern ? container.querySelectorAll(modernRowsSelector) : latestSalesContainer.querySelectorAll('tr.c-assetPreview__row');
+	let rows = container.querySelectorAll(DMARKET_SELECTORS.popup.recentSalesRows);
 	tries = 10;
 	while (rows.length === 0 && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		rows = isModern ? container.querySelectorAll(modernRowsSelector) : latestSalesContainer.querySelectorAll('tr.c-assetPreview__row');
+		rows = container.querySelectorAll(DMARKET_SELECTORS.popup.recentSalesRows);
 	}
 	for (let i = 0; i < rows.length; i++) {
 		const row = rows[i];
 		const sale = latestSales[i];
 		if (!row || !sale) continue;
 
-		const innerContainer = isModern ? row.querySelector('td:nth-child(2)') : row.querySelector('last-sales-details-popup > div.c-assetPreview_icon');
+		const innerContainer = row.querySelector('td:nth-child(2)');
 		if (innerContainer) {
 			const price = new Decimal(sale.price);
 			const difference = price.minus(buffData.priceFromReference);
@@ -228,45 +212,31 @@ async function addLatestSalesEnhancements(container: HTMLElement) {
 			const { color, background } = difference.gt(0) ? styling.loss : styling.profit;
 
 			const differenceElement = html`
-            	<div class="sale-tag betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; font-size: 12px; margin-left: 8px;">
+				<div class="betterfloat-sale-tag" style="background-color: ${background}; color: ${color}; font-size: 12px; margin-left: 8px;">
 					${html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(difference.abs().toNumber())} </span>`}
             	</div>
 			`;
 
-			if (isModern) innerContainer.classList.add('betterfloat-modern-sale-cell');
+			innerContainer.classList.add('betterfloat-sale-cell');
 			if (!innerContainer.querySelector('.betterfloat-sale-tag')) innerContainer.insertAdjacentHTML('beforeend', differenceElement);
 		}
 	}
 }
 
 function addQuickLinks(container: HTMLElement, item: DMarket.CachedListing) {
-	const modernQuickLinks = container.querySelector<HTMLElement>(DMARKET_SELECTORS.modern.popup.actionButtons);
-	if (modernQuickLinks) {
-		if (modernQuickLinks.querySelector('.betterfloat-pricempire-link')) return;
-
-		const actionButton = modernQuickLinks.firstElementChild?.cloneNode(true) as HTMLAnchorElement | null;
-		if (!actionButton) return;
-
-		actionButton.classList.add('betterfloat-pricempire-link');
-		actionButton.href = `https://pricempire.com/item/${encodeURIComponent(item.title)}`;
-		actionButton.setAttribute('aria-label', 'Pricempire');
-		actionButton.setAttribute('title', 'Pricempire');
-		const label = actionButton.querySelector('span');
-		if (label) label.textContent = 'Pricempire';
-		modernQuickLinks.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
-		modernQuickLinks.appendChild(actionButton);
-		return;
-	}
-
-	const quickLinks = container.querySelector('asset-action-button > .c-assetPreviewButtons');
+	const quickLinks = container.querySelector<HTMLElement>(DMARKET_SELECTORS.popup.actionButtons);
 	if (!quickLinks || quickLinks.querySelector('.betterfloat-pricempire-link')) return;
 
-	const actionButton = quickLinks.firstElementChild?.cloneNode(true) as HTMLElement;
+	const actionButton = quickLinks.firstElementChild?.cloneNode(true) as HTMLAnchorElement | null;
 	if (!actionButton) return;
 
 	actionButton.classList.add('betterfloat-pricempire-link');
-	actionButton.querySelector('.mdc-button__label')!.textContent = 'Pricempire';
-	actionButton.querySelector('a')?.setAttribute('href', `https://pricempire.com/item/${encodeURIComponent(item.title)}`);
+	actionButton.href = `https://pricempire.com/item/${encodeURIComponent(item.title)}`;
+	actionButton.setAttribute('aria-label', 'Pricempire');
+	actionButton.setAttribute('title', 'Pricempire');
+	const label = actionButton.querySelector('span');
+	if (label) label.textContent = 'Pricempire';
+	quickLinks.style.gridTemplateColumns = 'repeat(3, minmax(0, 1fr))';
 	quickLinks.appendChild(actionButton);
 }
 
@@ -295,20 +265,12 @@ function aphroditeDetection(container: Element, item: DMarket.CachedListing, isP
 	badge.setAttribute('aria-label', label);
 	badge.innerHTML = generateAphroditeIcon(gem.type, gem.tier, isPopout ? 30 : 20);
 
-	const modernTarget = isPopout ? container.querySelector(DMARKET_SELECTORS.modern.popup.title) : container.querySelector(DMARKET_SELECTORS.modern.market.pattern)?.parentElement;
-	if (modernTarget) {
-		modernTarget.classList.add('betterfloat-aphrodite-target');
-		if (isPopout) modernTarget.appendChild(badge);
-		else modernTarget.prepend(badge);
-		return;
-	}
+	const target = isPopout ? container.querySelector(DMARKET_SELECTORS.popup.title) : container.querySelector(DMARKET_SELECTORS.market.pattern)?.parentElement;
+	if (!target) return;
 
-	const legacyTarget = isPopout ? container.querySelector('share-link')?.parentElement : container.querySelector('asset-exterior-quality');
-	if (!legacyTarget) return;
-
-	legacyTarget.classList.add('betterfloat-aphrodite-target');
-	legacyTarget.appendChild(badge);
-	if (!isPopout) legacyTarget.closest('.c-asset__footerLeft')?.setAttribute('style', 'max-width: 100%');
+	target.classList.add('betterfloat-aphrodite-target');
+	if (isPopout) target.appendChild(badge);
+	else target.prepend(badge);
 }
 
 async function caseHardenedDetection(container: Element, item: DMarket.CachedListing, isPopout: boolean) {
@@ -319,18 +281,8 @@ async function caseHardenedDetection(container: Element, item: DMarket.CachedLis
 	const type = getOldBlueGemName(item.title.replace('StatTrak™ ', ''));
 	if (!type) return false;
 
-	// retrieve the stored data instead of fetching newly
-	if (isPopout) {
-		const itemPreview = document.getElementsByClassName('item-' + location.pathname.split('/').pop())[0];
-		const csbluegem = itemPreview?.getAttribute('data-bluegemlab');
-		if (csbluegem && csbluegem.length > 0) {
-			patternElement = JSON.parse(csbluegem);
-		}
-	}
-	if (!patternElement) {
-		patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: paintSeed });
-		container.setAttribute('data-bluegemlab', JSON.stringify(patternElement));
-	}
+	patternElement = await fetchBlueGemPatternData({ type: type.replaceAll(' ', '_'), pattern: paintSeed });
+	container.setAttribute('data-bluegemlab', JSON.stringify(patternElement));
 	if (!patternElement) {
 		console.warn('[BetterFloat] Could not fetch pattern data for ', item.title);
 		return false;
@@ -338,66 +290,31 @@ async function caseHardenedDetection(container: Element, item: DMarket.CachedLis
 
 	// add gem icon and blue gem percent badge
 	if (!item.title.includes('Gloves')) {
-		const modernContainer = isPopout ? container.querySelector(DMARKET_SELECTORS.modern.popup.title) : container.querySelector(DMARKET_SELECTORS.modern.market.pattern)?.parentElement;
-		const exteriorContainer = modernContainer ?? (isPopout ? container.querySelector('share-link')?.parentElement : container.querySelector('asset-exterior-quality'));
-		if (!exteriorContainer) return;
+		const patternContainer = isPopout ? container.querySelector(DMARKET_SELECTORS.popup.title) : container.querySelector(DMARKET_SELECTORS.market.pattern)?.parentElement;
+		if (!patternContainer) return;
 
-		if (modernContainer) {
-			exteriorContainer.classList.add('betterfloat-pattern-target');
-		} else if (!isPopout) {
-			exteriorContainer.setAttribute('style', 'display: flex; align-items: center; gap: 8px;');
-			exteriorContainer.closest('.c-asset__footerLeft')?.setAttribute('style', 'max-width: 100%');
-		}
+		patternContainer.classList.add('betterfloat-pattern-target');
 
 		const gemContainer = genGemContainer({ patternElement, site: 'DM', large: isPopout });
 		if (!gemContainer) return;
 		gemContainer.setAttribute('style', 'display: flex; align-items: center; justify-content: flex-end;');
 		if (!container.querySelector('.betterfloat-gem-container')) {
-			exteriorContainer.appendChild(gemContainer);
+			patternContainer.appendChild(gemContainer);
 		}
-	}
-
-	if (!isPopout) {
-		return;
 	}
 }
 
 async function addBuffPrice(item: DMarket.CachedListing, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
-	let footerContainer: Element | null = null;
-	let modernPriceRow: Element | null = null;
-	const isModernMarket = container.matches(DMARKET_SELECTORS.modern.market.container);
-	const isModernInventory = container.matches(DMARKET_SELECTORS.modern.inventory.container);
-	const isModernCard = isModernMarket || isModernInventory;
-	const isModernPopup = container.matches(DMARKET_SELECTORS.modern.popup.container) || !!container.querySelector(DMARKET_SELECTORS.modern.popup.details);
-	if (state === PageState.ItemPage) {
-		footerContainer = document.querySelector(DMARKET_SELECTORS.itempage.footer);
-	} else if (state === PageState.Market) {
-		if (isModernMarket) {
-			modernPriceRow = container.querySelector(DMARKET_SELECTORS.modern.market.price)?.parentElement ?? null;
-		} else {
-			footerContainer = container.querySelector(DMARKET_SELECTORS.market.footer);
-		}
-	} else if (state === PageState.Inventory) {
-		if (isModernInventory) {
-			modernPriceRow = container.querySelector(DMARKET_SELECTORS.modern.inventory.price)?.parentElement ?? null;
-		} else {
-			footerContainer = container.querySelector(DMARKET_SELECTORS.inventory.footer);
-		}
-	} else if (state === PageState.Popup) {
-		if (isModernPopup) {
-			modernPriceRow = container.querySelector(DMARKET_SELECTORS.modern.popup.price)?.parentElement ?? null;
-		} else {
-			footerContainer = container.querySelector(DMARKET_SELECTORS.popup.footer);
-		}
-	}
+	const priceSelector = state === PageState.Market ? DMARKET_SELECTORS.market.price : state === PageState.Inventory ? DMARKET_SELECTORS.inventory.price : DMARKET_SELECTORS.popup.price;
+	const priceRow = container.querySelector(priceSelector)?.parentElement;
 
 	const isDoppler = buff_name.includes('Doppler') && buff_name.includes('|');
-	const maximumFractionDigits = priceListing?.gt(1000) && state !== PageState.ItemPage && priceOrder?.gt(10) ? 0 : 2;
+	const maximumFractionDigits = priceListing?.gt(1000) && priceOrder?.gt(10) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
-	if ((footerContainer || modernPriceRow) && !container.querySelector('.betterfloat-buffprice')) {
+	if (priceRow && !container.querySelector('.betterfloat-buffprice')) {
 		const buffContainer = generatePriceLine({
 			source,
 			market_id,
@@ -410,17 +327,12 @@ async function addBuffPrice(item: DMarket.CachedListing, container: Element, sta
 			CurrencyFormatter: currencyFormatter,
 			isDoppler,
 			isPopout: state === PageState.Popup,
-			priceClass: 'suggested-price',
 			addSpaceBetweenPrices: true,
 			showPrefix: false,
-			iconHeight: state === PageState.Popup ? '20px' : isModernCard ? '18px' : '15px',
+			iconHeight: state === PageState.Popup ? '20px' : '18px',
 			hasPro: isUserPro(extensionSettings['user']),
 		});
-		if (modernPriceRow) {
-			modernPriceRow.insertAdjacentHTML('afterend', buffContainer);
-		} else {
-			footerContainer?.insertAdjacentHTML('beforeend', buffContainer);
-		}
+		priceRow.insertAdjacentHTML('afterend', buffContainer);
 
 		const buffElement = container.querySelector<HTMLAnchorElement>('.betterfloat-buff-a');
 		if (buffElement) {
@@ -430,9 +342,9 @@ async function addBuffPrice(item: DMarket.CachedListing, container: Element, sta
 
 	let priceContainer: Element | null = null;
 	if (state === PageState.Market) {
-		priceContainer = container.querySelector(isModernMarket ? DMARKET_SELECTORS.modern.market.price : DMARKET_SELECTORS.market.price);
+		priceContainer = container.querySelector(DMARKET_SELECTORS.market.price);
 	} else if (state === PageState.Popup) {
-		priceContainer = container.querySelector(isModernPopup ? DMARKET_SELECTORS.modern.popup.price : DMARKET_SELECTORS.popup.price);
+		priceContainer = container.querySelector(DMARKET_SELECTORS.popup.price);
 	}
 
 	if (priceContainer && !container.querySelector('.betterfloat-sale-tag') && (extensionSettings['dm-buffdifference'] || extensionSettings['dm-buffdifferencepercent'])) {
@@ -452,7 +364,7 @@ async function addBuffPrice(item: DMarket.CachedListing, container: Element, sta
 		const { color, background } = percentage.gt(100) ? styling.loss : styling.profit;
 
 		const buffPriceHTML = html`
-            <div class="sale-tag betterfloat-sale-tag ${state === PageState.Popup ? 'betterfloat-big-sale' : ''}" style="background-color: ${background}; color: ${color};">
+			<div class="betterfloat-sale-tag ${state === PageState.Popup ? 'betterfloat-big-sale' : ''}" style="background-color: ${background}; color: ${color};">
 				${extensionSettings['dm-buffdifference'] ? html`<span>${difference.isPos() ? '+' : '-'}${currencyFormatter.format(absDifference.toNumber())} </span>` : ''}
 				${extensionSettings['dm-buffdifferencepercent'] ? html`<span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span>` : ''}
             </div>
@@ -460,12 +372,12 @@ async function addBuffPrice(item: DMarket.CachedListing, container: Element, sta
 
 		priceContainer.insertAdjacentHTML('afterend', buffPriceHTML);
 
-		container.querySelector('asset-advanced-badge, asset-overprice-tag')?.remove();
+		container.querySelector('asset-overprice-tag')?.remove();
 
 		setTimeout(() => {
-			const oldBadge = container.querySelector('asset-discount-badge, asset-discount-tag');
-			if (oldBadge) {
-				oldBadge.remove();
+			const discountBadge = container.querySelector('asset-discount-tag');
+			if (discountBadge) {
+				discountBadge.remove();
 			}
 		}, 500);
 	}
@@ -568,9 +480,8 @@ function createBuffItem(item: DMarket.CachedListing): { name: string; style: Ite
 
 enum PageState {
 	Market = 0,
-	ItemPage = 1,
-	Inventory = 2,
-	Popup = 3,
+	Inventory = 1,
+	Popup = 2,
 }
 
 // mutation observer active?
