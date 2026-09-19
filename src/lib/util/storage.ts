@@ -141,6 +141,7 @@ export const DEFAULT_SETTINGS = {
 	'bm-pricereference': 0,
 	'bm-buffdifference': true,
 	'bm-buffdifferencepercent': true,
+	'bm-profitpercentage': 100,
 	'bm-listingage': true,
 	'bm-stickerprices': true,
 	'lis-enable': true,

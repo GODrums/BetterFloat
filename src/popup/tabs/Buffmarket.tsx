@@ -5,6 +5,7 @@ import { MarketLogoFull } from '~popup/components/MarketLogoFull';
 import { SettingsCard } from '~popup/components/SettingsCard';
 import { SettingsCheckbox } from '~popup/components/SettingsCheckbox';
 import { SettingsEnable } from '~popup/components/SettingsEnable';
+import { SettingsInputNumber } from '~popup/components/SettingsInput';
 import { SettingsSource } from '~popup/components/SettingsSource';
 import { Button } from '~popup/ui/button';
 import { WarningCallout } from '~popup/ui/callout';
@@ -84,6 +85,14 @@ export const BuffMarketSettings = ({ hasProPlan }: BuffMarketSettingsProps) => {
 							text="Show Price Difference"
 							tooltipText="Requires 'Show Buff Price Difference' to be activated. Display the ratio of an item's price to the reference price in percentage. Price equality equates to 100%."
 							icon={<StreamlineDiscountPercentCoupon className="h-6 w-6" />}
+						/>
+					</SettingsCard>
+					<SettingsCard>
+						<SettingsInputNumber
+							id="bm-profitpercentage"
+							text="Profit Percentage"
+							tooltipText="Adjust the percentage which determines the color of the price difference tag (default: 100%)."
+							defaultValue="100"
 						/>
 					</SettingsCard>
 				</div>

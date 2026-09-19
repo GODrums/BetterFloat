@@ -362,7 +362,8 @@ async function addBuffPrice(item: BuffMarket.Item, container: Element, state: Pa
 
 		const absDifference = difference.abs();
 		const percentage = new Decimal(getItemPrice(item)).div(priceFromReference ?? 0).mul(100);
-		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
+		const profitPercentage = Number(extensionSettings['bm-profitpercentage'] ?? 100);
+		const { color, background: backgroundColor } = percentage.gt(profitPercentage) ? styling.loss : styling.profit;
 
 		const saleTagStyle = `background-color: ${backgroundColor}; color: ${color}; ${state === PageState.ItemPage ? 'display: inline; font-size: 14px;' : 'margin-left: 10px;'} ${state === PageState.Popup ? 'line-height: 22px; translate: 0 -5px;' : ''}`;
 		const formattedPrice =

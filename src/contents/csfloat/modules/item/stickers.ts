@@ -1,4 +1,3 @@
-import { html } from 'common-tags';
 import Decimal from 'decimal.js';
 
 import type { CSFloat } from '~lib/@typings/FloatTypes';
@@ -11,7 +10,7 @@ import { adjustExistingSP } from './metadata';
 import { getCurrencyRate } from './pricing';
 
 export async function addStickerInfo(container: Element, apiItem: CSFloat.ListingData, price_difference: number) {
-	if (!apiItem.item?.stickers) return;
+	if (!apiItem.item?.stickers || container.querySelector('.mat-mdc-tooltip-disabled')) return;
 
 	if (apiItem.item.quality === 12) {
 		adjustExistingSP(container);
