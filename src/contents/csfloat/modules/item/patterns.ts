@@ -51,7 +51,7 @@ import {
 	CloudChasersMapping,
 	DiamonGemMapping,
 	KarambitGemMapping,
-	NoctsMapping,
+	NoctsRanking,
 	PillowPunchersMapping,
 	PinkGalaxyMapping,
 	UltraViolentMapping,
@@ -255,23 +255,18 @@ async function badgeChromaGems(container: Element, item: CSFloat.Item) {
 }
 
 async function badgeNocts(container: Element, item: CSFloat.Item) {
-	const nocts_data = NoctsMapping[item.paint_seed!];
-	if (!nocts_data) return;
+	const rank = NoctsRanking.indexOf(item.paint_seed!) + 1;
+	if (!rank) return;
 
-	const iconMapping: Record<number, string> = {
-		1: ICON_NOCTS_1,
-		2: ICON_NOCTS_2,
-		3: ICON_NOCTS_3,
-	};
-	const icon = iconMapping[nocts_data];
-	if (!icon) return;
+	const tier = rank <= 50 ? 1 : rank <= 100 ? 2 : 3;
+	const icon = tier === 1 ? ICON_NOCTS_1 : tier === 2 ? ICON_NOCTS_2 : ICON_NOCTS_3;
 
 	addPatternBadge({
 		container,
 		svgfile: icon,
 		svgStyle: 'height: 30px;',
-		tooltipText: ['Max Black', `Tier ${nocts_data}`],
-		tooltipStyle: 'translate: -25px 15px; width: 60px;',
+		tooltipText: ['Max Black', `Rank ${rank} (T${tier})`],
+		tooltipStyle: 'translate: -35px 15px; width: 80px;',
 	});
 }
 

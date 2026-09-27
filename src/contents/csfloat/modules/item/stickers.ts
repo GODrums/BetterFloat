@@ -18,7 +18,7 @@ export async function addStickerInfo(container: Element, apiItem: CSFloat.Listin
 		return;
 	}
 
-	const csfSP = container.querySelector('.sticker-percentage .sticker-badge');
+	const csfSP = container.querySelector<HTMLElement>('.sticker-percentage .sticker-badge');
 	if (!csfSP) return;
 
 	let difference = price_difference;
@@ -69,7 +69,7 @@ export function addStickerLinks(container: Element, item: CSFloat.Item) {
 	}
 }
 
-export async function changeSpContainer(csfSP: Element, stickers: CSFloat.StickerData[], price_difference: number) {
+export async function changeSpContainer(csfSP: HTMLElement, stickers: CSFloat.StickerData[], price_difference: number) {
 	const extensionSettings = getCSFloatSettings();
 	const source = extensionSettings['csf-pricingsource'] as MarketSource;
 	const { userCurrency, currencyRate } = await getCurrencyRate();
@@ -109,6 +109,5 @@ export async function changeSpContainer(csfSP: Element, stickers: CSFloat.Sticke
 	if (location.pathname !== '/sell') {
 		(csfSP as HTMLElement).style.backgroundColor = getSPBackgroundColor(spPercentage.toNumber());
 	}
-	(csfSP as HTMLElement).style.marginBottom = '5px';
 	return true;
 }
