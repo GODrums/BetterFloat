@@ -45,7 +45,12 @@ export const CSFloatSettings = ({ hasProPlan }: CSFloatSettingsProps) => {
 						<SettingsCheckbox id="csf-autorefresh" text="Auto-Refresh" icon={<MaterialSymbolsUpdate className="h-6 w-6" />} />
 					</SettingsCard>
 					<SettingsCard>
-						<SettingsCheckbox id="csf-stickerprices" text="Sticker Prices" icon={<PhSticker className="h-6 w-6" />} />
+						<SettingsCheckbox
+							id="csf-stickerprices"
+							text="Sticker Prices"
+							icon={<PhSticker className="h-6 w-6" />}
+							tooltipText="Show BetterFloat's sticker percentage in CSFloat's sticker badges. Disable to use CSFloat's native sticker percentage instead."
+						/>
 					</SettingsCard>
 					<SettingsCard>
 						<SettingsCheckbox

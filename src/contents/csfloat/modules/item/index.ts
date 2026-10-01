@@ -11,7 +11,7 @@ import { getCSFloatSettings } from '../runtime';
 import { addSaleListListener } from '../sell';
 import { INSERT_TYPE } from '../types';
 import { addCollectionLink, addQuickLinks, addScreenshotListener, adjustActionButtons } from './actions';
-import { addListingAge, addMiniListingAge, addMiniSellerDetails, addSellerDetails, adjustExistingSP } from './metadata';
+import { addListingAge, addMiniListingAge, addMiniSellerDetails, addSellerDetails } from './metadata';
 import { liveNotifications } from './notifications';
 import { patternDetections } from './patterns';
 import { addBuffPrice, getCurrencyRate, getFloatItem, showBargainPrice } from './pricing';
@@ -136,13 +136,9 @@ export async function adjustItem(container: Element, insertType = INSERT_TYPE.NO
 			}
 		}
 
-		if (extensionSettings['csf-stickerprices']) {
-			try {
-				await addStickerInfo(container, apiItem, priceResult.price_difference);
-			} catch (_) {}
-		} else {
-			adjustExistingSP(container);
-		}
+		try {
+			await addStickerInfo(container, apiItem, priceResult.price_difference);
+		} catch (_) {}
 
 		if (extensionSettings['csf-floatcoloring']) {
 			addFloatColoring(container, apiItem);

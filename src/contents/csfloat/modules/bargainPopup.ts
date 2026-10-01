@@ -8,6 +8,7 @@ import { getJSONAttribute, getSPBackgroundColor } from '~lib/util/helperfunction
 import { mountCSFBargainButtons } from '../url';
 import { storeApiItem } from './dom';
 import { adjustItem } from './item';
+import { formatSPText, styleNativeSPBadge } from './item/stickers';
 import { getCSFloatSettings } from './runtime';
 import { INSERT_TYPE } from './types';
 
@@ -20,7 +21,7 @@ type CSFBargainPopupData = {
 function getBargainPopupData(itemContainer: Element): CSFBargainPopupData | null {
 	const item = getJSONAttribute<CSFloat.ListingData>(itemContainer.getAttribute('data-betterfloat'));
 	const buffData = getJSONAttribute<{ priceFromReference: number; userCurrency: string }>(itemContainer.querySelector('.betterfloat-buff-a')?.getAttribute('data-betterfloat'));
-	const stickerData = getJSONAttribute<{ priceSum?: number; spPercentage?: number }>(itemContainer.querySelector('.sticker-percentage')?.getAttribute('data-betterfloat'));
+	const stickerData = getJSONAttribute<{ priceSum?: number; spPercentage?: number }>(itemContainer.querySelector('.sticker-percentage .sticker-badge')?.getAttribute('data-betterfloat'));
 
 	if (!item || !buffData?.priceFromReference || buffData.priceFromReference <= 0) {
 		return null;
@@ -130,6 +131,32 @@ function updateBargainInputMeta({
 	diffElement.style.backgroundColor = getBargainDiffColor(percentage.lessThan(100));
 }
 
+/**
+ * Replaces the value of CSFloat's native sticker badge in the offer input with our own SP.
+ * The badge is (re-)rendered by Angular depending on the input value, hence the observer.
+ */
+function syncOfferSPBadge(popupContainer: Element, inputField: HTMLInputElement, buffReferencePrice: number, priceSum: number, userCurrency: string) {
+	const priceField = popupContainer.querySelector('.offer-price-field');
+	if (!priceField) return;
+
+	const update = () => {
+		const badge = priceField.querySelector<HTMLElement>('.offer-sticker-overpay .sticker-badge');
+		const rawValue = inputField.value.trim();
+		if (!badge || rawValue.length === 0 || Number.isNaN(Number(rawValue))) return;
+
+		const spPercentage = new Decimal(rawValue).minus(buffReferencePrice).div(priceSum).toDP(4);
+		const text = formatSPText(spPercentage, priceSum, userCurrency);
+		if (badge.textContent?.trim() !== text) {
+			badge.textContent = text;
+		}
+		styleNativeSPBadge(badge, getSPBackgroundColor(spPercentage.toNumber()));
+	};
+
+	update();
+	inputField.addEventListener('input', update);
+	new MutationObserver(update).observe(priceField, { childList: true, subtree: true, characterData: true });
+}
+
 export async function adjustBargainPopup(itemContainer: Element, popupContainer: Element) {
 	const itemCard = popupContainer.querySelector('item-card');
 	if (!itemCard) return;
@@ -173,6 +200,9 @@ export async function adjustBargainPopup(itemContainer: Element, popupContainer:
 
 	updateMeta();
 	inputField.addEventListener('input', updateMeta);
+	if (stickerData?.priceSum) {
+		syncOfferSPBadge(popupContainer, inputField, buffData.priceFromReference, stickerData.priceSum, buffData.userCurrency);
+	}
 	diffElement?.addEventListener('click', () => {
 		absolute = !absolute;
 		updateMeta();

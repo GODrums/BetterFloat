@@ -3,22 +3,10 @@ import Decimal from 'decimal.js';
 
 import type { CSFloat } from '~lib/@typings/FloatTypes';
 import { ICON_CLOCK } from '~lib/util/globals';
-import { calculateEpochFromDate, calculateTime, getSPBackgroundColor } from '~lib/util/helperfunctions';
+import { calculateEpochFromDate, calculateTime } from '~lib/util/helperfunctions';
 
 import { getCSFCurrencyRate } from '../../cache';
 import { getCSFloatUserCurrency } from '../currency';
-
-export function adjustExistingSP(container: Element) {
-	const spContainer = container.querySelector('.sticker-percentage');
-	let spValue = spContainer?.textContent?.trim().split('%')[0];
-	if (!spValue || !spContainer) return;
-	if (spValue.startsWith('>')) {
-		spValue = spValue.substring(1);
-	}
-
-	const backgroundImageColor = getSPBackgroundColor(Number(spValue) / 100);
-	(spContainer as HTMLElement).style.backgroundColor = backgroundImageColor;
-}
 
 function calculateShortTime(created_at: number) {
 	const diffMinutes = Math.floor((Date.now() - created_at * 1000) / 60_000);
