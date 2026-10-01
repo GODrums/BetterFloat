@@ -36,11 +36,12 @@ function processCSMoneyEvent(eventData: EventData<unknown>) {
 		return;
 	}
 
-	if (eventData.url.includes('1.0/market/sell-orders/')) {
+	// sell-orders is versioned (1.0, 2.0, 3.0, ...): `/x.0/market/sell-orders/<id>` is a single
+	// item popup, `/x.0/market/sell-orders?...` is a (paginated) list
+	const sellOrdersPath = new URL(eventData.url).pathname.match(/\/\d+\.\d+\/market\/sell-orders(?:\/([^/]+))?\/?$/);
+	if (sellOrdersPath?.[1]) {
 		cacheCSMoneyPopupItem((eventData.data as CSMoney.SingleSellOrderResponse).item);
-	} else if (eventData.url.includes('1.0/market/sell-orders')) {
-		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
-	} else if (eventData.url.includes('2.0/market/sell-orders')) {
+	} else if (sellOrdersPath) {
 		cacheCSMoneyItems((eventData.data as CSMoney.SellOrderResponse).items);
 	} else if (eventData.url.includes('market/user-inventory')) {
 		if (eventData.url.includes('user-inventory/')) {

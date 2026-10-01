@@ -90,7 +90,7 @@ async function firstLaunch(serverData: CSMoneyServerData) {
 }
 
 function applyMutation() {
-	const observer = new MutationObserver(async (mutations) => {
+	const observer = new MutationObserver((mutations) => {
 		for (const mutation of mutations) {
 			for (let i = 0; i < mutation.addedNodes.length; i++) {
 				const addedNode = mutation.addedNodes[i];
@@ -99,10 +99,9 @@ function applyMutation() {
 				// console.debug('[|BetterFloat] Mutation detected:', addedNode, addedNode.tagName, addedNode.className.toString());
 
 				const items = addedNode.matches(ITEM_SELECTOR) ? [addedNode] : Array.from(addedNode.querySelectorAll(ITEM_SELECTOR));
-				if (items.length > 0) {
-					for (const item of items) {
-						await adjustItem(item);
-					}
+				// adjust cards concurrently: a card whose API data is late would otherwise block all following cards
+				for (const item of items) {
+					void adjustItem(item);
 				}
 			}
 		}
