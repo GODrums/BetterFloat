@@ -88,7 +88,7 @@ function applyMutation() {
 				} else if (addedNode.className === 'item-sell-card') {
 					await adjustItem(addedNode, PageState.Inventory);
 				} else if (addedNode.className === 'base-tooltip') {
-					const item = addedNode.querySelector('.item-buy-card');
+					const item = addedNode.querySelector(SKINPLACE_SELECTORS.market.itemCard);
 					if (item) {
 						await adjustItem(item, PageState.Market);
 					}
