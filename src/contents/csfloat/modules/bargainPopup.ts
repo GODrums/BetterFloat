@@ -70,7 +70,7 @@ function renderBargainMinOfferSummary(popupContainer: Element, currency: string,
 	popupContainer.querySelector('.minimum-offer')?.insertAdjacentHTML('beforeend', summaryMarkup);
 }
 
-function renderBargainInputMeta(popupContainer: Element, inputField: HTMLInputElement, showSP: boolean, styles: { spStyle: string; diffStyle: string }) {
+function renderBargainInputMeta(popupContainer: Element, inputField: HTMLInputElement, styles: { diffStyle: string }) {
 	const extensionSettings = getCSFloatSettings();
 	inputField.parentElement?.classList.add('betterfloat-bargain-input-row');
 	popupContainer.querySelector('.betterfloat-bargain-meta')?.remove();
@@ -85,32 +85,24 @@ function renderBargainInputMeta(popupContainer: Element, inputField: HTMLInputEl
 				>
 					-
 				</span>
-				${showSP ? `<span class="betterfloat-sticker-percentage betterfloat-bargain-sp" style="${styles.spStyle}; display: none;"></span>` : ''}
 			</div>
 		`
 	);
 
-	return {
-		diffElement: popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff'),
-		spElement: popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-sp'),
-	};
+	return popupContainer.querySelector<HTMLElement>('.betterfloat-bargain-diff');
 }
 
 function updateBargainInputMeta({
 	inputField,
 	diffElement,
-	spElement,
 	buffReferencePrice,
 	currency,
-	stickerData,
 	absolute,
 }: {
 	inputField: HTMLInputElement;
 	diffElement: HTMLElement | null;
-	spElement: HTMLElement | null;
 	buffReferencePrice: number;
 	currency: string;
-	stickerData: { priceSum?: number; spPercentage?: number } | null;
 	absolute: boolean;
 }) {
 	const extensionSettings = getCSFloatSettings();
@@ -122,9 +114,6 @@ function updateBargainInputMeta({
 	if (rawValue.length === 0) {
 		diffElement.textContent = absolute ? `+${currency}0` : '-';
 		diffElement.style.backgroundColor = extensionSettings['csf-color-neutral'];
-		if (spElement) {
-			spElement.style.display = 'none';
-		}
 		return;
 	}
 
@@ -133,29 +122,12 @@ function updateBargainInputMeta({
 		const diff = inputPrice.minus(buffReferencePrice);
 		diffElement.textContent = formatSignedCurrencyDifference(diff, currency);
 		diffElement.style.backgroundColor = getBargainDiffColor(diff.isNegative());
-		if (spElement) {
-			spElement.style.display = 'none';
-		}
 		return;
 	}
 
 	const percentage = inputPrice.div(buffReferencePrice).mul(100);
 	diffElement.textContent = `${percentage.absoluteValue().toDP(2).toNumber()}%`;
 	diffElement.style.backgroundColor = getBargainDiffColor(percentage.lessThan(100));
-
-	if (!spElement || !stickerData?.priceSum) {
-		return;
-	}
-
-	const stickerPercentage = inputPrice.minus(buffReferencePrice).div(stickerData.priceSum).mul(100).toDP(2);
-	if (stickerPercentage.lessThan(0)) {
-		spElement.style.display = 'none';
-		return;
-	}
-
-	spElement.style.display = 'block';
-	spElement.textContent = `${stickerPercentage.toNumber()}% SP`;
-	spElement.style.border = '1px solid grey';
 }
 
 export async function adjustBargainPopup(itemContainer: Element, popupContainer: Element) {
@@ -187,17 +159,15 @@ export async function adjustBargainPopup(itemContainer: Element, popupContainer:
 	const inputField = popupContainer.querySelector<HTMLInputElement>('input');
 	if (!inputField) return;
 
-	const { diffElement, spElement } = renderBargainInputMeta(popupContainer, inputField, showSP, styles);
+	const diffElement = renderBargainInputMeta(popupContainer, inputField, styles);
 	let absolute = false;
 
 	const updateMeta = () =>
 		updateBargainInputMeta({
 			inputField,
 			diffElement,
-			spElement,
 			buffReferencePrice: buffData.priceFromReference,
 			currency: currency ?? '',
-			stickerData,
 			absolute,
 		});
 

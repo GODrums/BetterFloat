@@ -65,6 +65,20 @@ app-user-orders {
 	gap: 8px;
 }
 
+/* Reserve CSFloat's native sticker badge space for the whole input row. */
+app-make-offer-dialog .offer-price-field.has-sticker-overpay .betterfloat-bargain-input-row {
+	box-sizing: border-box;
+	padding-right: 62px;
+
+	input {
+		padding-right: 0 !important;
+	}
+}
+
+app-make-offer-dialog .offer-price-field.has-sticker-overpay.currency-symbol-on-right .betterfloat-bargain-input-row {
+	padding-right: 132px;
+}
+
 .betterfloat-bargain-meta {
 	position: relative;
 	display: inline-flex;
@@ -74,6 +88,7 @@ app-user-orders {
 	font-size: 16px;
 	white-space: nowrap;
 	margin-left: 8px;
+	flex-shrink: 0;
 }
 
 .betterfloat-bargain-diff {
