@@ -1,8 +1,9 @@
 import { html } from 'common-tags';
 
 import type { CSFloat } from '~lib/@typings/FloatTypes';
-import { ICON_CSGOSKINS, ICON_PRICEMPIRE, ICON_STEAM, ICON_STEAMANALYST } from '~lib/util/globals';
+import { ICON_CS2SH, ICON_CSGOSKINS, ICON_PRICEMPIRE, ICON_STEAM, ICON_STEAMANALYST } from '~lib/util/globals';
 import { getCollectionLink, isUserPro, waitForElement } from '~lib/util/helperfunctions';
+import { getCS2shURL } from '~lib/util/market_urls';
 
 import { getCSFloatSettings } from '../runtime';
 import { getSkinSchema, getWeaponSchemaIndex, initItemSchema } from './schema';
@@ -169,6 +170,11 @@ export function addQuickLinks(listing: CSFloat.ListingData) {
 			icon: ICON_PRICEMPIRE,
 			tooltip: 'Show Pricempire Page',
 			link: `https://pricempire.com/item/${buff_name}`,
+		},
+		{
+			icon: ICON_CS2SH,
+			tooltip: 'Show CS2.sh Page',
+			link: getCS2shURL(listing.item.market_hash_name, listing.item.phase),
 		},
 	];
 	if (listing.seller?.stall_public) {

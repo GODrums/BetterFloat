@@ -72,6 +72,13 @@
 	border-radius: 3px;
 }
 
+.bf-popover-header-links {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
 .bf-popover-header-link {
 	display: inline-flex;
 	align-items: center;

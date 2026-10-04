@@ -3,9 +3,9 @@ import { html } from 'common-tags';
 import type { Extension } from '~lib/@typings/ExtensionTypes';
 import type { ItemStyle } from '~lib/@typings/FloatTypes';
 import { getMarketID } from '~lib/handlers/mappinghandler';
-import { AvailableMarketSources, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
+import { AvailableMarketSources, ICON_CS2SH, ICON_PRICEMPIRE, MarketSource, WEBSITE_URL } from './globals';
 import { CurrencyFormatter } from './helperfunctions';
-import { getMarketURL } from './market_urls';
+import { getCS2shURL, getMarketURL } from './market_urls';
 import { fetchMarketComparisonData } from './messaging';
 
 type CacheEntry = {
@@ -229,6 +229,7 @@ function positionPopover(trigger: HTMLElement) {
 function buildPopoverHeader(buffName: string, { itemStyle, isPro }: { itemStyle?: ItemStyle | undefined; isPro: boolean }) {
 	const phase = itemStyle !== '' && itemStyle !== 'Vanilla' ? itemStyle : undefined;
 	const pricempireUrl = isPro ? getMarketURL({ source: MarketSource.Pricempire, buff_name: buffName, phase }) : '';
+	const cs2shUrl = getCS2shURL(buffName, phase);
 
 	return html`
 		<div class="bf-popover-header">
@@ -236,22 +237,34 @@ function buildPopoverHeader(buffName: string, { itemStyle, isPro }: { itemStyle?
 				<img src="${betterfloatLogo}" class="bf-popover-header-logo" />
 				<span>Market Comparison</span>
 			</div>
-			${
-				pricempireUrl
-					? html`
-							<a
-								class="bf-popover-header-link"
-								href="${pricempireUrl}"
-								target="_blank"
-								rel="noopener noreferrer"
-								aria-label="View on Pricempire"
-								title="View on Pricempire"
-							>
-								<img src="${ICON_PRICEMPIRE}" alt="Pricempire" />
-							</a>
-						`
-					: ''
-			}
+			<div class="bf-popover-header-links">
+				${
+					pricempireUrl
+						? html`
+								<a
+									class="bf-popover-header-link"
+									href="${pricempireUrl}"
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="View on Pricempire"
+									title="View on Pricempire"
+								>
+									<img src="${ICON_PRICEMPIRE}" alt="Pricempire" />
+								</a>
+							`
+						: ''
+				}
+				<a
+					class="bf-popover-header-link"
+					href="${cs2shUrl}"
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="View on CS2.sh"
+					title="View on CS2.sh"
+				>
+					<img src="${ICON_CS2SH}" alt="CS2.sh" />
+				</a>
+			</div>
 		</div>
 	`;
 }

@@ -8,6 +8,18 @@ function getPhaseTag(marketId: number | string, phase?: DopplerPhase | null) {
 	return phases?.[phase];
 }
 
+/**
+ * Item page on cs2.sh, e.g. "StatTrak™ Karambit | Doppler (Factory New)" + "Phase 1"
+ * -> https://cs2.sh/item/stattrak-karambit-doppler-factory-new-phase-1
+ */
+export function getCS2shURL(buff_name: string, phase?: DopplerPhase) {
+	const slug = (buff_name + (phase ? ` - ${phase}` : ''))
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-+|-+$/g, '');
+	return `https://cs2.sh/item/${slug}?utm_source=betterfloat`;
+}
+
 export function getMarketURL({ source, buff_name, market_id = 0, phase }: { source: MarketSource; buff_name: string; market_id?: number | string; phase?: DopplerPhase }) {
 	switch (source) {
 		case MarketSource.Buff: {
