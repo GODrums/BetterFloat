@@ -166,7 +166,7 @@ function addSimilarButton(container: Element, item: CSMoney.Item) {
 				: allSelectors.length === 2
 					? allSelectors[0]?.parentElement
 					: (allSelectors[1]?.parentElement?.parentElement?.firstElementChild?.firstElementChild as HTMLElement);
-	} else if (location.pathname.includes('/market/sell/') || location.pathname.includes('/market/instant-sell/')) {
+	} else if (location.pathname.includes('/market/p2p-sell/') || location.pathname.includes('/market/instant-sell/')) {
 		parentElement = container.querySelector(CSMONEY_SELECTORS.sell.popup_similar) as HTMLElement;
 	}
 	if (!parentElement) return;
@@ -311,7 +311,7 @@ function getSelectors(isPopout: boolean): CSMONEY_SELECTOR {
 		return CSMONEY_SELECTORS.market;
 	} else if (location.pathname.includes('/market/instant-sell/')) {
 		return CSMONEY_SELECTORS.instant_sell;
-	} else if (location.pathname.includes('/market/sell/')) {
+	} else if (location.pathname.includes('/market/p2p-sell/')) {
 		if (isPopout) {
 			return CSMONEY_SELECTORS.sell_popout;
 		}
@@ -372,7 +372,7 @@ async function addBuffPrice(item: CSMoney.Item, container: Element, isPopout = f
 	if (
 		(extensionSettings['csm-buffdifference'] || extensionSettings['csm-buffdifferencepercent']) &&
 		priceFromReference?.gt(0) &&
-		!location.pathname.includes('/market/sell/') &&
+		!location.pathname.includes('/market/p2p-sell/') &&
 		!container.querySelector('.betterfloat-sale-tag')
 	) {
 		let priceContainer: HTMLElement | null | undefined = null;
