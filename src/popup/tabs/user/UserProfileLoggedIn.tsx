@@ -22,6 +22,7 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 	const [syncCooldown, setSyncCooldown] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	const [refreshCooldown, setRefreshCooldown] = useState(false);
+	const [refreshSuccess, setRefreshSuccess] = useState(false);
 	const [grantingPermissions, setGrantingPermissions] = useState(false);
 	const [allPermissionsGranted, setAllPermissionsGranted] = useState(false);
 	const isDevMode = chrome.runtime.getManifest().name.includes('DEV');
@@ -43,9 +44,13 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 		try {
 			const allSources = [MarketSource.Buff, MarketSource.Steam, MarketSource.YouPin, MarketSource.C5Game, MarketSource.CSFloat];
 			await Promise.all(allSources.map((source) => resetUpdateCounter(source)));
+			setRefreshSuccess(true);
 		} finally {
 			setRefreshing(false);
-			setTimeout(() => setRefreshCooldown(false), 60000); // 1 minute cooldown
+			setTimeout(() => {
+				setRefreshCooldown(false);
+				setRefreshSuccess(false);
+			}, 60000); // 1 minute cooldown
 		}
 	};
 
@@ -194,8 +199,22 @@ export function LoggedInView({ user, setUser }: LoggedInViewProps) {
 					{user.plan.type === 'pro' && user.plan.endDate && (
 						<>
 							<p className="text-sm text-muted-foreground text-center">Subscription ends on {new Date(user.plan.endDate).toLocaleDateString()}</p>
-							<Button variant="outline" onClick={refreshPrices} disabled={refreshing || refreshCooldown}>
-								{refreshing ? <LoadingSpinner /> : 'Refresh prices manually'}
+							<Button
+								variant="outline"
+								onClick={refreshPrices}
+								disabled={refreshing || refreshCooldown}
+								className={refreshSuccess ? 'gap-2 border-green-500/50 text-green-500 disabled:opacity-100' : undefined}
+							>
+								{refreshing ? (
+									<LoadingSpinner />
+								) : refreshSuccess ? (
+									<>
+										<Check className="w-4 h-4 text-green-500" />
+										Prices refreshed
+									</>
+								) : (
+									'Refresh prices manually'
+								)}
 							</Button>
 							{!allPermissionsGranted && (
 								<Button variant="secondary" onClick={grantAllHostPermissions} disabled={grantingPermissions || allPermissionsGranted}>
