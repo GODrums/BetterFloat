@@ -10,7 +10,10 @@ function processWhiteMarketEvent(eventData: EventData<unknown>) {
 		return;
 	}
 
-	const responseData = (eventData.data as any).data;
+	const responseData = (eventData.data as any)?.data;
+	if (!responseData) {
+		return;
+	}
 
 	if (responseData.market_list) {
 		const items = (responseData as WhiteMarket.MarketListResponse).market_list.edges.map((edge) => edge.node);

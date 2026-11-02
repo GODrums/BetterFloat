@@ -8,7 +8,7 @@ import { CurrencyFormatter, convertCurrency, getBuffPrice, handleSpecialStickerN
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getFirstWhiteMarketInventoryItem, getWhiteMarketItem } from './cache';
+import { cacheWhiteMarketSSRItems, findWhiteMarketInventoryItem, getWhiteMarketItem, type WhiteMarketInventoryCard } from './cache';
 import { activateWhitemarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -31,6 +31,8 @@ async function init() {
 	// catch the events thrown by the script
 	// this has to be done as first thing to not miss timed events
 	activateHandler();
+	// the first page of listings is server-rendered and not fetched via GraphQL
+	cacheWhiteMarketSSRItems();
 
 	extensionSettings = await getAllSettings();
 
@@ -52,24 +54,16 @@ function changeListener() {
 	setInterval(async () => {
 		// Check if the inventory section is still part of the document
 		if (location.pathname === '/inventory/my' || location.pathname === '/inventory/instant-sell') {
-			// Check each item in the list
-			const items = document.querySelectorAll('div[id]:has(> button[title])');
+			// inventory cards are buttons (market cards are links) inside a virtualized grid
+			const items = document.querySelectorAll('button.wm-card');
 			for (const item of items) {
-				if (item instanceof HTMLElement && item.className.includes('__item')) {
-					// Check if the Buff price container has already been added
-					const hasBuffContainer = item.querySelector('.betterfloat-buff-a');
-					if (hasBuffContainer) break;
-
-					await adjustItem(item, PageState.Inventory);
-				}
+				await adjustItem(item, PageState.Inventory);
 			}
 		} else {
 			const items = document.querySelectorAll('a[href*="/item/"]:not(:has(.betterfloat-buff-a))');
 			for (const item of items) {
-				const result = await adjustItem(item as Element, PageState.Market);
-				if (result === null) {
-					return;
-				}
+				// items without cached API data (yet) are skipped and retried on the next tick
+				await adjustItem(item as Element, PageState.Market);
 			}
 		}
 	}, 1000);
@@ -103,7 +97,7 @@ async function adjustItem(container: Element, state: PageState) {
 	let price: WhiteMarket.Price | null = null;
 	const getApiItem = () => {
 		if (state === PageState.Inventory) {
-			return getFirstWhiteMarketInventoryItem();
+			return findWhiteMarketInventoryItem(readInventoryCard(container));
 		}
 		if (state === PageState.Market) {
 			const slug = container.getAttribute('href')?.split('/').at(-1);
@@ -119,15 +113,41 @@ async function adjustItem(container: Element, state: PageState) {
 	};
 	const apiItem = getApiItem();
 	if (!apiItem) {
-		console.error('[BetterFloat] No item found after 5 attempts');
+		console.debug('[BetterFloat] No API data found for item: ', container);
 		return null;
 	}
 
-	if (container.classList.contains(apiItem.id)) return null;
-
-	container.classList.add(apiItem.id);
+	if (state === PageState.Inventory) {
+		// the virtualized grid recycles card elements while scrolling, so the
+		// card may now show a different item than the one we priced before
+		const htmlContainer = container as HTMLElement;
+		if (htmlContainer.dataset.betterfloatId === apiItem.id) return null;
+		for (const element of container.querySelectorAll('.betterfloat-buff-a')) {
+			element.remove();
+		}
+		htmlContainer.dataset.betterfloatId = apiItem.id;
+	} else {
+		if (container.classList.contains(apiItem.id)) return null;
+		container.classList.add(apiItem.id);
+	}
 
 	const _priceResult = await addBuffPrice(apiItem, price, container, state);
+}
+
+function readInventoryCard(container: Element): WhiteMarketInventoryCard {
+	const description = container.querySelector('.wm-card-desc-detailed');
+	const short = description?.querySelector('.wm-label--13')?.textContent?.trim() || undefined;
+	const skin = description?.querySelector('.wm-label--14')?.textContent?.trim() || undefined;
+	// float row: "<span>MW</span><span>0.0721</span>" right below the float bar
+	const floatText = container.querySelector('.wm-float')?.nextElementSibling?.querySelector('.wm-label--13 > span:last-child')?.textContent?.trim();
+	const float = floatText && /^\d*\.\d+$/.test(floatText) ? Number(floatText) : undefined;
+	return {
+		icon: container.querySelector<HTMLImageElement>('img.wm-card-img')?.src,
+		short,
+		skin,
+		float,
+		isStatTrak: (short ?? '').includes('StatTrak'),
+	};
 }
 
 async function getBuffItem(item: WhiteMarket.Item, price: WhiteMarket.Price | null) {
@@ -196,9 +216,11 @@ enum PageState {
 async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | null, container: Element, state: PageState): Promise<PriceResult> {
 	const { buff_name, market_id, source, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item, price);
 
-	let footerContainer = container.querySelector('div.price')?.parentElement as HTMLElement;
-	if (state === PageState.Inventory) {
-		footerContainer = footerContainer.parentElement as HTMLElement;
+	// legacy layout used `div.price`, the current card layout renders the price as an 18px label
+	const legacyPrice = container.querySelector('div.price');
+	let footerContainer = (legacyPrice ?? container.querySelector('.wm-label--18'))?.parentElement ?? null;
+	if (legacyPrice && state === PageState.Inventory) {
+		footerContainer = footerContainer?.parentElement ?? null;
 	}
 
 	const isItemPage = state === PageState.ItemPage;
@@ -225,11 +247,8 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 		});
 
 		if (!container.querySelector('.betterfloat-buffprice')) {
-			if (state === PageState.Market) {
-				footerContainer.insertAdjacentHTML('afterend', buffContainer);
-			} else if (state === PageState.Inventory) {
-				footerContainer.insertAdjacentHTML('beforeend', buffContainer);
-			}
+			// the legacy inventory layout had room inside the footer, the current layout puts it below the price row
+			footerContainer.insertAdjacentHTML(legacyPrice && state === PageState.Inventory ? 'beforeend' : 'afterend', buffContainer);
 		}
 
 		container.querySelector('.betterfloat-buff-a')?.addEventListener('click', (e) => {
@@ -264,7 +283,7 @@ async function addBuffPrice(item: WhiteMarket.Item, price: WhiteMarket.Price | n
 		const percentage = itemPrice.div(priceFromReference ?? 0).mul(100);
 		const { color, background: backgroundColor } = percentage.gt(100) ? styling.loss : styling.profit;
 
-		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px;" data-betterfloat="${difference}"><span>${difference.gt(0) ? '+' : '-'}${convertCurrency(
+		const buffPriceHTML = `<div class="sale-tag betterfloat-sale-tag" style="background-color: ${backgroundColor}; color: ${color}; padding: 1px 5px; border-radius: 4px; display: inline-block; margin-left: 6px; vertical-align: middle;" data-betterfloat="${difference}"><span>${difference.gt(0) ? '+' : '-'}${convertCurrency(
 			difference.abs().toDP(2).toNumber(),
 			'USD'
 		)} </span><span>(${percentage.gt(150) ? percentage.toFixed(0) : percentage.toFixed(2)}%)</span></div>`;
