@@ -86,7 +86,7 @@ const comparisonPrimary = [
 	{ icon: ICON_CSFLOAT, name: 'CSFloat', bid: '$1,500.00', ask: '$1,637.03' },
 ];
 const comparisonOther = [
-	{ icon: ICON_C5GAME, name: 'C5Game', bid: '-', ask: '$1,613.44' },
+	{ icon: ICON_C5GAME, name: 'C5Game', bid: '$1,497.81', ask: '$1,613.44' },
 	{ icon: ICON_SKINPORT, name: 'Skinport', bid: '-', ask: '$1,647.04' },
 	{ icon: ICON_WHITEMARKET, name: 'Whitemarket', bid: '-', ask: '$1,649.94' },
 	{ icon: ICON_LISSKINS, name: 'Lisskins', bid: '-', ask: '$1,661.63' },
@@ -98,8 +98,6 @@ const comparisonOther = [
 	{ icon: ICON_AVANMARKET, name: 'Avanmarket', bid: '-', ask: '$1,889.60' },
 	{ icon: ICON_MARKETCSGO, name: 'Marketcsgo', bid: '$1,696.36', ask: '$1,975.26' },
 	{ icon: ICON_BUFFMARKET, name: 'BuffMarket', bid: '-', ask: '$1,990.44' },
-	{ icon: ICON_GAMERPAY, name: 'Gamerpay', bid: '-', ask: '$2,178.01' },
-	{ icon: ICON_BITSKINS, name: 'Bitskins', bid: '-', ask: '$2,212.00' },
 	{ icon: ICON_SKINBID, name: 'Skinbid', bid: '-', ask: '$2,348.80' },
 	{ icon: ICON_SKINOUT, name: 'Skinout', bid: '-', ask: '$2,462.09' },
 	{ icon: ICON_SKINBARON, name: 'Skinbaron', bid: '-', ask: '$2,884.37' },
@@ -370,8 +368,8 @@ export default function OnboardingPage() {
 							{/* Glow under the popover to suggest it's floating above a listing */}
 							<div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.18),transparent_65%)] blur-2xl" />
 
-							<div className="relative mx-auto w-full max-w-[380px]">
-								<div className="relative max-h-[360px] overflow-y-auto overflow-x-hidden rounded-[10px] border border-white/10 bg-[rgba(30,30,30,0.95)] text-xs text-white shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md [&::-webkit-scrollbar-thumb]:rounded-sm [&::-webkit-scrollbar-thumb]:bg-white/15 [&::-webkit-scrollbar]:w-1">
+							<div className="relative mx-auto w-full max-w-95">
+								<div className="relative max-h-90 overflow-y-auto overflow-x-hidden rounded-[10px] border border-white/10 bg-[rgba(30,30,30,0.95)] text-xs text-white shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md [&::-webkit-scrollbar-thumb]:rounded-sm [&::-webkit-scrollbar-thumb]:bg-white/15 [&::-webkit-scrollbar]:w-1">
 									{/* Popover header — sticks to top so it stays visible while scrolling */}
 									<div className="sticky top-0 z-10 flex items-center justify-between gap-2.5 border-b border-white/8 bg-[rgba(30,30,30,0.95)] px-3 py-1 text-sm font-semibold backdrop-blur-md">
 										<div className="flex min-w-0 items-center gap-1.5">
@@ -386,7 +384,7 @@ export default function OnboardingPage() {
 											title="View on Pricempire"
 											className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/2 transition-colors hover:border-white/18 hover:bg-white/8"
 										>
-											<img src={ICON_PRICEMPIRE} alt="Pricempire" className="h-[18px] w-[18px] rounded-[4px]" />
+											<img src={ICON_PRICEMPIRE} alt="Pricempire" className="h-4.5 w-4.5 rounded-lg" />
 										</a>
 									</div>
 
@@ -402,33 +400,33 @@ export default function OnboardingPage() {
 										<tbody>
 											{comparisonPrimary.map((row) => (
 												<tr key={row.name}>
-													<td className="whitespace-nowrap px-2.5 py-[5px]">
-														<div className="flex items-center gap-[7px]">
-															<img src={row.icon} alt="" className="h-[14px] w-[14px] shrink-0 object-contain" />
+													<td className="whitespace-nowrap px-2.5 py-1.25">
+														<div className="flex items-center gap-1.75">
+															<img src={row.icon} alt="" className="h-3.5 w-3.5 shrink-0 object-contain" />
 															<span>{row.name}</span>
 														</div>
 													</td>
-													<td className="whitespace-nowrap px-2.5 py-[5px] text-right tabular-nums text-orange-400">{row.bid}</td>
-													<td className="whitespace-nowrap px-2.5 py-[5px] text-right tabular-nums" style={{ color: 'greenyellow' }}>
+													<td className="whitespace-nowrap px-2.5 py-1.25 text-right tabular-nums text-orange-400">{row.bid}</td>
+													<td className="whitespace-nowrap px-2.5 py-1.25 text-right tabular-nums" style={{ color: 'greenyellow' }}>
 														{row.ask}
 													</td>
 												</tr>
 											))}
 											<tr aria-hidden>
 												<td colSpan={3} className="p-0">
-													<div className="h-[2px] bg-white/8" />
+													<div className="h-0.5 bg-white/8" />
 												</td>
 											</tr>
 											{comparisonOther.map((row) => (
 												<tr key={row.name}>
-													<td className="whitespace-nowrap px-2.5 py-[5px]">
-														<div className="flex items-center gap-[7px]">
-															<img src={row.icon} alt="" className="h-[14px] w-[14px] shrink-0 object-contain" />
+													<td className="whitespace-nowrap px-2.5 py-1.25">
+														<div className="flex items-center gap-1.75">
+															<img src={row.icon} alt="" className="h-3.5 w-3.5 shrink-0 object-contain" />
 															<span>{row.name}</span>
 														</div>
 													</td>
-													<td className="whitespace-nowrap px-2.5 py-[5px] text-right tabular-nums text-orange-400">{row.bid}</td>
-													<td className="whitespace-nowrap px-2.5 py-[5px] text-right tabular-nums" style={{ color: 'greenyellow' }}>
+													<td className="whitespace-nowrap px-2.5 py-1.25 text-right tabular-nums text-orange-400">{row.bid}</td>
+													<td className="whitespace-nowrap px-2.5 py-1.25 text-right tabular-nums" style={{ color: 'greenyellow' }}>
 														{row.ask}
 													</td>
 												</tr>
@@ -437,10 +435,10 @@ export default function OnboardingPage() {
 									</table>
 
 									{/* Liquidity footer — sticks to bottom so it stays visible while scrolling */}
-									<div className="sticky bottom-0 z-10 flex items-center justify-between gap-2 border-t border-white/8 bg-[rgba(30,30,30,0.95)] px-2.5 py-[5px] text-[11px] text-white/40 backdrop-blur-md">
+									<div className="sticky bottom-0 z-10 flex items-center justify-between gap-2 border-t border-white/8 bg-[rgba(30,30,30,0.95)] px-2.5 py-1.25 text-[11px] text-white/40 backdrop-blur-md">
 										<span>Liquidity</span>
 										<div className="flex items-center gap-1.5 tabular-nums">
-											<div className="h-[3px] w-8 overflow-hidden rounded-[1.5px] bg-white/8">
+											<div className="h-0.75 w-8 overflow-hidden rounded-[1.5px] bg-white/8">
 												<div className="h-full rounded-[1.5px]" style={{ width: `${LIQUIDITY_PCT}%`, background: liquidityColor }} />
 											</div>
 											<span style={{ color: liquidityColor }}>{LIQUIDITY_PCT.toFixed(1)}%</span>

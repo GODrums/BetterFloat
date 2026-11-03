@@ -7,7 +7,7 @@ import type { LegacyContentScriptConfig as PlasmoCSConfig } from '~lib/@typings/
 import { getMarketID } from '~lib/handlers/mappinghandler';
 import { AVAN_SELECTORS } from '~lib/handlers/selectors/avan_selectors';
 import { initPriceMapping } from '~lib/shared/pricing';
-import { MarketSource } from '~lib/util/globals';
+import { AskBidMarkets, MarketSource } from '~lib/util/globals';
 import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialStickerNames, isUserPro } from '~lib/util/helperfunctions';
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
@@ -316,7 +316,7 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 
 	const referencePrice =
 		Number(extensionSettings['av-pricereference']) === 0 &&
-		([MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat].includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
+		(AskBidMarkets.map((market) => market.source).includes(source) || (MarketSource.YouPin === source && isUserPro(extensionSettings['user'])))
 			? priceOrder
 			: priceListing;
 	const priceDifference = itemPrice.minus(referencePrice ?? 0);

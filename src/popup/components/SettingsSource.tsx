@@ -122,8 +122,8 @@ export const SettingsSource = ({ prefix }: { prefix: string }) => {
 					)}
 				</AnimatePresence>
 				<AnimatePresence mode="wait">
-					{[MarketSource.Buff, MarketSource.Steam, MarketSource.Marketcsgo].includes(source) && (
-						<motion.div key="buff-steam-marketcsgo" {...animateProps}>
+					{[MarketSource.Buff, MarketSource.Steam, MarketSource.C5Game, MarketSource.Marketcsgo].includes(source) && (
+						<motion.div key="bid-ask-altmarket" {...animateProps}>
 							<div className="pt-1 px-4">
 								<SettingsSelect id={`${prefix}-pricereference`} text="Primary Price" tooltipText="Bid => highest buy order; Ask => lowest listing" options={['Bid', 'Ask']} />
 								<SettingsAltMarket prefix={prefix} sources={sources.filter((s) => s.source !== source)} primarySource={source} />

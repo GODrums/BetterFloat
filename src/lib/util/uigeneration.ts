@@ -3,7 +3,7 @@ import { html } from 'common-tags';
 import type Decimal from 'decimal.js';
 import type { DopplerPhase } from '~lib/@typings/FloatTypes';
 import type { BlueGem } from '../@typings/ExtensionTypes';
-import { AvailableMarketSources, ICON_EXCLAMATION, MarketSource } from './globals';
+import { AskBidMarkets, AvailableMarketSources, ICON_EXCLAMATION, MarketSource } from './globals';
 import { getMarketURL } from './market_urls';
 
 export function generatePriceLine({
@@ -45,7 +45,7 @@ export function generatePriceLine({
 	const isWarning = priceOrder?.gt(priceListing ?? 0);
 	const bfDataAttribute = JSON.stringify({ buff_name, itemStyle, priceFromReference, userCurrency }).replace(/'/g, '&#39;');
 
-	const showBothPrices = [MarketSource.Buff, MarketSource.Steam, MarketSource.CSFloat, MarketSource.Marketcsgo].includes(source) || (MarketSource.YouPin === source && hasPro);
+	const showBothPrices = AskBidMarkets.some((market) => market.source === source) || (MarketSource.YouPin === source && hasPro);
 	const buffContainer = html`
 		<a 
 			class="betterfloat-buff-a ${isPopout ? 'betterfloat-big-a' : ''}" 
