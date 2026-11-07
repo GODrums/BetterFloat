@@ -1,4 +1,9 @@
 export namespace Skinplace {
+	export type Screenshot = {
+		side: 'front' | 'back';
+		icon_url: string;
+	};
+
 	export type MarketOffersResponse = {
 		data: MarketOffer[];
 		item: {
@@ -65,6 +70,7 @@ export namespace Skinplace {
 	};
 
 	export type GetItem = {
+		screenshots?: Screenshot[] | null;
 		item_amount: number;
 		id: number;
 		item_id: number;

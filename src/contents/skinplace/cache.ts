@@ -13,7 +13,10 @@ export type SkinplaceMarketItemLookup = {
 };
 
 function getMarketItemCacheKey({ cdnIconUrl, isStatTrak, isSouvenir, exterior }: SkinplaceMarketItemLookup) {
-	return [cdnIconUrl, isStatTrak ? 'st' : isSouvenir ? 'souv' : '', exterior].join('|');
+	// Cards use full CDN URLs and may append /d/<size>.webp to Steam icons.
+	// Preserve the rest of the path so individual screenshots remain distinct.
+	const imagePath = new URL(cdnIconUrl, 'https://skin.place').pathname.replace(/^\/+/, '').replace(/\/d\/\d+x\d+\.webp$/, '');
+	return [imagePath, isStatTrak ? 'st' : isSouvenir ? 'souv' : '', exterior].join('|');
 }
 
 export function cacheSkinplaceMarketOffer(data: Skinplace.MarketOffersResponse) {
@@ -22,14 +25,19 @@ export function cacheSkinplaceMarketOffer(data: Skinplace.MarketOffersResponse) 
 
 export function cacheSkinplaceMarketItems(data: Skinplace.GetItemsResponse) {
 	data.items.forEach((item) => {
-		marketItems[
-			getMarketItemCacheKey({
-				cdnIconUrl: item.cdn_icon_url,
-				isStatTrak: Boolean(item.is_stattrak),
-				isSouvenir: Boolean(item.steam_is_souvenir),
-				exterior: item.shorten_exterior || item.steam_exterior,
-			})
-		] = { ...item };
+		const cachedItem = { ...item };
+		const images = [item.cdn_icon_url, ...(item.screenshots ?? []).map((screenshot) => screenshot.icon_url)];
+		for (const cdnIconUrl of images) {
+			if (!cdnIconUrl) continue;
+			marketItems[
+				getMarketItemCacheKey({
+					cdnIconUrl,
+					isStatTrak: Boolean(item.is_stattrak),
+					isSouvenir: Boolean(item.steam_is_souvenir),
+					exterior: item.shorten_exterior || item.steam_exterior,
+				})
+			] = cachedItem;
+		}
 	});
 }
 
