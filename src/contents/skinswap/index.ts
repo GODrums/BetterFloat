@@ -75,6 +75,34 @@ function firstLaunch() {
 	// }
 }
 
+/**
+ * Grid cards (used on /buy and /china) are rendered in a virtualized list:
+ * each card sits inside an absolutely positioned wrapper div.
+ */
+function isGridCard(element: Element | null | undefined): element is HTMLElement {
+	return !!element && element.classList.contains('h-53') && element.classList.contains('bg-bg-800');
+}
+
+function isSiteItemCard(item: Element) {
+	return item.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
+}
+
+async function adjustItemCards(root: Element) {
+	const items = root.querySelectorAll('.item-card');
+	for (const item of items) {
+		await adjustItem(item, PageState.Market, isSiteItemCard(item));
+	}
+}
+
+async function adjustGridCards(root: Element) {
+	const cards = root.querySelectorAll('div.h-53.bg-bg-800');
+	for (const card of cards) {
+		if (card.parentElement) {
+			await adjustItem(card.parentElement, PageState.China, true);
+		}
+	}
+}
+
 function applyMutation() {
 	const observer = new MutationObserver(async (mutations) => {
 		for (const mutation of mutations) {
@@ -84,40 +112,15 @@ function applyMutation() {
 				if (!(addedNode instanceof HTMLElement)) continue;
 				// console.debug('[BetterFloat] Skinswap Mutation detected:', addedNode);
 
-				if (addedNode.className === 'px-0 md:px-[12px]') {
-					const items = addedNode.querySelectorAll('.item-card');
-					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
-					for (const item of items) {
-						await adjustItem(item, PageState.Market, isSiteItem);
-					}
-				} else if (addedNode.parentElement?.classList.contains('gridBox')) {
-					if (location.pathname.startsWith('/china')) {
-						const items = addedNode.querySelectorAll('.grow.center');
-						for (const item of items) {
-							const container = item.parentElement?.parentElement;
-							if (!container) {
-								continue;
-							}
-							await adjustItem(container, PageState.China, true);
-						}
-					} else {
-						const items = addedNode.querySelectorAll('.item-card');
-						const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
-						for (const item of items) {
-							await adjustItem(item, PageState.Market, isSiteItem);
-						}
-					}
-				} else if (addedNode.classList.contains('item-card')) {
-					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
-					await adjustItem(addedNode, PageState.Market, isSiteItem);
+				if (addedNode.classList.contains('item-card')) {
+					await adjustItem(addedNode, PageState.Market, isSiteItemCard(addedNode));
 				} else if (addedNode.firstElementChild?.classList.contains('item-card')) {
-					const isSiteItem = addedNode.closest('.z-30')?.previousElementSibling?.id === 'middleTradeBar';
-					await adjustItem(addedNode.firstElementChild, PageState.Market, isSiteItem);
-				} else if (
-					addedNode.getAttribute('style')?.includes('position: absolute;') &&
-					addedNode.firstElementChild?.className === 'flex flex-col p-2.5 h-53 relative rounded-4 transition-colors duration-300 bg-bg-800'
-				) {
+					await adjustItem(addedNode.firstElementChild, PageState.Market, isSiteItemCard(addedNode));
+				} else if (addedNode.getAttribute('style')?.includes('position: absolute;') && isGridCard(addedNode.firstElementChild)) {
 					await adjustItem(addedNode, PageState.China, true);
+				} else if (addedNode.classList.contains('px-0') || addedNode.parentElement?.classList.contains('gridBox')) {
+					await adjustItemCards(addedNode);
+					await adjustGridCards(addedNode);
 				}
 			}
 		}
@@ -136,7 +139,13 @@ function getAPIItem(container: Element, state: PageState, isSiteItem: boolean): 
 			return getSkinswapUserItem(itemId);
 		}
 	} else if (state === PageState.China) {
-		const mhn = container.querySelector('img.w-full')?.getAttribute('alt');
+		const img = container.querySelector('img.w-full');
+		// card images are served as cdn.skinswap.com/images/<appid>/<stackId>
+		const stackId = img?.getAttribute('src')?.split('?')[0]?.split('/').pop();
+		const stackItem = stackId ? getSkinswapItem(stackId) : undefined;
+		if (stackItem) return stackItem;
+
+		const mhn = img?.getAttribute('alt');
 		if (!mhn) return undefined;
 
 		return getSkinswapChinaItem(mhn);

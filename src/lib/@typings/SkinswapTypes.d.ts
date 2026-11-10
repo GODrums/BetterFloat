@@ -45,7 +45,8 @@ export namespace Skinswap {
 	export interface Item {
 		accepted: boolean;
 		appid: number;
-		assetid: string;
+		asset: Asset;
+		assetid?: string;
 		classid: string;
 		id: number;
 		inspect: Inspect;
@@ -57,11 +58,29 @@ export namespace Skinswap {
 		qualities: Qualities;
 		reason: null;
 		stackId: string;
-		stackIdWithHold: string;
+		/** @deprecated removed from site inventory responses, use stackId */
+		stackIdWithHold?: string;
 		steamid: string;
 		tradable: boolean;
 		tradehold_days: number;
 		tradehold_expires: null;
+	}
+
+	export interface Asset {
+		id: string;
+		inspect: {
+			charm: any;
+			fade_percentage: number | null;
+			fade_ranking: number | null;
+			float: number | null;
+			paint_index: number | null;
+			pattern: number;
+			stickers: any[];
+		};
+		inspect_link: string;
+		source: string;
+		tradehold_days: number;
+		tradehold_expires: string | null;
 	}
 
 	export interface Qualities {
