@@ -249,7 +249,7 @@ export namespace BlueGem {
 			id?: string; // csfloat new
 			playside?: string | null; // csfloat old
 			backside?: string | null; // csfloat old
-		};
+		} | null;
 		statTrak: boolean;
 		float: number;
 	};

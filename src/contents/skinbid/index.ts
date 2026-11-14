@@ -352,22 +352,22 @@ export async function caseHardenedDetection(container: Element, listing: Skinbid
                             <td class="main-td from-sm-table-cell" style="${tdStyle} display: flex; flex-direction: column;">
                                 ${sale.statTrak ? '<span style="color: rgb(255, 120, 44);">StatTrak™ </span>' : ''}
 								${
-									sale.screenshots.combined
+									sale.screenshots?.combined
 										? html`
-												<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot">
+												<a href="${sale.screenshots?.combined}" target="_blank" title="Show Buff screenshot">
 													<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 												</a>
 										  `
 										: ''
 								}
 								${
-									sale.screenshots.playside
+									sale.screenshots?.playside
 										? html`
 												<div style="display: flex; align-items: center; gap: 8px;">
-													<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot">
+													<a href="${sale.screenshots?.playside}" target="_blank" title="Show CSFloat font screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
-													<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot">
+													<a href="${sale.screenshots?.backside}" target="_blank" title="Show CSFloat back screenshot">
 														<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 													</a>
 												</div>

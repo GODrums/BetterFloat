@@ -467,20 +467,20 @@ async function addCaseHardenedSales(item: CSFloat.Item) {
 						<span>${sale.float}</span>
 					</td>
 					<td role="cell" class="mat-mdc-cell">
-						${sale.screenshots.combined ? html`<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot"><mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon></a>` : ''}
-						${sale.screenshots.playside ? html`<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot"><mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon></a>` : ''}
+						${sale.screenshots?.combined ? html`<a href="${sale.screenshots?.combined}" target="_blank" title="Show Buff screenshot"><mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon></a>` : ''}
+						${sale.screenshots?.playside ? html`<a href="${sale.screenshots?.playside}" target="_blank" title="Show CSFloat font screenshot"><mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon></a>` : ''}
 						${
-							sale.screenshots.backside
-								? html`<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot"><img src="${ICON_CAMERA_FLIPPED}" style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);" /></a>`
+							sale.screenshots?.backside
+								? html`<a href="${sale.screenshots?.backside}" target="_blank" title="Show CSFloat back screenshot"><img src="${ICON_CAMERA_FLIPPED}" style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);" /></a>`
 								: ''
 						}
 						${
-							sale.screenshots.id
+							sale.screenshots?.id
 								? html`
-										<a href="https://csfloat.pics/m/${sale.screenshots.id}/playside.png" target="_blank" title="Show CSFloat font screenshot">
+										<a href="https://csfloat.pics/m/${sale.screenshots?.id}/playside.png" target="_blank" title="Show CSFloat font screenshot">
 											<mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">photo_camera</mat-icon>
 										</a>
-										<a href="https://csfloat.pics/m/${sale.screenshots.id}/backside.png" target="_blank" title="Show CSFloat back screenshot">
+										<a href="https://csfloat.pics/m/${sale.screenshots?.id}/backside.png" target="_blank" title="Show CSFloat back screenshot">
 											<img src="${ICON_CAMERA_FLIPPED}" style="height: 24px; translate: 7px 0; filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%);" />
 										</a>
 									`

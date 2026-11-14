@@ -644,21 +644,21 @@ async function caseHardenedDetection(container: Element, item: Skinport.Item) {
 				<div class="ItemHistoryList-col" style="width: 24%;">${currencySymbol} ${price}</div>
 				<div style="width: 60px; display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
 					${
-						sale.screenshots.combined
+						sale.screenshots?.combined
 							? html`
-								<a href="${sale.screenshots.combined}" target="_blank" title="Show Buff screenshot">
+								<a href="${sale.screenshots?.combined}" target="_blank" title="Show Buff screenshot">
 									<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 								</a>
 							  `
 							: ''
 					}
 					${
-						sale.screenshots.playside
+						sale.screenshots?.playside
 							? html`
-						<a href="${sale.screenshots.playside}" target="_blank" title="Show CSFloat font screenshot">
+						<a href="${sale.screenshots?.playside}" target="_blank" title="Show CSFloat font screenshot">
 							<img src="${ICON_CAMERA}" style="filter: brightness(0) saturate(100%) invert(73%) sepia(57%) saturate(1739%) hue-rotate(164deg) brightness(92%) contrast(84%); margin-right: 5px; height: 20px;"></img>
 						</a>
-						<a href="${sale.screenshots.backside}" target="_blank" title="Show CSFloat back screenshot">
+						<a href="${sale.screenshots?.backside}" target="_blank" title="Show CSFloat back screenshot">
 							<img src="${ICON_CAMERA_FLIPPED}" style="filter: brightness(0) saturate(100%) invert(39%) sepia(52%) saturate(4169%) hue-rotate(201deg) brightness(113%) contrast(101%); margin-right: 5px; height: 20px;"></img>
 						</a>
 					`
