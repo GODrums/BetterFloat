@@ -12,7 +12,7 @@ import { CurrencyFormatter, checkUserPlanPro, getBuffPrice, handleSpecialSticker
 import { attachMarketPopover } from '~lib/util/market_popover';
 import { getAllSettings, type IStorage } from '~lib/util/storage';
 import { generatePriceLine } from '~lib/util/uigeneration';
-import { getAvanmarketCurrency, getAvanmarketInventoryItem, getFirstAvanmarketItem } from './cache';
+import { cacheAvanmarketCurrency, getAvanmarketCurrency, getAvanmarketInventoryItem } from './cache';
 import { activateAvanmarketEventHandler as activateHandler } from './events';
 
 export const config: PlasmoCSConfig = {
@@ -25,9 +25,17 @@ type PriceResult = {
 	price_difference: Decimal;
 };
 
-async function init() {
-	console.time('[BetterFloat] Avanmarket init timer');
+type AvanItem = {
+	name: string;
+	style: ItemStyle;
+	price: Decimal;
+	// market prices are scraped from the page and are already in the user's currency
+	priceInUserCurrency: boolean;
+};
 
+const DOPPLER_PHASES: DopplerPhase[] = ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4', 'Ruby', 'Sapphire', 'Black Pearl', 'Emerald'];
+
+async function init() {
 	if (location.host !== 'avan.market') {
 		return;
 	}
@@ -48,7 +56,7 @@ async function init() {
 		return;
 	}
 
-	await initPriceMapping(extensionSettings, 'av');
+	await Promise.all([initPriceMapping(extensionSettings, 'av'), fetchUserCurrency()]);
 
 	console.timeEnd('[BetterFloat] Avanmarket init timer');
 
@@ -62,9 +70,27 @@ async function init() {
 	firstLaunch();
 }
 
+// the site no longer requests the currency rate itself, the selected currency is stored in a cookie
+async function fetchUserCurrency() {
+	const currencyId = document.cookie.match(/(?:^|;\s*)currencyId=(\d+)/)?.[1] ?? '1';
+	if (currencyId === '1') return;
+	try {
+		const response = await fetch(`/v1/api/items/rate?currencyId=${currencyId}`);
+		if (!response.ok) return;
+		cacheAvanmarketCurrency((await response.json()) as Avanmarket.CurrencyResponse);
+	} catch (error) {
+		console.warn('[BetterFloat] Failed to fetch Avanmarket currency rate:', error);
+	}
+}
+
 function firstLaunch() {
-	if (location.pathname.includes('/market/cs/')) {
-		adjustItemPage(document.querySelector<HTMLElement>(`div[class*="${AVAN_SELECTORS.MUTATION.ITEM_PAGE}"]`)!);
+	// the first market page is server-side rendered, so the cards are already in the DOM
+	for (const card of document.querySelectorAll<HTMLElement>(AVAN_SELECTORS.MUTATION.MARKET_CARD)) {
+		adjustItem(card, PageState.Market);
+	}
+	const itemPage = document.querySelector<HTMLElement>(AVAN_SELECTORS.MUTATION.ITEM_PAGE);
+	if (itemPage) {
+		adjustItemPage(itemPage);
 	}
 }
 
@@ -75,14 +101,21 @@ function applyMutation() {
 				const addedNode = mutation.addedNodes[i];
 				// some nodes are not elements, so we need to check
 				if (!(addedNode instanceof HTMLElement)) continue;
-				// console.debug('[BetterFloat] Avanmarket Mutation detected:', addedNode);
 
-				if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.MARKET_CARD)) {
-					await adjustItem(addedNode, PageState.Market);
-				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.INVENTORY_CARD)) {
-					await adjustItem(addedNode, PageState.Inventory);
-				} else if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.ITEM_PAGE)) {
-					await adjustItemPage(addedNode);
+				if (addedNode.className.startsWith(AVAN_SELECTORS.MUTATION.INVENTORY_CARD)) {
+					adjustItem(addedNode, PageState.Inventory);
+					continue;
+				}
+
+				// cards may be added individually (pagination) or as part of a whole page (navigation)
+				const marketCards = addedNode.matches(AVAN_SELECTORS.MUTATION.MARKET_CARD) ? [addedNode] : addedNode.querySelectorAll<HTMLElement>(AVAN_SELECTORS.MUTATION.MARKET_CARD);
+				for (const card of marketCards) {
+					adjustItem(card, PageState.Market);
+				}
+
+				const itemPage = addedNode.matches(AVAN_SELECTORS.MUTATION.ITEM_PAGE) ? addedNode : addedNode.querySelector<HTMLElement>(AVAN_SELECTORS.MUTATION.ITEM_PAGE);
+				if (itemPage) {
+					adjustItemPage(itemPage);
 				}
 			}
 		}
@@ -90,28 +123,70 @@ function applyMutation() {
 	observer.observe(document, { childList: true, subtree: true });
 }
 
-function getAPIItem(container: Element, state: PageState) {
-	if (state === PageState.Market) {
-		return getFirstAvanmarketItem();
-	} else if (state === PageState.Inventory) {
-		const iconUrl = container.querySelector<HTMLImageElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_ICON)?.getAttribute('src');
-		const iconPath = decodeURIComponent(new URL(iconUrl ?? '').pathname.split('/image/').pop() ?? '');
-		if (iconPath) {
-			return getAvanmarketInventoryItem(iconPath);
-		}
-		return null;
+function getMarketItem(container: Element): AvanItem | null {
+	const name = container.querySelector<HTMLImageElement>(AVAN_SELECTORS.STATE.MARKET.ITEM_IMAGE)?.getAttribute('alt')?.trim();
+	const priceText = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.MARKET.PRICE)?.textContent;
+	if (!name || !priceText) return null;
+
+	const nameText = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.MARKET.ITEM_NAME_TEXT)?.textContent ?? '';
+	return {
+		name,
+		style: getItemStyle(name, nameText),
+		price: parseAvanPrice(priceText),
+		priceInUserCurrency: true,
+	};
+}
+
+function getInventoryItem(container: Element): AvanItem | null {
+	const iconUrl = container.querySelector<HTMLImageElement>(AVAN_SELECTORS.STATE.INVENTORY.ITEM_ICON)?.getAttribute('src');
+	if (!iconUrl) return null;
+	const iconPath = decodeURIComponent(new URL(iconUrl, location.origin).pathname.split('/image/').pop() ?? '');
+	const item = iconPath ? getAvanmarketInventoryItem(iconPath) : undefined;
+	if (!item) return null;
+	return { ...createBuffItem(item), price: new Decimal(item.price), priceInUserCurrency: false };
+}
+
+function getItem(container: Element, state: PageState) {
+	return state === PageState.Market ? getMarketItem(container) : getInventoryItem(container);
+}
+
+/**
+ * Avan formats prices according to the locale, e.g. "4 690,34 $" or "$4,690.34"
+ */
+function parseAvanPrice(text: string) {
+	const cleaned = text.replace(/[^0-9.,]/g, '');
+	const decimalMatch = cleaned.match(/[.,](\d{1,2})$/);
+	const integerPart = (decimalMatch ? cleaned.slice(0, -decimalMatch[0].length) : cleaned).replace(/[.,]/g, '');
+	const value = `${integerPart || '0'}${decimalMatch ? `.${decimalMatch[1]}` : ''}`;
+	return new Decimal(value);
+}
+
+/**
+ * Determines the item style. Doppler phases are not part of the market hash name,
+ * but are shown in the displayed name, e.g. "Gamma Doppler  Phase 1" or "Doppler  Ruby (Factory New)"
+ */
+function getItemStyle(name: string, displayName: string): ItemStyle {
+	if (name.includes('Doppler')) {
+		const phase = DOPPLER_PHASES.find((p) => displayName.includes(p));
+		if (phase) return phase;
 	}
+	if (name.includes('★') && !name.includes('|')) {
+		return 'Vanilla';
+	}
+	return '';
 }
 
 async function adjustItem(container: Element, state: PageState) {
-	let item = getAPIItem(container, state);
+	if (container.hasAttribute('data-betterfloat')) return;
+	container.setAttribute('data-betterfloat', 'true');
+
+	let item = getItem(container, state);
 
 	let tries = 10;
 	while (!item && tries-- > 0) {
 		await new Promise((resolve) => setTimeout(resolve, 200));
-		item = getAPIItem(container, state);
+		item = getItem(container, state);
 	}
-	// console.log('[BetterFloat] Avanmarket item:', item);
 	if (!item) return;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -122,17 +197,16 @@ async function adjustItem(container: Element, state: PageState) {
 }
 
 async function adjustItemPage(container: Element) {
-	const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.ITEM_NAME)?.getAttribute('alt');
+	if (container.hasAttribute('data-betterfloat')) return;
+	const itemName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.ITEM_NAME)?.getAttribute('alt')?.trim();
 	if (!itemName) return;
+	container.setAttribute('data-betterfloat', 'true');
 
-	const buff_item = { name: itemName, style: '' as ItemStyle };
-	if (itemName.includes('★') && !itemName.includes('|')) {
-		buff_item.style = 'Vanilla';
-	}
-	const buff_name = handleSpecialStickerNames(buff_item.name);
-	const itemPrice = new Decimal(0);
+	const displayName = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.ITEM_NAME_TEXT)?.textContent ?? '';
+	const buff_name = handleSpecialStickerNames(itemName);
+	const itemStyle = getItemStyle(itemName, displayName);
 
-	const priceData = await getPriceData(buff_name, buff_item.style, itemPrice);
+	const priceData = await getPriceData(buff_name, itemStyle, new Decimal(0), true);
 
 	const currencyFormatter = CurrencyFormatter(priceData.currency.text ?? 'USD', 0, 2);
 	const footerContainer = container.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.PRICE_CONTAINER);
@@ -148,7 +222,7 @@ async function adjustItemPage(container: Element) {
 			userCurrency: priceData.currency.symbol ?? '$',
 			itemStyle: priceData.itemStyle as DopplerPhase,
 			CurrencyFormatter: currencyFormatter,
-			isDoppler: false,
+			isDoppler: DOPPLER_PHASES.includes(itemStyle as DopplerPhase),
 			isPopout: true,
 			addSpaceBetweenPrices: true,
 			showPrefix: true,
@@ -174,14 +248,11 @@ async function adjustItemPage(container: Element) {
 	const listItems = container.querySelectorAll<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.OFFER_CONTAINER);
 	for (const listItem of listItems) {
 		const priceContainer = listItem.querySelector<HTMLElement>(AVAN_SELECTORS.STATE.ITEM_PAGE.OFFER_PRICE);
-		if (!priceContainer) continue;
 
-		const parsedPrice =
-			priceContainer.textContent
-				?.split(' ')[0]
-				?.replace(/,/g, '')
-				.replace(/[^0-9.]/g, '') ?? 0;
-		const itemPrice = new Decimal(parsedPrice).div(100);
+		if (!priceContainer || priceContainer.querySelector('.betterfloat-sale-tag')) continue;
+
+		const itemPrice = parseAvanPrice(priceContainer.textContent ?? '');
+		if (itemPrice.isZero()) continue;
 		const saleTag = createSaleTag(itemPrice.minus(priceData.priceFromReference ?? 0), itemPrice.div(priceData.priceFromReference ?? 0).mul(100), CurrencyFormatter(getUserCurrency().name, 0, 2));
 		priceContainer?.insertAdjacentHTML('beforeend', saleTag);
 
@@ -189,7 +260,7 @@ async function adjustItemPage(container: Element) {
 	}
 }
 
-async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, container: Element, state: PageState): Promise<PriceResult> {
+async function addBuffPrice(item: AvanItem, container: Element, state: PageState): Promise<PriceResult> {
 	const { source, itemStyle, itemPrice, buff_name, market_id, priceListing, priceOrder, priceFromReference, difference, currency } = await getBuffItem(item);
 
 	let footerContainer: HTMLElement | null = null;
@@ -200,7 +271,7 @@ async function addBuffPrice(item: Avanmarket.Item | Avanmarket.InventoryItem, co
 		container.classList.add('inventory-item');
 	}
 
-	const isDoppler = isAvanmarketItem(item) && !!item.phase;
+	const isDoppler = DOPPLER_PHASES.includes(item.style as DopplerPhase);
 	const maximumFractionDigits = priceListing?.gt(1000) ? 0 : 2;
 	const currencyFormatter = CurrencyFormatter(currency.text ?? 'USD', 0, maximumFractionDigits);
 
@@ -282,14 +353,13 @@ function createSaleTag(difference: Decimal, percentage: Decimal, currencyFormatt
 	`;
 }
 
-async function getBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem) {
-	const buff_item = createBuffItem(item);
-	const buff_name = handleSpecialStickerNames(buff_item.name);
+async function getBuffItem(item: AvanItem) {
+	const buff_name = handleSpecialStickerNames(item.name);
 
-	return getPriceData(buff_name, buff_item.style, getItemPrice(item));
+	return getPriceData(buff_name, item.style, item.price, item.priceInUserCurrency);
 }
 
-async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice: Decimal) {
+async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice: Decimal, priceInUserCurrency: boolean) {
 	let source = (extensionSettings['av-pricingsource'] as MarketSource) ?? MarketSource.Buff;
 	let { priceListing, priceOrder } = await getBuffPrice(buff_name, buff_style, source);
 
@@ -311,7 +381,9 @@ async function getPriceData(buff_name: string, buff_style: ItemStyle, itemPrice:
 		if (priceOrder) {
 			priceOrder = priceOrder.mul(currencyRate);
 		}
-		itemPrice = itemPrice.mul(currencyRate);
+		if (!priceInUserCurrency) {
+			itemPrice = itemPrice.mul(currencyRate);
+		}
 	}
 
 	const referencePrice =
@@ -343,52 +415,27 @@ function getUserCurrency() {
 	return getAvanmarketCurrency();
 }
 
-function getItemPrice(item: Avanmarket.Item | Avanmarket.InventoryItem) {
-	if (isAvanmarketItem(item)) {
-		return new Decimal(item.sell_items[0]?.sell_price ?? 0);
-	} else {
-		return new Decimal(item.price);
-	}
-}
-
-function createBuffItem(item: Avanmarket.Item | Avanmarket.InventoryItem): { name: string; style: ItemStyle } {
+function createBuffItem(item: Avanmarket.InventoryItem): { name: string; style: ItemStyle } {
 	const buff_item = {
-		name: '',
+		name: item.name,
 		style: '' as ItemStyle,
 	};
-	if (isAvanmarketItem(item)) {
-		buff_item.name = item.full_name;
-	} else {
-		buff_item.name = item.name;
-		if (item.quality?.trim()) {
-			if (!item.name.includes(' | ') && item.name.includes('★')) {
-				buff_item.style = 'Vanilla';
-			} else if (item.name.startsWith('Sticker | ') && item.name.split(' | ').length > 2) {
-				const nameParts = item.name.split(' | ');
-				const newName = nameParts[0] + ' | ' + nameParts[1] + ' (' + item.quality.trim() + ')' + ' | ' + nameParts[2];
-				buff_item.name = newName;
-			} else {
-				buff_item.name += ` (${item.quality.trim()})`;
-			}
+	if (item.quality?.trim()) {
+		if (!item.name.includes(' | ') && item.name.includes('★')) {
+			buff_item.style = 'Vanilla';
+		} else if (item.name.startsWith('Sticker | ') && item.name.split(' | ').length > 2) {
+			const nameParts = item.name.split(' | ');
+			buff_item.name = nameParts[0] + ' | ' + nameParts[1] + ' (' + item.quality.trim() + ')' + ' | ' + nameParts[2];
+		} else {
+			buff_item.name += ` (${item.quality.trim()})`;
 		}
 	}
-	if (isAvanmarketItem(item) && item.phase) {
-		buff_item.style = item.phase as ItemStyle;
-	}
-	return {
-		name: buff_item.name,
-		style: buff_item.style,
-	};
+	return buff_item;
 }
 
 enum PageState {
 	Market = 0,
 	Inventory = 1,
-}
-
-// Type guard functions
-function isAvanmarketItem(item: Avanmarket.Item | Avanmarket.InventoryItem): item is Avanmarket.Item {
-	return 'full_name' in item && 'sell_items' in item;
 }
 
 // mutation observer active?

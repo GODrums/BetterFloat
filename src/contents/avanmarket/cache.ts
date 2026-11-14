@@ -5,16 +5,11 @@ export type AvCurrency = {
 	name: string;
 };
 
-let avItems: Avanmarket.Item[] = [];
 let avInventory: Avanmarket.InventoryItem[] = [];
 let avCurrency: AvCurrency = {
 	rate: 1,
 	name: 'USD',
 };
-
-export function cacheAvanmarketItems(items: Avanmarket.Item[]) {
-	avItems = items;
-}
 
 export function cacheAvanmarketCurrency(res: Avanmarket.CurrencyResponse) {
 	avCurrency = {
@@ -25,10 +20,6 @@ export function cacheAvanmarketCurrency(res: Avanmarket.CurrencyResponse) {
 
 export function getAvanmarketCurrency() {
 	return avCurrency;
-}
-
-export function getFirstAvanmarketItem() {
-	return avItems.shift();
 }
 
 export function cacheAvanmarketInventory(inventory: Avanmarket.InventoryItem[]) {
