@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
-import { cacheSkinplaceMarketItems, getSpecificSkinplaceMarketItem, type SkinplaceMarketItemLookup } from '~contents/skinplace/cache';
+import { cacheSkinplaceMarketItems, cacheSkinplaceMarketOffer, getSkinplaceMarketOffer, getSpecificSkinplaceMarketItem, type SkinplaceMarketItemLookup } from '~contents/skinplace/cache';
+import { isMarketItemsUrl, isMarketOffersUrl } from '~contents/skinplace/endpoints';
 import { SKINPLACE_MARKET_IMAGE_SELECTOR } from '~contents/skinplace/market';
 import type { Skinplace } from '~lib/@typings/SkinplaceTypes';
 
@@ -113,5 +114,43 @@ describe('Skinplace market preview matching', () => {
 
 		expect(lookup(nullScreenshots.cdn_icon_url, { exterior: 'Field-Tested' })).toEqual(nullScreenshots);
 		expect(lookup(emptyScreenshots.cdn_icon_url)).toEqual(emptyScreenshots);
+	});
+});
+
+describe('Skinplace frontend API', () => {
+	test('routes current and legacy endpoints', () => {
+		expect(isMarketItemsUrl('https://api.skin.place/api/frontend/market/items?game=csgo&limit=50&offset=0')).toBe(true);
+		expect(isMarketItemsUrl('https://skin.place/api/market/guest/get_items?game=csgo')).toBe(true);
+		expect(isMarketItemsUrl('https://api.skin.place/api/frontend/market/items/123')).toBe(false);
+		expect(isMarketItemsUrl('https://api.skin.place/api/frontend/market/items/123/screenshots')).toBe(false);
+		expect(isMarketOffersUrl('https://api.skin.place/api/frontend/market/offers?game=csgo&limit=20&offset=0')).toBe(true);
+		expect(isMarketOffersUrl('https://skin.place/api/market/items/offers?game=csgo')).toBe(true);
+		expect(isMarketOffersUrl('https://api.skin.place/api/frontend/market/offers/stats?game=csgo')).toBe(false);
+	});
+
+	test('caches items from the data field with boolean souvenir flags', () => {
+		const item = marketItem({ id: 110, cdn_icon_url: '730/frontend.png', steam_is_souvenir: undefined, is_souvenir: true, is_stattrak: false });
+		cacheSkinplaceMarketItems({ status: 'success', data: [item] });
+
+		expect(lookup('https://cdnsteam.skin.place/730/frontend.png/d/240x180.webp', { isSouvenir: true })).toEqual(item);
+		expect(lookup('730/frontend.png')).toBeUndefined();
+	});
+
+	test('orders offers like the item page: featured first, without its duplicate in the list', () => {
+		const offer = (id: number) => ({ id, price_market: id }) as Skinplace.MarketOffer;
+		const base = 'https://api.skin.place/api/frontend/market/offers?game=csgo&steam_url_title_name=ak-47-redline&exterior=Minimal%20Wear';
+		const response = (data: Skinplace.MarketOffer[]) => ({ status: 'success', data, meta: { count: 30, limit: 20, offset: 0 } });
+
+		// the list may arrive before the featured offer
+		cacheSkinplaceMarketOffer(response([offer(1), offer(2), offer(3)]), `${base}&limit=20&offset=0`);
+		cacheSkinplaceMarketOffer(response([offer(2)]), `${base}&is_hold=0&is_external=0&limit=1&offset=0`);
+		expect(getSkinplaceMarketOffer()?.data.map((o) => o.id)).toEqual([2, 1, 3]);
+
+		cacheSkinplaceMarketOffer(response([offer(4)]), `${base}&limit=20&offset=20`);
+		expect(getSkinplaceMarketOffer()?.data.map((o) => o.id)).toEqual([2, 1, 3, 4]);
+
+		// a featured offer from another item/exterior is not mixed in
+		cacheSkinplaceMarketOffer(response([offer(9), offer(8)]), base.replace('Minimal%20Wear', 'Field-Tested') + '&limit=20&offset=0');
+		expect(getSkinplaceMarketOffer()?.data.map((o) => o.id)).toEqual([9, 8]);
 	});
 });

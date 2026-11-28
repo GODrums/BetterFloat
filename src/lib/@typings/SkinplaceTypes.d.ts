@@ -6,7 +6,8 @@ export namespace Skinplace {
 
 	export type MarketOffersResponse = {
 		data: MarketOffer[];
-		item: {
+		/** legacy: newer responses nest the item under meta.item */
+		item?: {
 			cdn_icon_url: string;
 			id: number;
 			steam_market_hash_name: string;
@@ -16,9 +17,11 @@ export namespace Skinplace {
 			count: number;
 			limit: number;
 			offset: number;
+			steam_price?: number;
+			item?: unknown;
 		};
 		status: string;
-		steam_price: number;
+		steam_price?: number;
 	};
 
 	export type InventoryResponse = {
@@ -31,7 +34,10 @@ export namespace Skinplace {
 	};
 
 	export type GetItemsResponse = {
-		items: GetItem[];
+		/** legacy api/market/get_items */
+		items?: GetItem[];
+		/** api/frontend/market/items */
+		data?: GetItem[];
 		status: string;
 	};
 
@@ -59,12 +65,12 @@ export namespace Skinplace {
 		steam_exterior: string;
 		steam_itemtype: string;
 		steam_rarity: string;
-		is_souvenir: number;
+		is_souvenir: number | boolean;
 		steam_url_name: string;
 		collection: string | null;
 		subcategory_name: string;
 		phase: string | null;
-		is_stattrak: number;
+		is_stattrak: number | boolean;
 		hero: string | null;
 		stickers: unknown[];
 	};
@@ -101,12 +107,14 @@ export namespace Skinplace {
 		steam_itemtype: string;
 		steam_rarity: string;
 		steam_rarity_color: string;
-		steam_is_souvenir: number;
+		/** legacy; api/frontend/market/items sends is_souvenir instead */
+		steam_is_souvenir?: number;
+		is_souvenir?: number | boolean;
 		steam_price_en: number;
 		collection: string | null;
 		subcategory_name: string;
 		phase: string | null;
-		is_stattrak: number;
+		is_stattrak: number | boolean;
 		description: string;
 		url_name: string;
 		is_charity: boolean;
